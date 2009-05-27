@@ -1,4 +1,4 @@
-3.0.0 beta1
+3.0.0 beta 1
 
 * Removed Attribute.CLONE support in the interests of simplicity.
   Was not being used. Can add support if real demand for it exists. 
@@ -36,14 +36,29 @@
   
 * Added additional log messages to assist with debugging.
 
-* Attribute change events are no longer fired for initial set
+* Attribute change events are no longer fired for initial set.
 
 * Split up State add/get/remove into add/addAll, get/getAll, remove/removeAll
   to avoid having to create object literals for critical path [ add/get single
-  key values ]
+  key values ].
 
-* Attribute getter, setter, validator now also receive name 
-  as the 2nd arg (val, name)
+* Attribute getter, setter, validator now also receive attribute name 
+  as the 2nd arg (val, name).
+
+* If Attributes initialized through addAttrs have a user provided value 
+  which is not valid, the initial attribute value will revert to the 
+  default value in the attribute configuration, if it exists.
+  
+* reset() no longer resets readOnly or writeOnce attributes. Only publically
+  settable values are reset.
+
+* Added modifyAttr method, to allow component developer to modify configuration
+  of an attribute which has already been added. The set of attribute configuration
+  properties which can be modified after is has been added are limited to getter,
+  readOnly, writeOnce and broadcast.
+
+* Added support for lazy attribute configuration. Attributes are configured on
+  first call to get/set.
 
 3.0.0PR2
 

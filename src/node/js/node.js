@@ -12,7 +12,7 @@
  * <strong>NOTE:</strong> NodeList properties are accessed using
  * the <code>set</code> and <code>get</code> methods.
  *
- * @class NodeList
+ * @class Node
  * @constructor
  */
 
@@ -63,27 +63,60 @@ var g_nodes = {},
 Node.NAME = 'Node';
 
 Node.DOM_EVENTS = {
-    'click': true,
-    'dblclick': true,
-    'keydown': true,
-    'keypress': true,
-    'keyup': true,
-    'mousedown': true,
-    'mousemove': true,
-    'mouseout': true, 
-    'mouseover': true, 
-    'mouseup': true,
-    'focus': true,
-    'blur': true,
-    'submit': true,
-    'change': true,
+    abort: true,
+    blur: true,
+    change: true,
+    click: true,
+    close: true,
+    command: true,
+    contextmenu: true,
+    dblclick: true,
     'error': true,
+    'focus': true,
+    keydown: true,
+    keypress: true,
+    keyup: true,
     'load': true,
-    'mouseenter': true,
-    'mouseleave': true
+    mousedown: true,
+    mousemove: true,
+    mouseout: true, 
+    mouseover: true, 
+    mouseup: true,
+    mousemultiwheel: true,
+    mousewheel: true,
+    'submit': true,
+    mouseenter: true,
+    mouseleave: true,
+    'scroll': true,
+    reset: true,
+    resize: true,
+    select: true,
+    textInput: true,
+    unload: true
 };
 
+// Add custom event adaptors to this list.  This will make it so
+// that delegate, key, available, contentready, etc all will
+// be available through Node.on
+Y.mix(Node.DOM_EVENTS, Y.Env.evt.plugins);
+
+Node.EXEC_SCRIPTS = true;
+
 Node._instances = {};
+
+Node.plug = function() {
+    var args = g_slice.call(arguments, 0);
+    args.unshift(Node);
+    Y.Base.plug.apply(Y.Base, args);
+    return Node;
+};
+
+Node.unplug = function() {
+    var args = g_slice.call(arguments, 0);
+    args.unshift(Node);
+    Y.Base.unplug.apply(Y.Base, args);
+    return Node;
+};
 
 /**
  * Retrieves the DOM node bound to a Node instance
@@ -239,6 +272,16 @@ Node.ATTRS = {
         }
     },
 
+    value: {
+        getter: function() {
+            return Y.DOM.getValue(g_nodes[this[UID]]);
+        },
+
+        setter: function(val) {
+            return Y.DOM.setValue(g_nodes[this[UID]], val);
+        }
+    },
+
     restricted: {
         writeOnce: true,
         value: false
@@ -317,38 +360,51 @@ Y.mix(Node.prototype, {
         }
     },
 
-    on: function(type, fn, context, arg) {
-        var args;
-            ret = null;
+    // on: function(type, fn, context, arg) {
+    //     var args,
+    //         ret = null;
 
-        if (Node.DOM_EVENTS[type]) {
-            args = g_slice.call(arguments, 0),
-            args.splice(2, 0, g_nodes[this[UID]]);
-            ret = Y.Event.attach.apply(Y.Event, args);
-        } else {
-            ret = SuperConstrProto.on.apply(this, arguments);
-        }
-        return ret;
-    },
+    //     if (Node.DOM_EVENTS[type]) {
+    //         args = g_slice.call(arguments, 0);
+    //         args.splice(2, 0, g_nodes[this[UID]]);
+    //         ret = Y.Event.attach.apply(Y.Event, args);
+    //     } else {
+    //         ret = SuperConstrProto.on.apply(this, arguments);
+    //     }
+    //     return ret;
+    // },
 
-   /**
-     * Detaches a DOM event handler. 
-     * @method detach
-     * @param {String} type The type of DOM Event
-     * @param {Function} fn The handler to call when the event fires 
-     */
-    detach: function(type, fn) {
-        var args, ret = null;
-        if (Node.DOM_EVENTS[type]) {
-            args = g_slice.call(arguments, 0);
-            args.splice(2, 0, g_nodes[this[UID]]);
+   /// **
+    //  * Detaches a DOM event handler. 
+    //  * @method detach
+    //  * @param {String} type The type of DOM Event
+    //  * @param {Function} fn The handler to call when the event fires 
+    //  */
+    // detach: function(type, fn) {
+    //     var args, ret = null;
 
-            ret = Y.Event.detach.apply(Y.Event, args);
-        } else {
-            ret = SuperConstrProto.detach.apply(this, arguments);
-        }
-        return ret;
-    },
+    //     // Added by apm: if this is a DOM event, dispatch to the event 
+    //     // system.  If the type is not supplied, do the same since 
+    //     // this is how detachAll works.  This means that Node may not 
+    //     // be able to support detachAll for both DOM events and custom events
+    //     // as implemented.  Detaching DOM events this way is a blocking
+    //     // issue for DD, so I changed it so that will work.  It is probably
+    //     // less important for custom events to work this way through this
+    //     // interface, but we need to review this.
+    //     if (!type || Node.DOM_EVENTS[type]) {
+    //         args = g_slice.call(arguments, 0);
+    //         args[2] = g_nodes[this[UID]];
+
+    //         ret = Y.Event.detach.apply(Y.Event, args);
+    //     } else {
+    //         ret = SuperConstrProto.detach.apply(this, arguments);
+    //     }
+    //     return ret;
+    // },
+
+    // detachAll: function(type) {
+    //     return this.detach(type);
+    // },
 
     get: function(attr) {
         if (!this.attrAdded(attr)) {
@@ -366,7 +422,7 @@ Y.mix(Node.prototype, {
         if (!this.attrAdded(attr)) {
             if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
                 this._addDOMAttr(attr);
-            } else { // handle chained properties TODO: can Attribute do this? Not sure we want events
+            } else {
                 return Node.DEFAULT_SETTER.call(this, attr, val);
             }
         }
@@ -488,8 +544,16 @@ Y.mix(Node.prototype, {
         return Y.Selector.test(g_nodes[this[UID]], selector);
     },
 
+    /**
+     * Removes the node from its parent.
+     * Shortcut for myNode.get('parentNode').removeChild(myNode);
+     * @method remove
+     * @chainable
+     *
+     */
     remove: function() {
-        g_nodes[this[UID]].parentNode.removeChild();
+        var node = g_nodes[this[UID]];
+        node.parentNode.removeChild(node);
         return this;
     },
 
@@ -498,11 +562,11 @@ Y.mix(Node.prototype, {
         var node = g_nodes[this[UID]],
             ret;
 
-        if (a && a instanceof Y.Node) { // first 2 may be Node instances
+        if (a && a instanceof Y.Node) {
             a = Node.getDOMNode(a);
         }
 
-        if (b && b instanceof Y.Node) { // first 2 may be Node instances
+        if (b && b instanceof Y.Node) {
             b = Node.getDOMNode(b);
         }
 
@@ -511,8 +575,11 @@ Y.mix(Node.prototype, {
     },
 
     destructor: function() {
-        g_nodes[this[UID]] = [];
-        delete Node._instances[this[UID]];
+        var uid = this[UID];
+
+        delete g_nodes[uid];
+        delete g_restrict[uid];
+        delete Node._instances[uid];
     },
 
     /**
@@ -550,10 +617,72 @@ Y.mix(Node.prototype, {
      * @deprecated Use NodeList
      * @return {Int} The number of items in the Node. 
      */
-
     size: function() {
         Y.log('size is deprecated on Node', 'warn', 'Node');
         return g_nodes[this[UID]] ? 1 : 0;
+    },
+
+    /**
+     * Inserts the content before the reference node. 
+     * @method insert
+     * @param {String | Y.Node | HTMLElement} content The content to insert 
+     * @param {Int | Y.Node | HTMLElement} refNode The index or node to insert before 
+     * @param {Boolean} execScripts Whether or not to execute any scripts found in
+     * the content.  If false, all scripts will be stripped out.
+     * @chainable
+     */
+    insert: function(content, refNode) {
+        execScripts = (execScripts && Node.EXEC_SCRIPTS);
+        if (typeof refNode === 'number') { // allow index
+            refNode = g_nodes[this[UID]].childNodes[refNode];
+        }
+        if (this.contains(refNode)) { // only allow inserting into this Node's subtree
+            Y.DOM.addHTML(g_nodes[this[UID]], Y.Node.create(content), refNode, execScripts);
+        }
+        return this;
+    },
+
+    /**
+     * Inserts the content as the firstChild of the node. 
+     * @method prepend
+     * @param {String | Y.Node | HTMLElement} content The content to insert 
+     * @param {Boolean} execScripts Whether or not to execute any scripts found in
+     * the content.  If false, all scripts will be stripped out.
+     * @chainable
+     */
+    prepend: function(content, execScripts) {
+        execScripts = (execScripts && Node.EXEC_SCRIPTS);
+        var node = g_nodes[this[UID]];
+        Y.DOM.addHTML(node, content, node.firstChild, execScripts);
+        return this;
+    },
+
+    /**
+     * Inserts the content as the lastChild of the node. 
+     * @method append
+     * @param {String | Y.Node | HTMLElement} content The content to insert 
+     * @param {Boolean} execScripts Whether or not to execute any scripts found in
+     * the content.  If false, all scripts will be stripped out.
+     * @chainable
+     */
+    append: function(content, execScripts) {
+        execScripts = (execScripts && Node.EXEC_SCRIPTS);
+        Y.DOM.addHTML(g_nodes[this[UID]], content, null, execScripts);
+        return this;
+    },
+
+    /**
+     * Replaces the node's current content with the content.
+     * @method setContent
+     * @param {String | Y.Node | HTMLElement} content The content to insert 
+     * @param {Boolean} execScripts Whether or not to execute any scripts found in
+     * the content.  If false, all scripts will be stripped out.
+     * @chainable
+     */
+    setContent: function(content, execScripts) {
+        execScripts = (execScripts && Node.EXEC_SCRIPTS);
+        Y.DOM.addHTML(g_nodes[this[UID]], content, 'replace', execScripts);
+        return this;
     },
 
     addEventListener: function() {
@@ -565,10 +694,10 @@ Y.mix(Node.prototype, {
     removeEventListener: function() {
         var args = g_slice.call(arguments);
         args.unshift(g_nodes[this[UID]]);
-        return Y.Event.nativeRemove.apply(Y.Event, arguments);
+        return Y.Event.nativeRemove.apply(Y.Event, args);
     },
 
-    // TODO: need this?  check for fn; document this
+    // TODO: need this?
     hasMethod: function(method) {
         var node = g_nodes[this[UID]];
         return (node && (typeof node === 'function'));

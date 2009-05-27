@@ -74,7 +74,7 @@ YUI.add('dd-ddm', function(Y) {
         */
         _pg_size: function() {
             if (this.activeDrag) {
-                var b = Y.Node.get('body'),
+                var b = Y.get('body'),
                 h = b.get('docHeight'),
                 w = b.get('docWidth');
                 this._pg.setStyles({
@@ -90,7 +90,7 @@ YUI.add('dd-ddm', function(Y) {
         */
         _createPG: function() {
             var pg = Y.Node.create('<div></div>'),
-            bd = Y.Node.get('body');
+            bd = Y.get('body');
             pg.setStyles({
                 top: '0',
                 left: '0',

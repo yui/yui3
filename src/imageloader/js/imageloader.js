@@ -4,13 +4,13 @@
  * and a more responsive UI.
  *
  * @module imageloader
+ * @requires node
  */
 
 
 	/**
-	 * A group for images. A group can have one time limit and a series of triggers. Thus the images belonging to this group must share these constraints
+	 * A group for images. A group can have one time limit and a series of triggers. Thus the images belonging to this group must share these constraints.
 	 * @class ImgLoadGroup
-	 * @requires  // TODO
 	 * @extends Base
 	 * @constructor
 	 */
@@ -25,7 +25,7 @@
 	Y.ImgLoadGroup.ATTRS = {
 		
 		/**
-		 * Name for the group. Only used to identify the group in logging statements
+		 * Name for the group. Only used to identify the group in logging statements.
 		 * @attribute name
 		 * @type String
 		 */
@@ -34,7 +34,7 @@
 		},
 
 		/**
-		 * Time limit, in seconds, after which images are fetched regardless of trigger events
+		 * Time limit, in seconds, after which images are fetched regardless of trigger events.
 		 * @attribute timeLimit
 		 * @type Number
 		 */
@@ -43,8 +43,8 @@
 		},
 
 		/**
-		 * Distance below the fold for which images are loaded. Images are not loaded until they are at most this distance away from (or above) the fold
-		 * This check is performed at page load and after any window scroll or window resize event (until all images are loaded)
+		 * Distance below the fold for which images are loaded. Images are not loaded until they are at most this distance away from (or above) the fold.
+		 * This check is performed at page load (domready) and after any window scroll or window resize event (until all images are loaded).
 		 * @attribute foldDistance
 		 * @type Number
 		 */
@@ -54,8 +54,8 @@
 		},
 
 		/**
-		 * Class name that will identify images belonging to the group. This class name will be removed from each element in order to fetch images
-		 * This class should have, in its CSS style definition, "background:none !important;"
+		 * Class name that will identify images belonging to the group. This class name will be removed from each element in order to fetch images.
+		 * This class should have, in its CSS style definition, "<code>background:none !important;</code>".
 		 * @attribute className
 		 * @type String
 		 */
@@ -69,13 +69,15 @@
 	var groupProto = {
 
 		/**
-		 * Initialize all private members needed for the group
+		 * Initialize all private members needed for the group.
+		 * @method _init
+		 * @private
 		 */
 		_init: function() {
 
 			/**
-			 * Collection of triggers for this group
-			 * Keeps track of each trigger's event handle, as returned from Y.on()
+			 * Collection of triggers for this group.
+			 * Keeps track of each trigger's event handle, as returned from <code>Y.on</code>.
 			 * @property _triggers
 			 * @private
 			 * @type Array
@@ -83,7 +85,7 @@
 			this._triggers = [];
 
 			/**
-			 * Collection of images registered with this group
+			 * Collection of images (<code>Y.ImgLoadImgObj</code> objects) registered with this group, keyed by DOM id.
 			 * @property _imgObjs
 			 * @private
 			 * @type Object
@@ -91,7 +93,7 @@
 			this._imgObjs = {};
 
 			/**
-			 * Timeout object to keep a handle on the time limit
+			 * Timeout object to keep a handle on the time limit.
 			 * @property _timeout
 			 * @private
 			 * @type Object
@@ -99,8 +101,8 @@
 			this._timeout = null;
 
 			/**
-			 * HTML elements having the class name that is associated with this group
-			 * Elements are stored during the _foldCheck function and reused later during any subsequent _foldCheck calls - gives a slight performance improvement when the page fold is repeatedly checked
+			 * DOM elements having the class name that is associated with this group.
+			 * Elements are stored during the <code>_foldCheck</code> function and reused later during any subsequent <code>_foldCheck</code> calls - gives a slight performance improvement when the page fold is repeatedly checked.
 			 * @property _classImageEls
 			 * @private
 			 * @type Array
@@ -108,7 +110,7 @@
 			this._classImageEls = null;
 
 			/**
-			 * Keep the css class name in a member variable for ease and speed
+			 * Keep the CSS class name in a member variable for ease and speed.
 			 * @property _className
 			 * @private
 			 * @type String
@@ -116,52 +118,50 @@
 			this._className = null;
 
 			/**
-			 * Boolean tracking whether the window scroll and window resize triggers have been set for fold groups
+			 * Boolean tracking whether the window scroll and window resize triggers have been set if this is a fold group.
 			 * @property _areFoldTriggersSet
 			 * @private
 			 * @type Boolean
 			 */
 			this._areFoldTriggersSet = false;
 
-			// TODO  can't get this to work. 'load' for window doesn't even fire, and 'domready' won't fire anything if the dom is already ready
-			// add a listener to the onload that will start the time limit
-			//Y.on('load', this._onloadTasks, window, this);
+			// add a listener to domready that will start the time limit
 			Y.on('domready', this._onloadTasks, this);
 		},
 
 		/**
-		 * Adds a trigger to the group. Arguments are passed through to Y.on()
+		 * Adds a trigger to the group. Arguments are passed to <code>Y.on</code>.
 		 * @method addTrigger
 		 * @chainable
-		 * @param {String|HTMLElement} context  The HTML element id or reference to assign the trigger event to  // TODO  type
-		 * @param {String} type  The type of event to assign to context
+		 * @param {Object} obj  The DOM object to attach the trigger event to
+		 * @param {String} type  The event type
 		 */
-		addTrigger: function(context, type) {
-			if (! context || ! type) {
+		addTrigger: function(obj, type) {
+			if (! obj || ! type) {
 				return this;
 			}
 
 			Y.log('adding trigger to group: ' + this.get('name'), 'info', 'imageloader');
 
-			/* Need to wrap the fetch function. Event Util can't distinguish prototyped functions of different instantiations
+			/* Need to wrap the fetch function. Event Util can't distinguish prototyped functions of different instantiations.
 			 *   Leads to this scenario: groupA and groupZ both have window-scroll triggers. groupZ also has a 2-sec timeout (groupA has no timeout).
 			 *   groupZ's timeout fires; we remove the triggers. The detach call finds the first window-scroll event with Y.ILG.p.fetch, which is groupA's. 
-			 *   groupA's trigger is removed and never fires, leaving images unfetched
+			 *   groupA's trigger is removed and never fires, leaving images unfetched.
 			 */
 			var wrappedFetch = function() {
 				this.fetch();
 			};
-			this._triggers.push( Y.on(type, wrappedFetch, context, this) );
+			this._triggers.push( Y.on(type, wrappedFetch, obj, this) );
 
 			return this;
 		},
 
 		/**
-		 * Adds a custom event trigger to the group
+		 * Adds a custom event trigger to the group.
 		 * @method addCustomTrigger
 		 * @chainable
 		 * @param {String} name  The name of the event
-		 * @param {Object} obj  The object on which to attach the event. obj is optional - by default the event is attached to the Y instance
+		 * @param {Object} obj  The object on which to attach the event. <code>obj</code> is optional - by default the event is attached to the <code>Y</code> instance
 		 */
 		addCustomTrigger: function(name, obj) {
 			if (! name) {
@@ -185,7 +185,7 @@
 		},
 
 		/**
-		 * Sets the window scroll and window resize triggers for any group that is fold-conditional (i.e., has a fold distance set)
+		 * Sets the window scroll and window resize triggers for any group that is fold-conditional (i.e., has a fold distance set).
 		 * @method _setFoldTriggers
 		 * @private
 		 */
@@ -205,8 +205,8 @@
 		},
 
 		/**
-		 * Performs necessary setup after the window's onload  // TODO  onload? or domready?
-		 * Initiates time limit for group; executes the fold check for the images
+		 * Performs necessary setup at domready time.
+		 * Initiates time limit for group; executes the fold check for the images.
 		 * @method _onloadTasks
 		 * @private
 		 */
@@ -223,9 +223,9 @@
 		},
 
 		/**
-		 * Returns the group's fetch method, with the proper closure, for use with setTimeout
+		 * Returns the group's <code>fetch</code> method, with the proper closure, for use with <code>setTimeout</code>.
 		 * @method _getFetchTimeout
-		 * @return {Function}  group's fetch method
+		 * @return {Function}  group's <code>fetch</code> method
 		 * @private
 		 */
 		_getFetchTimeout: function() {
@@ -234,10 +234,11 @@
 		},
 
 		/**
-		 * Registers an image with the group
+		 * Registers an image with the group.
+		 * Arguments are passed through to a <code>Y.ImgLoadImgObj</code> constructor; see that class' attribute documentation for detailed information. "<code>domId</code>" is a required attribute.
 		 * @method registerImage
-		 * // TODO  how to label params
-		 * @return {Object} Y.ImgLoadImgObj that was registered
+		 * @param {Object} *  A configuration object literal with attribute name/value pairs  (passed through to a <code>Y.ImgLoadImgObj</code> constructor)
+		 * @return {Object}  <code>Y.ImgLoadImgObj</code> that was registered
 		 */
 		registerImage: function() {
 			var domId = arguments[0].domId;
@@ -252,8 +253,8 @@
 		},
 
 		/**
-		 * Displays the images in the group
-		 * This method is called when a trigger fires or the time limit expires; it shouldn't be called externally, but is not private in the event that it needs to be called immediately
+		 * Displays the images in the group.
+		 * This method is called when a trigger fires or the time limit expires; it shouldn't be called externally, but is not private in the rare event that it needs to be called immediately.
 		 * @method fetch
 		 */
 		fetch: function() {
@@ -274,7 +275,7 @@
 		},
 
 		/**
-		 * Clears the timeout and all triggers associated with the group
+		 * Clears the timeout and all triggers associated with the group.
 		 * @method _clearTriggers
 		 * @private
 		 */
@@ -287,16 +288,16 @@
 		},
 
 		/**
-		 * Checks the position of each image in the group. If any part of the image is within the specified distance of the client viewport, the image is fetched immediately
+		 * Checks the position of each image in the group. If any part of the image is within the specified distance (<code>foldDistance</code>) of the client viewport, the image is fetched immediately.
 		 * @method _foldCheck
 		 * @private
 		 */
 		_foldCheck: function() {
 			Y.log('Checking for images above the fold in group: "' + this.get('name') + '"', 'info', 'imageloader');
 
-			var allFetched = true;
-			var viewReg = Y.DOM.viewportRegion();
-			var hLimit = viewReg.bottom + this.get('foldDistance');
+			var allFetched = true,
+			    viewReg = Y.DOM.viewportRegion(),
+			    hLimit = viewReg.bottom + this.get('foldDistance');
 
 			for (var id in this._imgObjs) {
 				if (this._imgObjs.hasOwnProperty(id)) {
@@ -337,7 +338,7 @@
 		},
 
 		/**
-		 * Finds all elements in the Dom with the class name specified in the group. Removes the class from the element in order to let the style definitions trigger the image fetching
+		 * Finds all elements in the DOM with the class name specified in the group. Removes the class from the element in order to let the style definitions trigger the image fetching.
 		 * @method _fetchByClass
 		 * @private
 		 */
@@ -375,7 +376,7 @@
 
 	Y.ImgLoadImgObj.ATTRS = {
 		/**
-		 * HTML DOM id of the image element
+		 * HTML DOM id of the image element.
 		 * @attribute domId
 		 * @type String
 		 */
@@ -385,8 +386,8 @@
 		},
 
 		/**
-		 * Background URL for the image
-		 * For an image whose URL is specified by "background-image" in the element's style
+		 * Background URL for the image.
+		 * For an image whose URL is specified by "<code>background-image</code>" in the element's style.
 		 * @attribute bgUrl
 		 * @type String
 		 */
@@ -395,8 +396,8 @@
 		},
 
 		/**
-		 * Source URL for the image
-		 * For an image whose URL is specified by a "src" attribute in the DOM element
+		 * Source URL for the image.
+		 * For an image whose URL is specified by a "<code>src</code>" attribute in the DOM element.
 		 * @attribute srcUrl
 		 * @type String
 		 */
@@ -405,9 +406,9 @@
 		},
 
 		/**
-		 * Pixel width of the image. Will be set as a "width" attribute on the DOM element after the image is fetched
-		 * Detaults to the natural width of the image (no "width" attribute will be set)
-		 * Usually only used with src images
+		 * Pixel width of the image. Will be set as a <code>width</code> attribute on the DOM element after the image is fetched.
+		 * Defaults to the natural width of the image (no <code>width</code> attribute will be set).
+		 * Usually only used with src images.
 		 * @attribute width
 		 * @type Int
 		 */
@@ -416,9 +417,9 @@
 		},
 
 		/**
-		 * Pixel height of the image. Will be set as a "height" attribute on the DOM element after the image is fetched
-		 * Detaults to the natural height of the image (no "height" attribute will be set)
-		 * Usually only used with src images
+		 * Pixel height of the image. Will be set as a <code>height</code> attribute on the DOM element after the image is fetched.
+		 * Defaults to the natural height of the image (no <code>height</code> attribute will be set).
+		 * Usually only used with src images.
 		 * @attribute height
 		 * @type Int
 		 */
@@ -427,8 +428,8 @@
 		},
 
 		/**
-		 * Whether the style.visibility should be set to "visible" after the image is fetched
-		 * Used when setting images as visibility:hidden prior to image fetching
+		 * Whether the image's <code>style.visibility</code> should be set to <code>visible</code> after the image is fetched.
+		 * Used when setting images as <code>visibility:hidden</code> prior to image fetching.
 		 * @attribute setVisible
 		 * @type Boolean
 		 */
@@ -437,9 +438,9 @@
 		},
 
 		/**
-		 * Whether the image is a PNG
-		 * PNG images get special treatment in that the URL is specified through AlphaImageLoader for IE, versions 6 and earlier
-		 * Only used with background images
+		 * Whether the image is a PNG.
+		 * PNG images get special treatment in that the URL is specified through AlphaImageLoader for IE, versions 6 and earlier.
+		 * Only used with background images.
 		 * @attribute isPng
 		 * @type Boolean
 		 */
@@ -448,9 +449,9 @@
 		},
 
 		/**
-		 * AlphaImageLoader "sizingMethod" property to be set for the image
-		 * Only set if isPng value for this image is set to true
-		 * Defaults to "scale"
+		 * AlphaImageLoader <code>sizingMethod</code> property to be set for the image.
+		 * Only set if <code>isPng</code> value for this image is set to <code>true</code>.
+		 * Defaults to <code>scale</code>.
 		 * @attribute sizingMethod
 		 * @type String
 		 */
@@ -459,9 +460,9 @@
 		},
 
 		/**
-		 * AlphaImageLoader "enabled" property to be set for the image
-		 * Only set if isPng value for this image is set to true
-		 * Defaults to "true"
+		 * AlphaImageLoader <code>enabled</code> property to be set for the image.
+		 * Only set if <code>isPng</code> value for this image is set to <code>true</code>.
+		 * Defaults to <code>true</code>.
 		 * @attribute enabled
 		 * @type String
 		 */
@@ -469,20 +470,20 @@
 			value: 'true'
 		}
 
-		// TODO  could have a noYPosCache if we wanted...
-
 	};
 
 	var imgProto = {
 
 		/**
-		 * Initialize all private members needed for the group
+		 * Initialize all private members needed for the group.
+		 * @method _init
+		 * @private
 		 */
 		_init: function() {
 
 			/**
-			 * Whether this image has already been fetched
-			 * In the case of fold-conditional groups, images won't be fetched twice
+			 * Whether this image has already been fetched.
+			 * In the case of fold-conditional groups, images won't be fetched twice.
 			 * @property _fetched
 			 * @private
 			 * @type Boolean
@@ -490,7 +491,7 @@
 			this._fetched = false;
 
 			/**
-			 * The Node object returned from Y.get(), to avoid repeat calls to access the DOM
+			 * The Node object returned from <code>Y.get</code>, to avoid repeat calls to access the DOM.
 			 * @property _imgEl
 			 * @private
 			 * @type Object
@@ -498,9 +499,9 @@
 			this._imgEl = null;
 
 			/**
-			 * The vertical position returned from getY(), to avoid repeat calls to access the DOM
-			 * The Y position is checked only for images registered with fold-conditional groups. The position is checked first at page load
-			 *   and this caching enhancement assumes that the image's vertical position won't change after that first check
+			 * The vertical position returned from <code>getY</code>, to avoid repeat calls to access the DOM.
+			 * The Y position is checked only for images registered with fold-conditional groups. The position is checked first at page load (domready)
+			 *   and this caching enhancement assumes that the image's vertical position won't change after that first check.
 			 * @property _yPos
 			 * @private
 			 * @type Int
@@ -509,10 +510,10 @@
 		},
 
 		/**
-		 * Displays the image; puts the URL into the DOM
-		 * This method shouldn't be called externally, but is not private in the event that it needs to be called immediately
+		 * Displays the image; puts the URL into the DOM.
+		 * This method shouldn't be called externally, but is not private in the rare event that it needs to be called immediately.
 		 * @method fetch
-		 * @param {Int} withinY  The pixel distance from the top of the page, for which if the image lies within this distance, it will be fetched. Undefined indicates that no check should be made, and the image should always be fetched
+		 * @param {Int} withinY  The pixel distance from the top of the page, for which if the image lies within, it will be fetched. Undefined indicates that no check should be made, and the image should always be fetched
 		 * @return {Boolean}  Whether the image has been fetched (either during this execution or previously)
 		 */
 		fetch: function(withinY) {
@@ -570,9 +571,9 @@
 		},
 
 		/**
-		 * Gets the object (as a Y.Node) of the DOM element indicated by "domId"
+		 * Gets the object (as a <code>Y.Node</code>) of the DOM element indicated by "<code>domId</code>".
 		 * @method _getImgEl
-		 * @returns {Object} DOM element of the image as a Y.Node object
+		 * @returns {Object} DOM element of the image as a <code>Y.Node</code> object
 		 * @private
 		 */
 		_getImgEl: function() {
@@ -583,8 +584,8 @@
 		},
 
 		/**
-		 * Gets the Y position of the node in page coordinates
-		 * Expects that the page-coordinate position of the image won't change
+		 * Gets the Y position of the node in page coordinates.
+		 * Expects that the page-coordinate position of the image won't change.
 		 * @method _getYPos
 		 * @returns {Object} The Y position of the image
 		 * @private

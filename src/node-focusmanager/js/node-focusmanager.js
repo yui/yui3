@@ -35,13 +35,12 @@ var ACTIVE_DESCENDANT = "activeDescendant",
 	ID = "id",
 	DISABLED = "disabled",
 	TAB_INDEX = "tabIndex",
-	HAS_FOCUS = "hasFocus",
+	FOCUSED = "focused",
 	FOCUS_CLASS = "focusClass",
 	CIRCULAR = "circular",
 	UI = "UI",
 	KEY = "key",
 	ACTIVE_DESCENDANT_CHANGE = ACTIVE_DESCENDANT + "Change",
-	FOCUS_MANAGER = "focusManager",
 	HOST = "host",
 
 	//	Collection of keys that, when pressed, cause the browser viewport
@@ -56,22 +55,20 @@ var ACTIVE_DESCENDANT = "activeDescendant",
 	//	Library shortcuts
 
 	Lang = Y.Lang,
- 	UA = Y.UA;
-	
+ 	UA = Y.UA,
 
+	/**
+	* The NodeFocusManager class is a plugin for a Node instance.  The class is used 
+	* via the <a href="Node.html#method_plug"><code>plug</code></a> method of Node 
+	* and should not be instantiated directly.
+	* @namespace plugin
+	* @class NodeFocusManager
+	*/	
+	NodeFocusManager = function () {
 
-/**
-* The NodeFocusManager class is a plugin for a Node instance.  The class is used 
-* via the <a href="Node.html#method_plug"><code>plug</code></a> method of Node 
-* and should not be instantiated directly.
-* @namespace plugin
-* @class NodeFocusManager
-*/	
-var NodeFocusManager = function () {
+		NodeFocusManager.superclass.constructor.apply(this, arguments);
 
-	NodeFocusManager.superclass.constructor.apply(this, arguments);
-
-};
+	};
 
 
 NodeFocusManager.ATTRS = {
@@ -79,12 +76,12 @@ NodeFocusManager.ATTRS = {
 	/**
 	* Boolean indicating that one of the descendants is focused.
 	*
-	* @attribute hasFocus
+	* @attribute focused
 	* @readOnly
 	* @default false
 	* @type boolean
 	*/
-	hasFocus: {
+	focused: {
 		
 		value: false,
 		readOnly: true
@@ -97,7 +94,7 @@ NodeFocusManager.ATTRS = {
 	* whose focus should be managed.
 	*
 	* @attribute descendants
-	* @type string
+	* @type Y.NodeList
 	*/
 	descendants: {
 
@@ -189,7 +186,7 @@ NodeFocusManager.ATTRS = {
 
 	/**
 	* Object literal representing the keys to be used to navigate between the 
-	* next/previous decendant.  The format for the attribute's value is 
+	* next/previous descendant.  The format for the attribute's value is 
 	* <code>{ next: "down:40", previous: "down:38" }</code>.  The value for the 
 	* "next" and "previous" properties are used to attach 
 	* <a href="event/#keylistener"><code>key</code></a> event listeners. See 
@@ -213,11 +210,16 @@ NodeFocusManager.ATTRS = {
 
 
 	/**
-	* String representing the CSS class name used to indicate the Node instance 
-	* that currently has DOM focus.
+	* String representing the name of class applied to the focused active  
+	* descendant Node.  Can also be an object literal used to define both the 
+	* class name, and the Node to which the class should be applied.  If using 
+	* an object literal, the format is:
+	* <code>{ className: "focus", fn: myFunction }</code>.  The function 
+	* referenced by the <code>fn</code> property in the object literal will be
+	* passed a reference to the currently focused active descendant Node.
 	* 
 	* @attribute focusClass
-	* @type String
+	* @type String|Object
 	*/
 	focusClass: { },
 
@@ -250,7 +252,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	//	"_descendants" NodeList.
 	_descendantsMap: null,
 
-	//	Reference to the Node instance to which the focused CSS class (defined 
+	//	Reference to the Node instance to which the focused class (defined 
 	//	by the "focusClass" attribute) is currently applied.
 	_focusedNode: null,
 	
@@ -385,7 +387,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 	/**
 	* @method _removeFocusClass
-	* @description Removes the CSS class representing focus (as specified by 
+	* @description Removes the class name representing focus (as specified by 
 	* the "focusClass" attribute) from the Node instance to which it is 
 	* currently applied.
 	* @protected
@@ -393,8 +395,14 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	_removeFocusClass: function () {
 
 		var oFocusedNode = this._focusedNode,
-			sClassName = this.get(FOCUS_CLASS);
-		
+			focusClass = this.get(FOCUS_CLASS),
+			sClassName;
+
+		if (focusClass) {
+			sClassName = Lang.isString(focusClass) ? 
+				focusClass : focusClass.className;		
+		}
+
 		if (oFocusedNode && sClassName) {
 			oFocusedNode.removeClass(sClassName);
 		}
@@ -527,12 +535,10 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 			if (aHandlers.length === 0) {
 
-		    	aHandlers.push(
-					Y.on("focus", Y.bind(this._onDocFocus, this), oDocument));
+						aHandlers.push(oDocument.on("focus", this._onDocFocus, this));
 
-				aHandlers.push(
-					Y.on("mousedown", 
-						Y.bind(this._onDocMouseDown, this), oDocument));
+				aHandlers.push(oDocument.on("mousedown", 
+					this._onDocMouseDown, this));
 
 				aHandlers.push(
 						this.after("keysChange", this._attachKeyHandler));
@@ -569,8 +575,47 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	*/
 	_onDocMouseDown: function (event) {
 	
-		var oTarget = event.target,
-			bChildNode = this.get(HOST).contains(oTarget);
+		var oHost = this.get(HOST),
+			oTarget = event.target,
+			bChildNode = oHost.contains(oTarget),
+			node,
+
+			getFocusable = function (node) {
+
+				var returnVal = false;
+
+				if (!node.compareTo(oHost)) {
+					returnVal = Lang.isNumber(node.get(TAB_INDEX)) ? node : 
+									getFocusable(node.get("parentNode"));
+				}
+		
+				return returnVal;
+
+			};
+		
+
+		if (bChildNode) {
+
+			//	Check to make sure that the target isn't a child node of one 
+			//	of the focusable descendants.
+
+			node = getFocusable(oTarget);
+
+			if (node) {
+				oTarget = node;
+			}
+			else if (!node && this.get(FOCUSED)) {
+
+				//	The target was a non-focusable descendant of the root 
+				//	node, so the "focused" attribute should be set to false.
+
+	 			this._set(FOCUSED, false);
+	 			this._onDocFocus(event);
+								
+			}
+
+		}
+		
 
 		if (bChildNode && this._isDescendant(oTarget)) {
 
@@ -583,15 +628,15 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 			this.focus(oTarget);
 		}
-		else if (UA.webkit && this.get(HAS_FOCUS) && 
+		else if (UA.webkit && this.get(FOCUSED) && 
 			(!bChildNode || (bChildNode && !this._isDescendant(oTarget)))) {
 
 			//	Fix for Webkit:
 			//	Document doesn't receive focus in Webkit when the user mouses 
-			//	down on it, so the "hasFocus" attribute won't get set to the 
+			//	down on it, so the "focused" attribute won't get set to the 
 			//	correct value.
 
- 			this._set(HAS_FOCUS, false);
+ 			this._set(FOCUSED, false);
  			this._onDocFocus(event);
 
 		}
@@ -609,8 +654,8 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	_onDocFocus: function (event) {
 
 		var oTarget = this._focusTarget || event.target,
-			bHasFocus = this.get(HAS_FOCUS),
-			sClassName = this.get(FOCUS_CLASS),
+			bFocused = this.get(FOCUSED),
+			focusClass = this.get(FOCUS_CLASS),
 			oFocusedNode = this._focusedNode,
 			bInCollection;
 
@@ -625,20 +670,20 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 			bInCollection = this._isDescendant(oTarget);
 
-			if (!bHasFocus && bInCollection) {
+			if (!bFocused && bInCollection) {
 
 				//	The user has focused a focusable descendant.
 
-				bHasFocus = true;
+				bFocused = true;
 
 			}
-			else if (bHasFocus && !bInCollection) {  
+			else if (bFocused && !bInCollection) {  
 			
 				//	The user has focused a child of the root Node that is 
 				//	not one of the descendants managed by this Focus Manager
 				//	so clear the currently focused descendant.
 				
-				bHasFocus = false;
+				bFocused = false;
 			
 			}
 			
@@ -647,30 +692,39 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 		
 			// The target is some other node in the document.
 
-			bHasFocus = false;
+			bFocused = false;
 			
 		}
 
 
-		if (sClassName) {
+		if (focusClass) {
 
-			if (oFocusedNode && (oFocusedNode !== oTarget || !bHasFocus)) {
+			if (oFocusedNode && (oFocusedNode !== oTarget || !bFocused)) {
 				this._removeFocusClass();
 			}
 
-			if (bInCollection && bHasFocus) {
-				oTarget.addClass(sClassName);
+			if (bInCollection && bFocused) {
+
+				if (focusClass.fn) {
+					oTarget = focusClass.fn(oTarget);
+					oTarget.addClass(focusClass.className);
+				}
+				else {
+					oTarget.addClass(focusClass);
+				}
+
 				this._focusedNode = oTarget;
+
 			}
 			
 		}
 
 
-		if (bHasFocus && this._eventHandlers.length === 5) {
+		if (bFocused && this._eventHandlers.length === 5) {
 			this._attachEventHandlers();
 		}
 
-		this._set(HAS_FOCUS, bHasFocus);			
+		this._set(FOCUSED, bFocused);			
 
 	},
 
@@ -800,7 +854,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	/**
 	* @method focus
 	* @description Focuses the active descendant and sets the  
-	* <code>hasFocus</code> attribute to true.
+	* <code>focused</code> attribute to true.
 	* @param index {Number} Optional. Number representing the index of the 
 	* descendant to be set as the active descendant.
 	* @param index {Node} Optional. Node instance representing the 
@@ -818,19 +872,18 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 		if (oNode) {
 
+			oNode.focus();
+
 			//	In Opera focusing a <BUTTON> element programmatically 
-			//	will result in the document object getting focus first, 
-			//	immediately followed by the <BUTTON> element.  
-			//	This results in the "_onDocFocus" handler incorrectly
-			//	setting the "hasFocus" Attribute to false.  To fix this,
-			//	set a flag ("_focusTarget") that the "_onDocFocus" method 
+			//	will result in the document-level focus event handler 
+			//	"_onDocFocus" being called, resulting in the handler 
+			//	incorrectly setting the "focused" Attribute to false.  To fix 
+			//	this, set a flag ("_focusTarget") that the "_onDocFocus" method 
 			//	can look for to properly handle this edge case.
 
 			if (UA.opera && oNode.get("nodeName").toLowerCase() === "button") {
 				this._focusTarget = oNode;
 			}
-
-			oNode.focus();
 
 		}
 
@@ -840,13 +893,13 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 	/**
 	* @method blur
 	* @description Blurs the current active descendant and sets the 
-	* <code>hasFocus</code> attribute to false.
+	* <code>focused</code> attribute to false.
 	*/
 	blur: function () {
 
 		var oNode;
 
-		if (this.get(HAS_FOCUS)) {
+		if (this.get(FOCUSED)) {
 
 			oNode = this._descendants.item(this.get(ACTIVE_DESCENDANT));
 
@@ -858,13 +911,13 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 				//	doesn't result in another element (such as the document)
 				//	being focused.  Therefore, the "_onDocFocus" method 
 				//	responsible for managing the application and removal of the 
-				//	focus indicator CSS class name is never called.
+				//	focus indicator class name is never called.
 
 				this._removeFocusClass();
 				
 			}
 
-			this._set(HAS_FOCUS, false, { src: UI });
+			this._set(FOCUSED, false, { src: UI });
 		}
 		
 	},
@@ -922,7 +975,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 });
 
 
-NodeFocusManager.NAME = "NodeFocusManager";
+NodeFocusManager.NAME = "nodeFocusManager";
 NodeFocusManager.NS = "focusManager";
 
 Y.namespace("Plugin");

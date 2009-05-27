@@ -16,6 +16,7 @@
 <script type="text/javascript" src="../../../build/base/base.js"></script>
 <script type="text/javascript" src="../../../build/attribute/attribute.js"></script>
 <script type="text/javascript" src="../../../build/node/node-debug.js"></script>
+<script type="text/javascript" src="../../../build/anim/anim.js"></script>
 
 <script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
@@ -85,6 +86,7 @@ button {
 <body class="yui-skin-sam">
     <div id="test-append"></div>
     <div id="test-xy"></div>
+    <div id="test-remove"></div>
     <div id="test-scroll">
         <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
     </div>
@@ -146,12 +148,12 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
     var ArrayAssert = YAHOO.util.ArrayAssert;
     var logger = new tool.TestLogger(null, { height: '800px', fontSize: '100%' });
 
-    var handleClick = function(e) {
-        //alert('click');
-        e.currentTarget.detach('click', handleClick);
-    };
+    var handle = Y.get('html').on('click', function(e) {
+        alert('click');
+        Y.get('html').detach('click');
+        //handle.detach();
+    });
 
-    Y.Node.get('html').on('click', handleClick);
 
     var byId = function(id) {
         return document.getElementById(id);
@@ -238,6 +240,34 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.isTrue(isNode, 'node instanceof Y.Node');
         },
 
+        test_some: function() {
+            var nodes = Y.all('#test-nodes *'),
+                index, instance, isNode;
+
+            Assert.isTrue(nodes.some(function(node, i, list) {
+                return true;
+            }), 'nodes.some(function() { return true; })');
+
+            Assert.isFalse(nodes.some(function(node, i, list) {
+            }), 'nodes.some(function() {})');
+
+        },
+
+        test_indexOf: function() {
+            Assert.areEqual(0, Y.all('div').indexOf(Y.get('#test-append')),
+                "Y.all('div').indexOf(Y.get('#test-append'))");
+
+            Assert.areEqual(1, Y.all('div').indexOf(Y.get('#test-xy')),
+                "Y.all('div').indexOf(Y.get('#test-xy'))");
+
+            Assert.areEqual(-1, Y.all('div').indexOf(Y.get('#test-')),
+                "Y.all('div').indexOf(Y.get('#test-'))");
+
+            Assert.areEqual(-1, Y.all('div').indexOf(Y.get('#test-form')),
+                "Y.all('div').indexOf(Y.get('#test-form'))");
+
+        },
+
         test_getters: function() {
             var id = 'test-nodes',
                 element = byId(id),
@@ -304,6 +334,9 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             node.appendChild(option);
             Assert.isTrue(Y.Node.getDOMNode(option).selected, "Y.Node.create('<option>test</option>').set('selected', 'selected'))");
 
+            var html = '<li><a href=""></a></li>';
+            node = Y.Node.create(html);
+            Assert.areEqual('A', node.get('firstChild.tagName'), html);
         },
 
         test_setter: function() {
@@ -379,6 +412,8 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.areEqual('doc', node.ancestor(function(el) {
                 return el.get('id') === 'doc';
             }).get('id'), 'ancestor');
+
+            Assert.areEqual(node.ancestor(), node.get('parentNode'), "node.ancestor()");
 
             Assert.isNull(node.ancestor(function(el) {
                 return el.hasAttribute('foo');
@@ -605,19 +640,26 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
         test_inject: function() {
             var html = '<strong>bar</strong>';
-            Y.get('#test-insert-html').insertHTML(html);
+            Y.get('#test-insert-html').append(html);
             Assert.areEqual(Y.DOM.byId('test-insert-html').innerHTML,
                 'foo' + html,
-                "Y.get('#test-insert-html').insertHTML('<strong>bar</strong>')");
+                "Y.get('#test-insert-html').append('<strong>bar</strong>')");
 
-            Y.get('#test-insert-html').insertHTML('<em>baz</em>', 'afterBegin');
+            Y.get('#test-insert-html').prepend('<em>baz</em>');
             Assert.areEqual('<em>baz</em>foo<strong>bar</strong>',
                 Y.DOM.byId('test-insert-html').innerHTML,
-                Y.get('#test-insert-html').insertHTML('<em>baz</em>', 'afterBegin'));
+                "Y.get('#test-insert-html').prepend('<em>baz</em>')");
 
-            Y.get('#test-insert-html').insertHTML('<sc' + 'ript>var test_inject = "script injected";</sc' + 'ript>', 'afterBegin');
-            Assert.areEqual('script injected', test_inject, "Y.get('#test-insert-html').insertHTML('<sc' + 'ript>var test_inject = 'script injected';</sc' + 'ript>', 'afterBegin')");
+            Y.get('#test-insert-html').prepend('<sc' + 'ript>var test_inject = "script injected";</sc' + 'ript>');
+            Assert.areEqual('script injected', test_inject, "Y.get('#test-insert-html').prepend('<sc' + 'ript>var test_inject = 'script injected';</sc' + 'ript>'");
 
+
+            
+            var html = '<strong>baz</strong>';
+            Y.get('#test-insert-html').setContent(html);
+            Assert.areEqual(html,
+                Y.DOM.byId('test-insert-html').innerHTML,
+                "Y.get('#test-insert-html').setContent('<strong>baz</strong>')");
         },
 
         test_getValue: function() {
@@ -636,8 +678,9 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
                 "Y.get('input[name=test-text-novalue]').get('value')");
 
             // textarea
-            Assert.isTrue(Y.get('textarea[name=test-textarea-value]').hasAttribute('value'),
-                'textarea[name=test-textarea-value].hasAttribute("value")');
+            // textarea doesn't use value attribute
+            //Assert.isTrue(Y.get('textarea[name=test-textarea-value]').hasAttribute('value'),
+            //    'textarea[name=test-textarea-value].hasAttribute("value")');
 
             Assert.isFalse(Y.get('textarea[name=test-textarea-novalue]').hasAttribute('value'),
                 'textarea[name=test-textarea-value].hasAttribute("value")');
@@ -674,6 +717,30 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
                 'button[name=test-button-textvalue].get("value")');
         },
 
+        test_remove: function() {
+            var node = Y.get('#test-remove'),
+                domNode = Y.DOM.byId('test-remove'),
+                parent = domNode.parentNode;
+
+            node.remove();
+            Assert.isTrue(parent !== domNode.parentNode, 'node.remove()');
+        },
+
+        test_destroy: function() {
+            var node = Y.get('body');
+            node.destroy();
+            Assert.areEqual(undefined, Y.Node.getDOMNode(node), "Y.get('body').destroy()");
+
+            var node2 = Y.get('div');
+
+            var nodelist = Y.all('*');
+            nodelist.destroy();
+            Assert.areEqual(undefined, Y.NodeList.getDOMNodes(node), "Y.all('*').destroy()");
+
+            // node2 instance should still be intact
+            Assert.areEqual(document.getElementsByTagName('div')[0], Y.Node.getDOMNode(node2), "Y.get('div')");
+        },
+
         test_aria: function() {
             Y.get('body').set('role', 'menu');
             Assert.isTrue(document.body.getAttribute('role') === 'menu', "Y.get('body').set('role', 'menu')")
@@ -685,6 +752,13 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             Y.get('body').set('aria-checked', false);
             Assert.areEqual('false', Y.get('body').get('aria-checked'), "Y.get('body').set('aria-checked', false)");
+        },
+
+        test_plugin: function() {
+            Y.Node.plug(Y.Plugin.NodeFX);
+            Assert.isTrue(!!Y.Node.create('<div></div>').fx, 'Node.plug()');
+            Y.Node.unplug(Y.Plugin.NodeFX);
+            Assert.isFalse(!!Y.Node.create('<div></div>').fx, 'Node.unplug()');
         }
     }));
 

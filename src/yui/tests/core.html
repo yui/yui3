@@ -32,7 +32,7 @@
         var testCore = new Y.Test.Case({
             name: "Core tests",
         
-            testCached: function() {
+            'cached functions should execute only once per input': function() {
 
                 var r1 = "", r2 = "", r3 = "";
 

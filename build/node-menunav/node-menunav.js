@@ -353,7 +353,7 @@ var NodeMenuNav = function () {
 
 };
 
-NodeMenuNav.NAME = "NodeMenuNav";
+NodeMenuNav.NAME = "nodeMenuNav";
 NodeMenuNav.NS = "menuNav";
 
 
@@ -687,7 +687,8 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
     initializer: function (config) {
 
 		var menuNav = this,
-			oRootMenu = this.get("host");
+			oRootMenu = this.get("host"),
+			oDoc;
 
 
 		if (oRootMenu) {
@@ -712,9 +713,10 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			oRootMenu.on("keypress", menuNav._onKeyPress, menuNav);
 			oRootMenu.on(KEYDOWN, menuNav._onKeyDown, menuNav);
 
-		    oRootMenu.get("ownerDocument").on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav);
+			oDoc = oRootMenu.get("ownerDocument");
 
-			Y.on("focus", Y.bind(menuNav._onDocFocus, menuNav), oRootMenu.get("ownerDocument"));
+		    oDoc.on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav);
+			oDoc.on("focus", menuNav._onDocFocus, menuNav);
 
 			menuNav._initFocusManager();
 
@@ -2014,7 +2016,18 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 					}
 					else {
+
 						menuNav._focusManager.blur();
+
+						//	This is necessary for Webkit since blurring the 
+						//	active menuitem won't result in the document 
+						//	gaining focus, meaning the that _onDocFocus 
+						//	listener won't clear the active menuitem.
+
+						menuNav._clearActiveItem();	
+						
+						menuNav._hasFocus = false;
+
 					}
 
 				}
@@ -2059,13 +2072,20 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 				
 			}
 
-			// menuNav._initFocusManager();
-			// menuNav._focusManager.set(ACTIVE_DESCENDANT, oTarget);
-			// menuNav._setActiveItem(getItem(oTarget, true));
-
 		}
 		else {
-			menuNav._hideAllSubmenus(oRoot);			
+
+			menuNav._hideAllSubmenus(oRoot);
+
+			//	Document doesn't receive focus in Webkit when the user mouses 
+			//	down on it, so the "_hasFocus" property won't get set to the 
+			//	correct value.  The following line corrects the problem.
+
+			if (UA.webkit) {
+				menuNav._hasFocus = false;
+				menuNav._clearActiveItem();
+			}
+						
 		}
 
 	}

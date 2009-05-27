@@ -59,25 +59,29 @@
 <script src="/yui3/build/yui/yui.js" type="text/javascript"></script>
 <script type="text/javascript">
 
-	YUI({base:"../../build/", timeout: 10000 }).use("node", function(Y) {
+	YUI({base:"../../build/", timeout: 10000 }).use("event", function(Y) {
 	
 		Y.on("contentready", function () {
 
-			Y.on('mouseenter', function (e) {
+			Y.on('mouseenter', Y.rbind(function (e, arg1, arg2, arg3) {
 
-				e.currentTarget.addClass("highlight");
+				e.target.addClass("highlight");
+
+				Y.log("target: " + e.target + ", arguments: " + arg1 + ", " + arg2 + ", " + arg3);
 				
-			}, this);
+			}, Y, "one", "two", "three"), this);
 			
 			Y.on('mouseleave', function (e) {
 			
-				e.currentTarget.removeClass("highlight");
+				e.target.removeClass("highlight");
 				
 			}, this);
 
-			Y.on('mouseenter', Y.rbind(function (e) {
+			Y.on('mouseenter', Y.rbind(function (e, arg1, arg2, arg3) {
 
-				console.log(arguments.length);	//	Should be 4
+				Y.log(arguments.length);	//	Should be 4
+
+				Y.log("target: " + e.target + ", arguments: " + arg1 + ", " + arg2 + ", " + arg3);
 
 				//	Target of the event will be the element that matched the
 				//	specified CSS selector
@@ -90,9 +94,7 @@
 			
 				e.target.removeClass("highlight");
 				
-			}, this, '>li');			
-			
-			
+			}, this, '>li');		
 	
 		}, "#list-1");
 	

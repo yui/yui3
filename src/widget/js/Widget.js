@@ -15,8 +15,7 @@ var L = Y.Lang,
     VISIBLE = "visible",
     HIDDEN = "hidden",
     DISABLED = "disabled",
-    FOCUS = "focus",
-    HAS_FOCUS = "hasFocus",
+    FOCUSED = "focused",
     WIDTH = "width",
     HEIGHT = "height",
     EMPTY = "",
@@ -48,7 +47,7 @@ var L = Y.Lang,
  *    <li>Abstract methods to support consistent MVC structure across 
  *        widgets: renderer, renderUI, bindUI, syncUI</li>
  *    <li>Support for common widget attributes, such as boundingBox, contentBox, visible, 
- *        disabled, hasFocus, strings</li>
+ *        disabled, focused, strings</li>
  * </ul>
  *
  * @param config {Object} Object literal specifying widget configuration 
@@ -176,7 +175,7 @@ Widget.ATTRS = {
     */
     tabIndex: {
 
-		value: null,
+		value: 0,
 		validator: function (val) {
             return (L.isNumber(val) || L.isNull(val));
         }
@@ -184,14 +183,14 @@ Widget.ATTRS = {
     },
 
     /**
-    * @attribute hasFocus
+    * @attribute focused
     * @description Boolean indicating if the Widget, or one of its descendants, 
 	* has focus.
     * @readOnly
     * @default false
     * @type boolean
     */
-    hasFocus: {
+    focused: {
         value: false,
         readOnly:true
     },
@@ -591,20 +590,20 @@ Y.extend(Widget, Y.Base, {
 
     /**
     * @method focus
-    * @description Causes the Widget to receive the focus by setting the "hasFocus" 
+    * @description Causes the Widget to receive the focus by setting the "focused" 
     * attribute to "true".
     */
     focus: function () {
-        return this._set(HAS_FOCUS, true);
+        return this._set(FOCUSED, true);
     },
 
     /**
     * @method blur
-    * @description Causes the Widget to lose focus by setting the "hasFocus" attribute 
+    * @description Causes the Widget to lose focus by setting the "focused" attribute 
     * to "false"
     */            
     blur: function () {
-        return this._set(HAS_FOCUS, false);
+        return this._set(FOCUSED, false);
     },
 
     /**
@@ -863,7 +862,7 @@ Y.extend(Widget, Y.Base, {
         this.after('disabledChange', this._afterDisabledChange);
         this.after('heightChange', this._afterHeightChange);
         this.after('widthChange', this._afterWidthChange);
-        this.after('hasFocusChange', this._afterHasFocusChange);
+        this.after('focusedChange', this._afterFocusedChange);
 
         this._bindDOMListeners();
     },
@@ -878,15 +877,15 @@ Y.extend(Widget, Y.Base, {
 
 		var oDocument = this.get(BOUNDING_BOX).get("ownerDocument");
 
-		Y.on(FOCUS, Y.bind(this._onFocus, this), oDocument);
+		oDocument.on("focus", this._onFocus, this);
 
 		//	Fix for Webkit:
 		//	Document doesn't receive focus in Webkit when the user mouses 
-		//	down on it, so the "hasFocus" attribute won't get set to the 
+		//	down on it, so the "focused" attribute won't get set to the 
 		//	correct value.
 		
 		if (Y.UA.webkit) {
-			Y.on("mousedown", Y.bind(this._onDocMouseDown, this), oDocument);
+			oDocument.on("mousedown", this._onDocMouseDown, this);
 		}
 
     },
@@ -902,7 +901,7 @@ Y.extend(Widget, Y.Base, {
         this._uiSetDisabled(this.get(DISABLED));
         this._uiSetHeight(this.get(HEIGHT));
         this._uiSetWidth(this.get(WIDTH));
-        this._uiSetHasFocus(this.get(HAS_FOCUS));
+        this._uiSetFocused(this.get(FOCUSED));
 		this._uiSetTabIndex(this.get(TAB_INDEX));
     },
 
@@ -994,17 +993,17 @@ Y.extend(Widget, Y.Base, {
 
 
     /**
-     * Sets the hasFocus state for the UI
+     * Sets the focused state for the UI
      *
      * @protected
      * @param {boolean} val
      * @param {string} src String representing the source that triggered an update to 
      * the UI.     
      */
-    _uiSetHasFocus: function(val, src) {
+    _uiSetFocused: function(val, src) {
 
         var box = this.get(BOUNDING_BOX),
-            sClassName = this.getClassName(FOCUS);
+            sClassName = this.getClassName(FOCUSED);
 
         if (val === true) {
             box.addClass(sClassName);
@@ -1066,14 +1065,14 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Default hasFocus attribute state change handler
+     * Default focused attribute state change handler
      * 
-     * @method _afterHasFocusChange
+     * @method _afterFocusedChange
      * @protected
      * @param {Event.Facade} evt The event facade for the attribute change
      */
-    _afterHasFocusChange: function(evt) {
-        this._uiSetHasFocus(evt.newVal, evt.src);
+    _afterFocusedChange: function(evt) {
+        this._uiSetFocused(evt.newVal, evt.src);
     },
 
 	/**
@@ -1102,10 +1101,10 @@ Y.extend(Widget, Y.Base, {
 
 		var target = evt.target,
 			boundingBox = this.get(BOUNDING_BOX),
-			bHasFocus = (boundingBox.compareTo(target) || boundingBox.contains(target));
+			bFocused = (boundingBox.compareTo(target) || boundingBox.contains(target));
 
-		this._hasDOMFocus = bHasFocus;
-        this._set(HAS_FOCUS, bHasFocus, { src: UI });
+		this._hasDOMFocus = bFocused;
+        this._set(FOCUSED, bFocused, { src: UI });
 
     },
 
@@ -1322,13 +1321,5 @@ Y.extend(Widget, Y.Base, {
         return this._HTML_PARSER;
     }
 });
-
-/**
- * Static registration of default plugins for the class.
- * 
- * @property Widget.PLUGINS
- * @static
- */
-Widget.PLUGINS = [];
 
 Y.Widget = Widget;

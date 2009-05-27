@@ -36,9 +36,9 @@ Y.mix(DataSourceArraySchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceArraySchema"
+     * @value "dataSourceArraySchema"
      */
-    NAME: "DataSourceArraySchema",
+    NAME: "dataSourceArraySchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -100,8 +100,8 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceArraySchema = DataSourceArraySchema;
+Y.namespace('Plugin').DataSourceArraySchema = DataSourceArraySchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-array']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-array']});

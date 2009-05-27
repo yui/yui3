@@ -78,9 +78,9 @@
 <span class="c">     * @type String</span>
 <span class="c">     * @static     </span>
 <span class="c">     * @final</span>
-<span class="c">     * @value &quot;DataSource.Local&quot;</span>
+<span class="c">     * @value &quot;dataSourceLocal&quot;</span>
 <span class="c">     */</span>
-    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;DataSource.Local&quot;</span><span class="o">,</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceLocal&quot;</span><span class="o">,</span>
 
     <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
 <span class="c"></span>    <span class="c">//</span>
@@ -162,20 +162,16 @@
 <span class="c">         * Fired when a data request is received.</span>
 <span class="c">         *</span>
 <span class="c">         * @event request</span>
-<span class="c">         * @param e {Event.Facade} Event Facade.         </span>
-<span class="c">         * @param o {Object} Object with the following properties:</span>
+<span class="c">         * @param e {Event.Facade} Event Facade with the following properties:</span>
 <span class="c">         * &lt;dl&gt;                          </span>
 <span class="c">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object.&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * @preventable _defRequestFn</span>
 <span class="c">         */</span>
-        <span class="c">//this.publish(&quot;request&quot;, {defaultFn: this._defRequestFn});</span>
-<span class="c"></span>        <span class="c">//this.publish(&quot;request&quot;, {defaultFn:function(e){</span>
-<span class="c"></span>        <span class="c">//    this._defRequestFn(e);</span>
-<span class="c"></span>        <span class="c">//}});</span>
-<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;request&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_defRequestFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">)});</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;request&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_defRequestFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">)});</span>
          
         <span class="c">/**</span>
 <span class="c">         * Fired when raw data is received.</span>
@@ -192,15 +188,12 @@
 <span class="c">         *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
 <span class="c">         *     &lt;/dl&gt;</span>
 <span class="c">         * &lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * @preventable _defDataFn</span>
 <span class="c">         */</span>
-         <span class="c">//this.publish(&quot;data&quot;, {defaultFn: this._defDataFn});</span>
-<span class="c"></span>         <span class="c">//this.publish(&quot;data&quot;, {defaultFn:function(e){</span>
-<span class="c"></span>         <span class="c">//   this._defDataFn(e);</span>
-<span class="c"></span>         <span class="c">//}});</span>
-<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_defDataFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">)});</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_defDataFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">)});</span>
 
         <span class="c">/**</span>
 <span class="c">         * Fired when response is returned.</span>
@@ -217,6 +210,7 @@
 <span class="c">         *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
 <span class="c">         *     &lt;/dl&gt;</span>
 <span class="c">         * &lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized resopnse object with the following properties:</span>
 <span class="c">         *     &lt;dl&gt;</span>
@@ -228,11 +222,7 @@
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * @preventable _defResponseFn</span>
 <span class="c">         */</span>
-         <span class="c">//this.publish(&quot;response&quot;, {defaultFn: this._defResponseFn});</span>
-<span class="c"></span>         <span class="c">//this.publish(&quot;response&quot;, {defaultFn:function(e){</span>
-<span class="c"></span>         <span class="c">//   this._defResponseFn(e);</span>
-<span class="c"></span>         <span class="c">//}});</span>
-<span class="c"></span>         <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;response&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_defResponseFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">)});</span>
+         <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;response&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_defResponseFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">)});</span>
 
         <span class="c">/**</span>
 <span class="c">         * Fired when an error is encountered.</span>
@@ -249,6 +239,7 @@
 <span class="c">         *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
 <span class="c">         *     &lt;/dl&gt;</span>
 <span class="c">         * &lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized resopnse object with the following properties:</span>
 <span class="c">         *     &lt;dl&gt;</span>
@@ -279,6 +270,7 @@
 <span class="c">     *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
 <span class="c">     *     &lt;/dl&gt;</span>
 <span class="c">     * &lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
 <span class="c">     * &lt;/dl&gt;</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
@@ -287,16 +279,16 @@
         
         <span class="c">// Problematic data</span>
 <span class="c"></span>        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">data</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">+</span> <span class="s2">&quot; Source undefined&quot;</span><span class="o">);</span>
+            <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;Local source undefined&quot;</span><span class="o">);</span>
         <span class="o">}</span>
         <span class="k">if</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">error</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Error in response&quot;</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Error in response&quot;</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-local&quot;</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">data</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Transaction &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot; complete. Request: &quot;</span> <span class="o">+</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; . Response: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">response</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; . Response: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">response</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-local&quot;</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -314,6 +306,7 @@
 <span class="c">     *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
 <span class="c">     *     &lt;/dl&gt;</span>
 <span class="c">     * &lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
 <span class="c">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
 <span class="c">     * &lt;/dl&gt;</span>
 <span class="c">     * @protected</span>
@@ -344,6 +337,7 @@
 <span class="c">     *         &lt;dt&gt;scope (Object)&lt;/dt&gt; &lt;dd&gt;Execution context.&lt;/dd&gt;</span>
 <span class="c">     *     &lt;/dl&gt;</span>
 <span class="c">     * &lt;/dd&gt;</span>
+<span class="c">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
 <span class="c">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
 <span class="c">     * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized resopnse object with the following properties:</span>
 <span class="c">     *     &lt;dl&gt;</span>
@@ -376,12 +370,13 @@
 <span class="c">     *     &lt;dt&gt;&lt;code&gt;argument&lt;/code&gt;&lt;/dt&gt;</span>
 <span class="c">     *     &lt;dd&gt;Arbitrary data payload that will be passed back to the success and failure handlers.&lt;/dd&gt;</span>
 <span class="c">     *     &lt;/dl&gt;</span>
+<span class="c">     * @param cfg {Object} Configuration object</span>
 <span class="c">     * @return {Number} Transaction ID.</span>
 <span class="c">     */</span>
-    <span class="nx">sendRequest</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">request</span><span class="o">,</span> <span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">sendRequest</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">request</span><span class="o">,</span> <span class="nx">callback</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">tId</span> <span class="o">=</span> <span class="nx">DSLocal</span><span class="o">.</span><span class="nx">_tId</span><span class="o">++;</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;request&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">tId</span><span class="o">:</span><span class="nx">tId</span><span class="o">,</span> <span class="nx">request</span><span class="o">:</span><span class="nx">request</span><span class="o">,</span><span class="nx">callback</span><span class="o">:</span><span class="nx">callback</span><span class="o">});</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Transaction &quot;</span> <span class="o">+</span> <span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot; sent request: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">request</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;request&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">tId</span><span class="o">:</span><span class="nx">tId</span><span class="o">,</span> <span class="nx">request</span><span class="o">:</span><span class="nx">request</span><span class="o">,</span> <span class="nx">callback</span><span class="o">:</span><span class="nx">callback</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">:</span><span class="nx">cfg</span> <span class="o">||</span> <span class="o">{}});</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Transaction &quot;</span> <span class="o">+</span> <span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot; sent request: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">request</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-local&quot;</span><span class="o">);</span>
         <span class="k">return</span> <span class="nx">tId</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">});</span>
@@ -403,16 +398,19 @@
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class="selected"><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
@@ -421,7 +419,10 @@
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
