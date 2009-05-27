@@ -106,8 +106,8 @@ YUI({
 
     var node = Y.get('#text1');
 
-    node.on('blahblah|focus', function() {
-        Y.log("TEXT focus fired");
+    node.on('blahblah|focus', function(e) {
+        Y.log("TEXT focus fired: " + e.type);
         //node.detach();
         node.detach('blahblah|*');
     });

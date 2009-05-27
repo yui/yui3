@@ -150,7 +150,7 @@
                     input.value = value;
                     this._form.appendChild(input);
                 }
-            });
+            }, this);
     
             //remove default fields
             delete this._fields.results;

@@ -40,7 +40,7 @@ YUI({
     useBrowserConsole:false
 }).use('event','profile-report','table','profiler','slider',function (Y) {
 
-Y.get('#report').on('click',function () { report("Activity since last report"); });
+Y.get('#report').on('click',function () { Y.Profiler.renderFullReport("Activity since last report"); });
 
 Y.Profiler.registerConstructor('Slider',Y);
 

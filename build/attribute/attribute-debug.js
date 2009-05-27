@@ -243,6 +243,8 @@ YUI.add('attribute', function(Y) {
             var conf = this._conf;
 
             if (lazy && !this.attrAdded(name)) {
+                Y.log('Lazy Add: ' + name, 'info', 'attribute');
+
                 conf.add(name, LAZY, config || {});
                 conf.add(name, ADDED, true);
             } else {
@@ -250,11 +252,11 @@ YUI.add('attribute', function(Y) {
                 if (this.attrAdded(name) && !conf.get(name, LAZY_INIT)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
                 if (!this.attrAdded(name) || conf.get(name, LAZY_INIT)) {
+                    Y.log('Non-Lazy Add: ' + name, 'info', 'attribute');
 
                     config = config || {};
 
                     var value, hasValue = (VALUE in config);
-
                     if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
 
                     if(hasValue) {
@@ -775,12 +777,12 @@ YUI.add('attribute', function(Y) {
          * from complex attribute values, so that complex
          * attributes can be keyed by top level attribute name.
          *
-         * @method _splitAttrValues
+         * @method _splitAttrVals
          * @param {Object} valueHash Name/value hash of initial values
          *
          * @return {Object} Object literal with 2 properties - "simple" and "complex",
          * containing simple and complex attribute values respectively keyed 
-         * by attribute the top level attribute name.
+         * by attribute the top level attribute name, or null, if valueHash is falsey.
          * @protected
          */
         _splitAttrVals : function(valueHash) {
@@ -790,22 +792,26 @@ YUI.add('attribute', function(Y) {
                 attr,
                 v, k;
 
-            for (k in valueHash) {
-                if (valueHash.hasOwnProperty(k)) {
-                    if (k.indexOf(DOT) !== -1) {
-                        path = k.split(DOT);
-                        attr = path.shift();
-                        v = subvals[attr] = subvals[attr] || [];
-                        v[v.length] = {
-                            path : path, 
-                            value: valueHash[k]
-                        };
-                    } else {
-                        vals[k] = valueHash[k];
+            if (valueHash) {
+                for (k in valueHash) {
+                    if (valueHash.hasOwnProperty(k)) {
+                        if (k.indexOf(DOT) !== -1) {
+                            path = k.split(DOT);
+                            attr = path.shift();
+                            v = subvals[attr] = subvals[attr] || [];
+                            v[v.length] = {
+                                path : path, 
+                                value: valueHash[k]
+                            };
+                        } else {
+                            vals[k] = valueHash[k];
+                        }
                     }
                 }
+                return { simple:vals, complex:subvals };
+            } else {
+                return null;
             }
-            return { simple:vals, complex:subvals };
         },
 
         /**
@@ -836,6 +842,8 @@ YUI.add('attribute', function(Y) {
 
             if (!cfg.readOnly && initValues) {
 
+                Y.log('Checking initValues in _getAttrIniVal: ' + attr, 'info', 'attribute');
+
                 // Simple Attributes
                 simple = initValues.simple;
                 if (simple && simple.hasOwnProperty(attr)) {
@@ -853,6 +861,9 @@ YUI.add('attribute', function(Y) {
                     }
                 }
             }
+
+            Y.log('initValue for ' + attr + ':' + val, 'info', 'attribute');
+
             return val;
         }
     };
