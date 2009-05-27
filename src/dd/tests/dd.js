@@ -108,6 +108,24 @@ YUI({
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
             Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
         },
+        test_drag_drop_setup: function() {
+            dd.destroy();
+            dd = new Y.DD.Drag({ node: '#drag', target: true });
+            Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
+            Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
+            Y.Assert.isInstanceOf(Y.DD.Drop, dd.target, 'drag.target: Drop Instance');
+        },
+        test_drag_drop_group_setup: function() {
+            dd.destroy();
+            dd = new Y.DD.Drag({ node: '#drag', groups: ['one', 'two'], target: true });
+            Y.Assert.areSame(dd.get('groups').length, dd.target.get('groups').length, 'Groups failed to pass from Drag to Drop');
+        },
+        test_drag_drop_group_pass_setup: function() {
+            dd.destroy();
+            dd = new Y.DD.Drag({ node: '#drag', target: { groups: ['one', 'two'] } });
+            Y.Assert.areSame(1, dd.get('groups').length, 'Groups failed to pass from Drag to Drop');
+            Y.Assert.areSame(2, dd.target.get('groups').length, 'Groups failed to pass from Drag to Drop');
+        },
         test_drag_add_handle: function() {
             Y.Assert.isNull(dd._handles, 'dd: Handles NOT Null');
             dd.set('handles', ['h2']);
@@ -258,6 +276,10 @@ YUI({
                         _fakeEnd(dd);
                         Y.Assert.isTrue((Y.get(window).get('scrollTop') > 0), 'window.scrollTop is not greater than 0');
                         dd.destroy();
+                        Y.Node.get('#drag').setStyles({ top: '', left: '' });
+                        Y.get(window).set('scrollTop', 0);
+                        Y.get(window).set('scrollLeft', 0);
+                        Y.get('body').setStyle('height', '');
                     }, 1500);
                 }
             };
