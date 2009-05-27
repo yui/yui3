@@ -128,6 +128,7 @@ YUI.add('dd-drag', function(Y) {
         */
     
     Drag = function() {
+        this._lazyAttrInit = false;
         Drag.superclass.constructor.apply(this, arguments);
 
         DDM._regDrag(this);
@@ -265,10 +266,7 @@ YUI.add('dd-drag', function(Y) {
         target: {
             value: false,
             setter: function(config) {
-                Y.later(0, this, function(config) {
-                    this._handleTarget(config);
-                }, config);
-
+                this._handleTarget(config);
                 return config;
             }
         },
@@ -388,8 +386,9 @@ YUI.add('dd-drag', function(Y) {
                     if (!Y.Lang.isObject(config)) {
                         config = {};
                     }
-                    config.bubbles = this.get('bubbles');
+                    config.bubbles = ('bubbles' in config) ? config.bubbles : this.get('bubbles');
                     config.node = this.get(NODE);
+                    config.groups = config.groups || this.get('groups');
                     this.target = new Y.DD.Drop(config);
                 }
             } else {

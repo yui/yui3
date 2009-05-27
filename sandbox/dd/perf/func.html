@@ -10,43 +10,47 @@
 <div id="results"></div>
 
 <script>
-var foo = function foo() {
-    var a=1, b=2, c=3, d=4, e=5,
-    bar = function bar() {
-        return 'Bar :: ' + (a + b + c + d + e);
+function innerScoped() {
+    var a=1, b=2, c=3, d=4, e=5;
+    function innerScoped2() {
+        return (a + b + c + d + e);
     };
-    return bar();
+    return innerScoped2();
 };
 
-var bar2 = function(a, b, c, d, e) {
-    return 'Bar2 :: ' + (a + b + c + d + e);
+function innerPassed() {
+    var a=1, b=2, c=3, d=4, e=5;
+
+    function innerPassed2(a, b, c, d, e) {
+        return (a + b + c + d + e);
+    }
+    return innerPassed2(a, b, c, d, e);
+};
+
+function outterPassed2(a, b, c, d, e) {
+    return (a + b + c + d + e);
 }
 
-var foo2 = function() {
+function outterPassed() {
     var a=1, b=2, c=3, d=4, e=5;
-    return bar2(a, b, c, d, e);
+    return outterPassed2(a, b, c, d, e);
 }
 
 document.onclick = function() {
     var top = 30000;
     //console.profile('func');
     for (var i = 0; i < top; i++) {
-        foo();
+        innerScoped();
     }
 
     for (var i = 0; i < top; i++) {
-        foo2();
+        outterPassed();
     }
 
     for (var i = 0; i < top; i++) {
-        var f=1, g=2, h=3, j=4;
-        (function barwrap() {
-            var bar3 = function(a, b, c, d, e) {
-                return 'Bar3 :: ' + (a + b + c + d + e);
-            }
-            bar3(f, g, h, j);
-        })();
+        innerPassed();
     }
+
     //console.profileEnd('func');
 };
 </script>
