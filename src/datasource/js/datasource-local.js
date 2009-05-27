@@ -73,10 +73,9 @@ Y.mix(DSLocal, {
      */
     issueCallback: function (e) {
         if(e.callback) {
-            var scope = e.callback.scope || this,
-                callbackFunc = (e.error && e.callback.failure) || e.callback.success;
+            var callbackFunc = (e.error && e.callback.failure) || e.callback.success;
             if (callbackFunc) {
-                callbackFunc.apply(scope, [e]);
+                callbackFunc(e);
             }
         }
     }
@@ -127,7 +126,6 @@ Y.extend(DSLocal, Y.Base, {
          *     <dl>
          *         <dt>success (Function)</dt> <dd>Success handler.</dd>
          *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-         *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
          *     </dl>
          * </dd>
          * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
@@ -149,7 +147,6 @@ Y.extend(DSLocal, Y.Base, {
          *     <dl>
          *         <dt>success (Function)</dt> <dd>Success handler.</dd>
          *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-         *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
          *     </dl>
          * </dd>
          * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
@@ -178,7 +175,6 @@ Y.extend(DSLocal, Y.Base, {
          *     <dl>
          *         <dt>success (Function)</dt> <dd>Success handler.</dd>
          *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-         *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
          *     </dl>
          * </dd>
          * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
@@ -209,7 +205,6 @@ Y.extend(DSLocal, Y.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
@@ -245,7 +240,6 @@ Y.extend(DSLocal, Y.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
@@ -276,7 +270,6 @@ Y.extend(DSLocal, Y.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
@@ -307,8 +300,6 @@ Y.extend(DSLocal, Y.Base, {
      *     <dd>The function to call when the data is ready.</dd>
      *     <dt><code>failure</code></dt>
      *     <dd>The function to call upon a response failure condition.</dd>
-     *     <dt><code>scope</code></dt>
-     *     <dd>The object to serve as the scope for the success and failure handlers.</dd>
      *     <dt><code>argument</code></dt>
      *     <dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
      *     </dl>

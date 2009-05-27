@@ -530,11 +530,10 @@
                 });
 
                 ds.sendRequest(null, {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
+                    success: Y.bind(handler.handleSuccess, this),
+                    failure: Y.bind(function(e) {
                         ASSERT.fail("XHR failure case.");
-                    },
-                    scope: this
+                    }, this)
                 });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -564,11 +563,10 @@
                 });
 
                 ds.sendRequest(null, {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
+                    success: Y.bind(handler.handleSuccess, this),
+                    failure: Y.bind(function(e) {
                         ASSERT.fail("XHR failure case.");
-                    },
-                    scope: this
+                    }, this)
                 });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -602,11 +600,10 @@
                 });
 
                 ds.sendRequest(null, {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
+                    success: Y.bind(handler.handleSuccess, this),
+                    failure: Y.bind(function(e) {
                         ASSERT.fail("Local failure case.");
-                    },
-                    scope: this
+                    }, this)
                 });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -642,11 +639,10 @@
                 });
 
                 ds.sendRequest(null, {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
+                    success: Y.bind(handler.handleSuccess, this),
+                    failure: Y.bind(function(e) {
                         ASSERT.fail("Local failure case.");
-                    },
-                    scope: this
+                    }, this)
                 });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);

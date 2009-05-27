@@ -41,8 +41,6 @@ Pollable.prototype = {
      *     <dd>The function to call when the data is ready.</dd>
      *     <dt><code>failure</code></dt>
      *     <dd>The function to call upon a response failure condition.</dd>
-     *     <dt><code>scope</code></dt>
-     *     <dd>The object to serve as the scope for the success and failure handlers.</dd>
      *     <dt><code>argument</code></dt>
      *     <dd>Arbitrary data that will be passed back to the success and failure handlers.</dd>
      *     </dl>

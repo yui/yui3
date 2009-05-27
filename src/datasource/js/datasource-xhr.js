@@ -98,7 +98,6 @@ Y.extend(DSXHR, Y.DataSource.Local, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
