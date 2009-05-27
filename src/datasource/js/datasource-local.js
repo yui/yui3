@@ -95,15 +95,6 @@ Y.extend(DSLocal, Y.Base, {
     },
 
     /**
-    * Internal destroy() handler.
-    *
-    * @method destructor
-    * @private        
-    */
-    destructor: function() {
-    },
-
-    /**
     * This method creates all the events for this module.
     * @method _initEvents
     * @private        

@@ -131,19 +131,6 @@ generateRequestCallback : {
 });
     
 Y.extend(DSSN, Y.DataSource.Local, {
-
-
-    /**
-    * Internal init() handler.
-    *
-    * @method initializer
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function(config) {
-        
-    },
-
     /**
      * Passes query string to Get Utility. Fires <code>response</code> event when
      * response is received asynchronously.
