@@ -459,9 +459,7 @@ var AFTER = 'after',
         'type'
     ],
 
-    EventFacade = Y.EventFacade,
-
-    FACADE = new EventFacade(),
+    FACADE = new Y.EventFacade(),
 
     YUI3_SIGNATURE = 9;
 
@@ -855,7 +853,7 @@ Y.CustomEvent.prototype = {
         var ef = this._facade, o, args = this.details, o2;
 
         if (!ef) {
-            ef = new EventFacade(this, this.currentTarget);
+            ef = new Y.EventFacade(this, this.currentTarget);
         }
 
         // if the first argument is an object literal, apply the
@@ -866,16 +864,14 @@ Y.CustomEvent.prototype = {
 
             o2 = {};
 
-            if (o instanceof EventFacade) {
-                // protect the event facade properties
-                Y.mix(o2, ef, true, FACADE);
-                // mix the data
-                Y.mix(ef, o, true);
-                // restore ef
-                Y.mix(ef, o2, true);
-            } else {
-                Y.mix(ef, o, true);
-            }
+            // protect the event facade properties
+            Y.mix(o2, ef, true, FACADE);
+
+            // mix the data
+            Y.mix(ef, o, true);
+
+            // restore ef
+            Y.mix(ef, o2, true);
         }
 
         // update the details field with the arguments
