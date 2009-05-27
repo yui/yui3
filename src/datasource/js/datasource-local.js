@@ -113,7 +113,7 @@ Y.extend(DSLocal, Y.Base, {
          * </dl>
          * @preventable _defRequestFn
          */
-        this.publish("request", {defaultFn: Y.bind("_defRequestFn", this)});
+        this.publish("request", {defaultFn: Y.bind("_defRequestFn", this), queuable:true});
          
         /**
          * Fired when raw data is received.
@@ -135,7 +135,7 @@ Y.extend(DSLocal, Y.Base, {
          * </dl>
          * @preventable _defDataFn
          */
-        this.publish("data", {defaultFn: Y.bind("_defDataFn", this)});
+        this.publish("data", {defaultFn: Y.bind("_defDataFn", this), queuable:true});
 
         /**
          * Fired when response is returned.
@@ -164,7 +164,7 @@ Y.extend(DSLocal, Y.Base, {
          * </dl>
          * @preventable _defResponseFn
          */
-         this.publish("response", {defaultFn: Y.bind("_defResponseFn", this)});
+         this.publish("response", {defaultFn: Y.bind("_defResponseFn", this), queuable:true});
 
         /**
          * Fired when an error is encountered.
