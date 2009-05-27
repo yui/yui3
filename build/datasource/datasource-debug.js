@@ -967,7 +967,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      }
 });
 
-Y.namespace('plugin').DataSourceCache = DataSourceCache;
+Y.namespace('Plugin').DataSourceCache = DataSourceCache;
 
 
 
@@ -1075,7 +1075,7 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceJSONSchema = DataSourceJSONSchema;
+Y.namespace('Plugin').DataSourceJSONSchema = DataSourceJSONSchema;
 
 
 
@@ -1183,7 +1183,7 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceXMLSchema = DataSourceXMLSchema;
+Y.namespace('Plugin').DataSourceXMLSchema = DataSourceXMLSchema;
 
 
 
@@ -1291,7 +1291,7 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceArraySchema = DataSourceArraySchema;
+Y.namespace('Plugin').DataSourceArraySchema = DataSourceArraySchema;
 
 
 
@@ -1399,7 +1399,7 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceTextSchema = DataSourceTextSchema;
+Y.namespace('Plugin').DataSourceTextSchema = DataSourceTextSchema;
 
 
 

@@ -1,15 +1,20 @@
 YUI.add('base-base', function(Y) {
 
 /**
- * Provides the base Widget class along with an augmentable PluginHost interface
- *
- * @module widget
- */
+* Base class support for objects requiring managed attributes and acting as event targets. 
+*
+* The base module also provides an augmentable PluginHost interface.
+*
+* @module base
+*/
 
 /**
  * An augmentable class, which when added to a "Base" based class, allows 
- * the class to support Plugins, providing plug and unplug methods and performing
- * instantiation and cleanup during the init and destroy lifecycle phases respectively.
+ * the class to support Plugins, providing plug and unplug methods.
+ * 
+ * The PlugHost's _initPlugins and _destroyPlugins should be invoked by the 
+ * host class at the appropriate point in the classes lifecyle. This is done
+ * by default for Base class.
  *
  * @class PluginHost
  */
@@ -18,9 +23,6 @@ var L = Y.Lang;
 
 function PluginHost(config) {
     this._plugins = {};
-
-    this.after("init", function(e) {this._initPlugins(e.cfg);});
-    this.after("destroy", this._destroyPlugins);
 }
 
 PluginHost.prototype = {
@@ -315,7 +317,12 @@ Y.namespace("Plugin").Host = PluginHost;
      * @param {Object} config Object literal of configuration property name/value pairs
      */
     function Base() {
+
         Y.Attribute.call(this);
+        Y.Plugin.Host.call(this);
+
+        if (this._lazyAttrInit !== false) { this._lazyAttrInit = true; }
+
         this.init.apply(this, arguments);
     }
 
@@ -420,9 +427,6 @@ Y.namespace("Plugin").Host = PluginHost;
                 defaultFn:this._defInitFn
             });
 
-            // TODO: Look at why this needs to be done after publish.
-            Y.Plugin.Host.call(this);
-
             if (config) {
                 if (config.on) {
                     this.on(config.on);
@@ -487,6 +491,7 @@ Y.namespace("Plugin").Host = PluginHost;
          */
         _defInitFn : function(e) {
             this._initHierarchy(e.cfg);
+            this._initPlugins(e.cfg);
             this._set(INITIALIZED, true);
         },
 
@@ -499,6 +504,7 @@ Y.namespace("Plugin").Host = PluginHost;
          */
         _defDestroyFn : function(e) {
             this._destroyHierarchy();
+            this._destroyPlugins();
             this._set(DESTROYED, true);
         },
 
@@ -560,7 +566,7 @@ Y.namespace("Plugin").Host = PluginHost;
                 classes = [],
                 attrs = [];
 
-            while (c && c.prototype) {
+            while (c) {
                 // Add to classes
                 classes[classes.length] = c;
 
@@ -636,20 +642,21 @@ Y.namespace("Plugin").Host = PluginHost;
          * method on the prototype of each class in the hierarchy.
          *
          * @method _initHierarchy
-         * @param {Object} userConf Object literal containing attribute name/value pairs
+         * @param {Object} userVals Object literal containing attribute name/value pairs
          * @private
          */
-        _initHierarchy : function(userConf) {
-            var constr,
+        _initHierarchy : function(userVals) {
+            var lazy = this._lazyAttrInit,
+                constr,
                 constrProto,
                 ci,
                 ei,
                 el,
                 classes = this._getClasses(),
-                mergedCfgs = this._getAttrCfgs();
-                this._userCfgs = userConf;
+                attrCfgs = this._getAttrCfgs();
 
             for (ci = classes.length-1; ci >= 0; ci--) {
+
                 constr = classes[ci];
                 constrProto = constr.prototype;
 
@@ -659,12 +666,10 @@ Y.namespace("Plugin").Host = PluginHost;
                     }
                 }
 
-                this._classCfgs = this._filterAttrCfgs(constr, mergedCfgs);
-                this.addAttrs(this._classCfgs, userConf);
-                this._classCfgs = null;
+                this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
-                    constrProto[INITIALIZER].apply(this, arguments);
+                    constrProto.initializer.apply(this, arguments);
                 }
             }
         },
@@ -686,48 +691,9 @@ Y.namespace("Plugin").Host = PluginHost;
                 constr = classes[ci];
                 constrProto = constr.prototype;
                 if (constrProto.hasOwnProperty(DESTRUCTOR)) {
-                    constrProto[DESTRUCTOR].apply(this, arguments);
+                    constrProto.destructor.apply(this, arguments);
                 }
             }
-        },
-
-        /**
-         * Wrapper for Attribute.get. Adds the ability to 
-         * initialize attributes on-demand during initialization
-         * of the ATTRS definitions at each class level.
-         *
-         * @method get
-         *
-         * @param {String} name The attribute whose value will be returned. If 
-         * the attribute is not currently configured, but is part of the ATTRS 
-         * configuration for the class currently being configured, it will be
-         *
-         * @return {Any} The current value of the attribute
-         */
-        get: function(name) {
-
-            if (this._classCfgs) {
-                var attrName = name,
-                    iDot = name.indexOf(DOT);
-
-                if (iDot !== -1) {
-                    attrName = name.slice(0, iDot);
-                }
-
-                if (this._classCfgs[attrName] && !this.attrAdded(attrName)) {
-                    var classCfg = this._classCfgs[attrName],
-                        userCfg = this._userCfgs,
-                        attrCfg;
-
-                    if (classCfg) {
-                        attrCfg = {};
-                        attrCfg[attrName] = classCfg;
-                        this.addAttrs(attrCfg, userCfg);
-                    }
-                }
-            }
-
-            return Y.Attribute.prototype.get.call(this, name);
         },
 
         /**

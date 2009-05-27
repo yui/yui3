@@ -9,7 +9,7 @@
      * @class DDProxy
      * @extends Base
      * @constructor
-     * @namespace plugin     
+     * @namespace Plugin     
      */
     var DDM = Y.DD.DDM,
         NODE = 'node',
@@ -122,9 +122,9 @@
         }
     };
     
-    Y.namespace('plugin');
+    Y.namespace('Plugin');
     Y.extend(P, Y.Base, proto);
-    Y.plugin.DDProxy = P;
+    Y.Plugin.DDProxy = P;
 
     //Add a couple of methods to the DDM
     Y.mix(DDM, {

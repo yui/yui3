@@ -65,6 +65,12 @@ Y.Get.script([
     
 });
 
+Y.Get.script("failure", {
+    onEnd: function(e) {
+        Y.log('onEnd: ' + e.statusText);
+    }
+});
+
 
 })();
 

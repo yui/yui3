@@ -167,6 +167,8 @@
 	<span class="nx">USE_ARIA</span> <span class="o">=</span> <span class="s2">&quot;useARIA&quot;</span><span class="o">,</span>
 	<span class="nx">ARIA_HIDDEN</span> <span class="o">=</span> <span class="s2">&quot;aria-hidden&quot;</span><span class="o">,</span>
 	<span class="nx">CONTENT</span> <span class="o">=</span> <span class="s2">&quot;content&quot;</span><span class="o">,</span>
+	<span class="nx">HOST</span> <span class="o">=</span> <span class="s2">&quot;host&quot;</span><span class="o">,</span>
+	<span class="nx">ACTIVE_DESCENDANT_CHANGE</span> <span class="o">=</span> <span class="nx">ACTIVE_DESCENDANT</span> <span class="o">+</span> <span class="s2">&quot;Change&quot;</span><span class="o">,</span>
 
 	<span class="nx">STANDARD_QUERY</span> <span class="o">=</span> <span class="s2">&quot;&gt;.yui-menu-content&gt;ul&gt;li&gt;a&quot;</span><span class="o">,</span>
 	<span class="nx">EXTENDED_QUERY</span> <span class="o">=</span> <span class="s2">&quot;&gt;.yui-menu-content&gt;ul&gt;li&gt;.yui-menu-label&gt;a:first-child&quot;</span><span class="o">,</span>
@@ -465,7 +467,7 @@
 		<span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
 		<span class="nx">setter</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
 
-			<span class="k">var</span> <span class="nx">oMenu</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">),</span>
+			<span class="k">var</span> <span class="nx">oMenu</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">),</span>
 				<span class="nx">oMenuLabel</span><span class="o">,</span>
 				<span class="nx">oMenuToggle</span><span class="o">,</span>
 				<span class="nx">oSubmenu</span><span class="o">,</span>
@@ -734,7 +736,9 @@
     <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
 
 		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
-			<span class="nx">oRootMenu</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">);</span>
+			<span class="nx">oRootMenu</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">),</span>
+			<span class="nx">aHandlers</span> <span class="o">=</span> <span class="o">[],</span>
+			<span class="nx">oDoc</span><span class="o">;</span>
 
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">oRootMenu</span><span class="o">)</span> <span class="o">{</span>
@@ -750,18 +754,21 @@
 
 			<span class="c">//	Wire up all event handlers</span>
 <span class="c"></span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mouseover&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseOver</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mouseout&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseOut</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mousemove&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseMove</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEYDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">CLICK</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;keypress&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onKeyPress</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEYDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onKeyDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mouseover&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseOver</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">));</span>
+			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mouseout&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseOut</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">));</span>
+			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mousemove&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onMouseMove</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">));</span>
+			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">));</span>
+			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEYDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">));</span>
+			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">CLICK</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_toggleSubmenuDisplay</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">));</span>
+			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;keypress&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onKeyPress</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">));</span>
+			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEYDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onKeyDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">));</span>
 
-		    <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">);</span>
+			<span class="nx">oDoc</span> <span class="o">=</span> <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">);</span>
 
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">),</span> <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">));</span>
+		    <span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oDoc</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSEDOWN</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">));</span>
+			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oDoc</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="nx">menuNav</span><span class="o">));</span>
+
+			<span class="k">this</span><span class="o">.</span><span class="nx">_eventHandlers</span> <span class="o">=</span> <span class="nx">aHandlers</span><span class="o">;</span>
 
 			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_initFocusManager</span><span class="o">();</span>
 
@@ -772,8 +779,20 @@
 
 	<span class="nx">destructor</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
 
-		<span class="c">// TO DO -- clean up event handlers</span>
-<span class="c"></span>		
+		<span class="k">var</span> <span class="nx">aHandlers</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_eventHandlers</span><span class="o">;</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">aHandlers</span><span class="o">)</span> <span class="o">{</span>
+
+			<span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">aHandlers</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">handle</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">handle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
+			<span class="o">});</span>
+
+			<span class="k">this</span><span class="o">.</span><span class="nx">_eventHandlers</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+		<span class="o">}</span>
+		
+		<span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">).</span><span class="nx">unplug</span><span class="o">(</span><span class="s2">&quot;focusManager&quot;</span><span class="o">);</span>
+		
     <span class="o">},</span>
 
 
@@ -1106,10 +1125,10 @@
 
 			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">sQuery</span><span class="o">).</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;tabIndex&quot;</span><span class="o">,</span> <span class="o">-</span><span class="m">1</span><span class="o">);</span>
 
-			<span class="nx">oFocusManager</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;activeDescendantChange&quot;</span><span class="o">,</span> 
+			<span class="nx">oFocusManager</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT_CHANGE</span><span class="o">,</span> 
 				<span class="k">this</span><span class="o">.</span><span class="nx">_onActiveDescendantChange</span><span class="o">,</span> <span class="nx">oFocusManager</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
 
-			<span class="nx">oFocusManager</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;activeDescendantChange&quot;</span><span class="o">,</span> 
+			<span class="nx">oFocusManager</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT_CHANGE</span><span class="o">,</span> 
 				<span class="k">this</span><span class="o">.</span><span class="nx">_afterActiveDescendantChange</span><span class="o">,</span> <span class="nx">oFocusManager</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
 			
 			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusManager</span> <span class="o">=</span> <span class="nx">oFocusManager</span><span class="o">;</span>
@@ -2061,7 +2080,18 @@
 
 					<span class="o">}</span>
 					<span class="k">else</span> <span class="o">{</span>
+
 						<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusManager</span><span class="o">.</span><span class="nx">blur</span><span class="o">();</span>
+
+						<span class="c">//	This is necessary for Webkit since blurring the </span>
+<span class="c"></span>						<span class="c">//	active menuitem won&#39;t result in the document </span>
+<span class="c"></span>						<span class="c">//	gaining focus, meaning the that _onDocFocus </span>
+<span class="c"></span>						<span class="c">//	listener won&#39;t clear the active menuitem.</span>
+<span class="c"></span>
+						<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>	
+						
+						<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
 					<span class="o">}</span>
 
 				<span class="o">}</span>
@@ -2106,13 +2136,20 @@
 				
 			<span class="o">}</span>
 
-			<span class="c">// menuNav._initFocusManager();</span>
-<span class="c"></span>			<span class="c">// menuNav._focusManager.set(ACTIVE_DESCENDANT, oTarget);</span>
-<span class="c"></span>			<span class="c">// menuNav._setActiveItem(getItem(oTarget, true));</span>
-<span class="c"></span>
 		<span class="o">}</span>
 		<span class="k">else</span> <span class="o">{</span>
-			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oRoot</span><span class="o">);</span>			
+
+			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oRoot</span><span class="o">);</span>
+
+			<span class="c">//	Document doesn&#39;t receive focus in Webkit when the user mouses </span>
+<span class="c"></span>			<span class="c">//	down on it, so the &quot;_hasFocus&quot; property won&#39;t get set to the </span>
+<span class="c"></span>			<span class="c">//	correct value.  The following line corrects the problem.</span>
+<span class="c"></span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>
+			<span class="o">}</span>
+						
 		<span class="o">}</span>
 
 	<span class="o">}</span>

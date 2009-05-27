@@ -55,3 +55,4 @@ Y.mix(Y.namespace("DataType.XML"), {
 
 // Add Parsers shortcut
 Y.namespace("Parsers").xml = Y.DataType.XML.parse;
+

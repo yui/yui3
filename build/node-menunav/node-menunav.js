@@ -120,6 +120,8 @@ var UA = Y.UA,
 	USE_ARIA = "useARIA",
 	ARIA_HIDDEN = "aria-hidden",
 	CONTENT = "content",
+	HOST = "host",
+	ACTIVE_DESCENDANT_CHANGE = ACTIVE_DESCENDANT + "Change",
 
 	STANDARD_QUERY = ">.yui-menu-content>ul>li>a",
 	EXTENDED_QUERY = ">.yui-menu-content>ul>li>.yui-menu-label>a:first-child",
@@ -418,7 +420,7 @@ NodeMenuNav.ATTRS = {
 		writeOnce: true,
 		setter: function (value) {
 
-			var oMenu = this.get("host"),
+			var oMenu = this.get(HOST),
 				oMenuLabel,
 				oMenuToggle,
 				oSubmenu,
@@ -687,7 +689,9 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
     initializer: function (config) {
 
 		var menuNav = this,
-			oRootMenu = this.get("host");
+			oRootMenu = this.get(HOST),
+			aHandlers = [],
+			oDoc;
 
 
 		if (oRootMenu) {
@@ -703,18 +707,21 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			//	Wire up all event handlers
 
-			oRootMenu.on("mouseover", menuNav._onMouseOver, menuNav);
-			oRootMenu.on("mouseout", menuNav._onMouseOut, menuNav);
-			oRootMenu.on("mousemove", menuNav._onMouseMove, menuNav);
-			oRootMenu.on(MOUSEDOWN, menuNav._toggleSubmenuDisplay, menuNav);
-			oRootMenu.on(KEYDOWN, menuNav._toggleSubmenuDisplay, menuNav);
-			oRootMenu.on(CLICK, menuNav._toggleSubmenuDisplay, menuNav);
-			oRootMenu.on("keypress", menuNav._onKeyPress, menuNav);
-			oRootMenu.on(KEYDOWN, menuNav._onKeyDown, menuNav);
+			aHandlers.push(oRootMenu.on("mouseover", menuNav._onMouseOver, menuNav));
+			aHandlers.push(oRootMenu.on("mouseout", menuNav._onMouseOut, menuNav));
+			aHandlers.push(oRootMenu.on("mousemove", menuNav._onMouseMove, menuNav));
+			aHandlers.push(oRootMenu.on(MOUSEDOWN, menuNav._toggleSubmenuDisplay, menuNav));
+			aHandlers.push(oRootMenu.on(KEYDOWN, menuNav._toggleSubmenuDisplay, menuNav));
+			aHandlers.push(oRootMenu.on(CLICK, menuNav._toggleSubmenuDisplay, menuNav));
+			aHandlers.push(oRootMenu.on("keypress", menuNav._onKeyPress, menuNav));
+			aHandlers.push(oRootMenu.on(KEYDOWN, menuNav._onKeyDown, menuNav));
 
-		    oRootMenu.get("ownerDocument").on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav);
+			oDoc = oRootMenu.get("ownerDocument");
 
-			Y.on("focus", Y.bind(menuNav._onDocFocus, menuNav), oRootMenu.get("ownerDocument"));
+		    aHandlers.push(oDoc.on(MOUSEDOWN, menuNav._onDocMouseDown, menuNav));
+			aHandlers.push(oDoc.on("focus", menuNav._onDocFocus, menuNav));
+
+			this._eventHandlers = aHandlers;
 
 			menuNav._initFocusManager();
 
@@ -725,7 +732,19 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 	destructor: function () {
 
-		// TO DO -- clean up event handlers
+		var aHandlers = this._eventHandlers;
+
+		if (aHandlers) {
+
+			Y.Array.each(aHandlers, function (handle) {
+				handle.detach();
+			});
+
+			this._eventHandlers = null;
+
+		}
+		
+		this.get(HOST).unplug("focusManager");
 		
     },
 
@@ -1059,10 +1078,10 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			oRootMenu.queryAll(sQuery).set("tabIndex", -1);
 
-			oFocusManager.on("activeDescendantChange", 
+			oFocusManager.on(ACTIVE_DESCENDANT_CHANGE, 
 				this._onActiveDescendantChange, oFocusManager, this);
 
-			oFocusManager.after("activeDescendantChange", 
+			oFocusManager.after(ACTIVE_DESCENDANT_CHANGE, 
 				this._afterActiveDescendantChange, oFocusManager, this);
 			
 			menuNav._focusManager = oFocusManager;
@@ -2014,7 +2033,18 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 					}
 					else {
+
 						menuNav._focusManager.blur();
+
+						//	This is necessary for Webkit since blurring the 
+						//	active menuitem won't result in the document 
+						//	gaining focus, meaning the that _onDocFocus 
+						//	listener won't clear the active menuitem.
+
+						menuNav._clearActiveItem();	
+						
+						menuNav._hasFocus = false;
+
 					}
 
 				}
@@ -2059,13 +2089,20 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 				
 			}
 
-			// menuNav._initFocusManager();
-			// menuNav._focusManager.set(ACTIVE_DESCENDANT, oTarget);
-			// menuNav._setActiveItem(getItem(oTarget, true));
-
 		}
 		else {
-			menuNav._hideAllSubmenus(oRoot);			
+
+			menuNav._hideAllSubmenus(oRoot);
+
+			//	Document doesn't receive focus in Webkit when the user mouses 
+			//	down on it, so the "_hasFocus" property won't get set to the 
+			//	correct value.  The following line corrects the problem.
+
+			if (UA.webkit) {
+				menuNav._hasFocus = false;
+				menuNav._clearActiveItem();
+			}
+						
 		}
 
 	}

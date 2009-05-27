@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+    <link type="text/css" rel="stylesheet" href="../../profile-report/table.css">
+    <style id="localStyle" type="text/css">
+.highlight-example { 
+    clear: both;
+}
+.yui-skin-sam #c .yui-console {
+    position: relative;
+    top: auto;
+    right: auto;
+}
+#c {
+    margin-bottom: 1em;
+}
+    </style>
+</head>
+<body class="yui-skin-sam">
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../profile-report/profiler.js"></script>
+<script type="text/javascript" src="../../profile-report/profile-report.js"></script>
+<script type="text/javascript" src="../../profile-report/table.js"></script>
+<script type="text/javascript">
+YUI({
+    base: '../../../build/',
+    //filter: 'debug',
+    //logInclude : { global: true },
+    useBrowserConsole:false
+}).use('event','profile-report','table','profiler','stylesheet','io-base',function (Y) {
+
+Y.Profiler.registerConstructor('StyleSheet',Y);
+
+new Y.StyleSheet();
+Y.Profiler.renderFullReport("Empty construction");
+
+new Y.StyleSheet('#localLink');
+Y.Profiler.renderFullReport("Link ref construction");
+
+new Y.StyleSheet('#localStyle');
+Y.Profiler.renderFullReport("Style ref construction");
+
+Y.io('../../../../yui2/build/editor/assets/skins/sam/editor.css',{on:{success:
+    function (id,o) {
+        new Y.StyleSheet(o.responseText);
+        Y.Profiler.renderFullReport("cssText construction (yui2 Editor skin)");
+    }
+}});
+
+});
+</script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js?highlight=javascript"></script>
+</body>
+</html>

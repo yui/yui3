@@ -44,7 +44,12 @@
      */
     function Base() {
         Y.log('constructor called', 'life', 'base');
+
         Y.Attribute.call(this);
+        Y.Plugin.Host.call(this);
+
+        if (this._lazyAttrInit !== false) { this._lazyAttrInit = true; }
+
         this.init.apply(this, arguments);
     }
 
@@ -150,9 +155,6 @@
                 defaultFn:this._defInitFn
             });
 
-            // TODO: Look at why this needs to be done after publish.
-            Y.Plugin.Host.call(this);
-
             if (config) {
                 if (config.on) {
                     this.on(config.on);
@@ -218,6 +220,7 @@
          */
         _defInitFn : function(e) {
             this._initHierarchy(e.cfg);
+            this._initPlugins(e.cfg);
             this._set(INITIALIZED, true);
         },
 
@@ -230,6 +233,7 @@
          */
         _defDestroyFn : function(e) {
             this._destroyHierarchy();
+            this._destroyPlugins();
             this._set(DESTROYED, true);
         },
 
@@ -291,7 +295,7 @@
                 classes = [],
                 attrs = [];
 
-            while (c && c.prototype) {
+            while (c) {
                 // Add to classes
                 classes[classes.length] = c;
 
@@ -369,20 +373,21 @@
          * method on the prototype of each class in the hierarchy.
          *
          * @method _initHierarchy
-         * @param {Object} userConf Object literal containing attribute name/value pairs
+         * @param {Object} userVals Object literal containing attribute name/value pairs
          * @private
          */
-        _initHierarchy : function(userConf) {
-            var constr,
+        _initHierarchy : function(userVals) {
+            var lazy = this._lazyAttrInit,
+                constr,
                 constrProto,
                 ci,
                 ei,
                 el,
                 classes = this._getClasses(),
-                mergedCfgs = this._getAttrCfgs();
-                this._userCfgs = userConf;
+                attrCfgs = this._getAttrCfgs();
 
             for (ci = classes.length-1; ci >= 0; ci--) {
+
                 constr = classes[ci];
                 constrProto = constr.prototype;
 
@@ -392,12 +397,10 @@
                     }
                 }
 
-                this._classCfgs = this._filterAttrCfgs(constr, mergedCfgs);
-                this.addAttrs(this._classCfgs, userConf);
-                this._classCfgs = null;
+                this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
-                    constrProto[INITIALIZER].apply(this, arguments);
+                    constrProto.initializer.apply(this, arguments);
                 }
             }
         },
@@ -419,48 +422,9 @@
                 constr = classes[ci];
                 constrProto = constr.prototype;
                 if (constrProto.hasOwnProperty(DESTRUCTOR)) {
-                    constrProto[DESTRUCTOR].apply(this, arguments);
+                    constrProto.destructor.apply(this, arguments);
                 }
             }
-        },
-
-        /**
-         * Wrapper for Attribute.get. Adds the ability to 
-         * initialize attributes on-demand during initialization
-         * of the ATTRS definitions at each class level.
-         *
-         * @method get
-         *
-         * @param {String} name The attribute whose value will be returned. If 
-         * the attribute is not currently configured, but is part of the ATTRS 
-         * configuration for the class currently being configured, it will be
-         *
-         * @return {Any} The current value of the attribute
-         */
-        get: function(name) {
-
-            if (this._classCfgs) {
-                var attrName = name,
-                    iDot = name.indexOf(DOT);
-
-                if (iDot !== -1) {
-                    attrName = name.slice(0, iDot);
-                }
-
-                if (this._classCfgs[attrName] && !this.attrAdded(attrName)) {
-                    var classCfg = this._classCfgs[attrName],
-                        userCfg = this._userCfgs,
-                        attrCfg;
-
-                    if (classCfg) {
-                        attrCfg = {};
-                        attrCfg[attrName] = classCfg;
-                        this.addAttrs(attrCfg, userCfg);
-                    }
-                }
-            }
-
-            return Y.Attribute.prototype.get.call(this, name);
         },
 
         /**

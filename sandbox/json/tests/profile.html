@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+    <link type="text/css" rel="stylesheet" href="../../profile-report/table.css">
+    <link type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console-filters.css">
+    <style type="text/css">
+.markup,pre { 
+    clear: both;
+    margin: 1em;
+    border: 1px solid #ccc;
+}
+.yui-skin-sam #c .yui-console {
+    position: relative;
+    top: auto;
+    right: auto;
+}
+#c {
+    margin-bottom: 1em;
+}
+    </style>
+</head>
+<body class="yui-skin-sam">
+<div class="markup">
+<form action=''>
+    <h3>Form used for field value extraction, stringification</h3>
+    <input type="text" id="empty_text">
+    <input type="text" id="text" value="text">
+    <input type="radio" name="radio" id="unchecked_radio" value="unchecked">
+    <input type="radio" name="radio" id="checked_radio" value="radio" checked="checked">
+    <input type="checkbox" name="box" id="unchecked_box" value="unchecked">
+    <input type="checkbox" name="box" id="checked_box" value="box" checked="checked">
+    <textarea id="empty_textarea"></textarea>
+    <textarea id="textarea">textarea</textarea>
+    <select id="select">
+        <option value="unselected">Unselected</option>
+        <option value="selected" selected="selected">Selected</option>
+    </select>
+    <select id="multiple_select" multiple="multiple" size="3">
+        <option value="unselected">Unselected</option>
+        <option value="selected" selected="selected">Selected</option>
+        <option value="selected also" selected="selected">Selected also</option>
+    </select>
+    <button id="button" type="button">content; no value</button>
+    <button id="button_with_value" type="button" value="button value">content and value</button>
+    <button id="button_submit" type="submit">content; no value</button>
+    <button id="button_submit_with_value" type="submit" value="submit button value">content and value</button>
+    <input type="button" id="input_button" value="input button">
+    <input type="submit" id="input_submit" value="input submit">
+    <input type="image" id="input_image" src="404.png" value="input image">
+</form>
+</div>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../profile-report/profiler.js"></script>
+<script type="text/javascript" src="../../profile-report/profile-report.js"></script>
+<script type="text/javascript" src="../../profile-report/table.js"></script>
+<script type="text/javascript">
+YUI({
+    base: '../../../build/',
+    filter: 'raw',
+    //logInclude : { global: true },
+    useBrowserConsole:false
+}).use('event','profile-report','table','json','profiler', 'io-base',function (Y) {
+
+Y.Profiler.registerFunction('parse',Y.JSON);
+Y.Profiler.registerFunction('stringify',Y.JSON);
+
+Y.io('flickr.json', {on:{success: function (id,o) {
+    var x = Y.JSON.parse(o.responseText);
+    Y.Profiler.renderFullReport("parse flickr.json");
+
+    // Stringify
+    Y.JSON.stringify(x);
+    Y.Profiler.renderFullReport("stringify flickr.json");
+}}});
+
+Y.io('bbc.json', {on:{success: function (id,o) {
+    var x = Y.JSON.parse(o.responseText);
+    Y.Profiler.renderFullReport("parse bbc.json");
+
+    // Stringify
+    Y.JSON.stringify(x);
+    Y.Profiler.renderFullReport("stringify bbc.json");
+}}});
+
+function $(id) { return document.getElementById(id); }
+
+Y.JSON.stringify({
+    empty_text              : $('empty_text').value,
+    text                    : $('text').value,
+    unchecked_radio         : $('unchecked_radio').value,
+    checked_radio           : $('checked_radio').value,
+    unchecked_box           : $('unchecked_box').value,
+    checked_box             : $('checked_box').value,
+    empty_textarea          : $('empty_textarea').value,
+    textarea                : $('textarea').value,
+    select                  : $('select').value,
+    multiple_select         : $('multiple_select').value,
+    button                  : $('button').value,
+    button_with_value       : $('button_with_value').value,
+    button_submit           : $('button_submit').value,
+    button_submit_with_value: $('button_submit_with_value').value,
+    input_button            : $('input_button').value,
+    input_submit            : $('input_submit').value,
+    input_image             : $('input_image').value
+});
+Y.Profiler.renderFullReport("stringify form data");
+
+/*
+Y.JSON.stringify({
+    foo : [
+        1,2,3,{
+            foo : "FOO",
+            baz : true
+        }
+    ],
+    bar : [
+        1,2,3,{
+            foo : "FOO",
+            baz : true
+        }
+    ],
+    baz : true},["foo","baz"]);
+report("stringify with whitelist");
+
+Y.JSON.stringify({
+    foo : [ 2, {
+        bar : [ 4, {
+            baz : [ 6, {
+                "deep enough" : 7
+            }]
+        }]
+    }]
+},null,"Xo");
+report("stringify with whitelist");
+
+Y.JSON.parse(JSON_STRING, function (k,v) {
+    switch (k) {
+        case "alpha" : return "LOWER CASE";
+        case "ALPHA" : return "upper case";
+        case "true"  :
+        case "false" :
+        case "null"  : return undefined;
+    }
+
+    if (typeof v === 'number') {
+        return -(Math.abs(v|0));
+    }
+
+    if (Y.Lang.isArray(v)) {
+        v[99] = "NEW ITEM";
+    }
+
+    return v;
+});
+report("parse with reviver");
+
+Y.JSON.stringify({
+        num: 1,
+        alpha: "abc",
+        ignore: "me",
+        change: "to a function",
+        toUpper: true,
+        obj: {
+            nested_num: 50,
+            undef: undefined,
+            alpha: "abc"
+        },
+        arr: [1, 7, 2]
+    }
+    ,function (k,v) {
+        var t = typeof v;
+
+        if (k === 'change') {
+            // this property should then be ignored
+            return function () {};
+        } else if (k === 'ignore') {
+            // this property should then be ignored
+            return undefined;
+        } else if (t === 'number') {
+            // undefined returned to arrays should become null
+            return v % 7 ? v * 2 : undefined;
+
+        // this refers to the object containing the key:value
+        } else if (t === 'string' && (this.toUpper)) {
+            // modify the object during stringification
+            delete this.toUpper;
+            return v.toUpperCase();
+        } else {
+            return v;
+        }
+    },'_');
+
+report("stringify with replacer");
+*/
+});
+</script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
+</body>
+</html>
