@@ -283,7 +283,7 @@
 			clearTimeout(this._timeout);
 			// detach all listeners
 			for (var i=0, len = this._triggers.length; i < len; i++) {
-				Y.detach(this._triggers[i]);
+				this._triggers[i].detach();
 			}
 		},
 
