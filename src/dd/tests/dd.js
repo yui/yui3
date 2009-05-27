@@ -14,6 +14,7 @@ moveCount = 728;
 YUI({
     base: '../../../build/',
     //filter: 'DEBUG',
+    filter: 'RAW',
     logExclude: {
         'YUI': true,
         Event: true,
