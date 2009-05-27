@@ -173,7 +173,7 @@ Node.scrubVal = function(val, node, depth) {
 
 Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn === 'function') {
-        Node.prototype[name] = function() {
+        Node.prototype[name] = function name() {
             context = context || this;
             var args = g_slice.call(arguments),
                 ret;
@@ -633,13 +633,18 @@ Y.mix(Node.prototype, {
      * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    insert: function(content, refNode) {
-        execScripts = (execScripts && Node.EXEC_SCRIPTS);
-        if (typeof refNode === 'number') { // allow index
-            refNode = g_nodes[this[UID]].childNodes[refNode];
-        }
-        if (this.contains(refNode)) { // only allow inserting into this Node's subtree
-            Y.DOM.addHTML(g_nodes[this[UID]], Y.Node.create(content), refNode, execScripts);
+    insert: function(content, refNode, execScripts) {
+        if (content) {
+            execScripts = (execScripts && Node.EXEC_SCRIPTS);
+            if (typeof refNode === 'number') { // allow index
+                refNode = g_nodes[this[UID]].childNodes[refNode];
+            }
+            if (typeof content !== 'string') {
+                content = Y.Node.getDOMNode(content);
+            }
+            if (!refNode || this.contains(refNode)) { // only allow inserting into this Node's subtree
+                Y.DOM.addHTML(g_nodes[this[UID]], content, refNode, execScripts);
+            }
         }
         return this;
     },
@@ -653,10 +658,7 @@ Y.mix(Node.prototype, {
      * @chainable
      */
     prepend: function(content, execScripts) {
-        execScripts = (execScripts && Node.EXEC_SCRIPTS);
-        var node = g_nodes[this[UID]];
-        Y.DOM.addHTML(node, content, node.firstChild, execScripts);
-        return this;
+        return this.insert(content, 0, execScripts);
     },
 
     /**
@@ -668,9 +670,7 @@ Y.mix(Node.prototype, {
      * @chainable
      */
     append: function(content, execScripts) {
-        execScripts = (execScripts && Node.EXEC_SCRIPTS);
-        Y.DOM.addHTML(g_nodes[this[UID]], content, null, execScripts);
-        return this;
+        return this.insert(content, null, execScripts);
     },
 
     /**

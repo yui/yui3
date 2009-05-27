@@ -31,8 +31,10 @@ var NODE_TYPE = 'nodeType',
     TEXT_CONTENT = 'textContent',
     LENGTH = 'length',
 
+
     UNDEFINED = undefined,
 
+    g_slice = Array.slice,
     re_tag = /<([a-z]+)/i;
 
 Y.DOM = {
@@ -360,7 +362,7 @@ Y.DOM = {
             return null;
         }
         if (typeof newNode === 'string') {
-            newNode = DOM.create(newNode);
+            newNode = Y.DOM.create(newNode);
         }
         return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
     },
@@ -376,6 +378,10 @@ Y.DOM = {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
             return null;
         }       
+
+        if (typeof newNode === 'string') {
+            newNode = Y.DOM.create(newNode);
+        }
 
         if (referenceNode[NEXT_SIBLING]) {
             return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode[NEXT_SIBLING]); 
@@ -477,10 +483,15 @@ Y.DOM = {
         return obj.alert && obj.document;
     },
 
+    _fragClones: {
+        div: document.createElement('div')
+    },
+
     _create: function(html, doc, tag) {
         tag = tag || 'div';
-        var frag = doc.createElement(tag);
-        frag.innerHTML = Y.Lang.trim(html);
+
+        var frag = Y.DOM._fragClones[tag] ? Y.DOM._fragClones[tag].cloneNode(false) : doc.createElement('div');
+        frag.innerHTML = html;
         return frag;
     },
 
@@ -492,7 +503,7 @@ Y.DOM = {
 
     addHTML: function(node, content, where, execScripts) {
         var scripts,
-            newNode = (content[NODE_TYPE]) ? content : Y.DOM.create(content);
+            newNode = (content.nodeType) ? content : Y.DOM.create(content);
 
         if (!where) {
             node.appendChild(newNode);
@@ -511,7 +522,7 @@ Y.DOM = {
                 scripts = newNode.getElementsByTagName('script');
             }
             Y.DOM._execScripts(scripts);
-        } else { // prevent any scripts from being injected
+        } else if (newNode.innerHTML.indexOf('script') > -1) { // prevent any scripts from being injected
             Y.DOM._stripScripts(newNode);
         }
 
@@ -681,6 +692,26 @@ Y.DOM = {
         }
         return ret;
 
+    },
+
+    _batch: function(nodes, fn, arg1, arg2, etc) {
+        fn = (typeof name === 'string') ? Y.DOM[fn] : fn;
+        var args = arguments,
+            result,
+            ret = [];
+
+        if (fn && nodes) {
+            args = g_slice.call(args, 1);
+            Y.each(nodes, function(node) {
+                args.splice(0, 1, node);
+                console.log(args[1]);
+                if ((result = fn.apply(Y.DOM, args)) !== undefined) {
+                    ret[ret.length] = result;
+                }
+            });
+        }
+
+        return ret.length ? ret : nodes;
     },
 
     _testElement: function(element, tag, fn) {
