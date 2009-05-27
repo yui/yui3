@@ -387,9 +387,14 @@ YUI.add('dd-scroll', function(Y) {
                 }
                 return n;
             }
-        },
+        }
     });
-    Y.extend(NS, S);
+    Y.extend(NS, S, {
+        //Shouldn't have to do this..
+        initializer: function() {
+            this.set('node', this.get('node'));
+        }
+    });
     NS.NAME = NS.NS = 'nodescroll';
     Y.Plugin.DDNodeScroll = NS;
 
