@@ -91,7 +91,7 @@
                         ASSERT.areSame("callback", e.callback, "request: Expected callback.");
                     })]
                 });
-                ds.subscribe("request", handler.handleRequest);
+                ds.on("request", handler.handleRequest);
 
                 Y.Mock.expect(handler,{
                     method: "handleData",
@@ -102,7 +102,7 @@
                         ASSERT.isArray(e.data, "data: Expected raw data.");
                     })]
                 });
-                ds.subscribe("data", handler.handleData);
+                ds.on("data", handler.handleData);
                 
                 Y.Mock.expect(handler,{
                     method: "handleResponse",
@@ -116,7 +116,7 @@
                         ASSERT.isObject(e.response.meta, "response: Expected parsed meta data.");
                     })]
                 });
-                ds.subscribe("response", handler.handleResponse);
+                ds.on("response", handler.handleResponse);
 
                 ds.sendRequest("a", "callback");
                 Y.Mock.verify(handler);
@@ -138,7 +138,7 @@
                         ASSERT.isObject(e.error, "error: Expected error.");
                     })]
                 });
-                ds.subscribe("error", handler.handleError);
+                ds.on("error", handler.handleError);
 
                 ds.set("source", undefined);
                 ds.sendRequest("a", "callback");
@@ -222,7 +222,7 @@
                         ASSERT.areSame("callback", e.callback, "request: Expected callback.");
                     })]
                 });
-                ds.subscribe("request", handler.handleRequest);
+                ds.on("request", handler.handleRequest);
 
                 Y.Mock.expect(handler,{
                     method: "handleData",
@@ -233,7 +233,7 @@
                         ASSERT.isObject(e.data, "data: Expected raw data.");
                     })]
                 });
-                ds.subscribe("data", handler.handleData);
+                ds.on("data", handler.handleData);
 
                 Y.Mock.expect(handler,{
                     method: "handleResponse",
@@ -247,7 +247,7 @@
                         ASSERT.isObject(e.response.meta, "response: Expected parsed meta data.");
                     })]
                 });
-                ds.subscribe("response", handler.handleResponse);
+                ds.on("response", handler.handleResponse);
 
                 ds.sendRequest(null, "callback");
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -275,7 +275,7 @@
                         ASSERT.isObject(e.error, "error: Expected error.");
                     })]
                 });
-                ds.subscribe("error", handler.handleError);
+                ds.on("error", handler.handleError);
 
                 ds.set("source", "foo");
                 ds.sendRequest("a", "callback");
@@ -331,7 +331,7 @@
                         ASSERT.areSame("callback", e.callback, "request: Expected callback.");
                     })]
                 });
-                ds.subscribe("request", handler.handleRequest);
+                ds.on("request", handler.handleRequest);
 
                 Y.Mock.expect(handler,{
                     method: "handleData",
@@ -342,7 +342,7 @@
                         ASSERT.isObject(e.data, "data: Expected raw data.");
                     })]
                 });
-                ds.subscribe("data", handler.handleData);
+                ds.on("data", handler.handleData);
 
                 Y.Mock.expect(handler,{
                     method: "handleResponse",
@@ -356,7 +356,7 @@
                         ASSERT.isObject(e.response.meta, "response: Expected parsed meta data.");
                     })]
                 });
-                ds.subscribe("response", handler.handleResponse);
+                ds.on("response", handler.handleResponse);
 
                 ds.sendRequest("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", "callback");
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -385,7 +385,7 @@
                         ASSERT.isObject(e.error, "error: Expected error.");
                     })]
                 });
-                ds.subscribe("error", handler.handleError);
+                ds.on("error", handler.handleError);
 
                 ds.set("source", "foo");
                 ds.sendRequest("a", "callback");
@@ -444,7 +444,7 @@
                         ASSERT.areSame("callback", e.callback, "request: Expected callback.");
                     })]
                 });
-                ds.subscribe("request", handler.handleRequest);
+                ds.on("request", handler.handleRequest);
 
                 Y.Mock.expect(handler,{
                     method: "handleData",
@@ -455,7 +455,7 @@
                         ASSERT.isObject(e.data, "data: Expected raw data.");
                     })]
                 });
-                ds.subscribe("data", handler.handleData);
+                ds.on("data", handler.handleData);
 
                 Y.Mock.expect(handler,{
                     method: "handleResponse",
@@ -469,7 +469,7 @@
                         ASSERT.isObject(e.response.meta, "response: Expected parsed meta data.");
                     })]
                 });
-                ds.subscribe("response", handler.handleResponse);
+                ds.on("response", handler.handleResponse);
 
                 ds.sendRequest("foo", "callback");
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -496,7 +496,7 @@
                         ASSERT.isObject(e.error, "error: Expected error.");
                     })]
                 });
-                ds.subscribe("error", handler.handleError);
+                ds.on("error", handler.handleError);
 
                 ds.sendRequest("a", "callback");
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -682,7 +682,7 @@
 
                 ds.sendRequest("a");
 
-                ds.subscribe("data", function(e) {
+                ds.on("data", function(e) {
                     ASSERT.fail("Entry should be cached -- 'data' event is unexpected");
                 });
 
@@ -697,7 +697,7 @@
 
                 ds.sendRequest("a");
 
-                ds.cache.subscribe("retrieve", function(e) {
+                ds.cache.on("retrieve", function(e) {
                     ASSERT.fail("Cache is unset -- 'retrieve' event is unexpected");
                 });
 
