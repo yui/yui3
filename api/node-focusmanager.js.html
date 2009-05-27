@@ -100,6 +100,13 @@
 		<span class="m">39</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
 		<span class="m">40</span><span class="o">:</span> <span class="kc">true</span>
 	<span class="o">},</span>
+	
+	<span class="nx">clickableElements</span> <span class="o">=</span> <span class="o">{</span>
+		<span class="s2">&quot;a&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+		<span class="s2">&quot;button&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+		<span class="s2">&quot;input&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+		<span class="s2">&quot;object&quot;</span><span class="o">:</span> <span class="kc">true</span>
+	<span class="o">},</span>	
 
 	<span class="c">//	Library shortcuts</span>
 <span class="c"></span>
@@ -409,7 +416,8 @@
 				<span class="c">//	Need to set the &quot;tabIndex&quot; attribute here, since the </span>
 <span class="c"></span>				<span class="c">//	&quot;activeDescendantChange&quot; event handler used to manage</span>
 <span class="c"></span>				<span class="c">//	the setting of the &quot;tabIndex&quot; attribute isn&#39;t wired up yet.</span>
-<span class="c"></span>				<span class="nx">oNode</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
+<span class="c"></span>
+				<span class="nx">oNode</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
 
 			<span class="o">}</span>
 			
@@ -468,8 +476,7 @@
 	<span class="nx">_detachKeyHandler</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
 
 		<span class="k">var</span> <span class="nx">prevKeyHandler</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prevKeyHandler</span><span class="o">,</span>
-			<span class="nx">nextKeyHandler</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_nextKeyHandler</span><span class="o">,</span>
-			<span class="nx">keyPressHandler</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_keyPressHandler</span><span class="o">;</span>
+			<span class="nx">nextKeyHandler</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_nextKeyHandler</span><span class="o">;</span>
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">prevKeyHandler</span><span class="o">)</span> <span class="o">{</span>
 			<span class="nx">prevKeyHandler</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
@@ -477,10 +484,6 @@
 		
 		<span class="k">if</span> <span class="o">(</span><span class="nx">nextKeyHandler</span><span class="o">)</span> <span class="o">{</span>
 			<span class="nx">nextKeyHandler</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-		<span class="o">}</span>
-
-		<span class="k">if</span> <span class="o">(</span><span class="nx">keyPressHandler</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">keyPressHandler</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
 		<span class="o">}</span>
 		
 	<span class="o">},</span>
@@ -500,6 +503,30 @@
 		
 	<span class="o">},</span>
 
+
+	<span class="c">/**</span>
+<span class="c">	* @method _preventScroll</span>
+<span class="c">	* @description Fires the click event if the enter key is pressed while </span>
+<span class="c">	* focused on an HTML element that is not natively clickable.</span>
+<span class="c">	* @protected</span>
+<span class="c">	*/</span>
+	<span class="nx">_fireClick</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+		
+		<span class="k">var</span> <span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span>
+			<span class="nx">sNodeName</span> <span class="o">=</span> <span class="nx">oTarget</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;nodeName&quot;</span><span class="o">).</span><span class="nx">toLowerCase</span><span class="o">();</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="m">13</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">clickableElements</span><span class="o">[</span><span class="nx">sNodeName</span><span class="o">]</span> <span class="o">||</span> 
+				<span class="o">(</span><span class="nx">sNodeName</span> <span class="o">===</span> <span class="s2">&quot;a&quot;</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">oTarget</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="s2">&quot;href&quot;</span><span class="o">))))</span> <span class="o">{</span>
+
+			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">((</span><span class="s2">&quot;Firing click event for node:&quot;</span> <span class="o">+</span> <span class="nx">oTarget</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;id&quot;</span><span class="o">)),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;nodeFocusManager&quot;</span><span class="o">);</span>
+
+			<span class="nx">oTarget</span><span class="o">.</span><span class="nx">simulate</span><span class="o">(</span><span class="s2">&quot;click&quot;</span><span class="o">);</span>
+			
+		<span class="o">}</span>
+		
+	<span class="o">},</span>
+
+
 	<span class="c">/**</span>
 <span class="c">	* @method _attachKeyHandler</span>
 <span class="c">	* @description Attaches the &quot;key&quot; event handlers used to support the &quot;keys&quot;</span>
@@ -511,12 +538,13 @@
 		<span class="k">this</span><span class="o">.</span><span class="nx">_detachKeyHandler</span><span class="o">();</span>
 
 		<span class="k">var</span> <span class="nx">sNextKey</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;keys.next&quot;</span><span class="o">),</span>
-			<span class="nx">sPreviousKey</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;keys.previous&quot;</span><span class="o">),</span>
-			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">);</span>
+			<span class="nx">sPrevKey</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;keys.previous&quot;</span><span class="o">),</span>
+			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">),</span>
+			<span class="nx">aHandlers</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_eventHandlers</span><span class="o">;</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">sPreviousKey</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="nx">sPrevKey</span><span class="o">)</span> <span class="o">{</span>
  			<span class="k">this</span><span class="o">.</span><span class="nx">_prevKeyHandler</span> <span class="o">=</span> 
-				<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEY</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_focusPrevious</span><span class="o">,</span> <span class="k">this</span><span class="o">),</span> <span class="nx">oNode</span><span class="o">,</span> <span class="nx">sPreviousKey</span><span class="o">);</span>
+				<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEY</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_focusPrevious</span><span class="o">,</span> <span class="k">this</span><span class="o">),</span> <span class="nx">oNode</span><span class="o">,</span> <span class="nx">sPrevKey</span><span class="o">);</span>
 		<span class="o">}</span>
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">sNextKey</span><span class="o">)</span> <span class="o">{</span>
@@ -525,15 +553,24 @@
 		<span class="o">}</span>
 
 
-		<span class="c">//	For Opera and Firefox 2:  In these browsers it is necessary to </span>
-<span class="c"></span>		<span class="c">//	call the &quot;preventDefault&quot; method on a &quot;keypress&quot; event in order </span>
-<span class="c"></span>		<span class="c">//	to prevent the viewport from scrolling.</span>
+		<span class="c">//	In Opera it is necessary to call the &quot;preventDefault&quot; method in  </span>
+<span class="c"></span>		<span class="c">//	response to the user pressing the arrow keys in order to prevent </span>
+<span class="c"></span>		<span class="c">//	the viewport from scrolling when the user is moving focus among </span>
+<span class="c"></span>		<span class="c">//	the focusable descendants.</span>
 <span class="c"></span>		
-		<span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span> <span class="o">||</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">&amp;&amp;</span> <span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">&lt;</span> <span class="m">1</span><span class="o">.</span><span class="m">9</span><span class="o">))</span> <span class="o">{</span>	
+		<span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span><span class="o">)</span> <span class="o">{</span>	
+			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oNode</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;keypress&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_preventScroll</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
+		<span class="o">}</span>
 
-			<span class="k">this</span><span class="o">.</span><span class="nx">_keyPressHandler</span> <span class="o">=</span> 
-				<span class="nx">oNode</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;keypress&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_preventScroll</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
 
+		<span class="c">//	For all browsers except Opera: HTML elements that are not natively</span>
+<span class="c"></span>		<span class="c">//	focusable but made focusable via the tabIndex attribute don&#39;t </span>
+<span class="c"></span>		<span class="c">//	fire a click event when the user presses the enter key.  It is </span>
+<span class="c"></span>		<span class="c">//	possible to work around this problem by simplying dispatching a </span>
+<span class="c"></span>		<span class="c">//	click event in response to the user pressing the enter key.</span>
+<span class="c"></span>
+		<span class="k">if</span> <span class="o">(!</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oNode</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;keypress&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_fireClick</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
 		<span class="o">}</span>
 
 	<span class="o">},</span>
@@ -572,19 +609,20 @@
 
 		<span class="k">var</span> <span class="nx">descendants</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_descendants</span><span class="o">,</span>
 			<span class="nx">aHandlers</span><span class="o">,</span>
-			<span class="nx">oDocument</span><span class="o">;</span>
+			<span class="nx">oDocument</span><span class="o">,</span>
+			<span class="nx">handle</span><span class="o">;</span>
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">descendants</span> <span class="o">&amp;&amp;</span> <span class="nx">descendants</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
 
 			<span class="nx">aHandlers</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_eventHandlers</span> <span class="o">||</span> <span class="o">[];</span>
 			<span class="nx">oDocument</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">);</span>
 
-			<span class="c">//	For performance: defer attaching all event handlers until the </span>
-<span class="c"></span>			<span class="c">//	first time one of the specified descendants receives focus</span>
-<span class="c"></span>
+
 			<span class="k">if</span> <span class="o">(</span><span class="nx">aHandlers</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
 
-						<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oDocument</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
+		        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Attaching base set of event handlers.&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;nodeFocusManager&quot;</span><span class="o">);</span>
+
+				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oDocument</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
 
 				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oDocument</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mousedown&quot;</span><span class="o">,</span> 
 					<span class="k">this</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
@@ -598,13 +636,33 @@
 				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span>
 						<span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT_CHANGE</span><span class="o">,</span> 
 								<span class="k">this</span><span class="o">.</span><span class="nx">_afterActiveDescendantChange</span><span class="o">));</span>
+
+
+				<span class="c">//	For performance: defer attaching all key-related event </span>
+<span class="c"></span>				<span class="c">//	handlers until the first time one of the specified </span>
+<span class="c"></span>				<span class="c">//	descendants receives focus.</span>
+<span class="c"></span>
+				<span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;focusedChange&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+					
+					<span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">newVal</span><span class="o">)</span> <span class="o">{</span>
+						
+				        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Attaching key event handlers.&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;nodeFocusManager&quot;</span><span class="o">);</span>
+						
+						<span class="k">this</span><span class="o">.</span><span class="nx">_attachKeyHandler</span><span class="o">();</span>
+
+						<span class="c">//	Detach this &quot;focusedChange&quot; handler so that the </span>
+<span class="c"></span>						<span class="c">//	key-related handlers only get attached once.</span>
+<span class="c"></span>
+						<span class="nx">handle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
+
+					<span class="o">}</span>
+					
+				<span class="o">},</span> <span class="k">this</span><span class="o">));</span>
+				
+				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">handle</span><span class="o">);</span>
 				
 			<span class="o">}</span>
-			<span class="k">else</span> <span class="o">{</span>
 
-				<span class="k">this</span><span class="o">.</span><span class="nx">_attachKeyHandler</span><span class="o">();</span>
-			
-			<span class="o">}</span>
 
 			<span class="k">this</span><span class="o">.</span><span class="nx">_eventHandlers</span> <span class="o">=</span> <span class="nx">aHandlers</span><span class="o">;</span>
 			
@@ -768,10 +826,6 @@
 			
 		<span class="o">}</span>
 
-
-		<span class="k">if</span> <span class="o">(</span><span class="nx">bFocused</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_eventHandlers</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">5</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">this</span><span class="o">.</span><span class="nx">_attachEventHandlers</span><span class="o">();</span>
-		<span class="o">}</span>
 
 		<span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">FOCUSED</span><span class="o">,</span> <span class="nx">bFocused</span><span class="o">);</span>			
 

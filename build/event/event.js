@@ -280,6 +280,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     this.ctrlKey  = e.ctrlKey;
     this.metaKey  = e.metaKey;
     this.shiftKey = e.shiftKey;
+    this.type     = e.type;
 
     //////////////////////////////////////////////////////
 

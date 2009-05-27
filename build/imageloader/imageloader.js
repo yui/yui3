@@ -127,6 +127,15 @@ YUI.add('imageloader', function(Y) {
 			 */
 			this._areFoldTriggersSet = false;
 
+			/**
+			 * The maximum that the visible part of the document has been scrolled or resized to.
+			 * During fold checks, if the user scrolls up then there's no need to check for newly exposed images.
+			 * @property _maxKnownHLimit
+			 * @private
+			 * @type Int
+			 */
+			this._maxKnownHLimit = 0;
+
 			// add a listener to domready that will start the time limit
 			Y.on('domready', this._onloadTasks, this);
 		},
@@ -279,7 +288,7 @@ YUI.add('imageloader', function(Y) {
 			clearTimeout(this._timeout);
 			// detach all listeners
 			for (var i=0, len = this._triggers.length; i < len; i++) {
-				Y.detach(this._triggers[i]);
+				this._triggers[i].detach();
 			}
 		},
 
@@ -293,6 +302,12 @@ YUI.add('imageloader', function(Y) {
 			var allFetched = true,
 			    viewReg = Y.DOM.viewportRegion(),
 			    hLimit = viewReg.bottom + this.get('foldDistance');
+
+			// unless we've uncovered new frontiers, there's no need to continue
+			if (hLimit <= this._maxKnownHLimit) {
+				return;
+			}
+			this._maxKnownHLimit = hLimit;
 
 			for (var id in this._imgObjs) {
 				if (this._imgObjs.hasOwnProperty(id)) {

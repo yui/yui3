@@ -83,9 +83,7 @@
         <span class="s1">&#39;type&#39;</span>
     <span class="o">],</span>
 
-    <span class="nx">EventFacade</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventFacade</span><span class="o">,</span>
-
-    <span class="nx">FACADE</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventFacade</span><span class="o">(),</span>
+    <span class="nx">FACADE</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventFacade</span><span class="o">(),</span>
 
     <span class="nx">YUI3_SIGNATURE</span> <span class="o">=</span> <span class="m">9</span><span class="o">;</span>
 
@@ -479,7 +477,7 @@
         <span class="k">var</span> <span class="nx">ef</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_facade</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">args</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">details</span><span class="o">,</span> <span class="nx">o2</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">ef</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">ef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventFacade</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">);</span>
+            <span class="nx">ef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventFacade</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="c">// if the first argument is an object literal, apply the</span>
@@ -490,16 +488,14 @@
 
             <span class="nx">o2</span> <span class="o">=</span> <span class="o">{};</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="k">instanceof</span> <span class="nx">EventFacade</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// protect the event facade properties</span>
-<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o2</span><span class="o">,</span> <span class="nx">ef</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">FACADE</span><span class="o">);</span>
-                <span class="c">// mix the data</span>
-<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-                <span class="c">// restore ef</span>
-<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="c">// protect the event facade properties</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o2</span><span class="o">,</span> <span class="nx">ef</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">FACADE</span><span class="o">);</span>
+
+            <span class="c">// mix the data</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+
+            <span class="c">// restore ef</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="c">// update the details field with the arguments</span>

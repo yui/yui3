@@ -225,10 +225,12 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
         test_each: function() {
             var count = 0,
                 nodes = Y.all('#test-nodes *'),
-                index, instance, isNode;
+                g_node, self, index, instance, isNode;
 
             nodes.each(function(node, i, list) {
+                self = this;
                 count++;
+                g_node = node;
                 index = i;
                 instance = list;
                 isNode = (node instanceof Y.Node);
@@ -237,6 +239,8 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.areEqual(count, nodes.size(), 'node.each(count) === nodes.size()');
             Assert.areEqual(nodes.size() - 1, index, 'nodes.size() - 1 === index');
             Assert.areEqual(nodes, instance, 'nodes === instance');
+            Assert.areEqual(nodes, instance, 'nodes === instance');
+            Assert.areEqual(g_node, self, 'this === node');
             Assert.isTrue(isNode, 'node instanceof Y.Node');
         },
 
