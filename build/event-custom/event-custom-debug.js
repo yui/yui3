@@ -1454,7 +1454,7 @@ var L = Y.Lang,
      * applied to the supplied type.
      * @method _getType
      */
-    _getType = Y.cached(function(pre, type) {
+    _getType = Y.cached(function(type, pre) {
 
         // console.log('__getType: ' + pre + ', ' + type, 'info', 'event');
 
@@ -1484,7 +1484,7 @@ var L = Y.Lang,
      * @method _parseType
      * @private
      */
-    _parseType = Y.cached(function(pre, type) {
+    _parseType = Y.cached(function(type, pre) {
 
         var t = type, parts, detachcategory, after, i, full_t;
 
@@ -1507,7 +1507,7 @@ var L = Y.Lang,
             t = parts[1];
         }
 
-        full_t = _getType(pre, t);
+        full_t = _getType(t, pre);
 
         return [detachcategory, full_t, after, t];
     }),
@@ -1565,7 +1565,7 @@ ET.prototype = {
      */
     on: function(type, fn, context) {
 
-        var parts = _parseType(this._yuievt.config.prefix, type), f, c, args, ret, ce,
+        var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n;
 
@@ -1691,7 +1691,7 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
 
-        var parts = _parseType(this._yuievt.config.prefix, type), 
+        var parts = _parseType(type, this._yuievt.config.prefix), 
         detachcategory = L.isArray(parts) ? parts[0] : null,
         shorttype = (parts) ? parts[3] : null,
         handle, adapt, store = Y.Env.evt.handles, cat, args,
@@ -1786,7 +1786,7 @@ ET.prototype = {
      * @param type {string}   The type, or name of the event
      */
     detachAll: function(type) {
-        type = _getType(this._yuievt.config.prefix, type);
+        type = _getType(type, this._yuievt.config.prefix);
         return this.detach(type);
     },
 
@@ -1861,7 +1861,7 @@ ET.prototype = {
     publish: function(type, opts) {
         // this._yuievt.config.prefix
 
-        type = _getType(this._yuievt.config.prefix, type);
+        type = _getType(type, this._yuievt.config.prefix);
 
         var events, ce, ret, o = opts || {};
 
@@ -1952,7 +1952,7 @@ ET.prototype = {
             t = (typeIncluded) ? type : (type && type.type),
             ce, a, ret;
 
-        t = _getType(this._yuievt.config.prefix, t);
+        t = _getType(t, this._yuievt.config.prefix);
         ce = this.getEvent(t);
 
         // this event has not been published or subscribed to
@@ -1990,7 +1990,7 @@ ET.prototype = {
      * @return {Event.Custom} the custom event or null
      */
     getEvent: function(type) {
-        type = _getType(this._yuievt.config.prefix, type);
+        type = _getType(type, this._yuievt.config.prefix);
         var e = this._yuievt.events;
         return (e && type in e) ? e[type] : null;
     },
