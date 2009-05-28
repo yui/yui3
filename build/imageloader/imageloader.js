@@ -52,7 +52,8 @@ YUI.add('imageloader', function(Y) {
 		 */
 		foldDistance: {
 			validator: Y.Lang.isNumber,
-			setter: function(val) { this._setFoldTriggers(); return val; }
+			setter: function(val) { this._setFoldTriggers(); return val; },
+			lazyAdd: false
 		},
 
 		/**
@@ -63,7 +64,8 @@ YUI.add('imageloader', function(Y) {
 		 */
 		className: {
 			value: null,
-			setter: function(name) { this._className = name; return name; }
+			setter: function(name) { this._className = name; return name; },
+			lazyAdd: false
 		}
 
 	};
@@ -128,7 +130,7 @@ YUI.add('imageloader', function(Y) {
 			this._areFoldTriggersSet = false;
 
 			/**
-			 * The maximum that the visible part of the document has been scrolled or resized to.
+			 * The maximum pixel height of the document that has been made visible.
 			 * During fold checks, if the user scrolls up then there's no need to check for newly exposed images.
 			 * @property _maxKnownHLimit
 			 * @private
