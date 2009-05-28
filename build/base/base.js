@@ -321,6 +321,7 @@ Y.namespace("Plugin").Host = PluginHost;
         Y.Attribute.call(this);
         Y.Plugin.Host.call(this);
 
+        this._silentInit = this._silentInit || false;
         if (this._lazyAttrInit !== false) { this._lazyAttrInit = true; }
 
         this.init.apply(this, arguments);
@@ -422,10 +423,12 @@ Y.namespace("Plugin").Host = PluginHost;
              * @param {Event.Facade} e Event object
              * @param config Object literal of configuration name/value pairs
              */
-            this.publish(INIT, {
-                queuable:false,
-                defaultFn:this._defInitFn
-            });
+            if (!this._silentInit) {
+                this.publish(INIT, {
+                    queuable:false,
+                    defaultFn:this._defInitFn
+                });
+            }
 
             if (config) {
                 if (config.on) {
@@ -436,7 +439,12 @@ Y.namespace("Plugin").Host = PluginHost;
                 }
             }
 
-            this.fire(INIT, {cfg: config});
+            if (!this._silentInit) {
+                this.fire(INIT, {cfg: config});
+            } else {
+                this._defInitFn({cfg: config});
+            }
+
             return this;
         },
 
@@ -492,7 +500,12 @@ Y.namespace("Plugin").Host = PluginHost;
         _defInitFn : function(e) {
             this._initHierarchy(e.cfg);
             this._initPlugins(e.cfg);
-            this._set(INITIALIZED, true);
+
+            if (!this._silentInit) {
+                this._set(INITIALIZED, true);
+            } else {
+                this._conf.add(INITIALIZED, true);
+            }
         },
 
         /**
