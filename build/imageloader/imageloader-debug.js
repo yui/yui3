@@ -310,7 +310,8 @@ YUI.add('imageloader', function(Y) {
 
 			var allFetched = true,
 			    viewReg = Y.DOM.viewportRegion(),
-			    hLimit = viewReg.bottom + this.get('foldDistance');
+			    hLimit = viewReg.bottom + this.get('foldDistance'),
+					id, imgFetched, els, i, len;
 
 			// unless we've uncovered new frontiers, there's no need to continue
 			if (hLimit <= this._maxKnownHLimit) {
@@ -318,9 +319,9 @@ YUI.add('imageloader', function(Y) {
 			}
 			this._maxKnownHLimit = hLimit;
 
-			for (var id in this._imgObjs) {
+			for (id in this._imgObjs) {
 				if (this._imgObjs.hasOwnProperty(id)) {
-					var imgFetched = this._imgObjs[id].fetch(hLimit);
+					imgFetched = this._imgObjs[id].fetch(hLimit);
 					allFetched = allFetched && imgFetched;
 				}
 			}
@@ -330,11 +331,11 @@ YUI.add('imageloader', function(Y) {
 				if (this._classImageEls === null) {
 					// get all the relevant elements and store them
 					this._classImageEls = [];
-					var classedEls = Y.all('.' + this._className);
-					classedEls.each( function(node) { this._classImageEls.push( { el: node, y: node.getY(), fetched: false } ); }, this);
+					els = Y.all('.' + this._className);
+					els.each( function(node) { this._classImageEls.push( { el: node, y: node.getY(), fetched: false } ); }, this);
 				}
-				var els = this._classImageEls;
-				for (var i=0, len = els.length; i < len; i++) {
+				els = this._classImageEls;
+				for (i=0, len = els.length; i < len; i++) {
 					if (els[i].fetched) {
 						continue;
 					}
@@ -540,14 +541,15 @@ YUI.add('imageloader', function(Y) {
 				return true;
 			}
 
-			var el = this._getImgEl();
+			var el = this._getImgEl(),
+			    yPos;
 			if (! el) {
 				return false;
 			}
 
 			if (withinY) {
 				// need a distance check
-				var yPos = this._getYPos();
+				yPos = this._getYPos();
 				if (! yPos || yPos > withinY) {
 					return false;
 				}
