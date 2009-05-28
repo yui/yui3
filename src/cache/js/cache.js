@@ -134,9 +134,10 @@ Y.extend(Cache, Y.Plugin.Base, {
     /**
     * @method initializer
     * @description Internal init() handler.
+    * @param config {Object} Config object.
     * @private        
     */
-    initializer: function() {
+    initializer: function(config) {
 
         /**
         * @event add

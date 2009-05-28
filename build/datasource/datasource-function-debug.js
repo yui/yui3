@@ -51,37 +51,11 @@ Y.mix(DSFn, {
         */
         source: {
             validator: LANG.isFunction
-        },
-
-        /**
-         * Context in which to execute the function. By default, is the DataSource
-         * instance itself. If set, the function will receive the DataSource instance
-         * as an additional argument.
-         *
-         * @property scope
-         * @type Object
-         * @default null
-         */
-        context: {
-            value: null
         }
     }
 });
     
 Y.extend(DSFn, Y.DataSource.Local, {
-
-
-    /**
-    * Internal init() handler.
-    *
-    * @method initializer
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function(config) {
-        
-    },
-
     /**
      * Passes query string to IO. Fires <code>response</code> event when
      * response is received asynchronously.
@@ -95,7 +69,6 @@ Y.extend(DSFn, Y.DataSource.Local, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
@@ -104,11 +77,10 @@ Y.extend(DSFn, Y.DataSource.Local, {
      */
     _defRequestFn: function(e) {
         var fn = this.get("source"),
-            scope = this.get("scope") || this,
             response;
             
             if(fn) {
-                response = fn.call(scope, e.request, this, e);
+                response = fn(e.request, this, e);
                 this.fire("data", Y.mix({data:response}, e));
             }
             else {

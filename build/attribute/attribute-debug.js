@@ -145,7 +145,8 @@ YUI.add('attribute', function(Y) {
         BROADCAST = "broadcast",
         DEF_VALUE = "defaultValue",
         LAZY = "lazy",
-        LAZY_INIT = "lazyInit",
+        LAZY_ADD = "lazyAdd",
+        IS_LAZY_ADD = "isLazyAdd",
         INVALID_VALUE,
         MODIFIABLE = {};
 
@@ -242,6 +243,8 @@ YUI.add('attribute', function(Y) {
             Y.log('Adding attribute: ' + name, 'info', 'attribute');
             var conf = this._conf;
 
+            lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
+
             if (lazy && !this.attrAdded(name)) {
                 Y.log('Lazy Add: ' + name, 'info', 'attribute');
 
@@ -249,9 +252,9 @@ YUI.add('attribute', function(Y) {
                 conf.add(name, ADDED, true);
             } else {
 
-                if (this.attrAdded(name) && !conf.get(name, LAZY_INIT)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
+                if (this.attrAdded(name) && !conf.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
-                if (!this.attrAdded(name) || conf.get(name, LAZY_INIT)) {
+                if (!this.attrAdded(name) || conf.get(name, IS_LAZY_ADD)) {
                     Y.log('Non-Lazy Add: ' + name, 'info', 'attribute');
 
                     config = config || {};
@@ -405,7 +408,7 @@ YUI.add('attribute', function(Y) {
         _addLazyAttr: function(name) {
             var conf = this._conf;
             var lazyCfg = conf.get(name, LAZY);
-            conf.add(name, LAZY_INIT, true);
+            conf.add(name, IS_LAZY_ADD, true);
             conf.remove(name, LAZY);
             this.addAttr(name, lazyCfg);
         },
@@ -765,6 +768,10 @@ YUI.add('attribute', function(Y) {
 
                     if (value !== undefined) {
                         attrCfg.value = value;
+                    }
+
+                    if (this._tCfgs[attr]) {
+                        delete this._tCfgs[attr];
                     }
 
                     this.addAttr(attr, attrCfg, lazy);
