@@ -22,7 +22,7 @@ YUI.add('imageloader', function(Y) {
 		Y.ImgLoadGroup.superclass.constructor.apply(this, arguments);
 	};
 
-	Y.ImgLoadGroup.NAME = 'imgloadgroup';
+	Y.ImgLoadGroup.NAME = 'imgLoadGroup';
 
 	Y.ImgLoadGroup.ATTRS = {
 		
@@ -392,7 +392,7 @@ YUI.add('imageloader', function(Y) {
 		this._init();
 	};
 		
-	Y.ImgLoadImgObj.NAME = 'imgloadimg';
+	Y.ImgLoadImgObj.NAME = 'imgLoadImgObj';
 
 	Y.ImgLoadImgObj.ATTRS = {
 		/**
