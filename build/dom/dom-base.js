@@ -414,12 +414,12 @@ Y.DOM = {
 
         nodes = create(html, doc, tag).childNodes;
 
-        if (nodes[LENGTH] === 1) { // return single node, breaking parentNode ref from "fragment"
+        if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
             ret = nodes[0].parentNode.removeChild(nodes[0]);
         } else { // return multiple nodes as a fragment
             ret = doc.createDocumentFragment();
-            while (nodes[LENGTH]) {
-                ret.appendChild(nodes[nodes[LENGTH] - 1]); 
+            while (nodes.length) {
+                ret.appendChild(nodes[nodes.length - 1]); 
             }
         }
 
@@ -507,7 +507,7 @@ Y.DOM = {
 
         if (!where) {
             node.appendChild(newNode);
-        } else if (where[NODE_TYPE]) {
+        } else if (where.nodeType) {
             Y.DOM.insertBefore(newNode, where);
         } else if (where === 'replace') {
             Y.DOM._removeChildNodes(node);
@@ -516,13 +516,13 @@ Y.DOM = {
         }
 
         if (execScripts) {
-            if (newNode.nodeName.toUpperCase() === 'SCRIPT' && !Y.UA.gecko) {
+            if (newNode.tagName.toUpperCase() === 'SCRIPT' && !Y.UA.gecko) {
                 scripts = [newNode]; // execute the new script
             } else {
                 scripts = newNode.getElementsByTagName('script');
             }
             Y.DOM._execScripts(scripts);
-        } else if (newNode.innerHTML.indexOf('script') > -1) { // prevent any scripts from being injected
+        } else if (newNode.innerHTML && newNode.innerHTML.indexOf('script') > -1) { // prevent any scripts from being injected
             Y.DOM._stripScripts(newNode);
         }
 
@@ -694,18 +694,17 @@ Y.DOM = {
 
     },
 
-    _batch: function(nodes, fn, arg1, arg2, etc) {
+    _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
         fn = (typeof name === 'string') ? Y.DOM[fn] : fn;
         var args = arguments,
             result,
             ret = [];
 
         if (fn && nodes) {
-            args = g_slice.call(args, 1);
+            //args = g_slice.call(args, 1);
             Y.each(nodes, function(node) {
-                args.splice(0, 1, node);
-                console.log(args[1]);
-                if ((result = fn.apply(Y.DOM, args)) !== undefined) {
+                //args.splice(0, 1, node);
+                if ((result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc)) !== undefined) {
                     ret[ret.length] = result;
                 }
             });

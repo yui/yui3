@@ -500,4 +500,4 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 
 
 
-}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});
