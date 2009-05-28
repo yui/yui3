@@ -20,7 +20,7 @@
 		Y.ImgLoadGroup.superclass.constructor.apply(this, arguments);
 	};
 
-	Y.ImgLoadGroup.NAME = 'imgloadgroup';
+	Y.ImgLoadGroup.NAME = 'imgLoadGroup';
 
 	Y.ImgLoadGroup.ATTRS = {
 		
@@ -390,7 +390,7 @@
 		this._init();
 	};
 		
-	Y.ImgLoadImgObj.NAME = 'imgloadimg';
+	Y.ImgLoadImgObj.NAME = 'imgLoadImgObj';
 
 	Y.ImgLoadImgObj.ATTRS = {
 		/**
