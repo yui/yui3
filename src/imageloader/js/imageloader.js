@@ -50,7 +50,8 @@
 		 */
 		foldDistance: {
 			validator: Y.Lang.isNumber,
-			setter: function(val) { this._setFoldTriggers(); return val; }
+			setter: function(val) { this._setFoldTriggers(); return val; },
+			lazyAdd: false
 		},
 
 		/**
@@ -61,7 +62,8 @@
 		 */
 		className: {
 			value: null,
-			setter: function(name) { this._className = name; return name; }
+			setter: function(name) { this._className = name; return name; },
+			lazyAdd: false
 		}
 
 	};
