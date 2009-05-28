@@ -1932,6 +1932,7 @@ Y.Loader.prototype = {
                     charset: this.charset,
                     attributes: attr,
                     timeout: this.timeout,
+                    autopurge: false,
                     context: self 
                 });
 
@@ -2023,6 +2024,7 @@ Y.Loader.prototype = {
                     onFailure: this._onFailure,
                     onTimeout: this._onTimeout,
                     timeout: this.timeout,
+                    autopurge: false,
                     context: self 
                 });
 

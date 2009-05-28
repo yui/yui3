@@ -1967,6 +1967,7 @@ Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
                     charset: this.charset,
                     attributes: attr,
                     timeout: this.timeout,
+                    autopurge: false,
                     context: self 
                 });
 
@@ -2063,6 +2064,7 @@ Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader"
                     onFailure: this._onFailure,
                     onTimeout: this._onTimeout,
                     timeout: this.timeout,
+                    autopurge: false,
                     context: self 
                 });
 
