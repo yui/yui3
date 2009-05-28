@@ -99,7 +99,8 @@
 <span class="c">		 */</span>
 		<span class="nx">foldDistance</span><span class="o">:</span> <span class="o">{</span>
 			<span class="nx">validator</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">,</span>
-			<span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setFoldTriggers</span><span class="o">();</span> <span class="k">return</span> <span class="nx">val</span><span class="o">;</span> <span class="o">}</span>
+			<span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setFoldTriggers</span><span class="o">();</span> <span class="k">return</span> <span class="nx">val</span><span class="o">;</span> <span class="o">},</span>
+			<span class="nx">lazyAdd</span><span class="o">:</span> <span class="kc">false</span>
 		<span class="o">},</span>
 
 		<span class="c">/**</span>
@@ -110,7 +111,8 @@
 <span class="c">		 */</span>
 		<span class="nx">className</span><span class="o">:</span> <span class="o">{</span>
 			<span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-			<span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="nx">_className</span> <span class="o">=</span> <span class="nx">name</span><span class="o">;</span> <span class="k">return</span> <span class="nx">name</span><span class="o">;</span> <span class="o">}</span>
+			<span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="nx">_className</span> <span class="o">=</span> <span class="nx">name</span><span class="o">;</span> <span class="k">return</span> <span class="nx">name</span><span class="o">;</span> <span class="o">},</span>
+			<span class="nx">lazyAdd</span><span class="o">:</span> <span class="kc">false</span>
 		<span class="o">}</span>
 
 	<span class="o">};</span>
@@ -355,7 +357,8 @@
 
 			<span class="k">var</span> <span class="nx">allFetched</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
 			    <span class="nx">viewReg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">viewportRegion</span><span class="o">(),</span>
-			    <span class="nx">hLimit</span> <span class="o">=</span> <span class="nx">viewReg</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;foldDistance&#39;</span><span class="o">);</span>
+			    <span class="nx">hLimit</span> <span class="o">=</span> <span class="nx">viewReg</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;foldDistance&#39;</span><span class="o">),</span>
+					<span class="nx">id</span><span class="o">,</span> <span class="nx">imgFetched</span><span class="o">,</span> <span class="nx">els</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
 
 			<span class="c">// unless we&#39;ve uncovered new frontiers, there&#39;s no need to continue</span>
 <span class="c"></span>			<span class="k">if</span> <span class="o">(</span><span class="nx">hLimit</span> <span class="o">&lt;=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_maxKnownHLimit</span><span class="o">)</span> <span class="o">{</span>
@@ -363,9 +366,9 @@
 			<span class="o">}</span>
 			<span class="k">this</span><span class="o">.</span><span class="nx">_maxKnownHLimit</span> <span class="o">=</span> <span class="nx">hLimit</span><span class="o">;</span>
 
-			<span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">id</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">_imgObjs</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">for</span> <span class="o">(</span><span class="nx">id</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">_imgObjs</span><span class="o">)</span> <span class="o">{</span>
 				<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_imgObjs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">id</span><span class="o">))</span> <span class="o">{</span>
-					<span class="k">var</span> <span class="nx">imgFetched</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_imgObjs</span><span class="o">[</span><span class="nx">id</span><span class="o">].</span><span class="nx">fetch</span><span class="o">(</span><span class="nx">hLimit</span><span class="o">);</span>
+					<span class="nx">imgFetched</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_imgObjs</span><span class="o">[</span><span class="nx">id</span><span class="o">].</span><span class="nx">fetch</span><span class="o">(</span><span class="nx">hLimit</span><span class="o">);</span>
 					<span class="nx">allFetched</span> <span class="o">=</span> <span class="nx">allFetched</span> <span class="o">&amp;&amp;</span> <span class="nx">imgFetched</span><span class="o">;</span>
 				<span class="o">}</span>
 			<span class="o">}</span>
@@ -375,11 +378,11 @@
 				<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_classImageEls</span> <span class="o">===</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
 					<span class="c">// get all the relevant elements and store them</span>
 <span class="c"></span>					<span class="k">this</span><span class="o">.</span><span class="nx">_classImageEls</span> <span class="o">=</span> <span class="o">[];</span>
-					<span class="k">var</span> <span class="nx">classedEls</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">_className</span><span class="o">);</span>
-					<span class="nx">classedEls</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classImageEls</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span> <span class="o">{</span> <span class="nx">el</span><span class="o">:</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">y</span><span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getY</span><span class="o">(),</span> <span class="nx">fetched</span><span class="o">:</span> <span class="kc">false</span> <span class="o">}</span> <span class="o">);</span> <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+					<span class="nx">els</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">_className</span><span class="o">);</span>
+					<span class="nx">els</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classImageEls</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span> <span class="o">{</span> <span class="nx">el</span><span class="o">:</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">y</span><span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getY</span><span class="o">(),</span> <span class="nx">fetched</span><span class="o">:</span> <span class="kc">false</span> <span class="o">}</span> <span class="o">);</span> <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
 				<span class="o">}</span>
-				<span class="k">var</span> <span class="nx">els</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classImageEls</span><span class="o">;</span>
-				<span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">els</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+				<span class="nx">els</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classImageEls</span><span class="o">;</span>
+				<span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">els</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
 					<span class="k">if</span> <span class="o">(</span><span class="nx">els</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">fetched</span><span class="o">)</span> <span class="o">{</span>
 						<span class="k">continue</span><span class="o">;</span>
 					<span class="o">}</span>
@@ -585,14 +588,15 @@
 				<span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
 			<span class="o">}</span>
 
-			<span class="k">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getImgEl</span><span class="o">();</span>
+			<span class="k">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getImgEl</span><span class="o">(),</span>
+			    <span class="nx">yPos</span><span class="o">;</span>
 			<span class="k">if</span> <span class="o">(!</span> <span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
 				<span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
 			<span class="o">}</span>
 
 			<span class="k">if</span> <span class="o">(</span><span class="nx">withinY</span><span class="o">)</span> <span class="o">{</span>
 				<span class="c">// need a distance check</span>
-<span class="c"></span>				<span class="k">var</span> <span class="nx">yPos</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getYPos</span><span class="o">();</span>
+<span class="c"></span>				<span class="nx">yPos</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getYPos</span><span class="o">();</span>
 				<span class="k">if</span> <span class="o">(!</span> <span class="nx">yPos</span> <span class="o">||</span> <span class="nx">yPos</span> <span class="o">&gt;</span> <span class="nx">withinY</span><span class="o">)</span> <span class="o">{</span>
 					<span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
 				<span class="o">}</span>
