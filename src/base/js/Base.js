@@ -50,7 +50,7 @@
         Y.Plugin.Host.call(this);
 
         this._silentInit = this._silentInit || false;
-        if (this._lazyAttrInit !== false) { this._lazyAttrInit = true; }
+        if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
 
         this.init.apply(this, arguments);
     }
@@ -297,16 +297,14 @@
          * @param {Objects} allCfgs
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
-            var cfgs = null, attr;
+            var cfgs = null, attr, attrs = clazz.ATTRS;
 
-            if (clazz.ATTRS) {
-                for (attr in clazz.ATTRS) {
-                    if (clazz.ATTRS.hasOwnProperty(attr)) {
-                        if (allCfgs[attr]) {
-                            cfgs = cfgs || {};
-                            cfgs[attr] = allCfgs[attr];
-                            delete allCfgs[attr];
-                        }
+            if (attrs) {
+                for (attr in attrs) {
+                    if (attrs.hasOwnProperty(attr) && allCfgs[attr]) {
+                        cfgs = cfgs || {};
+                        cfgs[attr] = allCfgs[attr];
+                        delete allCfgs[attr];
                     }
                 }
             }
@@ -413,7 +411,7 @@
          * @private
          */
         _initHierarchy : function(userVals) {
-            var lazy = this._lazyAttrInit,
+            var lazy = this._lazyAddAttrs,
                 constr,
                 constrProto,
                 ci,
