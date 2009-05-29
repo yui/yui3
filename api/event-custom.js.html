@@ -85,6 +85,8 @@
 
     <span class="nx">FACADE</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventFacade</span><span class="o">(),</span>
 
+    <span class="nx">FACADE_KEYS</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">keys</span><span class="o">(</span><span class="nx">FACADE</span><span class="o">),</span>
+
     <span class="nx">YUI3_SIGNATURE</span> <span class="o">=</span> <span class="m">9</span><span class="o">;</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">EventHandle</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">evt</span><span class="o">,</span> <span class="nx">sub</span><span class="o">)</span> <span class="o">{</span>
@@ -489,13 +491,13 @@
             <span class="nx">o2</span> <span class="o">=</span> <span class="o">{};</span>
 
             <span class="c">// protect the event facade properties</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o2</span><span class="o">,</span> <span class="nx">ef</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">FACADE</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o2</span><span class="o">,</span> <span class="nx">ef</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">FACADE_KEYS</span><span class="o">);</span>
 
             <span class="c">// mix the data</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
             <span class="c">// restore ef</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o2</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">FACADE_KEYS</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="c">// update the details field with the arguments</span>
