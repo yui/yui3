@@ -8,7 +8,7 @@ YUI({
 	}
 }).use('imageloader', 'profiler', 'console', function(Y) {
 
-		new Y.Console({ width: 500, height: 800 }).render();
+		new Y.Console({ width: 500, height: 800, newestOnTop: false }).render();
 
 		Y.Profiler.registerConstructor('Y.Base');
 		Y.Profiler.registerConstructor('Y.ImgLoadGroup');
