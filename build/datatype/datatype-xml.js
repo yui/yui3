@@ -58,6 +58,7 @@ Y.namespace("Parsers").xml = Y.DataType.XML.parse;
 
 
 
+
 }, '@VERSION@' );
 
 YUI.add('datatype-xml-format', function(Y) {
@@ -93,11 +94,11 @@ Y.mix(Y.namespace("DataType.XML"), {
             }
         }
         catch(e) {
-            if(data.xml) {
+            if(data && data.xml) {
                 return data.xml;
             }
             else {
-                return data.toString();
+                return (LANG.isValue(data) && data.toString) ? data.toString() : "";
             }
         }
     }

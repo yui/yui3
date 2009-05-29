@@ -55,6 +55,16 @@
         var testFormat = new Y.Test.Case({
             name: "XML Format Tests",
 
+            testUndefined: function() {
+                var output = Y.DataType.XML.format();
+                ASSERT.areSame("", output, "Expected empty string.");
+            },
+
+            testNull: function() {
+                var output = Y.DataType.XML.format(null);
+                ASSERT.areSame("", output, "Expected empty string.");
+            },
+
             testFormat: function() {
                 var origString = "<myroot><item type=\"foo\"><name>Abc</name><rank>1</rank></item><item type=\"bar\"><name>Def</name><rank>2</rank></item><item type=\"bat\"><name>Ghhi</name><rank>3</rank></item></myroot>",
                     xmldoc = Y.DataType.XML.parse(origString),
