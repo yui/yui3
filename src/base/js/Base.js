@@ -351,18 +351,18 @@
                 path, 
                 i, 
                 clone, 
-                cfgProps = Base._ATTR_CFG, 
-                filteredMerge = this._filteredMerge,
-
+                cfgProps = Base._ATTR_CFG,
                 aggAttrs = {};
 
             if (allAttrs) {
                 for (i = allAttrs.length-1; i >= 0; --i) {
                     attrs = allAttrs[i];
+
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            cfg = filteredMerge(cfgProps, {}, attrs[attr]);
+                            // Protect config passed in
+                            cfg = Y.mix({}, attrs[attr], true, cfgProps);
 
                             val = cfg.value;
                             clone = cfg.cloneDefaultValue;
@@ -391,7 +391,7 @@
                                 if (!aggAttrs[attr]) {
                                     aggAttrs[attr] = cfg;
                                 } else {
-                                    filteredMerge(cfgProps, aggAttrs[attr], cfg);
+                                    Y.mix(aggAttrs[attr], cfg, true, cfgProps);
                                 }
                             }
                         }
@@ -461,30 +461,6 @@
                     constrProto.destructor.apply(this, arguments);
                 }
             }
-        },
-
-        /**
-         * Merges a given list of properties from the supplier object to the receiver object,
-         * overwriting the propery on the supplier if it exists. Implemented locally by Base 
-         * for performance reasons, to streamline the critical path for Base. If you need 
-         * additional flexibility use the Y.merge or Y.mix utilities.
-         *
-         * @method _filteredMerge
-         * @protected
-         *
-         * @param {Array} properties The list of properties to merge. Only these properties will be merged.
-         * @param {Object} r Reciever. The object being merged into.
-         * @param {Object} s Supplier. The object providing the properties to merge.
-         */
-        _filteredMerge : function(properties, r, s) {
-            var i, l, p;
-            for (i = 0, l = properties.length; i < l; ++i) {
-                p = properties[i];
-                if (p in s){
-                    r[p] = s[p];
-                }
-            }
-            return r;
         },
 
         /**
