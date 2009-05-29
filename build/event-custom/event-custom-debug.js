@@ -461,6 +461,8 @@ var AFTER = 'after',
 
     FACADE = new Y.EventFacade(),
 
+    FACADE_KEYS = Y.Object.keys(FACADE),
+
     YUI3_SIGNATURE = 9;
 
 Y.EventHandle = function(evt, sub) {
@@ -865,13 +867,13 @@ Y.CustomEvent.prototype = {
             o2 = {};
 
             // protect the event facade properties
-            Y.mix(o2, ef, true, FACADE);
+            Y.mix(o2, ef, true, FACADE_KEYS);
 
             // mix the data
             Y.mix(ef, o, true);
 
             // restore ef
-            Y.mix(ef, o2, true);
+            Y.mix(ef, o2, true, FACADE_KEYS);
         }
 
         // update the details field with the arguments

@@ -1218,7 +1218,7 @@ A.numericSort = function(a, b) {
 (function() {
 
 var L = Y.Lang, 
-DELIMITER = '`~',
+DELIMITER = '__',
 FROZEN = {
     'prototype': 1,
     '_yuid': 1
@@ -1231,16 +1231,13 @@ FROZEN = {
  * @property _iefix
  * @param {Function} r  the object to receive the augmentation
  * @param {Function} s  the object that supplies the properties to augment
- * @param w a whitelist object (the keys are the valid items to reference)
  * @private
  * @for YUI
  */
-_iefix = function(r, s, w) {
+_iefix = function(r, s) {
     var fn = s.toString;
     if (L.isFunction(fn) && fn != Object.prototype.toString) {
-        if (!w || (w.toString)) {
-            r.toString = fn;
-        }
+        r.toString = fn;
     }
 };
 
@@ -1296,28 +1293,35 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
         return r || Y;
     }
 
-    switch (mode) {
-        case 1: // proto to proto
-            return Y.mix(r.prototype, s.prototype);
-        case 2: // object to object and proto to proto
-            Y.mix(r.prototype, s.prototype);
-            break; // pass through 
-        case 3: // proto to static
-            return Y.mix(r, s.prototype);
-        case 4: // static to proto
-            return Y.mix(r.prototype, s);
-        default:  // object to object is what happens below
+    if (mode) {
+        switch (mode) {
+            case 1: // proto to proto
+                return Y.mix(r.prototype, s.prototype);
+            case 2: // object to object and proto to proto
+                Y.mix(r.prototype, s.prototype);
+                break; // pass through 
+            case 3: // proto to static
+                return Y.mix(r, s.prototype);
+            case 4: // static to proto
+                return Y.mix(r.prototype, s);
+            default:  // object to object is what happens below
+        }
     }
 
-    var w = (wl && wl.length) ? Y.Array.hash(wl) : null, 
-        arr = merge && L.isArray(r), i;
+    // Maybe don't even need this wl && wl.length check anymore??
+    var arr = merge && L.isArray(r), i, l, p;
 
-    for (i in s) { 
-
-        if (s.hasOwnProperty(i) && !(i in FROZEN)) {
-
-            // check white list if it was supplied
-            if (!w || (i in w)) {
+    if (wl && wl.length) {
+        for (i = 0, l = wl.length; i < l; ++i) {
+            p = wl[i];
+            if ((p in s) && (ov || !(p in r))) {
+                r[p] = s[p];
+            }
+        }
+    } else {
+        for (i in s) { 
+            if (s.hasOwnProperty(i) && !(i in FROZEN)) {
+                // check white list if it was supplied
                 // if the receiver has this property, it is an object,
                 // and merge is specified, merge the two objects.
                 if (merge && L.isObject(r[i], true)) {
@@ -1333,10 +1337,10 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                 }
             }
         }
-    }
-
-    if (Y.UA.ie) {
-        _iefix(r, s, w);
+    
+        if (Y.UA.ie) {
+            _iefix(r, s);
+        }
     }
 
     return r;
@@ -1368,6 +1372,7 @@ Y.cached = function(source, cache){
 };
 
 })();
+
 (function() {
 
 /**
