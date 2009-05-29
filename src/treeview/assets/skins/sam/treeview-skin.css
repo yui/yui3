@@ -1,51 +1,26 @@
-/*
-Copyright (c) 2008, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.net/yui/license.txt
-version: 2.5.2
-*/
+li.yui-treenode ,li.yui-treeview-content {
+	list-style:none;
 
-.yui-treenode-children {
-padding-left:40px;
 }
-.yui-treenode-toggle {
-padding-left:22px;
+ul.yui-treenode-children {
+	padding:0;
+	margin:0;
 }
-.content {
-}
-.sigue {
-background:transparent url(icons/yui-tv-vert.gif) repeat-y scroll 0 0;
-}
-.nosigue {
-}
+
 .yui-treenode-magnet {
-color:black;
-text-decoration:none;
-}
-
-/* the style of the div around each node */
-.ygtvitem { }  
-
-table.ygtvtable {
-    margin-bottom:0; 
-	border:none;
-}
-
-/*.ygtvitem td {*/
-td.ygtvcell {
-    border: none; 
-	padding: 0;
-}
-a.ygtvspacer {
+	color:black;
 	text-decoration:none;
-	outline-style:none;
 }
-
+.yui-treenode-content {
+	padding-left:18px;
+	min-height:22px;
+}
 
 /* first or middle sibling, no children */
 .yui-treenode-toggle-first-leaf,.yui-treenode-toggle-middle-leaf {
     background: url(treeview-sprite.gif) 0 -5600px no-repeat; 
 	cursor:pointer ;
+	
 }
 
 /* first or middle sibling, collapsable */
@@ -65,8 +40,16 @@ a.ygtvspacer {
     cursor:pointer ;
     background: url(treeview-sprite.gif) 0 -6400px no-repeat; 
 }
+.yui-treenode-toggle-first-plus ul.yui-treenode-children,
+.yui-treenode-toggle-middle-plus   ul.yui-treenode-children ,
+.yui-treenode-toggle-last-plus     ul.yui-treenode-children  {
+	display:none;
+}
 
-/* first or middle sibling, expandable, hover */
+div.yui-treenode-label {
+	display:inline;
+}
+/* first or middle sibling, expandable, hover * /
 .yui-treenode-toggle-tph ,.yui-treenode-toggle-tphh {
     cursor:pointer ;
     background: url(treeview-sprite.gif) 0 -7200px no-repeat; 
@@ -84,7 +67,7 @@ a.ygtvspacer {
     background: url(treeview-sprite.gif) 0 0px no-repeat; 
 }
 
-/* Last sibling, collapsable, hover */
+/* Last sibling, collapsable, hover * /
 .yui-treenode-toggle-lmh,.yui-treenode-toggle-lmhh {
     cursor:pointer ;
     background: url(treeview-sprite.gif) 0 -800px no-repeat; 
@@ -96,34 +79,20 @@ a.ygtvspacer {
     background: url(treeview-sprite.gif) 0 -2400px no-repeat; 
 }
 
-/* Last sibling, expandable, hover */
+/* Last sibling, expandable, hover * /
 .yui-treenode-toggle-lph,.yui-treenode-toggle-lphh { 
     cursor:pointer ;
     background: url(treeview-sprite.gif) 0 -3200px no-repeat; 
 	cursor:pointer ;
 }
 
-/* Loading icon */
+/* Loading icon * /
 .yui-treenode-toggle-loading { 
     width:18px; height:22px; 
     background: url(treeview-loading.gif) 0 0 no-repeat; 
 }
 
-/* the style for the empty cells that are used for rendering the depth 
- * of the node */
-.ygtvdepthcell { 
-    width:18px; height:22px; 
-    background: url(treeview-sprite.gif) 0 -8000px no-repeat; 
-}
-
-.ygtvblankdepthcell { width:18px; height:22px; }
-
-
-/* the style of the div around each node's collection of children */
-.ygtvchildren {  }  
-* html .ygtvchildren { height:2%; }  
-
-/* the style of the text label in ygTextNode */
+/* the style of the text label in ygTextNode * /
 .ygtvlabel, .ygtvlabel:link, .ygtvlabel:visited, .ygtvlabel:hover { 
     margin-left:2px;
     text-decoration: none;

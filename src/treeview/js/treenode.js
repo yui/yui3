@@ -9,6 +9,7 @@ var TREENODE = 'treenode',
 	CONTENT_BOX  = 'contentBox',
 	BOUNDING_BOX = 'boundingBox',
 	RENDERED	 = 'rendered',
+	EXPANDED 	= 'expanded',
 	
 	NOT_HIGHLIGHTED =      0,
 	HIGHLIGHTED =          1,
@@ -23,6 +24,7 @@ var TREENODE = 'treenode',
 	PREVIOUS	= 'previousSibling',
 	NEXT 		= 'nextSibling',
 	ROOT		= 'root',
+	CONTENT		= 'content',
 	
 
 	getCN     = Y.ClassNameManager.getClassName,
@@ -34,42 +36,30 @@ var TREENODE = 'treenode',
 	FIRST =		'first',
 	MIDDLE =	'middle',
 	LAST =		'last',
-	CONTENT = 	'content',
+	LABEL = 	'label',
 	MAGNET = 	'magnet',
 	CHILDREN = 	'children',
 	
-	C_TOGGLE = 		getCN(TREENODE, TOGGLE),
-	C_TOGGLE_F_N = 	getCN(TREENODE, TOGGLE, FIRST, LEAF),
-	C_TOGGLE_F_P = 	getCN(TREENODE, TOGGLE, FIRST, PLUS),
-	C_TOGGLE_F_M = 	getCN(TREENODE, TOGGLE, FIRST, MINUS),
-	C_TOGGLE_M_N = 	getCN(TREENODE, TOGGLE, MIDDLE, LEAF),
-	C_TOGGLE_M_P = 	getCN(TREENODE, TOGGLE, MIDDLE, PLUS),
-	C_TOGGLE_M_M = 	getCN(TREENODE, TOGGLE, MIDDLE, MINUS),
-	C_TOGGLE_L_N = 	getCN(TREENODE, TOGGLE, LAST, LEAF),
-	C_TOGGLE_L_P = 	getCN(TREENODE, TOGGLE, LAST, PLUS),
-	C_TOGGLE_L_M = 	getCN(TREENODE, TOGGLE, LAST, MINUS),
-	
-	regexp_C_TOGGLE = new RegExp('\\b' + getCN(TREENODE,TOGGLE,'(' + FIRST + '|' + MIDDLE + '|' + LAST + ')','(' + LEAF + '|' + PLUS + '|' + MINUS + ')') + '\\b','gi'),
-	
-	C_CONTENT = 	getCN(TREENODE, CONTENT),
+	C_LABEL = 	getCN(TREENODE, LABEL),
 	C_MAGNET = 		getCN(TREENODE, MAGNET),
 	C_CHILDREN =	getCN(TREENODE, CHILDREN),
 	
-	NODE_MARKUP = '<div class ="' + C_TOGGLE + '"><span class ="' + C_CONTENT + '"></span><a class ="' + C_MAGNET + '" href ="#">&nbsp;</a></div>',
-	CHILDREN_MARKUP = '<div class ="' + C_CHILDREN + '"></div>',
+	NODE_MARKUP = '<div class ="' + C_LABEL + '"></div>',
+	MAGNET_MARKUP = '<a class ="' + C_MAGNET + '" href ="#">&nbsp;</a>',
+	CHILDREN_MARKUP = '<ul class ="' + C_CHILDREN + '"></ul>',
 	EMPTY_DIV_MARKUP = '<div></div>',
 	
 	
 	silent = false;
 	
 	var Q = new Y.Queue();
-	Q.on('executeCallback',function(ev) {
+/*	Q.on('executeCallback',function(ev) {
 		console.log('executeCallback',ev.name,ev.context,ev.args);
 	});
 	Q.on('complete',function() {
 		console.log('Q complete');
 	});
-	
+*/	
 	/**
  * Create a hierarchical tree
  *
@@ -181,28 +171,26 @@ Y.mix(TreeNode,{
 				inserting:'Inserting child [{child}] into [{me}] at position [{position}]',
 				positionOutOfBounds:'Tried to insert child [{child}] out of bounds at position [{position}] under parent [{me}]',
 				positionNotInParent:'Cannot insert node [{child}] before a node [{position}] that is not a child of this node [{me}]',
-				positionArgumentInvalid:'Argument position in method insertNode should be an integer, a TreeNode reference or undefined, was [{position}]'
+				positionArgumentInvalid:'Argument position in method insertNode should be an integer, a TreeNode reference or undefined, was [{position}]',
+				cantHaveParent:'Config "parent" ignored. The TreeView object is the root of the tree, it can\'t have a parent.',
+				needsParent:'When looking for the root of [{me}] found no parent above [{brokenRoot}]'
 				
 			}
 		}
 	},
 	HTML_PARSER: {
 		content: function(contentBox) {
-			//console.log('+++ content',contentBox.get('innerHTML'));
 			var child = contentBox.get('firstChild');
 			var tag = child.get('nodeName').toUpperCase();
 			if ( tag == 'UL' || tag == 'OL') {
-				//console.log('=== content','');
 				return '';
 			} 
 			if (child.get('nodeType') == 3) {
-				//console.log('=== content',child.get('textContent'));
-				return child.get('textContent');
+				return Y.Lang.trim(child.get('textContent')) || undefined;
 			}
-			//console.log('=== content',child.get('nodeName'),child.get('innerHTML'));
 			return child;
 		},
-		children: ['ul > li, ol > li'],
+		children: ['>ul>li,>ol>li'],
 		/*function (contentBox) {
 			var ul = contentBox.query('ul');
 			var ol = contentBox.query('ol');
@@ -215,6 +203,7 @@ Y.mix(TreeNode,{
 	        return contentBox.getAttribute('yuiconfig'); 
 	    }
 	}
+	
 });
 
 Y.extend(TreeNode,Y.Widget,{
@@ -222,7 +211,9 @@ Y.extend(TreeNode,Y.Widget,{
 	_children: null,
 	_childContainerEl: null,
 	_dontPropagate: false,
+	_lastToggleClass: '',
 	
+	BOUNDING_TEMPLATE: '<li></li>',
 	
 	initializer: function (config) {
 		Y.log(Y.substitute('initializer [{me}]',{me:this}));
@@ -241,7 +232,9 @@ Y.extend(TreeNode,Y.Widget,{
 			inserting:'Insertando el hijo [{child}] bajo el padre [{me}] en la posici&oacute;n [{position}]',
 			positionOutOfBounds:'Rechazado el intento de insertar el hijo [{child}] fuera de rango en la posici&oacute;n [{position}] bajo el padre [{me}]',
 			positionNotInParent:'No se puede insertar el nodo [{child}] antes de un nodo [{position}] que no es hijo de este padre [{me}]',
-			positionArgumentInvalid:"El argumento 'position' en el m&eacute;todo 'insertNode' debe ser un entero, un TreeNode o 'undefined', fue [{position}]"
+			positionArgumentInvalid:"El argumento 'position' en el m&eacute;todo 'insertNode' debe ser un entero, un TreeNode o 'undefined', fue [{position}]",
+			cantHaveParent:'Se ignorar&aacute; el Atributo "parent". El objeto TreeView es la ra&iacute;z del &aacute;rbol, no puede tener padre.',
+			needsParent:'Al buscar la ra&iacute;z para [{me}] no se pudo encontrar el padre de [{brokenRoot}]'
 		});
 
 
@@ -281,24 +274,23 @@ Y.extend(TreeNode,Y.Widget,{
 				(new Y.TreeNode({parent:this,contentBox:node}));
 			},this);
 		}
-
-		this._findRoot();
+		this.on('render',function(ev) {
+			this._findRoot();
+		});
+		var parent = this.get(PARENT);
+		if (parent  && parent.get('rendered')) {
+			this.render(parent._childContainerEl);
+			Q.run();
+		}
 	},
+	
 	destructor: function () {
 		for (var i = 0;i < this._children.length;i++) {
 			this._children[i].destructor();
 		}
 		var cb = this.get(CONTENT_BOX);
 		cb.set('innerHTML','');
-		cb.set('className',cb.get('className').replace(regexp_C_TOGGLE,''));
-	},
-	render: function (parentNode) {
-		var root = this.get(ROOT);
-		if (root !== this && !root.get(RENDERED)) {
-			root.render(parentNode);
-		} else {
-			TreeNode.superclass.render.apply(this,arguments);
-		}
+		cb.removeClass(this._lastToggleClass);
 	},
 		
 	renderUI : function () {
@@ -307,16 +299,20 @@ Y.extend(TreeNode,Y.Widget,{
         Q.add({fn:this._renderUIChildren,context:this,name:'renderUIChildren'});
 		if (!this.get(PARENT)) {
 			Q.run();
-			console.log('Q launched');
 		}
 	},
 	_findRoot : function () {
+		var self = this;
 		var findParent = function (node) {
 			var root, parent = node.get(PARENT);
 			if (parent) {
 				root = findParent(parent);
 			} else {
-				root = node;
+				if (node._isRoot) {
+					root = node;
+				} else {
+					Y.error(Y.substitute(self.getString('needsParent'),{me:self,brokenRoot:node}));
+				}
 			}
 			node._set(ROOT,root);
 			return root;
@@ -327,6 +323,7 @@ Y.extend(TreeNode,Y.Widget,{
 	_renderUIContainer: function () {
 		Y.log(Y.substitute('_renderUIContainer [{me}]',{me:this}));
 		var cb   = this.get(CONTENT_BOX);
+		/*
 		console.log('antes1',this.get(BOUNDING_BOX).get('innerHTML'));
 		if (this === this.get(ROOT)) {
 			cb.set('innerHTML','');
@@ -359,14 +356,17 @@ Y.extend(TreeNode,Y.Widget,{
 			}
 			cb = newCb;
 		}
-		cb.appendChild(Y.Node.create(NODE_MARKUP));
-		cb.addClass(C_TOGGLE_F_N);
-		var container = cb.query('.' + C_CONTENT);
+		*/
+				
+		
+		var container = Y.Node.create(NODE_MARKUP);
+		cb.appendChild(container);
 		this.set('container',container);
 		var newContent = this.get('content');
 		if (newContent instanceof Y.Node) {
 			container.appendChild(newContent);
 		}
+		cb.appendChild(Y.Node.create(MAGNET_MARKUP));
 		//console.log('despues',this.get(BOUNDING_BOX).get('innerHTML'));
 	},
 	_renderUIChildren: function () {
@@ -384,7 +384,14 @@ Y.extend(TreeNode,Y.Widget,{
 
 	},
 	syncUI: function () {
-
+		var isNull = Y.Lang.isNull;
+		
+		if (this._isRoot) { return; }
+		var toggleClass = getCN(TREENODE, TOGGLE,
+			(isNull(this.get(NEXT))?LAST:(isNull(this.get(PREVIOUS))?FIRST:MIDDLE)) ,
+			(this._children.length>0?(this.get(EXPANDED)?MINUS:PLUS):LEAF));
+		this.get(CONTENT_BOX).replaceClass(this._lastToggleClass,toggleClass);
+		this._lastToggleClass = toggleClass;
 	},
 	
 	_genericNodeValidator: function (node,who) {
@@ -485,7 +492,11 @@ Y.extend(TreeNode,Y.Widget,{
 		Y.log(Y.substitute(this.getString('setParent'),{parent:newParent,me:this}));
 		this.set(NEXT,null);
 		siblings = newParent._children;
-		this.set(PREVIOUS,siblings[siblings.length -1] || null);
+		var previous = siblings.length && siblings[siblings.length -1];
+		if (previous) {
+			this.set(PREVIOUS,previous);
+			previous.set(NEXT,this);
+		}
 		siblings.push(this);
 	},
 	
