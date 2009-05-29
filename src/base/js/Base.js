@@ -56,6 +56,17 @@
     }
 
     /**
+     * The list of properties which can be configured for 
+     * each attribute (e.g. setter, getter, writeOnce etc.)
+     *
+     * @property Base._ATTR_CFG
+     * @type Array
+     * @static
+     * @private
+     */
+    Base._ATTR_CFG = Y.Attribute._ATTR_CFG.concat("cloneDefaultValue");
+
+    /**
      * <p>
      * Name string to be used to identify instances of 
      * this class, for example in prefixing events.
@@ -286,15 +297,18 @@
          * @param {Objects} allCfgs
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
-            var cfgs = {};
+            var cfgs = null, attr;
 
             if (clazz.ATTRS) {
-                Y.each(clazz.ATTRS, function(v, k) {
-                    if (allCfgs[k]) {
-                        cfgs[k] = allCfgs[k];
-                        delete allCfgs[k];
+                for (attr in clazz.ATTRS) {
+                    if (clazz.ATTRS.hasOwnProperty(attr)) {
+                        if (allCfgs[attr]) {
+                            cfgs = cfgs || {};
+                            cfgs[attr] = allCfgs[attr];
+                            delete allCfgs[attr];
+                        }
                     }
-                });
+                }
             }
 
             return cfgs;
@@ -330,7 +344,16 @@
          * @param {Object} allAttrs
          */
         _aggregateAttrs : function(allAttrs) {
-            var attr, attrs, cfg, val, path, i, clone,
+            var attr, 
+                attrs, 
+                cfg, 
+                val, 
+                path, 
+                i, 
+                clone, 
+                cfgProps = Base._ATTR_CFG, 
+                filteredMerge = this._filteredMerge,
+
                 aggAttrs = {};
 
             if (allAttrs) {
@@ -339,8 +362,7 @@
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            // Protect
-                            cfg = Y.merge(attrs[attr]);
+                            cfg = filteredMerge(cfgProps, {}, attrs[attr]);
 
                             val = cfg.value;
                             clone = cfg.cloneDefaultValue;
@@ -369,7 +391,7 @@
                                 if (!aggAttrs[attr]) {
                                     aggAttrs[attr] = cfg;
                                 } else {
-                                    aggAttrs[attr] = Y.mix(aggAttrs[attr], cfg, true);
+                                    filteredMerge(cfgProps, aggAttrs[attr], cfg);
                                 }
                             }
                         }
@@ -442,15 +464,40 @@
         },
 
         /**
+         * Merges a given list of properties from the supplier object to the receiver object,
+         * overwriting the propery on the supplier if it exists. Implemented locally by Base 
+         * for performance reasons, to streamline the critical path for Base. If you need 
+         * additional flexibility use the Y.merge or Y.mix utilities.
+         *
+         * @method _filteredMerge
+         * @protected
+         *
+         * @param {Array} properties The list of properties to merge. Only these properties will be merged.
+         * @param {Object} r Reciever. The object being merged into.
+         * @param {Object} s Supplier. The object providing the properties to merge.
+         */
+        _filteredMerge : function(properties, r, s) {
+            var i, l, p;
+            for (i = 0, l = properties.length; i < l; ++i) {
+                p = properties[i];
+                if (p in s){
+                    r[p] = s[p];
+                }
+            }
+            return r;
+        },
+
+        /**
          * Default toString implementation. Provides the constructor NAME
          * and the instance ID.
-         * 
+         *
          * @method toString
          * @return {String} String representation for this object
          */
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
         }
+
     };
 
     // Straightup augment, no wrapper functions
