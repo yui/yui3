@@ -71,6 +71,7 @@
         <span class="nx">OBJECT_CONSTRUCTOR</span> <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">constructor</span><span class="o">,</span>
         <span class="nx">DEEP</span> <span class="o">=</span> <span class="s2">&quot;deep&quot;</span><span class="o">,</span>
         <span class="nx">SHALLOW</span> <span class="o">=</span> <span class="s2">&quot;shallow&quot;</span><span class="o">,</span>
+        <span class="nx">VALUE</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="o">,</span>
         <span class="nx">DESTRUCTOR</span> <span class="o">=</span> <span class="s2">&quot;destructor&quot;</span><span class="o">;</span>
 
     <span class="c">/**</span>
@@ -282,7 +283,7 @@
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">INITIALIZED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">INITIALIZED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">INITIALIZED</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
 
