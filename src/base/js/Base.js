@@ -22,6 +22,7 @@
         OBJECT_CONSTRUCTOR = Object.prototype.constructor,
         DEEP = "deep",
         SHALLOW = "shallow",
+        VALUE = "value",
         DESTRUCTOR = "destructor";
 
     /**
@@ -233,7 +234,7 @@
             if (!this._silentInit) {
                 this._set(INITIALIZED, true);
             } else {
-                this._conf.add(INITIALIZED, true);
+                this._conf.add(INITIALIZED, VALUE, true);
             }
         },
 

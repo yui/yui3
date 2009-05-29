@@ -296,6 +296,7 @@ Y.namespace("Plugin").Host = PluginHost;
         OBJECT_CONSTRUCTOR = Object.prototype.constructor,
         DEEP = "deep",
         SHALLOW = "shallow",
+        VALUE = "value",
         DESTRUCTOR = "destructor";
 
     /**
@@ -504,7 +505,7 @@ Y.namespace("Plugin").Host = PluginHost;
             if (!this._silentInit) {
                 this._set(INITIALIZED, true);
             } else {
-                this._conf.add(INITIALIZED, true);
+                this._conf.add(INITIALIZED, VALUE, true);
             }
         },
 
