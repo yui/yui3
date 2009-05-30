@@ -60,6 +60,7 @@ Y.extend(TreeView,Y.TreeNode,{
 		}
 		this.set(ROOT,this);
 		TreeView.superclass.initializer.apply(this,arguments);
+		
 	},
 	_renderUIContainer: null,
 	_renderUIChildren: function () {
@@ -72,6 +73,25 @@ Y.extend(TreeView,Y.TreeNode,{
 			Q.add({fn:this._children[i].render,context:this._children[i],args:[cb],name:'render'});
 		}
 	
+	},
+	bindUI: function () {
+		Y.on('click',Y.bind(this._onClick,this),this.get(BOUNDING_BOX));
+	},
+	_onClick: function (ev) {
+		var target = ev.target;
+		var node = this.getNodeByElement(target);
+		console.log('_noClick',this,arguments,node);
+		if (node) {
+			if (target.hasClass(C_LABEL) || target.hasClass(C_MAGNET)) {
+				node.fire(CLICK_EVENT,{node:node});
+			} else if (target.hasClass(C_CONTENT)) {
+				node.toggle();
+			}
+		}
+	},
+	getNodeByElement : function (el) {
+		var node = el.ancestor('.' + getCN(TREENODE));
+		return node && _nodes[node.get('id')];
 	}
 });
 

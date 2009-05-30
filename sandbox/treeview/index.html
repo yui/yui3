@@ -215,6 +215,13 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 				A.areSame(tv._children[1],t2,'t2 should be in the middle');
 				A.areSame(tv._children[2],t3,'t3 should be the last');
 				
+				A.areSame(t2,t1.get(NEXT),'t2 should be the next sibling of t1');
+				A.areSame(t3,t2.get(NEXT),'t3 should be the next sibling of t2');
+				A.isNull(t3.get(NEXT),'t3 should have no next');
+				A.isNull(t1.get(PREVIOUS),'t1 should have no previous');
+				A.areSame(t1,t2.get(PREVIOUS),'t1 should be the previous sibling of t2');
+				A.areSame(t2,t3.get(PREVIOUS),'t2 should be the previous sibling of t3');
+				
 				t2.set(PARENT,t1);
 	
 				A.areSame(tv._children[0],t1,'t1 should be the first');
@@ -234,23 +241,22 @@ switch (3) {
 		tv = new Y.TreeView({contentBox:'#markup'});
 		tv.render();
 		break;
-	case 3:				
+	case 3:	
+		var makeBranch = function (parent,label) {
+			var n = Math.random() * 5 - 1;
+			if (label.length > 10) return;
+			for (var i = 0;i < n;i++) {
+				var tmpNode = new Y.TreeNode({content:label + '-' + i, parent:parent,expanded:Math.random() > .5});
+				makeBranch(tmpNode,label + '-' + i);
+			}
+		}
 		tv = new Y.TreeView({content:"primero"});
-				console.log('testFatherWithChildAdded');
-				tv.set('content','testFatherWithChildAdded');
-				var t1 = new Y.TreeNode({parent:tv,content:'hijo t1'});
-				var t2 = new Y.TreeNode({parent:tv,content:'hijo t2'});
-				var t3 = new Y.TreeNode({parent:tv,content:'hijo t3'});
-				var t11 = new Y.TreeNode({parent:t1,content:'nieto t11'});
-				var t12 = new Y.TreeNode({parent:t1,content:'nieto t12'});
-				var t12 = new Y.TreeNode({parent:t1,content:'nieto t13'});
-				var t21 = new Y.TreeNode({parent:t2,content:'nieto t21'});
-				var t22 = new Y.TreeNode({parent:t2,content:'nieto t22'});
-				var t22 = new Y.TreeNode({parent:t2,content:'nieto t23'});
-				var t31 = new Y.TreeNode({parent:t3,content:'nieto t31'});
-				var t32 = new Y.TreeNode({parent:t3,content:'nieto t32'});
-				var t32 = new Y.TreeNode({parent:t3,content:'nieto t33'});
-				tv.render('#bd');
+		makeBranch(tv,'label');
+		tv.render('#bd');
+		tv.on('treenode:click',function(ev) {
+			console.log('treenode:click',ev);
+			ev.preventDefault();
+		});
 		break;
 			
 //		tv.destroy();

@@ -11,14 +11,14 @@ var TREENODE = 'treenode',
 	RENDERED	 = 'rendered',
 	EXPANDED 	= 'expanded',
 	
-	NOT_HIGHLIGHTED =      0,
-	HIGHLIGHTED =          1,
-	PARTIALLY_HIGHLIGHTED =2,
+	// NOT_HIGHLIGHTED =      0,
+	// HIGHLIGHTED =          1,
+	// PARTIALLY_HIGHLIGHTED =2,
 	
-	PROPAGATE_HIGHLIGHT_NONE = 0,
-	PROPAGATE_HIGHLIGHT_UP =   1,
-	PROPAGATE_HIGHLIGHT_DOWN = 2,
-	PROPAGATE_HIGHLIGHT_BOTH = 3,
+	// PROPAGATE_HIGHLIGHT_NONE = 0,
+	// PROPAGATE_HIGHLIGHT_UP =   1,
+	// PROPAGATE_HIGHLIGHT_DOWN = 2,
+	// PROPAGATE_HIGHLIGHT_BOTH = 3,
 	
 	PARENT 		= 'parent',
 	PREVIOUS	= 'previousSibling',
@@ -40,27 +40,27 @@ var TREENODE = 'treenode',
 	MAGNET = 	'magnet',
 	CHILDREN = 	'children',
 	
-	C_LABEL = 	getCN(TREENODE, LABEL),
+	C_LABEL = 		getCN(TREENODE, LABEL),
 	C_MAGNET = 		getCN(TREENODE, MAGNET),
 	C_CHILDREN =	getCN(TREENODE, CHILDREN),
+	C_CONTENT =		getCN(TREENODE, CONTENT),
 	
-	NODE_MARKUP = '<div class ="' + C_LABEL + '"></div>',
-	MAGNET_MARKUP = '<a class ="' + C_MAGNET + '" href ="#">&nbsp;</a>',
-	CHILDREN_MARKUP = '<ul class ="' + C_CHILDREN + '"></ul>',
-	EMPTY_DIV_MARKUP = '<div></div>',
+	NODE_MARKUP = 		'<div class ="' + C_LABEL + '"></div>',
+	MAGNET_MARKUP = 	'<a class ="' + C_MAGNET + '" href ="#">&nbsp;</a>',
+	CHILDREN_MARKUP = 	'<ul class ="' + C_CHILDREN + '"></ul>',
+	
+	CLICK_EVENT = 'click',
+	TOGGLE_EVENT = 'toggle',
+	EXPAND_EVENT = 'expand',
+	COLLAPSE_EVENT = 'collapse',
 	
 	
-	silent = false;
 	
-	var Q = new Y.Queue();
-/*	Q.on('executeCallback',function(ev) {
-		console.log('executeCallback',ev.name,ev.context,ev.args);
-	});
-	Q.on('complete',function() {
-		console.log('Q complete');
-	});
-*/	
-	/**
+	Q = new Y.Queue(),
+	
+	_nodes = {};
+
+/**
  * Create a hierarchical tree
  *
  * @class TreeNode
@@ -114,9 +114,12 @@ Y.mix(TreeNode,{
 		expanded: {
 			value:false
 		},
-		highlightState: {
-			value:NOT_HIGHLIGHTED
-		},
+		// highlightState: {
+			// value:NOT_HIGHLIGHTED
+		// },
+		// propagateHighlight: {
+			// value: PROPAGATE_HIGHLIGHT_NONE
+		// },
 		isLeaf: {
 			value: false
 		},
@@ -140,9 +143,6 @@ Y.mix(TreeNode,{
 			validator: function(node) { 
 				return this._parentValidator(node); 
 			}
-		},
-		propagateHighlight: {
-			value: PROPAGATE_HIGHLIGHT_NONE
 		},
 		root: {
 			value: null,
@@ -241,14 +241,17 @@ Y.extend(TreeNode,Y.Widget,{
 		config = config || {};
 
 		
-		this.after('parentChange',     		this._doWhenNotSilent,this,  this._afterParentChange);
-		this.after('nextSiblingChange',   	this._doWhenNotSilent,this,  this._afterNextSiblingChange);
-		this.after('previousSiblingChange',	this._doWhenNotSilent,this,  this._afterPreviousSiblingChange);	
+		this.on('parentChange',  this._onParentChange);
+		this.on('nextSiblingChange',   this._onNextSiblingChange);
+		this.on('previousSiblingChange',  this._onPreviousSiblingChange);	
 		
-		this.after('contentChange',    this._afterContentChange);	
+		this.on('contentChange',    this._onContentChange);	
 
-		
-		silent = true;
+		this.publish(CLICK_EVENT,{defaultFn:this._defClickFn});
+		this.publish(TOGGLE_EVENT,{defaultFn:this._defToggleFn});
+		this.publish(EXPAND_EVENT,{defaultFn:this._defExpandFn});
+		this.publish(COLLAPSE_EVENT,{defaultFn:this._defCollapseFn});
+
 	
 		if (PARENT in config) {
 			this._changeParent(config[PARENT]);
@@ -261,7 +264,6 @@ Y.extend(TreeNode,Y.Widget,{
 			this._changePreviousSibling(config[PREVIOUS]);
 		}
 
-		silent = false;
 		if (CONTENT in config) {
 			console.log('content',this,this.get(CONTENT) && (this.get(CONTENT).get('innerHTML') || this.get(CONTENT).get('textContent')));
 		}
@@ -278,7 +280,7 @@ Y.extend(TreeNode,Y.Widget,{
 			this._findRoot();
 		});
 		var parent = this.get(PARENT);
-		if (parent  && parent.get('rendered')) {
+		if (parent  && parent.get(RENDERED)) {
 			this.render(parent._childContainerEl);
 			Q.run();
 		}
@@ -368,6 +370,8 @@ Y.extend(TreeNode,Y.Widget,{
 		}
 		cb.appendChild(Y.Node.create(MAGNET_MARKUP));
 		//console.log('despues',this.get(BOUNDING_BOX).get('innerHTML'));
+		
+		_nodes[this.get(BOUNDING_BOX).get('id')] = this;
 	},
 	_renderUIChildren: function () {
 
@@ -381,6 +385,15 @@ Y.extend(TreeNode,Y.Widget,{
 	
 	},
 	bindUI: function () {
+		this.after('parentChange',     		this._syncParentChange);
+		this.after('nextSiblingChange',   	this._syncNextSiblingChange);
+		this.after('previousSiblingChange',	this._syncPreviousSiblingChange);	
+		
+		this.after('contentChange',    this._syncContentChange);	
+		
+		this.addTarget(this.get(PARENT));
+		
+		
 
 	},
 	syncUI: function () {
@@ -432,13 +445,16 @@ Y.extend(TreeNode,Y.Widget,{
 		return Y.Attribute.INVALID_VALUE;
 	},
 	
-	_afterContentChange: function (e) {
+	_onContentChange: function (e) {
 		var newContent = e.newVal;
 		var container = this.get('container');
 		if (container) {
 			container.set('innerHTML','');
 			container.appendChild(newContent);
 		}
+	},
+	_syncContentChange: function (e) {
+	
 	},
 	
 	_detach:  function(newParent,oldParent) {
@@ -459,54 +475,41 @@ Y.extend(TreeNode,Y.Widget,{
 		var next = this.get(NEXT),
 			previous = this.get(PREVIOUS);
 		if (next) {
-			next.set(PREVIOUS, previous);
+			next.set(PREVIOUS, previous,{internal:true});
 		}
 		if (previous) {
-			previous.set(NEXT,next);
+			previous.set(NEXT,next,{internal:true});
 		}			
 	},
 	
-	_doWhenNotSilent : function(ev,f) {
-		if (silent) { 
-			//console.log('drop',ev.type,ev.target,ev.newVal,ev.prevVal);
-			return; 
-		}
-		//console.log('do',ev.type,ev.target,ev.newVal,ev.prevVal);
-		silent = true;
-		f.call(this,ev);
-		silent = false;
-		Q.run();
-	},
-	
-	_afterParentChange : function(e) {
+	_onParentChange : function(e) {
+		if (e.internal) { return; }
 		var newParent = e.newVal;
 		this._detach(newParent,e.prevVal);
 		this._changeParent(newParent);
-		if (this.get(RENDERED)) {
-			Q.add({fn:this._move,context:this,name:'_move'});
-		}
 	},
 	_changeParent: function (newParent) {
 		var siblings;
 
 		Y.log(Y.substitute(this.getString('setParent'),{parent:newParent,me:this}));
-		this.set(NEXT,null);
+		this.set(NEXT,null,{internal:true});
 		siblings = newParent._children;
 		var previous = siblings.length && siblings[siblings.length -1];
 		if (previous) {
-			this.set(PREVIOUS,previous);
-			previous.set(NEXT,this);
+			this.set(PREVIOUS,previous,{internal:true});
+			previous.set(NEXT,this,{internal:true});
 		}
 		siblings.push(this);
 	},
-	
-	_afterNextSiblingChange : function(e) {
+	_syncParentChange: function (e) {
+		if (e.internal) { return; }
+		Q.add({fn:this._move,context:this,name:'_move'});
+	},
+	_onNextSiblingChange : function(e) {
+		if (e.internal) { return; }
 		var next = e.newVal;
 		this._detach(next && next.get(PARENT));
 		this._changeNextSibling(next);
-		if (this.get(RENDERED)) {
-			Q.add({fn:this._move,context:this,name:'_move'});
-		}
 	},
 	_changeNextSibling: function (next) {
 		var	newParent,siblings, previous, found,i;
@@ -527,23 +530,25 @@ Y.extend(TreeNode,Y.Widget,{
 			if (!found && siblings.length) {
 				Y.error(Y.substitute(this.getString('nextSiblingNotChild'),{me:this,next:next,parent:newParent}));
 			}
-			this.set(PARENT,newParent);
+			this.set(PARENT,newParent,{internal:true});
 		}
-		this.set(NEXT,next);
+		this.set(NEXT,next,{internal:true});
 		previous = next.get(PREVIOUS);
 		if (previous) {
-			this.set(PREVIOUS,previous);
-			previous.set(NEXT,this);
+			this.set(PREVIOUS,previous,{internal:true});
+			previous.set(NEXT,this,{internal:true});
 		}
-		next.set(PREVIOUS,this);
+		next.set(PREVIOUS,this,{internal:true});
 	},
-	_afterPreviousSiblingChange : function(e) {
+	_syncNextSiblingChange: function (e) {
+		if (e.internal) { return; }
+		Q.add({fn:this._move,context:this,name:'_move'});
+	},
+	_onPreviousSiblingChange : function(e) {
+		if (e.internal){ return; }
 		var previous = e.newVal;
 		this._detach(previous && previous.get(PARENT));
 		this._changePreviousSibling(previous);
-		if (this.get(RENDERED)) {
-			Q.add({fn:this._move,context:this,name:'_move'});
-		}
 	},
 	_changePreviousSibling: function (previous) {
 		var	newParent,siblings, next, found,i;
@@ -563,17 +568,22 @@ Y.extend(TreeNode,Y.Widget,{
 			if (!found && siblings.length) {
 				Y.error(Y.substitute(this.getString('previousSiblingNotChild'),{me:this,previous:previous,parent:newParent}));
 			}
-			this.set(PARENT,newParent);
+			this.set(PARENT,newParent,{internal:true});
 		}
-		this.set(PREVIOUS,previous);
+		this.set(PREVIOUS,previous,{internal:true});
 		next = previous.get(NEXT);
 		if (next) {
-			this.set(NEXT,next);
-			next.set(PREVIOUS,this);
+			this.set(NEXT,next,{internal:true});
+			next.set(PREVIOUS,this,{internal:true});
 		}
-		previous.set(NEXT,this);
+		previous.set(NEXT,this,{internal:true});
 
 	},
+	_syncPreviousSiblingChange: function (e) {
+		if (e.internal) { return; }
+		Q.add({fn:this._move,context:this,name:'_move'});
+	},
+		
 	_move: function () {
 		var myBB = this.get(BOUNDING_BOX),
 			parent = this.get(PARENT),
@@ -594,6 +604,7 @@ Y.extend(TreeNode,Y.Widget,{
 				parentContainer.appendChild(myBB);
 			}
 		}
+		this.syncUI();
 	},
 	
 	removeChild: function (node) {
@@ -637,9 +648,50 @@ Y.extend(TreeNode,Y.Widget,{
 	},
 	toString : function() {
 		return (this.get(CONTENT) && this.get(CONTENT).get('textContent')) || this._yuid;
-	}
+	},
 	
-
+	_defClickFn: function (ev) {
+		console.log('_defClickFn',this,arguments);
+		if (ev.node !== this) { return; }
+		console.log('_defClickFn 2',this,arguments);
+		this.toggle();
+	},
+	toggle : function() {
+		console.log('toggle',this,arguments);
+		if (this._children.length) {
+			this.fire(TOGGLE_EVENT,{node:this});
+		}
+	},
+	_defToggleFn: function(ev) {
+		if (ev.node !== this) { return; }
+		console.log('_defToggleFn',this,arguments);
+		if (this.get(EXPANDED)) {
+			this.collapse();
+		} else {
+			this.expand();
+		}
+		ev.stopPropagation();
+	},
+	expand: function()  {
+		console.log('expand',this,arguments);
+		this.fire(EXPAND_EVENT,{node:this});
+	},
+	_defExpandFn: function (ev) {
+		if (ev.node !== this) { return; }
+		console.log('_defExpandFn',this,arguments);
+		this.set(EXPANDED,true);
+		this.syncUI();
+	},
+	collapse: function() {
+		console.log('collapse',this,arguments);
+		this.fire(COLLAPSE_EVENT,{node:this});
+	},
+	_defCollapseFn: function(ev) {
+		if (ev.node !== this) { return; }
+		console.log('_defCollapseFn',this,arguments);
+		this.set(EXPANDED,false);
+		this.syncUI();
+	}
 });
 
 Y.TreeNode = TreeNode;
