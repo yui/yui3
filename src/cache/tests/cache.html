@@ -119,6 +119,14 @@
                 ASSERT.areSame("c", cachedresponse, "Expected second cached response.");
             },
 
+            testNoMatch: function() {
+                var cache = new Y.Cache({max:2}),
+                    cachedentry;
+                cache.add("a", "b");
+                cachedentry = cache.retrieve("c");
+                ASSERT.areSame(null, cachedentry, "Expected no match.");
+            },
+
             testFlush: function() {
                 var cache = new Y.Cache({max:2});
                 cache.add(1, "a");

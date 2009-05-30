@@ -316,11 +316,9 @@ Y.extend(Cache, Y.Plugin.Base, {
                         entries[entries.length] = entry;
                     } 
                     
-                    break;
+                    return entry;
                 }
             }
-            return entry;
-
         }
         return null;
     }

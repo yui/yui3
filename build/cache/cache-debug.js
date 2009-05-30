@@ -323,13 +323,11 @@ Y.extend(Cache, Y.Plugin.Base, {
                                 " for request: " +  Y.dump(request), "info", "cache");
                     } 
                     
-                    break;
+                    Y.log("Retrieved cached response: " + Y.dump(entry) +
+                            " for request: " + Y.dump(request), "info", "cache");
+                    return entry;
                 }
             }
-            Y.log("Retrieved cached response: " + Y.dump(entry) +
-                    " for request: " + Y.dump(request), "info", "cache");
-            return entry;
-
         }
         return null;
     }
