@@ -132,21 +132,27 @@ YUI.add('attribute', function(Y) {
 
         DOT = ".",
         CHANGE = "Change",
+
+        // Externally configurable props
         GETTER = "getter",
         SETTER = "setter",
-        VALUE = "value",
-        ADDED = "added",
-        INITIALIZING = "initializing",
-        INIT_VALUE = "initValue",
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
-        PUBLISHED = "published",
+        VALUE = "value",
+        VALUE_FN = "valueFn",
         BROADCAST = "broadcast",
+        LAZY_ADD = "lazyAdd",
+
+        // Used for internal state management
+        ADDED = "added",
+        INITIALIZING = "initializing",
+        INIT_VALUE = "initValue",
+        PUBLISHED = "published",
         DEF_VALUE = "defaultValue",
         LAZY = "lazy",
-        LAZY_ADD = "lazyAdd",
         IS_LAZY_ADD = "isLazyAdd",
+
         INVALID_VALUE,
         MODIFIABLE = {};
 
@@ -192,9 +198,26 @@ YUI.add('attribute', function(Y) {
         this._conf = new Y.State();
     }
 
+    /**
+     * The value to return from an attribute setter, in order to prevent the set from going through.
+     *
+     * @property Attribute.INVALID_VALUE
+     * @type Object
+     * @static
+     */
     Attribute.INVALID_VALUE = {};
-
     INVALID_VALUE = Attribute.INVALID_VALUE;
+
+    /**
+     * The list of properties which can be configured for 
+     * each attribute (e.g. setter, getter, writeOnce etc.)
+     * 
+     * @property Attribute._ATTR_CFG
+     * @type Array
+     * @static
+     * @private
+     */
+    Attribute._ATTR_CFG = [SETTER, GETTER, VALIDATOR, VALUE, VALUE_FN, WRITE_ONCE, READ_ONLY, LAZY_ADD, BROADCAST];
 
     Attribute.prototype = {
         /**
@@ -735,11 +758,10 @@ YUI.add('attribute', function(Y) {
          *
          * @param {Object} cfgs Name/value hash of attribute configuration literals.
          * @param {Object} values Name/value hash of initial values to apply. Values defined in the configuration hash will be over-written by the initial values hash unless read-only.
-         * @param {boolean} lazy Name/value hash of initial values to apply. Values defined in the configuration hash will be over-written by the initial values hash unless read-only.
+         * @param {boolean} lazy Whether or not to delay the intialization of this attribute until the first call to get/set.
          */
         addAttrs : function(cfgs, values, lazy) {
             if (cfgs) {
-
                 this._tCfgs = cfgs;
                 this._tVals = this._splitAttrVals(values);
 
@@ -751,6 +773,13 @@ YUI.add('attribute', function(Y) {
             return this;
         },
 
+        /**
+         * @method _addAttrs
+         * @private
+         * @param {Object} cfgs Name/value hash of attribute configuration literals.
+         * @param {Object} values Name/value hash of initial values to apply. Values defined in the configuration hash will be over-written by the initial values hash unless read-only.
+         * @param {boolean} lazy Whether or not to delay the intialization of this attribute until the first call to get/set.
+         */
         _addAttrs : function(cfgs, values, lazy) {
             var attr,
                 attrCfg,

@@ -37,8 +37,6 @@ var AFTER = 'after',
 
     FACADE = new Y.EventFacade(),
 
-    FACADE_KEYS = Y.Object.keys(FACADE),
-
     YUI3_SIGNATURE = 9;
 
 Y.EventHandle = function(evt, sub) {
@@ -80,7 +78,7 @@ Y.EventHandle.prototype = {
  * @class Event.Custom
  * @constructor
  */
-Y.CustomEvent = function(type, o) {
+Y.CustomEvent = function(type, o, defaults) {
 
     // if (arguments.length > 2) {
 // this.log('CustomEvent context and silent are now in the config', 'warn', 'Event');
@@ -261,7 +259,10 @@ Y.CustomEvent = function(type, o) {
      */
     this.emitFacade = false;
 
-    this.applyConfig(o, true);
+    this.initialConfig = o;
+    this.defaults = defaults;
+
+    // this.applyConfig(o, true);
 
     this.log("Creating " + this.type);
 
@@ -300,11 +301,15 @@ Y.CustomEvent.prototype = {
      * Apply configuration properties.  Only applies the CONFIG whitelist
      * @method applyConfig
      * @param o hash of properties to apply
+     * @param o2 a second hash
      * @param force {boolean} if true, properties that exist on the event 
      * will be overwritten.
      */
-    applyConfig: function(o, force) {
+    applyConfig: function(o, o2, force) {
         if (o) {
+            Y.mix(this, o, force, CONFIGS);
+        }
+        if (o2) {
             Y.mix(this, o, force, CONFIGS);
         }
     },
@@ -443,13 +448,13 @@ Y.CustomEvent.prototype = {
             o2 = {};
 
             // protect the event facade properties
-            Y.mix(o2, ef, true, FACADE_KEYS);
+            Y.mix(o2, ef, true, FACADE);
 
             // mix the data
             Y.mix(ef, o, true);
 
             // restore ef
-            Y.mix(ef, o2, true, FACADE_KEYS);
+            Y.mix(ef, o2, true);
         }
 
         // update the details field with the arguments
@@ -547,6 +552,11 @@ Y.CustomEvent.prototype = {
         var es = Y.Env._eventstack,
             subs, s, args, i, ef, q, queue, ce, hasSub,
             ret = true, events;
+
+        // apply the initial config
+        if (!this.fired) {
+            this.applyConfig(this.initialConfig, this.defaults, false);
+        }
 
         // @TODO find a better way to short circuit this.  
         // if (!this.broadcast && !this.defaultFn && !this.hasSubscribers && !this.hasAfters) {

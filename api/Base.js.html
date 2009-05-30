@@ -99,10 +99,21 @@
         <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">Host</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span> <span class="o">||</span> <span class="kc">false</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_lazyAttrInit</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lazyAttrInit</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_lazyAddAttrs</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lazyAddAttrs</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="o">}</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">init</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">}</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The list of properties which can be configured for </span>
+<span class="c">     * each attribute (e.g. setter, getter, writeOnce etc.)</span>
+<span class="c">     *</span>
+<span class="c">     * @property Base._ATTR_CFG</span>
+<span class="c">     * @type Array</span>
+<span class="c">     * @static</span>
+<span class="c">     * @private</span>
+<span class="c">     */</span>
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">_ATTR_CFG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">_ATTR_CFG</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="s2">&quot;cloneDefaultValue&quot;</span><span class="o">);</span>
 
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
@@ -335,15 +346,16 @@
 <span class="c">         * @param {Objects} allCfgs</span>
 <span class="c">         */</span>
         <span class="nx">_filterAttrCfgs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">clazz</span><span class="o">,</span> <span class="nx">allCfgs</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">cfgs</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="k">var</span> <span class="nx">cfgs</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">allCfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">])</span> <span class="o">{</span>
-                        <span class="nx">cfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
-                        <span class="nx">delete</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">])</span> <span class="o">{</span>
+                        <span class="nx">cfgs</span> <span class="o">=</span> <span class="nx">cfgs</span> <span class="o">||</span> <span class="o">{};</span>
+                        <span class="nx">cfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">];</span>
+                        <span class="nx">delete</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">];</span>
                     <span class="o">}</span>
-                <span class="o">});</span>
+                <span class="o">}</span>
             <span class="o">}</span>
 
             <span class="k">return</span> <span class="nx">cfgs</span><span class="o">;</span>
@@ -379,17 +391,25 @@
 <span class="c">         * @param {Object} allAttrs</span>
 <span class="c">         */</span>
         <span class="nx">_aggregateAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">allAttrs</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">attrs</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">clone</span><span class="o">,</span>
+            <span class="k">var</span> <span class="nx">attr</span><span class="o">,</span> 
+                <span class="nx">attrs</span><span class="o">,</span> 
+                <span class="nx">cfg</span><span class="o">,</span> 
+                <span class="nx">val</span><span class="o">,</span> 
+                <span class="nx">path</span><span class="o">,</span> 
+                <span class="nx">i</span><span class="o">,</span> 
+                <span class="nx">clone</span><span class="o">,</span> 
+                <span class="nx">cfgProps</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">_ATTR_CFG</span><span class="o">,</span>
                 <span class="nx">aggAttrs</span> <span class="o">=</span> <span class="o">{};</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">allAttrs</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">allAttrs</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">allAttrs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+
                     <span class="k">for</span> <span class="o">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
 
-                            <span class="c">// Protect</span>
-<span class="c"></span>                            <span class="nx">cfg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">attrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]);</span>
+                            <span class="c">// Protect config passed in</span>
+<span class="c"></span>                            <span class="nx">cfg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({},</span> <span class="nx">attrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">cfgProps</span><span class="o">);</span>
 
                             <span class="nx">val</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
                             <span class="nx">clone</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">cloneDefaultValue</span><span class="o">;</span>
@@ -418,7 +438,7 @@
                                 <span class="k">if</span> <span class="o">(!</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">])</span> <span class="o">{</span>
                                     <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">;</span>
                                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                                    <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="nx">cfg</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="nx">cfg</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">cfgProps</span><span class="o">);</span>
                                 <span class="o">}</span>
                             <span class="o">}</span>
                         <span class="o">}</span>
@@ -440,7 +460,7 @@
 <span class="c">         * @private</span>
 <span class="c">         */</span>
         <span class="nx">_initHierarchy</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">userVals</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">lazy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lazyAttrInit</span><span class="o">,</span>
+            <span class="k">var</span> <span class="nx">lazy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lazyAddAttrs</span><span class="o">,</span>
                 <span class="nx">constr</span><span class="o">,</span>
                 <span class="nx">constrProto</span><span class="o">,</span>
                 <span class="nx">ci</span><span class="o">,</span>
@@ -493,13 +513,14 @@
         <span class="c">/**</span>
 <span class="c">         * Default toString implementation. Provides the constructor NAME</span>
 <span class="c">         * and the instance ID.</span>
-<span class="c">         * </span>
+<span class="c">         *</span>
 <span class="c">         * @method toString</span>
 <span class="c">         * @return {String} String representation for this object</span>
 <span class="c">         */</span>
         <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
         <span class="o">}</span>
+
     <span class="o">};</span>
 
     <span class="c">// Straightup augment, no wrapper functions</span>
@@ -597,7 +618,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.plug", "url": "PluginHost.html#method_PluginHost.plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.unplug", "url": "PluginHost.html#method_PluginHost.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.plug", "url": "PluginHost.html#method_PluginHost.plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.unplug", "url": "PluginHost.html#method_PluginHost.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}];
 </script>
 </body>
 </html>
