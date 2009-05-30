@@ -133,7 +133,7 @@ Y.mix(Y.namespace("DataType.Number"), {
         }
         // Not a Number, just return as string
         else {
-            return data.toString();
+            return (LANG.isValue(data) && data.toString) ? data.toString() : "";
         }
     }
 });
