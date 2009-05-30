@@ -358,13 +358,16 @@ Y.DOM = {
      * @return {HTMLElement} The node that was inserted (or null if insert fails) 
      */
     insertBefore: function(newNode, referenceNode) {
-        if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            return null;
+        var ret = null,
+            parent;
+        if (newNode && referenceNode && (parent = referenceNode.parentNode)) { // NOTE: assignment
+            if (typeof newNode === 'string') {
+                newNode = Y.DOM.create(newNode);
+            }
+            ret = parent.insertBefore(newNode, referenceNode);
+        } else {
         }
-        if (typeof newNode === 'string') {
-            newNode = Y.DOM.create(newNode);
-        }
-        return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
+        return ret;
     },
 
     /**
@@ -490,12 +493,19 @@ Y.DOM = {
     _create: function(html, doc, tag) {
         tag = tag || 'div';
 
-        var frag = Y.DOM._fragClones[tag] ? Y.DOM._fragClones[tag].cloneNode(false) : doc.createElement('div');
+        var frag = Y.DOM._fragClones[tag];
+        if (frag) {
+            frag = frag.cloneNode(false);
+        } else {
+            frag = Y.DOM._fragClones[tag] = doc.createElement(tag);
+        }
         frag.innerHTML = html;
         return frag;
     },
 
     _removeChildNodes: function(node) {
+        var childNodes = node.childNodes, i;
+
         while (node.firstChild) {
             node.removeChild(node.firstChild);
         }
@@ -505,14 +515,29 @@ Y.DOM = {
         var scripts,
             newNode = (content.nodeType) ? content : Y.DOM.create(content);
 
-        if (!where) {
-            node.appendChild(newNode);
-        } else if (where.nodeType) {
-            Y.DOM.insertBefore(newNode, where);
-        } else if (where === 'replace') {
-            Y.DOM._removeChildNodes(node);
-            node.appendChild(newNode);
-            newNode = node;
+        if (where && where.nodeType) {
+            node.insertBefore(newNode, where);
+        } else {
+            switch (where) {
+                case 'replace':
+                    while (node.firstChild) {
+                        node.removeChild(node.firstChild);
+                    }
+                    node.appendChild(newNode);
+                    break;
+                case 'before':
+                    node.parentNode.insertBefore(newNode, node);
+                    break;
+                case 'after':
+                    if (node.nextSibling) { // IE errors if refNode is null
+                        node.parentNode.insertBefore(newNode, node.nextSibling);
+                    } else {
+                        node.parentNode.appendChild(newNode);
+                    }
+                    break;
+                default:
+                    node.appendChild(newNode);
+            }
         }
 
         if (execScripts) {
@@ -522,7 +547,7 @@ Y.DOM = {
                 scripts = newNode.getElementsByTagName('script');
             }
             Y.DOM._execScripts(scripts);
-        } else if (newNode.innerHTML && newNode.innerHTML.indexOf('script') > -1) { // prevent any scripts from being injected
+        } else if (content.nodeType || content.indexOf('script') > -1) { // prevent any scripts from being injected
             Y.DOM._stripScripts(newNode);
         }
 
@@ -1274,7 +1299,7 @@ ComputedStyle = {
     },
 
     getOffset: function(el, prop) {
-        var current = _getStyleObj(node)[prop],                     // value of "width", "top", etc.
+        var current = _getStyleObj(el)[prop],                     // value of "width", "top", etc.
             capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
             offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
             pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
@@ -2321,25 +2346,26 @@ var PARENT_NODE = 'parentNode',
                     if (!root.id) {
                         root.id = Y.guid();
                     }
-                    selector = '#' + root.id + ' ' + selector;
-
                     // fast-path ID when possible
                     if (root.ownerDocument.getElementById(root.id)) {
+                        selector = '#' + root.id + ' ' + selector;
                         root = root.ownerDocument;
+
                     }
                 }
 
-                tokens = Selector._tokenize(selector);
+                tokens = Selector._tokenize(selector, root);
                 token = tokens.pop();
 
                 if (token) {
                     if (deDupe) {
                         token.deDupe = true; // TODO: better approach?
                     }
-                    if (tokens[0] && tokens[0].id && root.nodeType === 9) {
+                    if (tokens[0] && tokens[0].id && root.nodeType === 9 && root.getElementById(tokens[0].id)) {
                         root = root.getElementById(tokens[0].id);
                     }
 
+                    // TODO: no prefilter for off-dom id
                     if (root && !nodes[LENGTH] && token.prefilter) {
                         nodes = token.prefilter(root, token);
                     }
@@ -2385,6 +2411,10 @@ var PARENT_NODE = 'parentNode',
                 }
 
                 if (nextTest && !nextTest(node, token)) {
+                    return false;
+                }
+
+                if (token.root && token.root.nodeType !== 9 && !Y.DOM.contains(token.root, node)) {
                     return false;
                 }
 
@@ -2521,7 +2551,7 @@ var PARENT_NODE = 'parentNode',
             Break selector into token units per simple selector.
             Combinator is attached to the previous token.
          */
-        _tokenize: function(selector) {
+        _tokenize: function(selector, root) {
             selector = selector || '';
             selector = Selector._replaceShorthand(Y.Lang.trim(selector)); 
             var token = Selector._getToken(),     // one token per simple selector (left selector holds combinator)
@@ -2557,6 +2587,7 @@ var PARENT_NODE = 'parentNode',
                             found = true;
                             selector = selector.replace(match[0], ''); // strip current match from selector
                             if (!selector[LENGTH] || parser.name === COMBINATOR) {
+                                token.root = root;
                                 tokens.push(token);
                                 token = Selector._getToken(token);
                             }

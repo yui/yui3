@@ -31,16 +31,22 @@ var g_nodes = {},
     SuperConstr = Y.Base,
     SuperConstrProto = Y.Base.prototype,
 
-    Node = function(config) {
-        this[UID] = Y.stamp(config.node);
-        g_nodes[this[UID]] = config.node;
+    Node = function(node, restricted) {
+        var config = null;
+        this[UID] = Y.stamp(node);
+        g_nodes[this[UID]] = node;
         Node._instances[this[UID]] = this;
 
-        if (config.restricted) {
+        if (restricted) {
+            config = {
+                restricted: restricted
+            };
             g_restrict[this[UID]] = true; 
         }
 
-        SuperConstr.apply(this, arguments);
+        this._lazyAttrInit = true;
+        this._silentInit = true;
+        SuperConstr.call(this, config);
     },
 
     // used with previous/next/ancestor tests
@@ -71,12 +77,12 @@ Node.DOM_EVENTS = {
     command: true,
     contextmenu: true,
     dblclick: true,
-    'error': true,
-    'focus': true,
+    error: true,
+    focus: true,
     keydown: true,
     keypress: true,
     keyup: true,
-    'load': true,
+    load: true,
     mousedown: true,
     mousemove: true,
     mouseout: true, 
@@ -84,10 +90,10 @@ Node.DOM_EVENTS = {
     mouseup: true,
     mousemultiwheel: true,
     mousewheel: true,
-    'submit': true,
+    submit: true,
     mouseenter: true,
     mouseleave: true,
-    'scroll': true,
+    scroll: true,
     reset: true,
     resize: true,
     select: true,
@@ -171,13 +177,17 @@ Node.scrubVal = function(val, node, depth) {
 
 Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn === 'function') {
-        Node.prototype[name] = function name() {
+        Node.prototype[name] = function() {
             context = context || this;
             var args = g_slice.call(arguments),
                 ret;
 
             if (args[0] && args[0] instanceof Node) {
                 args[0] = Node.getDOMNode(args[0]);
+            }
+
+            if (args[1] && args[1] instanceof Node) {
+                args[1] = Node.getDOMNode(args[1]);
             }
             args.unshift(g_nodes[this[UID]]);
             ret = Node.scrubVal(fn.apply(context, args), this);
@@ -215,10 +225,7 @@ Node.get = function(node, doc, restrict) {
     if (node) {
         instance = Node._instances[node[UID]]; // reuse exising instances
         if (!instance) {
-            instance = new Node({
-                node: node,
-                restricted: restrict
-            });
+            instance = new Node(node, restrict);
         } else if (restrict) {
             g_restrict[instance[UID]] = true;
             instance._set('restricted', true);
@@ -281,6 +288,14 @@ Node.ATTRS = {
             return Y.DOM.setValue(g_nodes[this[UID]], val);
         }
     },
+
+/*
+    style: {
+        getter: function(attr) {
+            return Y.DOM.getStyle(g_nodes[this[UID]].style, attr);
+        }
+    },
+*/
 
     restricted: {
         writeOnce: true,
@@ -360,56 +375,11 @@ Y.mix(Node.prototype, {
         }
     },
 
-    // on: function(type, fn, context, arg) {
-    //     var args,
-    //         ret = null;
-
-    //     if (Node.DOM_EVENTS[type]) {
-    //         args = g_slice.call(arguments, 0);
-    //         args.splice(2, 0, g_nodes[this[UID]]);
-    //         ret = Y.Event.attach.apply(Y.Event, args);
-    //     } else {
-    //         ret = SuperConstrProto.on.apply(this, arguments);
-    //     }
-    //     return ret;
-    // },
-
-   /// **
-    //  * Detaches a DOM event handler. 
-    //  * @method detach
-    //  * @param {String} type The type of DOM Event
-    //  * @param {Function} fn The handler to call when the event fires 
-    //  */
-    // detach: function(type, fn) {
-    //     var args, ret = null;
-
-    //     // Added by apm: if this is a DOM event, dispatch to the event 
-    //     // system.  If the type is not supplied, do the same since 
-    //     // this is how detachAll works.  This means that Node may not 
-    //     // be able to support detachAll for both DOM events and custom events
-    //     // as implemented.  Detaching DOM events this way is a blocking
-    //     // issue for DD, so I changed it so that will work.  It is probably
-    //     // less important for custom events to work this way through this
-    //     // interface, but we need to review this.
-    //     if (!type || Node.DOM_EVENTS[type]) {
-    //         args = g_slice.call(arguments, 0);
-    //         args[2] = g_nodes[this[UID]];
-
-    //         ret = Y.Event.detach.apply(Y.Event, args);
-    //     } else {
-    //         ret = SuperConstrProto.detach.apply(this, arguments);
-    //     }
-    //     return ret;
-    // },
-
-    // detachAll: function(type) {
-    //     return this.detach(type);
-    // },
-
     get: function(attr) {
         if (!this.attrAdded(attr)) {
             if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
                 this._addDOMAttr(attr);
+                //return Node.DEFAULT_GETTER.apply(this, arguments);
             } else {
                 return Node.DEFAULT_GETTER.apply(this, arguments);
             }
@@ -575,11 +545,11 @@ Y.mix(Node.prototype, {
     },
 
     destructor: function() {
-        var uid = this[UID];
+        //var uid = this[UID];
 
-        delete g_nodes[uid];
-        delete g_restrict[uid];
-        delete Node._instances[uid];
+        //delete g_nodes[uid];
+        //delete g_restrict[uid];
+        //delete Node._instances[uid];
     },
 
     /**
@@ -626,22 +596,23 @@ Y.mix(Node.prototype, {
      * Inserts the content before the reference node. 
      * @method insert
      * @param {String | Y.Node | HTMLElement} content The content to insert 
-     * @param {Int | Y.Node | HTMLElement} refNode The index or node to insert before 
+     * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.
      * @param {Boolean} execScripts Whether or not to execute any scripts found in
      * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    insert: function(content, refNode, execScripts) {
+    //TODO: restrict
+    insert: function(content, where, execScripts) {
         if (content) {
             execScripts = (execScripts && Node.EXEC_SCRIPTS);
-            if (typeof refNode === 'number') { // allow index
-                refNode = g_nodes[this[UID]].childNodes[refNode];
+            if (typeof where === 'number') { // allow index
+                where = g_nodes[this[UID]].childNodes[where];
             }
-            if (typeof content !== 'string') {
-                content = Y.Node.getDOMNode(content);
+            if (typeof content !== 'string') { // pass the DOM node
+                content = g_nodes[content[UID]];
             }
-            if (!refNode || this.contains(refNode)) { // only allow inserting into this Node's subtree
-                Y.DOM.addHTML(g_nodes[this[UID]], content, refNode, execScripts);
+            if (!where || (!g_restrict[this[UID]] || this.contains(where))) { // only allow inserting into this Node's subtree
+                Y.DOM.addHTML(g_nodes[this[UID]], content, where, execScripts);
             }
         }
         return this;

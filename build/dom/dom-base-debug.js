@@ -358,14 +358,17 @@ Y.DOM = {
      * @return {HTMLElement} The node that was inserted (or null if insert fails) 
      */
     insertBefore: function(newNode, referenceNode) {
-        if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
-            return null;
+        var ret = null,
+            parent;
+        if (newNode && referenceNode && (parent = referenceNode.parentNode)) { // NOTE: assignment
+            if (typeof newNode === 'string') {
+                newNode = Y.DOM.create(newNode);
+            }
+            ret = parent.insertBefore(newNode, referenceNode);
+        } else {
+            Y.log('insertBefore failed: missing or invalid arg(s)', 'error', 'dom');
         }
-        if (typeof newNode === 'string') {
-            newNode = Y.DOM.create(newNode);
-        }
-        return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
+        return ret;
     },
 
     /**
@@ -492,12 +495,19 @@ Y.DOM = {
     _create: function(html, doc, tag) {
         tag = tag || 'div';
 
-        var frag = Y.DOM._fragClones[tag] ? Y.DOM._fragClones[tag].cloneNode(false) : doc.createElement('div');
+        var frag = Y.DOM._fragClones[tag];
+        if (frag) {
+            frag = frag.cloneNode(false);
+        } else {
+            frag = Y.DOM._fragClones[tag] = doc.createElement(tag);
+        }
         frag.innerHTML = html;
         return frag;
     },
 
     _removeChildNodes: function(node) {
+        var childNodes = node.childNodes, i;
+
         while (node.firstChild) {
             node.removeChild(node.firstChild);
         }
@@ -507,14 +517,29 @@ Y.DOM = {
         var scripts,
             newNode = (content.nodeType) ? content : Y.DOM.create(content);
 
-        if (!where) {
-            node.appendChild(newNode);
-        } else if (where.nodeType) {
-            Y.DOM.insertBefore(newNode, where);
-        } else if (where === 'replace') {
-            Y.DOM._removeChildNodes(node);
-            node.appendChild(newNode);
-            newNode = node;
+        if (where && where.nodeType) {
+            node.insertBefore(newNode, where);
+        } else {
+            switch (where) {
+                case 'replace':
+                    while (node.firstChild) {
+                        node.removeChild(node.firstChild);
+                    }
+                    node.appendChild(newNode);
+                    break;
+                case 'before':
+                    node.parentNode.insertBefore(newNode, node);
+                    break;
+                case 'after':
+                    if (node.nextSibling) { // IE errors if refNode is null
+                        node.parentNode.insertBefore(newNode, node.nextSibling);
+                    } else {
+                        node.parentNode.appendChild(newNode);
+                    }
+                    break;
+                default:
+                    node.appendChild(newNode);
+            }
         }
 
         if (execScripts) {
@@ -524,7 +549,7 @@ Y.DOM = {
                 scripts = newNode.getElementsByTagName('script');
             }
             Y.DOM._execScripts(scripts);
-        } else if (newNode.innerHTML && newNode.innerHTML.indexOf('script') > -1) { // prevent any scripts from being injected
+        } else if (content.nodeType || content.indexOf('script') > -1) { // prevent any scripts from being injected
             Y.DOM._stripScripts(newNode);
         }
 
