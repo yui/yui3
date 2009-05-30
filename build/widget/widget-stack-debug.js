@@ -42,9 +42,7 @@ YUI.add('widget-stack', function(Y) {
         ContentUpdate = "contentUpdate",
 
         // CSS
-        STACKED = "stacked",
-        SHOW_SCROLLBARS = "show-scrollbars",
-        HIDE_SCROLLBARS = "hide-scrollbars";
+        STACKED = "stacked";
 
     /**
      * Widget extension, which can be used to add stackable (z-index) support to the 
@@ -183,12 +181,6 @@ YUI.add('widget-stack', function(Y) {
          */
         _renderUIStack: function() {
             this._stackNode.addClass(Stack.STACKED_CLASS_NAME);
-
-            // TODO:DEPENDENCY Env.os
-            var isMac = navigator.userAgent.toLowerCase().indexOf("macintosh") != -1;
-            if (isMac && UA.gecko && UA.gecko <= 1.9) {
-                this._fixMacGeckoScrollbars();
-            }
         },
 
         /**
@@ -368,51 +360,6 @@ YUI.add('widget-stack', function(Y) {
             }
         },
 
-        /**
-         * Applies the CSS classes required to fix scrollbar bleedthrough, for FF2/Mac
-         * 
-         * @method _fixMacGeckoScrollbars
-         * @private
-         */
-        _fixMacGeckoScrollbars: function() {
-            this._toggleMacGeckoScrollbars();
-            this.after(VisibleChange, this._toggleMacGeckoScrollbars);
-        },
-
-        /**
-         * Flip the hide/show scrollbar classes applied to the Widget based on visibility, 
-         * to prevent scrollbar bleedthrough on FF2/Mac,
-         *
-         * @method _toggleMacGeckoScrollbars
-         * @private
-         */
-        _toggleMacGeckoScrollbars : function() {
-            if (this.get(VISIBLE)) {
-                this._showMacGeckoScrollbars();
-            } else {
-                this._hideMacGeckoScrollbars();
-            }
-        },
-
-        /**
-         * Set CSS classes on the Widgets boundingBox, to prevent scrollbar bleedthrough on FF2/Mac, when the Widget is hidden.
-         *
-         * @method _hideMacGeckoScrollbars
-         * @private
-         */
-        _hideMacGeckoScrollbars: function () {
-            this._stackNode.replaceClass(Widget.getClassName(SHOW_SCROLLBARS), Widget.getClassName(HIDE_SCROLLBARS));
-        },
-
-        /**
-         * Set CSS classes on the Widgets boundingBox, to prevent scrollbar bleedthrough on FF2/Mac, when the Widget is visible.
-         *
-         * @method _hideMacGeckoScrollbars
-         * @private
-         */
-        _showMacGeckoScrollbars: function () {
-            this._stackNode.replaceClass(Widget.getClassName(HIDE_SCROLLBARS), Widget.getClassName(SHOW_SCROLLBARS));
-        },
 
         /**
          * For IE6, synchronizes the size and position of iframe shim to that of 
@@ -447,7 +394,6 @@ YUI.add('widget-stack', function(Y) {
     };
 
     Y.WidgetStack = Stack;
-
 
 
 }, '@VERSION@' ,{requires:['widget']});

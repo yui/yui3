@@ -1,13 +1,15 @@
-3.0.0 Beta1
+3.0.0 beta 1
 
 * PluginHost moved down to Base.
 
 * Render event args added to event facade instead of being passed
   across separately (e.parentNode).
 
-* "hasFocus" attribute is read only
+* "hasFocus" attribute renamed to "focused"
 
-* "hasFocus" attribute is set via:
+* "focused" attribute is read only
+
+* "focused" attribute is set via:
    - user interaction
    - the "focus" and "blur" methods
 
@@ -18,7 +20,7 @@
 
 * "tabIndex" attribute was updated
   - accepts a number or null
-  -	more documentation
+  - more documentation
 
 
 3.0.0PR2 - Initial release

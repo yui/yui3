@@ -14,7 +14,7 @@ YUI.add('node-base', function(Y) {
  * <strong>NOTE:</strong> NodeList properties are accessed using
  * the <code>set</code> and <code>get</code> methods.
  *
- * @class NodeList
+ * @class Node
  * @constructor
  */
 
@@ -33,16 +33,22 @@ var g_nodes = {},
     SuperConstr = Y.Base,
     SuperConstrProto = Y.Base.prototype,
 
-    Node = function(config) {
-        this[UID] = Y.stamp(config.node);
-        g_nodes[this[UID]] = config.node;
+    Node = function(node, restricted) {
+        var config = null;
+        this[UID] = Y.stamp(node);
+        g_nodes[this[UID]] = node;
         Node._instances[this[UID]] = this;
 
-        if (config.restricted) {
+        if (restricted) {
+            config = {
+                restricted: restricted
+            };
             g_restrict[this[UID]] = true; 
         }
 
-        SuperConstr.apply(this, arguments);
+        this._lazyAttrInit = true;
+        this._silentInit = true;
+        SuperConstr.call(this, config);
     },
 
     // used with previous/next/ancestor tests
@@ -65,27 +71,60 @@ var g_nodes = {},
 Node.NAME = 'Node';
 
 Node.DOM_EVENTS = {
-    'click': true,
-    'dblclick': true,
-    'keydown': true,
-    'keypress': true,
-    'keyup': true,
-    'mousedown': true,
-    'mousemove': true,
-    'mouseout': true, 
-    'mouseover': true, 
-    'mouseup': true,
-    'focus': true,
-    'blur': true,
-    'submit': true,
-    'change': true,
-    'error': true,
-    'load': true,
-    'mouseenter': true,
-    'mouseleave': true
+    abort: true,
+    blur: true,
+    change: true,
+    click: true,
+    close: true,
+    command: true,
+    contextmenu: true,
+    dblclick: true,
+    error: true,
+    focus: true,
+    keydown: true,
+    keypress: true,
+    keyup: true,
+    load: true,
+    mousedown: true,
+    mousemove: true,
+    mouseout: true, 
+    mouseover: true, 
+    mouseup: true,
+    mousemultiwheel: true,
+    mousewheel: true,
+    submit: true,
+    mouseenter: true,
+    mouseleave: true,
+    scroll: true,
+    reset: true,
+    resize: true,
+    select: true,
+    textInput: true,
+    unload: true
 };
 
+// Add custom event adaptors to this list.  This will make it so
+// that delegate, key, available, contentready, etc all will
+// be available through Node.on
+Y.mix(Node.DOM_EVENTS, Y.Env.evt.plugins);
+
+Node.EXEC_SCRIPTS = true;
+
 Node._instances = {};
+
+Node.plug = function() {
+    var args = g_slice.call(arguments, 0);
+    args.unshift(Node);
+    Y.Base.plug.apply(Y.Base, args);
+    return Node;
+};
+
+Node.unplug = function() {
+    var args = g_slice.call(arguments, 0);
+    args.unshift(Node);
+    Y.Base.unplug.apply(Y.Base, args);
+    return Node;
+};
 
 /**
  * Retrieves the DOM node bound to a Node instance
@@ -148,6 +187,10 @@ Node.addMethod = function(name, fn, context) {
             if (args[0] && args[0] instanceof Node) {
                 args[0] = Node.getDOMNode(args[0]);
             }
+
+            if (args[1] && args[1] instanceof Node) {
+                args[1] = Node.getDOMNode(args[1]);
+            }
             args.unshift(g_nodes[this[UID]]);
             ret = Node.scrubVal(fn.apply(context, args), this);
             return ret;
@@ -183,10 +226,7 @@ Node.get = function(node, doc, restrict) {
     if (node) {
         instance = Node._instances[node[UID]]; // reuse exising instances
         if (!instance) {
-            instance = new Node({
-                node: node,
-                restricted: restrict
-            });
+            instance = new Node(node, restrict);
         } else if (restrict) {
             g_restrict[instance[UID]] = true;
             instance._set('restricted', true);
@@ -239,6 +279,24 @@ Node.ATTRS = {
             return Y.all(children);
         }
     },
+
+    value: {
+        getter: function() {
+            return Y.DOM.getValue(g_nodes[this[UID]]);
+        },
+
+        setter: function(val) {
+            return Y.DOM.setValue(g_nodes[this[UID]], val);
+        }
+    },
+
+/*
+    style: {
+        getter: function(attr) {
+            return Y.DOM.getStyle(g_nodes[this[UID]].style, attr);
+        }
+    },
+*/
 
     restricted: {
         writeOnce: true,
@@ -317,43 +375,11 @@ Y.mix(Node.prototype, {
         }
     },
 
-    on: function(type, fn, context, arg) {
-        var args;
-            ret = null;
-
-        if (Node.DOM_EVENTS[type]) {
-            args = g_slice.call(arguments, 0),
-            args.splice(2, 0, g_nodes[this[UID]]);
-            ret = Y.Event.attach.apply(Y.Event, args);
-        } else {
-            ret = SuperConstrProto.on.apply(this, arguments);
-        }
-        return ret;
-    },
-
-   /**
-     * Detaches a DOM event handler. 
-     * @method detach
-     * @param {String} type The type of DOM Event
-     * @param {Function} fn The handler to call when the event fires 
-     */
-    detach: function(type, fn) {
-        var args, ret = null;
-        if (Node.DOM_EVENTS[type]) {
-            args = g_slice.call(arguments, 0);
-            args.splice(2, 0, g_nodes[this[UID]]);
-
-            ret = Y.Event.detach.apply(Y.Event, args);
-        } else {
-            ret = SuperConstrProto.detach.apply(this, arguments);
-        }
-        return ret;
-    },
-
     get: function(attr) {
         if (!this.attrAdded(attr)) {
             if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
                 this._addDOMAttr(attr);
+                //return Node.DEFAULT_GETTER.apply(this, arguments);
             } else {
                 return Node.DEFAULT_GETTER.apply(this, arguments);
             }
@@ -366,7 +392,7 @@ Y.mix(Node.prototype, {
         if (!this.attrAdded(attr)) {
             if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
                 this._addDOMAttr(attr);
-            } else { // handle chained properties TODO: can Attribute do this? Not sure we want events
+            } else {
                 return Node.DEFAULT_SETTER.call(this, attr, val);
             }
         }
@@ -488,8 +514,16 @@ Y.mix(Node.prototype, {
         return Y.Selector.test(g_nodes[this[UID]], selector);
     },
 
+    /**
+     * Removes the node from its parent.
+     * Shortcut for myNode.get('parentNode').removeChild(myNode);
+     * @method remove
+     * @chainable
+     *
+     */
     remove: function() {
-        g_nodes[this[UID]].parentNode.removeChild();
+        var node = g_nodes[this[UID]];
+        node.parentNode.removeChild(node);
         return this;
     },
 
@@ -498,11 +532,11 @@ Y.mix(Node.prototype, {
         var node = g_nodes[this[UID]],
             ret;
 
-        if (a && a instanceof Y.Node) { // first 2 may be Node instances
+        if (a && a instanceof Y.Node) {
             a = Node.getDOMNode(a);
         }
 
-        if (b && b instanceof Y.Node) { // first 2 may be Node instances
+        if (b && b instanceof Y.Node) {
             b = Node.getDOMNode(b);
         }
 
@@ -511,8 +545,11 @@ Y.mix(Node.prototype, {
     },
 
     destructor: function() {
-        g_nodes[this[UID]] = [];
-        delete Node._instances[this[UID]];
+        //var uid = this[UID];
+
+        //delete g_nodes[uid];
+        //delete g_restrict[uid];
+        //delete Node._instances[uid];
     },
 
     /**
@@ -548,9 +585,72 @@ Y.mix(Node.prototype, {
      * @deprecated Use NodeList
      * @return {Int} The number of items in the Node. 
      */
-
     size: function() {
         return g_nodes[this[UID]] ? 1 : 0;
+    },
+
+    /**
+     * Inserts the content before the reference node. 
+     * @method insert
+     * @param {String | Y.Node | HTMLElement} content The content to insert 
+     * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.
+     * @param {Boolean} execScripts Whether or not to execute any scripts found in
+     * the content.  If false, all scripts will be stripped out.
+     * @chainable
+     */
+    //TODO: restrict
+    insert: function(content, where, execScripts) {
+        if (content) {
+            execScripts = (execScripts && Node.EXEC_SCRIPTS);
+            if (typeof where === 'number') { // allow index
+                where = g_nodes[this[UID]].childNodes[where];
+            }
+            if (typeof content !== 'string') { // pass the DOM node
+                content = g_nodes[content[UID]];
+            }
+            if (!where || (!g_restrict[this[UID]] || this.contains(where))) { // only allow inserting into this Node's subtree
+                Y.DOM.addHTML(g_nodes[this[UID]], content, where, execScripts);
+            }
+        }
+        return this;
+    },
+
+    /**
+     * Inserts the content as the firstChild of the node. 
+     * @method prepend
+     * @param {String | Y.Node | HTMLElement} content The content to insert 
+     * @param {Boolean} execScripts Whether or not to execute any scripts found in
+     * the content.  If false, all scripts will be stripped out.
+     * @chainable
+     */
+    prepend: function(content, execScripts) {
+        return this.insert(content, 0, execScripts);
+    },
+
+    /**
+     * Inserts the content as the lastChild of the node. 
+     * @method append
+     * @param {String | Y.Node | HTMLElement} content The content to insert 
+     * @param {Boolean} execScripts Whether or not to execute any scripts found in
+     * the content.  If false, all scripts will be stripped out.
+     * @chainable
+     */
+    append: function(content, execScripts) {
+        return this.insert(content, null, execScripts);
+    },
+
+    /**
+     * Replaces the node's current content with the content.
+     * @method setContent
+     * @param {String | Y.Node | HTMLElement} content The content to insert 
+     * @param {Boolean} execScripts Whether or not to execute any scripts found in
+     * the content.  If false, all scripts will be stripped out.
+     * @chainable
+     */
+    setContent: function(content, execScripts) {
+        execScripts = (execScripts && Node.EXEC_SCRIPTS);
+        Y.DOM.addHTML(g_nodes[this[UID]], content, 'replace', execScripts);
+        return this;
     },
 
     addEventListener: function() {
@@ -562,10 +662,10 @@ Y.mix(Node.prototype, {
     removeEventListener: function() {
         var args = g_slice.call(arguments);
         args.unshift(g_nodes[this[UID]]);
-        return Y.Event.nativeRemove.apply(Y.Event, arguments);
+        return Y.Event.nativeRemove.apply(Y.Event, args);
     },
 
-    // TODO: need this?  check for fn; document this
+    // TODO: need this?
     hasMethod: function(method) {
         var node = g_nodes[this[UID]];
         return (node && (typeof node === 'function'));
@@ -642,7 +742,6 @@ var g_nodelists = {},
         if (config.restricted) {
             g_restrict = this[UID];
         }
-        NodeList.superclass.constructor.apply(this, arguments);
     };
 // end "globals"
 
@@ -720,38 +819,6 @@ NodeList._getTempNode = function() {
     return tmp;
 };
 
-// call with instance context
-NodeList.DEFAULT_SETTER = function(attr, val) {
-    var tmp = NodeList._getTempNode();
-    NodeList.each(this, function(node) {
-        var instance = Y.Node._instances[node[UID]];
-        if (!instance) {
-            g_nodes[tmp[UID]] = node;
-            instance = tmp;
-        }
-        instance.set(attr, val);
-    });
-};
-
-// call with instance context
-NodeList.DEFAULT_GETTER = function(attr) {
-    var tmp = NodeList._getTempNode(),
-        ret = [];
-
-    NodeList.each(this, function(node) {
-        var instance = Y.Node._instances[node[UID]];
-        if (!instance) { // reuse tmp instance
-            g_nodes[tmp[UID]] = node;
-            instance = tmp;
-        }
-        ret[ret.length] = instance.get(attr);
-    });
-
-    return ret;
-};
-
-Y.extend(NodeList, Y.Base);
-
 Y.mix(NodeList.prototype, {
     /**
      * Retrieves the Node instance at the given index. 
@@ -767,19 +834,64 @@ Y.mix(NodeList.prototype, {
     /**
      * Applies the given function to each Node in the NodeList.
      * @method each
-     * @param {Function} fn The function to apply 
+     * @param {Function} fn The function to apply. It receives 3 arguments:
+     * the current node instance, the node's index, and the NodeList instance
      * @param {Object} context optional An optional context to apply the function with
-     * Default context is the NodeList instance
-     * @return {NodeList} NodeList containing the updated collection 
+     * Default context is the current Node instance
      * @chainable
      */
     each: function(fn, context) {
         var instance = this;
-        context = context || this;
         Y.Array.each(g_nodelists[this[UID]], function(node, index) {
-            return fn.call(context, Y.get(node), index, instance);
+            node = Y.get(node);
+            return fn.call(context || node, node, index, instance);
         });
         return instance;
+    },
+
+    batch: function(fn, context) {
+        var nodelist = this;
+            tmp = NodeList._getTempNode();
+
+        Y.Array.each(g_nodelists[this[UID]], function(node, index) {
+            var instance = Y.Node._instances[node[UID]];
+            if (!instance) {
+                g_nodes[tmp[UID]] = node;
+                instance = tmp;
+            }
+
+            return fn.call(context || instance, instance, index, nodelist);
+        });
+        return nodelist;
+    },
+
+    /**
+     * Executes the function once for each node until a true value is returned.
+     * @method some
+     * @param {Function} fn The function to apply. It receives 3 arguments:
+     * the current node instance, the node's index, and the NodeList instance
+     * @param {Object} context optional An optional context to execute the function from.
+     * Default context is the current Node instance
+     * @return {Boolean} Whether or not the function returned true for any node.
+     */
+    some: function(fn, context) {
+        var instance = this;
+        return Y.Array.some(g_nodelists[this[UID]], function(node, index) {
+            node = Y.get(node);
+            context = context || node;
+            return fn.call(context, node, index, instance);
+        });
+    },
+
+    /**
+     * Returns the index of the node in the NodeList instance
+     * or -1 if the node isn't found.
+     * @method indexOf
+     * @param {Y.Node || DOMNode} node the node to search for
+     * @return {Int} the index of the node value or -1 if not found
+     */
+    indexOf: function(node) {
+        return Y.Array.indexOf(g_nodelists[this[UID]], Y.Node.getDOMNode(node));
     },
 
     /**
@@ -793,55 +905,8 @@ Y.mix(NodeList.prototype, {
         return Node.scrubVal(Y.Selector.filter(g_nodelists[this[UID]], selector), this);
     },
 
-    get: function(attr) {
-        if (!this.attrAdded(attr) && (!this._conf.data.getter || !this._conf.data.getter[attr])) {
-        //if (!this.attrAdded(attr)) {
-            //this._addAttr(attr);
-            return NodeList.DEFAULT_GETTER.call(this, attr);
-            //return NodeList.DEFAULT_GETTER.call(this, attr);
-        }
-
-        return NodeList.superclass.constructor.prototype.get.apply(this, arguments);
-    },
-
-    set: function(attr, val) {
-        if (!this.attrAdded(attr)) {
-            this._addAttr(attr);
-        }
-
-        return NodeList.superclass.constructor.prototype.set.apply(this, arguments);
-    },
-
-    on: function(type, fn, context, arg) {
-        var args = g_slice.call(arguments, 0);
-
-        args.splice(2, 0, g_nodelists[this[UID]]);
-        if (Node.DOM_EVENTS[type]) {
-            Y.Event.attach.apply(Y.Event, args);
-        }
-
-        return NodeList.superclass.constructor.prototype.on.apply(this, arguments);
-    },
-
     destructor: function() {
-        g_nodelists[this[UID]] = [];
         delete NodeList._instances[this[UID]];
-    },
-
-    plug: function() {
-        var args = arguments;
-        this.each(function(node) {
-            node.plug.apply(node, args);
-        });
-        return this;
-    },
-
-    unplug: function() {
-        var args = arguments;
-        this.each(function(node) {
-            node.unplug.apply(node, args);
-        });
-        return this;
     },
 
     refresh: function() {
@@ -873,6 +938,23 @@ Y.mix(NodeList.prototype, {
         return g_nodelists[this[UID]].length;
     },
 
+    // one-off because we cant import from Node due to undefined return values
+    get: function(name) {
+        var ret = [],
+            tmp = NodeList._getTempNode();
+
+        NodeList.each(this, function(node) {
+            var instance = Y.Node._instances[node[UID]];
+            if (!instance) {
+                g_nodes[tmp[UID]] = node;
+                instance = tmp;
+            }
+            ret[ret.length] = instance.get(name);
+        });
+
+        return ret;
+    },
+
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to any nodes',
@@ -895,25 +977,24 @@ Y.mix(NodeList.prototype, {
             }
         }
         return str || errorMsg;
-    },
-
-    _addAttr: function(attr) {
-        this.addAttr(attr.split(DOT)[0], {
-            getter: function() {
-                return NodeList.DEFAULT_GETTER.call(this, attr);
-            },
-
-            setter: function(val) {
-                NodeList.DEFAULT_SETTER.call(this, attr, val);
-            }
-        });
     }
+
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-    'addEventListener',
-    'removeEventListener',
-    'remove'
+    'after',
+    'append',
+    'create',
+    'detach',
+    'detachAll',
+    'insert',
+    'on',
+    'plug',
+    'prepend',
+    'remove',
+    'set',
+    'setContent',
+    'unplug'
 ]);
 
 Y.NodeList = NodeList;
@@ -1079,18 +1160,16 @@ Node.importMethod(Y.DOM, [
      * @param {string} name The attribute name 
      * @return {string} The attribute value 
      */
-    'getAttribute',
-
-    'insertHTML'
+    'getAttribute'
 ]);
 
 if (!document.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
-        return this.getAttribute(attr) !== '';
+        return Y.DOM.getAttribute(Y.Node.getDOMNode(this), attr) !== '';
     };
 }
 
-Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'insertHTML']);
+Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 
 (function() { // IE clones expandos; regenerate UID
     var node = document.createElement('div');

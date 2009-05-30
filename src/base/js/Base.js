@@ -20,6 +20,9 @@
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
         OBJECT_CONSTRUCTOR = Object.prototype.constructor,
+        DEEP = "deep",
+        SHALLOW = "shallow",
+        VALUE = "value",
         DESTRUCTOR = "destructor";
 
     /**
@@ -42,9 +45,26 @@
      */
     function Base() {
         Y.log('constructor called', 'life', 'base');
+
         Y.Attribute.call(this);
+        Y.Plugin.Host.call(this);
+
+        this._silentInit = this._silentInit || false;
+        if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
+
         this.init.apply(this, arguments);
     }
+
+    /**
+     * The list of properties which can be configured for 
+     * each attribute (e.g. setter, getter, writeOnce etc.)
+     *
+     * @property Base._ATTR_CFG
+     * @type Array
+     * @static
+     * @private
+     */
+    Base._ATTR_CFG = Y.Attribute._ATTR_CFG.concat("cloneDefaultValue");
 
     /**
      * <p>
@@ -143,13 +163,12 @@
              * @param {Event.Facade} e Event object
              * @param config Object literal of configuration name/value pairs
              */
-            this.publish(INIT, {
-                queuable:false,
-                defaultFn:this._defInitFn
-            });
-
-            // TODO: Look at why this needs to be done after publish.
-            Y.Plugin.Host.call(this);
+            if (!this._silentInit) {
+                this.publish(INIT, {
+                    queuable:false,
+                    defaultFn:this._defInitFn
+                });
+            }
 
             if (config) {
                 if (config.on) {
@@ -160,7 +179,12 @@
                 }
             }
 
-            this.fire(INIT, {cfg: config});
+            if (!this._silentInit) {
+                this.fire(INIT, {cfg: config});
+            } else {
+                this._defInitFn({cfg: config});
+            }
+
             return this;
         },
 
@@ -216,7 +240,13 @@
          */
         _defInitFn : function(e) {
             this._initHierarchy(e.cfg);
-            this._set(INITIALIZED, true);
+            this._initPlugins(e.cfg);
+
+            if (!this._silentInit) {
+                this._set(INITIALIZED, true);
+            } else {
+                this._conf.add(INITIALIZED, VALUE, true);
+            }
         },
 
         /**
@@ -228,6 +258,7 @@
          */
         _defDestroyFn : function(e) {
             this._destroyHierarchy();
+            this._destroyPlugins();
             this._set(DESTROYED, true);
         },
 
@@ -266,15 +297,16 @@
          * @param {Objects} allCfgs
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
-            var cfgs = {};
+            var cfgs = null, attr, attrs = clazz.ATTRS;
 
-            if (clazz.ATTRS) {
-                Y.each(clazz.ATTRS, function(v, k) {
-                    if (allCfgs[k]) {
-                        cfgs[k] = allCfgs[k];
-                        delete allCfgs[k];
+            if (attrs) {
+                for (attr in attrs) {
+                    if (attrs.hasOwnProperty(attr) && allCfgs[attr]) {
+                        cfgs = cfgs || {};
+                        cfgs[attr] = allCfgs[attr];
+                        delete allCfgs[attr];
                     }
-                });
+                }
             }
 
             return cfgs;
@@ -289,7 +321,7 @@
                 classes = [],
                 attrs = [];
 
-            while (c && c.prototype) {
+            while (c) {
                 // Add to classes
                 classes[classes.length] = c;
 
@@ -310,21 +342,39 @@
          * @param {Object} allAttrs
          */
         _aggregateAttrs : function(allAttrs) {
-            var attr, attrs, cfg, val, path, i,
+            var attr, 
+                attrs, 
+                cfg, 
+                val, 
+                path, 
+                i, 
+                clone, 
+                cfgProps = Base._ATTR_CFG,
                 aggAttrs = {};
 
             if (allAttrs) {
                 for (i = allAttrs.length-1; i >= 0; --i) {
                     attrs = allAttrs[i];
+
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            // Protect
-                            cfg = Y.merge(attrs[attr]);
+                            // Protect config passed in
+                            cfg = Y.mix({}, attrs[attr], true, cfgProps);
 
                             val = cfg.value;
-                            if (val && !cfg.useRef && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) {
-                                cfg.value = Y.clone(val);
+                            clone = cfg.cloneDefaultValue;
+
+                            if (val) {
+                                if ( (clone === undefined && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) || clone === DEEP || clone === true) {
+                                    Y.log('Cloning default value for attribute:' + attr, 'info', 'base');
+                                    cfg.value = Y.clone(val);
+                                } else if (clone === SHALLOW) {
+                                    Y.log('Merging default value for attribute:' + attr, 'info', 'base');
+                                    cfg.value = Y.merge(val);
+                                }
+                                // else if (clone === false), don't clone the static default value. 
+                                // It's intended to be used by reference.
                             }
 
                             path = null;
@@ -339,7 +389,7 @@
                                 if (!aggAttrs[attr]) {
                                     aggAttrs[attr] = cfg;
                                 } else {
-                                    aggAttrs[attr] = Y.mix(aggAttrs[attr], cfg, true);
+                                    Y.mix(aggAttrs[attr], cfg, true, cfgProps);
                                 }
                             }
                         }
@@ -357,20 +407,21 @@
          * method on the prototype of each class in the hierarchy.
          *
          * @method _initHierarchy
-         * @param {Object} userConf Object literal containing attribute name/value pairs
+         * @param {Object} userVals Object literal containing attribute name/value pairs
          * @private
          */
-        _initHierarchy : function(userConf) {
-            var constr,
+        _initHierarchy : function(userVals) {
+            var lazy = this._lazyAddAttrs,
+                constr,
                 constrProto,
                 ci,
                 ei,
                 el,
                 classes = this._getClasses(),
-                mergedCfgs = this._getAttrCfgs();
-                this._userCfgs = userConf;
+                attrCfgs = this._getAttrCfgs();
 
             for (ci = classes.length-1; ci >= 0; ci--) {
+
                 constr = classes[ci];
                 constrProto = constr.prototype;
 
@@ -380,12 +431,10 @@
                     }
                 }
 
-                this._classCfgs = this._filterAttrCfgs(constr, mergedCfgs);
-                this.addAttrs(this._classCfgs, userConf);
-                this._classCfgs = null;
+                this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
-                    constrProto[INITIALIZER].apply(this, arguments);
+                    constrProto.initializer.apply(this, arguments);
                 }
             }
         },
@@ -407,65 +456,30 @@
                 constr = classes[ci];
                 constrProto = constr.prototype;
                 if (constrProto.hasOwnProperty(DESTRUCTOR)) {
-                    constrProto[DESTRUCTOR].apply(this, arguments);
+                    constrProto.destructor.apply(this, arguments);
                 }
             }
-        },
-
-        /**
-         * Wrapper for Attribute.get. Adds the ability to 
-         * initialize attributes on demand during initialization
-         * of the ATTRS definitions at each class level.
-         *
-         * @method get
-         *
-         * @param {String} name The attribute whose value will be returned. If 
-         * the attribute is not currently configured, but is part of the ATTRS 
-         * configuration for the class currently being configured, it will be
-         *
-         * @return {Any} The current value of the attribute
-         */
-        get: function(name) {
-
-            if (this._classCfgs) {
-                var attrName = name,
-                    iDot = name.indexOf(DOT);
-
-                if (iDot !== -1) {
-                    attrName = name.slice(0, iDot);
-                }
-
-                if (this._classCfgs[attrName] && !this.attrAdded(attrName)) {
-                    var classCfg = this._classCfgs[attrName],
-                        userCfg = this._userCfgs,
-                        attrCfg;
-
-                    if (classCfg) {
-                        attrCfg = {};
-                        attrCfg[attrName] = classCfg;
-                        this.addAttrs(attrCfg, userCfg);
-                    }
-                }
-            }
-
-            return Y.Attribute.prototype.get.call(this, name);
         },
 
         /**
          * Default toString implementation. Provides the constructor NAME
          * and the instance ID.
-         * 
+         *
          * @method toString
          * @return {String} String representation for this object
          */
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
         }
+
     };
 
     // Straightup augment, no wrapper functions
     Y.mix(Base, Y.Attribute, false, null, 1);
-    Y.mix(Base, Y.Plugin.Host, false, null, 1);
+    Y.mix(Base, PluginHost, false, null, 1);
+
+    Base.plug = PluginHost.plug;
+    Base.unplug = PluginHost.unplug;
 
     // Fix constructor
     Base.prototype.constructor = Base;

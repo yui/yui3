@@ -17,14 +17,14 @@ YUI.add('test', function(Y) {
      * @namespace Test
      * @constructor
      */
-    Y.Test.Case = function (template /*:Object*/) {
+    Y.Test.Case = function (template) {
         
         /**
          * Special rules for the test case. Possible subobjects
          * are fail, for tests that should fail, and error, for
          * tests that should throw an error.
          */
-        this._should /*:Object*/ = {};
+        this._should = {};
         
         //copy over all properties from the template to this object
         for (var prop in template) {
@@ -36,7 +36,7 @@ YUI.add('test', function(Y) {
             /**
              * Name for the test case.
              */
-            this.name /*:String*/ = "testCase" + Y.guid();
+            this.name = "testCase" + Y.guid();
         }
     
     };
@@ -50,7 +50,7 @@ YUI.add('test', function(Y) {
          * @return {Void}
          * @method resume
          */
-        resume : function (segment /*:Function*/) /*:Void*/ {
+        resume : function (segment) {
             Y.Test.Runner.resume(segment);
         },
     
@@ -64,7 +64,7 @@ YUI.add('test', function(Y) {
          * @return {Void}
          * @method wait
          */
-        wait : function (segment /*:Function*/, delay /*:int*/) /*:Void*/{
+        wait : function (segment, delay){
             var args = arguments;
             if (Y.Lang.isFunction(args[0])){
                 throw new Y.Test.Wait(args[0], args[1]);
@@ -84,7 +84,7 @@ YUI.add('test', function(Y) {
          * @return {Void}
          * @method setUp
          */
-        setUp : function () /*:Void*/ {
+        setUp : function () {
         },
         
         /**
@@ -92,7 +92,7 @@ YUI.add('test', function(Y) {
          * @return {Void}
          * @method tearDown
          */
-        tearDown: function () /*:Void*/ {    
+        tearDown: function () {    
         }
     };
     
@@ -106,21 +106,21 @@ YUI.add('test', function(Y) {
      * @constructor
      *
      */
-    Y.Test.Wait = function (segment /*:Function*/, delay /*:int*/) {
+    Y.Test.Wait = function (segment, delay) {
         
         /**
          * The segment of code to run when the wait is over.
          * @type Function
          * @property segment
          */
-        this.segment /*:Function*/ = (Y.Lang.isFunction(segment) ? segment : null);
+        this.segment = (Y.Lang.isFunction(segment) ? segment : null);
     
         /**
          * The delay before running the segment of code.
          * @type int
          * @property delay
          */
-        this.delay /*:int*/ = (Y.Lang.isNumber(delay) ? delay : 0);        
+        this.delay = (Y.Lang.isNumber(delay) ? delay : 0);        
     };
 
 
@@ -142,13 +142,13 @@ YUI.add('test', function(Y) {
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "";
+        this.name = "";
     
         /**
          * Array of test suites and
          * @private
          */
-        this.items /*:Array*/ = [];
+        this.items = [];
     
         //initialize the properties
         if (Y.Lang.isString(data)){
@@ -172,7 +172,7 @@ YUI.add('test', function(Y) {
          * @return {Void}
          * @method add
          */
-        add : function (testObject /*:Y.Test.Suite*/) /*:Void*/ {
+        add : function (testObject /*:Y.Test.Suite*/) {
             if (testObject instanceof Y.Test.Suite || testObject instanceof Y.Test.Case) {
                 this.items.push(testObject);
             }
@@ -187,7 +187,7 @@ YUI.add('test', function(Y) {
          * @return {Void}
          * @method setUp
          */
-        setUp : function () /*:Void*/ {
+        setUp : function () {
         },
         
         /**
@@ -195,7 +195,7 @@ YUI.add('test', function(Y) {
          * @return {Void}
          * @method tearDown
          */
-        tearDown: function () /*:Void*/ {
+        tearDown: function () {
         }
         
     };
@@ -218,7 +218,7 @@ YUI.add('test', function(Y) {
          * @constructor
          * @private
          */
-        function TestNode(testObject /*:Variant*/){
+        function TestNode(testObject){
         
             /**
              * The TestSuite, TestCase, or test function represented by this node.
@@ -232,7 +232,7 @@ YUI.add('test', function(Y) {
              * @type TestNode
              * @property firstChild
              */        
-            this.firstChild /*:TestNode*/ = null;
+            this.firstChild = null;
             
             /**
              * Pointer to this node's last child.
@@ -260,7 +260,7 @@ YUI.add('test', function(Y) {
              * @type object
              * @property results
              */                
-            this.results /*:Object*/ = {
+            this.results = {
                 passed : 0,
                 failed : 0,
                 total : 0,
@@ -286,7 +286,7 @@ YUI.add('test', function(Y) {
              * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
              * @return {Void}
              */
-            appendChild : function (testObject /*:Variant*/) /*:Void*/{
+            appendChild : function (testObject){
                 var node = new TestNode(testObject);
                 if (this.firstChild === null){
                     this.firstChild = this.lastChild = node;
@@ -387,14 +387,14 @@ YUI.add('test', function(Y) {
              * @event testcasebegin
              * @static
              */         
-            TEST_CASE_BEGIN_EVENT /*:String*/ : "testcasebegin",
+            TEST_CASE_BEGIN_EVENT : "testcasebegin",
             
             /**
              * Fires when all tests in a test case have been executed.
              * @event testcasecomplete
              * @static
              */        
-            TEST_CASE_COMPLETE_EVENT /*:String*/ : "testcasecomplete",
+            TEST_CASE_COMPLETE_EVENT : "testcasecomplete",
             
             /**
              * Fires when a test suite is opened but before the first 
@@ -402,7 +402,7 @@ YUI.add('test', function(Y) {
              * @event testsuitebegin
              * @static
              */        
-            TEST_SUITE_BEGIN_EVENT /*:String*/ : "testsuitebegin",
+            TEST_SUITE_BEGIN_EVENT : "testsuitebegin",
             
             /**
              * Fires when all test cases in a test suite have been
@@ -410,42 +410,42 @@ YUI.add('test', function(Y) {
              * @event testsuitecomplete
              * @static
              */        
-            TEST_SUITE_COMPLETE_EVENT /*:String*/ : "testsuitecomplete",
+            TEST_SUITE_COMPLETE_EVENT : "testsuitecomplete",
             
             /**
              * Fires when a test has passed.
              * @event pass
              * @static
              */        
-            TEST_PASS_EVENT /*:String*/ : "pass",
+            TEST_PASS_EVENT : "pass",
             
             /**
              * Fires when a test has failed.
              * @event fail
              * @static
              */        
-            TEST_FAIL_EVENT /*:String*/ : "fail",
+            TEST_FAIL_EVENT : "fail",
             
             /**
              * Fires when a test has been ignored.
              * @event ignore
              * @static
              */        
-            TEST_IGNORE_EVENT /*:String*/ : "ignore",
+            TEST_IGNORE_EVENT : "ignore",
             
             /**
              * Fires when all test suites and test cases have been completed.
              * @event complete
              * @static
              */        
-            COMPLETE_EVENT /*:String*/ : "complete",
+            COMPLETE_EVENT : "complete",
             
             /**
              * Fires when the run() method is called.
              * @event begin
              * @static
              */        
-            BEGIN_EVENT /*:String*/ : "begin",    
+            BEGIN_EVENT : "begin",    
             
             //-------------------------------------------------------------------------
             // Logging-Related Methods
@@ -485,8 +485,8 @@ YUI.add('test', function(Y) {
             _logEvent: function(event){
                 
                 //data variables
-                var message /*:String*/ = "";
-                var messageType /*:String*/ = "";
+                var message = "";
+                var messageType = "";
                 
                 switch(event.type){
                     case this.BEGIN_EVENT:
@@ -560,7 +560,7 @@ YUI.add('test', function(Y) {
              * @private
              * @method _addTestCaseToTestTree
              */
-           _addTestCaseToTestTree : function (parentNode /*:TestNode*/, testCase /*:Y.Test.Case*/) /*:Void*/{
+           _addTestCaseToTestTree : function (parentNode, testCase /*:Y.Test.Case*/){
                 
                 //add the test suite
                 var node = parentNode.appendChild(testCase),
@@ -585,7 +585,7 @@ YUI.add('test', function(Y) {
              * @private
              * @method _addTestSuiteToTestTree
              */
-            _addTestSuiteToTestTree : function (parentNode /*:TestNode*/, testSuite /*:Y.Test.Suite*/) /*:Void*/ {
+            _addTestSuiteToTestTree : function (parentNode, testSuite /*:Y.Test.Suite*/) {
                 
                 //add the test suite
                 var node = parentNode.appendChild(testSuite);
@@ -609,7 +609,7 @@ YUI.add('test', function(Y) {
              * @private
              * @method _buildTestTree
              */
-            _buildTestTree : function () /*:Void*/ {
+            _buildTestTree : function () {
             
                 this._root = new TestNode(this.masterSuite);
                 this._cur = this._root;
@@ -637,7 +637,7 @@ YUI.add('test', function(Y) {
              * @method _handleTestObjectComplete
              * @private
              */
-            _handleTestObjectComplete : function (node /*:TestNode*/) /*:Void*/ {
+            _handleTestObjectComplete : function (node) {
                 if (Y.Lang.isObject(node.testObject)){
                     node.parent.results.passed += node.results.passed;
                     node.parent.results.failed += node.results.failed;
@@ -665,7 +665,7 @@ YUI.add('test', function(Y) {
              * @static
              * @method _next
              */
-            _next : function () /*:TestNode*/ {
+            _next : function () {
             
                 if (this._cur.firstChild) {
                     this._cur = this._cur.firstChild;
@@ -700,10 +700,10 @@ YUI.add('test', function(Y) {
              * @method _run
              * @static
              */
-            _run : function () /*:Void*/ {
+            _run : function () {
             
                 //flag to indicate if the TestRunner should wait before continuing
-                var shouldWait /*:Boolean*/ = false;
+                var shouldWait = false;
                 
                 //get the next test node
                 var node = this._next();
@@ -735,10 +735,10 @@ YUI.add('test', function(Y) {
                 }
             },
             
-            _resumeTest : function (segment /*:Function*/) /*:Void*/ {
+            _resumeTest : function (segment) {
             
                 //get relevant information
-                var node /*:TestNode*/ = this._cur;
+                var node = this._cur;
                 
                 //if there's no node, it probably means a wait() was called after resume()
                 if (!node){
@@ -748,7 +748,7 @@ YUI.add('test', function(Y) {
                     return;
                 }
                 
-                var testName /*:String*/ = node.testObject;
+                var testName = node.testObject;
                 var testCase /*:Y.Test.Case*/ = node.parent.testObject;
             
                 //cancel other waits if available
@@ -758,12 +758,12 @@ YUI.add('test', function(Y) {
                 }
 
                 //get the "should" test cases
-                var shouldFail /*:Object*/ = (testCase._should.fail || {})[testName];
-                var shouldError /*:Object*/ = (testCase._should.error || {})[testName];
+                var shouldFail = (testCase._should.fail || {})[testName];
+                var shouldError = (testCase._should.error || {})[testName];
                 
                 //variable to hold whether or not the test failed
-                var failed /*:Boolean*/ = false;
-                var error /*:Error*/ = null;
+                var failed = false;
+                var error = null;
                     
                 //try the test
                 try {
@@ -780,7 +780,7 @@ YUI.add('test', function(Y) {
                         failed = true;
                     }
                                
-                } catch (thrown /*:Error*/){
+                } catch (thrown){
 
                     //cancel any pending waits, the test already failed
                     if (testCase.__yui_wait){
@@ -923,15 +923,15 @@ YUI.add('test', function(Y) {
              * @private
              * @name _runTest
              */
-            _runTest : function (node /*:TestNode*/) /*:Void*/ {
+            _runTest : function (node) {
             
                 //get relevant information
-                var testName /*:String*/ = node.testObject;
+                var testName = node.testObject;
                 var testCase /*:Y.Test.Case*/ = node.parent.testObject;
-                var test /*:Function*/ = testCase[testName];
+                var test = testCase[testName];
                 
                 //get the "should" test cases
-                var shouldIgnore /*:Object*/ = (testCase._should.ignore || {})[testName];
+                var shouldIgnore = (testCase._should.ignore || {})[testName];
                 
                 //figure out if the test should be ignored or not
                 if (shouldIgnore){
@@ -983,7 +983,7 @@ YUI.add('test', function(Y) {
              * @static
              * @protected
              */
-            fire : function (type /*:String*/, data /*:Object*/) /*:Void*/ {
+            fire : function (type, data) {
                 data = data || {};
                 data.type = type;
                 TestRunner.superclass.fire.call(this, type, data);
@@ -1000,7 +1000,7 @@ YUI.add('test', function(Y) {
              * @method add
              * @static
              */
-            add : function (testObject /*:Object*/) /*:Void*/ {
+            add : function (testObject) {
                 this.masterSuite.add(testObject);
             },
             
@@ -1010,7 +1010,7 @@ YUI.add('test', function(Y) {
              * @method clear
              * @static
              */
-            clear : function () /*:Void*/ {
+            clear : function () {
                 this.masterSuite.items = [];
             },
             
@@ -1032,7 +1032,7 @@ YUI.add('test', function(Y) {
              * @method resume
              * @static
              */
-            resume : function (segment /*:Function*/) /*:Void*/ {
+            resume : function (segment) {
                 this._resumeTest(segment || function(){});
             },
         
@@ -1042,7 +1042,7 @@ YUI.add('test', function(Y) {
              * @method run
              * @static
              */
-            run : function (testObject /*:Object*/) /*:Void*/ {
+            run : function (testObject) {
                 
                 //pointer to runner to avoid scope issues 
                 var runner = Y.Test.Runner;
@@ -1098,7 +1098,7 @@ YUI.add('test', function(Y) {
          * @static
          * @method _formatMessage
          */
-        _formatMessage : function (customMessage /*:String*/, defaultMessage /*:String*/) /*:String*/ {
+        _formatMessage : function (customMessage, defaultMessage) {
             var message = customMessage;
             if (Y.Lang.isString(customMessage) && customMessage.length > 0){
                 return Y.Lang.substitute(customMessage, { message: defaultMessage });
@@ -1147,7 +1147,7 @@ YUI.add('test', function(Y) {
          * @method fail
          * @static
          */
-        fail : function (message /*:String*/) /*:Void*/ {
+        fail : function (message) {
             throw new Y.Assert.Error(Y.Assert._formatMessage(message, "Test force-failed."));
         },       
         
@@ -1164,7 +1164,7 @@ YUI.add('test', function(Y) {
          * @method areEqual
          * @static
          */
-        areEqual : function (expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        areEqual : function (expected, actual, message) {
             Y.Assert._increment();
             if (expected != actual) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values should be equal."), expected, actual);
@@ -1180,8 +1180,8 @@ YUI.add('test', function(Y) {
          * @method areNotEqual
          * @static
          */
-        areNotEqual : function (unexpected /*:Object*/, actual /*:Object*/, 
-                             message /*:String*/) /*:Void*/ {
+        areNotEqual : function (unexpected, actual, 
+                             message) {
             Y.Assert._increment();
             if (unexpected == actual) {
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be equal."), unexpected);
@@ -1197,7 +1197,7 @@ YUI.add('test', function(Y) {
          * @method areNotSame
          * @static
          */
-        areNotSame : function (unexpected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        areNotSame : function (unexpected, actual, message) {
             Y.Assert._increment();
             if (unexpected === actual) {
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be the same."), unexpected);
@@ -1213,7 +1213,7 @@ YUI.add('test', function(Y) {
          * @method areSame
          * @static
          */
-        areSame : function (expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        areSame : function (expected, actual, message) {
             Y.Assert._increment();
             if (expected !== actual) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values should be the same."), expected, actual);
@@ -1232,7 +1232,7 @@ YUI.add('test', function(Y) {
          * @method isFalse
          * @static
          */
-        isFalse : function (actual /*:Boolean*/, message /*:String*/) {
+        isFalse : function (actual, message) {
             Y.Assert._increment();
             if (false !== actual) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be false."), false, actual);
@@ -1247,7 +1247,7 @@ YUI.add('test', function(Y) {
          * @method isTrue
          * @static
          */
-        isTrue : function (actual /*:Boolean*/, message /*:String*/) /*:Void*/ {
+        isTrue : function (actual, message) {
             Y.Assert._increment();
             if (true !== actual) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be true."), true, actual);
@@ -1266,7 +1266,7 @@ YUI.add('test', function(Y) {
          * @method isNaN
          * @static
          */
-        isNaN : function (actual /*:Object*/, message /*:String*/) /*:Void*/{
+        isNaN : function (actual, message){
             Y.Assert._increment();
             if (!isNaN(actual)){
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be NaN."), NaN, actual);
@@ -1280,7 +1280,7 @@ YUI.add('test', function(Y) {
          * @method isNotNaN
          * @static
          */
-        isNotNaN : function (actual /*:Object*/, message /*:String*/) /*:Void*/{
+        isNotNaN : function (actual, message){
             Y.Assert._increment();
             if (isNaN(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be NaN."), NaN);
@@ -1295,7 +1295,7 @@ YUI.add('test', function(Y) {
          * @method isNotNull
          * @static
          */
-        isNotNull : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isNotNull : function (actual, message) {
             Y.Assert._increment();
             if (Y.Lang.isNull(actual)) {
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be null."), null);
@@ -1310,7 +1310,7 @@ YUI.add('test', function(Y) {
          * @method isNotUndefined
          * @static
          */
-        isNotUndefined : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isNotUndefined : function (actual, message) {
             Y.Assert._increment();
             if (Y.Lang.isUndefined(actual)) {
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should not be undefined."), undefined);
@@ -1325,7 +1325,7 @@ YUI.add('test', function(Y) {
          * @method isNull
          * @static
          */
-        isNull : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isNull : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isNull(actual)) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be null."), null, actual);
@@ -1340,7 +1340,7 @@ YUI.add('test', function(Y) {
          * @method isUndefined
          * @static
          */
-        isUndefined : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isUndefined : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isUndefined(actual)) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be undefined."), undefined, actual);
@@ -1358,7 +1358,7 @@ YUI.add('test', function(Y) {
          * @method isArray
          * @static
          */
-        isArray : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isArray : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isArray(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be an array."), actual);
@@ -1372,7 +1372,7 @@ YUI.add('test', function(Y) {
          * @method isBoolean
          * @static
          */
-        isBoolean : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isBoolean : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isBoolean(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a Boolean."), actual);
@@ -1386,7 +1386,7 @@ YUI.add('test', function(Y) {
          * @method isFunction
          * @static
          */
-        isFunction : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isFunction : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isFunction(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a function."), actual);
@@ -1403,7 +1403,7 @@ YUI.add('test', function(Y) {
          * @method isInstanceOf
          * @static
          */
-        isInstanceOf : function (expected /*:Function*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isInstanceOf : function (expected, actual, message) {
             Y.Assert._increment();
             if (!(actual instanceof expected)){
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value isn't an instance of expected type."), expected, actual);
@@ -1417,7 +1417,7 @@ YUI.add('test', function(Y) {
          * @method isNumber
          * @static
          */
-        isNumber : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isNumber : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isNumber(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a number."), actual);
@@ -1431,7 +1431,7 @@ YUI.add('test', function(Y) {
          * @method isObject
          * @static
          */
-        isObject : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isObject : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isObject(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be an object."), actual);
@@ -1445,7 +1445,7 @@ YUI.add('test', function(Y) {
          * @method isString
          * @static
          */
-        isString : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isString : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isString(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a string."), actual);
@@ -1460,7 +1460,7 @@ YUI.add('test', function(Y) {
          * @method isTypeOf
          * @static
          */
-        isTypeOf : function (expectedType /*:String*/, actualValue /*:Object*/, message /*:String*/) /*:Void*/{
+        isTypeOf : function (expectedType, actualValue, message){
             Y.Assert._increment();
             if (typeof actualValue != expectedType){
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be of type " + expectedType + "."), expected, typeof actualValue);
@@ -1482,6 +1482,14 @@ YUI.add('test', function(Y) {
             throw new Y.Assert.Error(Y.Assert._formatMessage(message, "Assertion failed."));
         }
     };
+
+    /**
+     * Forces an assertion error to occur. Shortcut for Y.Assert.fail().
+     * @method Y.fail
+     * @param {String} message (Optional) The message to display with the failure.
+     * @static
+     */
+    Y.fail = Y.Assert.fail;   
     
     //-----------------------------------------------------------------------------
     // Assertion errors
@@ -1497,7 +1505,7 @@ YUI.add('test', function(Y) {
      * @class Error
      * @constructor
      */ 
-    Y.Assert.Error = function (message /*:String*/){
+    Y.Assert.Error = function (message){
     
         //call superclass
         arguments.callee.superclass.constructor.call(this, message);
@@ -1507,14 +1515,14 @@ YUI.add('test', function(Y) {
          * @type String
          * @property message
          */
-        this.message /*:String*/ = message;
+        this.message = message;
         
         /**
          * The name of the error that occurred.
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "Assert Error";
+        this.name = "Assert Error";
     };
     
     //inherit methods
@@ -1526,7 +1534,7 @@ YUI.add('test', function(Y) {
          * @method getMessage
          * @return {String} A string describing the error.
          */
-        getMessage : function () /*:String*/ {
+        getMessage : function () {
             return this.message;
         },
         
@@ -1535,7 +1543,7 @@ YUI.add('test', function(Y) {
          * @method toString
          * @return {String} A string representation of the error.
          */
-        toString : function () /*:String*/ {
+        toString : function () {
             return this.name + ": " + this.getMessage();
         },
         
@@ -1544,7 +1552,7 @@ YUI.add('test', function(Y) {
          * @method valueOf
          * @return {String} A primitive value version of the error.
          */
-        valueOf : function () /*:String*/ {
+        valueOf : function () {
             return this.toString();
         }
     
@@ -1563,7 +1571,7 @@ YUI.add('test', function(Y) {
      * @class ComparisonFailure
      * @constructor
      */ 
-    Y.Assert.ComparisonFailure = function (message /*:String*/, expected /*:Object*/, actual /*:Object*/){
+    Y.Assert.ComparisonFailure = function (message, expected, actual){
     
         //call superclass
         arguments.callee.superclass.constructor.call(this, message);
@@ -1573,21 +1581,21 @@ YUI.add('test', function(Y) {
          * @type Object
          * @property expected
          */
-        this.expected /*:Object*/ = expected;
+        this.expected = expected;
         
         /**
          * The actual value.
          * @type Object
          * @property actual
          */
-        this.actual /*:Object*/ = actual;
+        this.actual = actual;
         
         /**
          * The name of the error that occurred.
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "ComparisonFailure";
+        this.name = "ComparisonFailure";
         
     };
     
@@ -1600,7 +1608,7 @@ YUI.add('test', function(Y) {
          * @method toString
          * @return {String} A string describing the error.
          */
-        getMessage : function () /*:String*/ {
+        getMessage : function () {
             return this.message + "\nExpected: " + this.expected + " (" + (typeof this.expected) + ")"  +
                 "\nActual:" + this.actual + " (" + (typeof this.actual) + ")";
         }
@@ -1620,7 +1628,7 @@ YUI.add('test', function(Y) {
      * @class UnexpectedValue
      * @constructor
      */ 
-    Y.Assert.UnexpectedValue = function (message /*:String*/, unexpected /*:Object*/){
+    Y.Assert.UnexpectedValue = function (message, unexpected){
     
         //call superclass
         arguments.callee.superclass.constructor.call(this, message);
@@ -1630,14 +1638,14 @@ YUI.add('test', function(Y) {
          * @type Object
          * @property unexpected
          */
-        this.unexpected /*:Object*/ = unexpected;
+        this.unexpected = unexpected;
         
         /**
          * The name of the error that occurred.
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "UnexpectedValue";
+        this.name = "UnexpectedValue";
         
     };
     
@@ -1650,7 +1658,7 @@ YUI.add('test', function(Y) {
          * @method getMessage
          * @return {String} A string describing the error.
          */
-        getMessage : function () /*:String*/ {
+        getMessage : function () {
             return this.message + "\nUnexpected: " + this.unexpected + " (" + (typeof this.unexpected) + ") ";
         }
     
@@ -1666,7 +1674,7 @@ YUI.add('test', function(Y) {
      * @class ShouldFail
      * @constructor
      */  
-    Y.Assert.ShouldFail = function (message /*:String*/){
+    Y.Assert.ShouldFail = function (message){
     
         //call superclass
         arguments.callee.superclass.constructor.call(this, message || "This test should fail but didn't.");
@@ -1676,7 +1684,7 @@ YUI.add('test', function(Y) {
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "ShouldFail";
+        this.name = "ShouldFail";
         
     };
     
@@ -1693,7 +1701,7 @@ YUI.add('test', function(Y) {
      * @class ShouldError
      * @constructor
      */  
-    Y.Assert.ShouldError = function (message /*:String*/){
+    Y.Assert.ShouldError = function (message){
     
         //call superclass
         arguments.callee.superclass.constructor.call(this, message || "This test should have thrown an error but didn't.");
@@ -1703,7 +1711,7 @@ YUI.add('test', function(Y) {
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "ShouldError";
+        this.name = "ShouldError";
         
     };
     
@@ -1722,7 +1730,7 @@ YUI.add('test', function(Y) {
      * @class UnexpectedError
      * @constructor
      */  
-    Y.Assert.UnexpectedError = function (cause /*:Object*/){
+    Y.Assert.UnexpectedError = function (cause){
     
         //call superclass
         arguments.callee.superclass.constructor.call(this, "Unexpected error: " + cause.message);
@@ -1732,21 +1740,21 @@ YUI.add('test', function(Y) {
          * @type Error
          * @property cause
          */
-        this.cause /*:Error*/ = cause;
+        this.cause = cause;
         
         /**
          * The name of the error that occurred.
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "UnexpectedError";
+        this.name = "UnexpectedError";
         
         /**
          * Stack information for the error (if provided).
          * @type String
          * @property stack
          */
-        this.stack /*:String*/ = cause.stack;
+        this.stack = cause.stack;
         
     };
     
@@ -1774,8 +1782,8 @@ YUI.add('test', function(Y) {
          * @method contains
          * @static
          */
-        contains : function (needle /*:Object*/, haystack /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        contains : function (needle, haystack, 
+                               message) {
             
             Y.Assert._increment();               
 
@@ -1794,8 +1802,8 @@ YUI.add('test', function(Y) {
          * @method containsItems
          * @static
          */
-        containsItems : function (needles /*:Object[]*/, haystack /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        containsItems : function (needles, haystack, 
+                               message) {
             Y.Assert._increment();               
     
             //begin checking values
@@ -1815,8 +1823,8 @@ YUI.add('test', function(Y) {
          * @method containsMatch
          * @static
          */
-        containsMatch : function (matcher /*:Function*/, haystack /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        containsMatch : function (matcher, haystack, 
+                               message) {
             
             Y.Assert._increment();               
             //check for valid matcher
@@ -1839,8 +1847,8 @@ YUI.add('test', function(Y) {
          * @method doesNotContain
          * @static
          */
-        doesNotContain : function (needle /*:Object*/, haystack /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        doesNotContain : function (needle, haystack, 
+                               message) {
             
             Y.Assert._increment();               
 
@@ -1859,8 +1867,8 @@ YUI.add('test', function(Y) {
          * @method doesNotContainItems
          * @static
          */
-        doesNotContainItems : function (needles /*:Object[]*/, haystack /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        doesNotContainItems : function (needles, haystack, 
+                               message) {
     
             Y.Assert._increment();               
     
@@ -1881,8 +1889,8 @@ YUI.add('test', function(Y) {
          * @method doesNotContainMatch
          * @static
          */
-        doesNotContainMatch : function (matcher /*:Function*/, haystack /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        doesNotContainMatch : function (matcher, haystack, 
+                               message) {
             
             Y.Assert._increment();     
           
@@ -1906,7 +1914,7 @@ YUI.add('test', function(Y) {
          * @method indexOf
          * @static
          */
-        indexOf : function (needle /*:Object*/, haystack /*:Array*/, index /*:int*/, message /*:String*/) /*:Void*/ {
+        indexOf : function (needle, haystack, index, message) {
         
             Y.Assert._increment();     
 
@@ -1935,8 +1943,8 @@ YUI.add('test', function(Y) {
          * @method itemsAreEqual
          * @static
          */
-        itemsAreEqual : function (expected /*:Array*/, actual /*:Array*/, 
-                               message /*:String*/) /*:Void*/ {
+        itemsAreEqual : function (expected, actual, 
+                               message) {
             
             Y.Assert._increment();     
             
@@ -1967,8 +1975,8 @@ YUI.add('test', function(Y) {
          * @method itemsAreEquivalent
          * @static
          */
-        itemsAreEquivalent : function (expected /*:Array*/, actual /*:Array*/, 
-                               comparator /*:Function*/, message /*:String*/) /*:Void*/ {
+        itemsAreEquivalent : function (expected, actual, 
+                               comparator, message) {
             
             Y.Assert._increment();     
 
@@ -1997,7 +2005,7 @@ YUI.add('test', function(Y) {
          * @method isEmpty
          * @static
          */
-        isEmpty : function (actual /*:Array*/, message /*:String*/) /*:Void*/ {        
+        isEmpty : function (actual, message) {        
             Y.Assert._increment();     
             if (actual.length > 0){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Array should be empty."));
@@ -2011,7 +2019,7 @@ YUI.add('test', function(Y) {
          * @method isNotEmpty
          * @static
          */
-        isNotEmpty : function (actual /*:Array*/, message /*:String*/) /*:Void*/ {        
+        isNotEmpty : function (actual, message) {        
             Y.Assert._increment();     
             if (actual.length === 0){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Array should not be empty."));
@@ -2029,8 +2037,8 @@ YUI.add('test', function(Y) {
          * @method itemsAreSame
          * @static
          */
-        itemsAreSame : function (expected /*:Array*/, actual /*:Array*/, 
-                              message /*:String*/) /*:Void*/ {
+        itemsAreSame : function (expected, actual, 
+                              message) {
             
             Y.Assert._increment();     
 
@@ -2058,7 +2066,7 @@ YUI.add('test', function(Y) {
          * @method lastIndexOf
          * @static
          */
-        lastIndexOf : function (needle /*:Object*/, haystack /*:Array*/, index /*:int*/, message /*:String*/) /*:Void*/ {
+        lastIndexOf : function (needle, haystack, index, message) {
         
             //try to find the value in the array
             for (var i=haystack.length; i >= 0; i--){
@@ -2086,7 +2094,7 @@ YUI.add('test', function(Y) {
      */
     Y.ObjectAssert = {
     
-        areEqual: function(expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        areEqual: function(expected, actual, message) {
             Y.Assert._increment();               
             Y.Object.each(expected, function(value, name){
                 if (expected[name] != actual[name]){
@@ -2103,10 +2111,10 @@ YUI.add('test', function(Y) {
          * @method hasKey
          * @static
          */    
-        hasKey : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+        hasKey: function (propertyName, object, message) {
             Y.Assert._increment();               
             if (!Y.Object.hasKey(object, propertyName)){
-                Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
+                Y.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
             }    
         },
         
@@ -2118,11 +2126,11 @@ YUI.add('test', function(Y) {
          * @method hasKeys
          * @static
          */    
-        hasKeys : function (properties, object /*:Object*/, message /*:String*/) /*:Void*/ {
+        hasKeys: function (properties, object, message) {
             Y.Assert._increment();  
             for (var i=0; i < properties.length; i++){
                 if (!Y.Object.hasKey(object, properties[i])){
-                    Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
+                    Y.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
                 }      
             }
         },
@@ -2135,10 +2143,10 @@ YUI.add('test', function(Y) {
          * @method ownsKey
          * @static
          */    
-        ownsKey : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+        ownsKey: function (propertyName, object, message) {
             Y.Assert._increment();               
             if (!object.hasOwnProperty(propertyName)){
-                Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
+                Y.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
             }     
         },
         
@@ -2147,17 +2155,35 @@ YUI.add('test', function(Y) {
          * @param {Array} properties An array of property names that should be on the object.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
-         * @method ownsAll
+         * @method ownsKeys
          * @static
          */    
-        ownsKeys : function (properties /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+        ownsKeys: function (properties, object, message) {
             Y.Assert._increment();        
             for (var i=0; i < properties.length; i++){
                 if (!object.hasOwnProperty(properties[i])){
-                    Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
+                    Y.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
                 }      
             }
-        }
+        },
+        
+        /**
+         * Asserts that an object owns no properties.
+         * @param {Object} object The object to check.
+         * @param {String} message (Optional) The message to display if the assertion fails.
+         * @method ownsNoKeys
+         * @static
+         */    
+        ownsNoKeys : function (object, message) {
+            Y.Assert._increment();  
+
+            var keys = Y.Object.keys(object);
+            
+            if (keys.length > 0){
+                Y.fail(Y.Assert._formatMessage(message, "Object owns " + keys.length + " properties but should own none."));
+            }
+
+        }     
     };
 
 
@@ -2180,7 +2206,7 @@ YUI.add('test', function(Y) {
          * @method datesAreEqual
          * @static
          */
-        datesAreEqual : function (expected /*:Date*/, actual /*:Date*/, message /*:String*/){
+        datesAreEqual : function (expected, actual, message){
             Y.Assert._increment();        
             if (expected instanceof Date && actual instanceof Date){
                 var msg = "";
@@ -2216,7 +2242,7 @@ YUI.add('test', function(Y) {
          * @method timesAreEqual
          * @static
          */
-        timesAreEqual : function (expected /*:Date*/, actual /*:Date*/, message /*:String*/){
+        timesAreEqual : function (expected, actual, message){
             Y.Assert._increment();
             if (expected instanceof Date && actual instanceof Date){
                 var msg = "";
@@ -2249,6 +2275,26 @@ YUI.add('test', function(Y) {
     
     Y.namespace("Test.Format");
     
+    /* (intentionally not documented)
+     * Basic XML escaping method. Replaces quotes, less-than, greater-than,
+     * apostrophe, and ampersand characters with their corresponding entities.
+     * @param {String} text The text to encode.
+     * @return {String} The XML-escaped text.
+     */
+    function xmlEscape(text){
+    
+        return text.replace(/[<>"'&]/g, function(value){
+            switch(value){
+                case "<":   return "&lt;";
+                case ">":   return "&gt;";
+                case "\"":  return "&quot;";
+                case "'":   return "&apos;";
+                case "&":   return "&amp;";
+            }
+        });
+    
+    }
+    
     /**
      * Returns test results formatted as a JSON string. Requires JSON utility.
      * @param {Object} result The results object created by TestRunner.
@@ -2257,7 +2303,7 @@ YUI.add('test', function(Y) {
      * @method JSON
      * @static
      */
-    Y.Test.Format.JSON = function(results /*:Object*/) /*:String*/ {
+    Y.Test.Format.JSON = function(results) {
         return Y.JSON.stringify(results);
     };
     
@@ -2269,13 +2315,13 @@ YUI.add('test', function(Y) {
      * @method XML
      * @static
      */
-    Y.Test.Format.XML = function(results /*:Object*/) /*:String*/ {
+    Y.Test.Format.XML = function(results) {
     
         var l = Y.Lang;
-        var xml /*:String*/ = "<" + results.type + " name=\"" + results.name.replace(/"/g, "&quot;").replace(/'/g, "&apos;") + "\"";
+        var xml = "<" + results.type + " name=\"" + xmlEscape(results.name) + "\"";
         
         if (results.type == "test"){
-            xml += " result=\"" + results.result + "\" message=\"" + results.message + "\">";
+            xml += " result=\"" + xmlEscape(results.result) + "\" message=\"" + xmlEscape(results.message) + "\">";
         } else {
             xml += " passed=\"" + results.passed + "\" failed=\"" + results.failed + "\" ignored=\"" + results.ignored + "\" total=\"" + results.total + "\">";
             Y.Object.each(results, function(value, prop){
@@ -2303,21 +2349,21 @@ YUI.add('test', function(Y) {
      * @namespace Test
      * @class Reporter
      */
-    Y.Test.Reporter = function(url /*:String*/, format /*:Function*/) {
+    Y.Test.Reporter = function(url, format) {
     
         /**
          * The URL to submit the data to.
          * @type String
          * @property url
          */
-        this.url /*:String*/ = url;
+        this.url = url;
     
         /**
          * The formatting function to call when submitting the data.
          * @type Function
          * @property format
          */
-        this.format /*:Function*/ = format || Y.Test.Format.XML;
+        this.format = format || Y.Test.Format.XML;
     
         /**
          * Extra fields to submit with the request.
@@ -2325,7 +2371,7 @@ YUI.add('test', function(Y) {
          * @property _fields
          * @private
          */
-        this._fields /*:Object*/ = new Object();
+        this._fields = new Object();
         
         /**
          * The form element used to submit the results.
@@ -2333,7 +2379,7 @@ YUI.add('test', function(Y) {
          * @property _form
          * @private
          */
-        this._form /*:HTMLElement*/ = null;
+        this._form = null;
     
         /**
          * Iframe used as a target for form submission.
@@ -2341,7 +2387,7 @@ YUI.add('test', function(Y) {
          * @property _iframe
          * @private
          */
-        this._iframe /*:HTMLElement*/ = null;
+        this._iframe = null;
     };
     
     Y.Test.Reporter.prototype = {
@@ -2356,7 +2402,7 @@ YUI.add('test', function(Y) {
          * @return {Void}
          * @method addField
          */
-        addField : function (name /*:String*/, value /*:Variant*/) /*:Void*/{
+        addField : function (name, value){
             this._fields[name] = value;    
         },
         
@@ -2365,7 +2411,7 @@ YUI.add('test', function(Y) {
          * @return {Void}
          * @method addField
          */
-        clearFields : function() /*:Void*/{
+        clearFields : function(){
             this._fields = new Object();
         },
     
@@ -2375,7 +2421,7 @@ YUI.add('test', function(Y) {
          * @return {Void}
          * @method destroy
          */
-        destroy : function() /*:Void*/ {
+        destroy : function() {
             if (this._form){
                 this._form.parentNode.removeChild(this._form);
                 this._form = null;
@@ -2393,7 +2439,7 @@ YUI.add('test', function(Y) {
          * @return {Void}
          * @method report
          */
-        report : function(results /*:Object*/) /*:Void*/{
+        report : function(results){
         
             //if the form hasn't been created yet, create it
             if (!this._form){
@@ -2443,7 +2489,7 @@ YUI.add('test', function(Y) {
                     input.value = value;
                     this._form.appendChild(input);
                 }
-            });
+            }, this);
     
             //remove default fields
             delete this._fields.results;
@@ -2614,4 +2660,4 @@ YUI.add('test', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['substitute','event-custom','array','oop','event','event-simulate']});
+}, '@VERSION@' ,{requires:['substitute','event-simulate','event']});

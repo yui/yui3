@@ -66,17 +66,28 @@
 
 <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
     <span class="nx">PREFIX_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="o">,</span>
+    <span class="nx">DETACH_PREFIX_SPLITTER</span> <span class="o">=</span> <span class="sr">/[,|]\s*/</span><span class="o">,</span>
     <span class="nx">AFTER_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;~AFTER~&#39;</span><span class="o">,</span>
 
-    <span class="nx">__getType</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">pre</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c">/**</span>
+<span class="c">     * If the instance has a prefix attribute and the</span>
+<span class="c">     * event type is not prefixed, the instance prefix is</span>
+<span class="c">     * applied to the supplied type.</span>
+<span class="c">     * @method _getType</span>
+<span class="c">     */</span>
+    <span class="nx">_getType</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="c">// console.log(&#39;__getType: &#39; + pre + &#39;, &#39; + type, &#39;info&#39;, &#39;event&#39;);</span>
 <span class="c"></span>
         <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">t</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">t</span><span class="o">;</span>
         <span class="o">}</span> 
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
         
         <span class="k">if</span> <span class="o">(</span><span class="nx">t</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">PREFIX_DELIMITER</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">t</span> <span class="o">=</span> <span class="nx">pre</span> <span class="o">+</span> <span class="nx">PREFIX_DELIMITER</span> <span class="o">+</span> <span class="nx">t</span><span class="o">;</span>
@@ -85,23 +96,21 @@
         <span class="c">// Y.log(&quot;type: &quot; + t, &#39;info&#39;, &#39;event&#39;);</span>
 <span class="c"></span>
         <span class="k">return</span> <span class="nx">t</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="o">}),</span>
 
-    <span class="c">/**</span>
-<span class="c">     * If the instance has a prefix attribute and the</span>
-<span class="c">     * event type is not prefixed, the instance prefix is</span>
-<span class="c">     * applied to the supplied type.</span>
-<span class="c">     * @method _getType</span>
+    <span class="c">/**lt</span>
+<span class="c">     * Returns an array with the detach key (if provided),</span>
+<span class="c">     * and the prefixed event name from _getType</span>
+<span class="c">     * Y.on(&#39;detachcategory, menu:click&#39;, fn)</span>
+<span class="c">     * @method _parseType</span>
+<span class="c">     * @private</span>
 <span class="c">     */</span>
-    <span class="nx">_getType</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="nx">__getType</span><span class="o">),</span>
+    <span class="nx">_parseType</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
 
-    <span class="nx">__parseType</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">pre</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">parts</span><span class="o">,</span> <span class="nx">detachcategory</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">full_t</span><span class="o">;</span>
 
-        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> 
-            <span class="nx">parts</span><span class="o">,</span> <span class="nx">detachkey</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">t</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">t</span><span class="o">;</span>
         <span class="o">}</span> 
         
         <span class="nx">i</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">AFTER_PREFIX</span><span class="o">);</span>
@@ -112,26 +121,17 @@
             <span class="c">// Y.log(t);</span>
 <span class="c"></span>        <span class="o">}</span>
 
-        <span class="nx">parts</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="sr">/[,|]\s*/</span><span class="o">);</span>
+        <span class="nx">parts</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DETACH_PREFIX_SPLITTER</span><span class="o">);</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">parts</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">detachkey</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+            <span class="nx">detachcategory</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
             <span class="nx">t</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
         <span class="o">}</span>
 
-        <span class="nx">t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">pre</span><span class="o">,</span> <span class="nx">t</span><span class="o">);</span>
+        <span class="nx">full_t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">pre</span><span class="o">);</span>
 
-        <span class="k">return</span> <span class="o">[</span><span class="nx">detachkey</span><span class="o">,</span> <span class="nx">t</span><span class="o">,</span> <span class="nx">after</span><span class="o">];</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Returns an array with the detach key (if provided),</span>
-<span class="c">     * and the prefixed event name from _getType</span>
-<span class="c">     * Y.on(&#39;detachkey, menu:click&#39;, fn)</span>
-<span class="c">     * @method _parseType</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_parseType</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="nx">__parseType</span><span class="o">),</span>
+        <span class="k">return</span> <span class="o">[</span><span class="nx">detachcategory</span><span class="o">,</span> <span class="nx">full_t</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">t</span><span class="o">];</span>
+    <span class="o">}),</span>
 
     <span class="c">/**</span>
 <span class="c">     * An event target can fire events and be targeted by events.</span>
@@ -175,7 +175,6 @@
     <span class="o">};</span>
 
 
-
 <span class="nx">ET</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
 
     <span class="c">/**</span>
@@ -186,11 +185,10 @@
 <span class="c">     * @return the event target or a detach handle per &#39;chain&#39; config</span>
 <span class="c">     */</span>
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">// this._yuievt.config.prefix</span>
-<span class="c"></span>
-        <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span>
-            <span class="nx">detachkey</span><span class="o">,</span> <span class="nx">handle</span><span class="o">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">handles</span><span class="o">,</span>
-            <span class="nx">key</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">adapt</span><span class="o">;</span>
+
+        <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span>
+            <span class="nx">detachcategory</span><span class="o">,</span> <span class="nx">handle</span><span class="o">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">handles</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">adapt</span><span class="o">,</span> <span class="nx">shorttype</span><span class="o">,</span>
+            <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">,</span> <span class="nx">n</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="kc">true</span><span class="o">))</span> <span class="o">{</span>
 
@@ -222,16 +220,32 @@
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">before</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="nx">detachkey</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
+        <span class="nx">detachcategory</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
         <span class="nx">after</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">2</span><span class="o">];</span>
+        <span class="nx">shorttype</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">3</span><span class="o">];</span>
+
+
+        <span class="c">// extra redirection so we catch adaptor events too.  take a look at this.</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DOM_EVENTS</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">args</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">));</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
+            <span class="nx">args</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">shorttype</span><span class="o">;</span>
             <span class="c">// check for the existance of an event adaptor</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">on</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Using adaptor for &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
-                <span class="k">return</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                <span class="nx">n</span> <span class="o">=</span> <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">];</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Using adaptor for &#39;</span> <span class="o">+</span> <span class="nx">shorttype</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">n</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">n</span> <span class="k">instanceof</span> <span class="nx">Node</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
             <span class="c">// check to see if the target is an Event.Target.  If so,</span>
 <span class="c"></span>            <span class="c">// delegate to it (the Event.Target should handle whether</span>
 <span class="c"></span>            <span class="c">// or not the prefix was included);</span>
@@ -239,27 +253,30 @@
 <span class="c"></span>            <span class="c">//     a = Y.Array(arguments, 0, true);</span>
 <span class="c"></span>            <span class="c">//     a.splice(2, 1);</span>
 <span class="c"></span>            <span class="c">//     return o.on.apply(o, a);</span>
-<span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+<span class="c"></span>            <span class="c">// } else if ((!type) || (!adapt &amp;&amp; type.indexOf(&#39;:&#39;) == -1)) {</span>
+<span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">((!</span><span class="nx">type</span><span class="o">)</span> <span class="o">||</span> <span class="o">(!</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DOM_EVENTS</span><span class="o">)))</span> <span class="o">{</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
             <span class="o">}</span>
+
+        <span class="o">}</span> 
+
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">handle</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="c">// Y.log(&#39;parts: &#39; + parts);</span>
+<span class="c"></span>            <span class="nx">ce</span>     <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
+            <span class="nx">args</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+
+            <span class="nx">f</span> <span class="o">=</span> <span class="o">(</span><span class="nx">after</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">after</span> <span class="o">:</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">on</span><span class="o">;</span>
+
+            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="c">// Y.log(&#39;parts: &#39; + parts);</span>
-<span class="c"></span>
-        <span class="nx">ce</span>     <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
-        <span class="nx">args</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">detachcategory</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="nx">f</span> <span class="o">=</span> <span class="o">(</span><span class="nx">parts</span><span class="o">[</span><span class="m">2</span><span class="o">])</span> <span class="o">?</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">after</span> <span class="o">:</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">on</span><span class="o">;</span>
+            <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">]</span> <span class="o">=</span> <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">]</span> <span class="o">||</span> <span class="o">{};</span>
+            <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">][</span><span class="nx">type</span><span class="o">]</span> <span class="o">=</span> <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">][</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="o">[];</span>
+            <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">][</span><span class="nx">type</span><span class="o">].</span><span class="nx">push</span><span class="o">(</span><span class="nx">handle</span><span class="o">);</span>
 
-        <span class="nx">handle</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">detachkey</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="nx">key</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">+</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">store</span><span class="o">[</span><span class="nx">key</span><span class="o">])</span> <span class="o">{</span>
-                <span class="nx">store</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="o">[];</span>
-            <span class="o">}</span>
-            <span class="nx">store</span><span class="o">[</span><span class="nx">key</span><span class="o">].</span><span class="nx">push</span><span class="o">(</span><span class="nx">handle</span><span class="o">);</span>
 
             <span class="c">// Y.log(&#39;storing: &#39; + key);</span>
 <span class="c"></span>        <span class="o">}</span>
@@ -295,42 +312,64 @@
 <span class="c">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">),</span> 
-        <span class="nx">detachkey</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">parts</span><span class="o">)</span> <span class="o">?</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span>
-        <span class="nx">details</span><span class="o">,</span> <span class="nx">handle</span><span class="o">,</span> <span class="nx">adapt</span><span class="o">,</span>
+        <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">),</span> 
+        <span class="nx">detachcategory</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">parts</span><span class="o">)</span> <span class="o">?</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="nx">shorttype</span> <span class="o">=</span> <span class="o">(</span><span class="nx">parts</span><span class="o">)</span> <span class="o">?</span> <span class="nx">parts</span><span class="o">[</span><span class="m">3</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="nx">handle</span><span class="o">,</span> <span class="nx">adapt</span><span class="o">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">handles</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span>
+        <span class="nx">evts</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
 
-        <span class="nx">evts</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">detachkey</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">key</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">+</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span> 
-            <span class="nx">details</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">handles</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">details</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">while</span> <span class="o">(</span><span class="nx">details</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">handle</span> <span class="o">=</span> <span class="nx">details</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
+        <span class="nx">keyDetacher</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">lcat</span><span class="o">,</span> <span class="nx">ltype</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">handles</span> <span class="o">=</span> <span class="nx">lcat</span><span class="o">[</span><span class="nx">ltype</span><span class="o">];</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">handles</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">while</span> <span class="o">(</span><span class="nx">handles</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">handle</span> <span class="o">=</span> <span class="nx">handles</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
                     <span class="nx">handle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">detachcategory</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="nx">cat</span> <span class="o">=</span> <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">];</span>
+            <span class="nx">type</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">cat</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">keyDetacher</span><span class="o">(</span><span class="nx">cat</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">cat</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">cat</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+                            <span class="nx">keyDetacher</span><span class="o">(</span><span class="nx">cat</span><span class="o">,</span> <span class="nx">i</span><span class="o">);</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
                 <span class="o">}</span>
 
                 <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">chain</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="nx">type</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
-
         <span class="c">// If this is an event handle, use it to detach</span>
 <span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
             <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">chain</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="c">// extra redirection so we catch adaptor events too.  take a look at this.</span>
+<span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">((!</span><span class="nx">shorttype</span><span class="o">)</span> <span class="o">||</span> <span class="o">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">DOM_EVENTS</span><span class="o">)))</span> <span class="o">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
+        <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">[</span><span class="nx">shorttype</span><span class="o">];</span>
 
         <span class="c">// The YUI instance handles DOM events and adaptors</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="c">// use the adaptor specific detach code if</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                <span class="k">return</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
             <span class="c">// DOM event fork</span>
-<span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+<span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">type</span> <span class="o">||</span> <span class="o">(!</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">type</span><span class="o">;</span>
+                <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
 
@@ -368,7 +407,7 @@
 <span class="c">     * @param type {string}   The type, or name of the event</span>
 <span class="c">     */</span>
     <span class="nx">detachAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">detach</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
     <span class="o">},</span>
 
@@ -443,7 +482,7 @@
     <span class="nx">publish</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
         <span class="c">// this._yuievt.config.prefix</span>
 <span class="c"></span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">);</span>
 
         <span class="k">var</span> <span class="nx">events</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="o">{};</span>
 
@@ -461,12 +500,11 @@
 
         <span class="c">//if (ce &amp;&amp; !ce.configured) {</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">ce</span><span class="o">)</span> <span class="o">{</span>
-<span class="c">// ce.log(&quot;publish applying config to published event: &#39;&quot;+type+&quot;&#39; exists&quot;, &#39;info&#39;, &#39;event&#39;);</span>
-<span class="c"></span>
-            <span class="c">// This event could have been published</span>
-<span class="c"></span>            <span class="nx">ce</span><span class="o">.</span><span class="nx">applyConfig</span><span class="o">(</span><span class="nx">opts</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="c">// ce.configured = true;</span>
-<span class="c"></span>
+<span class="c">// ce.log(&quot;publish applying new config to published event: &#39;&quot;+type+&quot;&#39; exists&quot;, &#39;info&#39;, &#39;event&#39;);</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">ce</span><span class="o">.</span><span class="nx">applyConfig</span><span class="o">(</span><span class="nx">opts</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="o">}</span>
+
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="c">// apply defaults</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">defaults</span><span class="o">);</span>
@@ -475,10 +513,10 @@
 
             <span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">onSubscribeCallback</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ce</span><span class="o">.</span><span class="nx">subscribeEvent</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">onSubscribeCallback</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+            <span class="c">// if (o.onSubscribeCallback) {</span>
+<span class="c"></span>            <span class="c">//     ce.subscribeEvent.on(o.onSubscribeCallback);</span>
+<span class="c"></span>            <span class="c">// }</span>
+<span class="c"></span>        <span class="o">}</span>
 
         <span class="c">// make sure we turn the broadcast flag off if this</span>
 <span class="c"></span>        <span class="c">// event was published as a result of bubbling</span>
@@ -535,7 +573,7 @@
             <span class="nx">t</span> <span class="o">=</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="nx">type</span> <span class="o">:</span> <span class="o">(</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">type</span><span class="o">),</span>
             <span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">ret</span><span class="o">;</span>
 
-        <span class="nx">t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">t</span><span class="o">);</span>
+        <span class="nx">t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">);</span>
         <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
 
         <span class="c">// this event has not been published or subscribed to</span>
@@ -573,7 +611,7 @@
 <span class="c">     * @return {Event.Custom} the custom event or null</span>
 <span class="c">     */</span>
     <span class="nx">getEvent</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">);</span>
         <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">;</span>
         <span class="k">return</span> <span class="o">(</span><span class="nx">e</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="k">in</span> <span class="nx">e</span><span class="o">)</span> <span class="o">?</span> <span class="nx">e</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
     <span class="o">},</span>
@@ -726,16 +764,19 @@
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class="selected"><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
@@ -744,7 +785,10 @@
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -787,7 +831,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "EventFacade", "name": "button", "url": "EventFacade.html#property_button", "type": "property"}, {"access": "", "host": "EventFacade", "name": "charCode", "url": "EventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "EventFacade", "name": "currentTarget", "url": "EventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "EventFacade", "name": "details", "url": "EventFacade.html#property_details", "type": "property"}, {"access": "", "host": "EventFacade", "name": "halt", "url": "EventFacade.html#method_halt", "type": "method"}, {"access": "", "host": "EventFacade", "name": "keyCode", "url": "EventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "EventFacade", "name": "pageX", "url": "EventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "EventFacade", "name": "pageY", "url": "EventFacade.html#property_pageY", "type": "property"}, {"access": "", "host": "EventFacade", "name": "preventDefault", "url": "EventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "EventFacade", "name": "relatedTarget", "url": "EventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "EventFacade", "name": "resolve", "url": "EventFacade.html#method_resolve", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopImmediatePropagation", "url": "EventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopPropagation", "url": "EventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "target", "url": "EventFacade.html#property_target", "type": "property"}, {"access": "", "host": "EventFacade", "name": "time", "url": "EventFacade.html#property_time", "type": "property"}, {"access": "", "host": "EventFacade", "name": "type", "url": "EventFacade.html#property_type", "type": "property"}, {"access": "private", "host": "EventFacade", "name": "webkitKeymap", "url": "EventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "EventFacade", "name": "which", "url": "EventFacade.html#property_which", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "EventFacade", "name": "button", "url": "EventFacade.html#property_button", "type": "property"}, {"access": "", "host": "EventFacade", "name": "charCode", "url": "EventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "EventFacade", "name": "currentTarget", "url": "EventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "EventFacade", "name": "details", "url": "EventFacade.html#property_details", "type": "property"}, {"access": "", "host": "EventFacade", "name": "halt", "url": "EventFacade.html#method_halt", "type": "method"}, {"access": "", "host": "EventFacade", "name": "keyCode", "url": "EventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "EventFacade", "name": "pageX", "url": "EventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "EventFacade", "name": "pageY", "url": "EventFacade.html#property_pageY", "type": "property"}, {"access": "", "host": "EventFacade", "name": "preventDefault", "url": "EventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "EventFacade", "name": "relatedTarget", "url": "EventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "EventFacade", "name": "resolve", "url": "EventFacade.html#method_resolve", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopImmediatePropagation", "url": "EventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopPropagation", "url": "EventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "target", "url": "EventFacade.html#property_target", "type": "property"}, {"access": "", "host": "EventFacade", "name": "type", "url": "EventFacade.html#property_type", "type": "property"}, {"access": "private", "host": "EventFacade", "name": "webkitKeymap", "url": "EventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "EventFacade", "name": "which", "url": "EventFacade.html#property_which", "type": "property"}];
 </script>
 </body>
 </html>

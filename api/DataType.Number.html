@@ -59,7 +59,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Number submodule.
+                        Parse number submodule.
                     </div>
 
                     
@@ -115,7 +115,7 @@
 <dt>prefix {String}</dd>
 <dd>String prepended before each number, like a currency designator "$"</dd>
 <dt>decimalPlaces {Number}</dd>
-<dd>Number of decimal places to round.</dd>
+<dd>Number of decimal places to round. Must be a number 0 to 20.</dd>
 <dt>decimalSeparator {String}</dd>
 <dd>Decimal separator</dd>
 <dt>thousandsSeparator {String}</dd>
@@ -197,33 +197,67 @@ values return as null: null, undefined, NaN, "".</span>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_toString">
+                                    <div class="private" rel="yui:method" resource="#method_xPad">
                                     <h4>
-                                        <a name="method_toString">toString</a></h4>
+                                        <a name="method_xPad">xPad</a></h4>
                                     <div class="detail" >
                                         <code>
+                                         private 
                                         
                                         
-                                        
-                                        String
-                                            <strong property="yui:name">toString</strong>
+                                        void
+                                            <strong property="yui:name">xPad</strong>
                                            (
+                                                
+                                                        
+                                                         x
+                                                    
+                                                
+                                                        , 
+                                                         pad
+                                                    
+                                                
+                                                        , 
+                                                         r
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns string name.
+                                            Pad a number with leading spaces, zeroes or something else
                                         </div>
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">x</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 	The number to be padded</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">pad</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">   The character to pad the number with</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">r</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 	(optional) The base of the pad, eg, 10 implies to two digits, 100 implies to 3 digits.</span>
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        String
+                                                        void
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">String representation for this object.</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -262,16 +296,19 @@ values return as null: null, undefined, NaN, "".</span>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class="selected"><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
@@ -280,7 +317,10 @@ values return as null: null, undefined, NaN, "".</span>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -300,6 +340,8 @@ values return as null: null, undefined, NaN, "".</span>
                                 <li class=""><a href="DataType.Date.html" title="DataType.Date">DataType.Date</a></li>
                                 <li class=""><a href="DataType.Date.Locale.html" title="DataType.Date.Locale">DataType.Date.Locale</a></li>
                                 <li class="selected"><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
+                                <li class="selected"><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
+                                <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
                                 <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
                         </ul>
                     </div>
@@ -307,8 +349,10 @@ values return as null: null, undefined, NaN, "".</span>
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="datatype-number.js.html" title="datatype-number.js">datatype-number.js</a></li>
-                                <li class=""><a href="datatype-xml.js.html" title="datatype-xml.js">datatype-xml.js</a></li>
+                                <li class=""><a href="datatype-number-format.js.html" title="datatype-number-format.js">datatype-number-format.js</a></li>
+                                <li class=""><a href="datatype-number-parse.js.html" title="datatype-number-parse.js">datatype-number-parse.js</a></li>
+                                <li class=""><a href="datatype-xml-format.js.html" title="datatype-xml-format.js">datatype-xml-format.js</a></li>
+                                <li class=""><a href="datatype-xml-parse.js.html" title="datatype-xml-parse.js">datatype-xml-parse.js</a></li>
                                 <li class=""><a href="date-formatter.js.html" title="date-formatter.js">date-formatter.js</a></li>
                                 <li class=""><a href="date-locales.js.html" title="date-locales.js">date-locales.js</a></li>
                         </ul>
@@ -320,7 +364,7 @@ values return as null: null, undefined, NaN, "".</span>
                         <ul class="content">        
                                 <li class=""><a href="#method_format" title="format">format</a></li>
                                 <li class=""><a href="#method_parse" title="parse">parse</a></li>
-                                <li class=""><a href="#method_toString" title="toString">toString</a></li>
+                                <li class="private"><a href="#method_xPad" title="xPad">xPad</a></li>
                         </ul>
                     </div>
 
@@ -335,7 +379,7 @@ values return as null: null, undefined, NaN, "".</span>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "toString", "url": "DataType.Number.html#method_toString", "type": "method"}, {"access": "private", "host": "DataType.Date.Locale", "name": "xPad", "url": "DataType.Date.Locale.html#method_xPad", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "private", "host": "DataType.Number", "name": "xPad", "url": "DataType.Number.html#method_xPad", "type": "method"}, {"access": "private", "host": "DataType.Number", "name": "xPad", "url": "DataType.Number.html#method_xPad", "type": "method"}];
 </script>
 </body>
 </html>

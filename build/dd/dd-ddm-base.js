@@ -62,6 +62,12 @@ YUI.add('dd-ddm-base', function(Y) {
 
     Y.extend(DDMBase, Y.Base, {
         /**
+        * @property _active
+        * @description flag set when we activate our first drag, so DDM can start listening for events.
+        * @type {Boolean}
+        */
+        _active: null,
+        /**
         * @private
         * @method _setDragMode
         * @description Handler for dragMode attribute setter.
@@ -113,6 +119,9 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         _regDrag: function(d) {
             this._drags[this._drags.length] = d;
+            if (!this._active) {
+                this._setupListeners();
+            }
         },
         /**
         * @private
@@ -131,12 +140,14 @@ YUI.add('dd-ddm-base', function(Y) {
         },
         /**
         * @private
-        * @method _init
-        * @description DDM's init method
+        * @method _setupListeners
+        * @description Add the document listeners.
         */
-        initializer: function() {
-            var doc = Y.Node.get('document');
+        _setupListeners: function() {
+            this._active = true;
+            var doc = Y.get(document);
             doc.on('mousemove', Y.bind(this._move, this));
+            //Y.Event.nativeAdd(document, 'mousemove', Y.bind(this._move, this));
             doc.on('mouseup', Y.bind(this._end, this));
         },
         /**
@@ -204,7 +215,7 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         _move: function(ev) {
             if (this.activeDrag) {
-                this.activeDrag._move.apply(this.activeDrag, arguments);
+                this.activeDrag._move.call(this.activeDrag, ev);
                 this._dropMove();
             }
         },
@@ -240,7 +251,7 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         getDrag: function(node) {
             var drag = false,
-                n = Y.Node.get(node);
+                n = Y.get(node);
             if (n instanceof Y.Node) {
                 Y.each(this._drags, function(v, k) {
                     if (n.compareTo(v.get('node'))) {

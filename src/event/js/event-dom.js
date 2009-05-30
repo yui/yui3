@@ -280,11 +280,6 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
             el = el || Y.config.win;
 
-            // Y.log('attach: ' + Y.Lang.dump(Y.Array(arguments, 0, true), 1));
-            // Y.log('attach:');
-            // Y.log(Y.Array(arguments, 0, true), 1);
-            // var a=Y.Array(arguments, 1, true), override=a[3], E=Y.Event, aa=Y.Array(arguments, 0, true);
-
             var args=Y.Array(arguments, 0, true), 
                 trimmedArgs=args.slice(1),
                 compat, E=Y.Event, capture = false,
@@ -334,15 +329,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 // oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
                 oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
 
-                // this should not be a node list ever at this point
-                // if (oEl && (oEl instanceof Y.NodeList) && oEl.size() > 0) {
-                //     size = oEl.size();
-                //     if (size > 1) {
-                //         args[2] = oEl;
-                //         return E.attach.apply(E, args);
-                //     } else {
-                //         el = oEl.item(0);
-                //     }
                 if (oEl) {
 
                     if (Y.Lang.isArray(oEl)) {
@@ -379,10 +365,16 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             // the custom event key is the uid for the element + type
 
+            // allow a node reference to Y.on to work with load time addEventListener check
+            // (Node currently only has the addEventListener interface and that may be
+            // removed).
+            if (Y.Node && el instanceof Y.Node) {
+                return el.on.apply(el, args);
+            }
+
             ek = Y.stamp(el); 
             key = 'event:' + ek + type;
             cewrapper = _wrappers[key];
-
 
             if (!cewrapper) {
                 // create CE wrapper
@@ -494,7 +486,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             }
 
-            if (!fn || !fn.call) {
+            if (!type || !fn || !fn.call) {
                 return this.purgeElement(el, false, type);
             }
 

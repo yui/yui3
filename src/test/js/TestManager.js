@@ -16,7 +16,7 @@
          * @type string
          * @final
          */
-        TEST_PAGE_BEGIN_EVENT /*:String*/ : "testpagebegin",
+        TEST_PAGE_BEGIN_EVENT : "testpagebegin",
     
         /**
          * Constant for the testpagecomplete custom event
@@ -25,7 +25,7 @@
          * @type string
          * @final
          */
-        TEST_PAGE_COMPLETE_EVENT /*:String*/ : "testpagecomplete",
+        TEST_PAGE_COMPLETE_EVENT : "testpagecomplete",
     
         /**
          * Constant for the testmanagerbegin custom event
@@ -34,7 +34,7 @@
          * @type string
          * @final
          */
-        TEST_MANAGER_BEGIN_EVENT /*:String*/ : "testmanagerbegin",
+        TEST_MANAGER_BEGIN_EVENT : "testmanagerbegin",
     
         /**
          * Constant for the testmanagercomplete custom event
@@ -43,7 +43,7 @@
          * @type string
          * @final
          */
-        TEST_MANAGER_COMPLETE_EVENT /*:String*/ : "testmanagercomplete",
+        TEST_MANAGER_COMPLETE_EVENT : "testmanagercomplete",
     
         //-------------------------------------------------------------------------
         // Private Properties
@@ -57,7 +57,7 @@
          * @property _curPage
          * @static
          */
-        _curPage /*:String*/ : null,
+        _curPage : null,
         
         /**
          * The frame used to load and run tests.
@@ -66,7 +66,7 @@
          * @property _frame
          * @static
          */
-        _frame /*:Window*/ : null,
+        _frame : null,
         
         /**
          * The logger used to output results from the various tests.
@@ -84,7 +84,7 @@
          * @property _timeoutId
          * @static
          */
-        _timeoutId /*:int*/ : 0,
+        _timeoutId : 0,
         
         /**
          * Array of pages to load.
@@ -93,7 +93,7 @@
          * @property _pages
          * @static
          */
-        _pages /*:String[]*/ : [],
+        _pages : [],
         
         /**
          * Aggregated results
@@ -116,7 +116,7 @@
          * @private
          * @static
          */
-        _handleTestRunnerComplete : function (data /*:Object*/) /*:Void*/ {
+        _handleTestRunnerComplete : function (data) {
     
             this.fireEvent(this.TEST_PAGE_COMPLETE_EVENT, {
                     page: this._curPage,
@@ -148,7 +148,7 @@
          * @private
          * @static
          */
-        _processResults : function (page /*:String*/, results /*:Object*/) /*:Void*/ {
+        _processResults : function (page, results) {
     
             var r = this._results;
             
@@ -175,7 +175,7 @@
          * @static
          * @private
          */
-        _run : function () /*:Void*/ {
+        _run : function () {
         
             //set the current page
             this._curPage = this._pages.shift();
@@ -198,7 +198,7 @@
          * @return {Void}
          * @static
          */
-        load : function () /*:Void*/ {
+        load : function () {
             if (parent.YAHOO.tool.TestManager !== this){
                 parent.YAHOO.tool.TestManager.load();
             } else {
@@ -222,7 +222,7 @@
          * @return {Void}
          * @static
          */
-        setPages : function (pages /*:String[]*/) /*:Void*/ {
+        setPages : function (pages) {
             this._pages = pages;
         },
         
@@ -231,7 +231,7 @@
          * @return {Void}
          * @static
          */
-        start : function () /*:Void*/ {
+        start : function () {
     
             if (!this._initialized) {
     
@@ -273,7 +273,7 @@
     
                 //create iframe if not already available
                 if (!this._frame){
-                    var frame /*:HTMLElement*/ = document.createElement("iframe");
+                    var frame = document.createElement("iframe");
                     frame.style.visibility = "hidden";
                     frame.style.position = "absolute";
                     document.body.appendChild(frame);
@@ -327,7 +327,7 @@
          * @return {Void}
          * @static
          */
-        stop : function () /*:Void*/ {
+        stop : function () {
             clearTimeout(this._timeoutId);
         }
     

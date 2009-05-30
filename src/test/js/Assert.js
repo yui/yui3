@@ -31,7 +31,7 @@
          * @static
          * @method _formatMessage
          */
-        _formatMessage : function (customMessage /*:String*/, defaultMessage /*:String*/) /*:String*/ {
+        _formatMessage : function (customMessage, defaultMessage) {
             var message = customMessage;
             if (Y.Lang.isString(customMessage) && customMessage.length > 0){
                 return Y.Lang.substitute(customMessage, { message: defaultMessage });
@@ -80,7 +80,7 @@
          * @method fail
          * @static
          */
-        fail : function (message /*:String*/) /*:Void*/ {
+        fail : function (message) {
             throw new Y.Assert.Error(Y.Assert._formatMessage(message, "Test force-failed."));
         },       
         
@@ -97,7 +97,7 @@
          * @method areEqual
          * @static
          */
-        areEqual : function (expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        areEqual : function (expected, actual, message) {
             Y.Assert._increment();
             if (expected != actual) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values should be equal."), expected, actual);
@@ -113,8 +113,8 @@
          * @method areNotEqual
          * @static
          */
-        areNotEqual : function (unexpected /*:Object*/, actual /*:Object*/, 
-                             message /*:String*/) /*:Void*/ {
+        areNotEqual : function (unexpected, actual, 
+                             message) {
             Y.Assert._increment();
             if (unexpected == actual) {
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be equal."), unexpected);
@@ -130,7 +130,7 @@
          * @method areNotSame
          * @static
          */
-        areNotSame : function (unexpected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        areNotSame : function (unexpected, actual, message) {
             Y.Assert._increment();
             if (unexpected === actual) {
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be the same."), unexpected);
@@ -146,7 +146,7 @@
          * @method areSame
          * @static
          */
-        areSame : function (expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        areSame : function (expected, actual, message) {
             Y.Assert._increment();
             if (expected !== actual) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values should be the same."), expected, actual);
@@ -165,7 +165,7 @@
          * @method isFalse
          * @static
          */
-        isFalse : function (actual /*:Boolean*/, message /*:String*/) {
+        isFalse : function (actual, message) {
             Y.Assert._increment();
             if (false !== actual) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be false."), false, actual);
@@ -180,7 +180,7 @@
          * @method isTrue
          * @static
          */
-        isTrue : function (actual /*:Boolean*/, message /*:String*/) /*:Void*/ {
+        isTrue : function (actual, message) {
             Y.Assert._increment();
             if (true !== actual) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be true."), true, actual);
@@ -199,7 +199,7 @@
          * @method isNaN
          * @static
          */
-        isNaN : function (actual /*:Object*/, message /*:String*/) /*:Void*/{
+        isNaN : function (actual, message){
             Y.Assert._increment();
             if (!isNaN(actual)){
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be NaN."), NaN, actual);
@@ -213,7 +213,7 @@
          * @method isNotNaN
          * @static
          */
-        isNotNaN : function (actual /*:Object*/, message /*:String*/) /*:Void*/{
+        isNotNaN : function (actual, message){
             Y.Assert._increment();
             if (isNaN(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be NaN."), NaN);
@@ -228,7 +228,7 @@
          * @method isNotNull
          * @static
          */
-        isNotNull : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isNotNull : function (actual, message) {
             Y.Assert._increment();
             if (Y.Lang.isNull(actual)) {
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be null."), null);
@@ -243,7 +243,7 @@
          * @method isNotUndefined
          * @static
          */
-        isNotUndefined : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isNotUndefined : function (actual, message) {
             Y.Assert._increment();
             if (Y.Lang.isUndefined(actual)) {
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should not be undefined."), undefined);
@@ -258,7 +258,7 @@
          * @method isNull
          * @static
          */
-        isNull : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isNull : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isNull(actual)) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be null."), null, actual);
@@ -273,7 +273,7 @@
          * @method isUndefined
          * @static
          */
-        isUndefined : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isUndefined : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isUndefined(actual)) {
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be undefined."), undefined, actual);
@@ -291,7 +291,7 @@
          * @method isArray
          * @static
          */
-        isArray : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isArray : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isArray(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be an array."), actual);
@@ -305,7 +305,7 @@
          * @method isBoolean
          * @static
          */
-        isBoolean : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isBoolean : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isBoolean(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a Boolean."), actual);
@@ -319,7 +319,7 @@
          * @method isFunction
          * @static
          */
-        isFunction : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isFunction : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isFunction(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a function."), actual);
@@ -336,7 +336,7 @@
          * @method isInstanceOf
          * @static
          */
-        isInstanceOf : function (expected /*:Function*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isInstanceOf : function (expected, actual, message) {
             Y.Assert._increment();
             if (!(actual instanceof expected)){
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value isn't an instance of expected type."), expected, actual);
@@ -350,7 +350,7 @@
          * @method isNumber
          * @static
          */
-        isNumber : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isNumber : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isNumber(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a number."), actual);
@@ -364,7 +364,7 @@
          * @method isObject
          * @static
          */
-        isObject : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isObject : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isObject(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be an object."), actual);
@@ -378,7 +378,7 @@
          * @method isString
          * @static
          */
-        isString : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        isString : function (actual, message) {
             Y.Assert._increment();
             if (!Y.Lang.isString(actual)){
                 throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a string."), actual);
@@ -393,7 +393,7 @@
          * @method isTypeOf
          * @static
          */
-        isTypeOf : function (expectedType /*:String*/, actualValue /*:Object*/, message /*:String*/) /*:Void*/{
+        isTypeOf : function (expectedType, actualValue, message){
             Y.Assert._increment();
             if (typeof actualValue != expectedType){
                 throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be of type " + expectedType + "."), expected, typeof actualValue);
@@ -415,6 +415,14 @@
             throw new Y.Assert.Error(Y.Assert._formatMessage(message, "Assertion failed."));
         }
     };
+
+    /**
+     * Forces an assertion error to occur. Shortcut for Y.Assert.fail().
+     * @method Y.fail
+     * @param {String} message (Optional) The message to display with the failure.
+     * @static
+     */
+    Y.fail = Y.Assert.fail;   
     
     //-----------------------------------------------------------------------------
     // Assertion errors
@@ -430,7 +438,7 @@
      * @class Error
      * @constructor
      */ 
-    Y.Assert.Error = function (message /*:String*/){
+    Y.Assert.Error = function (message){
     
         //call superclass
         arguments.callee.superclass.constructor.call(this, message);
@@ -440,14 +448,14 @@
          * @type String
          * @property message
          */
-        this.message /*:String*/ = message;
+        this.message = message;
         
         /**
          * The name of the error that occurred.
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "Assert Error";
+        this.name = "Assert Error";
     };
     
     //inherit methods
@@ -459,7 +467,7 @@
          * @method getMessage
          * @return {String} A string describing the error.
          */
-        getMessage : function () /*:String*/ {
+        getMessage : function () {
             return this.message;
         },
         
@@ -468,7 +476,7 @@
          * @method toString
          * @return {String} A string representation of the error.
          */
-        toString : function () /*:String*/ {
+        toString : function () {
             return this.name + ": " + this.getMessage();
         },
         
@@ -477,7 +485,7 @@
          * @method valueOf
          * @return {String} A primitive value version of the error.
          */
-        valueOf : function () /*:String*/ {
+        valueOf : function () {
             return this.toString();
         }
     
@@ -496,7 +504,7 @@
      * @class ComparisonFailure
      * @constructor
      */ 
-    Y.Assert.ComparisonFailure = function (message /*:String*/, expected /*:Object*/, actual /*:Object*/){
+    Y.Assert.ComparisonFailure = function (message, expected, actual){
     
         //call superclass
         arguments.callee.superclass.constructor.call(this, message);
@@ -506,21 +514,21 @@
          * @type Object
          * @property expected
          */
-        this.expected /*:Object*/ = expected;
+        this.expected = expected;
         
         /**
          * The actual value.
          * @type Object
          * @property actual
          */
-        this.actual /*:Object*/ = actual;
+        this.actual = actual;
         
         /**
          * The name of the error that occurred.
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "ComparisonFailure";
+        this.name = "ComparisonFailure";
         
     };
     
@@ -533,7 +541,7 @@
          * @method toString
          * @return {String} A string describing the error.
          */
-        getMessage : function () /*:String*/ {
+        getMessage : function () {
             return this.message + "\nExpected: " + this.expected + " (" + (typeof this.expected) + ")"  +
                 "\nActual:" + this.actual + " (" + (typeof this.actual) + ")";
         }
@@ -553,7 +561,7 @@
      * @class UnexpectedValue
      * @constructor
      */ 
-    Y.Assert.UnexpectedValue = function (message /*:String*/, unexpected /*:Object*/){
+    Y.Assert.UnexpectedValue = function (message, unexpected){
     
         //call superclass
         arguments.callee.superclass.constructor.call(this, message);
@@ -563,14 +571,14 @@
          * @type Object
          * @property unexpected
          */
-        this.unexpected /*:Object*/ = unexpected;
+        this.unexpected = unexpected;
         
         /**
          * The name of the error that occurred.
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "UnexpectedValue";
+        this.name = "UnexpectedValue";
         
     };
     
@@ -583,7 +591,7 @@
          * @method getMessage
          * @return {String} A string describing the error.
          */
-        getMessage : function () /*:String*/ {
+        getMessage : function () {
             return this.message + "\nUnexpected: " + this.unexpected + " (" + (typeof this.unexpected) + ") ";
         }
     
@@ -599,7 +607,7 @@
      * @class ShouldFail
      * @constructor
      */  
-    Y.Assert.ShouldFail = function (message /*:String*/){
+    Y.Assert.ShouldFail = function (message){
     
         //call superclass
         arguments.callee.superclass.constructor.call(this, message || "This test should fail but didn't.");
@@ -609,7 +617,7 @@
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "ShouldFail";
+        this.name = "ShouldFail";
         
     };
     
@@ -626,7 +634,7 @@
      * @class ShouldError
      * @constructor
      */  
-    Y.Assert.ShouldError = function (message /*:String*/){
+    Y.Assert.ShouldError = function (message){
     
         //call superclass
         arguments.callee.superclass.constructor.call(this, message || "This test should have thrown an error but didn't.");
@@ -636,7 +644,7 @@
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "ShouldError";
+        this.name = "ShouldError";
         
     };
     
@@ -655,7 +663,7 @@
      * @class UnexpectedError
      * @constructor
      */  
-    Y.Assert.UnexpectedError = function (cause /*:Object*/){
+    Y.Assert.UnexpectedError = function (cause){
     
         //call superclass
         arguments.callee.superclass.constructor.call(this, "Unexpected error: " + cause.message);
@@ -665,21 +673,21 @@
          * @type Error
          * @property cause
          */
-        this.cause /*:Error*/ = cause;
+        this.cause = cause;
         
         /**
          * The name of the error that occurred.
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "UnexpectedError";
+        this.name = "UnexpectedError";
         
         /**
          * Stack information for the error (if provided).
          * @type String
          * @property stack
          */
-        this.stack /*:String*/ = cause.stack;
+        this.stack = cause.stack;
         
     };
     

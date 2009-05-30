@@ -15,14 +15,14 @@
      * @namespace Test
      * @constructor
      */
-    Y.Test.Case = function (template /*:Object*/) {
+    Y.Test.Case = function (template) {
         
         /**
          * Special rules for the test case. Possible subobjects
          * are fail, for tests that should fail, and error, for
          * tests that should throw an error.
          */
-        this._should /*:Object*/ = {};
+        this._should = {};
         
         //copy over all properties from the template to this object
         for (var prop in template) {
@@ -34,7 +34,7 @@
             /**
              * Name for the test case.
              */
-            this.name /*:String*/ = "testCase" + Y.guid();
+            this.name = "testCase" + Y.guid();
         }
     
     };
@@ -48,7 +48,7 @@
          * @return {Void}
          * @method resume
          */
-        resume : function (segment /*:Function*/) /*:Void*/ {
+        resume : function (segment) {
             Y.Test.Runner.resume(segment);
         },
     
@@ -62,7 +62,7 @@
          * @return {Void}
          * @method wait
          */
-        wait : function (segment /*:Function*/, delay /*:int*/) /*:Void*/{
+        wait : function (segment, delay){
             var args = arguments;
             if (Y.Lang.isFunction(args[0])){
                 throw new Y.Test.Wait(args[0], args[1]);
@@ -82,7 +82,7 @@
          * @return {Void}
          * @method setUp
          */
-        setUp : function () /*:Void*/ {
+        setUp : function () {
         },
         
         /**
@@ -90,7 +90,7 @@
          * @return {Void}
          * @method tearDown
          */
-        tearDown: function () /*:Void*/ {    
+        tearDown: function () {    
         }
     };
     
@@ -104,19 +104,19 @@
      * @constructor
      *
      */
-    Y.Test.Wait = function (segment /*:Function*/, delay /*:int*/) {
+    Y.Test.Wait = function (segment, delay) {
         
         /**
          * The segment of code to run when the wait is over.
          * @type Function
          * @property segment
          */
-        this.segment /*:Function*/ = (Y.Lang.isFunction(segment) ? segment : null);
+        this.segment = (Y.Lang.isFunction(segment) ? segment : null);
     
         /**
          * The delay before running the segment of code.
          * @type int
          * @property delay
          */
-        this.delay /*:int*/ = (Y.Lang.isNumber(delay) ? delay : 0);        
+        this.delay = (Y.Lang.isNumber(delay) ? delay : 0);        
     };

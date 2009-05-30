@@ -31,9 +31,9 @@ Y.mix(DSLocal, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.Local"
+     * @value "dataSourceLocal"
      */
-    NAME: "DataSource.Local",
+    NAME: "dataSourceLocal",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -75,10 +75,9 @@ Y.mix(DSLocal, {
      */
     issueCallback: function (e) {
         if(e.callback) {
-            var scope = e.callback.scope || this,
-                callbackFunc = (e.error && e.callback.failure) || e.callback.success;
+            var callbackFunc = (e.error && e.callback.failure) || e.callback.success;
             if (callbackFunc) {
-                callbackFunc.apply(scope, [e]);
+                callbackFunc(e);
             }
         }
     }
@@ -97,15 +96,6 @@ Y.extend(DSLocal, Y.Base, {
     },
 
     /**
-    * Internal destroy() handler.
-    *
-    * @method destructor
-    * @private        
-    */
-    destructor: function() {
-    },
-
-    /**
     * This method creates all the events for this module.
     * @method _initEvents
     * @private        
@@ -115,20 +105,16 @@ Y.extend(DSLocal, Y.Base, {
          * Fired when a data request is received.
          *
          * @event request
-         * @param e {Event.Facade} Event Facade.         
-         * @param o {Object} Object with the following properties:
+         * @param e {Event.Facade} Event Facade with the following properties:
          * <dl>                          
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+         * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * </dl>
          * @preventable _defRequestFn
          */
-        //this.publish("request", {defaultFn: this._defRequestFn});
-        //this.publish("request", {defaultFn:function(e){
-        //    this._defRequestFn(e);
-        //}});
-        this.publish("request", {defaultFn: Y.bind("_defRequestFn", this)});
+        this.publish("request", {defaultFn: Y.bind("_defRequestFn", this), queuable:true});
          
         /**
          * Fired when raw data is received.
@@ -142,18 +128,14 @@ Y.extend(DSLocal, Y.Base, {
          *     <dl>
          *         <dt>success (Function)</dt> <dd>Success handler.</dd>
          *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-         *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
          *     </dl>
          * </dd>
+         * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
          * </dl>
          * @preventable _defDataFn
          */
-         //this.publish("data", {defaultFn: this._defDataFn});
-         //this.publish("data", {defaultFn:function(e){
-         //   this._defDataFn(e);
-         //}});
-        this.publish("data", {defaultFn: Y.bind("_defDataFn", this)});
+        this.publish("data", {defaultFn: Y.bind("_defDataFn", this), queuable:true});
 
         /**
          * Fired when response is returned.
@@ -167,9 +149,9 @@ Y.extend(DSLocal, Y.Base, {
          *     <dl>
          *         <dt>success (Function)</dt> <dd>Success handler.</dd>
          *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-         *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
          *     </dl>
          * </dd>
+         * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
          * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
          *     <dl>
@@ -181,11 +163,7 @@ Y.extend(DSLocal, Y.Base, {
          * </dl>
          * @preventable _defResponseFn
          */
-         //this.publish("response", {defaultFn: this._defResponseFn});
-         //this.publish("response", {defaultFn:function(e){
-         //   this._defResponseFn(e);
-         //}});
-         this.publish("response", {defaultFn: Y.bind("_defResponseFn", this)});
+         this.publish("response", {defaultFn: Y.bind("_defResponseFn", this), queuable:true});
 
         /**
          * Fired when an error is encountered.
@@ -199,9 +177,9 @@ Y.extend(DSLocal, Y.Base, {
          *     <dl>
          *         <dt>success (Function)</dt> <dd>Success handler.</dd>
          *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-         *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
          *     </dl>
          * </dd>
+         * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
          * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
          *     <dl>
@@ -229,9 +207,9 @@ Y.extend(DSLocal, Y.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
@@ -240,16 +218,16 @@ Y.extend(DSLocal, Y.Base, {
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            e.error = new Error(this.toString() + " Source undefined");
+            e.error = new Error("Local source undefined");
         }
         if(e.error) {
             this.fire("error", e);
-            Y.log("Error in response", "error", this.toString());
+            Y.log("Error in response", "error", "datasource-local");
         }
 
         this.fire("data", Y.mix({data:data}, e));
         Y.log("Transaction " + e.tId + " complete. Request: " +
-                Y.dump(e.request) + " . Response: " + Y.dump(e.response), "info", this.toString());
+                Y.dump(e.request) + " . Response: " + Y.dump(e.response), "info", "datasource-local");
     },
 
     /**
@@ -264,9 +242,9 @@ Y.extend(DSLocal, Y.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
      * </dl>
      * @protected
@@ -294,9 +272,9 @@ Y.extend(DSLocal, Y.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
      * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
      *     <dl>
@@ -324,17 +302,16 @@ Y.extend(DSLocal, Y.Base, {
      *     <dd>The function to call when the data is ready.</dd>
      *     <dt><code>failure</code></dt>
      *     <dd>The function to call upon a response failure condition.</dd>
-     *     <dt><code>scope</code></dt>
-     *     <dd>The object to serve as the scope for the success and failure handlers.</dd>
      *     <dt><code>argument</code></dt>
      *     <dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
      *     </dl>
+     * @param cfg {Object} Configuration object
      * @return {Number} Transaction ID.
      */
-    sendRequest: function(request, callback) {
+    sendRequest: function(request, callback, cfg) {
         var tId = DSLocal._tId++;
-        this.fire("request", {tId:tId, request:request,callback:callback});
-        Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", this.toString());
+        this.fire("request", {tId:tId, request:request, callback:callback, cfg:cfg || {}});
+        Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", "datasource-local");
         return tId;
     }
 });
@@ -378,9 +355,9 @@ Y.mix(DSXHR, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.XHR"
+     * @value "dataSourceXHR"
      */
-    NAME: "DataSource.XHR",
+    NAME: "dataSourceXHR",
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -398,7 +375,8 @@ Y.mix(DSXHR, {
          * @default Y.io
          */
         io: {
-            value: Y.io
+            value: Y.io,
+            cloneDefaultValue: false
         }
     }
 });
@@ -446,34 +424,30 @@ Y.extend(DSXHR, Y.DataSource.Local, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
     _defRequestFn: function(e) {
         var uri = this.get("source"),
-            cfg = {
+            cfg = Y.mix(e.cfg, {
                 on: {
                     success: function (id, response, e) {
                         this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
-                        //{tId:args.tId, request:args.request, callback:args.callback, response:response}
-                        //this.handleResponse(args.tId, args.request, args.callback, response);
+                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", "datasource-xhr");
                     },
                     failure: function (id, response, e) {
-                        e.error = new Error(this.toString() + " Data failure");
+                        e.error = new Error("XHR data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
-                        //{tId:args.tId, request:args.request, callback:args.callback, response:response}
-                        //this.handleResponse(args.tId, args.request, args.callback, response);
+                        Y.log("Received XHR data failure for \"" + e.request + "\"", "info", "datasource-xhr");
                     }
                 },
                 context: this,
                 arguments: e
-            };
+            });
         
         this.get("io")(uri, cfg);
         return e.tId;
@@ -485,7 +459,7 @@ Y.DataSource.XHR = DSXHR;
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-local', 'io']});
 
 YUI.add('datasource-scriptnode', function(Y) {
 
@@ -520,9 +494,9 @@ Y.mix(DSSN, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.ScriptNode"
+     * @value "dataSourceScriptNode"
      */
-    NAME: "DataSource.ScriptNode",
+    NAME: "dataSourceScriptNode",
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -540,7 +514,8 @@ Y.mix(DSSN, {
          * @default Y.Get
          */
         get: {
-            value: Y.Get
+            value: Y.Get,
+            cloneDefaultValue: false
         },
 
 /**
@@ -619,21 +594,8 @@ generateRequestCallback : {
 });
     
 Y.extend(DSSN, Y.DataSource.Local, {
-
-
     /**
-    * Internal init() handler.
-    *
-    * @method initializer
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function(config) {
-        
-    },
-
-    /**
-     * Passes query string to IO. Fires <code>response</code> event when
+     * Passes query string to Get Utility. Fires <code>response</code> event when
      * response is received asynchronously.
      *
      * @method _defRequestFn
@@ -645,9 +607,9 @@ Y.extend(DSSN, Y.DataSource.Local, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
@@ -677,7 +639,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
             self.fire("data", Y.mix({data:response}, e));
         }
         else {
-            Y.log("DataSource ignored stale response for id " + e.tId + "(" + e.request + ")", "info", self.toString());
+            Y.log("DataSource ignored stale response for id " + e.tId + "(" + e.request + ")", "info", "datasource-scriptnode");
         }
 
         delete DSSN.callbacks[id];
@@ -686,11 +648,12 @@ Y.extend(DSSN, Y.DataSource.Local, {
     // We are now creating a request
     uri += e.request + this.get("generateRequestCallback")(this, id);
     //uri = this.doBeforeGetScriptNode(sUri);
-    Y.log("DataSource is querying URL " + uri, "info", this.toString());
+    Y.log("DataSource is querying URL " + uri, "info", "datasource-scriptnode");
     get.script(uri, {
         autopurge: true,
+        // Works in Firefox only....
         onFailure: Y.bind(function(e) {
-            e.error = new Error(this.toString() + " Data failure");
+            e.error = new Error("Script node data failure");
             this.fire("error", e);
         }, this, e)
     });
@@ -719,7 +682,7 @@ YUI.namespace("Env.DataSource.callbacks");
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base', 'get']});
+}, '@VERSION@' ,{requires:['datasource-local', 'get']});
 
 YUI.add('datasource-function', function(Y) {
 
@@ -754,9 +717,9 @@ Y.mix(DSFn, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.Function"
+     * @value "dataSourceFunction"
      */
-    NAME: "DataSource.Function",
+    NAME: "dataSourceFunction",
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -774,37 +737,11 @@ Y.mix(DSFn, {
         */
         source: {
             validator: LANG.isFunction
-        },
-
-        /**
-         * Context in which to execute the function. By default, is the DataSource
-         * instance itself. If set, the function will receive the DataSource instance
-         * as an additional argument.
-         *
-         * @property scope
-         * @type Object
-         * @default null
-         */
-        context: {
-            value: null
         }
     }
 });
     
 Y.extend(DSFn, Y.DataSource.Local, {
-
-
-    /**
-    * Internal init() handler.
-    *
-    * @method initializer
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function(config) {
-        
-    },
-
     /**
      * Passes query string to IO. Fires <code>response</code> event when
      * response is received asynchronously.
@@ -818,23 +755,22 @@ Y.extend(DSFn, Y.DataSource.Local, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
     _defRequestFn: function(e) {
         var fn = this.get("source"),
-            scope = this.get("scope") || this,
             response;
             
             if(fn) {
-                response = fn.call(scope, e.request, this, e);
+                response = fn(e.request, this, e);
                 this.fire("data", Y.mix({data:response}, e));
             }
             else {
-                e.error = new Error(this.toString() + " Data failure");
+                e.error = new Error("Function data failure");
                 this.fire("error", e);
             }
             
@@ -847,7 +783,7 @@ Y.DataSource.Function = DSFn;
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-local']});
 
 YUI.add('datasource-cache', function(Y) {
 
@@ -887,9 +823,9 @@ Y.mix(DataSourceCache, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceCache"
+     * @value "dataSourceCache"
      */
-    NAME: "DataSourceCache",
+    NAME: "dataSourceCache",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -924,6 +860,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
@@ -948,7 +885,6 @@ Y.extend(DataSourceCache, Y.Cache, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
@@ -959,6 +895,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      *         <dt>error (Object)</dt> <dd>Error object.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
@@ -968,11 +905,11 @@ Y.extend(DataSourceCache, Y.Cache, {
      }
 });
 
-Y.namespace('plugin').DataSourceCache = DataSourceCache;
+Y.namespace('Plugin').DataSourceCache = DataSourceCache;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'cache']});
+}, '@VERSION@' ,{requires:['datasource-local', 'cache']});
 
 YUI.add('datasource-jsonschema', function(Y) {
 
@@ -1012,9 +949,9 @@ Y.mix(DataSourceJSONSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceJSONSchema"
+     * @value "dataSourceJSONSchema"
      */
-    NAME: "DataSourceJSONSchema",
+    NAME: "dataSourceJSONSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -1052,7 +989,6 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
@@ -1076,11 +1012,11 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceJSONSchema = DataSourceJSONSchema;
+Y.namespace('Plugin').DataSourceJSONSchema = DataSourceJSONSchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-json']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-json']});
 
 YUI.add('datasource-xmlschema', function(Y) {
 
@@ -1120,9 +1056,9 @@ Y.mix(DataSourceXMLSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceXMLSchema"
+     * @value "dataSourceXMLSchema"
      */
-    NAME: "DataSourceXMLSchema",
+    NAME: "dataSourceXMLSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -1160,7 +1096,6 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
@@ -1184,11 +1119,11 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceXMLSchema = DataSourceXMLSchema;
+Y.namespace('Plugin').DataSourceXMLSchema = DataSourceXMLSchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-xml']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-xml']});
 
 YUI.add('datasource-arrayschema', function(Y) {
 
@@ -1228,9 +1163,9 @@ Y.mix(DataSourceArraySchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceArraySchema"
+     * @value "dataSourceArraySchema"
      */
-    NAME: "DataSourceArraySchema",
+    NAME: "dataSourceArraySchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -1268,7 +1203,6 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
@@ -1292,11 +1226,11 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceArraySchema = DataSourceArraySchema;
+Y.namespace('Plugin').DataSourceArraySchema = DataSourceArraySchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-array']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-array']});
 
 YUI.add('datasource-textschema', function(Y) {
 
@@ -1336,9 +1270,9 @@ Y.mix(DataSourceTextSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceTextSchema"
+     * @value "dataSourceTextSchema"
      */
-    NAME: "DataSourceTextSchema",
+    NAME: "dataSourceTextSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -1376,7 +1310,6 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
@@ -1400,11 +1333,11 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceTextSchema = DataSourceTextSchema;
+Y.namespace('Plugin').DataSourceTextSchema = DataSourceTextSchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-text']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-text']});
 
 YUI.add('datasource-polling', function(Y) {
 
@@ -1449,8 +1382,6 @@ Pollable.prototype = {
      *     <dd>The function to call when the data is ready.</dd>
      *     <dt><code>failure</code></dt>
      *     <dd>The function to call upon a response failure condition.</dd>
-     *     <dt><code>scope</code></dt>
-     *     <dd>The object to serve as the scope for the success and failure handlers.</dd>
      *     <dt><code>argument</code></dt>
      *     <dd>Arbitrary data that will be passed back to the success and failure handlers.</dd>
      *     </dl>
@@ -1493,7 +1424,7 @@ Y.augment(Y.DataSource.Local, Pollable);
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-local']});
 
 
 

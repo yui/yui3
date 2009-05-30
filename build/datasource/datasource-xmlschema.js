@@ -36,9 +36,9 @@ Y.mix(DataSourceXMLSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceXMLSchema"
+     * @value "dataSourceXMLSchema"
      */
-    NAME: "DataSourceXMLSchema",
+    NAME: "dataSourceXMLSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -76,7 +76,6 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
@@ -100,8 +99,8 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceXMLSchema = DataSourceXMLSchema;
+Y.namespace('Plugin').DataSourceXMLSchema = DataSourceXMLSchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-xml']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-xml']});

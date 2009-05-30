@@ -29,8 +29,10 @@ var NODE_TYPE = 'nodeType',
     TEXT_CONTENT = 'textContent',
     LENGTH = 'length',
 
+
     UNDEFINED = undefined,
 
+    g_slice = Array.slice,
     re_tag = /<([a-z]+)/i;
 
 Y.DOM = {
@@ -337,8 +339,13 @@ Y.DOM = {
      * @return {Boolean} Whether or not the element is attached to the document. 
      */
     inDoc: function(element, doc) {
-        doc = doc || Y.config.doc;
-        return Y.DOM.contains(doc.documentElement, element);
+        doc = doc || element[OWNER_DOCUMENT];
+        var id = element.id;
+        if (!id) { // TODO: remove when done?
+            id = element.id = Y.guid();
+        }
+
+        return !! (doc.getElementById(id));
     },
 
     /**
@@ -349,11 +356,17 @@ Y.DOM = {
      * @return {HTMLElement} The node that was inserted (or null if insert fails) 
      */
     insertBefore: function(newNode, referenceNode) {
-        if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
-            return null;
+        var ret = null,
+            parent;
+        if (newNode && referenceNode && (parent = referenceNode.parentNode)) { // NOTE: assignment
+            if (typeof newNode === 'string') {
+                newNode = Y.DOM.create(newNode);
+            }
+            ret = parent.insertBefore(newNode, referenceNode);
+        } else {
+            Y.log('insertBefore failed: missing or invalid arg(s)', 'error', 'dom');
         }
-        return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
+        return ret;
     },
 
     /**
@@ -365,9 +378,13 @@ Y.DOM = {
      */
     insertAfter: function(newNode, referenceNode) {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            YAHOO.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
+            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
         }       
+
+        if (typeof newNode === 'string') {
+            newNode = Y.DOM.create(newNode);
+        }
 
         if (referenceNode[NEXT_SIBLING]) {
             return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode[NEXT_SIBLING]); 
@@ -381,15 +398,14 @@ Y.DOM = {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
-     * @param {Boolean} execScripts Whether or not any provided scripts should be executed.
-     * If execScripts is false, all scripts are stripped.
      */
-    create: function(html, doc, execScripts) {
+    create: function(html, doc) {
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html),
             create = Y.DOM._create,
             custom = Y.DOM.creators,
-            tag, node;
+            ret = null,
+            tag, nodes;
 
         if (m && custom[m[1]]) {
             if (typeof custom[m[1]] === 'function') {
@@ -399,9 +415,18 @@ Y.DOM = {
             }
         }
 
-        node = create(html, doc, tag);
+        nodes = create(html, doc, tag).childNodes;
 
-        return node;
+        if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
+            ret = nodes[0].parentNode.removeChild(nodes[0]);
+        } else { // return multiple nodes as a fragment
+            ret = doc.createDocumentFragment();
+            while (nodes.length) {
+                ret.appendChild(nodes[nodes.length - 1]); 
+            }
+        }
+
+        return ret;
     },
 
     CUSTOM_ATTRIBUTES: (!document.documentElement.hasAttribute) ? { // IE < 8
@@ -461,43 +486,68 @@ Y.DOM = {
         return obj.alert && obj.document;
     },
 
-    _create: function(html, doc, tag) {
-        tag = tag || 'div';
-        var frag = doc.createElement(tag);
-        frag.innerHTML = Y.Lang.trim(html);
-        return frag.removeChild(frag[FIRST_CHILD]);
+    _fragClones: {
+        div: document.createElement('div')
     },
 
-    insertHTML: function(node, content, where, execScripts) {
-        var scripts,
-            newNode = Y.DOM.create(content);
+    _create: function(html, doc, tag) {
+        tag = tag || 'div';
 
-        switch(where) {
-            case 'innerHTML': 
-                node.innerHTML = content; // TODO: purge?
-                newNode = node;
-                break;
-            case 'beforeBegin':
-                Y.DOM.insertBefore(newNode, node);
-                break;
-            case 'afterBegin':
-                Y.DOM.insertBefore(newNode, node[FIRST_CHILD]);
-                break;
-            case 'afterEnd':
-                Y.DOM.insertAfter(newNode, node);
-                break;
-            default: // and 'beforeEnd'
-                node.appendChild(newNode);
+        var frag = Y.DOM._fragClones[tag];
+        if (frag) {
+            frag = frag.cloneNode(false);
+        } else {
+            frag = Y.DOM._fragClones[tag] = doc.createElement(tag);
+        }
+        frag.innerHTML = html;
+        return frag;
+    },
+
+    _removeChildNodes: function(node) {
+        var childNodes = node.childNodes, i;
+
+        while (node.firstChild) {
+            node.removeChild(node.firstChild);
+        }
+    },
+
+    addHTML: function(node, content, where, execScripts) {
+        var scripts,
+            newNode = (content.nodeType) ? content : Y.DOM.create(content);
+
+        if (where && where.nodeType) {
+            node.insertBefore(newNode, where);
+        } else {
+            switch (where) {
+                case 'replace':
+                    while (node.firstChild) {
+                        node.removeChild(node.firstChild);
+                    }
+                    node.appendChild(newNode);
+                    break;
+                case 'before':
+                    node.parentNode.insertBefore(newNode, node);
+                    break;
+                case 'after':
+                    if (node.nextSibling) { // IE errors if refNode is null
+                        node.parentNode.insertBefore(newNode, node.nextSibling);
+                    } else {
+                        node.parentNode.appendChild(newNode);
+                    }
+                    break;
+                default:
+                    node.appendChild(newNode);
+            }
         }
 
         if (execScripts) {
-            if (newNode.nodeName.toUpperCase() === 'SCRIPT' && !Y.UA.gecko) {
+            if (newNode.tagName.toUpperCase() === 'SCRIPT' && !Y.UA.gecko) {
                 scripts = [newNode]; // execute the new script
             } else {
                 scripts = newNode.getElementsByTagName('script');
             }
             Y.DOM._execScripts(scripts);
-        } else { // prevent any scripts from being injected
+        } else if (content.nodeType || content.indexOf('script') > -1) { // prevent any scripts from being injected
             Y.DOM._stripScripts(newNode);
         }
 
@@ -669,6 +719,25 @@ Y.DOM = {
 
     },
 
+    _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
+        fn = (typeof name === 'string') ? Y.DOM[fn] : fn;
+        var args = arguments,
+            result,
+            ret = [];
+
+        if (fn && nodes) {
+            //args = g_slice.call(args, 1);
+            Y.each(nodes, function(node) {
+                //args.splice(0, 1, node);
+                if ((result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc)) !== undefined) {
+                    ret[ret.length] = result;
+                }
+            });
+        }
+
+        return ret.length ? ret : nodes;
+    },
+
     _testElement: function(element, tag, fn) {
         tag = (tag && tag !== '*') ? tag.toUpperCase() : null;
         return (element && element[TAG_NAME] &&
@@ -696,23 +765,19 @@ Y.DOM = {
     if (Y.UA.gecko || Y.UA.ie) { // require custom creation code for certain element types
         Y.mix(creators, {
             option: function(html, doc) {
-                var frag = create('<select>' + html + '</select>');
-                return frag[FIRST_CHILD];
+                return create('<select>' + html + '</select>', doc);
             },
 
             tr: function(html, doc) {
-                var frag = creators.tbody('<tbody>' + html + '</tbody>', doc);
-                return frag[FIRST_CHILD];
+                return create('<tbody>' + html + '</tbody>', doc);
             },
 
             td: function(html, doc) {
-                var frag = creators.tr('<tr>' + html + '</tr>', doc);
-                return frag[FIRST_CHILD];
+                return create('<tr>' + html + '</tr>', doc);
             }, 
 
             tbody: function(html, doc) {
-                var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc);
-                return frag[FIRST_CHILD];
+                return create(TABLE_OPEN + html + TABLE_CLOSE, doc);
             },
 
             legend: 'fieldset'
@@ -722,16 +787,15 @@ Y.DOM = {
     }
 
     if (Y.UA.ie) {
-        creators.col = creators.link = Y.DOM._IESimpleCreate;
-
         Y.mix(creators, {
         // TODO: thead/tfoot with nested tbody
+            // IE adds TBODY when creating TABLE elements (which may share this impl)
             tbody: function(html, doc) {
                 var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc),
                     tb = frag.children.tags('tbody')[0];
 
                 if (frag.children[LENGTH] > 1 && tb && !re_tbody.test(html)) {
-                    tb[PARENT_NODE].removeChild(tb);
+                    tb[PARENT_NODE].removeChild(tb); // strip extraneous tbody
                 }
                 return frag;
             },
@@ -740,10 +804,11 @@ Y.DOM = {
                 var frag = doc.createElement('div');
 
                 frag.innerHTML = '-' + html;
-                return frag.removeChild(frag[FIRST_CHILD][NEXT_SIBLING]);
+                frag.removeChild(frag[FIRST_CHILD]);
+                return frag;
             }
 
-        });
+        }, true);
 
         Y.mix(Y.DOM.VALUE_GETTERS, {
             button: function(node) {

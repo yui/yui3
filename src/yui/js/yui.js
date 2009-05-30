@@ -6,21 +6,33 @@
 
     var _instances = {}, _startTime = new Date().getTime(), p, i,
 
-        add = function(el, type, fn, capture) {
-            if (el.addEventListener) {
-                    el.addEventListener(type, fn, !!capture);
-            } else if (el.attachEvent) {
+        add = function () {
+            if (window.addEventListener) {
+                return function(el, type, fn, capture) {
+                    el.addEventListener(type, fn, (!!capture));
+                };
+            } else if (window.attachEvent) {
+                return function(el, type, fn) {
                     el.attachEvent("on" + type, fn);
-            } 
-        },
-
-        remove = function(el, type, fn, capture) {
-            if (el.removeEventListener) {
-                    el.removeEventListener(type, fn, !!capture);
-            } else if (el.detachEvent) {
-                    el.detachEvent("on" + type, fn);
+                };
+            } else {
+                return function(){};
             }
-        },
+        }(),
+
+        remove = function() {
+            if (window.removeEventListener) {
+                return function (el, type, fn, capture) {
+                    el.removeEventListener(type, fn, !!capture);
+                };
+            } else if (window.detachEvent) {
+                return function (el, type, fn) {
+                    el.detachEvent("on" + type, fn);
+                };
+            } else {
+                return function(){};
+            }
+        }(),
 
         globalListener = function() {
             YUI.Env.windowLoaded = true;
@@ -34,8 +46,7 @@
             'io.xdrReady': 1,
             'io.start': 1,
             'io.success': 1,
-            'io.failure': 1,
-            'io.abort': 1
+            'io.failure': 1
         };
         
 // reduce to one or the other
@@ -82,14 +93,10 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>-------------------------------------------------------------------------</li>
      *  <li>For loader:</li>
      *  <li>-------------------------------------------------------------------------</li>
-     *  <li>base:
-     *  The base dir</li>
-     *  <li>secureBase:
-     *  The secure base dir (not implemented)</li>
-     *  <li>comboBase:
-     *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
-     *  <li>root:
-     *  The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
+     *  <li>base: The base dir</li>
+     *  <li>secureBase: The secure base dir (not implemented)</li>
+     *  <li>comboBase: The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+     *  <li>root: The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
      *  <li>filter:
      *  
      * A filter to apply to result urls.  This filter will modify the default
@@ -114,6 +121,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      * </pre>
      *
      *  </li>
+     *  <li>filters: per-component filter specification.  If specified for a given component, this overrides the filter config</li>
      *  <li>combine:
      *  Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
      *  <li>ignore:
@@ -132,6 +140,9 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  callback for the 'success' event</li>
      *  <li>onFailure:
      *  callback for the 'failure' event</li>
+     *  <li>onCSS: callback for the 'CSSComplete' event.  When loading YUI components with CSS
+     *  the CSS is loaded first, then the script.  This provides a moment you can tie into to improve
+     *  the presentation of the page while the script is loading.</li>
      *  <li>onTimeout:
      *  callback for the 'timeout' event</li>
      *  <li>onProgress:
@@ -172,25 +183,24 @@ YUI.prototype = {
      * @private
      */
     _init: function(o) {
-        
+
         o = o || {};
 
-        // find targeted window
+        // find targeted window/frame
         // @TODO create facades
-        // @TODO resolve windowless environments
-        var w = ((o.win) ? (o.win.contentWindow) : o.win || window) || {},
-            v = '@VERSION@';
-        o.win = w;
-        o.doc = w.document;
+        var v = '@VERSION@', Y = this;
+        o.win = o.win || window || {};
+        o.win = o.win.contentWindow || o.win;
+        o.doc = o.win.document;
         o.debug = ('debug' in o) ? o.debug : true;
         o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
         o.throwFail = ('throwFail' in o) ? o.throwFail : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
-        this.config = o;
+        Y.config = o;
 
-        this.Env = {
+        Y.Env = {
             // @todo expand the new module metadata
             mods: {},
             _idx: 0,
@@ -198,22 +208,27 @@ YUI.prototype = {
             _used: {},
             _attached: {},
             _yidx: 0,
-            _uidx: 0
+            _uidx: 0,
+            _loaded: {}
         };
+
 
         if (v.indexOf('@') > -1) {
             v = 'test';
         }
 
-        this.version = v;
+        Y.version = v;
+
+        Y.Env._loaded[v] = {};
 
         if (YUI.Env) {
-            this.Env._yidx = ++YUI.Env._idx;
-            this.id = this.stamp(this);
-            _instances[this.id] = this;
+            Y.Env._yidx = ++YUI.Env._idx;
+            Y.id = Y.stamp(Y);
+            _instances[Y.id] = Y;
         }
 
-        this.constructor = YUI;
+        Y.constructor = YUI;
+
 
         // this.log(this.id + ') init ');
     },
@@ -333,7 +348,7 @@ YUI.prototype = {
                     this._attach(this.Array(req));
                 }
 
-                // this.log('attaching ' + name, 'info', 'YUI');
+                // this.log('attaching ' + name, 'info', 'yui');
 
                 if (m.fn) {
                     m.fn(this);
@@ -372,6 +387,11 @@ YUI.prototype = {
      */
     use: function() {
 
+        if (this._loading) {
+            this._useQueue.add(Array.prototype.slice.call(arguments));
+            return this;
+        }
+
         var Y = this, 
             a=Array.prototype.slice.call(arguments, 0), 
             mods = YUI.Env.mods, 
@@ -380,26 +400,37 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
-            k, i, l, missing = [], r = [], 
+            k, i, l, missing = [], 
+            r = [], 
             f = function(name) {
 
                 // only attach a module once
                 if (used[name]) {
-                    // Y.log(name + ' already used');
+                    // Y.log(name + ' already used', 'info', 'yui');
                     return;
                 }
 
                 var m = mods[name], j, req, use;
 
                 if (m) {
+
+                    // Y.log('USING ' + name, 'info', 'yui');
+
                     used[name] = true;
 
-                    // Y.log('found ' + name);
                     req = m.details.requires;
                     use = m.details.use;
                 } else {
-                    Y.log('module not found: ' + name, 'info', 'yui');
-                    missing.push(name);
+
+                    // CSS files don't register themselves, see if it has been loaded
+                    if (!YUI.Env._loaded[Y.version][name]) {
+                        Y.log('module not found: ' + name, 'info', 'yui');
+                        missing.push(name);
+                    } else {
+                        // probably css
+                        // Y.log('module not found BUT HAS BEEN LOADED: ' + name, 'info', 'yui');
+                        used[name] = true;
+                    }
                 }
 
                 // make sure requirements are attached
@@ -408,13 +439,14 @@ YUI.prototype = {
                         f(req);
                     } else {
                         for (j = 0; j < req.length; j = j + 1) {
+                            // Y.log('using module\'s requirements: ' + name, 'info', 'yui');
                             f(req[j]);
                         }
                     }
                 }
 
                 // add this module to full list of things to attach
-                // Y.log('using ' + name);
+                // Y.log('adding to requires list: ' + name);
                 r.push(name);
 
             },
@@ -438,6 +470,13 @@ YUI.prototype = {
                 if (Y.fire) {
                     Y.fire('yui:load', Y, fromLoader);
                 }
+
+                // process queued use requests as long until done 
+                // or dynamic load happens again.
+                this._loading = false;
+                while (this._useQueue && this._useQueue.size() && !this._loading) {
+                    Y.use.apply(Y, this._useQueue.next());
+                }
             };
 
         // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback);
@@ -459,16 +498,19 @@ YUI.prototype = {
                 }
             }
 
+            // Y.log('Use *: ' + a);
+
             return Y.use.apply(Y, a);
 
         }
+        
         // Y.log('loader before: ' + a.join(','));
-       
 
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
+            this._useQueue = this._useQueue || new Y.Queue();
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.ignoreRegistered = true;
@@ -487,11 +529,12 @@ YUI.prototype = {
             f(a[i]);
         }
 
-        // Y.log('all reqs: ' + r + ' --- missing: ' + missing);
+        // Y.log('all reqs: ' + r + ' --- missing: ' + missing + ', l: ' + l + ', ' + r[0]);
 
         // dynamic load
         if (Y.Loader && missing.length) {
             Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'yui');
+            this._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
@@ -635,7 +678,6 @@ YUI.prototype = {
 
     // set up the environment
     YUI._init();
-
 
     // add a window load event at load time so we can capture
     // the case where it fires before dynamic loading is

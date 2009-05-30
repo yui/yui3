@@ -44,9 +44,9 @@ Y.mix(Cache, {
      * @type String
      * @static     
      * @final
-     * @value "Cache'
+     * @value "cache"
      */
-    NAME: "Cache",
+    NAME: "cache",
 
 
     ATTRS: {
@@ -136,9 +136,10 @@ Y.extend(Cache, Y.Plugin.Base, {
     /**
     * @method initializer
     * @description Internal init() handler.
+    * @param config {Object} Config object.
     * @private        
     */
-    initializer: function() {
+    initializer: function(config) {
 
         /**
         * @event add
@@ -259,12 +260,13 @@ Y.extend(Cache, Y.Plugin.Base, {
      * If cache is full, evicts the stalest entry before adding the new one.
      *
      * @method add
-     * @param request {Object} Request object.
-     * @param response {Object} Response object.
+     * @param request {Object} Request value.
+     * @param response {Object} Response value.
      * @param payload {Object} (optional) Arbitrary data payload.
      */
     add: function(request, response, payload) {
-        if(this.get("entries") && (this.get("max")>0) && LANG.isValue(request) && LANG.isValue(response)) {
+        if(this.get("entries") && (this.get("max")>0) &&
+                (LANG.isValue(request) || LANG.isNull(request) || LANG.isUndefined(request))) {
             this.fire("add", {entry: {request:request, response:response, payload:payload}});
         }
         else {
@@ -312,12 +314,11 @@ Y.extend(Cache, Y.Plugin.Base, {
                         entries.splice(i,1);
                         // Add as newest
                         entries[entries.length] = entry;
-                        break;
                     } 
+                    
+                    return entry;
                 }
             }
-            return entry;
-
         }
         return null;
     }

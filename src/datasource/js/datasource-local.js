@@ -29,9 +29,9 @@ Y.mix(DSLocal, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.Local"
+     * @value "dataSourceLocal"
      */
-    NAME: "DataSource.Local",
+    NAME: "dataSourceLocal",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -73,10 +73,9 @@ Y.mix(DSLocal, {
      */
     issueCallback: function (e) {
         if(e.callback) {
-            var scope = e.callback.scope || this,
-                callbackFunc = (e.error && e.callback.failure) || e.callback.success;
+            var callbackFunc = (e.error && e.callback.failure) || e.callback.success;
             if (callbackFunc) {
-                callbackFunc.apply(scope, [e]);
+                callbackFunc(e);
             }
         }
     }
@@ -95,15 +94,6 @@ Y.extend(DSLocal, Y.Base, {
     },
 
     /**
-    * Internal destroy() handler.
-    *
-    * @method destructor
-    * @private        
-    */
-    destructor: function() {
-    },
-
-    /**
     * This method creates all the events for this module.
     * @method _initEvents
     * @private        
@@ -113,20 +103,16 @@ Y.extend(DSLocal, Y.Base, {
          * Fired when a data request is received.
          *
          * @event request
-         * @param e {Event.Facade} Event Facade.         
-         * @param o {Object} Object with the following properties:
+         * @param e {Event.Facade} Event Facade with the following properties:
          * <dl>                          
          * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
          * <dt>request (Object)</dt> <dd>The request.</dd>
          * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+         * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * </dl>
          * @preventable _defRequestFn
          */
-        //this.publish("request", {defaultFn: this._defRequestFn});
-        //this.publish("request", {defaultFn:function(e){
-        //    this._defRequestFn(e);
-        //}});
-        this.publish("request", {defaultFn: Y.bind("_defRequestFn", this)});
+        this.publish("request", {defaultFn: Y.bind("_defRequestFn", this), queuable:true});
          
         /**
          * Fired when raw data is received.
@@ -140,18 +126,14 @@ Y.extend(DSLocal, Y.Base, {
          *     <dl>
          *         <dt>success (Function)</dt> <dd>Success handler.</dd>
          *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-         *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
          *     </dl>
          * </dd>
+         * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
          * </dl>
          * @preventable _defDataFn
          */
-         //this.publish("data", {defaultFn: this._defDataFn});
-         //this.publish("data", {defaultFn:function(e){
-         //   this._defDataFn(e);
-         //}});
-        this.publish("data", {defaultFn: Y.bind("_defDataFn", this)});
+        this.publish("data", {defaultFn: Y.bind("_defDataFn", this), queuable:true});
 
         /**
          * Fired when response is returned.
@@ -165,9 +147,9 @@ Y.extend(DSLocal, Y.Base, {
          *     <dl>
          *         <dt>success (Function)</dt> <dd>Success handler.</dd>
          *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-         *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
          *     </dl>
          * </dd>
+         * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
          * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
          *     <dl>
@@ -179,11 +161,7 @@ Y.extend(DSLocal, Y.Base, {
          * </dl>
          * @preventable _defResponseFn
          */
-         //this.publish("response", {defaultFn: this._defResponseFn});
-         //this.publish("response", {defaultFn:function(e){
-         //   this._defResponseFn(e);
-         //}});
-         this.publish("response", {defaultFn: Y.bind("_defResponseFn", this)});
+         this.publish("response", {defaultFn: Y.bind("_defResponseFn", this), queuable:true});
 
         /**
          * Fired when an error is encountered.
@@ -197,9 +175,9 @@ Y.extend(DSLocal, Y.Base, {
          *     <dl>
          *         <dt>success (Function)</dt> <dd>Success handler.</dd>
          *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-         *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
          *     </dl>
          * </dd>
+         * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
          * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
          *     <dl>
@@ -227,9 +205,9 @@ Y.extend(DSLocal, Y.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
@@ -238,16 +216,16 @@ Y.extend(DSLocal, Y.Base, {
         
         // Problematic data
         if(LANG.isUndefined(data)) {
-            e.error = new Error(this.toString() + " Source undefined");
+            e.error = new Error("Local source undefined");
         }
         if(e.error) {
             this.fire("error", e);
-            Y.log("Error in response", "error", this.toString());
+            Y.log("Error in response", "error", "datasource-local");
         }
 
         this.fire("data", Y.mix({data:data}, e));
         Y.log("Transaction " + e.tId + " complete. Request: " +
-                Y.dump(e.request) + " . Response: " + Y.dump(e.response), "info", this.toString());
+                Y.dump(e.request) + " . Response: " + Y.dump(e.response), "info", "datasource-local");
     },
 
     /**
@@ -262,9 +240,9 @@ Y.extend(DSLocal, Y.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
      * </dl>
      * @protected
@@ -292,9 +270,9 @@ Y.extend(DSLocal, Y.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
      * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
      *     <dl>
@@ -322,17 +300,16 @@ Y.extend(DSLocal, Y.Base, {
      *     <dd>The function to call when the data is ready.</dd>
      *     <dt><code>failure</code></dt>
      *     <dd>The function to call upon a response failure condition.</dd>
-     *     <dt><code>scope</code></dt>
-     *     <dd>The object to serve as the scope for the success and failure handlers.</dd>
      *     <dt><code>argument</code></dt>
      *     <dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
      *     </dl>
+     * @param cfg {Object} Configuration object
      * @return {Number} Transaction ID.
      */
-    sendRequest: function(request, callback) {
+    sendRequest: function(request, callback, cfg) {
         var tId = DSLocal._tId++;
-        this.fire("request", {tId:tId, request:request,callback:callback});
-        Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", this.toString());
+        this.fire("request", {tId:tId, request:request, callback:callback, cfg:cfg || {}});
+        Y.log("Transaction " + tId + " sent request: " + Y.dump(request), "info", "datasource-local");
         return tId;
     }
 });

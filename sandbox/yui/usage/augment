@@ -1,0 +1,45 @@
+./compat/js/yui-compat.js:Y.augmentProto = L.augmentProto;
+./datasource/js/datasource-polling.js:Y.augment(Y.DataSource.Local, Pollable);
+./event-custom/build_tmp/event-custom-debug.js: * EventTarget is designed to be used with Y.augment to wrap 
+./event-custom/build_tmp/event-custom.js: * EventTarget is designed to be used with Y.augment to wrap 
+./event-custom/js/event-target.js: * EventTarget is designed to be used with Y.augment to wrap 
+./event-custom/tests/aop.html:                Y.augment(O, Y.Event.Target, null, null, {
+./event-custom/tests/aop.html:                Y.augment(O, Y.Event.Target, null, null, {
+./event-custom/tests/customevent.html:                Y.augment(O, Y.EventTarget, null, null, {
+./event-custom/tests/customevent.html:                Y.augment(O, Y.EventTarget, null, null, {
+./oop/build_tmp/oop-debug.js:    Y.augment = function(r, s, ov, wl, args) {
+./oop/build_tmp/oop.js:    Y.augment = function(r, s, ov, wl, args) {
+./oop/js/oop.js:    Y.augment = function(r, s, ov, wl, args) {
+./queue/build_rollup_tmp/queue-debug.js:Y.augment(Queue, Y.Event.Target);
+./queue/build_rollup_tmp/queue.js:Y.augment(Queue, Y.Event.Target);
+./queue/js/queue-run.js:Y.augment(Queue, Y.EventTarget);
+./compat/js/yui-compat.js:Y.augmentProto = L.augmentProto;
+./compat/js/yui-compat.js:Y.augmentProto = L.augmentProto;
+./datasource/js/datasource-polling.js:Y.augment(Y.DataSource.Local, Pollable);
+./datasource/js/datasource-polling.js:Y.augment(Y.DataSource.Local, Pollable);
+./event-custom/build_tmp/event-custom-debug.js: * EventTarget is designed to be used with Y.augment to wrap 
+./event-custom/build_tmp/event-custom.js: * EventTarget is designed to be used with Y.augment to wrap 
+./event-custom/js/event-target.js: * EventTarget is designed to be used with Y.augment to wrap 
+./event-custom/tests/aop.html:                Y.augment(O, Y.Event.Target, null, null, {
+./event-custom/tests/aop.html:                Y.augment(O, Y.Event.Target, null, null, {
+./event-custom/tests/customevent.html:                Y.augment(O, Y.EventTarget, null, null, {
+./event-custom/tests/customevent.html:                Y.augment(O, Y.EventTarget, null, null, {
+./event-custom/build_tmp/event-custom-debug.js: * EventTarget is designed to be used with Y.augment to wrap 
+./event-custom/build_tmp/event-custom.js: * EventTarget is designed to be used with Y.augment to wrap 
+./event-custom/js/event-target.js: * EventTarget is designed to be used with Y.augment to wrap 
+./event-custom/tests/aop.html:                Y.augment(O, Y.Event.Target, null, null, {
+./event-custom/tests/aop.html:                Y.augment(O, Y.Event.Target, null, null, {
+./event-custom/tests/customevent.html:                Y.augment(O, Y.EventTarget, null, null, {
+./event-custom/tests/customevent.html:                Y.augment(O, Y.EventTarget, null, null, {
+./oop/build_tmp/oop-debug.js:    Y.augment = function(r, s, ov, wl, args) {
+./oop/build_tmp/oop.js:    Y.augment = function(r, s, ov, wl, args) {
+./oop/js/oop.js:    Y.augment = function(r, s, ov, wl, args) {
+./oop/build_tmp/oop-debug.js:    Y.augment = function(r, s, ov, wl, args) {
+./oop/build_tmp/oop.js:    Y.augment = function(r, s, ov, wl, args) {
+./oop/js/oop.js:    Y.augment = function(r, s, ov, wl, args) {
+./queue/build_rollup_tmp/queue-debug.js:Y.augment(Queue, Y.Event.Target);
+./queue/build_rollup_tmp/queue.js:Y.augment(Queue, Y.Event.Target);
+./queue/js/queue-run.js:Y.augment(Queue, Y.EventTarget);
+./queue/build_rollup_tmp/queue-debug.js:Y.augment(Queue, Y.Event.Target);
+./queue/build_rollup_tmp/queue.js:Y.augment(Queue, Y.Event.Target);
+./queue/js/queue-run.js:Y.augment(Queue, Y.EventTarget);

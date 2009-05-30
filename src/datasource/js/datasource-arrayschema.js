@@ -34,9 +34,9 @@ Y.mix(DataSourceArraySchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceArraySchema"
+     * @value "dataSourceArraySchema"
      */
-    NAME: "DataSourceArraySchema",
+    NAME: "dataSourceArraySchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -74,7 +74,6 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
@@ -98,4 +97,4 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceArraySchema = DataSourceArraySchema;
+Y.namespace('Plugin').DataSourceArraySchema = DataSourceArraySchema;

@@ -31,9 +31,9 @@ Y.mix(DSXHR, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.XHR"
+     * @value "dataSourceXHR"
      */
-    NAME: "DataSource.XHR",
+    NAME: "dataSourceXHR",
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,8 @@ Y.mix(DSXHR, {
          * @default Y.io
          */
         io: {
-            value: Y.io
+            value: Y.io,
+            cloneDefaultValue: false
         }
     }
 });
@@ -99,34 +100,30 @@ Y.extend(DSXHR, Y.DataSource.Local, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
     _defRequestFn: function(e) {
         var uri = this.get("source"),
-            cfg = {
+            cfg = Y.mix(e.cfg, {
                 on: {
                     success: function (id, response, e) {
                         this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
-                        //{tId:args.tId, request:args.request, callback:args.callback, response:response}
-                        //this.handleResponse(args.tId, args.request, args.callback, response);
+                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", "datasource-xhr");
                     },
                     failure: function (id, response, e) {
-                        e.error = new Error(this.toString() + " Data failure");
+                        e.error = new Error("XHR data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", this.toString());
-                        //{tId:args.tId, request:args.request, callback:args.callback, response:response}
-                        //this.handleResponse(args.tId, args.request, args.callback, response);
+                        Y.log("Received XHR data failure for \"" + e.request + "\"", "info", "datasource-xhr");
                     }
                 },
                 context: this,
                 arguments: e
-            };
+            });
         
         this.get("io")(uri, cfg);
         return e.tId;
@@ -138,4 +135,4 @@ Y.DataSource.XHR = DSXHR;
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-local', 'io']});

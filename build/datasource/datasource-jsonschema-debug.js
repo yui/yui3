@@ -36,9 +36,9 @@ Y.mix(DataSourceJSONSchema, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceJSONSchema"
+     * @value "dataSourceJSONSchema"
      */
-    NAME: "DataSourceJSONSchema",
+    NAME: "dataSourceJSONSchema",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -76,7 +76,6 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
@@ -100,8 +99,8 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
     }
 });
     
-Y.namespace('plugin').DataSourceJSONSchema = DataSourceJSONSchema;
+Y.namespace('Plugin').DataSourceJSONSchema = DataSourceJSONSchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-base', 'dataschema-json']});
+}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-json']});

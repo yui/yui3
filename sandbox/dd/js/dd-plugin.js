@@ -10,7 +10,7 @@ YUI.add('dd-plugin', function(Y) {
         * @class Drag
         * @extends DD.Drag
         * @constructor
-        * @namespace plugin
+        * @namespace Plugin
         */
 
 
@@ -35,8 +35,8 @@ YUI.add('dd-plugin', function(Y) {
 
 
         Y.extend(Drag, Y.DD.Drag);
-        Y.namespace('plugin');
-        Y.plugin.Drag = Drag;
+        Y.namespace('Plugin');
+        Y.Plugin.Drag = Drag;
 
 
 

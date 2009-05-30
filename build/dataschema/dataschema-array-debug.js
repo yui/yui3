@@ -22,16 +22,6 @@ SchemaArray = {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Returns string name.
-     *
-     * @method toString
-     * @return {String} String representation for this object.
-     */
-    toString: function() {
-        return "DataSchema.Array";
-    },
-
-    /**
      * Applies a given schema to given Array data.
      *
      * @method apply
@@ -51,12 +41,12 @@ SchemaArray = {
             }
             else {
                 data_out.results = data_in;
-                Y.log("Schema resultFields property not found: " + Y.dump(schema), "warn", SchemaArray.toString());
+                Y.log("Schema resultFields property not found: " + Y.dump(schema), "warn", "dataschema-array");
             }
         }
         else {
-            Y.log("Array data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", SchemaArray.toString());
-            data_out.error = new Error(this.toString() + " Schema parse failure");
+            Y.log("Array data could not be schema-parsed: " + Y.dump(data) + " " + Y.dump(data), "error", "dataschema-array");
+            data_out.error = new Error("Array schema parse failure");
         }
 
         return data_out;
@@ -95,7 +85,7 @@ SchemaArray = {
             else {
                 //TODO: null or {}?
                 result = null;
-                Y.log("Unexpected type while parsing array: " + Y.dump(item), "warn", SchemaArray.toString());
+                Y.log("Unexpected type while parsing array: " + Y.dump(item), "warn", "dataschema-array");
             }
             results[i] = result;
         }

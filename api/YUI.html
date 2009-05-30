@@ -124,14 +124,10 @@ A list of modules that defines the YUI core (overrides the default)</li>
 <li>-------------------------------------------------------------------------</li>
 <li>For loader:</li>
 <li>-------------------------------------------------------------------------</li>
-<li>base:
-The base dir</li>
-<li>secureBase:
-The secure base dir (not implemented)</li>
-<li>comboBase:
-The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
-<li>root:
-The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
+<li>base: The base dir</li>
+<li>secureBase: The secure base dir (not implemented)</li>
+<li>comboBase: The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+<li>root: The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
 <li>filter:
 A filter to apply to result urls.  This filter will modify the default
 path for all modules.  The default path for the YUI library is the
@@ -154,6 +150,7 @@ myFilter: &#123;
 &#125;
 </pre>
 </li>
+<li>filters: per-component filter specification.  If specified for a given component, this overrides the filter config</li>
 <li>combine:
 Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
 <li>ignore:
@@ -172,6 +169,9 @@ execution context for all callbacks</li>
 callback for the 'success' event</li>
 <li>onFailure:
 callback for the 'failure' event</li>
+<li>onCSS: callback for the 'CSSComplete' event.  When loading YUI components with CSS
+the CSS is loaded first, then the script.  This provides a moment you can tie into to improve
+the presentation of the page while the script is loading.</li>
 <li>onTimeout:
 callback for the 'timeout' event</li>
 <li>onProgress:
@@ -189,28 +189,6 @@ A list of module definitions.  See Loader.addModule for the supported module met
                     </div>
                     
                     <div rel="yui:properties" resource="#properties">
-                        <div class="section field details">
-                            <h3 id="properties">Properties</h3>
-                            <div class="content">
-                                    <div class="private" rel="yui:property" resource="#property__iefix">
-                                    <h4><a name="property__iefix" property="yui:name">_iefix</a>
-                                        - <code>private <span property="yui:type">object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            IE will not enumerate native functions in a derived object even if the
-function was overridden.  This is a workaround for specific functions 
-we care about on the Object prototype.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
 
                     </div>
 
@@ -1224,6 +1202,14 @@ be returned if the object has one assigned to it.</span>
                                                          f
                                                     
                                                 
+                                                        , 
+                                                         ldelim
+                                                    
+                                                
+                                                        , 
+                                                         rdelim
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -1269,6 +1255,18 @@ in the YUI module.
 process each match.  It receives the key,
 value, and any extra metadata included with
 the key inside of the braces.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">ldelim</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  optional left delimiter for the replacement token (default: {)</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">rdelim</span>
+                                                        &lt;<span property="yui:type">string} optional right delimiter for the replacement token (default: </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> )</span>
                                                         </dd>
                                                 </dl>
 
@@ -1421,9 +1419,12 @@ is detected in the DOM.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Adds a DOM focus listener.  Uses the focusout event in IE,
+                                            Adds a DOM blur listener.  Uses the focusout event in IE,
 and the capture phase otherwise so that
-the event propagates properly.
+the event propagates in a way that enables event delegation.
+Note: if you are registering this event on the intended target
+rather than an ancestor, the element must be in the DOM 
+at the time of registration in order for it to work in Opera.
                                         </div>
 
                                         <div class="description">
@@ -1666,7 +1667,10 @@ signature is:</p>
                                         <div class="description" property="yui:description">
                                             Adds a DOM focus listener.  Uses the focusin event in IE,
 and the capture phase otherwise so that
-the event propagates properly.
+the event propagates in a way that enables event delegation.
+Note: if you are registering this event on the intended target
+rather than an ancestor, the element must be in the DOM in
+order for it to work in Opera.
                                         </div>
 
                                         <div class="description">
@@ -1808,16 +1812,19 @@ to the listener.</span>
                                                          el
                                                     
                                                 
+                                                        , 
+                                                         spec
+                                                    
+                                                
                                             )
 
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Sets up a "mouseenter" listener--a listener that is called the first time 
-the user's mouse enters the specified element(s).  Can be used to listen for 
-the "mouseenter" event on a single element, or a collection of elements as
-specified via a CSS selector passed as the fourth argument when subscribing 
-to the event.
+                                            Sets up a "mouseenter" listener&#151;a listener that is called the first time 
+the user's mouse enters the specified element(s).  By passing a CSS selector 
+as the fourth argument, can also be used to delegate a "mouseenter" 
+event listener.
                                         </div>
 
                                         <div class="description">
@@ -1829,7 +1836,7 @@ to the event.
                                                             <code><span property="yui:name">type</span>
                                                                 &lt;<span property="yui:type">string</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  'mouseenter'</span>
+                                                            <span property="yui:description">  "mouseenter"</span>
                                                         </dd>
                                                         
                                                         <dd rel="yui:parameter">
@@ -1843,7 +1850,15 @@ to the event.
                                                             <code><span property="yui:name">el</span>
                                                                 &lt;<span property="yui:type">string|node</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  The element to assign the listener to.</span>
+                                                            <span property="yui:description">  The element(s) to assign the listener to.</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">spec</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  Optional.  String representing a selector that must 
+match the target of the event in order for the listener to be called.</span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -1878,16 +1893,19 @@ to the event.
                                                          el
                                                     
                                                 
+                                                        , 
+                                                         spec
+                                                    
+                                                
                                             )
 
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Sets up a "mouseleave" listener--a listener that is called the first time 
-the user's mouse enters the specified element(s).  Can be used to listen for 
-the "mouseleave" event on a single element, or a collection of elements as
-specified via a CSS selector passed as the fourth argument when subscribing 
-to the event.
+                                            Sets up a "mouseleave" listener&#151;a listener that is called the first time 
+the user's mouse leaves the specified element(s).  By passing a CSS selector 
+as the fourth argument, can also be used to delegate a "mouseleave" 
+event listener.
                                         </div>
 
                                         <div class="description">
@@ -1899,7 +1917,7 @@ to the event.
                                                             <code><span property="yui:name">type</span>
                                                                 &lt;<span property="yui:type">string</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  'mouseleave'</span>
+                                                            <span property="yui:description">  "mouseleave"</span>
                                                         </dd>
                                                         
                                                         <dd rel="yui:parameter">
@@ -1913,7 +1931,15 @@ to the event.
                                                             <code><span property="yui:name">el</span>
                                                                 &lt;<span property="yui:type">string|node</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  The element to assign the listener to.</span>
+                                                            <span property="yui:description">  The element(s) to assign the listener to.</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">spec</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  Optional.  String representing a selector that must 
+match the target of the event in order for the listener to be called.</span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -1980,16 +2006,19 @@ behavior in other browsers.
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
@@ -1998,7 +2027,10 @@ behavior in other browsers.
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -2041,12 +2073,6 @@ behavior in other browsers.
                         </ul>
                     </div>
 
-                    <div id="propertyList" class="module">
-                        <h4>Properties</h4>
-                        <ul class="content">        
-                                <li class="private"><a href="#property__iefix" title="_iefix">_iefix</a></li>
-                        </ul>
-                    </div>
 
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
@@ -2097,7 +2123,7 @@ behavior in other browsers.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "cached", "url": "YUI.html#method_cached", "type": "method"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#event_delegate", "type": "event"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "private", "host": "YUI~object", "name": "_extract", "url": "YUI~object.html#method__extract", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "YUI~object", "name": "getValue", "url": "YUI~object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "private", "host": "YUI", "name": "_iefix", "url": "YUI.html#property__iefix", "type": "property"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "YUI", "name": "mouseenter", "url": "YUI.html#event_mouseenter", "type": "event"}, {"access": "", "host": "YUI", "name": "mouseleave", "url": "YUI.html#event_mouseleave", "type": "event"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object", "url": "YUI~object.html#method_Object", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.each", "url": "YUI~object.html#method_Object.each", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasKey", "url": "YUI~object.html#method_Object.hasKey", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasValue", "url": "YUI~object.html#method_Object.hasValue", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.keys", "url": "YUI~object.html#method_Object.keys", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.owns", "url": "YUI~object.html#method_Object.owns", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.size", "url": "YUI~object.html#method_Object.size", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.values", "url": "YUI~object.html#method_Object.values", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "YUI~object", "name": "setValue", "url": "YUI~object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "YUI", "name": "substitute", "url": "YUI.html#method_substitute", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "cached", "url": "YUI.html#method_cached", "type": "method"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#event_delegate", "type": "event"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "private", "host": "YUI~object", "name": "_extract", "url": "YUI~object.html#method__extract", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "YUI~object", "name": "getValue", "url": "YUI~object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "YUI", "name": "mouseenter", "url": "YUI.html#event_mouseenter", "type": "event"}, {"access": "", "host": "YUI", "name": "mouseleave", "url": "YUI.html#event_mouseleave", "type": "event"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object", "url": "YUI~object.html#method_Object", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.each", "url": "YUI~object.html#method_Object.each", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasKey", "url": "YUI~object.html#method_Object.hasKey", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasValue", "url": "YUI~object.html#method_Object.hasValue", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.keys", "url": "YUI~object.html#method_Object.keys", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.owns", "url": "YUI~object.html#method_Object.owns", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.size", "url": "YUI~object.html#method_Object.size", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.values", "url": "YUI~object.html#method_Object.values", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "YUI~object", "name": "setValue", "url": "YUI~object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "YUI", "name": "substitute", "url": "YUI.html#method_substitute", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}];
 </script>
 </body>
 </html>

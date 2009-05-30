@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: widget   Base.js  (YUI Library)</title>
+	<title>API: base   Base.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>widget&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>base&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_widget.html" title="widget">widget</a>
+            &gt; <a href="./module_base.html" title="base">base</a>
                 
                  &gt; Base.js (source view) 
         <form onsubmit="return false">
@@ -69,6 +69,9 @@
         <span class="nx">DESTROYED</span> <span class="o">=</span> <span class="s2">&quot;destroyed&quot;</span><span class="o">,</span>
         <span class="nx">INITIALIZER</span> <span class="o">=</span> <span class="s2">&quot;initializer&quot;</span><span class="o">,</span>
         <span class="nx">OBJECT_CONSTRUCTOR</span> <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">constructor</span><span class="o">,</span>
+        <span class="nx">DEEP</span> <span class="o">=</span> <span class="s2">&quot;deep&quot;</span><span class="o">,</span>
+        <span class="nx">SHALLOW</span> <span class="o">=</span> <span class="s2">&quot;shallow&quot;</span><span class="o">,</span>
+        <span class="nx">VALUE</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="o">,</span>
         <span class="nx">DESTRUCTOR</span> <span class="o">=</span> <span class="s2">&quot;destructor&quot;</span><span class="o">;</span>
 
     <span class="c">/**</span>
@@ -91,9 +94,26 @@
 <span class="c">     */</span>
     <span class="k">function</span> <span class="nx">Base</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
+
         <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">Host</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span> <span class="o">||</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_lazyAddAttrs</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lazyAddAttrs</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="o">}</span>
+
         <span class="k">this</span><span class="o">.</span><span class="nx">init</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">}</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The list of properties which can be configured for </span>
+<span class="c">     * each attribute (e.g. setter, getter, writeOnce etc.)</span>
+<span class="c">     *</span>
+<span class="c">     * @property Base._ATTR_CFG</span>
+<span class="c">     * @type Array</span>
+<span class="c">     * @static</span>
+<span class="c">     * @private</span>
+<span class="c">     */</span>
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">_ATTR_CFG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">_ATTR_CFG</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="s2">&quot;cloneDefaultValue&quot;</span><span class="o">);</span>
 
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
@@ -192,13 +212,12 @@
 <span class="c">             * @param {Event.Facade} e Event object</span>
 <span class="c">             * @param config Object literal of configuration name/value pairs</span>
 <span class="c">             */</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">INIT</span><span class="o">,</span> <span class="o">{</span>
-                <span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span>
-                <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defInitFn</span>
-            <span class="o">});</span>
-
-            <span class="c">// TODO: Look at why this needs to be done after publish.</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">Host</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">INIT</span><span class="o">,</span> <span class="o">{</span>
+                    <span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span>
+                    <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defInitFn</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">on</span><span class="o">)</span> <span class="o">{</span>
@@ -209,7 +228,12 @@
                 <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">INIT</span><span class="o">,</span> <span class="o">{</span><span class="nx">cfg</span><span class="o">:</span> <span class="nx">config</span><span class="o">});</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">INIT</span><span class="o">,</span> <span class="o">{</span><span class="nx">cfg</span><span class="o">:</span> <span class="nx">config</span><span class="o">});</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_defInitFn</span><span class="o">({</span><span class="nx">cfg</span><span class="o">:</span> <span class="nx">config</span><span class="o">});</span>
+            <span class="o">}</span>
+
             <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
 
@@ -265,7 +289,13 @@
 <span class="c">         */</span>
         <span class="nx">_defInitFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_initHierarchy</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">cfg</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">INITIALIZED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_initPlugins</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">cfg</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">INITIALIZED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">INITIALIZED</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -277,6 +307,7 @@
 <span class="c">         */</span>
         <span class="nx">_defDestroyFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_destroyHierarchy</span><span class="o">();</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_destroyPlugins</span><span class="o">();</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">DESTROYED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">},</span>
 
@@ -315,15 +346,16 @@
 <span class="c">         * @param {Objects} allCfgs</span>
 <span class="c">         */</span>
         <span class="nx">_filterAttrCfgs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">clazz</span><span class="o">,</span> <span class="nx">allCfgs</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">cfgs</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="k">var</span> <span class="nx">cfgs</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">allCfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">])</span> <span class="o">{</span>
-                        <span class="nx">cfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
-                        <span class="nx">delete</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">])</span> <span class="o">{</span>
+                        <span class="nx">cfgs</span> <span class="o">=</span> <span class="nx">cfgs</span> <span class="o">||</span> <span class="o">{};</span>
+                        <span class="nx">cfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">];</span>
+                        <span class="nx">delete</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">];</span>
                     <span class="o">}</span>
-                <span class="o">});</span>
+                <span class="o">}</span>
             <span class="o">}</span>
 
             <span class="k">return</span> <span class="nx">cfgs</span><span class="o">;</span>
@@ -338,7 +370,7 @@
                 <span class="nx">classes</span> <span class="o">=</span> <span class="o">[],</span>
                 <span class="nx">attrs</span> <span class="o">=</span> <span class="o">[];</span>
 
-            <span class="k">while</span> <span class="o">(</span><span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="o">.</span><span class="nx">prototype</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">while</span> <span class="o">(</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
                 <span class="c">// Add to classes</span>
 <span class="c"></span>                <span class="nx">classes</span><span class="o">[</span><span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span>
 
@@ -359,22 +391,40 @@
 <span class="c">         * @param {Object} allAttrs</span>
 <span class="c">         */</span>
         <span class="nx">_aggregateAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">allAttrs</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">attrs</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span>
+            <span class="k">var</span> <span class="nx">attr</span><span class="o">,</span> 
+                <span class="nx">attrs</span><span class="o">,</span> 
+                <span class="nx">cfg</span><span class="o">,</span> 
+                <span class="nx">val</span><span class="o">,</span> 
+                <span class="nx">path</span><span class="o">,</span> 
+                <span class="nx">i</span><span class="o">,</span> 
+                <span class="nx">clone</span><span class="o">,</span> 
+                <span class="nx">cfgProps</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">_ATTR_CFG</span><span class="o">,</span>
                 <span class="nx">aggAttrs</span> <span class="o">=</span> <span class="o">{};</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">allAttrs</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">allAttrs</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">allAttrs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+
                     <span class="k">for</span> <span class="o">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
 
-                            <span class="c">// Protect</span>
-<span class="c"></span>                            <span class="nx">cfg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">attrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]);</span>
+                            <span class="c">// Protect config passed in</span>
+<span class="c"></span>                            <span class="nx">cfg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({},</span> <span class="nx">attrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">cfgProps</span><span class="o">);</span>
 
                             <span class="nx">val</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
-                            <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">cfg</span><span class="o">.</span><span class="nx">useRef</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">OBJECT_CONSTRUCTOR</span> <span class="o">===</span> <span class="nx">val</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">||</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">val</span><span class="o">)))</span> <span class="o">{</span>
-                                <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
-                            <span class="o">}</span>
+                            <span class="nx">clone</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">cloneDefaultValue</span><span class="o">;</span>
+
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="nx">clone</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">OBJECT_CONSTRUCTOR</span> <span class="o">===</span> <span class="nx">val</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">||</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">val</span><span class="o">)))</span> <span class="o">||</span> <span class="nx">clone</span> <span class="o">===</span> <span class="nx">DEEP</span> <span class="o">||</span> <span class="nx">clone</span> <span class="o">===</span> <span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+                                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Cloning default value for attribute:&#39;</span> <span class="o">+</span> <span class="nx">attr</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
+                                    <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+                                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">clone</span> <span class="o">===</span> <span class="nx">SHALLOW</span><span class="o">)</span> <span class="o">{</span>
+                                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Merging default value for attribute:&#39;</span> <span class="o">+</span> <span class="nx">attr</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
+                                    <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+                                <span class="o">}</span>
+                                <span class="c">// else if (clone === false), don&#39;t clone the static default value. </span>
+<span class="c"></span>                                <span class="c">// It&#39;s intended to be used by reference.</span>
+<span class="c"></span>                            <span class="o">}</span>
 
                             <span class="nx">path</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
                             <span class="k">if</span> <span class="o">(</span><span class="nx">attr</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
@@ -388,7 +438,7 @@
                                 <span class="k">if</span> <span class="o">(!</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">])</span> <span class="o">{</span>
                                     <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">;</span>
                                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                                    <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="nx">cfg</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="nx">cfg</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">cfgProps</span><span class="o">);</span>
                                 <span class="o">}</span>
                             <span class="o">}</span>
                         <span class="o">}</span>
@@ -406,20 +456,21 @@
 <span class="c">         * method on the prototype of each class in the hierarchy.</span>
 <span class="c">         *</span>
 <span class="c">         * @method _initHierarchy</span>
-<span class="c">         * @param {Object} userConf Object literal containing attribute name/value pairs</span>
+<span class="c">         * @param {Object} userVals Object literal containing attribute name/value pairs</span>
 <span class="c">         * @private</span>
 <span class="c">         */</span>
-        <span class="nx">_initHierarchy</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">userConf</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">constr</span><span class="o">,</span>
+        <span class="nx">_initHierarchy</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">userVals</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">lazy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lazyAddAttrs</span><span class="o">,</span>
+                <span class="nx">constr</span><span class="o">,</span>
                 <span class="nx">constrProto</span><span class="o">,</span>
                 <span class="nx">ci</span><span class="o">,</span>
                 <span class="nx">ei</span><span class="o">,</span>
                 <span class="nx">el</span><span class="o">,</span>
                 <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
-                <span class="nx">mergedCfgs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getAttrCfgs</span><span class="o">();</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_userCfgs</span> <span class="o">=</span> <span class="nx">userConf</span><span class="o">;</span>
+                <span class="nx">attrCfgs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getAttrCfgs</span><span class="o">();</span>
 
             <span class="k">for</span> <span class="o">(</span><span class="nx">ci</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">ci</span><span class="o">--)</span> <span class="o">{</span>
+
                 <span class="nx">constr</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">ci</span><span class="o">];</span>
                 <span class="nx">constrProto</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
 
@@ -429,12 +480,10 @@
                     <span class="o">}</span>
                 <span class="o">}</span>
 
-                <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_filterAttrCfgs</span><span class="o">(</span><span class="nx">constr</span><span class="o">,</span> <span class="nx">mergedCfgs</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">,</span> <span class="nx">userConf</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_filterAttrCfgs</span><span class="o">(</span><span class="nx">constr</span><span class="o">,</span> <span class="nx">attrCfgs</span><span class="o">),</span> <span class="nx">userVals</span><span class="o">,</span> <span class="nx">lazy</span><span class="o">);</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">constrProto</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">INITIALIZER</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">constrProto</span><span class="o">[</span><span class="nx">INITIALIZER</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                    <span class="nx">constrProto</span><span class="o">.</span><span class="nx">initializer</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -456,65 +505,30 @@
                 <span class="nx">constr</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">ci</span><span class="o">];</span>
                 <span class="nx">constrProto</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">constrProto</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">DESTRUCTOR</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">constrProto</span><span class="o">[</span><span class="nx">DESTRUCTOR</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                    <span class="nx">constrProto</span><span class="o">.</span><span class="nx">destructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * Wrapper for Attribute.get. Adds the ability to </span>
-<span class="c">         * initialize attributes on demand during initialization</span>
-<span class="c">         * of the ATTRS definitions at each class level.</span>
-<span class="c">         *</span>
-<span class="c">         * @method get</span>
-<span class="c">         *</span>
-<span class="c">         * @param {String} name The attribute whose value will be returned. If </span>
-<span class="c">         * the attribute is not currently configured, but is part of the ATTRS </span>
-<span class="c">         * configuration for the class currently being configured, it will be</span>
-<span class="c">         *</span>
-<span class="c">         * @return {Any} The current value of the attribute</span>
-<span class="c">         */</span>
-        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">attrName</span> <span class="o">=</span> <span class="nx">name</span><span class="o">,</span>
-                    <span class="nx">iDot</span> <span class="o">=</span> <span class="nx">name</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
-
-                <span class="k">if</span> <span class="o">(</span><span class="nx">iDot</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">attrName</span> <span class="o">=</span> <span class="nx">name</span><span class="o">.</span><span class="nx">slice</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">iDot</span><span class="o">);</span>
-                <span class="o">}</span>
-
-                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">[</span><span class="nx">attrName</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">attrName</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="k">var</span> <span class="nx">classCfg</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classCfgs</span><span class="o">[</span><span class="nx">attrName</span><span class="o">],</span>
-                        <span class="nx">userCfg</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_userCfgs</span><span class="o">,</span>
-                        <span class="nx">attrCfg</span><span class="o">;</span>
-
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">classCfg</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">attrCfg</span> <span class="o">=</span> <span class="o">{};</span>
-                        <span class="nx">attrCfg</span><span class="o">[</span><span class="nx">attrName</span><span class="o">]</span> <span class="o">=</span> <span class="nx">classCfg</span><span class="o">;</span>
-                        <span class="k">this</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="nx">attrCfg</span><span class="o">,</span> <span class="nx">userCfg</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">get</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">name</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
 <span class="c">         * Default toString implementation. Provides the constructor NAME</span>
 <span class="c">         * and the instance ID.</span>
-<span class="c">         * </span>
+<span class="c">         *</span>
 <span class="c">         * @method toString</span>
 <span class="c">         * @return {String} String representation for this object</span>
 <span class="c">         */</span>
         <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
         <span class="o">}</span>
+
     <span class="o">};</span>
 
     <span class="c">// Straightup augment, no wrapper functions</span>
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Base</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Base</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">Host</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Base</span><span class="o">,</span> <span class="nx">PluginHost</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">plug</span> <span class="o">=</span> <span class="nx">PluginHost</span><span class="o">.</span><span class="nx">plug</span><span class="o">;</span>
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">unplug</span> <span class="o">=</span> <span class="nx">PluginHost</span><span class="o">.</span><span class="nx">unplug</span><span class="o">;</span>
 
     <span class="c">// Fix constructor</span>
 <span class="c"></span>    <span class="nx">Base</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">;</span>
@@ -532,20 +546,23 @@
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
-                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class="selected"><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
@@ -554,11 +571,14 @@
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
-                                <li class="selected"><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
@@ -571,8 +591,8 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class=""><a href="Base.html" title="Base">Base</a></li>
                                 <li class=""><a href="PluginHost.html" title="PluginHost">PluginHost</a></li>
-                                <li class=""><a href="Widget.html" title="Widget">Widget</a></li>
                         </ul>
                     </div>
 
@@ -580,8 +600,8 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class="selected"><a href="Base.js.html" title="Base.js">Base.js</a></li>
+                                <li class=""><a href="BaseBuild.js.html" title="BaseBuild.js">BaseBuild.js</a></li>
                                 <li class=""><a href="PluginHost.js.html" title="PluginHost.js">PluginHost.js</a></li>
-                                <li class=""><a href="Widget.js.html" title="Widget.js">Widget.js</a></li>
                         </ul>
                     </div>
 
@@ -598,7 +618,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "Widget", "name": "_afterDisabledChange", "url": "Widget.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterHasFocusChange", "url": "Widget.html#method__afterHasFocusChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterHeightChange", "url": "Widget.html#method__afterHeightChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterVisibleChange", "url": "Widget.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterWidthChange", "url": "Widget.html#method__afterWidthChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindDOMListeners", "url": "Widget.html#method__bindDOMListeners", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindUI", "url": "Widget.html#method__bindUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "bindUI", "url": "Widget.html#method_bindUI", "type": "method"}, {"access": "", "host": "Widget", "name": "blur", "url": "Widget.html#method_blur", "type": "method"}, {"access": "", "host": "Widget", "name": "boundingBox", "url": "Widget.html#config_boundingBox", "type": "config"}, {"access": "", "host": "Widget", "name": "boundingBoxChange", "url": "Widget.html#event_boundingBoxChange", "type": "event"}, {"access": "", "host": "Widget", "name": "BOUNDING_TEMPLATE", "url": "Widget.html#property_BOUNDING_TEMPLATE", "type": "property"}, {"access": "private", "host": "Widget", "name": "_buildCfg", "url": "Widget.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Widget", "name": "contentBox", "url": "Widget.html#config_contentBox", "type": "config"}, {"access": "", "host": "Widget", "name": "contentBoxChange", "url": "Widget.html#event_contentBoxChange", "type": "event"}, {"access": "", "host": "Widget", "name": "CONTENT_TEMPLATE", "url": "Widget.html#property_CONTENT_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Widget", "name": "_defRenderFn", "url": "Widget.html#method__defRenderFn", "type": "method"}, {"access": "", "host": "Widget", "name": "DEF_UNIT", "url": "Widget.html#property_DEF_UNIT", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "protected", "host": "Widget", "name": "destructor", "url": "Widget.html#method_destructor", "type": "method"}, {"access": "", "host": "Widget", "name": "disabled", "url": "Widget.html#method_disabled", "type": "method"}, {"access": "", "host": "Widget", "name": "disabled", "url": "Widget.html#config_disabled", "type": "config"}, {"access": "", "host": "Widget", "name": "disabledChange", "url": "Widget.html#event_disabledChange", "type": "event"}, {"access": "", "host": "Widget", "name": "enable", "url": "Widget.html#method_enable", "type": "method"}, {"access": "", "host": "Widget", "name": "focus", "url": "Widget.html#method_focus", "type": "method"}, {"access": "", "host": "Widget", "name": "getClassName", "url": "Widget.html#method_getClassName", "type": "method"}, {"access": "", "host": "Widget", "name": "getDefaultLocale", "url": "Widget.html#method_getDefaultLocale", "type": "method"}, {"access": "", "host": "Widget", "name": "_getHtmlParser", "url": "Widget.html#method__getHtmlParser", "type": "method"}, {"access": "", "host": "Widget", "name": "getString", "url": "Widget.html#method_getString", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_getStrings", "url": "Widget.html#method__getStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "getStrings", "url": "Widget.html#method_getStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "hasFocus", "url": "Widget.html#config_hasFocus", "type": "config"}, {"access": "", "host": "Widget", "name": "hasFocusChange", "url": "Widget.html#event_hasFocusChange", "type": "event"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Widget", "name": "height", "url": "Widget.html#config_height", "type": "config"}, {"access": "", "host": "Widget", "name": "heightChange", "url": "Widget.html#event_heightChange", "type": "event"}, {"access": "", "host": "Widget", "name": "hide", "url": "Widget.html#method_hide", "type": "method"}, {"access": "protected", "host": "Widget", "name": "initializer", "url": "Widget.html#method_initializer", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Widget", "name": "locale", "url": "Widget.html#config_locale", "type": "config"}, {"access": "", "host": "Widget", "name": "localeChange", "url": "Widget.html#event_localeChange", "type": "event"}, {"access": "private", "host": "Widget", "name": "_moveStyles", "url": "Widget.html#method__moveStyles", "type": "method"}, {"access": "", "host": "Widget", "name": "moveStyles", "url": "Widget.html#config_moveStyles", "type": "config"}, {"access": "", "host": "Widget", "name": "moveStylesChange", "url": "Widget.html#event_moveStylesChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "_onDocMouseDown", "url": "Widget.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_onFocus", "url": "Widget.html#method__onFocus", "type": "method"}, {"access": "private", "host": "Widget", "name": "_parseHTML", "url": "Widget.html#method__parseHTML", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "Widget", "name": "render", "url": "Widget.html#method_render", "type": "method"}, {"access": "private", "host": "Widget", "name": "_renderBox", "url": "Widget.html#method__renderBox", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_renderBoxClassNames", "url": "Widget.html#method__renderBoxClassNames", "type": "method"}, {"access": "", "host": "Widget", "name": "rendered", "url": "Widget.html#config_rendered", "type": "config"}, {"access": "", "host": "Widget", "name": "renderedChange", "url": "Widget.html#event_renderedChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "renderer", "url": "Widget.html#method_renderer", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_renderUI", "url": "Widget.html#method__renderUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "renderUI", "url": "Widget.html#method_renderUI", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setBoundingBox", "url": "Widget.html#method__setBoundingBox", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setBox", "url": "Widget.html#method__setBox", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setContentBox", "url": "Widget.html#method__setContentBox", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_setStrings", "url": "Widget.html#method__setStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "show", "url": "Widget.html#method_show", "type": "method"}, {"access": "private", "host": "Widget", "name": "_strings", "url": "Widget.html#property__strings", "type": "property"}, {"access": "", "host": "Widget", "name": "strings", "url": "Widget.html#config_strings", "type": "config"}, {"access": "", "host": "Widget", "name": "stringsChange", "url": "Widget.html#event_stringsChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "_syncUI", "url": "Widget.html#method__syncUI", "type": "method"}, {"access": "", "host": "Widget", "name": "syncUI", "url": "Widget.html#method_syncUI", "type": "method"}, {"access": "", "host": "Widget", "name": "tabIndex", "url": "Widget.html#config_tabIndex", "type": "config"}, {"access": "", "host": "Widget", "name": "tabIndexChange", "url": "Widget.html#event_tabIndexChange", "type": "event"}, {"access": "", "host": "Widget", "name": "toString", "url": "Widget.html#method_toString", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetDisabled", "url": "Widget.html#method__uiSetDisabled", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetHasFocus", "url": "Widget.html#method__uiSetHasFocus", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetHeight", "url": "Widget.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetTabIndex", "url": "Widget.html#method__uiSetTabIndex", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetVisible", "url": "Widget.html#method__uiSetVisible", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetWidth", "url": "Widget.html#method__uiSetWidth", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}, {"access": "", "host": "Widget", "name": "visible", "url": "Widget.html#config_visible", "type": "config"}, {"access": "", "host": "Widget", "name": "visibleChange", "url": "Widget.html#event_visibleChange", "type": "event"}, {"access": "", "host": "Widget", "name": "widget:contentUpdate", "url": "Widget.html#event_widget:contentUpdate", "type": "event"}, {"access": "", "host": "Widget", "name": "widget:render", "url": "Widget.html#event_widget:render", "type": "event"}, {"access": "", "host": "Widget", "name": "Widget.ATTRS", "url": "Widget.html#property_Widget.ATTRS", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.getByNode", "url": "Widget.html#method_Widget.getByNode", "type": "method"}, {"access": "", "host": "Widget", "name": "Widget.HTML_PARSER", "url": "Widget.html#property_Widget.HTML_PARSER", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.NAME", "url": "Widget.html#property_Widget.NAME", "type": "property"}, {"access": "private", "host": "Widget", "name": "Widget._NAME_LOWERCASE", "url": "Widget.html#property_Widget._NAME_LOWERCASE", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.PLUGINS", "url": "Widget.html#property_Widget.PLUGINS", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.UI_SRC", "url": "Widget.html#property_Widget.UI_SRC", "type": "property"}, {"access": "", "host": "Widget", "name": "width", "url": "Widget.html#config_width", "type": "config"}, {"access": "", "host": "Widget", "name": "widthChange", "url": "Widget.html#event_widthChange", "type": "event"}, {"access": "", "host": "Widget", "name": "WRAP_STYLES", "url": "Widget.html#property_WRAP_STYLES", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.plug", "url": "PluginHost.html#method_PluginHost.plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.unplug", "url": "PluginHost.html#method_PluginHost.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}];
 </script>
 </body>
 </html>

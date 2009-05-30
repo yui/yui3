@@ -31,9 +31,9 @@ Y.mix(DSFn, {
      * @type String
      * @static     
      * @final
-     * @value "DataSource.Function"
+     * @value "dataSourceFunction"
      */
-    NAME: "DataSource.Function",
+    NAME: "dataSourceFunction",
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -51,37 +51,11 @@ Y.mix(DSFn, {
         */
         source: {
             validator: LANG.isFunction
-        },
-
-        /**
-         * Context in which to execute the function. By default, is the DataSource
-         * instance itself. If set, the function will receive the DataSource instance
-         * as an additional argument.
-         *
-         * @property scope
-         * @type Object
-         * @default null
-         */
-        context: {
-            value: null
         }
     }
 });
     
 Y.extend(DSFn, Y.DataSource.Local, {
-
-
-    /**
-    * Internal init() handler.
-    *
-    * @method initializer
-    * @param config {Object} Config object.
-    * @private
-    */
-    initializer: function(config) {
-        
-    },
-
     /**
      * Passes query string to IO. Fires <code>response</code> event when
      * response is received asynchronously.
@@ -95,23 +69,22 @@ Y.extend(DSFn, Y.DataSource.Local, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
     _defRequestFn: function(e) {
         var fn = this.get("source"),
-            scope = this.get("scope") || this,
             response;
             
             if(fn) {
-                response = fn.call(scope, e.request, this, e);
+                response = fn(e.request, this, e);
                 this.fire("data", Y.mix({data:response}, e));
             }
             else {
-                e.error = new Error(this.toString() + " Data failure");
+                e.error = new Error("Function data failure");
                 this.fire("error", e);
             }
             
@@ -124,4 +97,4 @@ Y.DataSource.Function = DSFn;
 
 
 
-}, '@VERSION@' ,{requires:['datasource-base']});
+}, '@VERSION@' ,{requires:['datasource-local']});

@@ -17,17 +17,28 @@
 
 var L = Y.Lang,
     PREFIX_DELIMITER = ':',
+    DETACH_PREFIX_SPLITTER = /[,|]\s*/,
     AFTER_PREFIX = '~AFTER~',
 
-    __getType = function(pre, type) {
+    /**
+     * If the instance has a prefix attribute and the
+     * event type is not prefixed, the instance prefix is
+     * applied to the supplied type.
+     * @method _getType
+     */
+    _getType = Y.cached(function(type, pre) {
 
         // console.log('__getType: ' + pre + ', ' + type, 'info', 'event');
 
         var t = type;
 
-        if (!L.isString(type)) {
-            return type;
+        if (!L.isString(t)) {
+            return t;
         } 
+
+        if (t == '*') {
+            return null;
+        }
         
         if (t.indexOf(PREFIX_DELIMITER) == -1 && pre) {
             t = pre + PREFIX_DELIMITER + t;
@@ -36,23 +47,21 @@ var L = Y.Lang,
         // Y.log("type: " + t, 'info', 'event');
 
         return t;
-    },
+    }),
 
-    /**
-     * If the instance has a prefix attribute and the
-     * event type is not prefixed, the instance prefix is
-     * applied to the supplied type.
-     * @method _getType
+    /**lt
+     * Returns an array with the detach key (if provided),
+     * and the prefixed event name from _getType
+     * Y.on('detachcategory, menu:click', fn)
+     * @method _parseType
+     * @private
      */
-    _getType = Y.cached(__getType),
+    _parseType = Y.cached(function(type, pre) {
 
-    __parseType = function(pre, type) {
+        var t = type, parts, detachcategory, after, i, full_t;
 
-        var t = type, 
-            parts, detachkey, after, i;
-
-        if (!L.isString(type)) {
-            return type;
+        if (!L.isString(t)) {
+            return t;
         } 
         
         i = t.indexOf(AFTER_PREFIX);
@@ -63,26 +72,17 @@ var L = Y.Lang,
             // Y.log(t);
         }
 
-        parts = t.split(/[,|]\s*/);
+        parts = t.split(DETACH_PREFIX_SPLITTER);
 
         if (parts.length > 1) {
-            detachkey = parts[0];
+            detachcategory = parts[0];
             t = parts[1];
         }
 
-        t = _getType(pre, t);
+        full_t = _getType(t, pre);
 
-        return [detachkey, t, after];
-    },
-
-    /**
-     * Returns an array with the detach key (if provided),
-     * and the prefixed event name from _getType
-     * Y.on('detachkey, menu:click', fn)
-     * @method _parseType
-     * @private
-     */
-    _parseType = Y.cached(__parseType),
+        return [detachcategory, full_t, after, t];
+    }),
 
     /**
      * An event target can fire events and be targeted by events.
@@ -126,7 +126,6 @@ var L = Y.Lang,
     };
 
 
-
 ET.prototype = {
 
     /**
@@ -137,11 +136,10 @@ ET.prototype = {
      * @return the event target or a detach handle per 'chain' config
      */
     on: function(type, fn, context) {
-        // this._yuievt.config.prefix
 
-        var parts = _parseType(this._yuievt.config.prefix, type), f, c, args, ret, ce,
-            detachkey, handle, store = Y.Env.evt.handles,
-            key, after, adapt;
+        var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
+            detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
+            Node = Y.Node, n;
 
         if (L.isObject(type, true)) {
 
@@ -173,16 +171,32 @@ ET.prototype = {
             return Y.Do.before.apply(Y.Do, arguments);
         }
 
-        detachkey = parts[0];
-        type = parts[1];
+        detachcategory = parts[0];
         after = parts[2];
+        shorttype = parts[3];
+
+
+        // extra redirection so we catch adaptor events too.  take a look at this.
+        if (Node && (this instanceof Node) && (shorttype in Node.DOM_EVENTS)) {
+            args = Y.Array(arguments, 0, true);
+            args.splice(2, 0, Node.getDOMNode(this));
+            return Y.on.apply(Y, args);
+        }
+
+        type = parts[1];
 
         if (this instanceof YUI) {
             adapt = Y.Env.evt.plugins[type];
+            args  = Y.Array(arguments, 0, true);
+            args[0] = shorttype;
             // check for the existance of an event adaptor
             if (adapt && adapt.on) {
-                Y.log('Using adaptor for ' + type, 'info', 'event');
-                return adapt.on.apply(Y, arguments);
+                n = args[2];
+                Y.log('Using adaptor for ' + shorttype + ', ' + n, 'info', 'event');
+                if (Node && n && (n instanceof Node)) {
+                    args[2] = Node.getDOMNode(n);
+                }
+                handle = adapt.on.apply(Y, args);
             // check to see if the target is an Event.Target.  If so,
             // delegate to it (the Event.Target should handle whether
             // or not the prefix was included);
@@ -190,27 +204,30 @@ ET.prototype = {
             //     a = Y.Array(arguments, 0, true);
             //     a.splice(2, 1);
             //     return o.on.apply(o, a);
-            } else if (!adapt && type.indexOf(':') == -1) {
-                return Y.Event.attach.apply(Y.Event, arguments);
+            // } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
+            } else if ((!type) || (!adapt && Node && (shorttype in Node.DOM_EVENTS))) {
+                handle = Y.Event.attach.apply(Y.Event, args);
             }
+
+        } 
+
+        if (!handle) {
+
+            // Y.log('parts: ' + parts);
+            ce     = this._yuievt.events[type] || this.publish(type);
+            args   = Y.Array(arguments, 1, true);
+
+            f = (after) ? ce.after : ce.on;
+
+            handle = f.apply(ce, args);
         }
 
-        // Y.log('parts: ' + parts);
+        if (detachcategory) {
 
-        ce     = this._yuievt.events[type] || this.publish(type);
-        args   = Y.Array(arguments, 1, true);
+            store[detachcategory] = store[detachcategory] || {};
+            store[detachcategory][type] = store[detachcategory][type] || [];
+            store[detachcategory][type].push(handle);
 
-        f = (parts[2]) ? ce.after : ce.on;
-
-        handle = f.apply(ce, args);
-
-        if (detachkey) {
-
-            key = parts[0] + parts[1];
-            if (!store[key]) {
-                store[key] = [];
-            }
-            store[key].push(handle);
 
             // Y.log('storing: ' + key);
         }
@@ -246,42 +263,64 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
 
-        var parts = _parseType(this._yuievt.config.prefix, type), 
-        detachkey = L.isArray(parts) ? parts[0] : null, key,
-        details, handle, adapt,
+        var parts = _parseType(type, this._yuievt.config.prefix), 
+        detachcategory = L.isArray(parts) ? parts[0] : null,
+        shorttype = (parts) ? parts[3] : null,
+        handle, adapt, store = Y.Env.evt.handles, cat, args,
+        evts = this._yuievt.events, ce, i, ret = true,
 
-        evts = this._yuievt.events, ce, i, ret = true;
-
-        if (detachkey) {
-            key = parts[0] + parts[1]; 
-            details = Y.Env.evt.handles[key];
-            if (details) {
-                while (details.length) {
-                    handle = details.pop();
+        keyDetacher = function(lcat, ltype) {
+            var handles = lcat[ltype];
+            if (handles) {
+                while (handles.length) {
+                    handle = handles.pop();
                     handle.detach();
+                }
+            }
+        };
+
+        if (detachcategory) {
+
+            cat = store[detachcategory];
+            type = parts[1];
+
+            if (cat) {
+                if (type) {
+                    keyDetacher(cat, type);
+                } else {
+                    for (i in cat) {
+                        if (cat.hasOwnProperty(i)) {
+                            keyDetacher(cat, i);
+                        }
+                    }
                 }
 
                 return (this._yuievt.chain) ? this : true;
             }
 
-            type = parts[1];
-
         // If this is an event handle, use it to detach
         } else if (L.isObject(type) && type.detach) {
             ret = type.detach();
             return (this._yuievt.chain) ? this : true;
+        // extra redirection so we catch adaptor events too.  take a look at this.
+        } else if (Y.Node && (this instanceof Y.Node) && ((!shorttype) || (shorttype in Y.Node.DOM_EVENTS))) {
+            args = Y.Array(arguments, 0, true);
+            args[2] = Y.Node.getDOMNode(this);
+            return Y.detach.apply(Y, args);
         }
 
-        adapt = Y.Env.evt.plugins[type];
+        adapt = Y.Env.evt.plugins[shorttype];
 
         // The YUI instance handles DOM events and adaptors
         if (this instanceof YUI) {
+            args = Y.Array(arguments, 0, true);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
-                return adapt.detach.apply(Y, arguments);
+                return adapt.detach.apply(Y, args);
             // DOM event fork
-            } else if (!adapt && type.indexOf(':') == -1) {
-                return Y.Event.detach.apply(Y.Event, arguments);
+            } else if (!type || (!adapt && type.indexOf(':') == -1)) {
+                args[0] = type;
+                return Y.Event.detach.apply(Y.Event, args);
             }
         }
 
@@ -319,7 +358,7 @@ ET.prototype = {
      * @param type {string}   The type, or name of the event
      */
     detachAll: function(type) {
-        type = _getType(this._yuievt.config.prefix, type);
+        type = _getType(type, this._yuievt.config.prefix);
         return this.detach(type);
     },
 
@@ -394,7 +433,7 @@ ET.prototype = {
     publish: function(type, opts) {
         // this._yuievt.config.prefix
 
-        type = _getType(this._yuievt.config.prefix, type);
+        type = _getType(type, this._yuievt.config.prefix);
 
         var events, ce, ret, o = opts || {};
 
@@ -412,11 +451,10 @@ ET.prototype = {
 
         //if (ce && !ce.configured) {
         if (ce) {
-// ce.log("publish applying config to published event: '"+type+"' exists", 'info', 'event');
-
-            // This event could have been published
-            ce.applyConfig(opts, true);
-            // ce.configured = true;
+// ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
+            if (opts) {
+                ce.applyConfig(opts, true);
+            }
 
         } else {
             // apply defaults
@@ -426,9 +464,9 @@ ET.prototype = {
 
             events[type] = ce;
 
-            if (o.onSubscribeCallback) {
-                ce.subscribeEvent.on(o.onSubscribeCallback);
-            }
+            // if (o.onSubscribeCallback) {
+            //     ce.subscribeEvent.on(o.onSubscribeCallback);
+            // }
         }
 
         // make sure we turn the broadcast flag off if this
@@ -486,7 +524,7 @@ ET.prototype = {
             t = (typeIncluded) ? type : (type && type.type),
             ce, a, ret;
 
-        t = _getType(this._yuievt.config.prefix, t);
+        t = _getType(t, this._yuievt.config.prefix);
         ce = this.getEvent(t);
 
         // this event has not been published or subscribed to
@@ -524,7 +562,7 @@ ET.prototype = {
      * @return {Event.Custom} the custom event or null
      */
     getEvent: function(type) {
-        type = _getType(this._yuievt.config.prefix, type);
+        type = _getType(type, this._yuievt.config.prefix);
         var e = this._yuievt.events;
         return (e && type in e) ? e[type] : null;
     },

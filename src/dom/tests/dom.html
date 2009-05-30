@@ -149,6 +149,8 @@ form {
             foo = document.getElementById('foo'),
             tmp = document.createElement('div');
 
+        Y.DOM.getStyle(foo, 'float');
+
         suite.add( new tool.TestCase({
             name: 'DOM',
 
@@ -406,40 +408,49 @@ form {
                 el = Y.DOM.create(html);
                 Assert.isTrue(el.tagName === 'DIV', " + html + ");
 
+                html = '<option selected>foo</option>';
+                el = Y.DOM.create(html);
+                document.getElementById('test-select').appendChild(el);
+                Assert.isTrue(el.selected, 'el.selected');
+
+                html = '<li><a href=""></a></li>';
+                el = Y.DOM.create(html);
+                Assert.areEqual('A', el.firstChild.tagName, html);
+
+                html = '<option>foo</option>';
+                el = Y.DOM.create(html);
+                document.getElementById('test-select').appendChild(el);
+                Assert.isFalse(el.selected, 'el.selected');
+
                 html = '<thead><tr><td><table><thead></thead><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead>';
                 el = Y.DOM.create(html);
                 Assert.areEqual('THEAD', el.tagName, html);
 
-                html = '<option selected>foo</option>';
-                el = Y.DOM.create(html);
-                document.getElementById('test-select').appendChild(el);
-                Assert.areEqual(true, el.selected, 'el.selected');
             },
 
             test_createNodes: function() {
                 var html = '<div>foo</div><div id="tmp-bar">bar</div><div>baz</div>';
                 var el = Y.DOM.create(html);
-                Assert.areEqual(3, el.length, html);
-                Assert.areEqual('tmp-bar', el[1].id, html);
+                Assert.areEqual(3, el.childNodes.length, html);
+                Assert.areEqual('tmp-bar', el.childNodes[1].id, html);
 
                 html = '<option>foo</option><option id="tmp-bar">bar</option><option>baz</option>';
                 el = Y.DOM.create(html);
-                Assert.areEqual(3, el.length, html);
-                Assert.areEqual('tmp-bar', el[1].id, html);
+                Assert.areEqual(3, el.childNodes.length, html);
+                Assert.areEqual('tmp-bar', el.childNodes[1].id, html);
 
                 html = '<td>foo</td><td id="tmp-bar">bar</td><td>baz</td>';
                 el = Y.DOM.create(html);
-                Assert.areEqual(3, el.length, html);
-                Assert.areEqual('tmp-bar', el[1].id, html);
+                Assert.areEqual(3, el.childNodes.length, html);
+                Assert.areEqual('tmp-bar', el.childNodes[1].id, html);
 
                 html = '<tbody>foo</tbody><tbody id="tmp-bar">bar</tbody><tbody>baz</tbody>';
                 el = Y.DOM.create(html);
-                Assert.areEqual(3, el.length, html);
-                Assert.areEqual('tmp-bar', el[1].id, html);
-
+                Assert.areEqual(3, el.childNodes.length, html);
+                Assert.areEqual('tmp-bar', el.childNodes[1].id, html);
                 html = '<thead><tr><td><table><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead><tbody></tbody>';
                 el = Y.DOM.create(html);
-                Assert.areEqual(2, el.length, html);
+                Assert.areEqual(2, el.childNodes.length, html);
             },
 
             test_ancestor: function() {
@@ -594,6 +605,66 @@ form {
 
                 Y.DOM.setValue(Y.DOM.byId(id), 'new value');
                 Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+            },
+
+            test_position: function() { // basic position tests
+                var node = document.createElement('div');
+                ArrayAssert.itemsAreEqual([0, 0], Y.DOM.getXY(node), 'off-dom: [0, 0]');
+                Y.DOM.setXY(node, [100, 200]);
+                ArrayAssert.itemsAreEqual([100, 200], Y.DOM.getXY(node), 'off-dom: [100, 200]');
+                Assert.isNull(Y.DOM.getXY(null), 'Y.DOM.getXY(null)');
+
+                document.body.appendChild(node);
+                Y.DOM.setXY(node, [100, 200]);
+                ArrayAssert.itemsAreEqual([100, 200], Y.DOM.getXY(node), 'setXY([100, 200]');
+            },
+
+            test_region: function() {
+                var node = Y.DOM.byId('doc'),
+                    xy = Y.DOM.getXY(node),
+                    region = Y.DOM.region(node);
+
+                Assert.isFalse(Y.DOM.region(null), 'Y.DOM.region(null)');
+
+                Assert.areEqual(xy[0], region.left, 'region.left');
+                Assert.areEqual(xy[1], region.top, 'region.top');
+                Assert.areEqual(xy[0], region[0], 'region[0]');
+                Assert.areEqual(xy[1], region[1], 'region[1]');
+                Assert.areEqual(node.offsetWidth, region.width, 'region.width');
+                Assert.areEqual(node.offsetHeight, region.height, 'region.height');
+                Assert.areEqual(node.offsetHeight + xy[1], region.bottom, 'region.bottom');
+                Assert.areEqual(node.offsetWidth + xy[0], region.right, 'region.right');
+
+            },
+
+
+            test_viewportRegion: function() {
+                var node = Y.DOM.byId('doc'),
+                    scrollX = Y.DOM.docScrollX(node),
+                    scrollY = Y.DOM.docScrollY(node),
+                    winHeight = Y.DOM.winHeight(node),
+                    winWidth = Y.DOM.winWidth(node),
+                    region = Y.DOM.viewportRegion(node);
+
+                Assert.areEqual(scrollX, region.left, 'region.left');
+                Assert.areEqual(scrollY, region.top, 'region.top');
+                Assert.areEqual(scrollX, region[0], 'region[0]');
+                Assert.areEqual(scrollY, region[1], 'region[1]');
+                Assert.areEqual(winWidth, region.width, 'region.width');
+                Assert.areEqual(winHeight, region.height, 'region.height');
+                Assert.areEqual(scrollY + winHeight, region.bottom, 'region.bottom');
+                Assert.areEqual(scrollX + winWidth, region.right, 'region.right');
+
+                region = Y.DOM.viewportRegion();
+                Assert.areEqual(scrollX, region.left, 'region.left');
+                Assert.areEqual(scrollY, region.top, 'region.top');
+                Assert.areEqual(scrollX, region[0], 'region[0]');
+                Assert.areEqual(scrollY, region[1], 'region[1]');
+                Assert.areEqual(winWidth, region.width, 'region.width');
+                Assert.areEqual(winHeight, region.height, 'region.height');
+                Assert.areEqual(scrollY + winHeight, region.bottom, 'region.bottom');
+                Assert.areEqual(scrollX + winWidth, region.right, 'region.right');
+
             }
         })); 
         tool.TestRunner.add(suite);

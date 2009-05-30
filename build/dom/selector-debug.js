@@ -302,28 +302,6 @@ var PARENT_NODE = 'parentNode',
             }
 
         },
-        /**
-         * Executes the supplied function against each node until true is returned.
-         * @method some
-         *
-         * @param {Array} nodes The nodes to run the function against 
-         * @param {Function} fn  The function to run against each node
-         * @return {Boolean} whether or not any element passed
-         * @static
-         */
-        some: function() { return (Array.prototype.some) ?
-            function(nodes, fn, context) {
-                return Array.prototype.some.call(nodes, fn, context);
-            } :
-            function(nodes, fn, context) {
-                for (var i = 0, node; node = nodes[i++];) {
-                    if (fn.call(context, node, i, nodes)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }(),
 
         // TODO: make extensible? events?
         _cleanup: function() {
@@ -356,28 +334,33 @@ var PARENT_NODE = 'parentNode',
                     if (!root.id) {
                         root.id = Y.guid();
                     }
-                    selector = '#' + root.id + ' ' + selector;
-                    root = root.ownerDocument;
+                    // fast-path ID when possible
+                    if (root.ownerDocument.getElementById(root.id)) {
+                        selector = '#' + root.id + ' ' + selector;
+                        root = root.ownerDocument;
+
+                    }
                 }
 
-                tokens = Selector._tokenize(selector);
+                tokens = Selector._tokenize(selector, root);
                 token = tokens.pop();
 
                 if (token) {
                     if (deDupe) {
                         token.deDupe = true; // TODO: better approach?
                     }
-                    if (tokens[0] && tokens[0].id) {
+                    if (tokens[0] && tokens[0].id && root.nodeType === 9 && root.getElementById(tokens[0].id)) {
                         root = root.getElementById(tokens[0].id);
                     }
 
+                    // TODO: no prefilter for off-dom id
                     if (root && !nodes[LENGTH] && token.prefilter) {
                         nodes = token.prefilter(root, token);
                     }
 
                     if (nodes[LENGTH]) {
                         if (firstOnly) {
-                            Selector.some(nodes, Selector._testToken, token);
+                            Y.Array.some(nodes, Selector._testToken, token);
                         } else {
                             Y.Array.each(nodes, Selector._testToken, token);
                         }
@@ -397,11 +380,12 @@ var PARENT_NODE = 'parentNode',
                 i = 0,
                 nextTest = previous && previous[COMBINATOR] ?
                         Selector.combinators[previous[COMBINATOR]] :
-                        null;
+                        null,
+                attr;
 
             if (//node[TAG_NAME] && // tagName limits to HTMLElements
                     (tag === '*' || tag === node[TAG_NAME]) &&
-                    !(node._found) ) {
+                    !(token.last && node._found) ) {
                 while ((attr = token.tests[i])) {
                     i++;
                     test = attr.test;
@@ -418,8 +402,12 @@ var PARENT_NODE = 'parentNode',
                     return false;
                 }
 
+                if (token.root && token.root.nodeType !== 9 && !Y.DOM.contains(token.root, node)) {
+                    return false;
+                }
+
                 result[result.length] = node;
-                if (token.deDupe) {
+                if (token.deDupe && token.last) {
                     node._found = true;
                     Selector._foundCache.push(node);
                 }
@@ -551,7 +539,7 @@ var PARENT_NODE = 'parentNode',
             Break selector into token units per simple selector.
             Combinator is attached to the previous token.
          */
-        _tokenize: function(selector) {
+        _tokenize: function(selector, root) {
             selector = selector || '';
             selector = Selector._replaceShorthand(Y.Lang.trim(selector)); 
             var token = Selector._getToken(),     // one token per simple selector (left selector holds combinator)
@@ -587,6 +575,7 @@ var PARENT_NODE = 'parentNode',
                             found = true;
                             selector = selector.replace(match[0], ''); // strip current match from selector
                             if (!selector[LENGTH] || parser.name === COMBINATOR) {
+                                token.root = root;
                                 tokens.push(token);
                                 token = Selector._getToken(token);
                             }
@@ -601,6 +590,8 @@ var PARENT_NODE = 'parentNode',
             if (!found || selector.length) { // not fully parsed
                 Y.log('query: ' + query + ' contains unsupported token in: ' + selector, 'warn', 'Selector');
                 tokens = [];
+            } else if (tokens[LENGTH]) {
+                tokens[tokens[LENGTH] - 1].last = true;
             }
             return tokens;
         },

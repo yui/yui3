@@ -24,7 +24,7 @@ YUI.add('base-build', function(Y) {
      * @private
      */
     Base._buildCfg = {
-        aggregates : ["ATTRS", "PLUGINS"]
+        aggregates : ["ATTRS", "_PLUG", "_UNPLUG"]
     };
 
     /**
@@ -183,4 +183,4 @@ YUI.add('base-build', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base']});
+}, '@VERSION@' ,{requires:['base-base']});

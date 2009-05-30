@@ -14,6 +14,10 @@ Documentation: http://developer.yahoo.com/yui/3/test
     * Renamed Y.ObjectAssert.owns() to Y.ObjectAssert.ownsKey() to better match Y.Object.hasKey().
     * Removed Y.ObjectAssert.ownsAll() and replaced with Y.ObjectAssert.ownsKeys() to better match Y.Object.hasKey().
     * Added unit tests for mock and object asserts.
+    * Added Y.assert() and Y.fail().
+    * Added Y.ObjectAssert.ownsNoKeys() (trac# 2527849).
+    * Added proper XML escaping to Y.Test.Format.XML.
+    * Fixed this._form is undefined error in TestReporter (trac# 2527928).
     
 3.0.0PR2
 

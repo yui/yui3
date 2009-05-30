@@ -1,36 +1,28 @@
 (function() {
 
 var L = Y.Lang, 
-A = Y.Array,
-OP = Object.prototype, 
-IEF = ["toString", "valueOf"], 
-PROTO = 'prototype',
-DELIMITER = '`~',
+DELIMITER = '__',
+FROZEN = {
+    'prototype': 1,
+    '_yuid': 1
+},
 
-/**
+/*
  * IE will not enumerate native functions in a derived object even if the
  * function was overridden.  This is a workaround for specific functions 
  * we care about on the Object prototype. 
  * @property _iefix
  * @param {Function} r  the object to receive the augmentation
  * @param {Function} s  the object that supplies the properties to augment
- * @param w a whitelist object (the keys are the valid items to reference)
  * @private
  * @for YUI
  */
-_iefix = (Y.UA && Y.UA.ie) ?
-    function(r, s, w) {
-        var i, a = IEF, n, f;
-        for (i=0; i<a.length; i=i+1) {
-            n = a[i]; 
-            f = s[n];
-            if (L.isFunction(f) && f != OP[n]) {
-                if (!w || (n in w)) {
-                    r[n]=f;
-                }
-            }
-        }
-    } : function() {};
+_iefix = function(r, s) {
+    var fn = s.toString;
+    if (L.isFunction(fn) && fn != Object.prototype.toString) {
+        r.toString = fn;
+    }
+};
 
 
 /**
@@ -77,82 +69,61 @@ Y.merge = function() {
  * @param merge {boolean} merge objects instead of overwriting/ignoring
  * Used by Y.aggregate
  * @return {object} the augmented object
- * @TODO review for PR2
  */
 Y.mix = function(r, s, ov, wl, mode, merge) {
 
     if (!s||!r) {
-        return Y;
+        return r || Y;
     }
 
-    var w = (wl && wl.length) ? A.hash(wl) : null, m = merge,
+    if (mode) {
+        switch (mode) {
+            case 1: // proto to proto
+                return Y.mix(r.prototype, s.prototype);
+            case 2: // object to object and proto to proto
+                Y.mix(r.prototype, s.prototype);
+                break; // pass through 
+            case 3: // proto to static
+                return Y.mix(r, s.prototype);
+            case 4: // static to proto
+                return Y.mix(r.prototype, s);
+            default:  // object to object is what happens below
+        }
+    }
 
-        f = function(fr, fs, proto, iwl) {
+    // Maybe don't even need this wl && wl.length check anymore??
+    var arr = merge && L.isArray(r), i, l, p;
 
-            var arr = m && L.isArray(fr), i;
-
-            for (i in fs) { 
-
-                if (fs.hasOwnProperty(i)) {
-
-                    // We never want to overwrite the prototype
-                    // if (PROTO === i) {
-                    if (PROTO === i || '_yuid' === i) {
-                        continue;
-                    }
-
-                    // Y.log('i: ' + i + ", " + fs[i]);
-                    // @TODO deal with the hasownprop issue
-
-                    // check white list if it was supplied
-                    if (!w || iwl || (i in w)) {
-                        // if the receiver has this property, it is an object,
-                        // and merge is specified, merge the two objects.
-                        if (m && L.isObject(fr[i], true)) {
-                            // console.log('aggregate RECURSE: ' + i);
-                            // @TODO recursive or no?
-                            // Y.mix(fr[i], fs[i]); // not recursive
-                            f(fr[i], fs[i], proto, true); // recursive
-                        // otherwise apply the property only if overwrite
-                        // is specified or the receiver doesn't have one.
-                        // @TODO make sure the 'arr' check isn't desructive
-                        } else if (!arr && (ov || !(i in fr))) {
-                            // console.log('hash: ' + i);
-                            fr[i] = fs[i];
-                        // if merge is specified and the receiver is an array,
-                        // append the array item
-                        } else if (arr) {
-                            // console.log('array: ' + i);
-                            // @TODO probably will need to remove dups
-                            fr.push(fs[i]);
-                        }
-                    }
+    if (wl && wl.length) {
+        for (i = 0, l = wl.length; i < l; ++i) {
+            p = wl[i];
+            if ((p in s) && (ov || !(p in r))) {
+                r[p] = s[p];
+            }
+        }
+    } else {
+        for (i in s) { 
+            if (s.hasOwnProperty(i) && !(i in FROZEN)) {
+                // check white list if it was supplied
+                // if the receiver has this property, it is an object,
+                // and merge is specified, merge the two objects.
+                if (merge && L.isObject(r[i], true)) {
+                    Y.mix(r[i], s[i]); // recursive
+                // otherwise apply the property only if overwrite
+                // is specified or the receiver doesn't have one.
+                } else if (!arr && (ov || !(i in r))) {
+                    r[i] = s[i];
+                // if merge is specified and the receiver is an array,
+                // append the array item
+                } else if (arr) {
+                    r.push(s[i]);
                 }
             }
-
-            _iefix(fr, fs, w);
-        },
-
-        rp = r.prototype, 
-
-        sp = s.prototype;
-
-    switch (mode) {
-        case 1: // proto to proto
-            f(rp, sp, true);
-            break;
-        case 2: // object to object and proto to proto
-            f(r, s);
-            f(rp, sp, true);
-            break;
-        case 3: // proto to static
-            f(r, sp, true);
-            break;
-        case 4: // static to proto
-            f(rp, s);
-            break;
-        default:  // object to object
-            f(r, s);
+        }
+    
+        if (Y.UA.ie) {
+            _iefix(r, s);
+        }
     }
 
     return r;
@@ -170,12 +141,12 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache){
     cache = cache || {};
 
-    return function() {
+    return function(arg1, arg2) {
         var a = arguments, 
-            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join(DELIMITER);
+            key = arg2 ? Y.Array(a, 0, true).join(DELIMITER) : arg1;
 
         if (!(key in cache)) {
-            cache[key] = source.apply(source, arguments);
+            cache[key] = source.apply(source, a);
         }
 
         return cache[key];
@@ -184,3 +155,4 @@ Y.cached = function(source, cache){
 };
 
 })();
+

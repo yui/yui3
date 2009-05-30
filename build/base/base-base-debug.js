@@ -1,15 +1,20 @@
 YUI.add('base-base', function(Y) {
 
 /**
- * Provides the base Widget class along with an augmentable PluginHost interface
- *
- * @module widget
- */
+* Base class support for objects requiring managed attributes and acting as event targets. 
+*
+* The base module also provides an augmentable PluginHost interface.
+*
+* @module base
+*/
 
 /**
  * An augmentable class, which when added to a "Base" based class, allows 
- * the class to support Plugins, providing plug and unplug methods and performing
- * instantiation and cleanup during the init and destroy lifecycle phases respectively.
+ * the class to support Plugins, providing plug and unplug methods.
+ * 
+ * The PlugHost's _initPlugins and _destroyPlugins should be invoked by the 
+ * host class at the appropriate point in the classes lifecyle. This is done
+ * by default for Base class.
  *
  * @class PluginHost
  */
@@ -18,27 +23,24 @@ var L = Y.Lang;
 
 function PluginHost(config) {
     this._plugins = {};
-
-    this.after("init", function(e) {this._initPlugins(e.cfg);});
-    this.after("destroy", this._destroyPlugins);
 }
 
 PluginHost.prototype = {
 
     /**
      * Register and instantiate a plugin with the Widget.
-     * 
+     *
      * @method plug
      * @chainable
-     * @param p {String | Object |Array} Accepts the registered 
-     * namespace for the Plugin or an object literal with an "fn" property
-     * specifying the Plugin class and a "cfg" property specifying
-     * the configuration for the Plugin.
+     * @param p {Function | Object |Array} Accepts the plugin class, or an 
+     * object literal with a "fn" property specifying the Plugin class and 
+     * a "cfg" property specifying the configuration for the Plugin.
      * <p>
-     * Additionally an Array can also be passed in, with either the above String or 
-     * Object literal values, allowing for multiple plugin registration in 
-     * a single call.
+     * Additionally an Array can also be passed in, with the above function or 
+     * Object literal values, allowing for multiple plugin registration in a single call.
      * </p>
+     * @param config Optional. If the first argument is the plugin class, the second argument
+     * can be the configuration for the plugin.
      */
     plug: function(p, config) {
         if (p) {
@@ -56,7 +58,7 @@ PluginHost.prototype = {
     },
 
     /**
-     * Unregister and destroy a plugin already instantiated with the Widget.
+     * Unregister and destroy a plugin already instantiated on the host.
      * 
      * @method unplug
      * @param {String | Function} plugin The namespace of the Plugin, or the Plugin class with the static NS namespace property defined. If not provided,
@@ -91,9 +93,9 @@ PluginHost.prototype = {
     },
 
     /**
-     * Initializes static plugins registered on the host (the
-     * "PLUGINS" static property) and any plugins passed in 
-     * for the instance through the "plugins" configuration property.
+     * Initializes static plugins registered on the host (using the
+     * Base.plug static method) and any plugins passed in for the 
+     * instance through the "plugins" configuration property.
      *
      * @method _initPlugins
      * @param {Config} the user configuration object for the host.
@@ -102,11 +104,33 @@ PluginHost.prototype = {
     _initPlugins: function(config) {
 
         // Class Configuration
-        var classes = this._getClasses(), constructor, i;
+        var classes = this._getClasses(),
+            plug = [],
+            unplug = {},
+            constructor, i, classPlug, classUnplug, pluginClassName;
+
+        //TODO: Room for optimization. Can we apply statically/unplug in same pass?
         for (i = classes.length - 1; i >= 0; i--) {
             constructor = classes[i];
-            if (constructor.PLUGINS) {
-                this.plug(constructor.PLUGINS);
+
+            classUnplug = constructor._UNPLUG;
+            if (classUnplug) {
+                // subclasses over-write
+                Y.mix(unplug, classUnplug, true);
+            }
+
+            classPlug = constructor._PLUG;
+            if (classPlug) {
+                // subclasses over-write
+                Y.mix(plug, classPlug, true);
+            }
+        }
+
+        for (pluginClassName in plug) {
+            if (plug.hasOwnProperty(pluginClassName)) {
+                if (!unplug[pluginClassName]) {
+                    this.plug(plug[pluginClassName]);
+                }
             }
         }
 
@@ -180,6 +204,72 @@ PluginHost.prototype = {
     }
 };
 
+/**
+ * Registers plugins to be instantiated at the class level (plugins 
+ * which should be plugged into every instance of the class by default).
+ * 
+ * @method PluginHost.plug
+ * @static
+ *
+ * @param {Function} hostClass The host class on which to register the plugins
+ * @param {Function | Array} plugin Either the plugin class, or an array of plugin classes/plugin fn, cfg object literals 
+ * @param {Object} config If plugin is the plugin class, the configuration for the plugin can be passed
+ * as the configuration for the plugin
+ */
+PluginHost.plug = function(hostClass, plugin, config) {
+    // Cannot plug into Base, since Plugins derive from Base [ will cause infinite recurrsion ]
+    var p, i, l, name;
+
+    if (hostClass !== Y.Base) {
+        hostClass._PLUG = hostClass._PLUG || {};
+
+        if (!L.isArray(plugin)) {
+            if (config) {
+                plugin = {fn:plugin, cfg:config};
+            }
+            plugin = [plugin];
+        }
+
+        for (i = 0, l = plugin.length; i < l;i++) {
+            p = plugin[i];
+            name = p.NAME || p.fn.NAME;
+            hostClass._PLUG[name] = p;
+        }
+    }
+};
+
+/**
+ * Unregisters plugins which have been registered by the host class, or any
+ * other class in the hierarchy.
+ *
+ * @method PluginHost.unplug
+ * @static
+ *
+ * @param {Function} hostClass The host class from which to unregister the plugins
+ * @param {Function | Array} plugin The plugin class, or an array of plugin classes
+ */
+PluginHost.unplug = function(hostClass, plugin) {
+    var p, i, l, name;
+
+    if (hostClass !== Y.Base) {
+        hostClass._UNPLUG = hostClass._UNPLUG || {};
+
+        if (!L.isArray(plugin)) {
+            plugin = [plugin];
+        }
+
+        for (i = 0, l = plugin.length; i < l; i++) {
+            p = plugin[i];
+            name = p.NAME;
+            if (!hostClass._PLUG[name]) {
+                hostClass._UNPLUG[name] = p;
+            } else {
+                delete hostClass._PLUG[name];
+            }
+        }
+    }
+};
+
 Y.namespace("Plugin").Host = PluginHost;
 
     /**
@@ -204,6 +294,9 @@ Y.namespace("Plugin").Host = PluginHost;
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
         OBJECT_CONSTRUCTOR = Object.prototype.constructor,
+        DEEP = "deep",
+        SHALLOW = "shallow",
+        VALUE = "value",
         DESTRUCTOR = "destructor";
 
     /**
@@ -226,9 +319,26 @@ Y.namespace("Plugin").Host = PluginHost;
      */
     function Base() {
         Y.log('constructor called', 'life', 'base');
+
         Y.Attribute.call(this);
+        Y.Plugin.Host.call(this);
+
+        this._silentInit = this._silentInit || false;
+        if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
+
         this.init.apply(this, arguments);
     }
+
+    /**
+     * The list of properties which can be configured for 
+     * each attribute (e.g. setter, getter, writeOnce etc.)
+     *
+     * @property Base._ATTR_CFG
+     * @type Array
+     * @static
+     * @private
+     */
+    Base._ATTR_CFG = Y.Attribute._ATTR_CFG.concat("cloneDefaultValue");
 
     /**
      * <p>
@@ -327,13 +437,12 @@ Y.namespace("Plugin").Host = PluginHost;
              * @param {Event.Facade} e Event object
              * @param config Object literal of configuration name/value pairs
              */
-            this.publish(INIT, {
-                queuable:false,
-                defaultFn:this._defInitFn
-            });
-
-            // TODO: Look at why this needs to be done after publish.
-            Y.Plugin.Host.call(this);
+            if (!this._silentInit) {
+                this.publish(INIT, {
+                    queuable:false,
+                    defaultFn:this._defInitFn
+                });
+            }
 
             if (config) {
                 if (config.on) {
@@ -344,7 +453,12 @@ Y.namespace("Plugin").Host = PluginHost;
                 }
             }
 
-            this.fire(INIT, {cfg: config});
+            if (!this._silentInit) {
+                this.fire(INIT, {cfg: config});
+            } else {
+                this._defInitFn({cfg: config});
+            }
+
             return this;
         },
 
@@ -400,7 +514,13 @@ Y.namespace("Plugin").Host = PluginHost;
          */
         _defInitFn : function(e) {
             this._initHierarchy(e.cfg);
-            this._set(INITIALIZED, true);
+            this._initPlugins(e.cfg);
+
+            if (!this._silentInit) {
+                this._set(INITIALIZED, true);
+            } else {
+                this._conf.add(INITIALIZED, VALUE, true);
+            }
         },
 
         /**
@@ -412,6 +532,7 @@ Y.namespace("Plugin").Host = PluginHost;
          */
         _defDestroyFn : function(e) {
             this._destroyHierarchy();
+            this._destroyPlugins();
             this._set(DESTROYED, true);
         },
 
@@ -450,15 +571,16 @@ Y.namespace("Plugin").Host = PluginHost;
          * @param {Objects} allCfgs
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
-            var cfgs = {};
+            var cfgs = null, attr, attrs = clazz.ATTRS;
 
-            if (clazz.ATTRS) {
-                Y.each(clazz.ATTRS, function(v, k) {
-                    if (allCfgs[k]) {
-                        cfgs[k] = allCfgs[k];
-                        delete allCfgs[k];
+            if (attrs) {
+                for (attr in attrs) {
+                    if (attrs.hasOwnProperty(attr) && allCfgs[attr]) {
+                        cfgs = cfgs || {};
+                        cfgs[attr] = allCfgs[attr];
+                        delete allCfgs[attr];
                     }
-                });
+                }
             }
 
             return cfgs;
@@ -473,7 +595,7 @@ Y.namespace("Plugin").Host = PluginHost;
                 classes = [],
                 attrs = [];
 
-            while (c && c.prototype) {
+            while (c) {
                 // Add to classes
                 classes[classes.length] = c;
 
@@ -494,21 +616,39 @@ Y.namespace("Plugin").Host = PluginHost;
          * @param {Object} allAttrs
          */
         _aggregateAttrs : function(allAttrs) {
-            var attr, attrs, cfg, val, path, i,
+            var attr, 
+                attrs, 
+                cfg, 
+                val, 
+                path, 
+                i, 
+                clone, 
+                cfgProps = Base._ATTR_CFG,
                 aggAttrs = {};
 
             if (allAttrs) {
                 for (i = allAttrs.length-1; i >= 0; --i) {
                     attrs = allAttrs[i];
+
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            // Protect
-                            cfg = Y.merge(attrs[attr]);
+                            // Protect config passed in
+                            cfg = Y.mix({}, attrs[attr], true, cfgProps);
 
                             val = cfg.value;
-                            if (val && !cfg.useRef && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) {
-                                cfg.value = Y.clone(val);
+                            clone = cfg.cloneDefaultValue;
+
+                            if (val) {
+                                if ( (clone === undefined && (OBJECT_CONSTRUCTOR === val.constructor || L.isArray(val))) || clone === DEEP || clone === true) {
+                                    Y.log('Cloning default value for attribute:' + attr, 'info', 'base');
+                                    cfg.value = Y.clone(val);
+                                } else if (clone === SHALLOW) {
+                                    Y.log('Merging default value for attribute:' + attr, 'info', 'base');
+                                    cfg.value = Y.merge(val);
+                                }
+                                // else if (clone === false), don't clone the static default value. 
+                                // It's intended to be used by reference.
                             }
 
                             path = null;
@@ -523,7 +663,7 @@ Y.namespace("Plugin").Host = PluginHost;
                                 if (!aggAttrs[attr]) {
                                     aggAttrs[attr] = cfg;
                                 } else {
-                                    aggAttrs[attr] = Y.mix(aggAttrs[attr], cfg, true);
+                                    Y.mix(aggAttrs[attr], cfg, true, cfgProps);
                                 }
                             }
                         }
@@ -541,20 +681,21 @@ Y.namespace("Plugin").Host = PluginHost;
          * method on the prototype of each class in the hierarchy.
          *
          * @method _initHierarchy
-         * @param {Object} userConf Object literal containing attribute name/value pairs
+         * @param {Object} userVals Object literal containing attribute name/value pairs
          * @private
          */
-        _initHierarchy : function(userConf) {
-            var constr,
+        _initHierarchy : function(userVals) {
+            var lazy = this._lazyAddAttrs,
+                constr,
                 constrProto,
                 ci,
                 ei,
                 el,
                 classes = this._getClasses(),
-                mergedCfgs = this._getAttrCfgs();
-                this._userCfgs = userConf;
+                attrCfgs = this._getAttrCfgs();
 
             for (ci = classes.length-1; ci >= 0; ci--) {
+
                 constr = classes[ci];
                 constrProto = constr.prototype;
 
@@ -564,12 +705,10 @@ Y.namespace("Plugin").Host = PluginHost;
                     }
                 }
 
-                this._classCfgs = this._filterAttrCfgs(constr, mergedCfgs);
-                this.addAttrs(this._classCfgs, userConf);
-                this._classCfgs = null;
+                this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
-                    constrProto[INITIALIZER].apply(this, arguments);
+                    constrProto.initializer.apply(this, arguments);
                 }
             }
         },
@@ -591,65 +730,30 @@ Y.namespace("Plugin").Host = PluginHost;
                 constr = classes[ci];
                 constrProto = constr.prototype;
                 if (constrProto.hasOwnProperty(DESTRUCTOR)) {
-                    constrProto[DESTRUCTOR].apply(this, arguments);
+                    constrProto.destructor.apply(this, arguments);
                 }
             }
-        },
-
-        /**
-         * Wrapper for Attribute.get. Adds the ability to 
-         * initialize attributes on demand during initialization
-         * of the ATTRS definitions at each class level.
-         *
-         * @method get
-         *
-         * @param {String} name The attribute whose value will be returned. If 
-         * the attribute is not currently configured, but is part of the ATTRS 
-         * configuration for the class currently being configured, it will be
-         *
-         * @return {Any} The current value of the attribute
-         */
-        get: function(name) {
-
-            if (this._classCfgs) {
-                var attrName = name,
-                    iDot = name.indexOf(DOT);
-
-                if (iDot !== -1) {
-                    attrName = name.slice(0, iDot);
-                }
-
-                if (this._classCfgs[attrName] && !this.attrAdded(attrName)) {
-                    var classCfg = this._classCfgs[attrName],
-                        userCfg = this._userCfgs,
-                        attrCfg;
-
-                    if (classCfg) {
-                        attrCfg = {};
-                        attrCfg[attrName] = classCfg;
-                        this.addAttrs(attrCfg, userCfg);
-                    }
-                }
-            }
-
-            return Y.Attribute.prototype.get.call(this, name);
         },
 
         /**
          * Default toString implementation. Provides the constructor NAME
          * and the instance ID.
-         * 
+         *
          * @method toString
          * @return {String} String representation for this object
          */
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
         }
+
     };
 
     // Straightup augment, no wrapper functions
     Y.mix(Base, Y.Attribute, false, null, 1);
-    Y.mix(Base, Y.Plugin.Host, false, null, 1);
+    Y.mix(Base, PluginHost, false, null, 1);
+
+    Base.plug = PluginHost.plug;
+    Base.unplug = PluginHost.unplug;
 
     // Fix constructor
     Base.prototype.constructor = Base;

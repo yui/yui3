@@ -6,21 +6,33 @@
 
     var _instances = {}, _startTime = new Date().getTime(), p, i,
 
-        add = function(el, type, fn, capture) {
-            if (el.addEventListener) {
-                    el.addEventListener(type, fn, !!capture);
-            } else if (el.attachEvent) {
+        add = function () {
+            if (window.addEventListener) {
+                return function(el, type, fn, capture) {
+                    el.addEventListener(type, fn, (!!capture));
+                };
+            } else if (window.attachEvent) {
+                return function(el, type, fn) {
                     el.attachEvent("on" + type, fn);
-            } 
-        },
-
-        remove = function(el, type, fn, capture) {
-            if (el.removeEventListener) {
-                    el.removeEventListener(type, fn, !!capture);
-            } else if (el.detachEvent) {
-                    el.detachEvent("on" + type, fn);
+                };
+            } else {
+                return function(){};
             }
-        },
+        }(),
+
+        remove = function() {
+            if (window.removeEventListener) {
+                return function (el, type, fn, capture) {
+                    el.removeEventListener(type, fn, !!capture);
+                };
+            } else if (window.detachEvent) {
+                return function (el, type, fn) {
+                    el.detachEvent("on" + type, fn);
+                };
+            } else {
+                return function(){};
+            }
+        }(),
 
         globalListener = function() {
             YUI.Env.windowLoaded = true;
@@ -34,8 +46,7 @@
             'io.xdrReady': 1,
             'io.start': 1,
             'io.success': 1,
-            'io.failure': 1,
-            'io.abort': 1
+            'io.failure': 1
         };
         
 // reduce to one or the other
@@ -82,14 +93,10 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>-------------------------------------------------------------------------</li>
      *  <li>For loader:</li>
      *  <li>-------------------------------------------------------------------------</li>
-     *  <li>base:
-     *  The base dir</li>
-     *  <li>secureBase:
-     *  The secure base dir (not implemented)</li>
-     *  <li>comboBase:
-     *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
-     *  <li>root:
-     *  The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
+     *  <li>base: The base dir</li>
+     *  <li>secureBase: The secure base dir (not implemented)</li>
+     *  <li>comboBase: The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+     *  <li>root: The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
      *  <li>filter:
      *  
      * A filter to apply to result urls.  This filter will modify the default
@@ -114,6 +121,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      * </pre>
      *
      *  </li>
+     *  <li>filters: per-component filter specification.  If specified for a given component, this overrides the filter config</li>
      *  <li>combine:
      *  Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
      *  <li>ignore:
@@ -132,6 +140,9 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  callback for the 'success' event</li>
      *  <li>onFailure:
      *  callback for the 'failure' event</li>
+     *  <li>onCSS: callback for the 'CSSComplete' event.  When loading YUI components with CSS
+     *  the CSS is loaded first, then the script.  This provides a moment you can tie into to improve
+     *  the presentation of the page while the script is loading.</li>
      *  <li>onTimeout:
      *  callback for the 'timeout' event</li>
      *  <li>onProgress:
@@ -172,25 +183,24 @@ YUI.prototype = {
      * @private
      */
     _init: function(o) {
-        
+
         o = o || {};
 
-        // find targeted window
+        // find targeted window/frame
         // @TODO create facades
-        // @TODO resolve windowless environments
-        var w = ((o.win) ? (o.win.contentWindow) : o.win || window) || {},
-            v = '@VERSION@';
-        o.win = w;
-        o.doc = w.document;
+        var v = '@VERSION@', Y = this;
+        o.win = o.win || window || {};
+        o.win = o.win.contentWindow || o.win;
+        o.doc = o.win.document;
         o.debug = ('debug' in o) ? o.debug : true;
         o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
         o.throwFail = ('throwFail' in o) ? o.throwFail : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
-        this.config = o;
+        Y.config = o;
 
-        this.Env = {
+        Y.Env = {
             // @todo expand the new module metadata
             mods: {},
             _idx: 0,
@@ -198,22 +208,27 @@ YUI.prototype = {
             _used: {},
             _attached: {},
             _yidx: 0,
-            _uidx: 0
+            _uidx: 0,
+            _loaded: {}
         };
+
 
         if (v.indexOf('@') > -1) {
             v = 'test';
         }
 
-        this.version = v;
+        Y.version = v;
+
+        Y.Env._loaded[v] = {};
 
         if (YUI.Env) {
-            this.Env._yidx = ++YUI.Env._idx;
-            this.id = this.stamp(this);
-            _instances[this.id] = this;
+            Y.Env._yidx = ++YUI.Env._idx;
+            Y.id = Y.stamp(Y);
+            _instances[Y.id] = Y;
         }
 
-        this.constructor = YUI;
+        Y.constructor = YUI;
+
 
         // this.log(this.id + ') init ');
     },
@@ -333,7 +348,7 @@ YUI.prototype = {
                     this._attach(this.Array(req));
                 }
 
-                // this.log('attaching ' + name, 'info', 'YUI');
+                // this.log('attaching ' + name, 'info', 'yui');
 
                 if (m.fn) {
                     m.fn(this);
@@ -372,6 +387,11 @@ YUI.prototype = {
      */
     use: function() {
 
+        if (this._loading) {
+            this._useQueue.add(Array.prototype.slice.call(arguments));
+            return this;
+        }
+
         var Y = this, 
             a=Array.prototype.slice.call(arguments, 0), 
             mods = YUI.Env.mods, 
@@ -380,26 +400,37 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
-            k, i, l, missing = [], r = [], 
+            k, i, l, missing = [], 
+            r = [], 
             f = function(name) {
 
                 // only attach a module once
                 if (used[name]) {
-                    // Y.log(name + ' already used');
+                    // Y.log(name + ' already used', 'info', 'yui');
                     return;
                 }
 
                 var m = mods[name], j, req, use;
 
                 if (m) {
+
+                    // Y.log('USING ' + name, 'info', 'yui');
+
                     used[name] = true;
 
-                    // Y.log('found ' + name);
                     req = m.details.requires;
                     use = m.details.use;
                 } else {
-                    Y.log('module not found: ' + name, 'info', 'yui');
-                    missing.push(name);
+
+                    // CSS files don't register themselves, see if it has been loaded
+                    if (!YUI.Env._loaded[Y.version][name]) {
+                        Y.log('module not found: ' + name, 'info', 'yui');
+                        missing.push(name);
+                    } else {
+                        // probably css
+                        // Y.log('module not found BUT HAS BEEN LOADED: ' + name, 'info', 'yui');
+                        used[name] = true;
+                    }
                 }
 
                 // make sure requirements are attached
@@ -408,13 +439,14 @@ YUI.prototype = {
                         f(req);
                     } else {
                         for (j = 0; j < req.length; j = j + 1) {
+                            // Y.log('using module\'s requirements: ' + name, 'info', 'yui');
                             f(req[j]);
                         }
                     }
                 }
 
                 // add this module to full list of things to attach
-                // Y.log('using ' + name);
+                // Y.log('adding to requires list: ' + name);
                 r.push(name);
 
             },
@@ -438,6 +470,13 @@ YUI.prototype = {
                 if (Y.fire) {
                     Y.fire('yui:load', Y, fromLoader);
                 }
+
+                // process queued use requests as long until done 
+                // or dynamic load happens again.
+                this._loading = false;
+                while (this._useQueue && this._useQueue.size() && !this._loading) {
+                    Y.use.apply(Y, this._useQueue.next());
+                }
             };
 
         // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback);
@@ -459,16 +498,19 @@ YUI.prototype = {
                 }
             }
 
+            // Y.log('Use *: ' + a);
+
             return Y.use.apply(Y, a);
 
         }
+        
         // Y.log('loader before: ' + a.join(','));
-       
 
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
+            this._useQueue = this._useQueue || new Y.Queue();
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.ignoreRegistered = true;
@@ -487,11 +529,12 @@ YUI.prototype = {
             f(a[i]);
         }
 
-        // Y.log('all reqs: ' + r + ' --- missing: ' + missing);
+        // Y.log('all reqs: ' + r + ' --- missing: ' + missing + ', l: ' + l + ', ' + r[0]);
 
         // dynamic load
         if (Y.Loader && missing.length) {
             Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'yui');
+            this._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
@@ -636,7 +679,6 @@ YUI.prototype = {
     // set up the environment
     YUI._init();
 
-
     // add a window load event at load time so we can capture
     // the case where it fires before dynamic loading is
     // complete.
@@ -655,7 +697,9 @@ YUI.add('yui-base', function(Y) {
  */
 (function() {
 
-var instance = Y;
+var instance = Y,
+    LOGEVENT = 'yui:log',
+    _published;
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -714,7 +758,23 @@ instance.log = function(msg, cat, src, silent) {
             }
 
             if (Y.fire && !bail && !silent) {
-                Y.fire('yui:log', msg, cat, src);
+                if (!_published) {
+                    Y.publish(LOGEVENT, {
+                        broadcast: 2,
+                        emitFacade: true
+                    });
+
+                    _published = true;
+
+                }
+                Y.fire(LOGEVENT, {
+                    msg: msg, 
+                    cat: cat, 
+                    src: src
+                });
+                
+
+                // Y.fire('yui:log', msg, cat, src);
             }
         }
     }
@@ -738,6 +798,31 @@ instance.log = function(msg, cat, src, silent) {
 instance.message = function() {
     return instance.log.apply(instance, arguments);
 };
+
+/*
+ * @TODO I'm not convinced the current log statement scrubbing routine can
+ * be made safe with all the variations that could be supplied for
+ * the condition.
+ *
+ * Logs a message with Y.log() if the first parameter is true
+ * Y.logIf((life == 'good'), 'yay'); 
+ * logIf statements are stripped from the raw and min files.
+ * @method logIf
+ * @for YUI
+ * @param  {boolean} condition Logging only occurs if a truthy value is provided
+ * @param  {String}  msg  The message to log.
+ * @param  {String}  cat  The log category for the message.  Default
+ *                        categories are "info", "warn", "error", time".
+ *                        Custom categories can be used as well. (opt)
+ * @param  {String}  src  The source of the the message (opt)
+ * @param  {boolean} silent If true, the log event won't fire
+ * @return {YUI}      YUI instance
+ */
+// instance.logIf = function(condition, msg, cat, src, silent) {
+//     if (condition) {
+//         return Y.log.apply(Y, arguments);
+//     }
+// };
 
 })();
 (function() {
@@ -773,7 +858,10 @@ TYPES     = {
     '[object Array]'    : ARRAY,
     '[object Date]'     : DATE,
     '[object Error]'    : ERROR 
-};
+},
+
+TRIMREGEX = /^\s+|\s+$/g,
+EMPTYSTRING = '';
 
 /**
  * Determines whether or not the provided item is an array.
@@ -902,7 +990,7 @@ L.isUndefined = function(o) {
  */
 L.trim = function(s){
     try {
-        return s.replace(/^\s+|\s+$/g, "");
+        return s.replace(TRIMREGEX, EMPTYSTRING);
     } catch(e) {
         return s;
     }
@@ -937,7 +1025,7 @@ L.isValue = function(o) {
  * @return {string} the detected type
  */
 L.type = function (o) {
-    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
+    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
 };
 
 })();
@@ -1146,36 +1234,28 @@ A.numericSort = function(a, b) {
 (function() {
 
 var L = Y.Lang, 
-A = Y.Array,
-OP = Object.prototype, 
-IEF = ["toString", "valueOf"], 
-PROTO = 'prototype',
-DELIMITER = '`~',
+DELIMITER = '__',
+FROZEN = {
+    'prototype': 1,
+    '_yuid': 1
+},
 
-/**
+/*
  * IE will not enumerate native functions in a derived object even if the
  * function was overridden.  This is a workaround for specific functions 
  * we care about on the Object prototype. 
  * @property _iefix
  * @param {Function} r  the object to receive the augmentation
  * @param {Function} s  the object that supplies the properties to augment
- * @param w a whitelist object (the keys are the valid items to reference)
  * @private
  * @for YUI
  */
-_iefix = (Y.UA && Y.UA.ie) ?
-    function(r, s, w) {
-        var i, a = IEF, n, f;
-        for (i=0; i<a.length; i=i+1) {
-            n = a[i]; 
-            f = s[n];
-            if (L.isFunction(f) && f != OP[n]) {
-                if (!w || (n in w)) {
-                    r[n]=f;
-                }
-            }
-        }
-    } : function() {};
+_iefix = function(r, s) {
+    var fn = s.toString;
+    if (L.isFunction(fn) && fn != Object.prototype.toString) {
+        r.toString = fn;
+    }
+};
 
 
 /**
@@ -1222,82 +1302,61 @@ Y.merge = function() {
  * @param merge {boolean} merge objects instead of overwriting/ignoring
  * Used by Y.aggregate
  * @return {object} the augmented object
- * @TODO review for PR2
  */
 Y.mix = function(r, s, ov, wl, mode, merge) {
 
     if (!s||!r) {
-        return Y;
+        return r || Y;
     }
 
-    var w = (wl && wl.length) ? A.hash(wl) : null, m = merge,
+    if (mode) {
+        switch (mode) {
+            case 1: // proto to proto
+                return Y.mix(r.prototype, s.prototype);
+            case 2: // object to object and proto to proto
+                Y.mix(r.prototype, s.prototype);
+                break; // pass through 
+            case 3: // proto to static
+                return Y.mix(r, s.prototype);
+            case 4: // static to proto
+                return Y.mix(r.prototype, s);
+            default:  // object to object is what happens below
+        }
+    }
 
-        f = function(fr, fs, proto, iwl) {
+    // Maybe don't even need this wl && wl.length check anymore??
+    var arr = merge && L.isArray(r), i, l, p;
 
-            var arr = m && L.isArray(fr), i;
-
-            for (i in fs) { 
-
-                if (fs.hasOwnProperty(i)) {
-
-                    // We never want to overwrite the prototype
-                    // if (PROTO === i) {
-                    if (PROTO === i || '_yuid' === i) {
-                        continue;
-                    }
-
-                    // Y.log('i: ' + i + ", " + fs[i]);
-                    // @TODO deal with the hasownprop issue
-
-                    // check white list if it was supplied
-                    if (!w || iwl || (i in w)) {
-                        // if the receiver has this property, it is an object,
-                        // and merge is specified, merge the two objects.
-                        if (m && L.isObject(fr[i], true)) {
-                            // console.log('aggregate RECURSE: ' + i);
-                            // @TODO recursive or no?
-                            // Y.mix(fr[i], fs[i]); // not recursive
-                            f(fr[i], fs[i], proto, true); // recursive
-                        // otherwise apply the property only if overwrite
-                        // is specified or the receiver doesn't have one.
-                        // @TODO make sure the 'arr' check isn't desructive
-                        } else if (!arr && (ov || !(i in fr))) {
-                            // console.log('hash: ' + i);
-                            fr[i] = fs[i];
-                        // if merge is specified and the receiver is an array,
-                        // append the array item
-                        } else if (arr) {
-                            // console.log('array: ' + i);
-                            // @TODO probably will need to remove dups
-                            fr.push(fs[i]);
-                        }
-                    }
+    if (wl && wl.length) {
+        for (i = 0, l = wl.length; i < l; ++i) {
+            p = wl[i];
+            if ((p in s) && (ov || !(p in r))) {
+                r[p] = s[p];
+            }
+        }
+    } else {
+        for (i in s) { 
+            if (s.hasOwnProperty(i) && !(i in FROZEN)) {
+                // check white list if it was supplied
+                // if the receiver has this property, it is an object,
+                // and merge is specified, merge the two objects.
+                if (merge && L.isObject(r[i], true)) {
+                    Y.mix(r[i], s[i]); // recursive
+                // otherwise apply the property only if overwrite
+                // is specified or the receiver doesn't have one.
+                } else if (!arr && (ov || !(i in r))) {
+                    r[i] = s[i];
+                // if merge is specified and the receiver is an array,
+                // append the array item
+                } else if (arr) {
+                    r.push(s[i]);
                 }
             }
-
-            _iefix(fr, fs, w);
-        },
-
-        rp = r.prototype, 
-
-        sp = s.prototype;
-
-    switch (mode) {
-        case 1: // proto to proto
-            f(rp, sp, true);
-            break;
-        case 2: // object to object and proto to proto
-            f(r, s);
-            f(rp, sp, true);
-            break;
-        case 3: // proto to static
-            f(r, sp, true);
-            break;
-        case 4: // static to proto
-            f(rp, s);
-            break;
-        default:  // object to object
-            f(r, s);
+        }
+    
+        if (Y.UA.ie) {
+            _iefix(r, s);
+        }
     }
 
     return r;
@@ -1315,12 +1374,12 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache){
     cache = cache || {};
 
-    return function() {
+    return function(arg1, arg2) {
         var a = arguments, 
-            key = (a.length == 1) ? a[0] : Y.Array(a, 0, true).join(DELIMITER);
+            key = arg2 ? Y.Array(a, 0, true).join(DELIMITER) : arg1;
 
         if (!(key in cache)) {
-            cache[key] = source.apply(source, arguments);
+            cache[key] = source.apply(source, a);
         }
 
         return cache[key];
@@ -1329,6 +1388,7 @@ Y.cached = function(source, cache){
 };
 
 })();
+
 (function() {
 
 /**
@@ -1817,10 +1877,7 @@ Y.UA = function() {
 
     } else {
 
-        // core = ["object", "ua", "later"];
-        // core.push("get", "loader");
-        
-        core = ["get", "loader"];
+        core = ['queue-base', 'get', 'loader'];
     }
 
     Y.use.apply(Y, core);
