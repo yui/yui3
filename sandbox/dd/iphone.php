@@ -181,28 +181,14 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
     </div>
     <div id="ft">&nbsp;</div>
 </div>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.5.1/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
-    <script type="text/javascript" src="../3.x/build/yui/yui.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/drag.js?bust=<?php echo(mktime()); ?>"></script>
 
-    <!-- needed until built into a module -->
-    <!--script type="text/javascript" src="http://greatniece-lx.corp.yahoo.com/YuiWip/yui3x/build/attribute/attribute.js?bust=<?php echo(mktime()); ?>"></script-->
-    <script type="text/javascript" src="../3.x/build/attribute/attribute.js?bust=<?php echo(mktime()); ?>"></script>
-    <script type="text/javascript" src="../3.x/build/base/base.js?bust=<?php echo(mktime()); ?>"></script>
-
-    <!-- needed until new node.js is built into yui.js -->
-    <script type="text/javascript" src="../3.x/build/dom/dom.js?bust=<?php echo(mktime()); ?>"></script>
-    <script type="text/javascript" src="../3.x/build/node/node.js?bust=<?php echo(mktime()); ?>"></script>
-
-    <script type="text/javascript" src="../3.x/build/animation/animation.js?bust=<?php echo(mktime()); ?>"></script>
-
-
-
-    <script type="text/javascript" src="ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
-    <script type="text/javascript" src="ddm.js?bust=<?php echo(mktime()); ?>"></script>
-    <script type="text/javascript" src="drag.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
+    base: '../../build/',
+    filter: 'DEBUG',
     logExclude: {
         'YUI': true,
         Event: true,
@@ -214,58 +200,51 @@ var yConfig = {
 };
 
 
-var Y = new YUI(yConfig).use('dd-drag', 'dd-ddm', 'dump', function(Y) {
-    //Y.DD.DDM._debugShim = true;
+YUI(yConfig).use('dd-drag', 'dd-ddm', 'dump', function(Y) {
+    Y.DD.DDM._debugShim = true;
 
-    var anim = null;
+    //Add touchmove event to node
+    Y.Node.DOM_EVENTS.touchmove = true;
     
-    dd = new Y.DD.Drag({
-        node: '#drag',
-        target: true,
-        dragMode: 'intersect',
-        //proxy: true,
-        //dragMode: 'strict',
-        data: {
-            one: 'This is my data object',
-            two: 'This is my data object',
-            three: 'This is my data object'
+    //Some Event over writing ?? Extend ??
+    //This needs to be added to Event, this is a total hack!!
+    Y._DOMEventFacade = Y.DOMEventFacade;
+    Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
+        var e = new Y._DOMEventFacade(ev, currentTarget, wrapper);
+        if (ev.touches) {
+            e.touches = [];
+            if (ev.touches[0]) {
+                e.touches[0] = new Y.DOMEventFacade(ev.touches[0], currentTarget, wrapper);
+            }
+            if (ev.touches[1]) {
+                e.touches[1] = new Y.DOMEventFacade(ev.touches[1], currentTarget, wrapper);
+            }
         }
-    });
-    //}).addHandle('h2');
+        return e;
+    };
+    
+    dd = new Y.DD.Drag({ node: '#drag' });
+    //So we know we are loaded, it's a little slow..
+    dd.get('node').setStyle('backgroundColor', 'green');
     
     if (Y.UA.webkit && Y.UA.mobile) {
         dd.get('node').on('touchmove', function(e) {
+
             if(e.touches.length == 1) { // Only deal with one finger
                 if (!dd.get('dragging')) {
-                    Y.DD.DDM._noShim = true;
-                    dd._setStartPosition(dd.get('node').getXY());
-                    Y.DD.DDM.activeDrag = dd;
-                    dd.start();
+                    dd.fire('drag:mouseDown', { ev: e.touches[0] });
+                    dd._ev_md = e.touches[0];
+                } else {
+                    console.log('touch: [' + e.touches[0].pageX + ', ' + e.touches[0].pageY + ']');
+                
+                    Y.DD.DDM._move.apply(Y.DD.DDM, [e.touches[0]]);
                 }
-                var touch = e.touches[0]; // Get the information for finger #1
-                var ev = new Y.Event.Facade(touch);
-                ///console.log(Y.Lang.dump(ev));
-                dd._dragThreshMet = true;
-                Y.DD.DDM.activeDrag = dd;
-                Y.DD.DDM._move.apply(Y.DD.DDM, [ev]);
                 e.preventDefault();
             }
             
         });
     }
 
-
-    Y.Node.get('document').on('keypress', function(e) {
-        if ((e.keyCode === 27) || (e.charCode === 27)) {
-            if (Y.DD.DDM.activeDrag) {
-                console.info('DD is dragging, stop it..');
-                Y.DD.DDM.activeDrag.stopDrag();
-            }
-        }
-    });
-    
-        
-  
 });
 </script>
 </body>
