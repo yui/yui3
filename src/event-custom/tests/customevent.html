@@ -38,6 +38,7 @@
         }
     }).use("dump", "test", "console", function(Y) {
 
+
         // Y.Global.on('yui:log', function(e) {
         //     console.log('GLOBAL LOG: ' + e.msg);
         // });
@@ -50,7 +51,9 @@
             Y.Test.Runner.run();
         }, button);
 
+
         var myConsole = new Y.Console().render();
+        Y.log('{}');
  
         var testEventTarget = new Y.Test.Case({
             name: "EventTarget tests",
