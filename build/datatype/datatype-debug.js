@@ -135,7 +135,7 @@ Y.mix(Y.namespace("DataType.Number"), {
         // Not a Number, just return as string
         else {
             Y.log("Could not format data " + Y.dump(data) + " from type Number", "warn", "datatype-number");
-            return data.toString();
+            return (LANG.isValue(data) && data.toString) ? data.toString() : "";
         }
     }
 });
@@ -628,6 +628,7 @@ Y.namespace("Parsers").xml = Y.DataType.XML.parse;
 
 
 
+
 }, '@VERSION@' );
 
 YUI.add('datatype-xml-format', function(Y) {
@@ -663,12 +664,12 @@ Y.mix(Y.namespace("DataType.XML"), {
             }
         }
         catch(e) {
-            if(data.xml) {
+            if(data && data.xml) {
                 return data.xml;
             }
             else {
                 Y.log("Could not format data " + Y.dump(data) + " from type XML", "warn", "datatype-xml");
-                return data.toString();
+                return (LANG.isValue(data) && data.toString) ? data.toString() : "";
             }
         }
     }

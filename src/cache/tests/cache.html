@@ -111,12 +111,20 @@
                 var cache = new Y.Cache({max:2}),
                     cachedresponse;
                 cache.add(1, "a");
-                cache.add(2, "b");
+                cache.add("b", "c");
                 cachedresponse = cache.retrieve(1).response;
                 ASSERT.areSame("a", cachedresponse, "Expected first cached response.");
 
-                cachedresponse = cache.retrieve(2).response;
-                ASSERT.areSame("b", cachedresponse, "Expected second cached response.");
+                cachedresponse = cache.retrieve("b").response;
+                ASSERT.areSame("c", cachedresponse, "Expected second cached response.");
+            },
+
+            testNoMatch: function() {
+                var cache = new Y.Cache({max:2}),
+                    cachedentry;
+                cache.add("a", "b");
+                cachedentry = cache.retrieve("c");
+                ASSERT.areSame(null, cachedentry, "Expected no match.");
             },
 
             testFlush: function() {
@@ -228,7 +236,7 @@
                 cache.add(1, "a");
                 ASSERT.areSame(3, cache.get("size"), "Expected 3 entries.");
             },
-        
+
             testFreshness: function() {
                 var cache = new Y.Cache({max:3});
                 cache.add(1, "a");
@@ -238,9 +246,41 @@
                 ASSERT.areSame(3, cache.get("size"), "Expected 3 entries.");
                 ASSERT.areSame(1, cache.get("entries")[2].request, "Expected entry to be refreshed.");
             },
-            
+
             testPayload: function() {
                 //TODO
+            }
+        });
+
+        var testBoundaryValues = new Y.Test.Case({
+            name: "Invalid Value Tests",
+
+            testUndefinedRequest: function() {
+                var cache = new Y.Cache({max:3});
+                cache.add(undefined, "a");
+                cache.add(undefined, "b");
+                ASSERT.areSame("b", cache.retrieve().response, "Expected cached response.");
+            },
+
+            testNullRequest: function() {
+                var cache = new Y.Cache({max:3});
+                cache.add(null, "a");
+                cache.add(null, "b");
+                ASSERT.areSame("b", cache.retrieve(null).response, "Expected cached response.");
+            },
+
+            testNaNRequest: function() {
+                var cache = new Y.Cache({max:3});
+                cache.add(NaN, "a");
+                cache.add(NaN, "b");
+                ASSERT.areSame(0, cache.get("size"), "Expected 0 entries.");
+            },
+
+            testEmptyStringRequest: function() {
+                var cache = new Y.Cache({max:3});
+                cache.add("", "a");
+                cache.add("", "b");
+                ASSERT.areSame("b", cache.retrieve("").response, "Expected cached response.");
             }
         });
 
@@ -248,6 +288,7 @@
         Y.Test.Runner.add(testBasic);
         Y.Test.Runner.add(testEvents);
         Y.Test.Runner.add(testEntryManagement);
+        Y.Test.Runner.add(testBoundaryValues);
         Y.Test.Runner.run();
     });
 })();
