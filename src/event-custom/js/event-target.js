@@ -98,21 +98,9 @@ var L = Y.Lang,
 
         // console.log('Event.Target constructor executed: ' + this._yuid);
 
-        var o = (L.isObject(opts)) ? opts : {};
+        var o = (L.isObject(opts)) ? opts : {},
 
-        this._yuievt = {
-
-            id: Y.guid(),
-
-            events: {},
-
-            targets: {},
-
-            config: o,
-
-            chain: ('chain' in o) ? o.chain : Y.config.chain,
-
-            defaults: {
+            defaults = {
                 context: o.context || this, 
                 host: this,
                 emitFacade: o.emitFacade,
@@ -120,7 +108,16 @@ var L = Y.Lang,
                 queuable: o.queuable,
                 broadcast: o.broadcast,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
-            }
+            };
+
+        this._yuievt = {
+            id: Y.guid(),
+            events: {},
+            targets: {},
+            config: o,
+            chain: ('chain' in o) ? o.chain : Y.config.chain,
+            defaults: defaults,
+            defaultkeys: Y.Object.keys(defaults)
         };
 
     };
@@ -433,9 +430,9 @@ ET.prototype = {
     publish: function(type, opts) {
         // this._yuievt.config.prefix
 
-        type = _getType(type, this._yuievt.config.prefix);
+        var events, ce, ret, o = opts || {}, meta = this._yuievt;
 
-        var events, ce, ret, o = opts || {};
+        type = _getType(type, meta.config.prefix);
 
         if (L.isObject(type)) {
             ret = {};
@@ -446,7 +443,7 @@ ET.prototype = {
             return ret;
         }
 
-        events = this._yuievt.events; 
+        events = meta.events; 
         ce = events[type];
 
         //if (ce && !ce.configured) {
@@ -458,7 +455,7 @@ ET.prototype = {
 
         } else {
             // apply defaults
-            Y.mix(o, this._yuievt.defaults);
+            Y.mix(o, meta.defaults, false, meta.defaultkeys);
 
             ce = new Y.CustomEvent(type, o);
 
