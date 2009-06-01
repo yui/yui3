@@ -51,11 +51,11 @@
 
 <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> 
 <span class="nx">DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;__&#39;</span><span class="o">,</span>
-<span class="nx">FROZEN</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="s1">&#39;prototype&#39;</span><span class="o">:</span> <span class="m">1</span><span class="o">,</span>
-    <span class="s1">&#39;_yuid&#39;</span><span class="o">:</span> <span class="m">1</span>
-<span class="o">},</span>
-
+<span class="c">// FROZEN = {</span>
+<span class="c">//     &#39;prototype&#39;: 1,</span>
+<span class="c">//     &#39;_yuid&#39;: 1</span>
+<span class="c">// },</span>
+<span class="c"></span>
 <span class="c">/*</span>
 <span class="c"> * IE will not enumerate native functions in a derived object even if the</span>
 <span class="c"> * function was overridden.  This is a workaround for specific functions </span>
@@ -158,8 +158,8 @@
         <span class="o">}</span>
     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
         <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">s</span><span class="o">)</span> <span class="o">{</span> 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">s</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">FROZEN</span><span class="o">))</span> <span class="o">{</span>
-                <span class="c">// check white list if it was supplied</span>
+            <span class="c">// if (s.hasOwnProperty(i) &amp;&amp; !(i in FROZEN)) {</span>
+<span class="c"></span>                <span class="c">// check white list if it was supplied</span>
 <span class="c"></span>                <span class="c">// if the receiver has this property, it is an object,</span>
 <span class="c"></span>                <span class="c">// and merge is specified, merge the two objects.</span>
 <span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">merge</span> <span class="o">&amp;&amp;</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="kc">true</span><span class="o">))</span> <span class="o">{</span>
@@ -173,8 +173,8 @@
 <span class="c"></span>                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">arr</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">r</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">s</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
                 <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+            <span class="c">// }</span>
+<span class="c"></span>        <span class="o">}</span>
     
         <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">_iefix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">);</span>

@@ -147,21 +147,9 @@
 
         <span class="c">// console.log(&#39;Event.Target constructor executed: &#39; + this._yuid);</span>
 <span class="c"></span>
-        <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">opts</span><span class="o">))</span> <span class="o">?</span> <span class="nx">opts</span> <span class="o">:</span> <span class="o">{};</span>
+        <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">opts</span><span class="o">))</span> <span class="o">?</span> <span class="nx">opts</span> <span class="o">:</span> <span class="o">{},</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span> <span class="o">=</span> <span class="o">{</span>
-
-            <span class="nx">id</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(),</span>
-
-            <span class="nx">events</span><span class="o">:</span> <span class="o">{},</span>
-
-            <span class="nx">targets</span><span class="o">:</span> <span class="o">{},</span>
-
-            <span class="nx">config</span><span class="o">:</span> <span class="nx">o</span><span class="o">,</span>
-
-            <span class="nx">chain</span><span class="o">:</span> <span class="o">(</span><span class="s1">&#39;chain&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">chain</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">chain</span><span class="o">,</span>
-
-            <span class="nx">defaults</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">defaults</span> <span class="o">=</span> <span class="o">{</span>
                 <span class="nx">context</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">,</span> 
                 <span class="nx">host</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span>
                 <span class="nx">emitFacade</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">emitFacade</span><span class="o">,</span>
@@ -169,7 +157,16 @@
                 <span class="nx">queuable</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">queuable</span><span class="o">,</span>
                 <span class="nx">broadcast</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">broadcast</span><span class="o">,</span>
                 <span class="nx">bubbles</span><span class="o">:</span> <span class="o">(</span><span class="s1">&#39;bubbles&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">bubbles</span> <span class="o">:</span> <span class="kc">true</span>
-            <span class="o">}</span>
+            <span class="o">};</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span> <span class="o">=</span> <span class="o">{</span>
+            <span class="nx">id</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(),</span>
+            <span class="nx">events</span><span class="o">:</span> <span class="o">{},</span>
+            <span class="nx">targets</span><span class="o">:</span> <span class="o">{},</span>
+            <span class="nx">config</span><span class="o">:</span> <span class="nx">o</span><span class="o">,</span>
+            <span class="nx">chain</span><span class="o">:</span> <span class="o">(</span><span class="s1">&#39;chain&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">chain</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">chain</span><span class="o">,</span>
+            <span class="nx">defaults</span><span class="o">:</span> <span class="nx">defaults</span><span class="o">,</span>
+            <span class="nx">defaultkeys</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">keys</span><span class="o">(</span><span class="nx">defaults</span><span class="o">)</span>
         <span class="o">};</span>
 
     <span class="o">};</span>
@@ -482,9 +479,9 @@
     <span class="nx">publish</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
         <span class="c">// this._yuievt.config.prefix</span>
 <span class="c"></span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">);</span>
+        <span class="k">var</span> <span class="nx">events</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="o">{},</span> <span class="nx">meta</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">;</span>
 
-        <span class="k">var</span> <span class="nx">events</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="o">{};</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">);</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="o">{};</span>
@@ -495,7 +492,7 @@
             <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="nx">events</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">;</span> 
+        <span class="nx">events</span> <span class="o">=</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">events</span><span class="o">;</span> 
         <span class="nx">ce</span> <span class="o">=</span> <span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
 
         <span class="c">//if (ce &amp;&amp; !ce.configured) {</span>
@@ -507,7 +504,7 @@
 
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="c">// apply defaults</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">defaults</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">defaults</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">defaultkeys</span><span class="o">);</span>
 
             <span class="nx">ce</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">o</span><span class="o">);</span>
 

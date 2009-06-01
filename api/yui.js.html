@@ -53,7 +53,10 @@
 <span class="c"> */</span>
 <span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-    <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">().</span><span class="nx">getTime</span><span class="o">(),</span> <span class="nx">p</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span>
+    <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{},</span> 
+        <span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">().</span><span class="nx">getTime</span><span class="o">(),</span> 
+        <span class="nx">p</span><span class="o">,</span> 
+        <span class="nx">i</span><span class="o">,</span>
 
         <span class="nx">add</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nb">window</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">)</span> <span class="o">{</span>
@@ -253,7 +256,6 @@
             <span class="c">// @todo expand the new module metadata</span>
 <span class="c"></span>            <span class="nx">mods</span><span class="o">:</span> <span class="o">{},</span>
             <span class="nx">_idx</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
-            <span class="nx">_pre</span><span class="o">:</span> <span class="s1">&#39;yuid&#39;</span><span class="o">,</span>
             <span class="nx">_used</span><span class="o">:</span> <span class="o">{},</span>
             <span class="nx">_attached</span><span class="o">:</span> <span class="o">{},</span>
             <span class="nx">_yidx</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
@@ -274,6 +276,8 @@
             <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_yidx</span> <span class="o">=</span> <span class="o">++</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_idx</span><span class="o">;</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">Y</span><span class="o">);</span>
             <span class="nx">_instances</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">;</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_guidp</span> <span class="o">=</span> <span class="o">(</span><span class="s1">&#39;yui_&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">version</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_yidx</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">_startTime</span><span class="o">).</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/\./g</span><span class="o">,</span> <span class="s1">&#39;_&#39;</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="nx">Y</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">;</span>
@@ -667,14 +671,8 @@
 <span class="c">     * @return {string} the guid</span>
 <span class="c">     */</span>
     <span class="nx">guid</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">,</span> <span class="nx">p</span> <span class="o">=</span> <span class="o">(</span><span class="nx">pre</span><span class="o">)</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">_pre</span><span class="o">,</span>
-            <span class="nx">id</span> <span class="o">=</span> <span class="nx">p</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> 
-                   <span class="k">this</span><span class="o">.</span><span class="nx">version</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> 
-                   <span class="nx">e</span><span class="o">.</span><span class="nx">_yidx</span>      <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> 
-                   <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">_uidx</span><span class="o">++)</span>  <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> 
-                   <span class="nx">_startTime</span><span class="o">;</span>
-
-            <span class="k">return</span> <span class="nx">id</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/\./g</span><span class="o">,</span> <span class="s1">&#39;_&#39;</span><span class="o">);</span>
+        <span class="k">var</span> <span class="nx">id</span> <span class="o">=</span>  <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_guidp</span> <span class="o">+</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_uidx</span><span class="o">++);</span>
+        <span class="k">return</span> <span class="o">(</span><span class="nx">pre</span><span class="o">)</span> <span class="o">?</span> <span class="o">(</span><span class="nx">pre</span> <span class="o">+</span> <span class="nx">id</span><span class="o">)</span> <span class="o">:</span> <span class="nx">id</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
