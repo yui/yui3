@@ -4,7 +4,10 @@
  */
 (function() {
 
-    var _instances = {}, _startTime = new Date().getTime(), p, i,
+    var _instances = {}, 
+        _startTime = new Date().getTime(), 
+        p, 
+        i,
 
         add = function () {
             if (window.addEventListener) {
@@ -204,7 +207,6 @@ YUI.prototype = {
             // @todo expand the new module metadata
             mods: {},
             _idx: 0,
-            _pre: 'yuid',
             _used: {},
             _attached: {},
             _yidx: 0,
@@ -225,6 +227,8 @@ YUI.prototype = {
             Y.Env._yidx = ++YUI.Env._idx;
             Y.id = Y.stamp(Y);
             _instances[Y.id] = Y;
+
+            Y.Env._guidp = ('yui_' + this.version + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
         }
 
         Y.constructor = YUI;
@@ -618,14 +622,8 @@ YUI.prototype = {
      * @return {string} the guid
      */
     guid: function(pre) {
-        var e = this.Env, p = (pre) || e._pre,
-            id = p + '-' + 
-                   this.version + '-' + 
-                   e._yidx      + '-' + 
-                   (e._uidx++)  + '-' + 
-                   _startTime;
-
-            return id.replace(/\./g, '_');
+        var id =  this.Env._guidp + (this.Env._uidx++);
+        return (pre) ? (pre + id) : id;
     },
 
     /**

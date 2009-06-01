@@ -2,10 +2,10 @@
 
 var L = Y.Lang, 
 DELIMITER = '__',
-FROZEN = {
-    'prototype': 1,
-    '_yuid': 1
-},
+// FROZEN = {
+//     'prototype': 1,
+//     '_yuid': 1
+// },
 
 /*
  * IE will not enumerate native functions in a derived object even if the
@@ -109,7 +109,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
         }
     } else {
         for (i in s) { 
-            if (s.hasOwnProperty(i) && !(i in FROZEN)) {
+            // if (s.hasOwnProperty(i) && !(i in FROZEN)) {
                 // check white list if it was supplied
                 // if the receiver has this property, it is an object,
                 // and merge is specified, merge the two objects.
@@ -124,7 +124,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                 } else if (arr) {
                     r.push(s[i]);
                 }
-            }
+            // }
         }
     
         if (Y.UA.ie) {
