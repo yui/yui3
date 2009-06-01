@@ -463,7 +463,8 @@ var AFTER = 'after',
 
     FACADE_KEYS = Y.Object.keys(FACADE),
 
-    YUI3_SIGNATURE = 9;
+    YUI3_SIGNATURE = 9,
+    YUI_LOG = 'yui:log';
 
 Y.EventHandle = function(evt, sub) {
 
@@ -528,7 +529,7 @@ Y.CustomEvent = function(type, o) {
      */
     this.context = Y;
 
-    this.logSystem = (type == "yui:log");
+    this.logSystem = (type == YUI_LOG);
 
     /**
      * If 0, this event does not broadcast.  If 1, the YUI instance is notified
@@ -538,7 +539,7 @@ Y.CustomEvent = function(type, o) {
      * @property broadcast
      * @type int
      */
-    this.broadcast = 0;
+    // this.broadcast = 0;
 
     /**
      * By default all custom events are logged in the debug build, set silent
@@ -548,8 +549,7 @@ Y.CustomEvent = function(type, o) {
      */
     this.silent = this.logSystem;
 
-    // this.queuable = !(this.logSystem);
-    this.queuable = false;
+    // this.queuable = false;
 
     /**
      * The subscribers to this event
@@ -580,7 +580,7 @@ Y.CustomEvent = function(type, o) {
      * @type boolean
      * @default false;
      */
-    this.fired = false;
+    // this.fired = false;
 
     /**
      * This event should only fire one time if true, and if
@@ -591,7 +591,7 @@ Y.CustomEvent = function(type, o) {
      * @type boolean
      * @default false;
      */
-    this.fireOnce = false;
+    // this.fireOnce = false;
 
     /**
      * Flag for stopPropagation that is modified during fire()
@@ -600,7 +600,7 @@ Y.CustomEvent = function(type, o) {
      * @property stopped
      * @type int
      */
-    this.stopped = 0;
+    // this.stopped = 0;
 
     /**
      * Flag for preventDefault that is modified during fire().
@@ -608,7 +608,7 @@ Y.CustomEvent = function(type, o) {
      * @property prevented
      * @type int
      */
-    this.prevented = 0;
+    // this.prevented = 0;
 
     /**
      * Specifies the host for this custom event.  This is used
@@ -616,7 +616,7 @@ Y.CustomEvent = function(type, o) {
      * @property host
      * @type Event.Target
      */
-    this.host = null;
+    // this.host = null;
 
     /**
      * The default function to execute after event listeners
@@ -625,7 +625,7 @@ Y.CustomEvent = function(type, o) {
      * @property defaultFn
      * @type Function
      */
-    this.defaultFn = null;
+    // this.defaultFn = null;
 
     /**
      * The function to execute if a subscriber calls
@@ -633,7 +633,7 @@ Y.CustomEvent = function(type, o) {
      * @property stoppedFn
      * @type Function
      */
-    this.stoppedFn = null;
+    // this.stoppedFn = null;
 
     /**
      * The function to execute if a subscriber calls
@@ -641,7 +641,7 @@ Y.CustomEvent = function(type, o) {
      * @property preventedFn
      * @type Function
      */
-    this.preventedFn = null;
+    // this.preventedFn = null;
 
     /**
      * Specifies whether or not this event's default function
@@ -671,9 +671,9 @@ Y.CustomEvent = function(type, o) {
      */
     this.signature = YUI3_SIGNATURE;
 
-    this.hasSubscribers = false;
+    // this.hasSubscribers = false;
 
-    this.hasAfters = false;
+    // this.hasAfters = false;
 
     /**
      * If set to true, the custom event will deliver an EventFacade object
@@ -682,11 +682,11 @@ Y.CustomEvent = function(type, o) {
      * @type boolean
      * @default false
      */
-    this.emitFacade = false;
+    // this.emitFacade = false;
 
     this.applyConfig(o, true);
 
-    this.log("Creating " + this.type);
+    // this.log("Creating " + this.type);
 
 };
 
@@ -952,13 +952,6 @@ Y.CustomEvent.prototype = {
 
         if (es) {
 
-            // var b = this.bubbles, h = this.host;
-            // if (b && h) {
-            //     b = (h._yuievt.targets.length);
-            // }
-
-            // es.silent = (es.silent || this.silent);
-
             // queue this event if the current item in the queue bubbles
             // if (b && this.queuable && this.type != es.next.type) {
             if (this.queuable && this.type != es.next.type) {
@@ -976,7 +969,7 @@ Y.CustomEvent.prototype = {
                id: this.id,
                next: this,
                silent: this.silent,
-               logging: (this.type === 'yui:log'),
+               logging: (this.type === YUI_LOG),
                stopped: 0,
                prevented: 0,
                queue: []
@@ -1051,7 +1044,7 @@ Y.CustomEvent.prototype = {
                     if (subs.hasOwnProperty(i)) {
 
                         if (!hasSub) {
-                            es.logging = (es.logging || (this.type === 'yui:log'));
+                            es.logging = (es.logging || (this.type === YUI_LOG));
                             hasSub = true;
                         }
 
@@ -1110,7 +1103,7 @@ Y.CustomEvent.prototype = {
                     if (subs.hasOwnProperty(i)) {
 
                         if (!hasSub) {
-                            es.logging = (es.logging || (this.type === 'yui:log'));
+                            es.logging = (es.logging || (this.type === YUI_LOG));
                             hasSub = true;
                         }
 
@@ -1208,8 +1201,6 @@ Y.CustomEvent.prototype = {
      * @method toString
      */
     toString: function() {
-         // return "{ CE '" + this.type + "' " + "id: " + this.id +
-              // ", host: " + (this.host && Y.stamp(this.host) + " }");
          return this.type;
     },
 
@@ -1420,68 +1411,6 @@ var L = Y.Lang,
     AFTER_PREFIX = '~AFTER~',
 
     /**
-     * If the instance has a prefix attribute and the
-     * event type is not prefixed, the instance prefix is
-     * applied to the supplied type.
-     * @method _getType
-     */
-    _getType = Y.cached(function(type, pre) {
-
-        // console.log('__getType: ' + pre + ', ' + type, 'info', 'event');
-
-        var t = type;
-
-        if (!L.isString(t)) {
-            return t;
-        } 
-
-        if (t == '*') {
-            return null;
-        }
-        
-        if (t.indexOf(PREFIX_DELIMITER) == -1 && pre) {
-            t = pre + PREFIX_DELIMITER + t;
-        }
-
-
-        return t;
-    }),
-
-    /**lt
-     * Returns an array with the detach key (if provided),
-     * and the prefixed event name from _getType
-     * Y.on('detachcategory, menu:click', fn)
-     * @method _parseType
-     * @private
-     */
-    _parseType = Y.cached(function(type, pre) {
-
-        var t = type, parts, detachcategory, after, i, full_t;
-
-        if (!L.isString(t)) {
-            return t;
-        } 
-        
-        i = t.indexOf(AFTER_PREFIX);
-
-        if (i > -1) {
-            after = true;
-            t = t.substr(AFTER_PREFIX.length);
-        }
-
-        parts = t.split(DETACH_PREFIX_SPLITTER);
-
-        if (parts.length > 1) {
-            detachcategory = parts[0];
-            t = parts[1];
-        }
-
-        full_t = _getType(t, pre);
-
-        return [detachcategory, full_t, after, t];
-    }),
-
-    /**
      * An event target can fire events and be targeted by events.
      * @class EventTarget
      * @param opts a configuration object
@@ -1517,10 +1446,67 @@ var L = Y.Lang,
             defaultkeys: Y.Object.keys(defaults)
         };
 
+
+        this._getType = Y.cached(function(type) {
+
+            var t = type,
+                pre = this._yuievt.config.prefix;
+
+            if (!L.isString(t)) {
+                return t;
+            } 
+
+            if (t == '*') {
+                return null;
+            }
+            
+            if (t.indexOf(PREFIX_DELIMITER) == -1 && pre) {
+                t = pre + PREFIX_DELIMITER + t;
+            }
+
+            return t;
+        });
+
+        /**
+         * Returns an array with the detach key (if provided),
+         * and the prefixed event name from _getType
+         * Y.on('detachcategory, menu:click', fn)
+         * @method _parseType
+         * @private
+         */
+        this._parseType = Y.cached(function(type) {
+
+            var t = type, parts, detachcategory, after, i, full_t,
+                pre = this._yuievt.config.prefix;
+
+            if (!L.isString(t)) {
+                return t;
+            } 
+            
+            i = t.indexOf(AFTER_PREFIX);
+
+            if (i > -1) {
+                after = true;
+                t = t.substr(AFTER_PREFIX.length);
+            }
+
+            parts = t.split(DETACH_PREFIX_SPLITTER);
+
+            if (parts.length > 1) {
+                detachcategory = parts[0];
+                t = parts[1];
+            }
+
+            full_t = this._getType(t);
+
+            return [detachcategory, full_t, after, t];
+        });
+
     };
 
 
 ET.prototype = {
+
 
     /**
      * Subscribe to a custom event hosted by this object
@@ -1531,7 +1517,7 @@ ET.prototype = {
      */
     on: function(type, fn, context) {
 
-        var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
+        var parts = this._parseType(type), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n;
 
@@ -1654,7 +1640,7 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
 
-        var parts = _parseType(type, this._yuievt.config.prefix), 
+        var parts = this._parseType(type), 
         detachcategory = L.isArray(parts) ? parts[0] : null,
         shorttype = (parts) ? parts[3] : null,
         handle, adapt, store = Y.Env.evt.handles, cat, args,
@@ -1749,7 +1735,7 @@ ET.prototype = {
      * @param type {string}   The type, or name of the event
      */
     detachAll: function(type) {
-        type = _getType(type, this._yuievt.config.prefix);
+        type = this._getType(type);
         return this.detach(type);
     },
 
@@ -1826,7 +1812,7 @@ ET.prototype = {
 
         var events, ce, ret, o = opts || {}, meta = this._yuievt;
 
-        type = _getType(type, meta.config.prefix);
+        type = this._getType(type);
 
         if (L.isObject(type)) {
             ret = {};
@@ -1915,7 +1901,7 @@ ET.prototype = {
             t = (typeIncluded) ? type : (type && type.type),
             ce, a, ret;
 
-        t = _getType(t, this._yuievt.config.prefix);
+        t = this._getType(t);
         ce = this.getEvent(t);
 
         // this event has not been published or subscribed to
@@ -1953,7 +1939,7 @@ ET.prototype = {
      * @return {Event.Custom} the custom event or null
      */
     getEvent: function(type) {
-        type = _getType(type, this._yuievt.config.prefix);
+        type = this._getType(type);
         var e = this._yuievt.events;
         return (e && type in e) ? e[type] : null;
     },
