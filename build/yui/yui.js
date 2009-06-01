@@ -1314,8 +1314,14 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     if (wl && wl.length) {
         for (i = 0, l = wl.length; i < l; ++i) {
             p = wl[i];
-            if ((p in s) && (ov || !(p in r))) {
-                r[p] = s[p];
+            if (p in s) {
+                if (merge && L.isObject(r[p], true)) {
+                    Y.mix(r[p], s[p]);
+                } else if (!arr && (ov || !(p in r))) {
+                    r[p] = s[p];
+                } else if (arr) {
+                    r.push(s[p]);
+                }
             }
         }
     } else {
