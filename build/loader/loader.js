@@ -1899,7 +1899,6 @@ Y.Loader.prototype = {
 
             for (i=0; i<len; i=i+1) {
                 m = this.getModule(s[i]);
-// @TODO we can't combine CSS yet until we deliver files with absolute paths to the assets
                 // Do not try to combine non-yui JS
                 if (m && m.type === this.loadType && !m.ext) {
                     url += this.root + m.path;
@@ -1914,7 +1913,8 @@ Y.Loader.prototype = {
             if (this._combining.length) {
 
 
-                if (m.type === CSS) {
+                // if (m.type === CSS) {
+                if (this.loadType === CSS) {
                     fn = Y.Get.css;
                     attr = this.cssAttributes;
                 } else {

@@ -41,7 +41,8 @@ var AFTER = 'after',
 
     FACADE_KEYS = Y.Object.keys(FACADE),
 
-    YUI3_SIGNATURE = 9;
+    YUI3_SIGNATURE = 9,
+    YUI_LOG = 'yui:log';
 
 Y.EventHandle = function(evt, sub) {
 
@@ -107,7 +108,7 @@ Y.CustomEvent = function(type, o) {
      */
     this.context = Y;
 
-    this.logSystem = (type == "yui:log");
+    this.logSystem = (type == YUI_LOG);
 
     /**
      * If 0, this event does not broadcast.  If 1, the YUI instance is notified
@@ -117,7 +118,7 @@ Y.CustomEvent = function(type, o) {
      * @property broadcast
      * @type int
      */
-    this.broadcast = 0;
+    // this.broadcast = 0;
 
     /**
      * By default all custom events are logged in the debug build, set silent
@@ -127,8 +128,7 @@ Y.CustomEvent = function(type, o) {
      */
     this.silent = this.logSystem;
 
-    // this.queuable = !(this.logSystem);
-    this.queuable = false;
+    // this.queuable = false;
 
     /**
      * The subscribers to this event
@@ -159,7 +159,7 @@ Y.CustomEvent = function(type, o) {
      * @type boolean
      * @default false;
      */
-    this.fired = false;
+    // this.fired = false;
 
     /**
      * This event should only fire one time if true, and if
@@ -170,7 +170,7 @@ Y.CustomEvent = function(type, o) {
      * @type boolean
      * @default false;
      */
-    this.fireOnce = false;
+    // this.fireOnce = false;
 
     /**
      * Flag for stopPropagation that is modified during fire()
@@ -179,7 +179,7 @@ Y.CustomEvent = function(type, o) {
      * @property stopped
      * @type int
      */
-    this.stopped = 0;
+    // this.stopped = 0;
 
     /**
      * Flag for preventDefault that is modified during fire().
@@ -187,7 +187,7 @@ Y.CustomEvent = function(type, o) {
      * @property prevented
      * @type int
      */
-    this.prevented = 0;
+    // this.prevented = 0;
 
     /**
      * Specifies the host for this custom event.  This is used
@@ -195,7 +195,7 @@ Y.CustomEvent = function(type, o) {
      * @property host
      * @type Event.Target
      */
-    this.host = null;
+    // this.host = null;
 
     /**
      * The default function to execute after event listeners
@@ -204,7 +204,7 @@ Y.CustomEvent = function(type, o) {
      * @property defaultFn
      * @type Function
      */
-    this.defaultFn = null;
+    // this.defaultFn = null;
 
     /**
      * The function to execute if a subscriber calls
@@ -212,7 +212,7 @@ Y.CustomEvent = function(type, o) {
      * @property stoppedFn
      * @type Function
      */
-    this.stoppedFn = null;
+    // this.stoppedFn = null;
 
     /**
      * The function to execute if a subscriber calls
@@ -220,7 +220,7 @@ Y.CustomEvent = function(type, o) {
      * @property preventedFn
      * @type Function
      */
-    this.preventedFn = null;
+    // this.preventedFn = null;
 
     /**
      * Specifies whether or not this event's default function
@@ -250,9 +250,9 @@ Y.CustomEvent = function(type, o) {
      */
     this.signature = YUI3_SIGNATURE;
 
-    this.hasSubscribers = false;
+    // this.hasSubscribers = false;
 
-    this.hasAfters = false;
+    // this.hasAfters = false;
 
     /**
      * If set to true, the custom event will deliver an EventFacade object
@@ -261,11 +261,11 @@ Y.CustomEvent = function(type, o) {
      * @type boolean
      * @default false
      */
-    this.emitFacade = false;
+    // this.emitFacade = false;
 
     this.applyConfig(o, true);
 
-    this.log("Creating " + this.type);
+    // this.log("Creating " + this.type);
 
 };
 
@@ -532,13 +532,6 @@ Y.CustomEvent.prototype = {
 
         if (es) {
 
-            // var b = this.bubbles, h = this.host;
-            // if (b && h) {
-            //     b = (h._yuievt.targets.length);
-            // }
-
-            // es.silent = (es.silent || this.silent);
-
             // queue this event if the current item in the queue bubbles
             // if (b && this.queuable && this.type != es.next.type) {
             if (this.queuable && this.type != es.next.type) {
@@ -556,7 +549,7 @@ Y.CustomEvent.prototype = {
                id: this.id,
                next: this,
                silent: this.silent,
-               logging: (this.type === 'yui:log'),
+               logging: (this.type === YUI_LOG),
                stopped: 0,
                prevented: 0,
                queue: []
@@ -631,7 +624,7 @@ Y.CustomEvent.prototype = {
                     if (subs.hasOwnProperty(i)) {
 
                         if (!hasSub) {
-                            es.logging = (es.logging || (this.type === 'yui:log'));
+                            es.logging = (es.logging || (this.type === YUI_LOG));
                             hasSub = true;
                         }
 
@@ -690,7 +683,7 @@ Y.CustomEvent.prototype = {
                     if (subs.hasOwnProperty(i)) {
 
                         if (!hasSub) {
-                            es.logging = (es.logging || (this.type === 'yui:log'));
+                            es.logging = (es.logging || (this.type === YUI_LOG));
                             hasSub = true;
                         }
 
@@ -789,8 +782,6 @@ Y.CustomEvent.prototype = {
      * @method toString
      */
     toString: function() {
-         // return "{ CE '" + this.type + "' " + "id: " + this.id +
-              // ", host: " + (this.host && Y.stamp(this.host) + " }");
          return this.type;
     },
 

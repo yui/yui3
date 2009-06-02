@@ -50,7 +50,9 @@
             'io.start': 1,
             'io.success': 1,
             'io.failure': 1
-        };
+        },
+
+        SLICE = Array.prototype.slice;
         
 // reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
@@ -392,12 +394,12 @@ YUI.prototype = {
     use: function() {
 
         if (this._loading) {
-            this._useQueue.add(Array.prototype.slice.call(arguments));
+            this._useQueue.add(SLICE.call(arguments));
             return this;
         }
 
         var Y = this, 
-            a=Array.prototype.slice.call(arguments, 0), 
+            a=SLICE.call(arguments), 
             mods = YUI.Env.mods, 
             used = Y.Env._used,
             loader, 
