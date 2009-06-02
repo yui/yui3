@@ -32,8 +32,6 @@ EVENT_READY = 'domready',
 
 COMPAT_ARG = '~yui|2|compat~',
 
-CAPTURE = "capture_",
-
 shouldIterate = function(o) {
     try {
          
@@ -276,21 +274,22 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          *                        or if the operation throws an exception.
          * @static
          */
+
         attach: function(type, fn, el, obj) {
+            return Y.Event._attach(Y.Array(arguments, 0, true));
+        },
 
-            el = el || Y.config.win;
+        _attach: function(args, config) {
 
-            var args=Y.Array(arguments, 0, true), 
-                trimmedArgs=args.slice(1),
-                compat, E=Y.Event, capture = false,
+            var trimmedArgs=args.slice(1),
+                compat, E=Y.Event,
                 handles, oEl, ek, key, cewrapper, context, 
-                fireNow = false, ret;
-
-            if (type.indexOf(CAPTURE) > -1) {
-                type = type.substr(CAPTURE.length);
-                capture = true;
-                Y.log('Using capture phase for: ' + type, 'info', 'event');
-            }
+                fireNow = false, ret,
+                type = args[0],
+                fn = args[1],
+                el = args[2] || Y.config.win,
+                facade = config && config.facade,
+                capture = config && config.capture;
 
             if (trimmedArgs[trimmedArgs.length-1] === COMPAT_ARG) {
                 compat = true;
@@ -313,7 +312,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 
                 Y.each(el, function(v, k) {
                     args[2] = v;
-                    handles.push(E.attach.apply(E, args));
+                    handles.push(E._attach(args, config));
                 });
 
                 return (handles.length === 1) ? handles[0] : handles;
@@ -336,7 +335,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                             el = oEl[0];
                         } else {
                             args[2] = oEl;
-                            return E.attach.apply(E, args);
+                            return E._attach(args, config);
                         }
 
                     // HTMLElement
@@ -352,7 +351,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                     return this.onAvailable(el, function() {
                         // Y.log('lazy attach: ' + args);
-                        E.attach.apply(E, args);
+                        E._attach(args, config);
                     }, E, true, false, compat);
                 }
             }
@@ -374,6 +373,12 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             ek = Y.stamp(el); 
             key = 'event:' + ek + type;
+            if (false === facade) {
+                key += 'native';
+            }
+            if (capture) {
+                key += 'capture';
+            }
             cewrapper = _wrappers[key];
 
             if (!cewrapper) {
@@ -388,7 +393,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 cewrapper.el = el;
                 cewrapper.type = type;
                 cewrapper.fn = function(e) {
-                    cewrapper.fire(E.getEvent(e, el, compat));
+                    console.log(config);
+                    cewrapper.fire(E.getEvent(e, el, (compat || (false === facade))));
                 };
 
                 if (el == Y.config.win && type == "load") {
@@ -408,10 +414,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 _el_events[ek] = _el_events[ek] || {};
                 _el_events[ek][key] = cewrapper;
 
-                // var capture = (Y.lang.isObject(obj) && obj.capture);
-                // attach a listener that fires the custom event
-
-                // Y.log("Attaching listener: " + [el, type, cewrapper.fn, capture]);
                 add(el, type, cewrapper.fn, capture);
             }
 

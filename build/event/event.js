@@ -274,7 +274,7 @@ var whitelist = {
 Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, i, c, t;
+        x = e.pageX, y = e.pageY, c, t;
 
     this.altKey   = e.altKey;
     this.ctrlKey  = e.ctrlKey;
@@ -486,8 +486,6 @@ onUnload = function() {
 EVENT_READY = 'domready',
 
 COMPAT_ARG = '~yui|2|compat~',
-
-CAPTURE = "capture_",
 
 shouldIterate = function(o) {
     try {
@@ -728,20 +726,22 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          *                        or if the operation throws an exception.
          * @static
          */
+
         attach: function(type, fn, el, obj) {
+            return Y.Event._attach(Y.Array(arguments, 0, true));
+        },
 
-            el = el || Y.config.win;
+        _attach: function(args, config) {
 
-            var args=Y.Array(arguments, 0, true), 
-                trimmedArgs=args.slice(1),
-                compat, E=Y.Event, capture = false,
+            var trimmedArgs=args.slice(1),
+                compat, E=Y.Event,
                 handles, oEl, ek, key, cewrapper, context, 
-                fireNow = false, ret;
-
-            if (type.indexOf(CAPTURE) > -1) {
-                type = type.substr(CAPTURE.length);
-                capture = true;
-            }
+                fireNow = false, ret,
+                type = args[0],
+                fn = args[1],
+                el = args[2] || Y.config.win,
+                facade = config && config.facade,
+                capture = config && config.capture;
 
             if (trimmedArgs[trimmedArgs.length-1] === COMPAT_ARG) {
                 compat = true;
@@ -761,7 +761,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 
                 Y.each(el, function(v, k) {
                     args[2] = v;
-                    handles.push(E.attach.apply(E, args));
+                    handles.push(E._attach(args, config));
                 });
 
                 return (handles.length === 1) ? handles[0] : handles;
@@ -784,7 +784,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                             el = oEl[0];
                         } else {
                             args[2] = oEl;
-                            return E.attach.apply(E, args);
+                            return E._attach(args, config);
                         }
 
                     // HTMLElement
@@ -797,7 +797,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
 
                     return this.onAvailable(el, function() {
-                        E.attach.apply(E, args);
+                        E._attach(args, config);
                     }, E, true, false, compat);
                 }
             }
@@ -818,6 +818,12 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
             ek = Y.stamp(el); 
             key = 'event:' + ek + type;
+            if (false === facade) {
+                key += 'native';
+            }
+            if (capture) {
+                key += 'capture';
+            }
             cewrapper = _wrappers[key];
 
             if (!cewrapper) {
@@ -832,7 +838,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 cewrapper.el = el;
                 cewrapper.type = type;
                 cewrapper.fn = function(e) {
-                    cewrapper.fire(E.getEvent(e, el, compat));
+                    console.log(config);
+                    cewrapper.fire(E.getEvent(e, el, (compat || (false === facade))));
                 };
 
                 if (el == Y.config.win && type == "load") {
@@ -851,9 +858,6 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 _wrappers[key] = cewrapper;
                 _el_events[ek] = _el_events[ek] || {};
                 _el_events[ek][key] = cewrapper;
-
-                // var capture = (Y.lang.isObject(obj) && obj.capture);
-                // attach a listener that fires the custom event
 
                 add(el, type, cewrapper.fn, capture);
             }
@@ -1308,10 +1312,8 @@ Y.Env.evt.plugins.contentready = {
 };
 (function() {
 
-var FOCUS   = Y.UA.ie ? "focusin" : "focus",
-    BLUR    = Y.UA.ie ? "focusout" : "blur",
-    CAPTURE = "capture_",
-    adapt = Y.Env.evt.plugins,
+var adapt = Y.Env.evt.plugins,
+    CAPTURE_CONFIG = { capture: true },
     NOOP  = function(){},
 
     // Opera implents capture phase events per spec rather than
@@ -1327,7 +1329,7 @@ var FOCUS   = Y.UA.ie ? "focusin" : "focus",
             p  = el && el.parentNode;
 
         if (p) {
-            Y.Event.attach(type, NOOP, p);
+            Y.Event._attach([type, NOOP, p], CAPTURE_CONFIG);
         }
     };
 
@@ -1347,18 +1349,10 @@ var FOCUS   = Y.UA.ie ? "focusin" : "focus",
 adapt.focus = {
     on: function(type, fn, o) {
         var a = Y.Array(arguments, 0, true);
-        a[0] = CAPTURE + FOCUS;
         if (Y.UA.opera) {
-            _captureHack(a[0], o);
+            _captureHack(type, o);
         }
-        return Y.Event.attach.apply(Y.Event, a);
-    },
-
-    detach: function() {
-        var a = Y.Array(arguments, 0, true);
-        a[0] = CAPTURE + FOCUS;
-        return Y.Event.detach.apply(Y.Event, a);
-
+        return Y.Event._attach(a, CAPTURE_CONFIG);
     }
 };
 
@@ -1377,18 +1371,12 @@ adapt.focus = {
 adapt.blur = {
     on: function(type, fn, o) {
         var a = Y.Array(arguments, 0, true);
-        a[0] = CAPTURE + BLUR;
         if (Y.UA.opera) {
-            _captureHack(a[0], o);
+            _captureHack(type, o);
         }
-        return Y.Event.attach.apply(Y.Event, a);
-    },
-
-    detach: function() {
-        var a = Y.Array(arguments, 0, true);
-        a[0] = CAPTURE + BLUR;
-        return Y.Event.detach.apply(Y.Event, a);
+        return Y.Event._attach(a, CAPTURE_CONFIG);
     }
+
 };
 
 })();
