@@ -99,7 +99,9 @@
             <span class="s1">&#39;io.start&#39;</span><span class="o">:</span> <span class="m">1</span><span class="o">,</span>
             <span class="s1">&#39;io.success&#39;</span><span class="o">:</span> <span class="m">1</span><span class="o">,</span>
             <span class="s1">&#39;io.failure&#39;</span><span class="o">:</span> <span class="m">1</span>
-        <span class="o">};</span>
+        <span class="o">},</span>
+
+        <span class="nx">SLICE</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">slice</span><span class="o">;</span>
         
 <span class="c">// reduce to one or the other</span>
 <span class="c"></span><span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">YUI</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">YUI</span><span class="o">)</span> <span class="o">{</span>
@@ -441,12 +443,12 @@
     <span class="nx">use</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_loading</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_useQueue</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">));</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_useQueue</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">SLICE</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">));</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">}</span>
 
         <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> 
-            <span class="nx">a</span><span class="o">=</span><span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">),</span> 
+            <span class="nx">a</span><span class="o">=</span><span class="nx">SLICE</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">),</span> 
             <span class="nx">mods</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">mods</span><span class="o">,</span> 
             <span class="nx">used</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_used</span><span class="o">,</span>
             <span class="nx">loader</span><span class="o">,</span> 

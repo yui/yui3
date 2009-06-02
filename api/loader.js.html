@@ -1980,8 +1980,7 @@
 
             <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getModule</span><span class="o">(</span><span class="nx">s</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-<span class="c">// @TODO we can&#39;t combine CSS yet until we deliver files with absolute paths to the assets</span>
-<span class="c"></span>                <span class="c">// Do not try to combine non-yui JS</span>
+                <span class="c">// Do not try to combine non-yui JS</span>
 <span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="k">this</span><span class="o">.</span><span class="nx">loadType</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">m</span><span class="o">.</span><span class="nx">ext</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">url</span> <span class="o">+=</span> <span class="k">this</span><span class="o">.</span><span class="nx">root</span> <span class="o">+</span> <span class="nx">m</span><span class="o">.</span><span class="nx">path</span><span class="o">;</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
@@ -1996,7 +1995,8 @@
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attempting to use combo: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">_combining</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;loader&quot;</span><span class="o">);</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="nx">CSS</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// if (m.type === CSS) {</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">loadType</span> <span class="o">===</span> <span class="nx">CSS</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">fn</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">.</span><span class="nx">css</span><span class="o">;</span>
                     <span class="nx">attr</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">cssAttributes</span><span class="o">;</span>
                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
