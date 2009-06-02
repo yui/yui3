@@ -394,12 +394,12 @@ YUI.prototype = {
     use: function() {
 
         if (this._loading) {
-            this._useQueue.add(SLICE.call(arguments));
+            this._useQueue.add(SLICE.call(arguments, 0));
             return this;
         }
 
         var Y = this, 
-            a=SLICE.call(arguments), 
+            a=SLICE.call(arguments, 0), 
             mods = YUI.Env.mods, 
             used = Y.Env._used,
             loader, 
@@ -611,7 +611,7 @@ YUI.prototype = {
      * @return {string} the guid
      */
     guid: function(pre) {
-        var id =  this.Env._guidp + (this.Env._uidx++);
+        var id =  this.Env._guidp + (++this.Env._uidx);
         return (pre) ? (pre + id) : id;
     },
 
@@ -673,6 +673,21 @@ YUI.prototype = {
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
+
+    /*
+     * Subscribe to an event.  The signature differs depending on the
+     * type of event you are attaching to.
+     * @method on 
+     * @param type {string|function|object} The type of the event.  If
+     * this is a function, this is dispatched to the aop system.  If an
+     * object, it is parsed for multiple subsription definitions
+     * @param fn {Function} The callback
+     * @param elspec {any} DOM element(s), selector string(s), and or
+     * Node ref(s) to attach DOM related events to (only applies to
+     * DOM events).
+     * @param
+     * @return the event target or a detach handle per 'chain' config
+     */
 
 })();
 YUI.add('yui-base', function(Y) {
