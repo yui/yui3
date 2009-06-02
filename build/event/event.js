@@ -838,7 +838,6 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 cewrapper.el = el;
                 cewrapper.type = type;
                 cewrapper.fn = function(e) {
-                    console.log(config);
                     cewrapper.fire(E.getEvent(e, el, (compat || (false === facade))));
                 };
 

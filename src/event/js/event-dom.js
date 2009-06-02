@@ -393,7 +393,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 cewrapper.el = el;
                 cewrapper.type = type;
                 cewrapper.fn = function(e) {
-                    console.log(config);
                     cewrapper.fire(E.getEvent(e, el, (compat || (false === facade))));
                 };
 
