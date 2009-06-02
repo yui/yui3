@@ -731,11 +731,61 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             return Y.Event._attach(Y.Array(arguments, 0, true));
         },
 
+		_createWrapper: function (el, type, capture, compat, facade) {
+
+            var ek = Y.stamp(el),
+	            key = 'event:' + ek + type,
+	            cewrapper;
+
+
+            if (false === facade) {
+                key += 'native';
+            }
+            if (capture) {
+                key += 'capture';
+            }
+
+
+            cewrapper = _wrappers[key];
+            
+
+            if (!cewrapper) {
+                // create CE wrapper
+                cewrapper = Y.publish(key, {
+                    //silent: true,
+                    // host: this,
+                    bubbles: false
+                });
+            
+                // for later removeListener calls
+                cewrapper.el = el;
+                cewrapper.type = type;
+                cewrapper.fn = function(e) {
+                    cewrapper.fire(Y.Event.getEvent(e, el, (compat || (false === facade))));
+                };
+            
+                if (el == Y.config.win && type == "load") {
+                    // window load happens once
+                    cewrapper.fireOnce = true;
+                    _windowLoadKey = key;
+                }
+            
+                _wrappers[key] = cewrapper;
+                _el_events[ek] = _el_events[ek] || {};
+                _el_events[ek][key] = cewrapper;
+            
+                add(el, type, cewrapper.fn, capture);
+            }
+
+			return cewrapper;
+			
+		},
+
         _attach: function(args, config) {
 
             var trimmedArgs=args.slice(1),
                 compat, E=Y.Event,
-                handles, oEl, ek, key, cewrapper, context, 
+                handles, oEl, cewrapper, context, 
                 fireNow = false, ret,
                 type = args[0],
                 fn = args[1],
@@ -816,49 +866,16 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 return el.on.apply(el, args);
             }
 
-            ek = Y.stamp(el); 
-            key = 'event:' + ek + type;
-            if (false === facade) {
-                key += 'native';
-            }
-            if (capture) {
-                key += 'capture';
-            }
-            cewrapper = _wrappers[key];
+ 			cewrapper = this._createWrapper(el, type, capture, compat, facade);
 
-            if (!cewrapper) {
-                // create CE wrapper
-                cewrapper = Y.publish(key, {
-                    //silent: true,
-                    // host: this,
-                    bubbles: false
-                });
+            if (el == Y.config.win && type == "load") {
 
-                // for later removeListener calls
-                cewrapper.el = el;
-                cewrapper.type = type;
-                cewrapper.fn = function(e) {
-                    cewrapper.fire(E.getEvent(e, el, (compat || (false === facade))));
-                };
-
-                if (el == Y.config.win && type == "load") {
-                    // window load happens once
-                    cewrapper.fireOnce = true;
-                    _windowLoadKey = key;
-
-                    // if the load is complete, fire immediately.
-                    // all subscribers, including the current one
-                    // will be notified.
-                    if (YUI.Env.windowLoaded) {
-                        fireNow = true;
-                    }
+                // if the load is complete, fire immediately.
+                // all subscribers, including the current one
+                // will be notified.
+                if (YUI.Env.windowLoaded) {
+                    fireNow = true;
                 }
-
-                _wrappers[key] = cewrapper;
-                _el_events[ek] = _el_events[ek] || {};
-                _el_events[ek][key] = cewrapper;
-
-                add(el, type, cewrapper.fn, capture);
             }
 
             // switched from obj to trimmedArgs[2] to deal with appened compat param
@@ -1473,27 +1490,74 @@ Y.Env.evt.plugins.key = {
 };
 (function() {
 
-var delegates = {},
+var Event = Y.Event,
+	
+	delegates = {},
+	
+	resolveTextNode = function(n) {
 
-    _worker = function(delegateKey, e) {
+	    try {
+	        if (n && 3 == n.nodeType) {
+	            return n.parentNode;
+	        }
+	    } catch(e) { }
 
-        var target = e.target, 
-            tests  = delegates[delegateKey], 
-            spec, ename;
+	    return n;
+
+	},
+
+    _worker = function(delegateKey, e, el) {
+
+        var target = resolveTextNode((e.target || e.srcElement)), 
+            tests  = delegates[delegateKey],
+            spec, 
+			ename,
+			elements,
+			nElements,
+			element,
+			ce,
+			ev,
+			i;
 
         for (spec in tests) {
-            if (tests.hasOwnProperty(spec)) {
-                ename  = tests[spec];
-                e.currentTarget.queryAll(spec).some(function (v, k) {
 
-                    if (v.compareTo(target) || v.contains(target)) {
-                        e.target = v;
-                        Y.fire(ename, e);
-                        return true;
-                    }
-                });
+            if (tests.hasOwnProperty(spec)) {
+
+                ename  = tests[spec];
+				elements = Y.Selector.query(("#" + el.id + " ") + spec);
+				nElements = elements.length;
+
+				if (nElements > 0) {
+
+					i = elements.length - 1;
+
+					do {
+
+						element = elements[i];
+
+	                    if (element === target || Y.DOM.contains(element, target)) {
+
+							ce = Event._createWrapper(element, e.type, false, false, true);
+
+							ev = new Y.DOMEventFacade(e, element, ce);
+
+	                        ev.target = Y.Node.get(element);
+	
+	                        Y.fire(ename, ev);
+
+	  						break;
+
+	                    }
+
+					}
+					while (i--);
+					
+				}
+
             }
+
         }
+
     },
 
     _sanitize = Y.cached(function(str) {
@@ -1529,16 +1593,30 @@ Y.Env.evt.plugins.delegate = {
             // the key to the listener for the event type and container
             delegateKey = delegateType + guid,
 
-            a = Y.Array(arguments, 0, true);
+            a = Y.Array(arguments, 0, true),
+
+			element;
+		
 
         if (!(delegateKey in delegates)) {
 
+			element = Y.Node.getDOMNode(Y.Node.get(el));
+
+			//	Need to make sure that the element has an id so that we 
+			//	can create a selector whose scope is limited to the element
+
+			if (!element.id) {
+				element.id = Y.guid();
+			}
+
             delegates[delegateKey] = {};
 
-            // set up the listener on the container
-            Y.on(delegateType, function(e) {
-                _worker(delegateKey, e);
-            }, el);
+
+			Y.Event._attach([delegateType, function (e) {
+
+                _worker(delegateKey, (e || window.event), element);
+
+			}, element], { facade: false });
 
         }
 
