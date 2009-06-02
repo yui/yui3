@@ -1869,6 +1869,7 @@ Y.Loader.prototype = {
 
         var self = this, copy;
 
+        Y.log('public insert() ' + type, "info", "loader");
         Y.log('public insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
 
 
