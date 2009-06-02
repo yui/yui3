@@ -443,12 +443,12 @@
     <span class="nx">use</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_loading</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_useQueue</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">SLICE</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">));</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_useQueue</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">SLICE</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">));</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">}</span>
 
         <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> 
-            <span class="nx">a</span><span class="o">=</span><span class="nx">SLICE</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">),</span> 
+            <span class="nx">a</span><span class="o">=</span><span class="nx">SLICE</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">),</span> 
             <span class="nx">mods</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">mods</span><span class="o">,</span> 
             <span class="nx">used</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_used</span><span class="o">,</span>
             <span class="nx">loader</span><span class="o">,</span> 
@@ -673,7 +673,7 @@
 <span class="c">     * @return {string} the guid</span>
 <span class="c">     */</span>
     <span class="nx">guid</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">id</span> <span class="o">=</span>  <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_guidp</span> <span class="o">+</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_uidx</span><span class="o">++);</span>
+        <span class="k">var</span> <span class="nx">id</span> <span class="o">=</span>  <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_guidp</span> <span class="o">+</span> <span class="o">(++</span><span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_uidx</span><span class="o">);</span>
         <span class="k">return</span> <span class="o">(</span><span class="nx">pre</span><span class="o">)</span> <span class="o">?</span> <span class="o">(</span><span class="nx">pre</span> <span class="o">+</span> <span class="nx">id</span><span class="o">)</span> <span class="o">:</span> <span class="nx">id</span><span class="o">;</span>
     <span class="o">},</span>
 
@@ -735,6 +735,21 @@
 
     <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">add</span> <span class="o">=</span> <span class="nx">add</span><span class="o">;</span>
     <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="nx">remove</span><span class="o">;</span>
+
+    <span class="c">/*</span>
+<span class="c">     * Subscribe to an event.  The signature differs depending on the</span>
+<span class="c">     * type of event you are attaching to.</span>
+<span class="c">     * @method on </span>
+<span class="c">     * @param type {string|function|object} The type of the event.  If</span>
+<span class="c">     * this is a function, this is dispatched to the aop system.  If an</span>
+<span class="c">     * object, it is parsed for multiple subsription definitions</span>
+<span class="c">     * @param fn {Function} The callback</span>
+<span class="c">     * @param elspec {any} DOM element(s), selector string(s), and or</span>
+<span class="c">     * Node ref(s) to attach DOM related events to (only applies to</span>
+<span class="c">     * DOM events).</span>
+<span class="c">     * @param</span>
+<span class="c">     * @return the event target or a detach handle per &#39;chain&#39; config</span>
+<span class="c">     */</span>
 
 <span class="o">})();</span>
 </pre></div>
