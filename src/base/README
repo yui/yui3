@@ -73,6 +73,15 @@
   for a class). Replaces static PLUGINS array, allowing subclasses to 
   easily unplug static plugins added higher up in the hierarchy.
 
+* Base adds all attributes lazily. This means attributes don't get
+  initialized until the first call to get/set, speeding up construction
+  of Base based objects.
+
+  Attributes which have setters which set some other state in the object, 
+  can configure the attribute to disable lazy initialization, by setting
+  lazyAdd:false as part of their attribute configuration, so that the setter
+  gets invoked during construction.
+
 3.0.0PR1 - Initial release
 
 Module Name: "base"
