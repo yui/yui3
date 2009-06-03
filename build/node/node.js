@@ -314,7 +314,7 @@ Node.DEFAULT_SETTER = function(name, val) {
         name = name.split(DOT);
         Y.Object.setValue(node, name, val);
     } else {
-        node[name] = val;    
+        node[name] = val;
     }
 
     return this;
