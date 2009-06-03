@@ -136,7 +136,7 @@
         <span class="c">// Not a Number, just return as string</span>
 <span class="c"></span>        <span class="k">else</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Could not format data &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; from type Number&quot;</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;datatype-number&quot;</span><span class="o">);</span>
-            <span class="k">return</span> <span class="nx">data</span><span class="o">.</span><span class="nx">toString</span><span class="o">();</span>
+            <span class="k">return</span> <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isValue</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="o">.</span><span class="nx">toString</span><span class="o">)</span> <span class="o">?</span> <span class="nx">data</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">}</span>
 <span class="o">});</span>

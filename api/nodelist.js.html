@@ -115,7 +115,6 @@
         <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">restricted</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">g_restrict</span> <span class="o">=</span> <span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">];</span>
         <span class="o">}</span>
-        <span class="nx">NodeList</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">};</span>
 <span class="c">// end &quot;globals&quot;</span>
 <span class="c"></span>
@@ -195,38 +194,6 @@
     <span class="k">return</span> <span class="nx">tmp</span><span class="o">;</span>
 <span class="o">};</span>
 
-<span class="c">// call with instance context</span>
-<span class="c"></span><span class="nx">NodeList</span><span class="o">.</span><span class="nx">DEFAULT_SETTER</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">_getTempNode</span><span class="o">();</span>
-    <span class="nx">NodeList</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="nx">node</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">instance</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">g_nodes</span><span class="o">[</span><span class="nx">tmp</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
-            <span class="nx">instance</span> <span class="o">=</span> <span class="nx">tmp</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="nx">instance</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
-    <span class="o">});</span>
-<span class="o">};</span>
-
-<span class="c">// call with instance context</span>
-<span class="c"></span><span class="nx">NodeList</span><span class="o">.</span><span class="nx">DEFAULT_GETTER</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">_getTempNode</span><span class="o">(),</span>
-        <span class="nx">ret</span> <span class="o">=</span> <span class="o">[];</span>
-
-    <span class="nx">NodeList</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="nx">node</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">instance</span><span class="o">)</span> <span class="o">{</span> <span class="c">// reuse tmp instance</span>
-<span class="c"></span>            <span class="nx">g_nodes</span><span class="o">[</span><span class="nx">tmp</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
-            <span class="nx">instance</span> <span class="o">=</span> <span class="nx">tmp</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="nx">ret</span><span class="o">[</span><span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attr</span><span class="o">);</span>
-    <span class="o">});</span>
-
-    <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-<span class="o">};</span>
-
-<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">NodeList</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">);</span>
-
 <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">NodeList</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="o">{</span>
     <span class="c">/**</span>
 <span class="c">     * Retrieves the Node instance at the given index. </span>
@@ -252,10 +219,25 @@
         <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-            <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="nx">node</span><span class="o">;</span>
-            <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">context</span><span class="o">,</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">instance</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">instance</span><span class="o">);</span>
         <span class="o">});</span>
         <span class="k">return</span> <span class="nx">instance</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="nx">batch</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">nodelist</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+            <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">_getTempNode</span><span class="o">();</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="nx">node</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">instance</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">g_nodes</span><span class="o">[</span><span class="nx">tmp</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
+                <span class="nx">instance</span> <span class="o">=</span> <span class="nx">tmp</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">instance</span><span class="o">,</span> <span class="nx">instance</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">nodelist</span><span class="o">);</span>
+        <span class="o">});</span>
+        <span class="k">return</span> <span class="nx">nodelist</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -298,54 +280,8 @@
         <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">scrubVal</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">filter</span><span class="o">(</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="nx">selector</span><span class="o">),</span> <span class="k">this</span><span class="o">);</span>
     <span class="o">},</span>
 
-    <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">data</span><span class="o">.</span><span class="nx">getter</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">data</span><span class="o">.</span><span class="nx">getter</span><span class="o">[</span><span class="nx">attr</span><span class="o">]))</span> <span class="o">{</span>
-        <span class="c">//if (!this.attrAdded(attr)) {</span>
-<span class="c"></span>            <span class="c">//this._addAttr(attr);</span>
-<span class="c"></span>            <span class="k">return</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">DEFAULT_GETTER</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">attr</span><span class="o">);</span>
-            <span class="c">//return NodeList.DEFAULT_GETTER.call(this, attr);</span>
-<span class="c"></span>        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">get</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-    <span class="o">},</span>
-
-    <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_addAttr</span><span class="o">(</span><span class="nx">attr</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">set</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-    <span class="o">},</span>
-
-    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">arg</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">g_slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
-
-        <span class="nx">args</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Node</span><span class="o">.</span><span class="nx">DOM_EVENTS</span><span class="o">[</span><span class="nx">type</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-    <span class="o">},</span>
-
     <span class="nx">destructor</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">delete</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
-    <span class="o">},</span>
-
-    <span class="nx">plug</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">node</span><span class="o">.</span><span class="nx">plug</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
-        <span class="o">});</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="nx">unplug</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">node</span><span class="o">.</span><span class="nx">unplug</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
-        <span class="o">});</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="nx">refresh</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
@@ -377,6 +313,23 @@
         <span class="k">return</span> <span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]].</span><span class="nx">length</span><span class="o">;</span>
     <span class="o">},</span>
 
+    <span class="c">// one-off because we cant import from Node due to undefined return values</span>
+<span class="c"></span>    <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">_getTempNode</span><span class="o">();</span>
+
+        <span class="nx">NodeList</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="nx">node</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">instance</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">g_nodes</span><span class="o">[</span><span class="nx">tmp</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
+                <span class="nx">instance</span> <span class="o">=</span> <span class="nx">tmp</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="nx">ret</span><span class="o">[</span><span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+        <span class="o">});</span>
+
+        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+    <span class="o">},</span>
+
     <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
             <span class="nx">errorMsg</span> <span class="o">=</span> <span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]</span> <span class="o">+</span> <span class="s1">&#39;: not bound to any nodes&#39;</span><span class="o">,</span>
@@ -399,28 +352,24 @@
             <span class="o">}</span>
         <span class="o">}</span>
         <span class="k">return</span> <span class="nx">str</span> <span class="o">||</span> <span class="nx">errorMsg</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="nx">_addAttr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">addAttr</span><span class="o">(</span><span class="nx">attr</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)[</span><span class="m">0</span><span class="o">],</span> <span class="o">{</span>
-            <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">DEFAULT_GETTER</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">attr</span><span class="o">);</span>
-            <span class="o">},</span>
-
-            <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">NodeList</span><span class="o">.</span><span class="nx">DEFAULT_SETTER</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
     <span class="o">}</span>
+
 <span class="o">},</span> <span class="kc">true</span><span class="o">);</span>
 
 <span class="nx">NodeList</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="o">[</span>
-    <span class="s1">&#39;addEventListener&#39;</span><span class="o">,</span>
-    <span class="s1">&#39;removeEventListener&#39;</span><span class="o">,</span>
-    <span class="s1">&#39;remove&#39;</span><span class="o">,</span>
+    <span class="s1">&#39;after&#39;</span><span class="o">,</span>
     <span class="s1">&#39;append&#39;</span><span class="o">,</span>
+    <span class="s1">&#39;create&#39;</span><span class="o">,</span>
+    <span class="s1">&#39;detach&#39;</span><span class="o">,</span>
+    <span class="s1">&#39;detachAll&#39;</span><span class="o">,</span>
+    <span class="s1">&#39;insert&#39;</span><span class="o">,</span>
+    <span class="s1">&#39;on&#39;</span><span class="o">,</span>
+    <span class="s1">&#39;plug&#39;</span><span class="o">,</span>
+    <span class="s1">&#39;prepend&#39;</span><span class="o">,</span>
+    <span class="s1">&#39;remove&#39;</span><span class="o">,</span>
+    <span class="s1">&#39;set&#39;</span><span class="o">,</span>
     <span class="s1">&#39;setContent&#39;</span><span class="o">,</span>
-    <span class="s1">&#39;prepend&#39;</span>
+    <span class="s1">&#39;unplug&#39;</span>
 <span class="o">]);</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span> <span class="o">=</span> <span class="nx">NodeList</span><span class="o">;</span>

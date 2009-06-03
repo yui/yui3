@@ -184,26 +184,27 @@
 <span class="c"></span>                    <span class="k">if</span> <span class="o">(!</span><span class="nx">root</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">root</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
                     <span class="o">}</span>
-                    <span class="nx">selector</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">root</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">selector</span><span class="o">;</span>
-
                     <span class="c">// fast-path ID when possible</span>
 <span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">root</span><span class="o">.</span><span class="nx">ownerDocument</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">root</span><span class="o">.</span><span class="nx">id</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">selector</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">root</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">selector</span><span class="o">;</span>
                         <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">ownerDocument</span><span class="o">;</span>
+
                     <span class="o">}</span>
                 <span class="o">}</span>
 
-                <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_tokenize</span><span class="o">(</span><span class="nx">selector</span><span class="o">);</span>
+                <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_tokenize</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">root</span><span class="o">);</span>
                 <span class="nx">token</span> <span class="o">=</span> <span class="nx">tokens</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">token</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">deDupe</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">token</span><span class="o">.</span><span class="nx">deDupe</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="c">// TODO: better approach?</span>
 <span class="c"></span>                    <span class="o">}</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">tokens</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">tokens</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="nx">root</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">tokens</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">tokens</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="nx">root</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span> <span class="o">&amp;&amp;</span> <span class="nx">root</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">tokens</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">id</span><span class="o">))</span> <span class="o">{</span>
                         <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">tokens</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">id</span><span class="o">);</span>
                     <span class="o">}</span>
 
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">nodes</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">token</span><span class="o">.</span><span class="nx">prefilter</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c">// TODO: no prefilter for off-dom id</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">nodes</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">token</span><span class="o">.</span><span class="nx">prefilter</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">token</span><span class="o">.</span><span class="nx">prefilter</span><span class="o">(</span><span class="nx">root</span><span class="o">,</span> <span class="nx">token</span><span class="o">);</span>
                     <span class="o">}</span>
 
@@ -248,6 +249,10 @@
                 <span class="o">}</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">nextTest</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">nextTest</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">token</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+                <span class="o">}</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">token</span><span class="o">.</span><span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="nx">token</span><span class="o">.</span><span class="nx">root</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">!==</span> <span class="m">9</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">token</span><span class="o">.</span><span class="nx">root</span><span class="o">,</span> <span class="nx">node</span><span class="o">))</span> <span class="o">{</span>
                     <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
                 <span class="o">}</span>
 
@@ -384,7 +389,7 @@
 <span class="c">            Break selector into token units per simple selector.</span>
 <span class="c">            Combinator is attached to the previous token.</span>
 <span class="c">         */</span>
-        <span class="nx">_tokenize</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">_tokenize</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">root</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
             <span class="nx">selector</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_replaceShorthand</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">selector</span><span class="o">));</span> 
             <span class="k">var</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_getToken</span><span class="o">(),</span>     <span class="c">// one token per simple selector (left selector holds combinator)</span>
@@ -420,6 +425,7 @@
                             <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                             <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">match</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="s1">&#39;&#39;</span><span class="o">);</span> <span class="c">// strip current match from selector</span>
 <span class="c"></span>                            <span class="k">if</span> <span class="o">(!</span><span class="nx">selector</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">]</span> <span class="o">||</span> <span class="nx">parser</span><span class="o">.</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">COMBINATOR</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="nx">token</span><span class="o">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span><span class="o">;</span>
                                 <span class="nx">tokens</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">token</span><span class="o">);</span>
                                 <span class="nx">token</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_getToken</span><span class="o">(</span><span class="nx">token</span><span class="o">);</span>
                             <span class="o">}</span>
