@@ -1,9 +1,7 @@
 (function() {
 
-var FOCUS   = Y.UA.ie ? "focusin" : "focus",
-    BLUR    = Y.UA.ie ? "focusout" : "blur",
-    CAPTURE = "capture_",
-    adapt = Y.Env.evt.plugins,
+var adapt = Y.Env.evt.plugins,
+    CAPTURE_CONFIG = { capture: true },
     NOOP  = function(){},
 
     // Opera implents capture phase events per spec rather than
@@ -19,7 +17,7 @@ var FOCUS   = Y.UA.ie ? "focusin" : "focus",
             p  = el && el.parentNode;
 
         if (p) {
-            Y.Event.attach(type, NOOP, p);
+            Y.Event._attach([type, NOOP, p], CAPTURE_CONFIG);
         }
     };
 
@@ -39,18 +37,10 @@ var FOCUS   = Y.UA.ie ? "focusin" : "focus",
 adapt.focus = {
     on: function(type, fn, o) {
         var a = Y.Array(arguments, 0, true);
-        a[0] = CAPTURE + FOCUS;
         if (Y.UA.opera) {
-            _captureHack(a[0], o);
+            _captureHack(type, o);
         }
-        return Y.Event.attach.apply(Y.Event, a);
-    },
-
-    detach: function() {
-        var a = Y.Array(arguments, 0, true);
-        a[0] = CAPTURE + FOCUS;
-        return Y.Event.detach.apply(Y.Event, a);
-
+        return Y.Event._attach(a, CAPTURE_CONFIG);
     }
 };
 
@@ -69,18 +59,12 @@ adapt.focus = {
 adapt.blur = {
     on: function(type, fn, o) {
         var a = Y.Array(arguments, 0, true);
-        a[0] = CAPTURE + BLUR;
         if (Y.UA.opera) {
-            _captureHack(a[0], o);
+            _captureHack(type, o);
         }
-        return Y.Event.attach.apply(Y.Event, a);
-    },
-
-    detach: function() {
-        var a = Y.Array(arguments, 0, true);
-        a[0] = CAPTURE + BLUR;
-        return Y.Event.detach.apply(Y.Event, a);
+        return Y.Event._attach(a, CAPTURE_CONFIG);
     }
+
 };
 
 })();
