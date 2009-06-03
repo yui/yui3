@@ -2,6 +2,8 @@
 
 var Event = Y.Event,
 	
+	Lang = Y.Lang,
+	
 	delegates = {},
 	
 	resolveTextNode = function(n) {
@@ -34,7 +36,9 @@ var Event = Y.Event,
             if (tests.hasOwnProperty(spec)) {
 
                 ename  = tests[spec];
-				elements = Y.Selector.query(("#" + el.id + " ") + spec);
+
+				elements = Y.Selector.query(spec, el);
+
 				nElements = elements.length;
 
 				if (nElements > 0) {
@@ -70,6 +74,16 @@ var Event = Y.Event,
 
     },
 
+	attach = function (type, key, element) {
+		
+		Y.Event._attach([type, function (e) {
+
+            _worker(key, (e || window.event), element);
+
+		}, element], { facade: false });
+		
+	},
+
     _sanitize = Y.cached(function(str) {
         return str.replace(/[|,:]/g, '~');
     });
@@ -96,7 +110,7 @@ Y.Env.evt.plugins.delegate = {
         }
 
         // identifier to target the container
-        var guid = (Y.Lang.isString(el) ? el : Y.stamp(el)), 
+        var guid = (Lang.isString(el) ? el : Y.stamp(el)), 
                 
             // the custom event for the delegation spec
             ename = 'delegate:' + guid + delegateType + _sanitize(spec),
@@ -111,23 +125,25 @@ Y.Env.evt.plugins.delegate = {
 
         if (!(delegateKey in delegates)) {
 
-			element = Y.Node.getDOMNode(Y.Node.get(el));
+			if (Lang.isString(el)) {	//	Selector
+				element = Y.Selector.query(el);				
+			}
+			else {	// Node instance
+				element = Y.Node.getDOMNode(el);
+			}
 
-			//	Need to make sure that the element has an id so that we 
-			//	can create a selector whose scope is limited to the element
+			if (Lang.isArray(element)) {
 
-			if (!element.id) {
-				element.id = Y.guid();
+				Y.Array.each(element, function (v) {
+					attach(delegateType, delegateKey, v);
+				});
+
+			}
+			else {
+				attach(delegateType, delegateKey, element);
 			}
 
             delegates[delegateKey] = {};
-
-
-			Y.Event._attach([delegateType, function (e) {
-
-                _worker(delegateKey, (e || window.event), element);
-
-			}, element], { facade: false });
 
         }
 
