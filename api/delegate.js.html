@@ -51,6 +51,8 @@
 
 <span class="k">var</span> <span class="nx">Event</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span>
 	
+	<span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+	
 	<span class="nx">delegates</span> <span class="o">=</span> <span class="o">{},</span>
 	
 	<span class="nx">resolveTextNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
@@ -83,7 +85,9 @@
             <span class="k">if</span> <span class="o">(</span><span class="nx">tests</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">spec</span><span class="o">))</span> <span class="o">{</span>
 
                 <span class="nx">ename</span>  <span class="o">=</span> <span class="nx">tests</span><span class="o">[</span><span class="nx">spec</span><span class="o">];</span>
-				<span class="nx">elements</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">((</span><span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="nx">el</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">)</span> <span class="o">+</span> <span class="nx">spec</span><span class="o">);</span>
+
+				<span class="nx">elements</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">spec</span><span class="o">,</span> <span class="nx">el</span><span class="o">);</span>
+
 				<span class="nx">nElements</span> <span class="o">=</span> <span class="nx">elements</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
 
 				<span class="k">if</span> <span class="o">(</span><span class="nx">nElements</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
@@ -119,6 +123,16 @@
 
     <span class="o">},</span>
 
+	<span class="nx">attach</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
+		
+		<span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_attach</span><span class="o">([</span><span class="nx">type</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="nx">_worker</span><span class="o">(</span><span class="nx">key</span><span class="o">,</span> <span class="o">(</span><span class="nx">e</span> <span class="o">||</span> <span class="nb">window</span><span class="o">.</span><span class="nx">event</span><span class="o">),</span> <span class="nx">element</span><span class="o">);</span>
+
+		<span class="o">},</span> <span class="nx">element</span><span class="o">],</span> <span class="o">{</span> <span class="nx">facade</span><span class="o">:</span> <span class="kc">false</span> <span class="o">});</span>
+		
+	<span class="o">},</span>
+
     <span class="nx">_sanitize</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">str</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">str</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/[|,:]/g</span><span class="o">,</span> <span class="s1">&#39;~&#39;</span><span class="o">);</span>
     <span class="o">});</span>
@@ -145,7 +159,7 @@
         <span class="o">}</span>
 
         <span class="c">// identifier to target the container</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">guid</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">?</span> <span class="nx">el</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">el</span><span class="o">)),</span> 
+<span class="c"></span>        <span class="k">var</span> <span class="nx">guid</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">?</span> <span class="nx">el</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">el</span><span class="o">)),</span> 
                 
             <span class="c">// the custom event for the delegation spec</span>
 <span class="c"></span>            <span class="nx">ename</span> <span class="o">=</span> <span class="s1">&#39;delegate:&#39;</span> <span class="o">+</span> <span class="nx">guid</span> <span class="o">+</span> <span class="nx">delegateType</span> <span class="o">+</span> <span class="nx">_sanitize</span><span class="o">(</span><span class="nx">spec</span><span class="o">),</span>
@@ -160,23 +174,25 @@
 
         <span class="k">if</span> <span class="o">(!(</span><span class="nx">delegateKey</span> <span class="k">in</span> <span class="nx">delegates</span><span class="o">))</span> <span class="o">{</span>
 
-			<span class="nx">element</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">el</span><span class="o">));</span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>	<span class="c">//	Selector</span>
+<span class="c"></span>				<span class="nx">element</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>				
+			<span class="o">}</span>
+			<span class="k">else</span> <span class="o">{</span>	<span class="c">// Node instance</span>
+<span class="c"></span>				<span class="nx">element</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
+			<span class="o">}</span>
 
-			<span class="c">//	Need to make sure that the element has an id so that we </span>
-<span class="c"></span>			<span class="c">//	can create a selector whose scope is limited to the element</span>
-<span class="c"></span>
-			<span class="k">if</span> <span class="o">(!</span><span class="nx">element</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">element</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">element</span><span class="o">))</span> <span class="o">{</span>
+
+				<span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+					<span class="nx">attach</span><span class="o">(</span><span class="nx">delegateType</span><span class="o">,</span> <span class="nx">delegateKey</span><span class="o">,</span> <span class="nx">v</span><span class="o">);</span>
+				<span class="o">});</span>
+
+			<span class="o">}</span>
+			<span class="k">else</span> <span class="o">{</span>
+				<span class="nx">attach</span><span class="o">(</span><span class="nx">delegateType</span><span class="o">,</span> <span class="nx">delegateKey</span><span class="o">,</span> <span class="nx">element</span><span class="o">);</span>
 			<span class="o">}</span>
 
             <span class="nx">delegates</span><span class="o">[</span><span class="nx">delegateKey</span><span class="o">]</span> <span class="o">=</span> <span class="o">{};</span>
-
-
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_attach</span><span class="o">([</span><span class="nx">delegateType</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-
-                <span class="nx">_worker</span><span class="o">(</span><span class="nx">delegateKey</span><span class="o">,</span> <span class="o">(</span><span class="nx">e</span> <span class="o">||</span> <span class="nb">window</span><span class="o">.</span><span class="nx">event</span><span class="o">),</span> <span class="nx">element</span><span class="o">);</span>
-
-			<span class="o">},</span> <span class="nx">element</span><span class="o">],</span> <span class="o">{</span> <span class="nx">facade</span><span class="o">:</span> <span class="kc">false</span> <span class="o">});</span>
 
         <span class="o">}</span>
 

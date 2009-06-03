@@ -228,7 +228,27 @@ Y.mix(NodeList.prototype, {
      * @see Selector
      */
     filter: function(selector) {
-        return Node.scrubVal(Y.Selector.filter(g_nodelists[this[UID]], selector), this);
+        return Y.all(Y.Selector.filter(g_nodelists[this[UID]], selector));
+    },
+
+    modulus: function(n, r) {
+        r = r || 0;
+        var nodes = [];
+        NodeList.each(this, function(node, i) {
+            if (i % n === r) {
+                nodes.push(node);
+            }
+        });
+
+        return Y.all(nodes);
+    },
+
+    odd: function() {
+        return this.modulus(2, 1);
+    },
+
+    even: function() {
+        return this.modulus(2);
     },
 
     destructor: function() {
