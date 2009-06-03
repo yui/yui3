@@ -380,8 +380,8 @@ Y.mix(Node.prototype, {
     get: function(attr) {
         if (!this.attrAdded(attr)) {
             if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
-                this._addDOMAttr(attr);
-                //return Node.DEFAULT_GETTER.apply(this, arguments);
+                //this._addDOMAttr(attr);
+                return Node.DEFAULT_GETTER.apply(this, arguments);
             } else {
                 return Node.DEFAULT_GETTER.apply(this, arguments);
             }
