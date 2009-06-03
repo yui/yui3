@@ -694,8 +694,11 @@ Y.extend(Console,Y.Widget,{
      * @chainable
      */
     printBuffer: function (limit) {
-        var messages = this.buffer,
-            debug = Y.config.debug,
+        var messages    = this.buffer,
+            debug       = Y.config.debug,
+            entries     = [],
+            newestOnTop = this.get('newestOnTop'),
+            anchor      = newestOnTop ? this._body.get('firstChild') : null,
             i;
 
         limit = Math.min(messages.length, (limit || messages.length));
@@ -705,16 +708,19 @@ Y.extend(Console,Y.Widget,{
 
         if (!this.get(PAUSED) && this.get('rendered')) {
 
-            // TODO: use doc frag
-            this._body.setStyle('diplay','none');
             for (i = 0; i < limit && messages.length; ++i) {
-                this.printLogEntry(messages.shift());
+                entries[i] = this._createEntryHTML(messages.shift());
             }
-            this._body.setStyle('diplay','');
 
             if (!messages.length) {
                 this._cancelPrintLoop();
             }
+
+            if (newestOnTop) {
+                entries.reverse();
+            }
+
+            this._body.insertBefore(create(entries.join('')), anchor);
 
             if (this.get('scrollIntoView')) {
                 this.scrollToLatest();
@@ -726,24 +732,6 @@ Y.extend(Console,Y.Widget,{
 
         // restore logging system
         Y.config.debug = debug;
-
-        return this;
-    },
-
-    /**
-     * Prints the provided message to the console UI.
-     *
-     * Inserts the Node into the console body at the top or bottom depending on
-     * the configuration value of newestOnTop.
-     *
-     * @method printLogEntry
-     * @param m {Object} Normalized message object
-     * @chainable
-     */
-    printLogEntry : function (m) {
-        var sib = this.get('newestOnTop') ? this._body.get('firstChild') : null;
-
-        this._body.insertBefore(this._createEntry(m), sib);
 
         return this;
     },
@@ -1001,14 +989,14 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Creates an entry node from the message meta provided.
+     * Translates message meta into the markup for a console entry
      *
-     * @method _createEntry
+     * @method _createEntryHTML
      * @param m {Object} object literal containing normalized message metadata
-     * @return Node
+     * @return String
      * @protected
      */
-    _createEntry : function (m) {
+    _createEntryHTML : function (m) {
         m = merge(
                 this._htmlEscapeMessage(m),
                 Console.ENTRY_CLASSES,
@@ -1017,7 +1005,10 @@ Y.extend(Console,Y.Widget,{
                     src_class : this.getClassName(ENTRY,m.source)
                 });
 
-        return create(substitute(this.get('entryTemplate'),m));
+        return this.get('entryTemplate').replace(/\{(\w+)\}/g,
+            function (_,token) {
+                return token in m ? m[token] : '';
+            });
     },
 
     /**
