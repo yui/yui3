@@ -549,7 +549,7 @@ Y.DOM = {
                 scripts = newNode.getElementsByTagName('script');
             }
             Y.DOM._execScripts(scripts);
-        } else if (content.nodeType || content.indexOf('script') > -1) { // prevent any scripts from being injected
+        } else if (content.nodeType || content.indexOf('<script') > -1) { // prevent any scripts from being injected
             Y.DOM._stripScripts(newNode);
         }
 
@@ -1068,7 +1068,7 @@ Y.mix(Y.DOM, {
             doc = node[OWNER_DOCUMENT];
 
         if (node[STYLE]) {
-            val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, '')[att];
+            val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, null)[att];
         }
         return val;
     }

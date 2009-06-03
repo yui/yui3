@@ -311,12 +311,13 @@
 <span class="c">     * If cache is full, evicts the stalest entry before adding the new one.</span>
 <span class="c">     *</span>
 <span class="c">     * @method add</span>
-<span class="c">     * @param request {Object} Request object.</span>
-<span class="c">     * @param response {Object} Response object.</span>
+<span class="c">     * @param request {Object} Request value.</span>
+<span class="c">     * @param response {Object} Response value.</span>
 <span class="c">     * @param payload {Object} (optional) Arbitrary data payload.</span>
 <span class="c">     */</span>
     <span class="nx">add</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">request</span><span class="o">,</span> <span class="nx">response</span><span class="o">,</span> <span class="nx">payload</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;entries&quot;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;max&quot;</span><span class="o">)&gt;</span><span class="m">0</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isValue</span><span class="o">(</span><span class="nx">request</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isValue</span><span class="o">(</span><span class="nx">response</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">if</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;entries&quot;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;max&quot;</span><span class="o">)&gt;</span><span class="m">0</span><span class="o">)</span> <span class="o">&amp;&amp;</span>
+                <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isValue</span><span class="o">(</span><span class="nx">request</span><span class="o">)</span> <span class="o">||</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isNull</span><span class="o">(</span><span class="nx">request</span><span class="o">)</span> <span class="o">||</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">request</span><span class="o">)))</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;add&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">entry</span><span class="o">:</span> <span class="o">{</span><span class="nx">request</span><span class="o">:</span><span class="nx">request</span><span class="o">,</span> <span class="nx">response</span><span class="o">:</span><span class="nx">response</span><span class="o">,</span> <span class="nx">payload</span><span class="o">:</span><span class="nx">payload</span><span class="o">}});</span>
         <span class="o">}</span>
         <span class="k">else</span> <span class="o">{</span>
@@ -367,14 +368,13 @@
 <span class="c"></span>                        <span class="nx">entries</span><span class="o">[</span><span class="nx">entries</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">entry</span><span class="o">;</span>
                         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Refreshed cache entry: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">entry</span><span class="o">)</span> <span class="o">+</span> 
                                 <span class="s2">&quot; for request: &quot;</span> <span class="o">+</span>  <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">request</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;cache&quot;</span><span class="o">);</span>
-                        <span class="k">break</span><span class="o">;</span>
                     <span class="o">}</span> 
+                    
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Retrieved cached response: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">entry</span><span class="o">)</span> <span class="o">+</span>
+                            <span class="s2">&quot; for request: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">request</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;cache&quot;</span><span class="o">);</span>
+                    <span class="k">return</span> <span class="nx">entry</span><span class="o">;</span>
                 <span class="o">}</span>
             <span class="o">}</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Retrieved cached response: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">entry</span><span class="o">)</span> <span class="o">+</span>
-                    <span class="s2">&quot; for request: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">request</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;cache&quot;</span><span class="o">);</span>
-            <span class="k">return</span> <span class="nx">entry</span><span class="o">;</span>
-
         <span class="o">}</span>
         <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
     <span class="o">}</span>

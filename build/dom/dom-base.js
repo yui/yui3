@@ -547,7 +547,7 @@ Y.DOM = {
                 scripts = newNode.getElementsByTagName('script');
             }
             Y.DOM._execScripts(scripts);
-        } else if (content.nodeType || content.indexOf('script') > -1) { // prevent any scripts from being injected
+        } else if (content.nodeType || content.indexOf('<script') > -1) { // prevent any scripts from being injected
             Y.DOM._stripScripts(newNode);
         }
 

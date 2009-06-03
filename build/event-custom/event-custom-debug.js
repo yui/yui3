@@ -1601,7 +1601,7 @@ ET.prototype = {
             //     return o.on.apply(o, a);
             // } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
             } else if ((!type) || (!adapt && Node && (shorttype in Node.DOM_EVENTS))) {
-                handle = Y.Event.attach.apply(Y.Event, args);
+                handle = Y.Event._attach(args);
             }
 
         } 
