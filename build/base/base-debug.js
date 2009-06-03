@@ -324,7 +324,7 @@ Y.namespace("Plugin").Host = PluginHost;
         Y.Plugin.Host.call(this);
 
         this._silentInit = this._silentInit || false;
-        if (this._lazyAttrInit !== false) { this._lazyAttrInit = true; }
+        if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
 
         this.init.apply(this, arguments);
     }
@@ -571,16 +571,14 @@ Y.namespace("Plugin").Host = PluginHost;
          * @param {Objects} allCfgs
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
-            var cfgs = null, attr;
+            var cfgs = null, attr, attrs = clazz.ATTRS;
 
-            if (clazz.ATTRS) {
-                for (attr in clazz.ATTRS) {
-                    if (clazz.ATTRS.hasOwnProperty(attr)) {
-                        if (allCfgs[attr]) {
-                            cfgs = cfgs || {};
-                            cfgs[attr] = allCfgs[attr];
-                            delete allCfgs[attr];
-                        }
+            if (attrs) {
+                for (attr in attrs) {
+                    if (attrs.hasOwnProperty(attr) && allCfgs[attr]) {
+                        cfgs = cfgs || {};
+                        cfgs[attr] = allCfgs[attr];
+                        delete allCfgs[attr];
                     }
                 }
             }
@@ -625,18 +623,18 @@ Y.namespace("Plugin").Host = PluginHost;
                 path, 
                 i, 
                 clone, 
-                cfgProps = Base._ATTR_CFG, 
-                filteredMerge = this._filteredMerge,
-
+                cfgProps = Base._ATTR_CFG,
                 aggAttrs = {};
 
             if (allAttrs) {
                 for (i = allAttrs.length-1; i >= 0; --i) {
                     attrs = allAttrs[i];
+
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            cfg = filteredMerge(cfgProps, {}, attrs[attr]);
+                            // Protect config passed in
+                            cfg = Y.mix({}, attrs[attr], true, cfgProps);
 
                             val = cfg.value;
                             clone = cfg.cloneDefaultValue;
@@ -665,7 +663,7 @@ Y.namespace("Plugin").Host = PluginHost;
                                 if (!aggAttrs[attr]) {
                                     aggAttrs[attr] = cfg;
                                 } else {
-                                    filteredMerge(cfgProps, aggAttrs[attr], cfg);
+                                    Y.mix(aggAttrs[attr], cfg, true, cfgProps);
                                 }
                             }
                         }
@@ -687,7 +685,7 @@ Y.namespace("Plugin").Host = PluginHost;
          * @private
          */
         _initHierarchy : function(userVals) {
-            var lazy = this._lazyAttrInit,
+            var lazy = this._lazyAddAttrs,
                 constr,
                 constrProto,
                 ci,
@@ -735,30 +733,6 @@ Y.namespace("Plugin").Host = PluginHost;
                     constrProto.destructor.apply(this, arguments);
                 }
             }
-        },
-
-        /**
-         * Merges a given list of properties from the supplier object to the receiver object,
-         * overwriting the propery on the supplier if it exists. Implemented locally by Base 
-         * for performance reasons, to streamline the critical path for Base. If you need 
-         * additional flexibility use the Y.merge or Y.mix utilities.
-         *
-         * @method _filteredMerge
-         * @protected
-         *
-         * @param {Array} properties The list of properties to merge. Only these properties will be merged.
-         * @param {Object} r Reciever. The object being merged into.
-         * @param {Object} s Supplier. The object providing the properties to merge.
-         */
-        _filteredMerge : function(properties, r, s) {
-            var i, l, p;
-            for (i = 0, l = properties.length; i < l; ++i) {
-                p = properties[i];
-                if (p in s){
-                    r[p] = s[p];
-                }
-            }
-            return r;
         },
 
         /**

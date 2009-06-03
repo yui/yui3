@@ -29,8 +29,10 @@ var NODE_TYPE = 'nodeType',
     TEXT_CONTENT = 'textContent',
     LENGTH = 'length',
 
+
     UNDEFINED = undefined,
 
+    g_slice = Array.slice,
     re_tag = /<([a-z]+)/i;
 
 Y.DOM = {
@@ -354,14 +356,17 @@ Y.DOM = {
      * @return {HTMLElement} The node that was inserted (or null if insert fails) 
      */
     insertBefore: function(newNode, referenceNode) {
-        if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
-            return null;
+        var ret = null,
+            parent;
+        if (newNode && referenceNode && (parent = referenceNode.parentNode)) { // NOTE: assignment
+            if (typeof newNode === 'string') {
+                newNode = Y.DOM.create(newNode);
+            }
+            ret = parent.insertBefore(newNode, referenceNode);
+        } else {
+            Y.log('insertBefore failed: missing or invalid arg(s)', 'error', 'dom');
         }
-        if (typeof newNode === 'string') {
-            newNode = DOM.create(newNode);
-        }
-        return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
+        return ret;
     },
 
     /**
@@ -376,6 +381,10 @@ Y.DOM = {
             Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'DOM');
             return null;
         }       
+
+        if (typeof newNode === 'string') {
+            newNode = Y.DOM.create(newNode);
+        }
 
         if (referenceNode[NEXT_SIBLING]) {
             return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode[NEXT_SIBLING]); 
@@ -408,12 +417,12 @@ Y.DOM = {
 
         nodes = create(html, doc, tag).childNodes;
 
-        if (nodes[LENGTH] === 1) { // return single node, breaking parentNode ref from "fragment"
+        if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
             ret = nodes[0].parentNode.removeChild(nodes[0]);
         } else { // return multiple nodes as a fragment
             ret = doc.createDocumentFragment();
-            while (nodes[LENGTH]) {
-                ret.appendChild(nodes[nodes[LENGTH] - 1]); 
+            while (nodes.length) {
+                ret.appendChild(nodes[nodes.length - 1]); 
             }
         }
 
@@ -477,14 +486,26 @@ Y.DOM = {
         return obj.alert && obj.document;
     },
 
+    _fragClones: {
+        div: document.createElement('div')
+    },
+
     _create: function(html, doc, tag) {
         tag = tag || 'div';
-        var frag = doc.createElement(tag);
-        frag.innerHTML = Y.Lang.trim(html);
+
+        var frag = Y.DOM._fragClones[tag];
+        if (frag) {
+            frag = frag.cloneNode(false);
+        } else {
+            frag = Y.DOM._fragClones[tag] = doc.createElement(tag);
+        }
+        frag.innerHTML = html;
         return frag;
     },
 
     _removeChildNodes: function(node) {
+        var childNodes = node.childNodes, i;
+
         while (node.firstChild) {
             node.removeChild(node.firstChild);
         }
@@ -492,26 +513,41 @@ Y.DOM = {
 
     addHTML: function(node, content, where, execScripts) {
         var scripts,
-            newNode = (content[NODE_TYPE]) ? content : Y.DOM.create(content);
+            newNode = (content.nodeType) ? content : Y.DOM.create(content);
 
-        if (!where) {
-            node.appendChild(newNode);
-        } else if (where[NODE_TYPE]) {
-            Y.DOM.insertBefore(newNode, where);
-        } else if (where === 'replace') {
-            Y.DOM._removeChildNodes(node);
-            node.appendChild(newNode);
-            newNode = node;
+        if (where && where.nodeType) {
+            node.insertBefore(newNode, where);
+        } else {
+            switch (where) {
+                case 'replace':
+                    while (node.firstChild) {
+                        node.removeChild(node.firstChild);
+                    }
+                    node.appendChild(newNode);
+                    break;
+                case 'before':
+                    node.parentNode.insertBefore(newNode, node);
+                    break;
+                case 'after':
+                    if (node.nextSibling) { // IE errors if refNode is null
+                        node.parentNode.insertBefore(newNode, node.nextSibling);
+                    } else {
+                        node.parentNode.appendChild(newNode);
+                    }
+                    break;
+                default:
+                    node.appendChild(newNode);
+            }
         }
 
         if (execScripts) {
-            if (newNode.nodeName.toUpperCase() === 'SCRIPT' && !Y.UA.gecko) {
+            if (newNode.tagName.toUpperCase() === 'SCRIPT' && !Y.UA.gecko) {
                 scripts = [newNode]; // execute the new script
             } else {
                 scripts = newNode.getElementsByTagName('script');
             }
             Y.DOM._execScripts(scripts);
-        } else { // prevent any scripts from being injected
+        } else if (content.nodeType || content.indexOf('script') > -1) { // prevent any scripts from being injected
             Y.DOM._stripScripts(newNode);
         }
 
@@ -681,6 +717,25 @@ Y.DOM = {
         }
         return ret;
 
+    },
+
+    _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
+        fn = (typeof name === 'string') ? Y.DOM[fn] : fn;
+        var args = arguments,
+            result,
+            ret = [];
+
+        if (fn && nodes) {
+            //args = g_slice.call(args, 1);
+            Y.each(nodes, function(node) {
+                //args.splice(0, 1, node);
+                if ((result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc)) !== undefined) {
+                    ret[ret.length] = result;
+                }
+            });
+        }
+
+        return ret.length ? ret : nodes;
     },
 
     _testElement: function(element, tag, fn) {

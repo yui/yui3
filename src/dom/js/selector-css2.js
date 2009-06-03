@@ -135,25 +135,26 @@ var PARENT_NODE = 'parentNode',
                     if (!root.id) {
                         root.id = Y.guid();
                     }
-                    selector = '#' + root.id + ' ' + selector;
-
                     // fast-path ID when possible
                     if (root.ownerDocument.getElementById(root.id)) {
+                        selector = '#' + root.id + ' ' + selector;
                         root = root.ownerDocument;
+
                     }
                 }
 
-                tokens = Selector._tokenize(selector);
+                tokens = Selector._tokenize(selector, root);
                 token = tokens.pop();
 
                 if (token) {
                     if (deDupe) {
                         token.deDupe = true; // TODO: better approach?
                     }
-                    if (tokens[0] && tokens[0].id && root.nodeType === 9) {
+                    if (tokens[0] && tokens[0].id && root.nodeType === 9 && root.getElementById(tokens[0].id)) {
                         root = root.getElementById(tokens[0].id);
                     }
 
+                    // TODO: no prefilter for off-dom id
                     if (root && !nodes[LENGTH] && token.prefilter) {
                         nodes = token.prefilter(root, token);
                     }
@@ -199,6 +200,10 @@ var PARENT_NODE = 'parentNode',
                 }
 
                 if (nextTest && !nextTest(node, token)) {
+                    return false;
+                }
+
+                if (token.root && token.root.nodeType !== 9 && !Y.DOM.contains(token.root, node)) {
                     return false;
                 }
 
@@ -335,7 +340,7 @@ var PARENT_NODE = 'parentNode',
             Break selector into token units per simple selector.
             Combinator is attached to the previous token.
          */
-        _tokenize: function(selector) {
+        _tokenize: function(selector, root) {
             selector = selector || '';
             selector = Selector._replaceShorthand(Y.Lang.trim(selector)); 
             var token = Selector._getToken(),     // one token per simple selector (left selector holds combinator)
@@ -371,6 +376,7 @@ var PARENT_NODE = 'parentNode',
                             found = true;
                             selector = selector.replace(match[0], ''); // strip current match from selector
                             if (!selector[LENGTH] || parser.name === COMBINATOR) {
+                                token.root = root;
                                 tokens.push(token);
                                 token = Selector._getToken(token);
                             }

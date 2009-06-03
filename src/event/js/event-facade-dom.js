@@ -117,7 +117,7 @@ var whitelist = {
 Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, i, c, t;
+        x = e.pageX, y = e.pageY, c, t;
 
     this.altKey   = e.altKey;
     this.ctrlKey  = e.ctrlKey;
