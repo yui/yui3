@@ -89,7 +89,7 @@
 
         <span class="c">// check for single window listener and add if needed</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="nx">detachHandle</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">detachHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="nx">handler</span><span class="o">);</span>
+            <span class="nx">detachHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_attach</span><span class="o">([</span><span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="nx">handler</span><span class="o">]);</span>
         <span class="o">}</span>
 
         <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
