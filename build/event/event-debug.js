@@ -1696,7 +1696,7 @@ Y.Env.evt.plugins.windowresize = {
 
         // check for single window listener and add if needed
         if (!detachHandle) {
-            detachHandle = Y.on('resize', handler);
+            detachHandle = Y.Event._attach(['resize', handler]);
         }
 
         var a = Y.Array(arguments, 0, true);
