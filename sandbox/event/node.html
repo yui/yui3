@@ -103,6 +103,12 @@ YUI(yui_config).use('node', function(Y) {
     //     }
     // }
 
+    var node = Y.get('#container');
+    node.addAttr('foo', {value: 'foo'});
+    node.set('foo', 'bar'); // set an attribute
+    Y.log(node.get('foo')); // read an attribute
+
+
 });
 
 

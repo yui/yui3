@@ -1396,7 +1396,8 @@ Y.cached = function(source, cache){
 
     return function(arg1, arg2) {
         var a = arguments, 
-            key = arg2 ? Y.Array(a, 0, true).join(DELIMITER) : arg1;
+            // key = arg2 ? Y.Array(a, 0, true).join(DELIMITER) : arg1;
+            key = arg2 ? Array.prototype.join.call(a, DELIMITER) : arg1;
 
         if (!(key in cache)) {
             cache[key] = source.apply(source, a);
