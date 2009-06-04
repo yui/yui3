@@ -303,9 +303,6 @@ Node.ATTRS = {
     }
 };
 
-// TODO: for perf test only
-Node.ATTRS = {};
-
 // call with instance context
 Node.DEFAULT_SETTER = function(name, val) {
     var node = g_nodes[this[UID]],
@@ -379,29 +376,25 @@ Y.mix(Node.prototype, {
     },
 
     get: function(attr) {
-        if (!this.attrAdded(attr)) {
-            if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
-                //this._addDOMAttr(attr);
-                return Node.DEFAULT_GETTER.apply(this, arguments);
-            } else {
-                return Node.DEFAULT_GETTER.apply(this, arguments);
-            }
+        if (!this.attrAdded(attr)) { // use DEFAULT_GETTER for unconfigured attrs
+            return Node.DEFAULT_GETTER.apply(this, arguments);
         }
 
         return SuperConstrProto.get.apply(this, arguments);
     },
 
     set: function(attr, val) {
-        if (!this.attrAdded(attr)) {
-            
-            if (attr.indexOf(DOT) > -1 || !this._yuievt.events['Node:' + attr + 'Change']) { // handling chained properties at Node level
-                return Node.DEFAULT_SETTER.call(this, attr, val);
-            } else {
+        if (!this.attrAdded(attr)) { // add DOM attributes dynamically
+            // except for chained properties or if no change listeners
+            if (attr.indexOf(DOT) < 0 && this._yuievt.events['Node:' + attr + 'Change']) {
                 this._addDOMAttr(attr);
+            } else {
+                Node.DEFAULT_SETTER.call(this, attr, val);
             }
+        } else {
+            SuperConstrProto.set.apply(this, arguments);
         }
-
-        return SuperConstrProto.set.apply(this, arguments);
+        return this;
     },
 
     create: Node.create,
