@@ -772,9 +772,10 @@ NodeList.addMethod = function(name, fn, context) {
     if (name && fn) {
         NodeList.prototype[name] = function() {
             var ret = [],
+                UID = '_yuid',
                 args = arguments;
 
-            NodeList.each(this, function(node) {
+            Y.Array.each(g_nodelists[this[UID]], function(node) {
                 var instance = Y.Node._instances[node[UID]],
                     ctx,
                     result;
