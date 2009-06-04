@@ -48,8 +48,10 @@
     border-bottom: 1px solid #777;
     color: #000;
     font-size: 11px;
-    overflow: scroll;
-    _width: 100%;
+    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    _width: 99%;
 }
 
 .yui-skin-sam .yui-console-ft {
@@ -115,31 +117,56 @@
 
 /* Log entries */
 .yui-skin-sam .yui-console-entry {
-    border-bottom: 1px dotted #aaa;
-    margin: 0;
-    padding: 0 0 1ex;
-}
-
-.yui-skin-sam .yui-console-entry p {
-    margin: 0;
-}
-.yui-skin-sam .yui-console-entry .yui-console-entry-src {
-    margin: 0 0 0 1ex;
-}
-.yui-skin-sam .yui-console-entry .yui-console-entry-content {
-    margin: 1ex 0 1ex 1ex;
+    border-bottom: 1px solid #aaa;
 }
 
 .yui-skin-sam .yui-console-entry-meta {
-    font-family: Arial, sans-serif;
+    margin: 0;
+    overflow: hidden;
+}
+
+.yui-skin-sam .yui-console-entry-content {
+    margin: 0;
+    padding: 0 1ex;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.yui-skin-sam .yui-console-entry-meta .yui-console-entry-src {
+    color: #000;
+    font-style: italic;
+    font-weight: bold;
+    float: right;
+    margin: 2px 5px 0 0;
+}
+.yui-skin-sam .yui-console-entry-meta .yui-console-entry-time {
+    color: #777;
+    padding-left: 1ex;
+}
+.yui-skin-sam .yui-console-entry-warn .yui-console-entry-meta .yui-console-entry-time {
+    color: #555;
+}
+
+.yui-skin-sam .yui-console-entry-info .yui-console-entry-meta .yui-console-entry-cat,
+.yui-skin-sam .yui-console-entry-warn .yui-console-entry-meta .yui-console-entry-cat,
+.yui-skin-sam .yui-console-entry-error .yui-console-entry-meta .yui-console-entry-cat {
+    display: none;
+}
+.yui-skin-sam .yui-console-entry-warn {
+    background: #aee url(../../warn_error.png) no-repeat -10px 15px;
+}
+.yui-skin-sam .yui-console-entry-error {
+    background: #ffa url(../../warn_error.png) no-repeat 5px -24px;
+    color: #900;
+}
+.yui-skin-sam .yui-console-entry-warn .yui-console-entry-content,
+.yui-skin-sam .yui-console-entry-error .yui-console-entry-content {
+    padding-left: 24px;
 }
 .yui-skin-sam .yui-console-entry-cat {
     text-transform: uppercase;
     padding: 1px 4px;
     background-color: #ccc;
-}
-.yui-skin-sam .yui-console-entry-src {
-    font-style: italic;
 }
 .yui-skin-sam .yui-console-entry-info .yui-console-entry-cat {
     background-color: #ac2;

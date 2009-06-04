@@ -278,21 +278,19 @@ Y.mix(Console, {
      * @static
      */
     ENTRY_TEMPLATE :
-        '<pre class="{entry_class} {cat_class} {src_class}">'+
-            '<div class="{entry_meta_class}">'+
-                '<p>'+
-                    '<span class="{entry_cat_class}">'+
-                        '{label}</span>'+
-                    '<span class="{entry_time_class}">'+
-                        ' {totalTime}ms (+{elapsedTime}) {localTime}:'+
-                    '</span>'+
-                '</p>'+
-                '<p class="{entry_src_class}">'+
+        '<div class="{entry_class} {cat_class} {src_class}">'+
+            '<p class="{entry_meta_class}">'+
+                '<span class="{entry_src_class}">'+
                     '{sourceAndDetail}'+
-                '</p>'+
-            '</div>'+
-            '<p class="{entry_content_class}">{message}</p>'+
-        '</pre>',
+                '</span>'+
+                '<span class="{entry_cat_class}">'+
+                    '{label}</span>'+
+                '<span class="{entry_time_class}">'+
+                    ' {totalTime}ms (+{elapsedTime}) {localTime}'+
+                '</span>'+
+            '</p>'+
+            '<pre class="{entry_content_class}">{message}</pre>'+
+        '</div>',
 
     /**
      * Static property used to define the default attribute configuration of
