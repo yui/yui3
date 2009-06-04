@@ -212,11 +212,9 @@ Y.mix(Console, {
     HEADER_TEMPLATE :
         '<div class="{console_hd_class}">'+
             '<h4 class="{console_title_class}">{str_title}</h4>'+
-            '<div class="{console_controls_class}">'+
-                '<button type="button" class="'+
-                    '{console_button_class} {console_collapse_class}">{str_collapse}'+
-                '</button>'+
-            '</div>'+
+            '<button type="button" class="'+
+                '{console_button_class} {console_collapse_class}">{str_collapse}'+
+            '</button>'+
         '</div>',
 
     /**
@@ -249,9 +247,9 @@ Y.mix(Console, {
     FOOTER_TEMPLATE :
         '<div class="{console_ft_class}">'+
             '<div class="{console_controls_class}">'+
-                '<input type="checkbox" class="{console_checkbox_class} '+
-                        '{console_pause_class}" value="1" id="{id_guid}"> '+
                 '<label for="{id_guid}" class="{console_pause_label_class}">'+
+                    '<input type="checkbox" class="{console_checkbox_class} '+
+                        '{console_pause_class}" value="1" id="{id_guid}"> '+
                     '{str_pause}</label>' +
                 '<button type="button" class="'+
                     '{console_button_class} {console_clear_class}">{str_clear}'+
@@ -699,12 +697,17 @@ Y.extend(Console,Y.Widget,{
         var messages    = this.buffer,
             debug       = Y.config.debug,
             entries     = [],
+            consoleLimit= this.get('consoleLimit'),
             newestOnTop = this.get('newestOnTop'),
             anchor      = newestOnTop ? this._body.get('firstChild') : null,
             i;
 
-        limit = Math.min(messages.length, (limit || messages.length));
+        if (messages.length > consoleLimit) {
+            messages.splice(0, messages.length - consoleLimit);
+        }
 
+        limit = Math.min(messages.length, (limit || messages.length));
+        
         // turn off logging system
         Y.config.debug = false;
 
@@ -718,7 +721,8 @@ Y.extend(Console,Y.Widget,{
                 this._cancelPrintLoop();
             }
 
-            if (newestOnTop) {
+            //if (newestOnTop) {
+            if (!newestOnTop) { // workaround for bug 2527946
                 entries.reverse();
             }
 
@@ -982,7 +986,7 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _schedulePrint : function () {
-        if (!this.get(PAUSED) && !this._printLoop && this.get('rendered')) {
+        if (!this._printLoop && !this.get(PAUSED) && this.get('rendered')) {
             this._printLoop = Y.later(
                                 this.get('printTimeout'),
                                 this, this.printBuffer,
