@@ -1413,6 +1413,7 @@ Y.Subscriber.prototype = {
 var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     DETACH_PREFIX_SPLITTER = /[,|]\s*/,
+    CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
 
     /**
@@ -1423,25 +1424,15 @@ var L = Y.Lang,
      */
     _getType = Y.cached(function(type, pre) {
 
-        // console.log('__getType: ' + pre + ', ' + type, 'info', 'event');
-
-        var t = type;
-
-        if (!L.isString(t)) {
-            return t;
+        if (!pre || !L.isString(type)) {
+            return type;
         } 
 
-        if (t == '*') {
-            return null;
-        }
-        
-        if (t.indexOf(PREFIX_DELIMITER) == -1 && pre) {
-            t = pre + PREFIX_DELIMITER + t;
+        if (type.indexOf(PREFIX_DELIMITER) == -1) {
+            return pre + PREFIX_DELIMITER + type;
         }
 
-        // Y.log("type: " + t, 'info', 'event');
-
-        return t;
+        return type;
     }),
 
     /**lt
@@ -1472,7 +1463,18 @@ var L = Y.Lang,
         if (parts.length > 1) {
             detachcategory = parts[0];
             t = parts[1];
+            if (t == '*') {
+                 t = null;
+            }
         }
+
+        // i = t.indexOf(CATEGORY_DELIMITER);
+        // if (i > -1) {
+        //     detachcategory = t.substr(0, AFTER_PREFIX.length-1);
+        //     t = t.substr(AFTER_PREFIX.length);
+        //     // Y.log(t);
+        // }
+
 
         full_t = _getType(t, pre);
 
@@ -1866,7 +1868,7 @@ ET.prototype = {
 
         // make sure we turn the broadcast flag off if this
         // event was published as a result of bubbling
-        if (typeof o == Y.CustomEvent) {
+        if (o instanceof Y.CustomEvent) {
             events[type].broadcast = false;
         }
 
