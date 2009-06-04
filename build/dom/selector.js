@@ -160,12 +160,10 @@ NativeSelector = {
             groups = selector.split(','),
             item;
 
-        if (node && node[PARENT_NODE]) {
+        if (node) {
             node.id = node.id || Y.guid();
-            node[PARENT_NODE].id = node[PARENT_NODE].id || Y.guid();
             for (var i = 0, group; group = groups[i++];) {
                 group += '#' + node.id; // add ID for uniqueness
-                //group = '#' + node[PARENT_NODE].id + ' ' + group; // document scope parent test
                 item = Y.Selector.query(group, null, true);
                 ret = (item === node);
                 if (ret) {
