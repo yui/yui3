@@ -719,8 +719,7 @@ Y.extend(Console,Y.Widget,{
                 this._cancelPrintLoop();
             }
 
-            //if (newestOnTop) {
-            if (!newestOnTop) { // workaround for bug 2527946
+            if (newestOnTop) {
                 entries.reverse();
             }
 
