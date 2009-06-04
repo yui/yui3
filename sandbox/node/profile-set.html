@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>Node::Set Profile</title>
+<title>Node::set Profile</title>
 <script type="text/javascript" src="../../build/yui/yui.js"></script>
 <script type="text/javascript" src="../../build/event-custom/event-custom.js"></script>
 <script type="text/javascript" src="../../build/event/event.js"></script>
@@ -17,21 +17,12 @@
 <body>
 <div id="yui-log"></div>
 </body>
-<style>
-#yui-profiler th,
-#yui-profiler td {
-    border:1px solid;
-    padding:0.5em;
-    text-align:right;
-}
-</style>
 <script>
     YUI().use('*', function(Y) {
         var query = 'body div ul li',
             y_time = 0,
-            count = 300,
+            count = 100,
             start,
-            y_nodes,
             testName;
 
         if (!window.console) {
@@ -50,19 +41,20 @@
         //console.profile(testName);
         start = new Date();
 
-        y_nodes = Y.all('ul').set('title', 'foo').size();
-        y_time += new Date() - start;
+        Y.all('ul').set('title', 'foo');
+        y_time = new Date() - start;
         //console.profileEnd();
 
         console.log(testName + ': ' + y_time + 'ms');
 
-        testName = "Y.all('ul').set('title', 'foo') (with listener)";
+        testName = "Y.all('ul').set('title', 'foo') (with change listener)";
         Y.all('ul').on('titleChange', function() {});
         //console.profile(testName);
+
         start = new Date();
 
-        y_nodes = Y.all('ul').set('title', 'bar').size();
-        y_time += new Date() - start;
+        Y.all('ul').set('title', 'bar');
+        y_time = new Date() - start;
         //console.profileEnd();
 
         console.log(testName + ': ' + y_time + 'ms');

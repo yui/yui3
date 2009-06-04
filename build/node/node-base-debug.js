@@ -310,11 +310,11 @@ Node.DEFAULT_SETTER = function(name, val) {
     var node = g_nodes[this[UID]],
         strPath;
 
-    if (name.indexOf(DOT) !== -1) {
+    if (name.indexOf(DOT) > -1) {
         strPath = name;
         name = name.split(DOT);
         Y.Object.setValue(node, name, val);
-    } else {
+    } else if (node[name] !== undefined) { // only set DOM attributes
         node[name] = val;
     }
 
@@ -379,23 +379,30 @@ Y.mix(Node.prototype, {
 
     get: function(attr) {
         if (!this.attrAdded(attr)) { // use DEFAULT_GETTER for unconfigured attrs
-            return Node.DEFAULT_GETTER.apply(this, arguments);
+            if (Node.re_aria && Node.re_aria.test(attr)) { // except for aria
+                this._addAriaAttr(attr);
+            } else {
+                return Node.DEFAULT_GETTER.apply(this, arguments);
+            }
         }
 
         return SuperConstrProto.get.apply(this, arguments);
     },
 
     set: function(attr, val) {
-        if (!this.attrAdded(attr)) {
-            // skip adding attr for chained properties or if no listeners
-            if (attr.indexOf(DOT) < 0 && this._yuievt.events['Node:' + attr + 'Change']) {
+        if (!this.attrAdded(attr)) { // use DEFAULT_SETTER for unconfigured attrs
+            // except for aria
+            if (Node.re_aria && Node.re_aria.test(attr)) {
+                this._addAriaAttr(attr);
+            //  or chained properties or if no change listeners
+            } else if (attr.indexOf(DOT) < 0 && this._yuievt.events['Node:' + attr + 'Change']) {
                 this._addDOMAttr(attr);
             } else {
                 Node.DEFAULT_SETTER.call(this, attr, val);
+                return this; // NOTE: return
             }
-        } else {
-            SuperConstrProto.set.apply(this, arguments);
         }
+        SuperConstrProto.set.apply(this, arguments);
         return this;
     },
 
@@ -653,18 +660,6 @@ Y.mix(Node.prototype, {
         execScripts = (execScripts && Node.EXEC_SCRIPTS);
         Y.DOM.addHTML(g_nodes[this[UID]], content, 'replace', execScripts);
         return this;
-    },
-
-    addEventListener: function() {
-        var args = g_slice.call(arguments);
-        args.unshift(g_nodes[this[UID]]);
-        return Y.Event.nativeAdd.apply(Y.Event, args);
-    },
-    
-    removeEventListener: function() {
-        var args = g_slice.call(arguments);
-        args.unshift(g_nodes[this[UID]]);
-        return Y.Event.nativeRemove.apply(Y.Event, args);
     },
 
     // TODO: need this?
