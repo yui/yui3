@@ -67,6 +67,7 @@
 <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
     <span class="nx">PREFIX_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="o">,</span>
     <span class="nx">DETACH_PREFIX_SPLITTER</span> <span class="o">=</span> <span class="sr">/[,|]\s*/</span><span class="o">,</span>
+    <span class="nx">CATEGORY_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="o">,</span>
     <span class="nx">AFTER_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;~AFTER~&#39;</span><span class="o">,</span>
 
     <span class="c">/**</span>
@@ -77,25 +78,15 @@
 <span class="c">     */</span>
     <span class="nx">_getType</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="c">// console.log(&#39;__getType: &#39; + pre + &#39;, &#39; + type, &#39;info&#39;, &#39;event&#39;);</span>
-<span class="c"></span>
-        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">t</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">t</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">pre</span> <span class="o">||</span> <span class="o">!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
         <span class="o">}</span> 
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="o">}</span>
-        
-        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">PREFIX_DELIMITER</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">t</span> <span class="o">=</span> <span class="nx">pre</span> <span class="o">+</span> <span class="nx">PREFIX_DELIMITER</span> <span class="o">+</span> <span class="nx">t</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">PREFIX_DELIMITER</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">pre</span> <span class="o">+</span> <span class="nx">PREFIX_DELIMITER</span> <span class="o">+</span> <span class="nx">type</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="c">// Y.log(&quot;type: &quot; + t, &#39;info&#39;, &#39;event&#39;);</span>
-<span class="c"></span>
-        <span class="k">return</span> <span class="nx">t</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
     <span class="o">}),</span>
 
     <span class="c">/**lt</span>
@@ -126,7 +117,18 @@
         <span class="k">if</span> <span class="o">(</span><span class="nx">parts</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">detachcategory</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
             <span class="nx">t</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="o">)</span> <span class="o">{</span>
+                 <span class="nx">t</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="o">}</span>
         <span class="o">}</span>
+
+        <span class="c">// i = t.indexOf(CATEGORY_DELIMITER);</span>
+<span class="c"></span>        <span class="c">// if (i &gt; -1) {</span>
+<span class="c"></span>        <span class="c">//     detachcategory = t.substr(0, AFTER_PREFIX.length-1);</span>
+<span class="c"></span>        <span class="c">//     t = t.substr(AFTER_PREFIX.length);</span>
+<span class="c"></span>        <span class="c">//     // Y.log(t);</span>
+<span class="c"></span>        <span class="c">// }</span>
+<span class="c"></span>
 
         <span class="nx">full_t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">pre</span><span class="o">);</span>
 
@@ -520,7 +522,7 @@
 
         <span class="c">// make sure we turn the broadcast flag off if this</span>
 <span class="c"></span>        <span class="c">// event was published as a result of bubbling</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">o</span> <span class="o">==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">].</span><span class="nx">broadcast</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
         <span class="o">}</span>
 
