@@ -525,7 +525,7 @@ Y.mix(DSSN, {
  *     <dd>Send all requests and handle all responses.</dd>
  * </dl>
  *
- * @property asyncMode
+ * @attribute asyncMode
  * @type String
  * @default "allowAll"
  */
@@ -538,7 +538,7 @@ asyncMode: {
  * requests are sent to
  * &#60;URI&#62;?&#60;scriptCallbackParam&#62;=callbackFunction
  *
- * @property scriptCallbackParam
+ * @attribute scriptCallbackParam
  * @type String
  * @default "callback"
  */
@@ -547,14 +547,13 @@ scriptCallbackParam : {
 },
 
 /**
- * Creates a request callback that gets appended to the script URI. Implementers
+ * Accepts the DataSource instance and a callback ID, and returns a callback
+ * param/value string that gets appended to the script URI. Implementers
  * can customize this string to match their server's query syntax.
  *
- * @method generateRequestCallback
- * @return {String} String fragment that gets appended to script URI that
- * specifies the callback function
+ * @attribute generateRequestCallback
+ * @type Function
  */
-
 generateRequestCallback : {
     value: function(self, id) {
         return "&" + self.get("scriptCallbackParam") + "=YUI.Env.DataSource.callbacks["+id+"]" ;
