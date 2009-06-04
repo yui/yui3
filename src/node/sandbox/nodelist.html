@@ -11,6 +11,7 @@
 <script type="text/javascript" src="../../../build/base/base.js"></script>
 <script type="text/javascript" src="../../../build/attribute/attribute.js"></script>
 <script type="text/javascript" src="../../../build/dom/dom-debug.js"></script>
+<script type="text/javascript" src="../../../build/dom/selector-css3-debug.js"></script>
 <script type="text/javascript" src="../../../build/node/node-debug.js"></script>
 
 <style type="text/css">
@@ -25,10 +26,23 @@
     <p>sit</p>
 </div>
 
+<div class="bar">bar</div>
+<div class="baz">bar</div>
+
+<ol start=0>
+    <li>foo</li>
+    <li>foo</li>
+    <li>foo</li>
+    <li>foo</li>
+    <li>foo</li>
+    <li>foo</li>
+    <li>foo</li>
+</ol>
+
 <script type="text/javascript">
 YUI().use('*', function(Y) {
-    nodelist = Y.all('body :first-child');
-    Y.log(nodelist.addClass('foo').addClass('bar'));
+    nodelist = Y.all('li').even().set('innerHTML', 'bar');
+    console.log(nodelist.size());
 
 /*
 1. set title on all nodes
