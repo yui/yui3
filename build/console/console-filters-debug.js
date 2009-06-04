@@ -26,9 +26,7 @@ var getCN = Y.ClassNameManager.getClassName,
     CHECKED  = 'checked',
 
     DOT = '.',
-    DISPLAY = 'display',
     EMPTY   = '',
-    NONE    = 'none',
 
     C_BODY       = DOT + Y.Console.CHROME_CLASSES.console_bd_class,
     C_FOOT       = DOT + Y.Console.CHROME_CLASSES.console_ft_class,
@@ -433,42 +431,31 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @method refreshConsole
      */
     refreshConsole : function () {
-        var debug = Y.config.debug,
-            entries = this._entries,
-            print   = [],
-            p_i     = 0,
-            host, body, limit, cats, srcs, i, e;
-
-        Y.config.debug = false;
-
-        host  = this.get(HOST);
-        body  = host.get('contentBox').query(C_BODY);
-        limit = host.get('consoleLimit');
-        cats  = this.get(CATEGORY);
-        srcs  = this.get(SOURCE);
+        var entries   = this._entries,
+            host      = this.get(HOST),
+            body      = host.get('contentBox').query(C_BODY),
+            remaining = host.get('consoleLimit'),
+            cats      = this.get(CATEGORY),
+            srcs      = this.get(SOURCE),
+            buffer    = [],
+            i,e;
 
         if (body) {
+            host._cancelPrintLoop();
+
             // Capture from bottom up.  Entry order reversed.
-            for (i = entries.length - 1; i >= 0 && p_i < limit; --i) {
+            for (i = entries.length - 1; i >= 0 && remaining >= 0; --i) {
                 e = entries[i];
                 if (cats[e.category] && srcs[e.source]) {
-                    print[p_i++] = e;
+                    buffer.unshift(e);
+                    --remaining;
                 }
             }
 
-            body.setStyle(DISPLAY,NONE);
-
             body.set('innerHTML',EMPTY);
-
-            // Print in reverse order from reverse ordered array (top down)
-            for (i = print.length - 1; i >= 0; --i) {
-                host.printLogEntry(print[i]);
-            }
-
-            body.setStyle(DISPLAY,EMPTY);
+            host.buffer = buffer;
+            host.printBuffer();
         }
-
-        Y.config.debug = debug;
     },
 
     /**

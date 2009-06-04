@@ -888,21 +888,6 @@ var yconsole = new Y.Console({
 }).render();
 
 //yconsole.hideCategory('info');
-yconsole.printLogEntry = function (m) {
-    if (m.category === 'section') {
-        this._addToConsole(Y.Node.create("<h3>"+m.message+"</h3>"));
-        return this;
-    } else if (m.category === "break") {
-        this._addToConsole(Y.Node.create("<br>"));
-        return this;
-    } else if (m.category === "info") {
-        return this;
-    } else {
-        return Y.Console.prototype.printLogEntry.call(this,m);
-    }
-};
-
-Y.log("Tests","section","TestRunner");
 
 Y.Test.Runner.add(suite);
 
