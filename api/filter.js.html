@@ -73,9 +73,7 @@
     <span class="nx">CHECKED</span>  <span class="o">=</span> <span class="s1">&#39;checked&#39;</span><span class="o">,</span>
 
     <span class="nx">DOT</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">,</span>
-    <span class="nx">DISPLAY</span> <span class="o">=</span> <span class="s1">&#39;display&#39;</span><span class="o">,</span>
     <span class="nx">EMPTY</span>   <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
-    <span class="nx">NONE</span>    <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="o">,</span>
 
     <span class="nx">C_BODY</span>       <span class="o">=</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Console</span><span class="o">.</span><span class="nx">CHROME_CLASSES</span><span class="o">.</span><span class="nx">console_bd_class</span><span class="o">,</span>
     <span class="nx">C_FOOT</span>       <span class="o">=</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Console</span><span class="o">.</span><span class="nx">CHROME_CLASSES</span><span class="o">.</span><span class="nx">console_ft_class</span><span class="o">,</span>
@@ -480,42 +478,31 @@
 <span class="c">     * @method refreshConsole</span>
 <span class="c">     */</span>
     <span class="nx">refreshConsole</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">debug</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span><span class="o">,</span>
-            <span class="nx">entries</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_entries</span><span class="o">,</span>
-            <span class="nx">print</span>   <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">p_i</span>     <span class="o">=</span> <span class="m">0</span><span class="o">,</span>
-            <span class="nx">host</span><span class="o">,</span> <span class="nx">body</span><span class="o">,</span> <span class="nx">limit</span><span class="o">,</span> <span class="nx">cats</span><span class="o">,</span> <span class="nx">srcs</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">e</span><span class="o">;</span>
-
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-
-        <span class="nx">host</span>  <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">);</span>
-        <span class="nx">body</span>  <span class="o">=</span> <span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;contentBox&#39;</span><span class="o">).</span><span class="nx">query</span><span class="o">(</span><span class="nx">C_BODY</span><span class="o">);</span>
-        <span class="nx">limit</span> <span class="o">=</span> <span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;consoleLimit&#39;</span><span class="o">);</span>
-        <span class="nx">cats</span>  <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CATEGORY</span><span class="o">);</span>
-        <span class="nx">srcs</span>  <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">SOURCE</span><span class="o">);</span>
+        <span class="k">var</span> <span class="nx">entries</span>   <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_entries</span><span class="o">,</span>
+            <span class="nx">host</span>      <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">),</span>
+            <span class="nx">body</span>      <span class="o">=</span> <span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;contentBox&#39;</span><span class="o">).</span><span class="nx">query</span><span class="o">(</span><span class="nx">C_BODY</span><span class="o">),</span>
+            <span class="nx">remaining</span> <span class="o">=</span> <span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;consoleLimit&#39;</span><span class="o">),</span>
+            <span class="nx">cats</span>      <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CATEGORY</span><span class="o">),</span>
+            <span class="nx">srcs</span>      <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">SOURCE</span><span class="o">),</span>
+            <span class="nx">buffer</span>    <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">i</span><span class="o">,</span><span class="nx">e</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">body</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">host</span><span class="o">.</span><span class="nx">_cancelPrintLoop</span><span class="o">();</span>
+
             <span class="c">// Capture from bottom up.  Entry order reversed.</span>
-<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">entries</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> <span class="nx">p_i</span> <span class="o">&lt;</span> <span class="nx">limit</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">entries</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> <span class="nx">remaining</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">e</span> <span class="o">=</span> <span class="nx">entries</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">cats</span><span class="o">[</span><span class="nx">e</span><span class="o">.</span><span class="nx">category</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">srcs</span><span class="o">[</span><span class="nx">e</span><span class="o">.</span><span class="nx">source</span><span class="o">])</span> <span class="o">{</span>
-                    <span class="nx">print</span><span class="o">[</span><span class="nx">p_i</span><span class="o">++]</span> <span class="o">=</span> <span class="nx">e</span><span class="o">;</span>
+                    <span class="nx">buffer</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">e</span><span class="o">);</span>
+                    <span class="o">--</span><span class="nx">remaining</span><span class="o">;</span>
                 <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="nx">body</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">DISPLAY</span><span class="o">,</span><span class="nx">NONE</span><span class="o">);</span>
-
             <span class="nx">body</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="o">,</span><span class="nx">EMPTY</span><span class="o">);</span>
-
-            <span class="c">// Print in reverse order from reverse ordered array (top down)</span>
-<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">print</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">host</span><span class="o">.</span><span class="nx">printLogEntry</span><span class="o">(</span><span class="nx">print</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-            <span class="o">}</span>
-
-            <span class="nx">body</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">DISPLAY</span><span class="o">,</span><span class="nx">EMPTY</span><span class="o">);</span>
+            <span class="nx">host</span><span class="o">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="nx">buffer</span><span class="o">;</span>
+            <span class="nx">host</span><span class="o">.</span><span class="nx">printBuffer</span><span class="o">();</span>
         <span class="o">}</span>
-
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">debug</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>

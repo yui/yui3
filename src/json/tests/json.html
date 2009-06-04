@@ -73,7 +73,7 @@
 YUI({
     base : '../../../build/',
     filter : 'debug',
-    //useBrowserConsole : false,
+    useBrowserConsole : false,
     logInclude : { TestRunner: true, json: true, JSON: true }
 }).use('test','console','json',function (Y) {
 
@@ -872,23 +872,6 @@ suite.add(new Y.Test.Case({
 }));
 */
 
-Y.Console.prototype.printLogEntry = function (m) {
-    m = Y.merge(
-        this._htmlEscapeMessage(m),
-        Y.Console.ENTRY_CLASSES,
-        {
-            cat_class : this.getClassName('entry',m.category),
-            src_class : this.getClassName('entry',m.source)
-        });
-    
-    var n = Y.Node.create(this.get('entryTemplate').replace(/\{([\w-]+)\}/g,
-            function (_,k) { return k in m ? m[k] : ''; }));
-    
-    this._addToConsole(n);
-    
-    return this;
-};
-
 var yconsole = new Y.Console({
     contentBox:"log",
     newestOnTop: false,
@@ -896,25 +879,10 @@ var yconsole = new Y.Console({
 }).render();
 
 //yconsole.hideCategory('info');
-yconsole.printLogEntry = function (m) {
-    if (m.category === 'section') {
-        this._addToConsole(Y.Node.create("<h3>"+m.message+"</h3>"));
-        return this;
-    } else if (m.category === "break") {
-        this._addToConsole(Y.Node.create("<br>"));
-        return this;
-    } else if (m.category === "info") {
-        return this;
-    } else {
-        return Y.Console.prototype.printLogEntry.call(this,m);
-    }
-};
 
 if (Object.prototype.toString.call(window.JSON) === '[object JSON]') {
     Y.log("Browser has native JSON implementation","info","TestRunner");
 }
-
-Y.log("Tests","section","TestRunner");
 
 Y.Test.Runner.add(suite);
 

@@ -471,7 +471,7 @@
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// return multiple nodes as a fragment</span>
 <span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">createDocumentFragment</span><span class="o">();</span>
             <span class="k">while</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ret</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">nodes</span><span class="o">[</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">]);</span> 
+                <span class="nx">ret</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span> 
             <span class="o">}</span>
         <span class="o">}</span>
 
@@ -596,7 +596,7 @@
                 <span class="nx">scripts</span> <span class="o">=</span> <span class="nx">newNode</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="s1">&#39;script&#39;</span><span class="o">);</span>
             <span class="o">}</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_execScripts</span><span class="o">(</span><span class="nx">scripts</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">content</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">||</span> <span class="nx">content</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;script&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span> <span class="c">// prevent any scripts from being injected</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">content</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">||</span> <span class="nx">content</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;&lt;script&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span> <span class="c">// prevent any scripts from being injected</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_stripScripts</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
         <span class="o">}</span>
 

@@ -212,11 +212,9 @@ Y.mix(Console, {
     HEADER_TEMPLATE :
         '<div class="{console_hd_class}">'+
             '<h4 class="{console_title_class}">{str_title}</h4>'+
-            '<div class="{console_controls_class}">'+
-                '<button type="button" class="'+
-                    '{console_button_class} {console_collapse_class}">{str_collapse}'+
-                '</button>'+
-            '</div>'+
+            '<button type="button" class="'+
+                '{console_button_class} {console_collapse_class}">{str_collapse}'+
+            '</button>'+
         '</div>',
 
     /**
@@ -249,9 +247,9 @@ Y.mix(Console, {
     FOOTER_TEMPLATE :
         '<div class="{console_ft_class}">'+
             '<div class="{console_controls_class}">'+
-                '<input type="checkbox" class="{console_checkbox_class} '+
-                        '{console_pause_class}" value="1" id="{id_guid}"> '+
                 '<label for="{id_guid}" class="{console_pause_label_class}">'+
+                    '<input type="checkbox" class="{console_checkbox_class} '+
+                        '{console_pause_class}" value="1" id="{id_guid}"> '+
                     '{str_pause}</label>' +
                 '<button type="button" class="'+
                     '{console_button_class} {console_clear_class}">{str_clear}'+
@@ -282,21 +280,19 @@ Y.mix(Console, {
      * @static
      */
     ENTRY_TEMPLATE :
-        '<pre class="{entry_class} {cat_class} {src_class}">'+
-            '<div class="{entry_meta_class}">'+
-                '<p>'+
-                    '<span class="{entry_cat_class}">'+
-                        '{label}</span>'+
-                    '<span class="{entry_time_class}">'+
-                        ' {totalTime}ms (+{elapsedTime}) {localTime}:'+
-                    '</span>'+
-                '</p>'+
-                '<p class="{entry_src_class}">'+
+        '<div class="{entry_class} {cat_class} {src_class}">'+
+            '<p class="{entry_meta_class}">'+
+                '<span class="{entry_src_class}">'+
                     '{sourceAndDetail}'+
-                '</p>'+
-            '</div>'+
-            '<p class="{entry_content_class}">{message}</p>'+
-        '</pre>',
+                '</span>'+
+                '<span class="{entry_cat_class}">'+
+                    '{label}</span>'+
+                '<span class="{entry_time_class}">'+
+                    ' {totalTime}ms (+{elapsedTime}) {localTime}'+
+                '</span>'+
+            '</p>'+
+            '<pre class="{entry_content_class}">{message}</pre>'+
+        '</div>',
 
     /**
      * Static property used to define the default attribute configuration of
@@ -696,27 +692,38 @@ Y.extend(Console,Y.Widget,{
      * @chainable
      */
     printBuffer: function (limit) {
-        var messages = this.buffer,
-            debug = Y.config.debug,
+        var messages    = this.buffer,
+            debug       = Y.config.debug,
+            entries     = [],
+            consoleLimit= this.get('consoleLimit'),
+            newestOnTop = this.get('newestOnTop'),
+            anchor      = newestOnTop ? this._body.get('firstChild') : null,
             i;
 
-        limit = Math.min(messages.length, (limit || messages.length));
+        if (messages.length > consoleLimit) {
+            messages.splice(0, messages.length - consoleLimit);
+        }
 
+        limit = Math.min(messages.length, (limit || messages.length));
+        
         // turn off logging system
         Y.config.debug = false;
 
         if (!this.get(PAUSED) && this.get('rendered')) {
 
-            // TODO: use doc frag
-            this._body.setStyle('diplay','none');
             for (i = 0; i < limit && messages.length; ++i) {
-                this.printLogEntry(messages.shift());
+                entries[i] = this._createEntryHTML(messages.shift());
             }
-            this._body.setStyle('diplay','');
 
             if (!messages.length) {
                 this._cancelPrintLoop();
             }
+
+            if (newestOnTop) {
+                entries.reverse();
+            }
+
+            this._body.insertBefore(create(entries.join('')), anchor);
 
             if (this.get('scrollIntoView')) {
                 this.scrollToLatest();
@@ -728,24 +735,6 @@ Y.extend(Console,Y.Widget,{
 
         // restore logging system
         Y.config.debug = debug;
-
-        return this;
-    },
-
-    /**
-     * Prints the provided message to the console UI.
-     *
-     * Inserts the Node into the console body at the top or bottom depending on
-     * the configuration value of newestOnTop.
-     *
-     * @method printLogEntry
-     * @param m {Object} Normalized message object
-     * @chainable
-     */
-    printLogEntry : function (m) {
-        var sib = this.get('newestOnTop') ? this._body.get('firstChild') : null;
-
-        this._body.insertBefore(this._createEntry(m), sib);
 
         return this;
     },
@@ -994,7 +983,7 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _schedulePrint : function () {
-        if (!this.get(PAUSED) && !this._printLoop && this.get('rendered')) {
+        if (!this._printLoop && !this.get(PAUSED) && this.get('rendered')) {
             this._printLoop = Y.later(
                                 this.get('printTimeout'),
                                 this, this.printBuffer,
@@ -1003,14 +992,14 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Creates an entry node from the message meta provided.
+     * Translates message meta into the markup for a console entry
      *
-     * @method _createEntry
+     * @method _createEntryHTML
      * @param m {Object} object literal containing normalized message metadata
-     * @return Node
+     * @return String
      * @protected
      */
-    _createEntry : function (m) {
+    _createEntryHTML : function (m) {
         m = merge(
                 this._htmlEscapeMessage(m),
                 Console.ENTRY_CLASSES,
@@ -1019,7 +1008,10 @@ Y.extend(Console,Y.Widget,{
                     src_class : this.getClassName(ENTRY,m.source)
                 });
 
-        return create(substitute(this.get('entryTemplate'),m));
+        return this.get('entryTemplate').replace(/\{(\w+)\}/g,
+            function (_,token) {
+                return token in m ? m[token] : '';
+            });
     },
 
     /**
