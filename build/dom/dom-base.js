@@ -515,6 +515,9 @@ Y.DOM = {
         var scripts,
             newNode = (content.nodeType) ? content : Y.DOM.create(content);
 
+        if (!where) {
+            node.appendChild(newNode);
+        }
         if (where && where.nodeType) {
             node.insertBefore(newNode, where);
         } else {
