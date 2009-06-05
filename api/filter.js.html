@@ -71,6 +71,7 @@
     <span class="nx">HOST</span>     <span class="o">=</span> <span class="s1">&#39;host&#39;</span><span class="o">,</span>
     <span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s1">&#39;parentNode&#39;</span><span class="o">,</span>
     <span class="nx">CHECKED</span>  <span class="o">=</span> <span class="s1">&#39;checked&#39;</span><span class="o">,</span>
+    <span class="nx">DEF_VISIBILITY</span> <span class="o">=</span> <span class="s1">&#39;defaultVisibility&#39;</span><span class="o">,</span>
 
     <span class="nx">DOT</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">,</span>
     <span class="nx">EMPTY</span>   <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
@@ -134,7 +135,7 @@
         <span class="s1">&#39;&lt;div class=&quot;{sources}&quot;&gt;&lt;/div&gt;&#39;</span><span class="o">,</span>
 
     <span class="c">/**</span>
-<span class="c">     * Markup template used to create the category and source filters.</span>
+<span class="c">     * Markup template used to create the category and source filter checkboxes.</span>
 <span class="c">     *</span>
 <span class="c">     * @property ConsoleFilters.FILTER_TEMPLATE</span>
 <span class="c">     * @type String</span>
@@ -255,7 +256,8 @@
     <span class="nx">_sources</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
 
     <span class="c">/**</span>
-<span class="c">     * Initialize this plugin.</span>
+<span class="c">     * Initialize entries collection and attach listeners to host events and</span>
+<span class="c">     * methods.</span>
 <span class="c">     *</span>
 <span class="c">     * @method initializer</span>
 <span class="c">     */</span>
@@ -371,13 +373,13 @@
             <span class="nx">visible</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">cat_filter</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">visible</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;defaultVisibility&#39;</span><span class="o">);</span>
+            <span class="nx">visible</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DEF_VISIBILITY</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">cat</span><span class="o">,</span> <span class="nx">visible</span><span class="o">);</span>
             <span class="nx">cat_filter</span> <span class="o">=</span> <span class="nx">visible</span><span class="o">;</span>
         <span class="o">}</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">src_filter</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">visible</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;defaultVisibility&#39;</span><span class="o">);</span>
+            <span class="nx">visible</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DEF_VISIBILITY</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">src</span><span class="o">,</span> <span class="nx">visible</span><span class="o">);</span>
             <span class="nx">src_filter</span> <span class="o">=</span> <span class="nx">visible</span><span class="o">;</span>
         <span class="o">}</span>
@@ -563,7 +565,7 @@
     <span class="c">/**</span>
 <span class="c">     * Passes checkbox clicks on to the source attribute.</span>
 <span class="c">     *</span>
-<span class="c">     * @metho _onSourceCheckboxClick</span>
+<span class="c">     * @method _onSourceCheckboxClick</span>
 <span class="c">     * @param e {Event} the DOM event</span>
 <span class="c">     */</span>
     <span class="nx">_onSourceCheckboxClick</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
