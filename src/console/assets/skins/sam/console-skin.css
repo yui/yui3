@@ -142,10 +142,10 @@
     display: none;
 }
 .yui-skin-sam .yui-console-entry-warn {
-    background: #aee url(../../warn_error.png) no-repeat -15px 15px;
+    background: #aee url(warn_error.png) no-repeat -15px 15px;
 }
 .yui-skin-sam .yui-console-entry-error {
-    background: #ffa url(../../warn_error.png) no-repeat 5px -24px;
+    background: #ffa url(warn_error.png) no-repeat 5px -24px;
     color: #900;
 }
 .yui-skin-sam .yui-console-entry-warn .yui-console-entry-content,

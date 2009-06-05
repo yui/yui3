@@ -927,7 +927,7 @@ YUI.add('dd-drag', function(Y) {
         */
     
     Drag = function() {
-        this._lazyAttrInit = false;
+        this._lazyAddAttrs = false;
         Drag.superclass.constructor.apply(this, arguments);
 
         DDM._regDrag(this);
@@ -3011,6 +3011,7 @@ YUI.add('dd-drop', function(Y) {
         
 
     Drop = function() {
+        this._lazyAddAttrs = false;
         Drop.superclass.constructor.apply(this, arguments);
 
 
