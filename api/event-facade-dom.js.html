@@ -291,7 +291,9 @@
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="nx">e</span><span class="o">.</span><span class="nx">cancelBubble</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
         <span class="o">}</span>
-        <span class="nx">wrapper</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">wrapper</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">wrapper</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">();</span>
+        <span class="o">}</span>
     <span class="o">};</span>
 
     <span class="c">/**</span>
@@ -308,7 +310,9 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">();</span>
         <span class="o">}</span>
 
-        <span class="nx">wrapper</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">wrapper</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">wrapper</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>
+        <span class="o">}</span>
     <span class="o">};</span>
 
     <span class="c">/**</span>
@@ -322,7 +326,9 @@
             <span class="nx">e</span><span class="o">.</span><span class="nx">returnValue</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="nx">wrapper</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">wrapper</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">wrapper</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
+        <span class="o">}</span>
     <span class="o">};</span>
 
     <span class="c">/**</span>

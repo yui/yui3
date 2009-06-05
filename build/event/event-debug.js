@@ -399,7 +399,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         } else {
             e.cancelBubble = true;
         }
-        wrapper.stopPropagation();
+        if (wrapper) {
+            wrapper.stopPropagation();
+        }
     };
 
     /**
@@ -416,7 +418,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             this.stopPropagation();
         }
 
-        wrapper.stopImmediatePropagation();
+        if (wrapper) {
+            wrapper.stopImmediatePropagation();
+        }
     };
 
     /**
@@ -430,7 +434,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             e.returnValue = false;
         }
 
-        wrapper.preventDefault();
+        if (wrapper) {
+            wrapper.preventDefault();
+        }
     };
 
     /**
@@ -1509,26 +1515,17 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 };
 (function() {
 
-var Event = Y.Event,
-	
-	Lang = Y.Lang,
-	
+var Lang = Y.Lang,
 	delegates = {},
-	
 	resolveTextNode = function(n) {
-
 	    try {
 	        if (n && 3 == n.nodeType) {
 	            return n.parentNode;
 	        }
 	    } catch(e) { }
-
 	    return n;
-
 	},
-
     _worker = function(delegateKey, e, el) {
-
         var target = resolveTextNode((e.target || e.srcElement)), 
             tests  = delegates[delegateKey],
             spec, 
@@ -1536,60 +1533,39 @@ var Event = Y.Event,
 			elements,
 			nElements,
 			element,
-			ce,
 			ev,
 			i;
 
         for (spec in tests) {
-
             if (tests.hasOwnProperty(spec)) {
-
                 ename  = tests[spec];
-
 				elements = Y.Selector.query(spec, el);
-
 				nElements = elements.length;
-
 				if (nElements > 0) {
-
 					i = elements.length - 1;
-
 					do {
-
 						element = elements[i];
-
 	                    if (element === target || Y.DOM.contains(element, target)) {
 
-							ce = Event._createWrapper(element, e.type, false, false, true);
+                            if (!ev) {
+                                ev = new Y.DOMEventFacade(e, el);
+                                ev.originalTarget = ev.target;
+                            }
 
-							ev = new Y.DOMEventFacade(e, el, ce);
-
-	                        ev.originalTarget = ev.target;
 	                        ev.target = Y.Node.get(element);
-	
 	                        Y.fire(ename, ev);
-
 	                    }
-
 					}
 					while (i--);
-					
 				}
-
             }
-
         }
-
     },
 
 	attach = function (type, key, element) {
-		
 		Y.Event._attach([type, function (e) {
-
             _worker(key, (e || window.event), element);
-
 		}, element], { facade: false });
-		
 	},
 
     _sanitize = Y.cached(function(str) {
@@ -1652,7 +1628,6 @@ Y.Env.evt.plugins.delegate = {
 			}
 
             delegates[delegateKey] = {};
-
         }
 
         delegates[delegateKey][spec] = ename;
@@ -1664,7 +1639,6 @@ Y.Env.evt.plugins.delegate = {
             
         // subscribe to the custom event for the delegation spec
         return Y.on.apply(Y, a);
-
     }
 };
 

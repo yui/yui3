@@ -1463,7 +1463,7 @@ var L = Y.Lang,
                  t = null;
             }
         }
-
+        
         // i = t.indexOf(CATEGORY_DELIMITER);
         // if (i > -1) {
         //     detachcategory = t.substr(0, AFTER_PREFIX.length-1);
@@ -1471,12 +1471,7 @@ var L = Y.Lang,
         //     // Y.log(t);
         // }
 
-        // full_t = _getType(t, pre);
-
-        full_t = t;
-        if (pre && t.indexOf(PREFIX_DELIMITER) == -1) {
-            full_t = pre + PREFIX_DELIMITER + t;
-        }
+        full_t = _getType(t, pre);
 
         return [detachcategory, full_t, after, t];
     }),
