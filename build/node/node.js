@@ -610,7 +610,7 @@ Y.mix(Node.prototype, {
                 where = g_nodes[this[UID]].childNodes[where];
             }
             if (typeof content !== 'string') { // pass the DOM node
-                content = g_nodes[content[UID]];
+                content = Y.Node.getDOMNode(content);
             }
             if (!where || (!g_restrict[this[UID]] || this.contains(where))) { // only allow inserting into this Node's subtree
                 Y.DOM.addHTML(g_nodes[this[UID]], content, where, execScripts);
@@ -766,11 +766,11 @@ NodeList.addMethod = function(name, fn, context) {
     if (name && fn) {
         NodeList.prototype[name] = function() {
             var ret = [],
-                UID = '_yuid',
                 args = arguments;
 
             Y.Array.each(g_nodelists[this[UID]], function(node) {
-                var instance = Y.Node._instances[node[UID]],
+                var UID = '_yuid',
+                    instance = Y.Node._instances[node[UID]],
                     ctx,
                     result;
 

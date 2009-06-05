@@ -402,6 +402,10 @@ Y.DOM = {
      * @param {HTMLDocument} doc An optional document context 
      */
     create: function(html, doc) {
+        if (!doc && Y.DOM._cloneCache[html]) {
+            return Y.DOM._cloneCache[html].cloneNode(true); // NOTE: return
+        }
+
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html),
             create = Y.DOM._create,
@@ -428,6 +432,7 @@ Y.DOM = {
             }
         }
 
+        Y.DOM._cloneCache[html] = ret;
         return ret;
     },
 
@@ -513,36 +518,50 @@ Y.DOM = {
         }
     },
 
+    _cloneCache: {},
+
     addHTML: function(node, content, where, execScripts) {
         var scripts,
-            newNode = (content.nodeType) ? content : Y.DOM.create(content);
-
-        if (!where) {
-            node.appendChild(newNode);
-        }
-        if (where && where.nodeType) {
-            node.insertBefore(newNode, where);
+            newNode = Y.DOM._cloneCache[content];
+            
+        if (newNode) {
+            newNode = newNode.cloneNode(true);
         } else {
-            switch (where) {
-                case 'replace':
-                    while (node.firstChild) {
-                        node.removeChild(node.firstChild);
-                    }
-                    node.appendChild(newNode);
-                    break;
-                case 'before':
-                    node.parentNode.insertBefore(newNode, node);
-                    break;
-                case 'after':
-                    if (node.nextSibling) { // IE errors if refNode is null
-                        node.parentNode.insertBefore(newNode, node.nextSibling);
-                    } else {
-                        node.parentNode.appendChild(newNode);
-                    }
-                    break;
-                default:
-                    node.appendChild(newNode);
+            if (content.nodeType) { // domNode
+                newNode = content;
+            } else { // create from string and cache
+                newNode = Y.DOM.create(content);
             }
+        }
+
+        if (where) {
+            if (where.nodeType) { // insert regardless of relationship to node
+                // TODO: check if node.contains(where)?
+                where.parentNode.insertBefore(newNode, where);
+            } else {
+                switch (where) {
+                    case 'replace':
+                        while (node.firstChild) {
+                            node.removeChild(node.firstChild);
+                        }
+                        node.appendChild(newNode);
+                        break;
+                    case 'before':
+                        node.parentNode.insertBefore(newNode, node);
+                        break;
+                    case 'after':
+                        if (node.nextSibling) { // IE errors if refNode is null
+                            node.parentNode.insertBefore(newNode, node.nextSibling);
+                        } else {
+                            node.parentNode.appendChild(newNode);
+                        }
+                        break;
+                    default:
+                        node.appendChild(newNode);
+                }
+            }
+        } else {
+            node.appendChild(newNode);
         }
 
         if (execScripts) {
