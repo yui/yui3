@@ -27,9 +27,9 @@ package com.yui.util
 
 			ExternalInterface.addCallback("send", send);
 			ExternalInterface.addCallback("abort", ioAbort);
-			ExternalInterface.addCallback("readyState", readyState);
+			ExternalInterface.addCallback("isInProgress", isInProgress);
 			ExternalInterface.call('YUI.applyTo', yId, 'io.xdrReady', a);
-		};
+		}
 
 		public function send(uri:String, cfg:Object, id:uint):void {
 			var loader:URLLoader = new URLLoader(),
@@ -67,7 +67,7 @@ package com.yui.util
 			if (timer) {
 				timer.start();
 			}
-		};
+		}
 
 		private function defineListeners(d:Object, timer:Timer):void {
 			httpComplete = function(e:Event):void { ioSuccess(e, d, timer); };
@@ -76,7 +76,7 @@ package com.yui.util
 			if (timer) {
 				httpTimeout = function(e:TimerEvent):void { ioTimeout(e, d); };
 			}
-		};
+		}
 
 		private function addListeners(loader:IEventDispatcher, timer:IEventDispatcher):void  {
 			loader.addEventListener(Event.COMPLETE, httpComplete);
@@ -85,7 +85,7 @@ package com.yui.util
 			if (timer) {
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, httpTimeout);
 			}
-		};
+		}
 
 		private function removeListeners(id:uint):void  {
 			loaderMap[id].c.removeEventListener(Event.COMPLETE, httpComplete);
@@ -94,14 +94,14 @@ package com.yui.util
 			if (loaderMap[id].t) {
 				loaderMap[id].t.removeEventListener(TimerEvent.TIMER_COMPLETE, httpTimeout);
 			}
-		};
+		}
 
 		private function ioStart(d:Object):void {
 			var a:Array = [d.id, d.cfg];
 
 			loaderMap[d.id].readyState = 2;
 			ExternalInterface.call('YUI.applyTo', yId, 'io.start', a);
-		};
+		}
 
 		private function ioSuccess(e:Event, d:Object, timer:Timer):void {
 			var data:String = encodeURI(e.target.data),
@@ -116,7 +116,7 @@ package com.yui.util
 
 			ExternalInterface.call('YUI.applyTo', yId, 'io.success', a);
 			destroy(d.id);
-		};
+		}
 
 		private function ioFailure(e:Event, d:Object, timer:Timer):void {
 			var data:String,
@@ -138,12 +138,12 @@ package com.yui.util
 
 			ExternalInterface.call('YUI.applyTo', yId, 'io.failure', a);
 			destroy(d.id);
-		};
+		}
 
 		private function ioTimeout(e:TimerEvent, d:Object):void {
 			loaderMap[d.id].c.close();
 			ioFailure(e, d, null);
-		};
+		}
 
 		public function ioAbort(id:uint, c:Object):void {
 			var response:Object = { id: id, c: { statusText: 'abort' } },
@@ -157,11 +157,11 @@ package com.yui.util
 
 			ExternalInterface.call('YUI.applyTo', yId, 'io.failure', a);
 			destroy(id);
-		};
+		}
 
-		public function readyState(id:uint):Boolean {
+		public function isInProgress(id:uint):Boolean {
 			return loaderMap[id].readyState !== 4;
-		};
+		}
 
 		private function setRequestHeaders(request:URLRequest, headers:Object):void {
 			var header:URLRequestHeader,
@@ -171,7 +171,7 @@ package com.yui.util
 				header = new URLRequestHeader(prop, headers[prop]);
 				request.requestHeaders.push(header);
  			}
-		};
+		}
 
 		private function serializeData(request:URLRequest, d:Object):void {
 			var prop:String;
@@ -180,11 +180,12 @@ package com.yui.util
 			for (prop in d) {
 				request.data[prop] = d[prop];
 			}
-		};
+
+		}
 
 		private function destroy(id:uint):void {
 			removeListeners(id);
 			delete loaderMap[id];
-		};
+		}
 	}
 }
