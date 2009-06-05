@@ -1817,7 +1817,7 @@ ET.prototype = {
 
         type = _getType(type, this._yuievt.config.prefix);
 
-        var events, ce, ret, o = opts || {};
+        var events, ce, ret, o;
 
         if (L.isObject(type)) {
             ret = {};
@@ -1839,21 +1839,18 @@ ET.prototype = {
             }
 
         } else {
+            o = (opts) ?  Y.mix(opts, this._yuievt.defaults) : this._yuievt.defaults;
             // apply defaults
-            Y.mix(o, this._yuievt.defaults);
 
             ce = new Y.CustomEvent(type, o);
 
             events[type] = ce;
 
-            // if (o.onSubscribeCallback) {
-            //     ce.subscribeEvent.on(o.onSubscribeCallback);
-            // }
         }
 
         // make sure we turn the broadcast flag off if this
         // event was published as a result of bubbling
-        if (o instanceof Y.CustomEvent) {
+        if (opts instanceof Y.CustomEvent) {
             events[type].broadcast = false;
         }
 
