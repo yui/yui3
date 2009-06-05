@@ -713,17 +713,9 @@ Y.CustomEvent.prototype = {
             Y.error("Invalid callback for CE: " + this.type);
         }
 
-        // var se = this.subscribeEvent, s;
-        // if (se) {
-        //     se.fire.apply(se, args);
-        // }
-
         var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-
-            // this._notify(s);
-            
             Y.later(0, this, this._notify, s);
         }
 
@@ -1912,10 +1904,11 @@ ET.prototype = {
             // if this object has bubble targets, we need to publish the
             // event in order for it to bubble.
             if (this._yuievt.hasTargets) {
-                ce = this.publish(t);
-                ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
-
-                return this.bubble(ce);
+                // ce = this.publish(t);
+                // ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
+                
+                a = (typeIncluded) ? arguments : Y.Array(arguments, 0, true).unshift(t);
+                return this.bubble(null, a, this);
             }
 
             // otherwise there is nothing to be done
@@ -1952,21 +1945,18 @@ ET.prototype = {
      * @param evt {Event.Custom} the custom event to propagate
      * @return {boolean} the aggregated return value from Event.Custom.fire
      */
-    bubble: function(evt) {
+    bubble: function(evt, args, target) {
 
         var targs = this._yuievt.targets, ret = true,
             t, type, ce, targetProp, i;
 
-        if (!evt.stopped && targs) {
-
+        if (!evt || (!evt.stopped && targs)) {
 
             for (i in targs) {
                 if (targs.hasOwnProperty(i)) {
-
                     t = targs[i]; 
-                    type = evt.type;
+                    // type = evt && evt.type;
                     ce = t.getEvent(type); 
-                    targetProp = evt.target || this;
                         
                     // if this event was not published on the bubble target,
                     // publish it with sensible default properties
@@ -1974,29 +1964,33 @@ ET.prototype = {
 
                         // publish the event on the bubble target using this event
                         // for its configuration
-                        ce = t.publish(type, evt);
-                        // ce.configured = false;
+                        // ce = t.publish(type, evt);
 
                         // set the host and context appropriately
-                        ce.context = (evt.host === evt.context) ? t : evt.context;
-                        ce.host = t;
+                        // ce.context = (evt.host === evt.context) ? t : evt.context;
+                        // ce.host = t;
 
                         // clear handlers if specified on this event
-                        ce.defaultFn = null;
-                        ce.preventedFn = null;
-                        ce.stoppedFn = null;
-                    }
+                        // ce.defaultFn = null;
+                        // ce.preventedFn = null;
+                        // ce.stoppedFn = null;
 
-                    ce.target = targetProp;
-                    ce.currentTarget = t;
+                        if (t._yuievt.hasTargets) {
+                            t.bubble.call(t, evt, args, target);
+                        }
 
-                    // ce.target = evt.target;
+                    } else {
 
-                    ret = ret && ce.fire.apply(ce, evt.details);
+                        ce.target = target || (evt && evt.target) || this;
 
-                    // stopPropagation() was called
-                    if (ce.stopped) {
-                        break;
+                        ce.currentTarget = t;
+
+                        ret = ret && ce.fire.apply(ce, evt.details);
+
+                        // stopPropagation() was called
+                        if (ce.stopped) {
+                            break;
+                        }
                     }
                 }
             }
