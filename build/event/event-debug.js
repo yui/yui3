@@ -1538,7 +1538,6 @@ var Event = Y.Event,
 			element,
 			ce,
 			ev,
-            nodes,
 			i;
 
         for (spec in tests) {
@@ -1561,19 +1560,14 @@ var Event = Y.Event,
 
 	                    if (element === target || Y.DOM.contains(element, target)) {
 
-                            nodes = nodes || Y.all(elements);
-
 							ce = Event._createWrapper(element, e.type, false, false, true);
 
 							ev = new Y.DOMEventFacade(e, el, ce);
 
 	                        ev.originalTarget = ev.target;
 	                        ev.target = Y.Node.get(element);
-                            ev.details = nodes;
 	
 	                        Y.fire(ename, ev);
-
-	  						break;
 
 	                    }
 
