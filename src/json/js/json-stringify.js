@@ -82,7 +82,7 @@ Y.mix(Y.namespace('JSON'),{
 
     /**
      * Converts an arbitrary value to a JSON string representation.
-     * Cyclical object or array references are replaced with null.
+     * Objects with cyclical references will trigger an exception.
      * If a whitelist is provided, only matching object keys will be included.
      * If a positive integer or non-empty string is passed as the third
      * parameter, the output will be formatted with carriage returns and
