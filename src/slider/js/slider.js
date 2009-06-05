@@ -610,16 +610,16 @@ Y.extend(Slider, Y.Widget, {
      */
     _bindThumbDD : function () {
         var ddConf = {
-            node : this.get(THUMB),
-            bubble : false
-        };
+                node : this.get(THUMB),
+                bubble : false
+            },
+            conConf = {
+                constrain2node : this.get(RAIL)
+            };
 
-        ddConf[this._key.ddStick] = true;
+        conConf[this._key.ddStick] = true;
 
-        this._dd = new Y.DD.Drag(ddConf).plug(Y.Plugin.DDConstrained, {
-            constrain2node : this.get(RAIL)
-        });
-
+        this._dd = new Y.DD.Drag(ddConf).plug(Y.Plugin.DDConstrained, conConf);
         this._dd.on('drag:start', Y.bind(this._onDDStartDrag, this));
         this._dd.on('drag:drag',  Y.bind(this._onDDDrag,      this));
         this._dd.on('drag:end',   Y.bind(this._onDDEndDrag,   this));
