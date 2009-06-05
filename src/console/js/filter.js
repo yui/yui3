@@ -26,6 +26,12 @@ var getCN = Y.ClassNameManager.getClassName,
     DOT = '.',
     EMPTY   = '',
 
+    // IE8 doesn't permit breaking _between_ nowrap elements AND it doesn't
+    // understand the (non spec) wbr tag AND it doesn't create text nodes for
+    // spaces between elements in innerHTML strings.  The en-space entity
+    // suffices, but is less that beautiful in other browsers.
+    SEP = Y.UA.ie > 7 ? '&#8194;' : ' ',
+
     C_BODY       = DOT + Y.Console.CHROME_CLASSES.console_bd_class,
     C_FOOT       = DOT + Y.Console.CHROME_CLASSES.console_ft_class,
 
@@ -66,7 +72,7 @@ Y.mix(ConsoleFilters,{
      * @static
      */
     CATEGORIES_TEMPLATE :
-        '<div class="{controls} {categories}"></div>',
+        '<div class="{categories}"></div>',
 
     /**
      * Markup template used to create the container for the source filters.
@@ -76,7 +82,7 @@ Y.mix(ConsoleFilters,{
      * @static
      */
     SOURCES_TEMPLATE :
-        '<div class="{controls} {sources}"></div>',
+        '<div class="{sources}"></div>',
 
     /**
      * Markup template used to create the category and source filters.
@@ -86,10 +92,10 @@ Y.mix(ConsoleFilters,{
      * @static
      */
     FILTER_TEMPLATE :
-        '<wbr><label class="{filter_label}">'+
+        '<label class="{filter_label}">'+
             '<input type="checkbox" value="{filter_name}" '+
                 'class="{filter} {filter_class}"> {filter_name}'+
-        '</label>',
+        '</label>'+SEP,
 
     /** 
      * Classnames used by the templates when creating nodes.
@@ -100,7 +106,6 @@ Y.mix(ConsoleFilters,{
      * @protected
      */
     CHROME_CLASSES : {
-        controls     : Y.Console.CHROME_CLASSES.console_controls_class,
         categories   : getCN(CONSOLE,FILTERS,'categories'),
         sources      : getCN(CONSOLE,FILTERS,'sources'),
         category     : getCN(CONSOLE,FILTER,CATEGORY),
