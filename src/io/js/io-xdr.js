@@ -31,7 +31,7 @@
                       '<param name="allowScriptAccess" value="sameDomain">' +
 		    	      '</object>';
 		Y.get('body').appendChild(Y.Node.create(XDR_SWF));
-	};
+	}
 
     Y.mix(Y.io, {
 
