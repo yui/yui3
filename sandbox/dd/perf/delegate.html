@@ -19,6 +19,7 @@
 <div class="one">
     <div id="demo"><strong>Foo</strong></div>
     <div id="demo2"><em>BAR</em></div>
+    <a href="#" id="demo3">Baz</a>
 </div>
 <script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
 
@@ -47,6 +48,10 @@ YUI(yConfig).use('node', function(Y) {
 
     Y.get('#demo2').on('click', function(e) {
         console.log('Second: ', e);
+    });
+    Y.get('#demo3').on('click', function(e) {
+        e.halt();
+        console.log('A');
     });
     /*
     Y.on('delegate', function(e) {
