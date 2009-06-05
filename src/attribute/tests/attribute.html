@@ -35,8 +35,9 @@
                 Y.ObjectAssert.areEqual(o2, o1);
             }
 
-            function Test(cfg, lazy) {
-                this._lazyAttrInit = lazy;
+            function Test(cfg, lazy, silentInit) {
+                this._lazyAddAttrs = lazy;
+                this._silentInit = silentInit;
                 Test.superclass.constructor.apply(this, arguments);
             };
 
@@ -1443,7 +1444,7 @@
 
             var perfTemplate = {
 
-                testConstruction: function() {
+                testTimeConstruction: function() {
                     var start, end, n = 20, t, i;
 
                     start = new Date().getTime();
@@ -1463,7 +1464,7 @@
                     }
                     end = new Date().getTime();
                     Y.log("Construction Time Populated (lazy): " + ((end-start)/n), "perf");
-                    
+
                     start = new Date().getTime();
                     for (i = 0; i < n; i++) {
                         t = new Test(null, false);
@@ -1484,18 +1485,33 @@
 
                     Y.log("Construction Time (lazy): " + time, "perf");
 
+                    start = new Date().getTime();
+                    for (i = 0; i < n; i++) {
+                        t = new Test(null, true, true);
+                        t = null;
+                    }
+                    end = new Date().getTime();
+                    Y.log("Construction Time (lazy and silent init): " + ((end-start)/n), "perf");
+
+                    Y.Assert.isTrue((time < expectedTime));
+                },
+
+                testStateForPerfSwitches : function() {
+
+                    // Lazy
                     t = new Test();
                     var x = t.getAttrs();
 
+                    // Non Lazy (Upfront)
                     t = new Test(null, false);
                     var y = t.getAttrs();
 
-                    Y.log(x);
-                    Y.log(y);
+                    // Lazy and Silent
+                    t = new Test(null, true, true);
+                    var z = t.getAttrs();
 
                     Y.Assert.areEqual(Y.dump(x), Y.dump(y), "Lazy vs. Upfront: attr state is not equal");
-
-                    Y.Assert.isTrue((time < expectedTime));
+                    Y.Assert.areEqual(Y.dump(y), Y.dump(z), "Upfront vs. Lazy and Silent: attr state is not equal");
                 }
             }
 

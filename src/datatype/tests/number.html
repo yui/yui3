@@ -71,6 +71,16 @@
         var testFormat = new Y.Test.Case({
             name: "Number Format Tests",
 
+            testUndefined: function() {
+                var output = Y.DataType.Number.format();
+                ASSERT.areSame("", output, "Expected empty string.");
+            },
+
+            testNull: function() {
+                var output = Y.DataType.Number.format(null);
+                ASSERT.areSame("", output, "Expected empty string.");
+            },
+
             testStrings: function() {
                 var output = Y.DataType.Number.format("0");
                 ASSERT.areSame("0", output, "Incorrect output 0.");

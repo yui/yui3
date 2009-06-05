@@ -99,26 +99,6 @@
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_scope">
-                                    <h4><a name="property_scope" property="yui:name">scope</a>
-                                        - <code><span property="yui:type">Object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Context in which to execute the function. By default, is the DataSource
-instance itself. If set, the function will receive the DataSource instance
-as an additional argument.
-                                        </div>
-                                    </div>
-     
-                                        
-                                    <div class="default" property="yui:defaultValue">
-                                        Default Value: null
-                                    </div>        
-
-
-                                    <hr />
-                                    </div>
                             </div>
                         </div>
 
@@ -190,62 +170,10 @@ response is received asynchronously.
 <dl>
 <dt>success (Function)</dt> <dd>Success handler.</dd>
 <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-<dt>scope (Object)</dt> <dd>Execution context.</dd>
 </dl>
 </dd>
 <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
 </dl></span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method_initializer">
-                                    <h4>
-                                        <a name="method_initializer">initializer</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">initializer</strong>
-                                           (
-                                                
-                                                        
-                                                         config
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Internal init() handler.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">config</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Config object.</span>
                                                         </dd>
                                                 </dl>
 
@@ -327,9 +255,6 @@ response is received asynchronously.
                                             </span>
                                             <span rel="yui:method" resource="DataSource.Local.html#method__initEvents">                                        
                                             <a class="private" href="DataSource.Local.html#method__initEvents" property="yui:name" title="_initEvents">_initEvents</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="DataSource.Local.html#method_destructor">                                        
-                                            <a class="private" href="DataSource.Local.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="private">,</span>
                                             </span>
                                             <span rel="yui:method" resource="DataSource.Local.html#method_initializer">                                        
                                             <a class="private" href="DataSource.Local.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="private">,</span>
@@ -427,7 +352,7 @@ response is received asynchronously.
                                         <a class="" href="DataSource.Local.html#event_error" property="yui:name" title="error">error</a><span class="">,</span>
                                         </span>
                                                                             <span rel="yui:event" resource="DataSource.Local.html#event_request">
-                                        <a class="" href="DataSource.Local.html#event_request" property="yui:name" title="request">request</a><span class="">,</span>
+                                        <a class="" href="DataSource.Local.html#event_request" property="yui:name" title="request">request</a>
                                         </span>
                                                                             <span rel="yui:event" resource="DataSource.Local.html#event_response">
                                         <a class="" href="DataSource.Local.html#event_response" property="yui:name" title="response">response</a>
@@ -584,7 +509,6 @@ response is received asynchronously.
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
-                                <li class=""><a href="#property_scope" title="scope">scope</a></li>
                         </ul>
                     </div>
 
@@ -592,7 +516,6 @@ response is received asynchronously.
                         <h4>Methods</h4>
                         <ul class="content">        
                                 <li class="protected"><a href="#method__defRequestFn" title="_defRequestFn">_defRequestFn</a></li>
-                                <li class="private"><a href="#method_initializer" title="initializer">initializer</a></li>
                         </ul>
                     </div>
 
@@ -619,7 +542,7 @@ response is received asynchronously.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "DataSource.Function", "name": "_defRequestFn", "url": "DataSource.Function.html#method__defRequestFn", "type": "method"}, {"access": "private", "host": "DataSource.Function", "name": "initializer", "url": "DataSource.Function.html#method_initializer", "type": "method"}, {"access": "", "host": "DataSource.Function", "name": "NAME", "url": "DataSource.Function.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "scope", "url": "DataSource.Function.html#property_scope", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "source", "url": "DataSource.Function.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Function", "name": "sourceChange", "url": "DataSource.Function.html#event_sourceChange", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "DataSource.Function", "name": "_defRequestFn", "url": "DataSource.Function.html#method__defRequestFn", "type": "method"}, {"access": "", "host": "DataSource.Function", "name": "NAME", "url": "DataSource.Function.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "source", "url": "DataSource.Function.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Function", "name": "sourceChange", "url": "DataSource.Function.html#event_sourceChange", "type": "event"}];
 </script>
 </body>
 </html>

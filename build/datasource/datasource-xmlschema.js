@@ -76,7 +76,6 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
@@ -84,7 +83,7 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = ((this.get("host") instanceof Y.DataSource.XHR) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
+        var data = (Y.DataSource.XHR && (this.get("host") instanceof Y.DataSource.XHR) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
             response = Y.DataSchema.XML.apply(this.get("schema"), data);
             
         // Default

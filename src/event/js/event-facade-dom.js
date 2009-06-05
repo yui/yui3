@@ -117,7 +117,7 @@ var whitelist = {
 Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, i, c, t;
+        x = e.pageX, y = e.pageY, c, t;
 
     this.altKey   = e.altKey;
     this.ctrlKey  = e.ctrlKey;
@@ -242,7 +242,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         } else {
             e.cancelBubble = true;
         }
-        wrapper.stopPropagation();
+        if (wrapper) {
+            wrapper.stopPropagation();
+        }
     };
 
     /**
@@ -259,7 +261,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             this.stopPropagation();
         }
 
-        wrapper.stopImmediatePropagation();
+        if (wrapper) {
+            wrapper.stopImmediatePropagation();
+        }
     };
 
     /**
@@ -273,7 +277,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             e.returnValue = false;
         }
 
-        wrapper.preventDefault();
+        if (wrapper) {
+            wrapper.preventDefault();
+        }
     };
 
     /**

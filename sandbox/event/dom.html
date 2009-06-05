@@ -284,6 +284,12 @@ var interceptLink = function(e) {
 //element:
 Y.on("click", interceptLink, "#secondA");
 
+Y.Event._attach(["click", function(e) {
+    console.log('native event -->');
+    console.log(e);
+    console.log('<-- native event');
+}, "#secondA"], { facade: false } );
+
 // Y.Event.onAvailable("#secondA", function() {
 //     Y.log('#secondA is READY');
 // });
@@ -300,6 +306,10 @@ Y.log("When you begin interacting with the example at left, you'll see log messa
 Y.on('windowresize', function(e) {
     Y.log('window resize');
 });
+
+    // Y.on('resize', function(e) {                                                                                                                                
+        // alert('resized');                                                                                                                                       
+    // });  
 
 });
 

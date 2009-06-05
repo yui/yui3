@@ -22,6 +22,7 @@
         OBJECT_CONSTRUCTOR = Object.prototype.constructor,
         DEEP = "deep",
         SHALLOW = "shallow",
+        VALUE = "value",
         DESTRUCTOR = "destructor";
 
     /**
@@ -48,10 +49,22 @@
         Y.Attribute.call(this);
         Y.Plugin.Host.call(this);
 
-        if (this._lazyAttrInit !== false) { this._lazyAttrInit = true; }
+        this._silentInit = this._silentInit || false;
+        if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
 
         this.init.apply(this, arguments);
     }
+
+    /**
+     * The list of properties which can be configured for 
+     * each attribute (e.g. setter, getter, writeOnce etc.)
+     *
+     * @property Base._ATTR_CFG
+     * @type Array
+     * @static
+     * @private
+     */
+    Base._ATTR_CFG = Y.Attribute._ATTR_CFG.concat("cloneDefaultValue");
 
     /**
      * <p>
@@ -150,10 +163,12 @@
              * @param {Event.Facade} e Event object
              * @param config Object literal of configuration name/value pairs
              */
-            this.publish(INIT, {
-                queuable:false,
-                defaultFn:this._defInitFn
-            });
+            if (!this._silentInit) {
+                this.publish(INIT, {
+                    queuable:false,
+                    defaultFn:this._defInitFn
+                });
+            }
 
             if (config) {
                 if (config.on) {
@@ -164,7 +179,12 @@
                 }
             }
 
-            this.fire(INIT, {cfg: config});
+            if (!this._silentInit) {
+                this.fire(INIT, {cfg: config});
+            } else {
+                this._defInitFn({cfg: config});
+            }
+
             return this;
         },
 
@@ -221,7 +241,12 @@
         _defInitFn : function(e) {
             this._initHierarchy(e.cfg);
             this._initPlugins(e.cfg);
-            this._set(INITIALIZED, true);
+
+            if (!this._silentInit) {
+                this._set(INITIALIZED, true);
+            } else {
+                this._conf.add(INITIALIZED, VALUE, true);
+            }
         },
 
         /**
@@ -272,15 +297,16 @@
          * @param {Objects} allCfgs
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
-            var cfgs = {};
+            var cfgs = null, attr, attrs = clazz.ATTRS;
 
-            if (clazz.ATTRS) {
-                Y.each(clazz.ATTRS, function(v, k) {
-                    if (allCfgs[k]) {
-                        cfgs[k] = allCfgs[k];
-                        delete allCfgs[k];
+            if (attrs) {
+                for (attr in attrs) {
+                    if (attrs.hasOwnProperty(attr) && allCfgs[attr]) {
+                        cfgs = cfgs || {};
+                        cfgs[attr] = allCfgs[attr];
+                        delete allCfgs[attr];
                     }
-                });
+                }
             }
 
             return cfgs;
@@ -316,17 +342,25 @@
          * @param {Object} allAttrs
          */
         _aggregateAttrs : function(allAttrs) {
-            var attr, attrs, cfg, val, path, i, clone,
+            var attr, 
+                attrs, 
+                cfg, 
+                val, 
+                path, 
+                i, 
+                clone, 
+                cfgProps = Base._ATTR_CFG,
                 aggAttrs = {};
 
             if (allAttrs) {
                 for (i = allAttrs.length-1; i >= 0; --i) {
                     attrs = allAttrs[i];
+
                     for (attr in attrs) {
                         if (attrs.hasOwnProperty(attr)) {
 
-                            // Protect
-                            cfg = Y.merge(attrs[attr]);
+                            // Protect config passed in
+                            cfg = Y.mix({}, attrs[attr], true, cfgProps);
 
                             val = cfg.value;
                             clone = cfg.cloneDefaultValue;
@@ -355,7 +389,7 @@
                                 if (!aggAttrs[attr]) {
                                     aggAttrs[attr] = cfg;
                                 } else {
-                                    aggAttrs[attr] = Y.mix(aggAttrs[attr], cfg, true);
+                                    Y.mix(aggAttrs[attr], cfg, true, cfgProps);
                                 }
                             }
                         }
@@ -377,7 +411,7 @@
          * @private
          */
         _initHierarchy : function(userVals) {
-            var lazy = this._lazyAttrInit,
+            var lazy = this._lazyAddAttrs,
                 constr,
                 constrProto,
                 ci,
@@ -430,13 +464,14 @@
         /**
          * Default toString implementation. Provides the constructor NAME
          * and the instance ID.
-         * 
+         *
          * @method toString
          * @return {String} String representation for this object
          */
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
         }
+
     };
 
     // Straightup augment, no wrapper functions

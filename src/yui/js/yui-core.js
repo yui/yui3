@@ -1,11 +1,11 @@
 (function() {
 
 var L = Y.Lang, 
-DELIMITER = '`~',
-FROZEN = {
-    'prototype': 1,
-    '_yuid': 1
-},
+DELIMITER = '__',
+// FROZEN = {
+//     'prototype': 1,
+//     '_yuid': 1
+// },
 
 /*
  * IE will not enumerate native functions in a derived object even if the
@@ -14,16 +14,13 @@ FROZEN = {
  * @property _iefix
  * @param {Function} r  the object to receive the augmentation
  * @param {Function} s  the object that supplies the properties to augment
- * @param w a whitelist object (the keys are the valid items to reference)
  * @private
  * @for YUI
  */
-_iefix = function(r, s, w) {
+_iefix = function(r, s) {
     var fn = s.toString;
     if (L.isFunction(fn) && fn != Object.prototype.toString) {
-        if (!w || (w.toString)) {
-            r.toString = fn;
-        }
+        r.toString = fn;
     }
 };
 
@@ -79,28 +76,41 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
         return r || Y;
     }
 
-    switch (mode) {
-        case 1: // proto to proto
-            return Y.mix(r.prototype, s.prototype);
-        case 2: // object to object and proto to proto
-            Y.mix(r.prototype, s.prototype);
-            break; // pass through 
-        case 3: // proto to static
-            return Y.mix(r, s.prototype);
-        case 4: // static to proto
-            return Y.mix(r.prototype, s);
-        default:  // object to object is what happens below
+    if (mode) {
+        switch (mode) {
+            case 1: // proto to proto
+                return Y.mix(r.prototype, s.prototype);
+            case 2: // object to object and proto to proto
+                Y.mix(r.prototype, s.prototype);
+                break; // pass through 
+            case 3: // proto to static
+                return Y.mix(r, s.prototype);
+            case 4: // static to proto
+                return Y.mix(r.prototype, s);
+            default:  // object to object is what happens below
+        }
     }
 
-    var w = (wl && wl.length) ? Y.Array.hash(wl) : null, 
-        arr = merge && L.isArray(r), i;
+    // Maybe don't even need this wl && wl.length check anymore??
+    var arr = merge && L.isArray(r), i, l, p;
 
-    for (i in s) { 
-
-        if (s.hasOwnProperty(i) && !(i in FROZEN)) {
-
-            // check white list if it was supplied
-            if (!w || (i in w)) {
+    if (wl && wl.length) {
+        for (i = 0, l = wl.length; i < l; ++i) {
+            p = wl[i];
+            if (p in s) {
+                if (merge && L.isObject(r[p], true)) {
+                    Y.mix(r[p], s[p]);
+                } else if (!arr && (ov || !(p in r))) {
+                    r[p] = s[p];
+                } else if (arr) {
+                    r.push(s[p]);
+                }
+            }
+        }
+    } else {
+        for (i in s) { 
+            // if (s.hasOwnProperty(i) && !(i in FROZEN)) {
+                // check white list if it was supplied
                 // if the receiver has this property, it is an object,
                 // and merge is specified, merge the two objects.
                 if (merge && L.isObject(r[i], true)) {
@@ -114,12 +124,12 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                 } else if (arr) {
                     r.push(s[i]);
                 }
-            }
+            // }
         }
-    }
-
-    if (Y.UA.ie) {
-        _iefix(r, s, w);
+    
+        if (Y.UA.ie) {
+            _iefix(r, s);
+        }
     }
 
     return r;
@@ -137,12 +147,31 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache){
     cache = cache || {};
 
-    return function(arg1, arg2) {
-        var a = arguments, 
-            key = arg2 ? Y.Array(a, 0, true).join(DELIMITER) : arg1;
+    // I want the profiler to show me separate entries for each
+    // cached function.  Is this too much to ask?
+    
+    // return function cached_sourceFunction
+    // return this['cached_' + source.name] = function
+    // var a = function(){}; a.name = 'foo'; return a;
+
+    return function cached(arg1, arg2) {
+
+        // (?)()   51  5.76%   0.571ms 1.01ms  0.02ms  0.001ms 0.041ms
+        // A() 76  6.58%   0.652ms 0.652ms 0.009ms 0.005ms 0.03ms
+        // var key = (arg2 !== undefined) ? Y.Array(arguments, 0, true).join(DELIMITER) : arg1;
+
+        // (?)()   51  8.57%   0.837ms 0.838ms 0.016ms 0.013ms 0.024ms
+        // var key = (arguments.length > 1) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
+
+        // (?)()   51  8.06%  0.761ms 0.762ms 0.015ms 0.002ms 0.025ms
+        // var key = (arg2 !== undefined) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
+        
+        // (?)()   51  7.87%   0.749ms 0.751ms 0.015ms 0.001ms 0.027ms
+        // A() 30  2.23%   0.214ms 0.214ms 0.007ms 0.005ms 0.009ms
+        var key = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
 
         if (!(key in cache)) {
-            cache[key] = source.apply(source, a);
+            cache[key] = source.apply(source, arguments);
         }
 
         return cache[key];
@@ -151,3 +180,4 @@ Y.cached = function(source, cache){
 };
 
 })();
+

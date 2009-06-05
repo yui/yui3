@@ -153,7 +153,7 @@ Node.importMethod(Y.DOM, [
 
 if (!document.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
-        return Y.Node.getDOMNode(this).getAttribute(attr, 2) !== '';
+        return Y.DOM.getAttribute(Y.Node.getDOMNode(this), attr) !== '';
     };
 }
 

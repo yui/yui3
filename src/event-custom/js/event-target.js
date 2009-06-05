@@ -18,6 +18,7 @@
 var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     DETACH_PREFIX_SPLITTER = /[,|]\s*/,
+    CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
 
     /**
@@ -26,27 +27,13 @@ var L = Y.Lang,
      * applied to the supplied type.
      * @method _getType
      */
-    _getType = Y.cached(function(pre, type) {
+    _getType = Y.cached(function(type, pre) {
 
-        // console.log('__getType: ' + pre + ', ' + type, 'info', 'event');
-
-        var t = type;
-
-        if (!L.isString(t)) {
-            return t;
+        if (!pre || !L.isString(type) || type.indexOf(PREFIX_DELIMITER) > -1) {
+            return type;
         } 
 
-        if (t == '*') {
-            return null;
-        }
-        
-        if (t.indexOf(PREFIX_DELIMITER) == -1 && pre) {
-            t = pre + PREFIX_DELIMITER + t;
-        }
-
-        // Y.log("type: " + t, 'info', 'event');
-
-        return t;
+        return pre + PREFIX_DELIMITER + type;
     }),
 
     /**lt
@@ -56,7 +43,7 @@ var L = Y.Lang,
      * @method _parseType
      * @private
      */
-    _parseType = Y.cached(function(pre, type) {
+    _parseType = Y.cached(function(type, pre) {
 
         var t = type, parts, detachcategory, after, i, full_t;
 
@@ -77,9 +64,19 @@ var L = Y.Lang,
         if (parts.length > 1) {
             detachcategory = parts[0];
             t = parts[1];
+            if (t == '*') {
+                 t = null;
+            }
         }
+        
+        // i = t.indexOf(CATEGORY_DELIMITER);
+        // if (i > -1) {
+        //     detachcategory = t.substr(0, AFTER_PREFIX.length-1);
+        //     t = t.substr(AFTER_PREFIX.length);
+        //     // Y.log(t);
+        // }
 
-        full_t = _getType(pre, t);
+        full_t = _getType(t, pre);
 
         return [detachcategory, full_t, after, t];
     }),
@@ -137,7 +134,7 @@ ET.prototype = {
      */
     on: function(type, fn, context) {
 
-        var parts = _parseType(this._yuievt.config.prefix, type), f, c, args, ret, ce,
+        var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n;
 
@@ -206,7 +203,7 @@ ET.prototype = {
             //     return o.on.apply(o, a);
             // } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
             } else if ((!type) || (!adapt && Node && (shorttype in Node.DOM_EVENTS))) {
-                handle = Y.Event.attach.apply(Y.Event, args);
+                handle = Y.Event._attach(args);
             }
 
         } 
@@ -263,7 +260,7 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
 
-        var parts = _parseType(this._yuievt.config.prefix, type), 
+        var parts = _parseType(type, this._yuievt.config.prefix), 
         detachcategory = L.isArray(parts) ? parts[0] : null,
         shorttype = (parts) ? parts[3] : null,
         handle, adapt, store = Y.Env.evt.handles, cat, args,
@@ -358,7 +355,7 @@ ET.prototype = {
      * @param type {string}   The type, or name of the event
      */
     detachAll: function(type) {
-        type = _getType(this._yuievt.config.prefix, type);
+        type = _getType(type, this._yuievt.config.prefix);
         return this.detach(type);
     },
 
@@ -433,7 +430,7 @@ ET.prototype = {
     publish: function(type, opts) {
         // this._yuievt.config.prefix
 
-        type = _getType(this._yuievt.config.prefix, type);
+        type = _getType(type, this._yuievt.config.prefix);
 
         var events, ce, ret, o = opts || {};
 
@@ -471,7 +468,7 @@ ET.prototype = {
 
         // make sure we turn the broadcast flag off if this
         // event was published as a result of bubbling
-        if (typeof o == Y.CustomEvent) {
+        if (o instanceof Y.CustomEvent) {
             events[type].broadcast = false;
         }
 
@@ -524,7 +521,7 @@ ET.prototype = {
             t = (typeIncluded) ? type : (type && type.type),
             ce, a, ret;
 
-        t = _getType(this._yuievt.config.prefix, t);
+        t = _getType(t, this._yuievt.config.prefix);
         ce = this.getEvent(t);
 
         // this event has not been published or subscribed to
@@ -562,7 +559,7 @@ ET.prototype = {
      * @return {Event.Custom} the custom event or null
      */
     getEvent: function(type) {
-        type = _getType(this._yuievt.config.prefix, type);
+        type = _getType(type, this._yuievt.config.prefix);
         var e = this._yuievt.events;
         return (e && type in e) ? e[type] : null;
     },

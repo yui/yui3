@@ -66,7 +66,6 @@ var g_nodelists = {},
         if (config.restricted) {
             g_restrict = this[UID];
         }
-        NodeList.superclass.constructor.apply(this, arguments);
     };
 // end "globals"
 
@@ -146,38 +145,6 @@ NodeList._getTempNode = function() {
     return tmp;
 };
 
-// call with instance context
-NodeList.DEFAULT_SETTER = function(attr, val) {
-    var tmp = NodeList._getTempNode();
-    NodeList.each(this, function(node) {
-        var instance = Y.Node._instances[node[UID]];
-        if (!instance) {
-            g_nodes[tmp[UID]] = node;
-            instance = tmp;
-        }
-        instance.set(attr, val);
-    });
-};
-
-// call with instance context
-NodeList.DEFAULT_GETTER = function(attr) {
-    var tmp = NodeList._getTempNode(),
-        ret = [];
-
-    NodeList.each(this, function(node) {
-        var instance = Y.Node._instances[node[UID]];
-        if (!instance) { // reuse tmp instance
-            g_nodes[tmp[UID]] = node;
-            instance = tmp;
-        }
-        ret[ret.length] = instance.get(attr);
-    });
-
-    return ret;
-};
-
-Y.extend(NodeList, Y.Base);
-
 Y.mix(NodeList.prototype, {
     /**
      * Retrieves the Node instance at the given index. 
@@ -203,10 +170,25 @@ Y.mix(NodeList.prototype, {
         var instance = this;
         Y.Array.each(g_nodelists[this[UID]], function(node, index) {
             node = Y.get(node);
-            context = context || node;
-            return fn.call(context, node, index, instance);
+            return fn.call(context || node, node, index, instance);
         });
         return instance;
+    },
+
+    batch: function(fn, context) {
+        var nodelist = this;
+            tmp = NodeList._getTempNode();
+
+        Y.Array.each(g_nodelists[this[UID]], function(node, index) {
+            var instance = Y.Node._instances[node[UID]];
+            if (!instance) {
+                g_nodes[tmp[UID]] = node;
+                instance = tmp;
+            }
+
+            return fn.call(context || instance, instance, index, nodelist);
+        });
+        return nodelist;
     },
 
     /**
@@ -246,57 +228,31 @@ Y.mix(NodeList.prototype, {
      * @see Selector
      */
     filter: function(selector) {
-        return Node.scrubVal(Y.Selector.filter(g_nodelists[this[UID]], selector), this);
+        return Y.all(Y.Selector.filter(g_nodelists[this[UID]], selector));
     },
 
-    get: function(attr) {
-        if (!this.attrAdded(attr) && (!this._conf.data.getter || !this._conf.data.getter[attr])) {
-        //if (!this.attrAdded(attr)) {
-            //this._addAttr(attr);
-            return NodeList.DEFAULT_GETTER.call(this, attr);
-            //return NodeList.DEFAULT_GETTER.call(this, attr);
-        }
+    modulus: function(n, r) {
+        r = r || 0;
+        var nodes = [];
+        NodeList.each(this, function(node, i) {
+            if (i % n === r) {
+                nodes.push(node);
+            }
+        });
 
-        return NodeList.superclass.constructor.prototype.get.apply(this, arguments);
+        return Y.all(nodes);
     },
 
-    set: function(attr, val) {
-        if (!this.attrAdded(attr)) {
-            this._addAttr(attr);
-        }
-
-        return NodeList.superclass.constructor.prototype.set.apply(this, arguments);
+    odd: function() {
+        return this.modulus(2, 1);
     },
 
-    on: function(type, fn, context, arg) {
-        var args = g_slice.call(arguments, 0);
-
-        args.splice(2, 0, g_nodelists[this[UID]]);
-        if (Node.DOM_EVENTS[type]) {
-            Y.Event.attach.apply(Y.Event, args);
-        }
-
-        return NodeList.superclass.constructor.prototype.on.apply(this, arguments);
+    even: function() {
+        return this.modulus(2);
     },
 
     destructor: function() {
         delete NodeList._instances[this[UID]];
-    },
-
-    plug: function() {
-        var args = arguments;
-        this.each(function(node) {
-            node.plug.apply(node, args);
-        });
-        return this;
-    },
-
-    unplug: function() {
-        var args = arguments;
-        this.each(function(node) {
-            node.unplug.apply(node, args);
-        });
-        return this;
     },
 
     refresh: function() {
@@ -328,6 +284,23 @@ Y.mix(NodeList.prototype, {
         return g_nodelists[this[UID]].length;
     },
 
+    // one-off because we cant import from Node due to undefined return values
+    get: function(name) {
+        var ret = [],
+            tmp = NodeList._getTempNode();
+
+        NodeList.each(this, function(node) {
+            var instance = Y.Node._instances[node[UID]];
+            if (!instance) {
+                g_nodes[tmp[UID]] = node;
+                instance = tmp;
+            }
+            ret[ret.length] = instance.get(name);
+        });
+
+        return ret;
+    },
+
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to any nodes',
@@ -350,28 +323,24 @@ Y.mix(NodeList.prototype, {
             }
         }
         return str || errorMsg;
-    },
-
-    _addAttr: function(attr) {
-        this.addAttr(attr.split(DOT)[0], {
-            getter: function() {
-                return NodeList.DEFAULT_GETTER.call(this, attr);
-            },
-
-            setter: function(val) {
-                NodeList.DEFAULT_SETTER.call(this, attr, val);
-            }
-        });
     }
+
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-    'addEventListener',
-    'removeEventListener',
-    'remove',
+    'after',
     'append',
+    'create',
+    'detach',
+    'detachAll',
+    'insert',
+    'on',
+    'plug',
+    'prepend',
+    'remove',
+    'set',
     'setContent',
-    'prepend'
+    'unplug'
 ]);
 
 Y.NodeList = NodeList;

@@ -418,6 +418,7 @@ NodeMenuNav.ATTRS = {
 		
 		value: true,
 		writeOnce: true,
+		lazyAdd: false,
 		setter: function (value) {
 
 			var oMenu = this.get(HOST),

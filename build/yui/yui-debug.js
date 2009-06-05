@@ -4,7 +4,10 @@
  */
 (function() {
 
-    var _instances = {}, _startTime = new Date().getTime(), p, i,
+    var _instances = {}, 
+        _startTime = new Date().getTime(), 
+        p, 
+        i,
 
         add = function () {
             if (window.addEventListener) {
@@ -47,7 +50,9 @@
             'io.start': 1,
             'io.success': 1,
             'io.failure': 1
-        };
+        },
+
+        SLICE = Array.prototype.slice;
         
 // reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
@@ -204,7 +209,6 @@ YUI.prototype = {
             // @todo expand the new module metadata
             mods: {},
             _idx: 0,
-            _pre: 'yuid',
             _used: {},
             _attached: {},
             _yidx: 0,
@@ -222,7 +226,8 @@ YUI.prototype = {
         Y.Env._loaded[v] = {};
 
         if (YUI.Env) {
-            Y.Env._yidx = ++YUI.Env._idx;
+            Y.Env._yidx = (++YUI.Env._yidx);
+            Y.Env._guidp = ('yui_' + this.version + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
             Y.id = Y.stamp(Y);
             _instances[Y.id] = Y;
         }
@@ -388,12 +393,12 @@ YUI.prototype = {
     use: function() {
 
         if (this._loading) {
-            this._useQueue.add(Array.prototype.slice.call(arguments));
+            this._useQueue.add(SLICE.call(arguments, 0));
             return this;
         }
 
         var Y = this, 
-            a=Array.prototype.slice.call(arguments, 0), 
+            a=SLICE.call(arguments, 0), 
             mods = YUI.Env.mods, 
             used = Y.Env._used,
             loader, 
@@ -618,14 +623,8 @@ YUI.prototype = {
      * @return {string} the guid
      */
     guid: function(pre) {
-        var e = this.Env, p = (pre) || e._pre,
-            id = p + '-' + 
-                   this.version + '-' + 
-                   e._yidx      + '-' + 
-                   (e._uidx++)  + '-' + 
-                   _startTime;
-
-            return id.replace(/\./g, '_');
+        var id =  this.Env._guidp + (++this.Env._uidx);
+        return (pre) ? (pre + id) : id;
     },
 
     /**
@@ -686,6 +685,21 @@ YUI.prototype = {
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
+
+    /*
+     * Subscribe to an event.  The signature differs depending on the
+     * type of event you are attaching to.
+     * @method on 
+     * @param type {string|function|object} The type of the event.  If
+     * this is a function, this is dispatched to the aop system.  If an
+     * object, it is parsed for multiple subsription definitions
+     * @param fn {Function} The callback
+     * @param elspec {any} DOM element(s), selector string(s), and or
+     * Node ref(s) to attach DOM related events to (only applies to
+     * DOM events).
+     * @param
+     * @return the event target or a detach handle per 'chain' config
+     */
 
 })();
 YUI.add('yui-base', function(Y) {
@@ -1063,7 +1077,7 @@ var L = Y.Lang, Native = Array.prototype,
  *   can be used to avoid multiple array.test calls.
  *   @return {Array} the resulting array
  */
-A = function(o, startIdx, al) {
+YArray = function(o, startIdx, al) {
     var t = (al) ? 2 : Y.Array.test(o), i, l, a;
 
     // switch (t) {
@@ -1092,7 +1106,7 @@ A = function(o, startIdx, al) {
 
 };
 
-Y.Array = A;
+Y.Array = YArray;
 
 /** 
  * Evaluates the input to determine if it is an array, array-like, or 
@@ -1110,7 +1124,7 @@ Y.Array = A;
  * 1: A real array. 
  * 2: array-like collection.
  */
-A.test = function(o) {
+YArray.test = function(o) {
     var r = 0;
     if (L.isObject(o)) {
         if (L.isArray(o)) {
@@ -1138,7 +1152,7 @@ A.test = function(o) {
  * @static
  * @return {YUI} the YUI instance
  */
-A.each = (Native.forEach) ?
+YArray.each = (Native.forEach) ?
     function (a, f, o) { 
         Native.forEach.call(a || [], f, o || Y);
         return Y;
@@ -1161,7 +1175,7 @@ A.each = (Native.forEach) ?
  * @param v {Array} optional valueset
  * @return {object} the hash
  */
-A.hash = function(k, v) {
+YArray.hash = function(k, v) {
     var o = {}, l = k.length, vl = v && v.length, i;
     for (i=0; i<l; i=i+1) {
         o[k[i]] = (vl && vl > i) ? v[i] : true;
@@ -1180,7 +1194,7 @@ A.hash = function(k, v) {
  * @param val the value to search for
  * @return {int} the index of the item that contains the value or -1
  */
-A.indexOf = (Native.indexOf) ?
+YArray.indexOf = (Native.indexOf) ?
     function(a, val) {
         return a.indexOf(val);
     } :
@@ -1199,7 +1213,7 @@ A.indexOf = (Native.indexOf) ?
  * Y.ArrayAssert.itemsAreEqual([1, 2, 3], [3, 1, 2].sort(Y.Array.numericSort));
  * @method numericSort
  */
-A.numericSort = function(a, b) { 
+YArray.numericSort = function(a, b) { 
     return (a - b); 
 };
 
@@ -1216,7 +1230,7 @@ A.numericSort = function(a, b) {
  * @return {boolean} true if the function returns true on
  * any of the items in the array
  */
- A.some = (Native.some) ?
+ YArray.some = (Native.some) ?
     function (a, f, o) { 
         return Native.some.call(a, f, o);
     } :
@@ -1234,11 +1248,11 @@ A.numericSort = function(a, b) {
 (function() {
 
 var L = Y.Lang, 
-DELIMITER = '`~',
-FROZEN = {
-    'prototype': 1,
-    '_yuid': 1
-},
+DELIMITER = '__',
+// FROZEN = {
+//     'prototype': 1,
+//     '_yuid': 1
+// },
 
 /*
  * IE will not enumerate native functions in a derived object even if the
@@ -1247,16 +1261,13 @@ FROZEN = {
  * @property _iefix
  * @param {Function} r  the object to receive the augmentation
  * @param {Function} s  the object that supplies the properties to augment
- * @param w a whitelist object (the keys are the valid items to reference)
  * @private
  * @for YUI
  */
-_iefix = function(r, s, w) {
+_iefix = function(r, s) {
     var fn = s.toString;
     if (L.isFunction(fn) && fn != Object.prototype.toString) {
-        if (!w || (w.toString)) {
-            r.toString = fn;
-        }
+        r.toString = fn;
     }
 };
 
@@ -1312,28 +1323,41 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
         return r || Y;
     }
 
-    switch (mode) {
-        case 1: // proto to proto
-            return Y.mix(r.prototype, s.prototype);
-        case 2: // object to object and proto to proto
-            Y.mix(r.prototype, s.prototype);
-            break; // pass through 
-        case 3: // proto to static
-            return Y.mix(r, s.prototype);
-        case 4: // static to proto
-            return Y.mix(r.prototype, s);
-        default:  // object to object is what happens below
+    if (mode) {
+        switch (mode) {
+            case 1: // proto to proto
+                return Y.mix(r.prototype, s.prototype);
+            case 2: // object to object and proto to proto
+                Y.mix(r.prototype, s.prototype);
+                break; // pass through 
+            case 3: // proto to static
+                return Y.mix(r, s.prototype);
+            case 4: // static to proto
+                return Y.mix(r.prototype, s);
+            default:  // object to object is what happens below
+        }
     }
 
-    var w = (wl && wl.length) ? Y.Array.hash(wl) : null, 
-        arr = merge && L.isArray(r), i;
+    // Maybe don't even need this wl && wl.length check anymore??
+    var arr = merge && L.isArray(r), i, l, p;
 
-    for (i in s) { 
-
-        if (s.hasOwnProperty(i) && !(i in FROZEN)) {
-
-            // check white list if it was supplied
-            if (!w || (i in w)) {
+    if (wl && wl.length) {
+        for (i = 0, l = wl.length; i < l; ++i) {
+            p = wl[i];
+            if (p in s) {
+                if (merge && L.isObject(r[p], true)) {
+                    Y.mix(r[p], s[p]);
+                } else if (!arr && (ov || !(p in r))) {
+                    r[p] = s[p];
+                } else if (arr) {
+                    r.push(s[p]);
+                }
+            }
+        }
+    } else {
+        for (i in s) { 
+            // if (s.hasOwnProperty(i) && !(i in FROZEN)) {
+                // check white list if it was supplied
                 // if the receiver has this property, it is an object,
                 // and merge is specified, merge the two objects.
                 if (merge && L.isObject(r[i], true)) {
@@ -1347,12 +1371,12 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                 } else if (arr) {
                     r.push(s[i]);
                 }
-            }
+            // }
         }
-    }
-
-    if (Y.UA.ie) {
-        _iefix(r, s, w);
+    
+        if (Y.UA.ie) {
+            _iefix(r, s);
+        }
     }
 
     return r;
@@ -1370,12 +1394,31 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache){
     cache = cache || {};
 
-    return function(arg1, arg2) {
-        var a = arguments, 
-            key = arg2 ? Y.Array(a, 0, true).join(DELIMITER) : arg1;
+    // I want the profiler to show me separate entries for each
+    // cached function.  Is this too much to ask?
+    
+    // return function cached_sourceFunction
+    // return this['cached_' + source.name] = function
+    // var a = function(){}; a.name = 'foo'; return a;
+
+    return function cached(arg1, arg2) {
+
+        // (?)()   51  5.76%   0.571ms 1.01ms  0.02ms  0.001ms 0.041ms
+        // A() 76  6.58%   0.652ms 0.652ms 0.009ms 0.005ms 0.03ms
+        // var key = (arg2 !== undefined) ? Y.Array(arguments, 0, true).join(DELIMITER) : arg1;
+
+        // (?)()   51  8.57%   0.837ms 0.838ms 0.016ms 0.013ms 0.024ms
+        // var key = (arguments.length > 1) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
+
+        // (?)()   51  8.06%  0.761ms 0.762ms 0.015ms 0.002ms 0.025ms
+        // var key = (arg2 !== undefined) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
+        
+        // (?)()   51  7.87%   0.749ms 0.751ms 0.015ms 0.001ms 0.027ms
+        // A() 30  2.23%   0.214ms 0.214ms 0.007ms 0.005ms 0.009ms
+        var key = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
 
         if (!(key in cache)) {
-            cache[key] = source.apply(source, a);
+            cache[key] = source.apply(source, arguments);
         }
 
         return cache[key];
@@ -1384,6 +1427,7 @@ Y.cached = function(source, cache){
 };
 
 })();
+
 (function() {
 
 /**
@@ -1967,7 +2011,7 @@ YUI.add('get', function(Y) {
 
 var ua         = Y.UA, 
     L          = Y.Lang,
-    PREFIX     = Y.guid('yui_'),
+    PREFIX     = Y.guid(),
     TYPE_JS    = "text/javascript",
     TYPE_CSS   = "text/css",
     STYLESHEET = "stylesheet";
@@ -3016,7 +3060,7 @@ var GLOBAL_ENV = YUI.Env,
                     requires: [DATASCHEMABASE]
                 },
                 'dataschema-json': {
-                    requires: [DATASCHEMABASE]
+                    requires: [DATASCHEMABASE, 'json']
                 },
                 'dataschema-text': {
                     requires: [DATASCHEMABASE]
@@ -4552,6 +4596,7 @@ Y.Loader.prototype = {
 
         var self = this, copy;
 
+        Y.log('public insert() ' + type, "info", "loader");
         Y.log('public insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
 
 
@@ -4616,7 +4661,6 @@ Y.Loader.prototype = {
 
             for (i=0; i<len; i=i+1) {
                 m = this.getModule(s[i]);
-// @TODO we can't combine CSS yet until we deliver files with absolute paths to the assets
                 // Do not try to combine non-yui JS
                 if (m && m.type === this.loadType && !m.ext) {
                     url += this.root + m.path;
@@ -4632,7 +4676,8 @@ Y.Loader.prototype = {
 
 Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
 
-                if (m.type === CSS) {
+                // if (m.type === CSS) {
+                if (this.loadType === CSS) {
                     fn = Y.Get.css;
                     attr = this.cssAttributes;
                 } else {
@@ -4650,6 +4695,7 @@ Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
                     charset: this.charset,
                     attributes: attr,
                     timeout: this.timeout,
+                    autopurge: false,
                     context: self 
                 });
 
@@ -4746,6 +4792,7 @@ Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader"
                     onFailure: this._onFailure,
                     onTimeout: this._onTimeout,
                     timeout: this.timeout,
+                    autopurge: false,
                     context: self 
                 });
 

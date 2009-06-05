@@ -225,23 +225,18 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
         test_each: function() {
             var count = 0,
                 nodes = Y.all('#test-nodes *'),
-                g_node, self, index, instance, isNode;
+                index;
 
             nodes.each(function(node, i, list) {
-                self = this;
                 count++;
-                g_node = node;
                 index = i;
-                instance = list;
-                isNode = (node instanceof Y.Node);
+                Assert.areEqual(nodes, list, 'nodes === instance');
+                Assert.isTrue(node instanceof Y.Node, 'node instanceof Y.Node');
+                Assert.areEqual(node, this, 'this === node');
             });
 
             Assert.areEqual(count, nodes.size(), 'node.each(count) === nodes.size()');
             Assert.areEqual(nodes.size() - 1, index, 'nodes.size() - 1 === index');
-            Assert.areEqual(nodes, instance, 'nodes === instance');
-            Assert.areEqual(nodes, instance, 'nodes === instance');
-            Assert.areEqual(g_node, self, 'this === node');
-            Assert.isTrue(isNode, 'node instanceof Y.Node');
         },
 
         test_some: function() {
@@ -310,6 +305,7 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             // size() is deprecated on Node
             //Assert.areEqual(1, Y.get('#' + id + ' li').size(), 'Y.get("#test-nodes li.size()")');
 
+            Assert.areEqual(byId('test-nodes').childNodes.length, node.get('childNodes').size(), 'node.get("childNodes").size()');
             
             Assert.areEqual(byId('test-nodes').childNodes.length, node.get('childNodes').get('tagName').length, 'node.get("childNodes")');
             ArrayAssert.itemsAreEqual(byId('test-nodes').childNodes.length, node.get('childNodes').get('length').length, "node.get('childNodes').get('length')");
@@ -420,7 +416,7 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.areEqual(node.ancestor(), node.get('parentNode'), "node.ancestor()");
 
             Assert.isNull(node.ancestor(function(el) {
-                return el.hasAttribute('foo');
+                return el.getAttribute('foo') !== '';
             }), 'ancestor');
             Assert.areEqual('test-class', node.previous().get('id'), 'node.previous()');
 
@@ -728,21 +724,6 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             node.remove();
             Assert.isTrue(parent !== domNode.parentNode, 'node.remove()');
-        },
-
-        test_destroy: function() {
-            var node = Y.get('body');
-            node.destroy();
-            Assert.areEqual(undefined, Y.Node.getDOMNode(node), "Y.get('body').destroy()");
-
-            var node2 = Y.get('div');
-
-            var nodelist = Y.all('*');
-            nodelist.destroy();
-            Assert.areEqual(undefined, Y.NodeList.getDOMNodes(node), "Y.all('*').destroy()");
-
-            // node2 instance should still be intact
-            Assert.areEqual(document.getElementsByTagName('div')[0], Y.Node.getDOMNode(node2), "Y.get('div')");
         },
 
         test_aria: function() {

@@ -4,7 +4,10 @@
  */
 (function() {
 
-    var _instances = {}, _startTime = new Date().getTime(), p, i,
+    var _instances = {}, 
+        _startTime = new Date().getTime(), 
+        p, 
+        i,
 
         add = function () {
             if (window.addEventListener) {
@@ -47,7 +50,9 @@
             'io.start': 1,
             'io.success': 1,
             'io.failure': 1
-        };
+        },
+
+        SLICE = Array.prototype.slice;
         
 // reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
@@ -204,7 +209,6 @@ YUI.prototype = {
             // @todo expand the new module metadata
             mods: {},
             _idx: 0,
-            _pre: 'yuid',
             _used: {},
             _attached: {},
             _yidx: 0,
@@ -222,7 +226,8 @@ YUI.prototype = {
         Y.Env._loaded[v] = {};
 
         if (YUI.Env) {
-            Y.Env._yidx = ++YUI.Env._idx;
+            Y.Env._yidx = (++YUI.Env._yidx);
+            Y.Env._guidp = ('yui_' + this.version + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
             Y.id = Y.stamp(Y);
             _instances[Y.id] = Y;
         }
@@ -388,12 +393,12 @@ YUI.prototype = {
     use: function() {
 
         if (this._loading) {
-            this._useQueue.add(Array.prototype.slice.call(arguments));
+            this._useQueue.add(SLICE.call(arguments, 0));
             return this;
         }
 
         var Y = this, 
-            a=Array.prototype.slice.call(arguments, 0), 
+            a=SLICE.call(arguments, 0), 
             mods = YUI.Env.mods, 
             used = Y.Env._used,
             loader, 
@@ -618,14 +623,8 @@ YUI.prototype = {
      * @return {string} the guid
      */
     guid: function(pre) {
-        var e = this.Env, p = (pre) || e._pre,
-            id = p + '-' + 
-                   this.version + '-' + 
-                   e._yidx      + '-' + 
-                   (e._uidx++)  + '-' + 
-                   _startTime;
-
-            return id.replace(/\./g, '_');
+        var id =  this.Env._guidp + (++this.Env._uidx);
+        return (pre) ? (pre + id) : id;
     },
 
     /**
@@ -686,5 +685,20 @@ YUI.prototype = {
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
+
+    /*
+     * Subscribe to an event.  The signature differs depending on the
+     * type of event you are attaching to.
+     * @method on 
+     * @param type {string|function|object} The type of the event.  If
+     * this is a function, this is dispatched to the aop system.  If an
+     * object, it is parsed for multiple subsription definitions
+     * @param fn {Function} The callback
+     * @param elspec {any} DOM element(s), selector string(s), and or
+     * Node ref(s) to attach DOM related events to (only applies to
+     * DOM events).
+     * @param
+     * @return the event target or a detach handle per 'chain' config
+     */
 
 })();

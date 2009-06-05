@@ -161,7 +161,7 @@
             <span class="nx">doc</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">];</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">DEFAULT_VIEW</span><span class="o">][</span><span class="nx">GET_COMPUTED_STYLE</span><span class="o">](</span><span class="nx">node</span><span class="o">,</span> <span class="s1">&#39;&#39;</span><span class="o">)[</span><span class="nx">att</span><span class="o">];</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">DEFAULT_VIEW</span><span class="o">][</span><span class="nx">GET_COMPUTED_STYLE</span><span class="o">](</span><span class="nx">node</span><span class="o">,</span> <span class="kc">null</span><span class="o">)[</span><span class="nx">att</span><span class="o">];</span>
         <span class="o">}</span>
         <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
     <span class="o">}</span>

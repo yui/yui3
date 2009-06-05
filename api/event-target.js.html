@@ -75,7 +75,7 @@
 <span class="c">     * applied to the supplied type.</span>
 <span class="c">     * @method _getType</span>
 <span class="c">     */</span>
-    <span class="nx">_getType</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">pre</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_getType</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="c">// console.log(&#39;__getType: &#39; + pre + &#39;, &#39; + type, &#39;info&#39;, &#39;event&#39;);</span>
 <span class="c"></span>
@@ -105,7 +105,7 @@
 <span class="c">     * @method _parseType</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
-    <span class="nx">_parseType</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">pre</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_parseType</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">parts</span><span class="o">,</span> <span class="nx">detachcategory</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">full_t</span><span class="o">;</span>
 
@@ -128,7 +128,7 @@
             <span class="nx">t</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
         <span class="o">}</span>
 
-        <span class="nx">full_t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">pre</span><span class="o">,</span> <span class="nx">t</span><span class="o">);</span>
+        <span class="nx">full_t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">pre</span><span class="o">);</span>
 
         <span class="k">return</span> <span class="o">[</span><span class="nx">detachcategory</span><span class="o">,</span> <span class="nx">full_t</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">t</span><span class="o">];</span>
     <span class="o">}),</span>
@@ -186,7 +186,7 @@
 <span class="c">     */</span>
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span>
+        <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span>
             <span class="nx">detachcategory</span><span class="o">,</span> <span class="nx">handle</span><span class="o">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">handles</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">adapt</span><span class="o">,</span> <span class="nx">shorttype</span><span class="o">,</span>
             <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">,</span> <span class="nx">n</span><span class="o">;</span>
 
@@ -255,7 +255,7 @@
 <span class="c"></span>            <span class="c">//     return o.on.apply(o, a);</span>
 <span class="c"></span>            <span class="c">// } else if ((!type) || (!adapt &amp;&amp; type.indexOf(&#39;:&#39;) == -1)) {</span>
 <span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">((!</span><span class="nx">type</span><span class="o">)</span> <span class="o">||</span> <span class="o">(!</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DOM_EVENTS</span><span class="o">)))</span> <span class="o">{</span>
-                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">args</span><span class="o">);</span>
             <span class="o">}</span>
 
         <span class="o">}</span> 
@@ -312,7 +312,7 @@
 <span class="c">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">),</span> 
+        <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">),</span> 
         <span class="nx">detachcategory</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">parts</span><span class="o">)</span> <span class="o">?</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
         <span class="nx">shorttype</span> <span class="o">=</span> <span class="o">(</span><span class="nx">parts</span><span class="o">)</span> <span class="o">?</span> <span class="nx">parts</span><span class="o">[</span><span class="m">3</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
         <span class="nx">handle</span><span class="o">,</span> <span class="nx">adapt</span><span class="o">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">handles</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span>
@@ -407,7 +407,7 @@
 <span class="c">     * @param type {string}   The type, or name of the event</span>
 <span class="c">     */</span>
     <span class="nx">detachAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">detach</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
     <span class="o">},</span>
 
@@ -482,7 +482,7 @@
     <span class="nx">publish</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
         <span class="c">// this._yuievt.config.prefix</span>
 <span class="c"></span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">);</span>
 
         <span class="k">var</span> <span class="nx">events</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="o">{};</span>
 
@@ -573,7 +573,7 @@
             <span class="nx">t</span> <span class="o">=</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="nx">type</span> <span class="o">:</span> <span class="o">(</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">type</span><span class="o">),</span>
             <span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">ret</span><span class="o">;</span>
 
-        <span class="nx">t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">t</span><span class="o">);</span>
+        <span class="nx">t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">);</span>
         <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
 
         <span class="c">// this event has not been published or subscribed to</span>
@@ -611,7 +611,7 @@
 <span class="c">     * @return {Event.Custom} the custom event or null</span>
 <span class="c">     */</span>
     <span class="nx">getEvent</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">);</span>
         <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">;</span>
         <span class="k">return</span> <span class="o">(</span><span class="nx">e</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="k">in</span> <span class="nx">e</span><span class="o">)</span> <span class="o">?</span> <span class="nx">e</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
     <span class="o">},</span>

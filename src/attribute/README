@@ -57,8 +57,12 @@
   properties which can be modified after is has been added are limited to getter,
   readOnly, writeOnce and broadcast.
 
-* Added support for lazy attribute configuration. Attributes are configured on
-  first call to get/set.
+* Added support for lazy attribute configuration. Base uses this feature to 
+  lazily intialize all Attributes on the first call to get/set, for 
+  performance optimization. 
+  
+  lazyAdd:true/false can be used to over-ride this behavior for a particular
+  attribute. 
 
 3.0.0PR2
 

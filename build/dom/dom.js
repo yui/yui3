@@ -31,8 +31,10 @@ var NODE_TYPE = 'nodeType',
     TEXT_CONTENT = 'textContent',
     LENGTH = 'length',
 
+
     UNDEFINED = undefined,
 
+    g_slice = Array.slice,
     re_tag = /<([a-z]+)/i;
 
 Y.DOM = {
@@ -356,13 +358,16 @@ Y.DOM = {
      * @return {HTMLElement} The node that was inserted (or null if insert fails) 
      */
     insertBefore: function(newNode, referenceNode) {
-        if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            return null;
+        var ret = null,
+            parent;
+        if (newNode && referenceNode && (parent = referenceNode.parentNode)) { // NOTE: assignment
+            if (typeof newNode === 'string') {
+                newNode = Y.DOM.create(newNode);
+            }
+            ret = parent.insertBefore(newNode, referenceNode);
+        } else {
         }
-        if (typeof newNode === 'string') {
-            newNode = DOM.create(newNode);
-        }
-        return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode);
+        return ret;
     },
 
     /**
@@ -376,6 +381,10 @@ Y.DOM = {
         if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
             return null;
         }       
+
+        if (typeof newNode === 'string') {
+            newNode = Y.DOM.create(newNode);
+        }
 
         if (referenceNode[NEXT_SIBLING]) {
             return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode[NEXT_SIBLING]); 
@@ -408,12 +417,12 @@ Y.DOM = {
 
         nodes = create(html, doc, tag).childNodes;
 
-        if (nodes[LENGTH] === 1) { // return single node, breaking parentNode ref from "fragment"
+        if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
             ret = nodes[0].parentNode.removeChild(nodes[0]);
         } else { // return multiple nodes as a fragment
             ret = doc.createDocumentFragment();
-            while (nodes[LENGTH]) {
-                ret.appendChild(nodes[nodes[LENGTH] - 1]); 
+            while (nodes.length) {
+                ret.appendChild(nodes[0]); 
             }
         }
 
@@ -477,14 +486,26 @@ Y.DOM = {
         return obj.alert && obj.document;
     },
 
+    _fragClones: {
+        div: document.createElement('div')
+    },
+
     _create: function(html, doc, tag) {
         tag = tag || 'div';
-        var frag = doc.createElement(tag);
-        frag.innerHTML = Y.Lang.trim(html);
+
+        var frag = Y.DOM._fragClones[tag];
+        if (frag) {
+            frag = frag.cloneNode(false);
+        } else {
+            frag = Y.DOM._fragClones[tag] = doc.createElement(tag);
+        }
+        frag.innerHTML = html;
         return frag;
     },
 
     _removeChildNodes: function(node) {
+        var childNodes = node.childNodes, i;
+
         while (node.firstChild) {
             node.removeChild(node.firstChild);
         }
@@ -492,26 +513,41 @@ Y.DOM = {
 
     addHTML: function(node, content, where, execScripts) {
         var scripts,
-            newNode = (content[NODE_TYPE]) ? content : Y.DOM.create(content);
+            newNode = (content.nodeType) ? content : Y.DOM.create(content);
 
-        if (!where) {
-            node.appendChild(newNode);
-        } else if (where[NODE_TYPE]) {
-            Y.DOM.insertBefore(newNode, where);
-        } else if (where === 'replace') {
-            Y.DOM._removeChildNodes(node);
-            node.appendChild(newNode);
-            newNode = node;
+        if (where && where.nodeType) {
+            node.insertBefore(newNode, where);
+        } else {
+            switch (where) {
+                case 'replace':
+                    while (node.firstChild) {
+                        node.removeChild(node.firstChild);
+                    }
+                    node.appendChild(newNode);
+                    break;
+                case 'before':
+                    node.parentNode.insertBefore(newNode, node);
+                    break;
+                case 'after':
+                    if (node.nextSibling) { // IE errors if refNode is null
+                        node.parentNode.insertBefore(newNode, node.nextSibling);
+                    } else {
+                        node.parentNode.appendChild(newNode);
+                    }
+                    break;
+                default:
+                    node.appendChild(newNode);
+            }
         }
 
         if (execScripts) {
-            if (newNode.nodeName.toUpperCase() === 'SCRIPT' && !Y.UA.gecko) {
+            if (newNode.tagName.toUpperCase() === 'SCRIPT' && !Y.UA.gecko) {
                 scripts = [newNode]; // execute the new script
             } else {
                 scripts = newNode.getElementsByTagName('script');
             }
             Y.DOM._execScripts(scripts);
-        } else { // prevent any scripts from being injected
+        } else if (content.nodeType || content.indexOf('<script') > -1) { // prevent any scripts from being injected
             Y.DOM._stripScripts(newNode);
         }
 
@@ -681,6 +717,25 @@ Y.DOM = {
         }
         return ret;
 
+    },
+
+    _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
+        fn = (typeof name === 'string') ? Y.DOM[fn] : fn;
+        var args = arguments,
+            result,
+            ret = [];
+
+        if (fn && nodes) {
+            //args = g_slice.call(args, 1);
+            Y.each(nodes, function(node) {
+                //args.splice(0, 1, node);
+                if ((result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc)) !== undefined) {
+                    ret[ret.length] = result;
+                }
+            });
+        }
+
+        return ret.length ? ret : nodes;
     },
 
     _testElement: function(element, tag, fn) {
@@ -1009,7 +1064,7 @@ Y.mix(Y.DOM, {
             doc = node[OWNER_DOCUMENT];
 
         if (node[STYLE]) {
-            val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, '')[att];
+            val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, null)[att];
         }
         return val;
     }
@@ -1244,7 +1299,7 @@ ComputedStyle = {
     },
 
     getOffset: function(el, prop) {
-        var current = _getStyleObj(node)[prop],                     // value of "width", "top", etc.
+        var current = _getStyleObj(el)[prop],                     // value of "width", "top", etc.
             capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
             offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
             pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
@@ -1392,7 +1447,7 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 
 
 
-}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});
 YUI.add('dom-screen', function(Y) {
 
 
@@ -2291,25 +2346,26 @@ var PARENT_NODE = 'parentNode',
                     if (!root.id) {
                         root.id = Y.guid();
                     }
-                    selector = '#' + root.id + ' ' + selector;
-
                     // fast-path ID when possible
                     if (root.ownerDocument.getElementById(root.id)) {
+                        selector = '#' + root.id + ' ' + selector;
                         root = root.ownerDocument;
+
                     }
                 }
 
-                tokens = Selector._tokenize(selector);
+                tokens = Selector._tokenize(selector, root);
                 token = tokens.pop();
 
                 if (token) {
                     if (deDupe) {
                         token.deDupe = true; // TODO: better approach?
                     }
-                    if (tokens[0] && tokens[0].id && root.nodeType === 9) {
+                    if (tokens[0] && tokens[0].id && root.nodeType === 9 && root.getElementById(tokens[0].id)) {
                         root = root.getElementById(tokens[0].id);
                     }
 
+                    // TODO: no prefilter for off-dom id
                     if (root && !nodes[LENGTH] && token.prefilter) {
                         nodes = token.prefilter(root, token);
                     }
@@ -2355,6 +2411,10 @@ var PARENT_NODE = 'parentNode',
                 }
 
                 if (nextTest && !nextTest(node, token)) {
+                    return false;
+                }
+
+                if (token.root && token.root.nodeType !== 9 && !Y.DOM.contains(token.root, node)) {
                     return false;
                 }
 
@@ -2491,7 +2551,7 @@ var PARENT_NODE = 'parentNode',
             Break selector into token units per simple selector.
             Combinator is attached to the previous token.
          */
-        _tokenize: function(selector) {
+        _tokenize: function(selector, root) {
             selector = selector || '';
             selector = Selector._replaceShorthand(Y.Lang.trim(selector)); 
             var token = Selector._getToken(),     // one token per simple selector (left selector holds combinator)
@@ -2527,6 +2587,7 @@ var PARENT_NODE = 'parentNode',
                             found = true;
                             selector = selector.replace(match[0], ''); // strip current match from selector
                             if (!selector[LENGTH] || parser.name === COMBINATOR) {
+                                token.root = root;
                                 tokens.push(token);
                                 token = Selector._getToken(token);
                             }
@@ -2580,5 +2641,5 @@ if (!Y.Selector._supportsNative()) {
 }, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
 
 
-YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-base', 'dom-style', 'dom-screen', 'selector'], skinnable:false});
+YUI.add('dom', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dom-base', 'dom-style', 'dom-screen', 'selector']});
 

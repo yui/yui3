@@ -274,7 +274,7 @@ var whitelist = {
 Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, i, c, t;
+        x = e.pageX, y = e.pageY, c, t;
 
     this.altKey   = e.altKey;
     this.ctrlKey  = e.ctrlKey;
@@ -399,7 +399,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         } else {
             e.cancelBubble = true;
         }
-        wrapper.stopPropagation();
+        if (wrapper) {
+            wrapper.stopPropagation();
+        }
     };
 
     /**
@@ -416,7 +418,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             this.stopPropagation();
         }
 
-        wrapper.stopImmediatePropagation();
+        if (wrapper) {
+            wrapper.stopImmediatePropagation();
+        }
     };
 
     /**
@@ -430,7 +434,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             e.returnValue = false;
         }
 
-        wrapper.preventDefault();
+        if (wrapper) {
+            wrapper.preventDefault();
+        }
     };
 
     /**
@@ -486,8 +492,6 @@ onUnload = function() {
 EVENT_READY = 'domready',
 
 COMPAT_ARG = '~yui|2|compat~',
-
-CAPTURE = "capture_",
 
 shouldIterate = function(o) {
     try {
@@ -731,21 +735,72 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          *                        or if the operation throws an exception.
          * @static
          */
+
         attach: function(type, fn, el, obj) {
+            return Y.Event._attach(Y.Array(arguments, 0, true));
+        },
 
-            el = el || Y.config.win;
+		_createWrapper: function (el, type, capture, compat, facade) {
 
-            var args=Y.Array(arguments, 0, true), 
-                trimmedArgs=args.slice(1),
-                compat, E=Y.Event, capture = false,
-                handles, oEl, ek, key, cewrapper, context, 
-                fireNow = false, ret;
+            var ek = Y.stamp(el),
+	            key = 'event:' + ek + type,
+	            cewrapper;
 
-            if (type.indexOf(CAPTURE) > -1) {
-                type = type.substr(CAPTURE.length);
-                capture = true;
-                Y.log('Using capture phase for: ' + type, 'info', 'event');
+
+            if (false === facade) {
+                key += 'native';
             }
+            if (capture) {
+                key += 'capture';
+            }
+
+
+            cewrapper = _wrappers[key];
+            
+
+            if (!cewrapper) {
+                // create CE wrapper
+                cewrapper = Y.publish(key, {
+                    //silent: true,
+                    // host: this,
+                    bubbles: false
+                });
+            
+                // for later removeListener calls
+                cewrapper.el = el;
+                cewrapper.type = type;
+                cewrapper.fn = function(e) {
+                    cewrapper.fire(Y.Event.getEvent(e, el, (compat || (false === facade))));
+                };
+            
+                if (el == Y.config.win && type == "load") {
+                    // window load happens once
+                    cewrapper.fireOnce = true;
+                    _windowLoadKey = key;
+                }
+            
+                _wrappers[key] = cewrapper;
+                _el_events[ek] = _el_events[ek] || {};
+                _el_events[ek][key] = cewrapper;
+            
+                add(el, type, cewrapper.fn, capture);
+            }
+
+			return cewrapper;
+			
+		},
+
+        _attach: function(args, config) {
+
+            var trimmedArgs=args.slice(1),
+                compat, E=Y.Event,
+                handles, oEl, cewrapper, context, 
+                fireNow = false, ret,
+                type = args[0],
+                fn = args[1],
+                el = args[2] || Y.config.win,
+                facade = config && config.facade,
+                capture = config && config.capture;
 
             if (trimmedArgs[trimmedArgs.length-1] === COMPAT_ARG) {
                 compat = true;
@@ -768,7 +823,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 
                 Y.each(el, function(v, k) {
                     args[2] = v;
-                    handles.push(E.attach.apply(E, args));
+                    handles.push(E._attach(args, config));
                 });
 
                 return (handles.length === 1) ? handles[0] : handles;
@@ -791,7 +846,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                             el = oEl[0];
                         } else {
                             args[2] = oEl;
-                            return E.attach.apply(E, args);
+                            return E._attach(args, config);
                         }
 
                     // HTMLElement
@@ -807,7 +862,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                     return this.onAvailable(el, function() {
                         // Y.log('lazy attach: ' + args);
-                        E.attach.apply(E, args);
+                        E._attach(args, config);
                     }, E, true, false, compat);
                 }
             }
@@ -827,47 +882,16 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return el.on.apply(el, args);
             }
 
-            ek = Y.stamp(el); 
-            key = 'event:' + ek + type;
-            cewrapper = _wrappers[key];
+ 			cewrapper = this._createWrapper(el, type, capture, compat, facade);
 
-            if (!cewrapper) {
-                // create CE wrapper
-                cewrapper = Y.publish(key, {
-                    //silent: true,
-                    // host: this,
-                    bubbles: false
-                });
+            if (el == Y.config.win && type == "load") {
 
-                // for later removeListener calls
-                cewrapper.el = el;
-                cewrapper.type = type;
-                cewrapper.fn = function(e) {
-                    cewrapper.fire(E.getEvent(e, el, compat));
-                };
-
-                if (el == Y.config.win && type == "load") {
-                    // window load happens once
-                    cewrapper.fireOnce = true;
-                    _windowLoadKey = key;
-
-                    // if the load is complete, fire immediately.
-                    // all subscribers, including the current one
-                    // will be notified.
-                    if (YUI.Env.windowLoaded) {
-                        fireNow = true;
-                    }
+                // if the load is complete, fire immediately.
+                // all subscribers, including the current one
+                // will be notified.
+                if (YUI.Env.windowLoaded) {
+                    fireNow = true;
                 }
-
-                _wrappers[key] = cewrapper;
-                _el_events[ek] = _el_events[ek] || {};
-                _el_events[ek][key] = cewrapper;
-
-                // var capture = (Y.lang.isObject(obj) && obj.capture);
-                // attach a listener that fires the custom event
-
-                // Y.log("Attaching listener: " + [el, type, cewrapper.fn, capture]);
-                add(el, type, cewrapper.fn, capture);
             }
 
             // switched from obj to trimmedArgs[2] to deal with appened compat param
@@ -1324,10 +1348,8 @@ Y.Env.evt.plugins.contentready = {
 };
 (function() {
 
-var FOCUS   = Y.UA.ie ? "focusin" : "focus",
-    BLUR    = Y.UA.ie ? "focusout" : "blur",
-    CAPTURE = "capture_",
-    adapt = Y.Env.evt.plugins,
+var adapt = Y.Env.evt.plugins,
+    CAPTURE_CONFIG = { capture: true },
     NOOP  = function(){},
 
     // Opera implents capture phase events per spec rather than
@@ -1343,7 +1365,7 @@ var FOCUS   = Y.UA.ie ? "focusin" : "focus",
             p  = el && el.parentNode;
 
         if (p) {
-            Y.Event.attach(type, NOOP, p);
+            Y.Event._attach([type, NOOP, p], CAPTURE_CONFIG);
         }
     };
 
@@ -1363,18 +1385,10 @@ var FOCUS   = Y.UA.ie ? "focusin" : "focus",
 adapt.focus = {
     on: function(type, fn, o) {
         var a = Y.Array(arguments, 0, true);
-        a[0] = CAPTURE + FOCUS;
         if (Y.UA.opera) {
-            _captureHack(a[0], o);
+            _captureHack(type, o);
         }
-        return Y.Event.attach.apply(Y.Event, a);
-    },
-
-    detach: function() {
-        var a = Y.Array(arguments, 0, true);
-        a[0] = CAPTURE + FOCUS;
-        return Y.Event.detach.apply(Y.Event, a);
-
+        return Y.Event._attach(a, CAPTURE_CONFIG);
     }
 };
 
@@ -1393,18 +1407,12 @@ adapt.focus = {
 adapt.blur = {
     on: function(type, fn, o) {
         var a = Y.Array(arguments, 0, true);
-        a[0] = CAPTURE + BLUR;
         if (Y.UA.opera) {
-            _captureHack(a[0], o);
+            _captureHack(type, o);
         }
-        return Y.Event.attach.apply(Y.Event, a);
-    },
-
-    detach: function() {
-        var a = Y.Array(arguments, 0, true);
-        a[0] = CAPTURE + BLUR;
-        return Y.Event.detach.apply(Y.Event, a);
+        return Y.Event._attach(a, CAPTURE_CONFIG);
     }
+
 };
 
 })();
@@ -1507,28 +1515,58 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 };
 (function() {
 
-var delegates = {},
-
-    _worker = function(delegateKey, e) {
-
-        var target = e.target, 
-            tests  = delegates[delegateKey], 
-            spec, ename;
+var Lang = Y.Lang,
+	delegates = {},
+	resolveTextNode = function(n) {
+	    try {
+	        if (n && 3 == n.nodeType) {
+	            return n.parentNode;
+	        }
+	    } catch(e) { }
+	    return n;
+	},
+    _worker = function(delegateKey, e, el) {
+        var target = resolveTextNode((e.target || e.srcElement)), 
+            tests  = delegates[delegateKey],
+            spec, 
+			ename,
+			elements,
+			nElements,
+			element,
+			ev,
+			i;
 
         for (spec in tests) {
             if (tests.hasOwnProperty(spec)) {
                 ename  = tests[spec];
-                e.currentTarget.queryAll(spec).some(function (v, k) {
+				elements = Y.Selector.query(spec, el);
+				nElements = elements.length;
+				if (nElements > 0) {
+					i = elements.length - 1;
+					do {
+						element = elements[i];
+	                    if (element === target || Y.DOM.contains(element, target)) {
 
-                    if (v.compareTo(target) || v.contains(target)) {
-                        e.target = v;
-                        Y.fire(ename, e);
-                        return true;
-                    }
-                });
+                            if (!ev) {
+                                ev = new Y.DOMEventFacade(e, el);
+                                ev.originalTarget = ev.target;
+                            }
+
+	                        ev.target = Y.Node.get(element);
+	                        Y.fire(ename, ev);
+	                    }
+					}
+					while (i--);
+				}
             }
         }
     },
+
+	attach = function (type, key, element) {
+		Y.Event._attach([type, function (e) {
+            _worker(key, (e || window.event), element);
+		}, element], { facade: false });
+	},
 
     _sanitize = Y.cached(function(str) {
         return str.replace(/[|,:]/g, '~');
@@ -1556,7 +1594,7 @@ Y.Env.evt.plugins.delegate = {
         }
 
         // identifier to target the container
-        var guid = (Y.Lang.isString(el) ? el : Y.stamp(el)), 
+        var guid = (Lang.isString(el) ? el : Y.stamp(el)), 
                 
             // the custom event for the delegation spec
             ename = 'delegate:' + guid + delegateType + _sanitize(spec),
@@ -1564,17 +1602,32 @@ Y.Env.evt.plugins.delegate = {
             // the key to the listener for the event type and container
             delegateKey = delegateType + guid,
 
-            a = Y.Array(arguments, 0, true);
+            a = Y.Array(arguments, 0, true),
+
+			element;
+		
 
         if (!(delegateKey in delegates)) {
 
+			if (Lang.isString(el)) {	//	Selector
+				element = Y.Selector.query(el);				
+			}
+			else {	// Node instance
+				element = Y.Node.getDOMNode(el);
+			}
+
+			if (Lang.isArray(element)) {
+
+				Y.Array.each(element, function (v) {
+					attach(delegateType, delegateKey, v);
+				});
+
+			}
+			else {
+				attach(delegateType, delegateKey, element);
+			}
+
             delegates[delegateKey] = {};
-
-            // set up the listener on the container
-            Y.on(delegateType, function(e) {
-                _worker(delegateKey, e);
-            }, el);
-
         }
 
         delegates[delegateKey][spec] = ename;
@@ -1586,7 +1639,6 @@ Y.Env.evt.plugins.delegate = {
             
         // subscribe to the custom event for the delegation spec
         return Y.on.apply(Y, a);
-
     }
 };
 
@@ -1633,7 +1685,7 @@ Y.Env.evt.plugins.windowresize = {
 
         // check for single window listener and add if needed
         if (!detachHandle) {
-            detachHandle = Y.on('resize', handler);
+            detachHandle = Y.Event._attach(['resize', handler]);
         }
 
         var a = Y.Array(arguments, 0, true);

@@ -136,9 +136,10 @@ Y.extend(Cache, Y.Plugin.Base, {
     /**
     * @method initializer
     * @description Internal init() handler.
+    * @param config {Object} Config object.
     * @private        
     */
-    initializer: function() {
+    initializer: function(config) {
 
         /**
         * @event add
@@ -263,12 +264,13 @@ Y.extend(Cache, Y.Plugin.Base, {
      * If cache is full, evicts the stalest entry before adding the new one.
      *
      * @method add
-     * @param request {Object} Request object.
-     * @param response {Object} Response object.
+     * @param request {Object} Request value.
+     * @param response {Object} Response value.
      * @param payload {Object} (optional) Arbitrary data payload.
      */
     add: function(request, response, payload) {
-        if(this.get("entries") && (this.get("max")>0) && LANG.isValue(request) && LANG.isValue(response)) {
+        if(this.get("entries") && (this.get("max")>0) &&
+                (LANG.isValue(request) || LANG.isNull(request) || LANG.isUndefined(request))) {
             this.fire("add", {entry: {request:request, response:response, payload:payload}});
         }
         else {
@@ -319,14 +321,13 @@ Y.extend(Cache, Y.Plugin.Base, {
                         entries[entries.length] = entry;
                         Y.log("Refreshed cache entry: " + Y.dump(entry) + 
                                 " for request: " +  Y.dump(request), "info", "cache");
-                        break;
                     } 
+                    
+                    Y.log("Retrieved cached response: " + Y.dump(entry) +
+                            " for request: " + Y.dump(request), "info", "cache");
+                    return entry;
                 }
             }
-            Y.log("Retrieved cached response: " + Y.dump(entry) +
-                    " for request: " + Y.dump(request), "info", "cache");
-            return entry;
-
         }
         return null;
     }

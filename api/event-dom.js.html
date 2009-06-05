@@ -81,8 +81,6 @@
 
 <span class="nx">COMPAT_ARG</span> <span class="o">=</span> <span class="s1">&#39;~yui|2|compat~&#39;</span><span class="o">,</span>
 
-<span class="nx">CAPTURE</span> <span class="o">=</span> <span class="s2">&quot;capture_&quot;</span><span class="o">,</span>
-
 <span class="nx">shouldIterate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">try</span> <span class="o">{</span>
          
@@ -325,21 +323,72 @@
 <span class="c">         *                        or if the operation throws an exception.</span>
 <span class="c">         * @static</span>
 <span class="c">         */</span>
+
         <span class="nx">attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+        <span class="o">},</span>
 
-            <span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
+		<span class="nx">_createWrapper</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">capture</span><span class="o">,</span> <span class="nx">compat</span><span class="o">,</span> <span class="nx">facade</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">var</span> <span class="nx">args</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> 
-                <span class="nx">trimmedArgs</span><span class="o">=</span><span class="nx">args</span><span class="o">.</span><span class="nx">slice</span><span class="o">(</span><span class="m">1</span><span class="o">),</span>
-                <span class="nx">compat</span><span class="o">,</span> <span class="nx">E</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">capture</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
-                <span class="nx">handles</span><span class="o">,</span> <span class="nx">oEl</span><span class="o">,</span> <span class="nx">ek</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">cewrapper</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> 
-                <span class="nx">fireNow</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">ret</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">ek</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">el</span><span class="o">),</span>
+	            <span class="nx">key</span> <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">ek</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span>
+	            <span class="nx">cewrapper</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">CAPTURE</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="nx">CAPTURE</span><span class="o">.</span><span class="nx">length</span><span class="o">);</span>
-                <span class="nx">capture</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Using capture phase for: &#39;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">facade</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">key</span> <span class="o">+=</span> <span class="s1">&#39;native&#39;</span><span class="o">;</span>
             <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">capture</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">key</span> <span class="o">+=</span> <span class="s1">&#39;capture&#39;</span><span class="o">;</span>
+            <span class="o">}</span>
+
+
+            <span class="nx">cewrapper</span> <span class="o">=</span> <span class="nx">_wrappers</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
+            
+
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">cewrapper</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// create CE wrapper</span>
+<span class="c"></span>                <span class="nx">cewrapper</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">key</span><span class="o">,</span> <span class="o">{</span>
+                    <span class="c">//silent: true,</span>
+<span class="c"></span>                    <span class="c">// host: this,</span>
+<span class="c"></span>                    <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">false</span>
+                <span class="o">});</span>
+            
+                <span class="c">// for later removeListener calls</span>
+<span class="c"></span>                <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span><span class="o">;</span>
+                <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span><span class="o">;</span>
+                <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fn</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="o">(</span><span class="nx">compat</span> <span class="o">||</span> <span class="o">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">facade</span><span class="o">))));</span>
+                <span class="o">};</span>
+            
+                <span class="k">if</span> <span class="o">(</span><span class="nx">el</span> <span class="o">==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;load&quot;</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c">// window load happens once</span>
+<span class="c"></span>                    <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fireOnce</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                    <span class="nx">_windowLoadKey</span> <span class="o">=</span> <span class="nx">key</span><span class="o">;</span>
+                <span class="o">}</span>
+            
+                <span class="nx">_wrappers</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">;</span>
+                <span class="nx">_el_events</span><span class="o">[</span><span class="nx">ek</span><span class="o">]</span> <span class="o">=</span> <span class="nx">_el_events</span><span class="o">[</span><span class="nx">ek</span><span class="o">]</span> <span class="o">||</span> <span class="o">{};</span>
+                <span class="nx">_el_events</span><span class="o">[</span><span class="nx">ek</span><span class="o">][</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">;</span>
+            
+                <span class="nx">add</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">capture</span><span class="o">);</span>
+            <span class="o">}</span>
+
+			<span class="k">return</span> <span class="nx">cewrapper</span><span class="o">;</span>
+			
+		<span class="o">},</span>
+
+        <span class="nx">_attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">var</span> <span class="nx">trimmedArgs</span><span class="o">=</span><span class="nx">args</span><span class="o">.</span><span class="nx">slice</span><span class="o">(</span><span class="m">1</span><span class="o">),</span>
+                <span class="nx">compat</span><span class="o">,</span> <span class="nx">E</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span>
+                <span class="nx">handles</span><span class="o">,</span> <span class="nx">oEl</span><span class="o">,</span> <span class="nx">cewrapper</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> 
+                <span class="nx">fireNow</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span>
+                <span class="nx">type</span> <span class="o">=</span> <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">],</span>
+                <span class="nx">fn</span> <span class="o">=</span> <span class="nx">args</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
+                <span class="nx">el</span> <span class="o">=</span> <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">,</span>
+                <span class="nx">facade</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="o">.</span><span class="nx">facade</span><span class="o">,</span>
+                <span class="nx">capture</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="o">.</span><span class="nx">capture</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">trimmedArgs</span><span class="o">[</span><span class="nx">trimmedArgs</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">]</span> <span class="o">===</span> <span class="nx">COMPAT_ARG</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">compat</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
@@ -362,7 +411,7 @@
                 
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
-                    <span class="nx">handles</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">E</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">E</span><span class="o">,</span> <span class="nx">args</span><span class="o">));</span>
+                    <span class="nx">handles</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">E</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="nx">config</span><span class="o">));</span>
                 <span class="o">});</span>
 
                 <span class="k">return</span> <span class="o">(</span><span class="nx">handles</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">1</span><span class="o">)</span> <span class="o">?</span> <span class="nx">handles</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">:</span> <span class="nx">handles</span><span class="o">;</span>
@@ -385,7 +434,7 @@
                             <span class="nx">el</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
                         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                             <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">;</span>
-                            <span class="k">return</span> <span class="nx">E</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">E</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+                            <span class="k">return</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
                         <span class="o">}</span>
 
                     <span class="c">// HTMLElement</span>
@@ -401,7 +450,7 @@
 <span class="c"></span>
                     <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                         <span class="c">// Y.log(&#39;lazy attach: &#39; + args);</span>
-<span class="c"></span>                        <span class="nx">E</span><span class="o">.</span><span class="nx">attach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">E</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+<span class="c"></span>                        <span class="nx">E</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
                     <span class="o">},</span> <span class="nx">E</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">compat</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
@@ -421,47 +470,16 @@
                 <span class="k">return</span> <span class="nx">el</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="nx">ek</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span> 
-            <span class="nx">key</span> <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">ek</span> <span class="o">+</span> <span class="nx">type</span><span class="o">;</span>
-            <span class="nx">cewrapper</span> <span class="o">=</span> <span class="nx">_wrappers</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
+ 			<span class="nx">cewrapper</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_createWrapper</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">capture</span><span class="o">,</span> <span class="nx">compat</span><span class="o">,</span> <span class="nx">facade</span><span class="o">);</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">cewrapper</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// create CE wrapper</span>
-<span class="c"></span>                <span class="nx">cewrapper</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">key</span><span class="o">,</span> <span class="o">{</span>
-                    <span class="c">//silent: true,</span>
-<span class="c"></span>                    <span class="c">// host: this,</span>
-<span class="c"></span>                    <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">false</span>
-                <span class="o">});</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">el</span> <span class="o">==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;load&quot;</span><span class="o">)</span> <span class="o">{</span>
 
-                <span class="c">// for later removeListener calls</span>
-<span class="c"></span>                <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span><span class="o">;</span>
-                <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span><span class="o">;</span>
-                <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fn</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">compat</span><span class="o">));</span>
-                <span class="o">};</span>
-
-                <span class="k">if</span> <span class="o">(</span><span class="nx">el</span> <span class="o">==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;load&quot;</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c">// window load happens once</span>
-<span class="c"></span>                    <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fireOnce</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                    <span class="nx">_windowLoadKey</span> <span class="o">=</span> <span class="nx">key</span><span class="o">;</span>
-
-                    <span class="c">// if the load is complete, fire immediately.</span>
-<span class="c"></span>                    <span class="c">// all subscribers, including the current one</span>
-<span class="c"></span>                    <span class="c">// will be notified.</span>
-<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">windowLoaded</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">fireNow</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                    <span class="o">}</span>
+                <span class="c">// if the load is complete, fire immediately.</span>
+<span class="c"></span>                <span class="c">// all subscribers, including the current one</span>
+<span class="c"></span>                <span class="c">// will be notified.</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">windowLoaded</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">fireNow</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                 <span class="o">}</span>
-
-                <span class="nx">_wrappers</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">;</span>
-                <span class="nx">_el_events</span><span class="o">[</span><span class="nx">ek</span><span class="o">]</span> <span class="o">=</span> <span class="nx">_el_events</span><span class="o">[</span><span class="nx">ek</span><span class="o">]</span> <span class="o">||</span> <span class="o">{};</span>
-                <span class="nx">_el_events</span><span class="o">[</span><span class="nx">ek</span><span class="o">][</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">;</span>
-
-                <span class="c">// var capture = (Y.lang.isObject(obj) &amp;&amp; obj.capture);</span>
-<span class="c"></span>                <span class="c">// attach a listener that fires the custom event</span>
-<span class="c"></span>
-                <span class="c">// Y.log(&quot;Attaching listener: &quot; + [el, type, cewrapper.fn, capture]);</span>
-<span class="c"></span>                <span class="nx">add</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">capture</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="c">// switched from obj to trimmedArgs[2] to deal with appened compat param</span>

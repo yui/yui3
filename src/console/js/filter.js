@@ -24,9 +24,13 @@ var getCN = Y.ClassNameManager.getClassName,
     CHECKED  = 'checked',
 
     DOT = '.',
-    DISPLAY = 'display',
     EMPTY   = '',
-    NONE    = 'none',
+
+    // IE8 doesn't permit breaking _between_ nowrap elements AND it doesn't
+    // understand the (non spec) wbr tag AND it doesn't create text nodes for
+    // spaces between elements in innerHTML strings.  The en-space entity
+    // suffices, but is less that beautiful in other browsers.
+    SEP = Y.UA.ie > 7 ? '&#8194;' : ' ',
 
     C_BODY       = DOT + Y.Console.CHROME_CLASSES.console_bd_class,
     C_FOOT       = DOT + Y.Console.CHROME_CLASSES.console_ft_class,
@@ -68,7 +72,7 @@ Y.mix(ConsoleFilters,{
      * @static
      */
     CATEGORIES_TEMPLATE :
-        '<div class="{controls} {categories}"></div>',
+        '<div class="{categories}"></div>',
 
     /**
      * Markup template used to create the container for the source filters.
@@ -78,7 +82,7 @@ Y.mix(ConsoleFilters,{
      * @static
      */
     SOURCES_TEMPLATE :
-        '<div class="{controls} {sources}"></div>',
+        '<div class="{sources}"></div>',
 
     /**
      * Markup template used to create the category and source filters.
@@ -88,10 +92,10 @@ Y.mix(ConsoleFilters,{
      * @static
      */
     FILTER_TEMPLATE :
-        '<wbr><label class="{filter_label}">'+
+        '<label class="{filter_label}">'+
             '<input type="checkbox" value="{filter_name}" '+
                 'class="{filter} {filter_class}"> {filter_name}'+
-        '</label>',
+        '</label>'+SEP,
 
     /** 
      * Classnames used by the templates when creating nodes.
@@ -102,7 +106,6 @@ Y.mix(ConsoleFilters,{
      * @protected
      */
     CHROME_CLASSES : {
-        controls     : Y.Console.CHROME_CLASSES.console_controls_class,
         categories   : getCN(CONSOLE,FILTERS,'categories'),
         sources      : getCN(CONSOLE,FILTERS,'sources'),
         category     : getCN(CONSOLE,FILTER,CATEGORY),
@@ -431,42 +434,31 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @method refreshConsole
      */
     refreshConsole : function () {
-        var debug = Y.config.debug,
-            entries = this._entries,
-            print   = [],
-            p_i     = 0,
-            host, body, limit, cats, srcs, i, e;
-
-        Y.config.debug = false;
-
-        host  = this.get(HOST);
-        body  = host.get('contentBox').query(C_BODY);
-        limit = host.get('consoleLimit');
-        cats  = this.get(CATEGORY);
-        srcs  = this.get(SOURCE);
+        var entries   = this._entries,
+            host      = this.get(HOST),
+            body      = host.get('contentBox').query(C_BODY),
+            remaining = host.get('consoleLimit'),
+            cats      = this.get(CATEGORY),
+            srcs      = this.get(SOURCE),
+            buffer    = [],
+            i,e;
 
         if (body) {
+            host._cancelPrintLoop();
+
             // Capture from bottom up.  Entry order reversed.
-            for (i = entries.length - 1; i >= 0 && p_i < limit; --i) {
+            for (i = entries.length - 1; i >= 0 && remaining >= 0; --i) {
                 e = entries[i];
                 if (cats[e.category] && srcs[e.source]) {
-                    print[p_i++] = e;
+                    buffer.unshift(e);
+                    --remaining;
                 }
             }
 
-            body.setStyle(DISPLAY,NONE);
-
             body.set('innerHTML',EMPTY);
-
-            // Print in reverse order from reverse ordered array (top down)
-            for (i = print.length - 1; i >= 0; --i) {
-                host.printLogEntry(print[i]);
-            }
-
-            body.setStyle(DISPLAY,EMPTY);
+            host.buffer = buffer;
+            host.printBuffer();
         }
-
-        Y.config.debug = debug;
     },
 
     /**

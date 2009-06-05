@@ -114,7 +114,7 @@ Y.mix(Y.DOM, {
             doc = node[OWNER_DOCUMENT];
 
         if (node[STYLE]) {
-            val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, '')[att];
+            val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, null)[att];
         }
         return val;
     }
@@ -352,7 +352,7 @@ ComputedStyle = {
     },
 
     getOffset: function(el, prop) {
-        var current = _getStyleObj(node)[prop],                     // value of "width", "top", etc.
+        var current = _getStyleObj(el)[prop],                     // value of "width", "top", etc.
             capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
             offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
             pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
@@ -500,4 +500,4 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 
 
 
-}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});
