@@ -75,6 +75,12 @@
     <span class="nx">DOT</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">,</span>
     <span class="nx">EMPTY</span>   <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
 
+    <span class="c">// IE8 doesn&#39;t permit breaking _between_ nowrap elements AND it doesn&#39;t</span>
+<span class="c"></span>    <span class="c">// understand the (non spec) wbr tag AND it doesn&#39;t create text nodes for</span>
+<span class="c"></span>    <span class="c">// spaces between elements in innerHTML strings.  The en-space entity</span>
+<span class="c"></span>    <span class="c">// suffices, but is less that beautiful in other browsers.</span>
+<span class="c"></span>    <span class="nx">SEP</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&gt;</span> <span class="m">7</span> <span class="o">?</span> <span class="s1">&#39;&amp;#8194;&#39;</span> <span class="o">:</span> <span class="s1">&#39; &#39;</span><span class="o">,</span>
+
     <span class="nx">C_BODY</span>       <span class="o">=</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Console</span><span class="o">.</span><span class="nx">CHROME_CLASSES</span><span class="o">.</span><span class="nx">console_bd_class</span><span class="o">,</span>
     <span class="nx">C_FOOT</span>       <span class="o">=</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Console</span><span class="o">.</span><span class="nx">CHROME_CLASSES</span><span class="o">.</span><span class="nx">console_ft_class</span><span class="o">,</span>
 
@@ -115,7 +121,7 @@
 <span class="c">     * @static</span>
 <span class="c">     */</span>
     <span class="nx">CATEGORIES_TEMPLATE</span> <span class="o">:</span>
-        <span class="s1">&#39;&lt;div class=&quot;{controls} {categories}&quot;&gt;&lt;/div&gt;&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;&lt;div class=&quot;{categories}&quot;&gt;&lt;/div&gt;&#39;</span><span class="o">,</span>
 
     <span class="c">/**</span>
 <span class="c">     * Markup template used to create the container for the source filters.</span>
@@ -125,7 +131,7 @@
 <span class="c">     * @static</span>
 <span class="c">     */</span>
     <span class="nx">SOURCES_TEMPLATE</span> <span class="o">:</span>
-        <span class="s1">&#39;&lt;div class=&quot;{controls} {sources}&quot;&gt;&lt;/div&gt;&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;&lt;div class=&quot;{sources}&quot;&gt;&lt;/div&gt;&#39;</span><span class="o">,</span>
 
     <span class="c">/**</span>
 <span class="c">     * Markup template used to create the category and source filters.</span>
@@ -135,10 +141,10 @@
 <span class="c">     * @static</span>
 <span class="c">     */</span>
     <span class="nx">FILTER_TEMPLATE</span> <span class="o">:</span>
-        <span class="s1">&#39;&lt;wbr&gt;&lt;label class=&quot;{filter_label}&quot;&gt;&#39;</span><span class="o">+</span>
+        <span class="s1">&#39;&lt;label class=&quot;{filter_label}&quot;&gt;&#39;</span><span class="o">+</span>
             <span class="s1">&#39;&lt;input type=&quot;checkbox&quot; value=&quot;{filter_name}&quot; &#39;</span><span class="o">+</span>
                 <span class="s1">&#39;class=&quot;{filter} {filter_class}&quot;&gt; {filter_name}&#39;</span><span class="o">+</span>
-        <span class="s1">&#39;&lt;/label&gt;&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;&lt;/label&gt;&#39;</span><span class="o">+</span><span class="nx">SEP</span><span class="o">,</span>
 
     <span class="c">/** </span>
 <span class="c">     * Classnames used by the templates when creating nodes.</span>
@@ -149,7 +155,6 @@
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">CHROME_CLASSES</span> <span class="o">:</span> <span class="o">{</span>
-        <span class="nx">controls</span>     <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Console</span><span class="o">.</span><span class="nx">CHROME_CLASSES</span><span class="o">.</span><span class="nx">console_controls_class</span><span class="o">,</span>
         <span class="nx">categories</span>   <span class="o">:</span> <span class="nx">getCN</span><span class="o">(</span><span class="nx">CONSOLE</span><span class="o">,</span><span class="nx">FILTERS</span><span class="o">,</span><span class="s1">&#39;categories&#39;</span><span class="o">),</span>
         <span class="nx">sources</span>      <span class="o">:</span> <span class="nx">getCN</span><span class="o">(</span><span class="nx">CONSOLE</span><span class="o">,</span><span class="nx">FILTERS</span><span class="o">,</span><span class="s1">&#39;sources&#39;</span><span class="o">),</span>
         <span class="nx">category</span>     <span class="o">:</span> <span class="nx">getCN</span><span class="o">(</span><span class="nx">CONSOLE</span><span class="o">,</span><span class="nx">FILTER</span><span class="o">,</span><span class="nx">CATEGORY</span><span class="o">),</span>
