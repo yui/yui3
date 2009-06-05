@@ -3,7 +3,6 @@
 <head>
     <title>Test Page</title>
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
-    <link type="text/css" id="locallink" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css">
     <link type="text/css" rel="stylesheet" href="../../../build/test/assets/test-console.css">
     <style type="text/css" id="styleblock" class="highlight-ignore">
         h1 {
@@ -30,6 +29,9 @@
             width: 650px;
         }
         .highlight-example h2 {
+            display: none;
+        }
+        .yui-skin-sam .yui-console-entry-time {
             display: none;
         }
     </style>
@@ -888,21 +890,6 @@ var yconsole = new Y.Console({
 }).render();
 
 //yconsole.hideCategory('info');
-yconsole.printLogEntry = function (m) {
-    if (m.category === 'section') {
-        this._addToConsole(Y.Node.create("<h3>"+m.message+"</h3>"));
-        return this;
-    } else if (m.category === "break") {
-        this._addToConsole(Y.Node.create("<br>"));
-        return this;
-    } else if (m.category === "info") {
-        return this;
-    } else {
-        return Y.Console.prototype.printLogEntry.call(this,m);
-    }
-};
-
-Y.log("Tests","section","TestRunner");
 
 Y.Test.Runner.add(suite);
 

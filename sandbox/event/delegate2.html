@@ -34,6 +34,7 @@ YUI({
 
 }).use('node', 'dump', 'substitute', function(Y) {
 
+	//	TEST 1: THIS ONE WORKS
 	//	Test using multiple selectors with a single root node
 	
 	Y.on('delegate', 
@@ -51,6 +52,7 @@ YUI({
 	'#li1,#li2');
 
 
+	//	TEST 2: THIS ONE FAILS
 	//	Test binding a delegated event to several nodes using a selector 
 
 	Y.on('delegate', 

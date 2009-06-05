@@ -408,11 +408,6 @@ form {
                 el = Y.DOM.create(html);
                 Assert.isTrue(el.nodeType === 11, html);
 
-                html = '<option selected>foo</option>';
-                el = Y.DOM.create(html);
-                document.getElementById('test-select').appendChild(el);
-                Assert.isTrue(el.selected, 'el.selected');
-
                 html = '<li><a href=""></a></li>';
                 el = Y.DOM.create(html);
                 Assert.areEqual('A', el.firstChild.tagName, html);
@@ -432,6 +427,7 @@ form {
                 var el = Y.DOM.create(html);
                 Assert.areEqual(3, el.childNodes.length, html);
                 Assert.areEqual('tmp-bar', el.childNodes[1].id, html);
+                Assert.areEqual('foo', el.childNodes[0].innerHTML, html);
 
                 html = '<option>foo</option><option id="tmp-bar">bar</option><option>baz</option>';
                 el = Y.DOM.create(html);
@@ -450,6 +446,12 @@ form {
                 html = '<thead><tr><td><table><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead><tbody></tbody>';
                 el = Y.DOM.create(html);
                 Assert.areEqual(2, el.childNodes.length, html);
+
+                // leading space creates textNode
+                html = ' <div>foo</div>';
+                el = Y.DOM.create(html);
+                Assert.isTrue(el.childNodes[1].tagName === 'DIV', html);
+
             },
 
             test_ancestor: function() {

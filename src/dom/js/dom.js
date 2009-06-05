@@ -426,7 +426,7 @@ Y.DOM = {
         } else { // return multiple nodes as a fragment
             ret = doc.createDocumentFragment();
             while (nodes.length) {
-                ret.appendChild(nodes[nodes.length - 1]); 
+                ret.appendChild(nodes[0]); 
             }
         }
 

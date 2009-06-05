@@ -76,6 +76,13 @@ Node.DOM_EVENTS = {
     close: true,
     command: true,
     contextmenu: true,
+    drag: true,
+    dragstart: true,
+    dragenter: true,
+    dragover: true,
+    dragleave: true,
+    dragend: true,
+    drop: true,
     dblclick: true,
     error: true,
     focus: true,
@@ -617,7 +624,7 @@ Y.mix(Node.prototype, {
             }
             if (!where || // only allow inserting into this Node's subtree
                 (g_restrict[this[UID]] &&
-                    (typeof where === 'string' || !this.contains(where))) { 
+                    (typeof where === 'string' || !this.contains(where)))) { 
                 Y.DOM.addHTML(g_nodes[this[UID]], content, where, execScripts);
             }
         }
