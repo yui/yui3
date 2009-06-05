@@ -1061,7 +1061,7 @@ var L = Y.Lang, Native = Array.prototype,
  *   can be used to avoid multiple array.test calls.
  *   @return {Array} the resulting array
  */
-A = function(o, startIdx, al) {
+YArray = function(o, startIdx, al) {
     var t = (al) ? 2 : Y.Array.test(o), i, l, a;
 
     // switch (t) {
@@ -1090,7 +1090,7 @@ A = function(o, startIdx, al) {
 
 };
 
-Y.Array = A;
+Y.Array = YArray;
 
 /** 
  * Evaluates the input to determine if it is an array, array-like, or 
@@ -1108,7 +1108,7 @@ Y.Array = A;
  * 1: A real array. 
  * 2: array-like collection.
  */
-A.test = function(o) {
+YArray.test = function(o) {
     var r = 0;
     if (L.isObject(o)) {
         if (L.isArray(o)) {
@@ -1136,7 +1136,7 @@ A.test = function(o) {
  * @static
  * @return {YUI} the YUI instance
  */
-A.each = (Native.forEach) ?
+YArray.each = (Native.forEach) ?
     function (a, f, o) { 
         Native.forEach.call(a || [], f, o || Y);
         return Y;
@@ -1159,7 +1159,7 @@ A.each = (Native.forEach) ?
  * @param v {Array} optional valueset
  * @return {object} the hash
  */
-A.hash = function(k, v) {
+YArray.hash = function(k, v) {
     var o = {}, l = k.length, vl = v && v.length, i;
     for (i=0; i<l; i=i+1) {
         o[k[i]] = (vl && vl > i) ? v[i] : true;
@@ -1178,7 +1178,7 @@ A.hash = function(k, v) {
  * @param val the value to search for
  * @return {int} the index of the item that contains the value or -1
  */
-A.indexOf = (Native.indexOf) ?
+YArray.indexOf = (Native.indexOf) ?
     function(a, val) {
         return a.indexOf(val);
     } :
@@ -1197,7 +1197,7 @@ A.indexOf = (Native.indexOf) ?
  * Y.ArrayAssert.itemsAreEqual([1, 2, 3], [3, 1, 2].sort(Y.Array.numericSort));
  * @method numericSort
  */
-A.numericSort = function(a, b) { 
+YArray.numericSort = function(a, b) { 
     return (a - b); 
 };
 
@@ -1214,7 +1214,7 @@ A.numericSort = function(a, b) {
  * @return {boolean} true if the function returns true on
  * any of the items in the array
  */
- A.some = (Native.some) ?
+ YArray.some = (Native.some) ?
     function (a, f, o) { 
         return Native.some.call(a, f, o);
     } :
@@ -1378,12 +1378,31 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache){
     cache = cache || {};
 
-    return function(arg1, arg2) {
-        var a = arguments, 
-            key = arg2 ? Y.Array(a, 0, true).join(DELIMITER) : arg1;
+    // I want the profiler to show me separate entries for each
+    // cached function.  Is this too much to ask?
+    
+    // return function cached_sourceFunction
+    // return this['cached_' + source.name] = function
+    // var a = function(){}; a.name = 'foo'; return a;
+
+    return function cached(arg1, arg2) {
+
+        // (?)()   51  5.76%   0.571ms 1.01ms  0.02ms  0.001ms 0.041ms
+        // A() 76  6.58%   0.652ms 0.652ms 0.009ms 0.005ms 0.03ms
+        // var key = (arg2 !== undefined) ? Y.Array(arguments, 0, true).join(DELIMITER) : arg1;
+
+        // (?)()   51  8.57%   0.837ms 0.838ms 0.016ms 0.013ms 0.024ms
+        // var key = (arguments.length > 1) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
+
+        // (?)()   51  8.06%  0.761ms 0.762ms 0.015ms 0.002ms 0.025ms
+        // var key = (arg2 !== undefined) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
+        
+        // (?)()   51  7.87%   0.749ms 0.751ms 0.015ms 0.001ms 0.027ms
+        // A() 30  2.23%   0.214ms 0.214ms 0.007ms 0.005ms 0.009ms
+        var key = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
 
         if (!(key in cache)) {
-            cache[key] = source.apply(source, a);
+            cache[key] = source.apply(source, arguments);
         }
 
         return cache[key];
@@ -3004,7 +3023,7 @@ var GLOBAL_ENV = YUI.Env,
                     requires: [DATASCHEMABASE]
                 },
                 'dataschema-json': {
-                    requires: [DATASCHEMABASE]
+                    requires: [DATASCHEMABASE, 'json']
                 },
                 'dataschema-text': {
                     requires: [DATASCHEMABASE]

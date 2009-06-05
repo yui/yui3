@@ -53,13 +53,12 @@ var Event = Y.Event,
 
 							ce = Event._createWrapper(element, e.type, false, false, true);
 
-							ev = new Y.DOMEventFacade(e, element, ce);
+							ev = new Y.DOMEventFacade(e, el, ce);
 
+	                        ev.originalTarget = ev.target;
 	                        ev.target = Y.Node.get(element);
 	
 	                        Y.fire(ename, ev);
-
-	  						break;
 
 	                    }
 

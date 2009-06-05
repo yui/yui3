@@ -147,12 +147,31 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache){
     cache = cache || {};
 
-    return function(arg1, arg2) {
-        var a = arguments, 
-            key = arg2 ? Y.Array(a, 0, true).join(DELIMITER) : arg1;
+    // I want the profiler to show me separate entries for each
+    // cached function.  Is this too much to ask?
+    
+    // return function cached_sourceFunction
+    // return this['cached_' + source.name] = function
+    // var a = function(){}; a.name = 'foo'; return a;
+
+    return function cached(arg1, arg2) {
+
+        // (?)()   51  5.76%   0.571ms 1.01ms  0.02ms  0.001ms 0.041ms
+        // A() 76  6.58%   0.652ms 0.652ms 0.009ms 0.005ms 0.03ms
+        // var key = (arg2 !== undefined) ? Y.Array(arguments, 0, true).join(DELIMITER) : arg1;
+
+        // (?)()   51  8.57%   0.837ms 0.838ms 0.016ms 0.013ms 0.024ms
+        // var key = (arguments.length > 1) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
+
+        // (?)()   51  8.06%  0.761ms 0.762ms 0.015ms 0.002ms 0.025ms
+        // var key = (arg2 !== undefined) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
+        
+        // (?)()   51  7.87%   0.749ms 0.751ms 0.015ms 0.001ms 0.027ms
+        // A() 30  2.23%   0.214ms 0.214ms 0.007ms 0.005ms 0.009ms
+        var key = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
 
         if (!(key in cache)) {
-            cache[key] = source.apply(source, a);
+            cache[key] = source.apply(source, arguments);
         }
 
         return cache[key];
