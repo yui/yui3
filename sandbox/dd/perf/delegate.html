@@ -41,6 +41,8 @@ var yConfig = {
 YUI(yConfig).use('node', function(Y) {
     Y.on('delegate', function(e) {
         console.log('First: ', e);
+        //e.halt();
+        e.preventDefault();
     }, document, 'click', '*');
 
     Y.get('#demo2').on('click', function(e) {
