@@ -78,6 +78,13 @@ Node.DOM_EVENTS = {
     close: true,
     command: true,
     contextmenu: true,
+    drag: true,
+    dragstart: true,
+    dragenter: true,
+    dragover: true,
+    dragleave: true,
+    dragend: true,
+    drop: true,
     dblclick: true,
     error: true,
     focus: true,
@@ -1567,5 +1574,5 @@ Y.Node.prototype._addDOMAttr = function(name) {
 }, '@VERSION@' ,{requires:['node-base']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-aria']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-aria'], skinnable:false});
 

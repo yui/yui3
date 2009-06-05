@@ -131,7 +131,7 @@
 
     <span class="c">/**</span>
 <span class="c">     * Converts an arbitrary value to a JSON string representation.</span>
-<span class="c">     * Cyclical object or array references are replaced with null.</span>
+<span class="c">     * Objects with cyclical references will trigger an exception.</span>
 <span class="c">     * If a whitelist is provided, only matching object keys will be included.</span>
 <span class="c">     * If a positive integer or non-empty string is passed as the third</span>
 <span class="c">     * parameter, the output will be formatted with carriage returns and</span>
