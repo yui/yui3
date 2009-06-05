@@ -12,9 +12,9 @@
     text-align: left;
 
     border: 1px solid #777;
-    border-radius: 20px;
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
 }
 
 .yui-skin-sam .yui-console-hd,
@@ -34,12 +34,12 @@
 
     border: 1px solid transparent;
     _border: 0 none;
-    border-top-right-radius: 20px;
-    border-top-left-radius: 20px;
-    -moz-border-radius-topright: 20px;
-    -moz-border-radius-topleft: 20px;
-    -webkit-border-top-right-radius: 20px;
-    -webkit-border-top-left-radius: 20px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    -moz-border-radius-topright: 10px;
+    -moz-border-radius-topleft: 10px;
+    -webkit-border-top-right-radius: 10px;
+    -webkit-border-top-left-radius: 10px;
 }
 
 .yui-skin-sam .yui-console-bd {
@@ -51,27 +51,25 @@
     overflow: auto;
     overflow-x: hidden;
     overflow-y: scroll;
-    _width: 99%;
+    _width: 100%;
 }
 
 .yui-skin-sam .yui-console-ft {
     background: #D8D8DA url(bg.png) repeat-x 0 0;
-    padding: 1ex;
 
     border: 1px solid transparent;
     _border: 0 none;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px;
-    -moz-border-radius-bottomright: 20px;
-    -moz-border-radius-bottomleft: 20px;
-    -webkit-border-bottom-right-radius: 20px;
-    -webkit-border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    -moz-border-radius-bottomright: 10px;
+    -moz-border-radius-bottomleft: 10px;
+    -webkit-border-bottom-right-radius: 10px;
+    -webkit-border-bottom-left-radius: 10px;
 }
 
 .yui-skin-sam .yui-console-controls {
-    height: 24px;
-    line-height: 24px;
-    overflow: hidden;
+    padding: 4px 1ex 0;
+    zoom: 1;
 }
 
 .yui-skin-sam .yui-console-title {
@@ -86,17 +84,8 @@
     padding-left: 1ex;
 }
 
-.yui-skin-sam .yui-console-controls label {
-    height: 24px;
-    line-height: 24px;
-    vertical-align: middle;
-    zoom: 1;
-}
-
 .yui-skin-sam .yui-console-pause-label {
     float: left;
-    line-height: 24px;
-    vertical-align: middle;
 }
 .yui-skin-sam .yui-console-button {
     line-height: 1.3;
@@ -110,8 +99,8 @@
     -webkit-border-radius: 0;
 }
 .yui-skin-sam .yui-console .yui-console-collapsed .yui-console-hd {
-    border-radius: 20px;
-    -moz-border-radius: 20px;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
     -webkit-border-radius: 0;
 }
 
@@ -153,7 +142,7 @@
     display: none;
 }
 .yui-skin-sam .yui-console-entry-warn {
-    background: #aee url(../../warn_error.png) no-repeat -10px 15px;
+    background: #aee url(../../warn_error.png) no-repeat -15px 15px;
 }
 .yui-skin-sam .yui-console-entry-error {
     background: #ffa url(../../warn_error.png) no-repeat 5px -24px;
