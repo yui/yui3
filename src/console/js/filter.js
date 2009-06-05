@@ -22,6 +22,7 @@ var getCN = Y.ClassNameManager.getClassName,
     HOST     = 'host',
     PARENT_NODE = 'parentNode',
     CHECKED  = 'checked',
+    DEF_VISIBILITY = 'defaultVisibility',
 
     DOT = '.',
     EMPTY   = '',
@@ -85,7 +86,7 @@ Y.mix(ConsoleFilters,{
         '<div class="{sources}"></div>',
 
     /**
-     * Markup template used to create the category and source filters.
+     * Markup template used to create the category and source filter checkboxes.
      *
      * @property ConsoleFilters.FILTER_TEMPLATE
      * @type String
@@ -206,7 +207,8 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
     _sources : null,
 
     /**
-     * Initialize this plugin.
+     * Initialize entries collection and attach listeners to host events and
+     * methods.
      *
      * @method initializer
      */
@@ -322,13 +324,13 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
             visible;
 
         if (cat_filter === undefined) {
-            visible = this.get('defaultVisibility');
+            visible = this.get(DEF_VISIBILITY);
             this.set(cat, visible);
             cat_filter = visible;
         }
 
         if (src_filter === undefined) {
-            visible = this.get('defaultVisibility');
+            visible = this.get(DEF_VISIBILITY);
             this.set(src, visible);
             src_filter = visible;
         }
@@ -514,7 +516,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
     /**
      * Passes checkbox clicks on to the source attribute.
      *
-     * @metho _onSourceCheckboxClick
+     * @method _onSourceCheckboxClick
      * @param e {Event} the DOM event
      */
     _onSourceCheckboxClick : function (e) {

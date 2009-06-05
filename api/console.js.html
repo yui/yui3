@@ -797,7 +797,7 @@
     <span class="nx">initializer</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_evtCat</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="o">;</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">buffer</span>    <span class="o">=</span> <span class="o">[];</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="o">[];</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ENTRY_TEMPLATE</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ENTRY_TEMPLATE</span><span class="o">,</span><span class="nx">Console</span><span class="o">.</span><span class="nx">ENTRY_TEMPLATE</span><span class="o">);</span>
@@ -987,27 +987,27 @@
 <span class="c">     * &lt;/ul&gt;</span>
 <span class="c">     *</span>
 <span class="c">     * @mehod _normalizeMessage</span>
-<span class="c">     * @param msg {String} the log message</span>
-<span class="c">     * @param cat {String} OPTIONAL the category or logLevel of the message</span>
-<span class="c">     * @param src {String} OPTIONAL the source widget or util of the message</span>
+<span class="c">     * @param e {Event} custom event containing the log message</span>
 <span class="c">     * @return Object the message object</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_normalizeMessage</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">cat</span><span class="o">,</span> <span class="nx">src</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">src</span><span class="o">,</span>
+        <span class="k">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">msg</span><span class="o">,</span>
+            <span class="nx">cat</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">cat</span><span class="o">,</span>
+            <span class="nx">src</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">src</span><span class="o">,</span>
 
-        <span class="nx">m</span> <span class="o">=</span> <span class="o">{</span>
-            <span class="nx">time</span>            <span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(),</span>
-            <span class="nx">message</span>         <span class="o">:</span> <span class="nx">msg</span><span class="o">,</span>
-            <span class="nx">category</span>        <span class="o">:</span> <span class="nx">cat</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;defaultCategory&#39;</span><span class="o">),</span>
-            <span class="nx">sourceAndDetail</span> <span class="o">:</span> <span class="nx">src</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;defaultSource&#39;</span><span class="o">),</span>
-            <span class="nx">source</span>          <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="k">label</span>           <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">localTime</span>       <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">elapsedTime</span>     <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">totalTime</span>       <span class="o">:</span> <span class="kc">null</span>
-        <span class="o">};</span>
+            <span class="nx">m</span> <span class="o">=</span> <span class="o">{</span>
+                <span class="nx">time</span>            <span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(),</span>
+                <span class="nx">message</span>         <span class="o">:</span> <span class="nx">msg</span><span class="o">,</span>
+                <span class="nx">category</span>        <span class="o">:</span> <span class="nx">cat</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;defaultCategory&#39;</span><span class="o">),</span>
+                <span class="nx">sourceAndDetail</span> <span class="o">:</span> <span class="nx">src</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;defaultSource&#39;</span><span class="o">),</span>
+                <span class="nx">source</span>          <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+                <span class="k">label</span>           <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+                <span class="nx">localTime</span>       <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+                <span class="nx">elapsedTime</span>     <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+                <span class="nx">totalTime</span>       <span class="o">:</span> <span class="kc">null</span>
+            <span class="o">};</span>
 
         <span class="c">// Extract m.source &quot;Foo&quot; from m.sourceAndDetail &quot;Foo bar baz&quot;</span>
 <span class="c"></span>        <span class="nx">m</span><span class="o">.</span><span class="nx">source</span>          <span class="o">=</span> <span class="nx">RE_INLINE_SOURCE</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">sourceAndDetail</span><span class="o">)</span> <span class="o">?</span>
@@ -1416,7 +1416,7 @@
             <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ENTRY</span><span class="o">,</span> <span class="o">{</span>
-                <span class="nx">message</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_normalizeMessage</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span>
+                <span class="nx">message</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_normalizeMessage</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span>
             <span class="o">});</span>
 
             <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">debug</span><span class="o">;</span>
