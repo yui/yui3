@@ -57,7 +57,8 @@ YUI(yConfig).use('base', function(Y) {
             console.log('_handleFoo: ', o);
         }
     });
-
+    
+    //Should this fire _handleFoo since it's set in the inital config??
     var bar = new Test({
         foo: {
             bax: 1
