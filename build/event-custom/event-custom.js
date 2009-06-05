@@ -1211,7 +1211,9 @@ Y.CustomEvent.prototype = {
     stopPropagation: function() {
         this.stopped = 1;
         Y.Env._eventstack.stopped = 1;
-        this.events.fire('stopped', this);
+        if (this.events) {
+            this.events.fire('stopped', this);
+        }
     },
 
     /**
@@ -1222,7 +1224,9 @@ Y.CustomEvent.prototype = {
     stopImmediatePropagation: function() {
         this.stopped = 2;
         Y.Env._eventstack.stopped = 2;
-        this.events.fire('stopped', this);
+        if (this.events) {
+            this.events.fire('stopped', this);
+        }
     },
 
     /**
@@ -1234,7 +1238,9 @@ Y.CustomEvent.prototype = {
             this.prevented = 1;
             Y.Env._eventstack.prevented = 1;
 
-            this.events.fire('prevented', this);
+            if (this.events) {
+                this.events.fire('prevented', this);
+            }
         }
     },
 
@@ -1457,19 +1463,14 @@ var L = Y.Lang,
                  t = null;
             }
         }
-
+        
         // i = t.indexOf(CATEGORY_DELIMITER);
         // if (i > -1) {
         //     detachcategory = t.substr(0, AFTER_PREFIX.length-1);
         //     t = t.substr(AFTER_PREFIX.length);
         // }
 
-        // full_t = _getType(t, pre);
-
-        full_t = t;
-        if (pre && t.indexOf(PREFIX_DELIMITER) == -1) {
-            full_t = pre + PREFIX_DELIMITER + t;
-        }
+        full_t = _getType(t, pre);
 
         return [detachcategory, full_t, after, t];
     }),
