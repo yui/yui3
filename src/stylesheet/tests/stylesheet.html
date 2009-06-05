@@ -3,8 +3,7 @@
 <head>
     <title>Test Page</title>
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
-    <link type="text/css" id="locallink" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css">
-    <link type="text/css" rel="stylesheet" href="../../../build/test/assets/test-console.css">
+    <link type="text/css" id="locallink" rel="stylesheet" href="../../../build/test/assets/test-console.css">
     <style type="text/css" id="styleblock" class="highlight-ignore">
         h1 {
             font: normal 125%/1.4 Arial, sans-serif;
@@ -30,6 +29,9 @@
             width: 650px;
         }
         .highlight-example h2 {
+            display: none;
+        }
+        .yui-skin-sam .yui-console-entry-time {
             display: none;
         }
     </style>
@@ -640,7 +642,7 @@ Y.Test.Runner.add(suite);
 
 Y.Test.Runner.run();
 
-})();
+});
 </script>
 <script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
 <script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>

@@ -748,7 +748,7 @@ Y.extend(Console,Y.Widget,{
     initializer : function () {
         this._evtCat = Y.stamp(this) + '|';
 
-        this.buffer    = [];
+        this.buffer = [];
 
         if (!this.get(ENTRY_TEMPLATE)) {
             this.set(ENTRY_TEMPLATE,Console.ENTRY_TEMPLATE);
@@ -938,27 +938,27 @@ Y.extend(Console,Y.Widget,{
      * </ul>
      *
      * @mehod _normalizeMessage
-     * @param msg {String} the log message
-     * @param cat {String} OPTIONAL the category or logLevel of the message
-     * @param src {String} OPTIONAL the source widget or util of the message
+     * @param e {Event} custom event containing the log message
      * @return Object the message object
      * @protected
      */
     _normalizeMessage : function (e) {
 
-        var msg = e.msg, cat = e.cat, src = e.src,
+        var msg = e.msg,
+            cat = e.cat,
+            src = e.src,
 
-        m = {
-            time            : new Date(),
-            message         : msg,
-            category        : cat || this.get('defaultCategory'),
-            sourceAndDetail : src || this.get('defaultSource'),
-            source          : null,
-            label           : null,
-            localTime       : null,
-            elapsedTime     : null,
-            totalTime       : null
-        };
+            m = {
+                time            : new Date(),
+                message         : msg,
+                category        : cat || this.get('defaultCategory'),
+                sourceAndDetail : src || this.get('defaultSource'),
+                source          : null,
+                label           : null,
+                localTime       : null,
+                elapsedTime     : null,
+                totalTime       : null
+            };
 
         // Extract m.source "Foo" from m.sourceAndDetail "Foo bar baz"
         m.source          = RE_INLINE_SOURCE.test(m.sourceAndDetail) ?
@@ -1367,7 +1367,7 @@ Y.extend(Console,Y.Widget,{
             Y.config.debug = false;
 
             this.fire(ENTRY, {
-                message : this._normalizeMessage.call(this, e)
+                message : this._normalizeMessage(e)
             });
 
             Y.config.debug = debug;
