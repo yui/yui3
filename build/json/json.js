@@ -158,7 +158,7 @@ var Native = Y.config.win.JSON,
     // JavaScript implementation in lieu of native browser support.  Based on
     // the json2.js library from http://json.org
     _parse = function (s,reviver) {
-        if (typeof s === 'string') {
+        if (s && typeof s === 'string') {
             // Replace certain Unicode characters that are otherwise handled
             // incorrectly by some browser implementations.
             // NOTE: This modifies the input if such characters are found!
