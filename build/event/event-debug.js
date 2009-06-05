@@ -399,7 +399,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         } else {
             e.cancelBubble = true;
         }
-        wrapper.stopPropagation();
+        if (wrapper) {
+            wrapper.stopPropagation();
+        }
     };
 
     /**
@@ -416,7 +418,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             this.stopPropagation();
         }
 
-        wrapper.stopImmediatePropagation();
+        if (wrapper) {
+            wrapper.stopImmediatePropagation();
+        }
     };
 
     /**
@@ -430,7 +434,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             e.returnValue = false;
         }
 
-        wrapper.preventDefault();
+        if (wrapper) {
+            wrapper.preventDefault();
+        }
     };
 
     /**
@@ -1509,8 +1515,7 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 };
 (function() {
 
-var Event = Y.Event,
-	Lang = Y.Lang,
+var Lang = Y.Lang,
 	delegates = {},
 	resolveTextNode = function(n) {
 	    try {
@@ -1528,7 +1533,6 @@ var Event = Y.Event,
 			elements,
 			nElements,
 			element,
-			ce,
 			ev,
 			i;
 
@@ -1543,9 +1547,8 @@ var Event = Y.Event,
 						element = elements[i];
 	                    if (element === target || Y.DOM.contains(element, target)) {
 
-                            if (!ce) {
-                                ce = Event._createWrapper(el, e.type, false, false, true);
-                                ev = new Y.DOMEventFacade(e, el, ce);
+                            if (!ev) {
+                                ev = new Y.DOMEventFacade(e, el);
                                 ev.originalTarget = ev.target;
                             }
 

@@ -840,9 +840,7 @@
     <span class="nx">stopPropagation</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">events</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">events</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;stopped&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">events</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;stopped&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -853,9 +851,7 @@
     <span class="nx">stopImmediatePropagation</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">2</span><span class="o">;</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">2</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">events</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">events</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;stopped&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">events</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;stopped&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -867,9 +863,7 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">events</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">events</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;prevented&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">events</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;prevented&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">},</span>
 

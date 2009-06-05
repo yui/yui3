@@ -792,9 +792,7 @@ Y.CustomEvent.prototype = {
     stopPropagation: function() {
         this.stopped = 1;
         Y.Env._eventstack.stopped = 1;
-        if (this.events) {
-            this.events.fire('stopped', this);
-        }
+        this.events.fire('stopped', this);
     },
 
     /**
@@ -805,9 +803,7 @@ Y.CustomEvent.prototype = {
     stopImmediatePropagation: function() {
         this.stopped = 2;
         Y.Env._eventstack.stopped = 2;
-        if (this.events) {
-            this.events.fire('stopped', this);
-        }
+        this.events.fire('stopped', this);
     },
 
     /**
@@ -819,9 +815,7 @@ Y.CustomEvent.prototype = {
             this.prevented = 1;
             Y.Env._eventstack.prevented = 1;
 
-            if (this.events) {
-                this.events.fire('prevented', this);
-            }
+            this.events.fire('prevented', this);
         }
     },
 
