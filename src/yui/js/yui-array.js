@@ -32,7 +32,7 @@ var L = Y.Lang, Native = Array.prototype,
  *   can be used to avoid multiple array.test calls.
  *   @return {Array} the resulting array
  */
-A = function(o, startIdx, al) {
+YArray = function(o, startIdx, al) {
     var t = (al) ? 2 : Y.Array.test(o), i, l, a;
 
     // switch (t) {
@@ -61,7 +61,7 @@ A = function(o, startIdx, al) {
 
 };
 
-Y.Array = A;
+Y.Array = YArray;
 
 /** 
  * Evaluates the input to determine if it is an array, array-like, or 
@@ -79,7 +79,7 @@ Y.Array = A;
  * 1: A real array. 
  * 2: array-like collection.
  */
-A.test = function(o) {
+YArray.test = function(o) {
     var r = 0;
     if (L.isObject(o)) {
         if (L.isArray(o)) {
@@ -107,7 +107,7 @@ A.test = function(o) {
  * @static
  * @return {YUI} the YUI instance
  */
-A.each = (Native.forEach) ?
+YArray.each = (Native.forEach) ?
     function (a, f, o) { 
         Native.forEach.call(a || [], f, o || Y);
         return Y;
@@ -130,7 +130,7 @@ A.each = (Native.forEach) ?
  * @param v {Array} optional valueset
  * @return {object} the hash
  */
-A.hash = function(k, v) {
+YArray.hash = function(k, v) {
     var o = {}, l = k.length, vl = v && v.length, i;
     for (i=0; i<l; i=i+1) {
         o[k[i]] = (vl && vl > i) ? v[i] : true;
@@ -149,7 +149,7 @@ A.hash = function(k, v) {
  * @param val the value to search for
  * @return {int} the index of the item that contains the value or -1
  */
-A.indexOf = (Native.indexOf) ?
+YArray.indexOf = (Native.indexOf) ?
     function(a, val) {
         return a.indexOf(val);
     } :
@@ -168,7 +168,7 @@ A.indexOf = (Native.indexOf) ?
  * Y.ArrayAssert.itemsAreEqual([1, 2, 3], [3, 1, 2].sort(Y.Array.numericSort));
  * @method numericSort
  */
-A.numericSort = function(a, b) { 
+YArray.numericSort = function(a, b) { 
     return (a - b); 
 };
 
@@ -185,7 +185,7 @@ A.numericSort = function(a, b) {
  * @return {boolean} true if the function returns true on
  * any of the items in the array
  */
- A.some = (Native.some) ?
+ YArray.some = (Native.some) ?
     function (a, f, o) { 
         return Native.some.call(a, f, o);
     } :

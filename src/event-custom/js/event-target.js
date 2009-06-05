@@ -29,15 +29,11 @@ var L = Y.Lang,
      */
     _getType = Y.cached(function(type, pre) {
 
-        if (!pre || !L.isString(type)) {
+        if (!pre || !L.isString(type) || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
         } 
 
-        if (type.indexOf(PREFIX_DELIMITER) == -1) {
-            return pre + PREFIX_DELIMITER + type;
-        }
-
-        return type;
+        return pre + PREFIX_DELIMITER + type;
     }),
 
     /**lt
@@ -72,14 +68,13 @@ var L = Y.Lang,
                  t = null;
             }
         }
-
+        
         // i = t.indexOf(CATEGORY_DELIMITER);
         // if (i > -1) {
         //     detachcategory = t.substr(0, AFTER_PREFIX.length-1);
         //     t = t.substr(AFTER_PREFIX.length);
         //     // Y.log(t);
         // }
-
 
         full_t = _getType(t, pre);
 
