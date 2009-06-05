@@ -1515,8 +1515,7 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 };
 (function() {
 
-var Event = Y.Event,
-	Lang = Y.Lang,
+var Lang = Y.Lang,
 	delegates = {},
 	resolveTextNode = function(n) {
 	    try {
@@ -1534,7 +1533,6 @@ var Event = Y.Event,
 			elements,
 			nElements,
 			element,
-			ce,
 			ev,
 			i;
 
@@ -1549,7 +1547,7 @@ var Event = Y.Event,
 						element = elements[i];
 	                    if (element === target || Y.DOM.contains(element, target)) {
 
-                            if (!ce) {
+                            if (!ev) {
                                 ev = new Y.DOMEventFacade(e, el);
                                 ev.originalTarget = ev.target;
                             }
