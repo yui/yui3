@@ -548,7 +548,7 @@ YUI.add('widget-stdmod', function(Y) {
          * @private
          * 
          * @param {Node} node The section Node to be updated.
-         * @param {Node} child The new content Node to be added to section Node provided.
+         * @param {Node|NodeList} children The new content Node, or NodeList to be added to section Node provided.
          * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
          * If not provided, the content will replace existing content in the Node.
          */
@@ -557,9 +557,14 @@ YUI.add('widget-stdmod', function(Y) {
                 i, s;
 
             if (where == BEFORE) {
-                if (node.get(FIRST_CHILD)) {
-                    for (i = node.size() - 1; i >=0; --i) {
-                        node.insertBefore(children.item(i), node.get(FIRST_CHILD));
+                var n = node.get(FIRST_CHILD);
+                if (n) {
+                    if (children instanceof Y.NodeList) {
+                        for (i = children.size() - 1; i >=0; --i) {
+                            node.insertBefore(children.item(i), n);
+                        }
+                    } else {
+                        node.insertBefore(children, n);
                     }
                     append = false;
                 }
@@ -567,8 +572,12 @@ YUI.add('widget-stdmod', function(Y) {
                 node.set(INNER_HTML, EMPTY);
             }
             if (append) {
-                for (i = 0, s = children.size(); i < s; ++i) {
-                    node.appendChild(children.item(i));
+                if (children instanceof Y.NodeList) {
+                    for (i = 0, s = children.size(); i < s; ++i) {
+                        node.appendChild(children.item(i));
+                    }
+                } else {
+                    node.appendChild(children);
                 }
             }
         },
