@@ -1424,15 +1424,11 @@ var L = Y.Lang,
      */
     _getType = Y.cached(function(type, pre) {
 
-        if (!pre || !L.isString(type)) {
+        if (!pre || !L.isString(type) || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
         } 
 
-        if (type.indexOf(PREFIX_DELIMITER) == -1) {
-            return pre + PREFIX_DELIMITER + type;
-        }
-
-        return type;
+        return pre + PREFIX_DELIMITER + type;
     }),
 
     /**lt
@@ -1475,8 +1471,12 @@ var L = Y.Lang,
         //     // Y.log(t);
         // }
 
+        // full_t = _getType(t, pre);
 
-        full_t = _getType(t, pre);
+        full_t = t;
+        if (pre && t.indexOf(PREFIX_DELIMITER) == -1) {
+            full_t = pre + PREFIX_DELIMITER + t;
+        }
 
         return [detachcategory, full_t, after, t];
     }),
