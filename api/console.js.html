@@ -259,11 +259,9 @@
     <span class="nx">HEADER_TEMPLATE</span> <span class="o">:</span>
         <span class="s1">&#39;&lt;div class=&quot;{console_hd_class}&quot;&gt;&#39;</span><span class="o">+</span>
             <span class="s1">&#39;&lt;h4 class=&quot;{console_title_class}&quot;&gt;{str_title}&lt;/h4&gt;&#39;</span><span class="o">+</span>
-            <span class="s1">&#39;&lt;div class=&quot;{console_controls_class}&quot;&gt;&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;button type=&quot;button&quot; class=&quot;&#39;</span><span class="o">+</span>
-                    <span class="s1">&#39;{console_button_class} {console_collapse_class}&quot;&gt;{str_collapse}&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;/button&gt;&#39;</span><span class="o">+</span>
-            <span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="o">+</span>
+            <span class="s1">&#39;&lt;button type=&quot;button&quot; class=&quot;&#39;</span><span class="o">+</span>
+                <span class="s1">&#39;{console_button_class} {console_collapse_class}&quot;&gt;{str_collapse}&#39;</span><span class="o">+</span>
+            <span class="s1">&#39;&lt;/button&gt;&#39;</span><span class="o">+</span>
         <span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="o">,</span>
 
     <span class="c">/**</span>
@@ -296,9 +294,9 @@
     <span class="nx">FOOTER_TEMPLATE</span> <span class="o">:</span>
         <span class="s1">&#39;&lt;div class=&quot;{console_ft_class}&quot;&gt;&#39;</span><span class="o">+</span>
             <span class="s1">&#39;&lt;div class=&quot;{console_controls_class}&quot;&gt;&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;input type=&quot;checkbox&quot; class=&quot;{console_checkbox_class} &#39;</span><span class="o">+</span>
-                        <span class="s1">&#39;{console_pause_class}&quot; value=&quot;1&quot; id=&quot;{id_guid}&quot;&gt; &#39;</span><span class="o">+</span>
                 <span class="s1">&#39;&lt;label for=&quot;{id_guid}&quot; class=&quot;{console_pause_label_class}&quot;&gt;&#39;</span><span class="o">+</span>
+                    <span class="s1">&#39;&lt;input type=&quot;checkbox&quot; class=&quot;{console_checkbox_class} &#39;</span><span class="o">+</span>
+                        <span class="s1">&#39;{console_pause_class}&quot; value=&quot;1&quot; id=&quot;{id_guid}&quot;&gt; &#39;</span><span class="o">+</span>
                     <span class="s1">&#39;{str_pause}&lt;/label&gt;&#39;</span> <span class="o">+</span>
                 <span class="s1">&#39;&lt;button type=&quot;button&quot; class=&quot;&#39;</span><span class="o">+</span>
                     <span class="s1">&#39;{console_button_class} {console_clear_class}&quot;&gt;{str_clear}&#39;</span><span class="o">+</span>
@@ -329,21 +327,19 @@
 <span class="c">     * @static</span>
 <span class="c">     */</span>
     <span class="nx">ENTRY_TEMPLATE</span> <span class="o">:</span>
-        <span class="s1">&#39;&lt;pre class=&quot;{entry_class} {cat_class} {src_class}&quot;&gt;&#39;</span><span class="o">+</span>
-            <span class="s1">&#39;&lt;div class=&quot;{entry_meta_class}&quot;&gt;&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;p&gt;&#39;</span><span class="o">+</span>
-                    <span class="s1">&#39;&lt;span class=&quot;{entry_cat_class}&quot;&gt;&#39;</span><span class="o">+</span>
-                        <span class="s1">&#39;{label}&lt;/span&gt;&#39;</span><span class="o">+</span>
-                    <span class="s1">&#39;&lt;span class=&quot;{entry_time_class}&quot;&gt;&#39;</span><span class="o">+</span>
-                        <span class="s1">&#39; {totalTime}ms (+{elapsedTime}) {localTime}:&#39;</span><span class="o">+</span>
-                    <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;/p&gt;&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;p class=&quot;{entry_src_class}&quot;&gt;&#39;</span><span class="o">+</span>
+        <span class="s1">&#39;&lt;div class=&quot;{entry_class} {cat_class} {src_class}&quot;&gt;&#39;</span><span class="o">+</span>
+            <span class="s1">&#39;&lt;p class=&quot;{entry_meta_class}&quot;&gt;&#39;</span><span class="o">+</span>
+                <span class="s1">&#39;&lt;span class=&quot;{entry_src_class}&quot;&gt;&#39;</span><span class="o">+</span>
                     <span class="s1">&#39;{sourceAndDetail}&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;/p&gt;&#39;</span><span class="o">+</span>
-            <span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="o">+</span>
-            <span class="s1">&#39;&lt;p class=&quot;{entry_content_class}&quot;&gt;{message}&lt;/p&gt;&#39;</span><span class="o">+</span>
-        <span class="s1">&#39;&lt;/pre&gt;&#39;</span><span class="o">,</span>
+                <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="o">+</span>
+                <span class="s1">&#39;&lt;span class=&quot;{entry_cat_class}&quot;&gt;&#39;</span><span class="o">+</span>
+                    <span class="s1">&#39;{label}&lt;/span&gt;&#39;</span><span class="o">+</span>
+                <span class="s1">&#39;&lt;span class=&quot;{entry_time_class}&quot;&gt;&#39;</span><span class="o">+</span>
+                    <span class="s1">&#39; {totalTime}ms (+{elapsedTime}) {localTime}&#39;</span><span class="o">+</span>
+                <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="o">+</span>
+            <span class="s1">&#39;&lt;/p&gt;&#39;</span><span class="o">+</span>
+            <span class="s1">&#39;&lt;pre class=&quot;{entry_content_class}&quot;&gt;{message}&lt;/pre&gt;&#39;</span><span class="o">+</span>
+        <span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="o">,</span>
 
     <span class="c">/**</span>
 <span class="c">     * Static property used to define the default attribute configuration of</span>
@@ -743,27 +739,38 @@
 <span class="c">     * @chainable</span>
 <span class="c">     */</span>
     <span class="nx">printBuffer</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">limit</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">buffer</span><span class="o">,</span>
-            <span class="nx">debug</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span><span class="o">,</span>
+        <span class="k">var</span> <span class="nx">messages</span>    <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">buffer</span><span class="o">,</span>
+            <span class="nx">debug</span>       <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span><span class="o">,</span>
+            <span class="nx">entries</span>     <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">consoleLimit</span><span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;consoleLimit&#39;</span><span class="o">),</span>
+            <span class="nx">newestOnTop</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;newestOnTop&#39;</span><span class="o">),</span>
+            <span class="nx">anchor</span>      <span class="o">=</span> <span class="nx">newestOnTop</span> <span class="o">?</span> <span class="k">this</span><span class="o">.</span><span class="nx">_body</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;firstChild&#39;</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
             <span class="nx">i</span><span class="o">;</span>
 
-        <span class="nx">limit</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">min</span><span class="o">(</span><span class="nx">messages</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="o">(</span><span class="nx">limit</span> <span class="o">||</span> <span class="nx">messages</span><span class="o">.</span><span class="nx">length</span><span class="o">));</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">messages</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">consoleLimit</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">messages</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">messages</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">consoleLimit</span><span class="o">);</span>
+        <span class="o">}</span>
 
+        <span class="nx">limit</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">min</span><span class="o">(</span><span class="nx">messages</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="o">(</span><span class="nx">limit</span> <span class="o">||</span> <span class="nx">messages</span><span class="o">.</span><span class="nx">length</span><span class="o">));</span>
+        
         <span class="c">// turn off logging system</span>
 <span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PAUSED</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;rendered&#39;</span><span class="o">))</span> <span class="o">{</span>
 
-            <span class="c">// TODO: use doc frag</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_body</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;diplay&#39;</span><span class="o">,</span><span class="s1">&#39;none&#39;</span><span class="o">);</span>
             <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">limit</span> <span class="o">&amp;&amp;</span> <span class="nx">messages</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">printLogEntry</span><span class="o">(</span><span class="nx">messages</span><span class="o">.</span><span class="nx">shift</span><span class="o">());</span>
+                <span class="nx">entries</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_createEntryHTML</span><span class="o">(</span><span class="nx">messages</span><span class="o">.</span><span class="nx">shift</span><span class="o">());</span>
             <span class="o">}</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_body</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;diplay&#39;</span><span class="o">,</span><span class="s1">&#39;&#39;</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">messages</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_cancelPrintLoop</span><span class="o">();</span>
             <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">newestOnTop</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">entries</span><span class="o">.</span><span class="nx">reverse</span><span class="o">();</span>
+            <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_body</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">create</span><span class="o">(</span><span class="nx">entries</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">)),</span> <span class="nx">anchor</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;scrollIntoView&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">scrollToLatest</span><span class="o">();</span>
@@ -775,24 +782,6 @@
 
         <span class="c">// restore logging system</span>
 <span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">debug</span><span class="o">;</span>
-
-        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Prints the provided message to the console UI.</span>
-<span class="c">     *</span>
-<span class="c">     * Inserts the Node into the console body at the top or bottom depending on</span>
-<span class="c">     * the configuration value of newestOnTop.</span>
-<span class="c">     *</span>
-<span class="c">     * @method printLogEntry</span>
-<span class="c">     * @param m {Object} Normalized message object</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-    <span class="nx">printLogEntry</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">sib</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;newestOnTop&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span><span class="o">.</span><span class="nx">_body</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;firstChild&#39;</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-
-        <span class="k">this</span><span class="o">.</span><span class="nx">_body</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_createEntry</span><span class="o">(</span><span class="nx">m</span><span class="o">),</span> <span class="nx">sib</span><span class="o">);</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">},</span>
@@ -1041,7 +1030,7 @@
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_schedulePrint</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PAUSED</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_printLoop</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;rendered&#39;</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_printLoop</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PAUSED</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;rendered&#39;</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_printLoop</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span>
                                 <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;printTimeout&#39;</span><span class="o">),</span>
                                 <span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">printBuffer</span><span class="o">,</span>
@@ -1050,14 +1039,14 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Creates an entry node from the message meta provided.</span>
+<span class="c">     * Translates message meta into the markup for a console entry</span>
 <span class="c">     *</span>
-<span class="c">     * @method _createEntry</span>
+<span class="c">     * @method _createEntryHTML</span>
 <span class="c">     * @param m {Object} object literal containing normalized message metadata</span>
-<span class="c">     * @return Node</span>
+<span class="c">     * @return String</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
-    <span class="nx">_createEntry</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_createEntryHTML</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">m</span> <span class="o">=</span> <span class="nx">merge</span><span class="o">(</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_htmlEscapeMessage</span><span class="o">(</span><span class="nx">m</span><span class="o">),</span>
                 <span class="nx">Console</span><span class="o">.</span><span class="nx">ENTRY_CLASSES</span><span class="o">,</span>
@@ -1066,7 +1055,10 @@
                     <span class="nx">src_class</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">ENTRY</span><span class="o">,</span><span class="nx">m</span><span class="o">.</span><span class="nx">source</span><span class="o">)</span>
                 <span class="o">});</span>
 
-        <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="nx">substitute</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;entryTemplate&#39;</span><span class="o">),</span><span class="nx">m</span><span class="o">));</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;entryTemplate&#39;</span><span class="o">).</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/\{(\w+)\}/g</span><span class="o">,</span>
+            <span class="k">function</span> <span class="o">(</span><span class="nx">_</span><span class="o">,</span><span class="nx">token</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">token</span> <span class="k">in</span> <span class="nx">m</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">token</span><span class="o">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
+            <span class="o">});</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
