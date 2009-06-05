@@ -29,12 +29,10 @@ var NODE_TYPE = 'nodeType',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     INNER_TEXT = 'innerText',
     TEXT_CONTENT = 'textContent',
-    LENGTH = 'length',
 
 
     UNDEFINED = undefined,
 
-    g_slice = Array.slice,
     re_tag = /<([a-z]+)/i;
 
 Y.DOM = {
@@ -126,7 +124,7 @@ Y.DOM = {
                         if (tag) {
                             wrapFn = function(el) {
                                 return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
-                            }
+                            };
                         }
                     }
 
@@ -246,11 +244,12 @@ Y.DOM = {
         root = root || Y.config.doc;
 
         var elements = root.getElementsByTagName(tag),
-            retNodes = [];
+            retNodes = [],
+            i, len;
 
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
+        for (i = 0, len = elements.length; i < len; ++i) {
             if ( !fn || fn(elements[i]) ) {
-                retNodes[retNodes[LENGTH]] = elements[i];
+                retNodes[retNodes.length] = elements[i];
             }
         }
         return retNodes;
@@ -270,9 +269,10 @@ Y.DOM = {
         root = root || Y.config.doc;
 
         var elements = root.getElementsByTagName(tag),
-            ret = null;
+            ret = null,
+            i, len;
 
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
+        for (i = 0, len = elements.length; i < len; ++i) {
             if ( !fn || fn(elements[i]) ) {
                 ret = elements[i];
                 break;
@@ -291,14 +291,15 @@ Y.DOM = {
      * @return {Array} The filtered collection of HTMLElements.
      */
     filterElementsBy: function(elements, fn, firstOnly) {
-        var ret = (firstOnly) ? null : [];
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
+        var ret = (firstOnly) ? null : [],
+            i, len;
+        for (i = 0, len = elements.length; i < len; ++i) {
             if (elements[i][TAG_NAME] && (!fn || fn(elements[i]))) {
                 if (firstOnly) {
                     ret = elements[i];
                     break;
                 } else {
-                    ret[ret[LENGTH]] = elements[i];
+                    ret[ret.length] = elements[i];
                 }
             }
         }
@@ -506,8 +507,6 @@ Y.DOM = {
     },
 
     _removeChildNodes: function(node) {
-        var childNodes = node.childNodes, i;
-
         while (node.firstChild) {
             node.removeChild(node.firstChild);
         }
@@ -592,17 +591,21 @@ Y.DOM = {
     },
 
     _stripScripts: function(node) {
-        var scripts = node.getElementsByTagName('script');
-        for (var i = 0, script; script = scripts[i++];) {
+        var scripts = node.getElementsByTagName('script'),
+            i, script;
+
+        for (i = 0, script; script = scripts[i++];) {
             script.parentNode.removeChild(script);
         }
     },
 
     _execScripts: function(scripts, startIndex) {
-        var newScript;
+        var newScript,
+            i, script;
+
         startIndex = startIndex || 0;
 
-        for (var i = startIndex, script; script = scripts[i++];) {
+        for (i = startIndex, script; script = scripts[i++];) {
             newScript = script.ownerDocument.createElement('script');
             script.parentNode.replaceChild(newScript, script);
             if (script.text) {
@@ -617,7 +620,9 @@ Y.DOM = {
                         if (/loaded|complete/.test(script.readyState)) {
                             event.srcElement.onreadystatechange = null; 
                             // timer to help ensure exec order
-                            setTimeout(function() {Y.DOM._execScripts(scripts, i++)}, 0);
+                            setTimeout(function() {
+                                Y.DOM._execScripts(scripts, i++);
+                            }, 0);
                         }
                     };
                 } else {
@@ -723,14 +728,11 @@ Y.DOM = {
 
     _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
         fn = (typeof name === 'string') ? Y.DOM[fn] : fn;
-        var args = arguments,
-            result,
+        var result,
             ret = [];
 
         if (fn && nodes) {
-            //args = g_slice.call(args, 1);
             Y.each(nodes, function(node) {
-                //args.splice(0, 1, node);
                 if ((result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc)) !== undefined) {
                     ret[ret.length] = result;
                 }
@@ -796,7 +798,7 @@ Y.DOM = {
                 var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc),
                     tb = frag.children.tags('tbody')[0];
 
-                if (frag.children[LENGTH] > 1 && tb && !re_tbody.test(html)) {
+                if (frag.children.length > 1 && tb && !re_tbody.test(html)) {
                     tb[PARENT_NODE].removeChild(tb); // strip extraneous tbody
                 }
                 return frag;
@@ -821,7 +823,7 @@ Y.DOM = {
         Y.mix(Y.DOM.VALUE_SETTERS, {
             // IE: node.value changes the button text, which should be handled via innerHTML
             button: function(node, val) {
-                var attr = node.attributes['value'];
+                var attr = node.attributes.value;
                 if (!attr) {
                     attr = node[OWNER_DOCUMENT].createAttribute('value');
                     node.setAttributeNode(attr);
@@ -852,8 +854,7 @@ Y.DOM = {
 
         select: function(node) {
             var val = node.value,
-                options = node.options,
-                i, opt;
+                options = node.options;
 
             if (options && val === '') {
                 if (node.multiple) {
@@ -876,8 +877,6 @@ Y.DOM = {
  * @for DOM
  */
 
-var CLASS_NAME = 'className';
-
 Y.mix(Y.DOM, {
     /**
      * Determines whether a DOM element has the given className.
@@ -888,7 +887,7 @@ Y.mix(Y.DOM, {
      */
     hasClass: function(node, className) {
         var re = Y.DOM._getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
-        return re.test(node[CLASS_NAME]);
+        return re.test(node.className);
     },
 
     /**
@@ -899,7 +898,7 @@ Y.mix(Y.DOM, {
      */
     addClass: function(node, className) {
         if (!Y.DOM.hasClass(node, className)) { // skip if already present 
-            node[CLASS_NAME] = Y.Lang.trim([node[CLASS_NAME], className].join(' '));
+            node.className = Y.Lang.trim([node.className, className].join(' '));
         }
     },
 
@@ -911,7 +910,7 @@ Y.mix(Y.DOM, {
      */
     removeClass: function(node, className) {
         if (className && Y.DOM.hasClass(node, className)) {
-            node[CLASS_NAME] = Y.Lang.trim(node[CLASS_NAME].replace(Y.DOM._getRegExp('(?:^|\\s+)' +
+            node.className = Y.Lang.trim(node.className.replace(Y.DOM._getRegExp('(?:^|\\s+)' +
                             className + '(?:\\s+|$)'), ' '));
 
             if ( Y.DOM.hasClass(node, className) ) { // in case of multiple adjacent
@@ -1111,6 +1110,7 @@ if (Y.UA.webkit) {
 
 }
 
+(function() {
 /**
  * Add style management functionality to DOM.
  * @module dom
@@ -1186,6 +1186,7 @@ Y.Color = {
         return val.toLowerCase();
     }
 };
+})();
 
 /**
  * Add style management functionality to DOM.
@@ -1256,7 +1257,7 @@ try {
     Y.DOM.CUSTOM_STYLES.height = {
         set: function(node, val, style) {
             if (parseInt(val, 10) >= 0) {
-                style['height'] = val;
+                style.height = val;
             } else {
                 Y.log('invalid style value for height: ' + val, 'warn', 'dom-style');
             }
@@ -1266,7 +1267,7 @@ try {
     Y.DOM.CUSTOM_STYLES.width = {
         set: function(node, val, style) {
             if (parseInt(val, 10) >= 0) {
-                style['width'] = val;
+                style.width = val;
             } else {
                 Y.log('invalid style value for width: ' + val, 'warn', 'dom-style');
             }
@@ -1465,23 +1466,15 @@ YUI.add('dom-screen', function(Y) {
  * @for DOM
  */
 
-var OFFSET_TOP = 'offsetTop',
-
-    DOCUMENT_ELEMENT = 'documentElement',
+var DOCUMENT_ELEMENT = 'documentElement',
     COMPAT_MODE = 'compatMode',
-    OFFSET_LEFT = 'offsetLeft',
-    OFFSET_PARENT = 'offsetParent',
     POSITION = 'position',
     FIXED = 'fixed',
     RELATIVE = 'relative',
     LEFT = 'left',
     TOP = 'top',
-    SCROLL_LEFT = 'scrollLeft',
-    SCROLL_TOP = 'scrollTop',
     _BACK_COMPAT = 'BackCompat',
     MEDIUM = 'medium',
-    HEIGHT = 'height',
-    WIDTH = 'width',
     BORDER_LEFT_WIDTH = 'borderLeftWidth',
     BORDER_TOP_WIDTH = 'borderTopWidth',
     GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
@@ -1498,7 +1491,7 @@ Y.mix(Y.DOM, {
 
      */
     winHeight: function(node) {
-        var h = Y.DOM._getWinSize(node)[HEIGHT];
+        var h = Y.DOM._getWinSize(node).height;
         Y.log('winHeight returning ' + h, 'info', 'dom-screen');
         return h;
     },
@@ -1509,7 +1502,7 @@ Y.mix(Y.DOM, {
 
      */
     winWidth: function(node) {
-        var w = Y.DOM._getWinSize(node)[WIDTH];
+        var w = Y.DOM._getWinSize(node).width;
         Y.log('winWidth returning ' + w, 'info', 'dom-screen');
         return w;
     },
@@ -1520,9 +1513,9 @@ Y.mix(Y.DOM, {
 
      */
     docHeight:  function(node) {
-        var h = Y.DOM._getDocSize(node)[HEIGHT];
+        var h = Y.DOM._getDocSize(node).height;
         Y.log('docHeight returning ' + h, 'info', 'dom-screen');
-        return Math.max(h, Y.DOM._getWinSize(node)[HEIGHT]);
+        return Math.max(h, Y.DOM._getWinSize(node).height);
     },
 
     /**
@@ -1530,9 +1523,9 @@ Y.mix(Y.DOM, {
      * @method docWidth
      */
     docWidth:  function(node) {
-        var w = Y.DOM._getDocSize(node)[WIDTH];
+        var w = Y.DOM._getDocSize(node).width;
         Y.log('docWidth returning ' + w, 'info', 'dom-screen');
-        return Math.max(w, Y.DOM._getWinSize(node)[WIDTH]);
+        return Math.max(w, Y.DOM._getWinSize(node).width);
     },
 
     /**
@@ -1541,7 +1534,7 @@ Y.mix(Y.DOM, {
      */
     docScrollX: function(node) {
         var doc = Y.DOM._getDoc(node);
-        return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_LEFT], doc.body[SCROLL_LEFT]);
+        return Math.max(doc[DOCUMENT_ELEMENT].scrollLeft, doc.body.scrollLeft);
     },
 
     /**
@@ -1550,7 +1543,7 @@ Y.mix(Y.DOM, {
      */
     docScrollY:  function(node) {
         var doc = Y.DOM._getDoc(node);
-        return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_TOP], doc.body[SCROLL_TOP]);
+        return Math.max(doc[DOCUMENT_ELEMENT].scrollTop, doc.body.scrollTop);
     },
 
     /**
@@ -1571,6 +1564,9 @@ Y.mix(Y.DOM, {
                     scrollTop,
                     pos,
                     box,
+                    off1, off2,
+                    bLeft, bTop,
+                    mode,
                     doc;
 
                 if (node) {
@@ -1579,12 +1575,12 @@ Y.mix(Y.DOM, {
                         scrollTop = Y.DOM.docScrollY(node);
                         box = node[GET_BOUNDING_CLIENT_RECT]();
                         doc = Y.DOM._getDoc(node);
-                        xy = [box[LEFT], box[TOP]];
+                        xy = [box.left, box.top];
 
                             if (Y.UA.ie) {
-                                var off1 = 2, off2 = 2,
-                                mode = doc[COMPAT_MODE],
-                                bLeft = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH),
+                                off1 = 2, off2 = 2;
+                                mode = doc[COMPAT_MODE];
+                                bLeft = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH);
                                 bTop = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_TOP_WIDTH);
 
                                 if (Y.UA.ie === 6) {
@@ -1629,15 +1625,15 @@ Y.mix(Y.DOM, {
 
                 if (node) {
                     if (Y.DOM.inDoc(node)) {
-                        xy = [node[OFFSET_LEFT], node[OFFSET_TOP]];
+                        xy = [node.offsetLeft, node.offsetTop];
                         parentNode = node;
                         // TODO: refactor with !! or just falsey
                         bCheck = ((Y.UA.gecko || Y.UA.webkit > 519) ? true : false);
 
                         // TODO: worth refactoring for TOP/LEFT only?
-                        while ((parentNode = parentNode[OFFSET_PARENT])) {
-                            xy[0] += parentNode[OFFSET_LEFT];
-                            xy[1] += parentNode[OFFSET_TOP];
+                        while ((parentNode = parentNode.offsetParent)) {
+                            xy[0] += parentNode.offsetLeft;
+                            xy[1] += parentNode.offsetTop;
                             if (bCheck) {
                                 xy = Y.DOM._calcBorders(parentNode, xy);
                             }
@@ -1648,8 +1644,8 @@ Y.mix(Y.DOM, {
                             parentNode = node;
 
                             while ((parentNode = parentNode.parentNode)) {
-                                scrollTop = parentNode[SCROLL_TOP];
-                                scrollLeft = parentNode[SCROLL_LEFT];
+                                scrollTop = parentNode.scrollTop;
+                                scrollLeft = parentNode.scrollLeft;
 
                                 //Firefox does something funky with borders when overflow is not visible.
                                 if (Y.UA.gecko && (Y.DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
@@ -1694,14 +1690,14 @@ Y.mix(Y.DOM, {
             if ( isNaN(xy[0]) ) { // in case of 'auto'
                 xy[0] = parseInt(Y.DOM.getStyle(node, LEFT), 10); // try inline
                 if ( isNaN(xy[0]) ) { // default to offset value
-                    xy[0] = (pos === RELATIVE) ? 0 : node[OFFSET_LEFT] || 0;
+                    xy[0] = (pos === RELATIVE) ? 0 : node.offsetLeft || 0;
                 }
             } 
 
             if ( isNaN(xy[1]) ) { // in case of 'auto'
                 xy[1] = parseInt(Y.DOM.getStyle(node, TOP), 10); // try inline
                 if ( isNaN(xy[1]) ) { // default to offset value
-                    xy[1] = (pos === RELATIVE) ? 0 : node[OFFSET_TOP] || 0;
+                    xy[1] = (pos === RELATIVE) ? 0 : node.offsetTop || 0;
                 }
             } 
         }

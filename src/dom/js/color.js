@@ -1,3 +1,4 @@
+(function() {
 /**
  * Add style management functionality to DOM.
  * @module dom
@@ -73,4 +74,5 @@ Y.Color = {
         return val.toLowerCase();
     }
 };
+})();
 

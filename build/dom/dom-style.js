@@ -157,6 +157,7 @@ if (Y.UA.webkit) {
 
 }
 
+(function() {
 /**
  * Add style management functionality to DOM.
  * @module dom
@@ -232,6 +233,7 @@ Y.Color = {
         return val.toLowerCase();
     }
 };
+})();
 
 /**
  * Add style management functionality to DOM.
@@ -242,22 +244,19 @@ Y.Color = {
 
 var CLIENT_TOP = 'clientTop',
     CLIENT_LEFT = 'clientLeft',
-    PARENT_NODE = 'parentNode',
-    RIGHT = 'right',
     HAS_LAYOUT = 'hasLayout',
     PX = 'px',
     FILTER = 'filter',
     FILTERS = 'filters',
     OPACITY = 'opacity',
     AUTO = 'auto',
-    CURRENT_STYLE = 'currentStyle',
 
     _getStyleObj = function(node) {
-        return node[CURRENT_STYLE] || node[STYLE];
+        return node.currentStyle || node.style;
     };
 
 // use alpha filter for IE opacity
-if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
+if (document[DOCUMENT_ELEMENT].style[OPACITY] === UNDEFINED &&
         document[DOCUMENT_ELEMENT][FILTERS]) {
     Y.DOM.CUSTOM_STYLES[OPACITY] = {
         get: function(node) {
@@ -287,7 +286,7 @@ if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
             if (typeof style[FILTER] == 'string') { // in case not appended
                 style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
                 
-                if (!node[CURRENT_STYLE] || !node[CURRENT_STYLE][HAS_LAYOUT]) {
+                if (!node.currentStyle || !node.currentStyle[HAS_LAYOUT]) {
                     style.zoom = 1; // needs layout 
                 }
             }
@@ -301,7 +300,7 @@ try {
     Y.DOM.CUSTOM_STYLES.height = {
         set: function(node, val, style) {
             if (parseInt(val, 10) >= 0) {
-                style['height'] = val;
+                style.height = val;
             } else {
             }
         }
@@ -310,7 +309,7 @@ try {
     Y.DOM.CUSTOM_STYLES.width = {
         set: function(node, val, style) {
             if (parseInt(val, 10) >= 0) {
-                style['width'] = val;
+                style.width = val;
             } else {
             }
         }
@@ -364,12 +363,12 @@ ComputedStyle = {
 
             value = actual;
             if (re_size.test(prop)) { // account for box model diff 
-                el[STYLE][prop] = actual;
+                el.style[prop] = actual;
                 if (el[offset] > actual) {
                     // the difference is padding + border (works in Standards & Quirks modes)
                     value = actual - (el[offset] - actual);
                 }
-                el[STYLE][prop] = AUTO; // revert to auto
+                el.style[prop] = AUTO; // revert to auto
             }
         } else { // convert units to px
             if (current.indexOf('%') > -1) { // IE pixelWidth incorrect for percent; manually compute 
@@ -377,10 +376,10 @@ ComputedStyle = {
                         ComputedStyle.getPixel(el, 'paddingRight') -
                         ComputedStyle.getPixel(el, 'paddingLeft');
             }
-            if (!el[STYLE][pixel] && !el[STYLE][prop]) { // need to map style.width to currentStyle (no currentStyle.pixelWidth)
-                el[STYLE][prop] = current;              // no style.pixelWidth if no style.width
+            if (!el.style[pixel] && !el.style[prop]) { // need to map style.width to currentStyle (no currentStyle.pixelWidth)
+                el.style[prop] = current;              // no style.pixelWidth if no style.width
             }
-            value = el[STYLE][pixel];
+            value = el.style[pixel];
         }
         return value + PX;
     },
@@ -389,8 +388,8 @@ ComputedStyle = {
         // clientHeight/Width = paddingBox (e.g. offsetWidth - borderWidth)
         // clientTop/Left = borderWidth
         var value = null;
-        if (!el[CURRENT_STYLE] || !el[CURRENT_STYLE][HAS_LAYOUT]) { // TODO: unset layout?
-            el[STYLE].zoom = 1; // need layout to measure client
+        if (!el.currentStyle || !el.currentStyle[HAS_LAYOUT]) { // TODO: unset layout?
+            el.style.zoom = 1; // need layout to measure client
         }
 
         switch(property) {
@@ -414,12 +413,12 @@ ComputedStyle = {
         // use pixelRight to convert to px
         var val = null,
             style = _getStyleObj(node),
-            styleRight = style[RIGHT],
+            styleRight = style.right,
             current = style[att];
 
-        node[STYLE][RIGHT] = current;
-        val = node[STYLE].pixelRight;
-        node[STYLE][RIGHT] = styleRight; // revert
+        node.style.right = current;
+        val = node.style.pixelRight;
+        node.style.right = styleRight; // revert
 
         return val;
     },
@@ -438,8 +437,8 @@ ComputedStyle = {
 
     getVisibility: function(node, att) {
         var current;
-        while ( (current = node[CURRENT_STYLE]) && current[att] == 'inherit') { // NOTE: assignment in test
-            node = node[PARENT_NODE];
+        while ( (current = node.currentStyle) && current[att] == 'inherit') { // NOTE: assignment in test
+            node = node.parentNode;
         }
         return (current) ? current[att] : VISIBLE;
     },
