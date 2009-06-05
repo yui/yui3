@@ -1519,64 +1519,49 @@ var Event = Y.Event,
 			element,
 			ce,
 			ev,
-            nodes,
+            matches,
+            firstTarget,
 			i;
 
         for (spec in tests) {
 
             if (tests.hasOwnProperty(spec)) {
-
                 ename  = tests[spec];
-
 				elements = Y.Selector.query(spec, el);
-
 				nElements = elements.length;
+                matches=[];
+                firstTarget = null;
 
 				if (nElements > 0) {
-
 					i = elements.length - 1;
-
 					do {
-
 						element = elements[i];
 
 	                    if (element === target || Y.DOM.contains(element, target)) {
-
-                            nodes = nodes || Y.all(elements);
-
-							ce = Event._createWrapper(element, e.type, false, false, true);
-
-							ev = new Y.DOMEventFacade(e, el, ce);
-
-	                        ev.originalTarget = ev.target;
-	                        ev.target = Y.Node.get(element);
-                            ev.details = nodes;
-	
-	                        Y.fire(ename, ev);
-
-	  						break;
-
+                            matches.push(element);
+                            firstTarget = firstTarget || Y.Node.get(element);
+	  						// break;
 	                    }
-
 					}
 					while (i--);
-					
+
+                    if (matches.length) {
+                        ce = Event._createWrapper(element, e.type, false, false, true);
+                        ev = new Y.DOMEventFacade(e, el, ce);
+                        ev.originalTarget = ev.target;
+                        ev.target = firstTarget;
+                        ev.details = Y.all(matches);
+                        Y.fire(ename, ev);
+                    }
 				}
-
             }
-
         }
-
     },
 
 	attach = function (type, key, element) {
-		
 		Y.Event._attach([type, function (e) {
-
             _worker(key, (e || window.event), element);
-
 		}, element], { facade: false });
-		
 	},
 
     _sanitize = Y.cached(function(str) {
@@ -1596,9 +1581,7 @@ var Event = Y.Event,
  * @for YUI
  */
 Y.Env.evt.plugins.delegate = {
-
     on: function(type, fn, el, delegateType, spec) {
-
         if (!spec) {
             return false;
         }
@@ -1650,7 +1633,6 @@ Y.Env.evt.plugins.delegate = {
             
         // subscribe to the custom event for the delegation spec
         return Y.on.apply(Y, a);
-
     }
 };
 
