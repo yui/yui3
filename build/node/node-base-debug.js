@@ -625,8 +625,8 @@ Y.mix(Node.prototype, {
                 content = Y.Node.getDOMNode(content);
             }
             if (!where || // only allow inserting into this Node's subtree
-                (g_restrict[this[UID]] &&
-                    (typeof where === 'string' || !this.contains(where)))) { 
+                (!g_restrict[this[UID]] || 
+                    (typeof where !== 'string' && this.contains(where)))) { 
                 Y.DOM.addHTML(g_nodes[this[UID]], content, where, execScripts);
             }
         }
