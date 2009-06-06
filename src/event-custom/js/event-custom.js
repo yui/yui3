@@ -292,17 +292,9 @@ Y.CustomEvent.prototype = {
             Y.error("Invalid callback for CE: " + this.type);
         }
 
-        // var se = this.subscribeEvent, s;
-        // if (se) {
-        //     se.fire.apply(se, args);
-        // }
-
         var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-
-            // this._notify(s);
-            
             Y.later(0, this, this._notify, s);
         }
 

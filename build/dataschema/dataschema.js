@@ -340,7 +340,7 @@ Y.DataSchema.JSON = Y.mix(SchemaJSON, Y.DataSchema.Base);
 
 
 
-}, '@VERSION@' ,{requires:['dataschema-base', 'json']});
+}, '@VERSION@' ,{requires:['json', 'dataschema-base']});
 
 YUI.add('dataschema-xml', function(Y) {
 

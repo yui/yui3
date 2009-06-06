@@ -402,6 +402,10 @@ Y.DOM = {
      * @param {HTMLDocument} doc An optional document context 
      */
     create: function(html, doc) {
+        if (!doc && Y.DOM._cloneCache[html]) {
+            return Y.DOM._cloneCache[html].cloneNode(true); // NOTE: return
+        }
+
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html),
             create = Y.DOM._create,
@@ -428,6 +432,7 @@ Y.DOM = {
             }
         }
 
+        Y.DOM._cloneCache[html] = ret;
         return ret;
     },
 
@@ -513,33 +518,50 @@ Y.DOM = {
         }
     },
 
+    _cloneCache: {},
+
     addHTML: function(node, content, where, execScripts) {
         var scripts,
-            newNode = (content.nodeType) ? content : Y.DOM.create(content);
-
-        if (where && where.nodeType) {
-            node.insertBefore(newNode, where);
+            newNode = Y.DOM._cloneCache[content];
+            
+        if (newNode) {
+            newNode = newNode.cloneNode(true);
         } else {
-            switch (where) {
-                case 'replace':
-                    while (node.firstChild) {
-                        node.removeChild(node.firstChild);
-                    }
-                    node.appendChild(newNode);
-                    break;
-                case 'before':
-                    node.parentNode.insertBefore(newNode, node);
-                    break;
-                case 'after':
-                    if (node.nextSibling) { // IE errors if refNode is null
-                        node.parentNode.insertBefore(newNode, node.nextSibling);
-                    } else {
-                        node.parentNode.appendChild(newNode);
-                    }
-                    break;
-                default:
-                    node.appendChild(newNode);
+            if (content.nodeType) { // domNode
+                newNode = content;
+            } else { // create from string and cache
+                newNode = Y.DOM.create(content);
             }
+        }
+
+        if (where) {
+            if (where.nodeType) { // insert regardless of relationship to node
+                // TODO: check if node.contains(where)?
+                where.parentNode.insertBefore(newNode, where);
+            } else {
+                switch (where) {
+                    case 'replace':
+                        while (node.firstChild) {
+                            node.removeChild(node.firstChild);
+                        }
+                        node.appendChild(newNode);
+                        break;
+                    case 'before':
+                        node.parentNode.insertBefore(newNode, node);
+                        break;
+                    case 'after':
+                        if (node.nextSibling) { // IE errors if refNode is null
+                            node.parentNode.insertBefore(newNode, node.nextSibling);
+                        } else {
+                            node.parentNode.appendChild(newNode);
+                        }
+                        break;
+                    default:
+                        node.appendChild(newNode);
+                }
+            }
+        } else {
+            node.appendChild(newNode);
         }
 
         if (execScripts) {
@@ -996,8 +1018,8 @@ Y.mix(Y.DOM, {
      * @param {String} att The style property to set. 
      * @param {String|Number} val The value. 
      */
-    setStyle: function(node, att, val) {
-        var style = node[STYLE],
+    setStyle: function(node, att, val, style) {
+        var style = node.style,
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
 
         if (style) {
@@ -1051,8 +1073,9 @@ Y.mix(Y.DOM, {
      * @param {Object} hash An object literal of property:value pairs. 
      */
     setStyles: function(node, hash) {
+        var style = node.style;
         Y.each(hash, function(v, n) {
-            Y.DOM.setStyle(node, n, v);
+            Y.DOM.setStyle(node, n, v, style);
         }, Y.DOM);
     },
 
@@ -2192,12 +2215,10 @@ NativeSelector = {
             groups = selector.split(','),
             item;
 
-        if (node && node[PARENT_NODE]) {
+        if (node) {
             node.id = node.id || Y.guid();
-            node[PARENT_NODE].id = node[PARENT_NODE].id || Y.guid();
             for (var i = 0, group; group = groups[i++];) {
                 group += '#' + node.id; // add ID for uniqueness
-                //group = '#' + node[PARENT_NODE].id + ' ' + group; // document scope parent test
                 item = Y.Selector.query(group, null, true);
                 ret = (item === node);
                 if (ret) {
