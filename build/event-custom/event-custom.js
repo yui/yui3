@@ -1399,7 +1399,6 @@ Y.Subscriber.prototype = {
 
 var L = Y.Lang,
     PREFIX_DELIMITER = ':',
-    DETACH_PREFIX_SPLITTER = /[,|]\s*/,
     CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
 
@@ -1427,7 +1426,7 @@ var L = Y.Lang,
      */
     _parseType = Y.cached(function(type, pre) {
 
-        var t = type, parts, detachcategory, after, i, full_t;
+        var t = type, detachcategory, after, i, full_t;
 
         if (!L.isString(t)) {
             return t;
@@ -1440,21 +1439,23 @@ var L = Y.Lang,
             t = t.substr(AFTER_PREFIX.length);
         }
 
-        parts = t.split(DETACH_PREFIX_SPLITTER);
-
-        if (parts.length > 1) {
-            detachcategory = parts[0];
-            t = parts[1];
+        // parts = t.split(DETACH_PREFIX_SPLITTER);
+        // if (parts.length > 1) {
+        //     detachcategory = parts[0];
+        //     t = parts[1];
+        //     if (t == '*') {
+        //          t = null;
+        //     }
+        // }
+        
+        i = t.indexOf(CATEGORY_DELIMITER);
+        if (i > -1) {
+            detachcategory = t.substr(0, (i));
+            t = t.substr(i+1);
             if (t == '*') {
-                 t = null;
+                t = null;
             }
         }
-        
-        // i = t.indexOf(CATEGORY_DELIMITER);
-        // if (i > -1) {
-        //     detachcategory = t.substr(0, AFTER_PREFIX.length-1);
-        //     t = t.substr(AFTER_PREFIX.length);
-        // }
 
         full_t = _getType(t, pre);
 
@@ -1948,7 +1949,7 @@ ET.prototype = {
     bubble: function(evt, args, target) {
 
         var targs = this._yuievt.targets, ret = true,
-            t, type, ce, targetProp, i;
+            t, type, ce, i;
 
         if (!evt || (!evt.stopped && targs)) {
 
@@ -1985,7 +1986,7 @@ ET.prototype = {
 
                         ce.currentTarget = t;
 
-                        ret = ret && ce.fire.apply(ce, evt.details);
+                        ret = ret && ce.fire.apply(ce, args || evt.details);
 
                         // stopPropagation() was called
                         if (ce.stopped) {

@@ -68,14 +68,14 @@ YUI({
     }, document);
     */
 
-    // Y.on('yui:log', function(msg) {
-    //     var d=document, b=d.body, n=d.createElement("div");
-    //     if (b) {
-    //         n.appendChild(d.createTextNode(msg));
-    //         b.appendChild(n);
-    //     }
+    Y.on('asdasdafdsf|yui:log', function(e) {
+        var d=document, b=d.body, n=d.createElement("div");
+        if (b) {
+            n.appendChild(d.createTextNode(e.msg));
+            b.appendChild(n);
+        }
 
-    // });
+    });
 
 /*
     Y.on('event:ready', function() {
