@@ -67,6 +67,19 @@ onload = function() {
                 Assert.isFalse(Selector.test(Y.Dom.get('radio-unchecked'), ':checked'), ':checked (radio) false pos');
                 Assert.isFalse(Selector.test(Y.Dom.get('checkbox-unchecked'), '[type=checkbox]:checked'), 'type=checkbox:checked false pos');
                 Assert.isTrue(Selector.test(Y.Dom.get('checkbox-unchecked'), '[type=checkbox]:not(:checked)'), 'type=checkbox:not(:checked)');
+
+                Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[0], 'dd'), 'dd (dd1)');
+                Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[1], 'dd'), 'dd (dd2)');
+
+                Assert.isFalse(Selector.test(document.getElementsByTagName('dd')[0], '.test-dd2'), '.test-dd2 (dd1)');
+                Assert.isFalse(Selector.test(document.getElementsByTagName('dd')[1], '.test-dd1'), '.test-dd1 (dd2)');
+
+                Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[0], '.test-dd1'), '.test-dd1');
+                Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[1], '.test-dd2'), '.test-dd2');
+
+                Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[0], 'dd'), 'dd (dd1)');
+                Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[1], 'dd'), 'dd (dd2)');
+
             },
 
             testRootQuery: function() {
@@ -363,5 +376,14 @@ onload = function() {
     <div id="contains-special">contains "' & ]</div>
     <div id="test-rel-div" rel="foo2"></div>
     <iframe src="test-frame.html" id="test-frame"></iframe>
+
+    <dl id="test-dl">
+        <dt>Window size</dt>
+        <dd class="test-dd1">dd1</dd>
+        <dt>Document size</dt>
+        <dd class="test-dd2">dd2</dd>
+
+    </dl>
+
 </body>
 </html>
