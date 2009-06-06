@@ -2,6 +2,7 @@
 <html debug="true">
 <head>
 <title>YUI 3.0</title>
+<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
 <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 <script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
 <script type="text/javascript" src="../../build/event-custom/event-custom.js"></script>
@@ -67,14 +68,14 @@ YUI({
     }, document);
     */
 
-    // Y.on('yui:log', function(msg) {
-    //     var d=document, b=d.body, n=d.createElement("div");
-    //     if (b) {
-    //         n.appendChild(d.createTextNode(msg));
-    //         b.appendChild(n);
-    //     }
+    Y.on('asdasdafdsf|yui:log', function(e) {
+        var d=document, b=d.body, n=d.createElement("div");
+        if (b) {
+            n.appendChild(d.createTextNode(e.msg));
+            b.appendChild(n);
+        }
 
-    // });
+    });
 
 /*
     Y.on('event:ready', function() {
