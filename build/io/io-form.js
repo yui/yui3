@@ -38,7 +38,7 @@ YUI.add('io-form', function(Y) {
                     v = encodeURIComponent(e.value);
 
                     switch (e.type) {
-                        // Safari, Opera, FF all default opt.value from .text if
+                        // Safari, Opera, FF all default options.value from .text if
                         // value attribute not specified in markup
                         case 'select-one':
                             if (e.selectedIndex > -1) {
