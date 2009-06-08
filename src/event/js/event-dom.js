@@ -303,7 +303,10 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     //silent: true,
                     // host: this,
                     bubbles: false,
-                    context: Y.get(el)
+                    contextFn: function() {
+                        cewrapper.nodeRef = cewrapper.nodeRef || Y.get(cewrapper.el);
+                        return cewrapper.nodeRef;
+                    }
                 });
             
                 // for later removeListener calls
