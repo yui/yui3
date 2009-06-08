@@ -760,7 +760,11 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 cewrapper = Y.publish(key, {
                     //silent: true,
                     // host: this,
-                    bubbles: false
+                    bubbles: false,
+                    contextFn: function() {
+                        cewrapper.nodeRef = cewrapper.nodeRef || Y.get(cewrapper.el);
+                        return cewrapper.nodeRef;
+                    }
                 });
             
                 // for later removeListener calls
@@ -885,7 +889,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             }
 
             // switched from obj to trimmedArgs[2] to deal with appened compat param
-            context = trimmedArgs[2] || ((compat) ? el : Y.get(el));
+            // context = trimmedArgs[2] || ((compat) ? el : Y.get(el));
+            context = trimmedArgs[2];
             
             // set the context as the second arg to subscribe
             trimmedArgs[1] = context;
