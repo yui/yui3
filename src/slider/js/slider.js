@@ -686,6 +686,8 @@ Y.extend(Slider, Y.Widget, {
      * @method syncUI
      */
     syncUI : function () {
+        this.get(CONTENT_BOX).removeClass(C_IMAGE_ERROR);
+
         var img = this.get(THUMB_IMAGE);
 
         if (this._isImageLoading(img)) {
@@ -800,6 +802,8 @@ Y.extend(Slider, Y.Widget, {
         this._setRailOffsetXY();
 
         this._setDDGutter();
+
+        this._resetDDCacheRegion();
 
         this._setFactor();
 
@@ -941,6 +945,17 @@ Y.extend(Slider, Y.Widget, {
         Y.log('setting DDConstrain gutter "'+gutter+'"','info','slider');
 
         this._dd.con.set('gutter', gutter);
+    },
+
+    /**
+     * Resets the cached region inside the DD constrain instance to support
+     * repositioning the Slider after instantiation. Workaround for ticket 
+     *
+     * @method _resetDDCacheRegion
+     * @protected
+     */
+    _resetDDCacheRegion : function () {
+        this._dd.con._cacheRegion();
     },
 
     /**
