@@ -1296,13 +1296,20 @@ Y.Subscriber = function(fn, context, args) {
      */
     // this.args = args;
 
-    /**
+    /*
      * }
      * fn bound to obj with additional arguments applied via Y.rbind
      * @property wrappedFn
      * @type Function
      */
-    this.wrappedFn = fn;
+    // this.wrappedFn = fn;
+
+    /**
+     * Additional arguments to propagate to the subscriber
+     * @property args
+     * @type Array
+     */
+    this.args = args;
 
     /**
      * Custom events for a given fire transaction.
@@ -1311,13 +1318,36 @@ Y.Subscriber = function(fn, context, args) {
      */
     this.events = null;
     
-    if (context) {
-        this.wrappedFn = Y.rbind.apply(Y, args);
-    }
+    // if (context) {
+    //     this.wrappedFn = Y.rbind.apply(Y, args);
+    // }
     
+
 };
 
 Y.Subscriber.prototype = {
+
+    _notify: function(c, args, ce) {
+        var a = this.args, ret;
+        switch (ce.signature) {
+            case 0:
+                ret = this.fn.call(c, ce.type, args, this.context);
+                break;
+            case 1:
+                ret = this.fn.call(c, args[0] || null, this.context);
+                break;
+            default:
+                if (a || args) {
+                    args = args || [];
+                    a = (a) ? args.concat(a) : args;
+                    ret = this.fn.apply(c, a);
+                } else {
+                    ret = this.fn.call(c);
+                }
+        }
+
+        return ret;
+    },
 
     /**
      * Executes the subscriber.
@@ -1328,28 +1358,15 @@ Y.Subscriber.prototype = {
      * @param ce {Event.Custom} The custom event that sent the notification
      */
     notify: function(defaultContext, args, ce) {
-        var c = this.context || defaultContext, ret = true,
-
-            f = function() {
-                switch (ce.signature) {
-                    case 0:
-                        ret = this.fn.call(c, ce.type, args, this.context);
-                        break;
-                    case 1:
-                        ret = this.fn.call(c, args[0] || null, this.context);
-                        break;
-                    default:
-                        ret = this.wrappedFn.apply(c, args || []);
-                }
-            };
+        var c = this.context || defaultContext, ret = true;
 
         // Ease debugging by only catching errors if we will not re-throw
         // them.
         if (Y.config.throwFail) {
-            f.call(this);
+            ret = this._notify(c, args, ce);
         } else {
             try {
-                f.call(this);
+                ret = this._notify(c, args, ce);
             } catch(e) {
                 Y.error(this + ' failed: ' + e.message, e);
             }
