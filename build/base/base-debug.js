@@ -222,7 +222,7 @@ YUI.add('base-base', function(Y) {
      * @static
      *
      * @param {Function} hostClass The host class on which to register the plugins
-     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or and array of object literals (with fn and cfg properties defined)
+     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of object literals (with fn and cfg properties defined)
      * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
      */
     PluginHost.plug = function(hostClass, plugin, config) {
