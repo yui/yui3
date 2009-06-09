@@ -150,6 +150,7 @@
 <span class="c">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
 <span class="c">     * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized resopnse object with the following properties:</span>
 <span class="c">     *     &lt;dl&gt;</span>
+<span class="c">     *         &lt;dt&gt;cached (Object)&lt;/dt&gt; &lt;dd&gt;True when response is cached.&lt;/dd&gt;</span>
 <span class="c">     *         &lt;dt&gt;results (Object)&lt;/dt&gt; &lt;dd&gt;Parsed results.&lt;/dd&gt;</span>
 <span class="c">     *         &lt;dt&gt;meta (Object)&lt;/dt&gt; &lt;dd&gt;Parsed meta data.&lt;/dd&gt;</span>
 <span class="c">     *         &lt;dt&gt;error (Object)&lt;/dt&gt; &lt;dd&gt;Error object.&lt;/dd&gt;</span>
@@ -161,7 +162,10 @@
 <span class="c">     */</span>
      <span class="nx">_beforeDefResponseFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
         <span class="c">// Add to Cache before returning</span>
-<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">,</span> <span class="nx">e</span><span class="o">.</span><span class="nx">response</span><span class="o">,</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="o">.</span><span class="nx">callback</span><span class="o">.</span><span class="nx">argument</span><span class="o">));</span>
+<span class="c"></span>        <span class="k">if</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">response</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">e</span><span class="o">.</span><span class="nx">response</span><span class="o">.</span><span class="nx">cached</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">e</span><span class="o">.</span><span class="nx">response</span><span class="o">.</span><span class="nx">cached</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">,</span> <span class="nx">e</span><span class="o">.</span><span class="nx">response</span><span class="o">,</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="o">.</span><span class="nx">callback</span><span class="o">.</span><span class="nx">argument</span><span class="o">));</span>
+        <span class="o">}</span>
      <span class="o">}</span>
 <span class="o">});</span>
 

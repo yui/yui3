@@ -34,6 +34,10 @@ var g_nodes = {},
     Node = function(node, restricted) {
         var config = null;
         this[UID] = Y.stamp(node);
+        if (!this[UID]) { // stamp failed; likely IE non-HTMLElement
+            this[UID] = Y.guid(); 
+        }
+
         g_nodes[this[UID]] = node;
         Node._instances[this[UID]] = this;
 

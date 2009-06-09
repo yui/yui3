@@ -686,6 +686,8 @@ Y.extend(Slider, Y.Widget, {
      * @method syncUI
      */
     syncUI : function () {
+        this.get(CONTENT_BOX).removeClass(C_IMAGE_ERROR);
+
         var img = this.get(THUMB_IMAGE);
 
         if (this._isImageLoading(img)) {
@@ -797,6 +799,8 @@ Y.extend(Slider, Y.Widget, {
         this._setRailOffsetXY();
 
         this._setDDGutter();
+
+        this._resetDDCacheRegion();
 
         this._setFactor();
 
@@ -929,6 +933,17 @@ Y.extend(Slider, Y.Widget, {
 
 
         this._dd.con.set('gutter', gutter);
+    },
+
+    /**
+     * Resets the cached region inside the DD constrain instance to support
+     * repositioning the Slider after instantiation. Workaround for ticket 
+     *
+     * @method _resetDDCacheRegion
+     * @protected
+     */
+    _resetDDCacheRegion : function () {
+        this._dd.con._cacheRegion();
     },
 
     /**
@@ -1230,15 +1245,32 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _uiPositionThumb : function (xy) {
-        var dd  = this._dd;
+        var dd     = this._dd,
+            thumb  = dd.get('dragNode'),
+            hidden = thumb.ancestor(this._isDisplayNone);
 
-        dd._setStartPosition(dd.get('dragNode').getXY());
+        if (!hidden) {
+            dd._setStartPosition(dd.get('dragNode').getXY());
 
-        // stickX/stickY config on DD instance will negate off-axis move
-        dd._alignNode([xy,xy],true);
+            // stickX/stickY config on DD instance will negate off-axis move
+            dd._alignNode([xy,xy],true);
+        }
     },
 
-
+    /**
+     * Helper function to search up the ancestor axis looking for a node with
+     * style display: none.  This is passed as a function to node.ancestor(..)
+     * to test if a given node is in the displayed DOM and can get accurate
+     * positioning information.
+     *
+     * @method _isDisplayNone
+     * @param el {Node} ancestor node as the function walks up the parent axis
+     * @protected
+     * @return {Boolean} true if the node is styled with display: none
+     */
+    _isDisplayNone : function (node) {
+        return node.getComputedStyle('display') === 'none';
+    },
 
     /**
      * Fires the internal valueSet event in response to a change in the value

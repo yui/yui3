@@ -158,9 +158,10 @@ NativeSelector = {
     _test: function(node, selector) {
         var ret = false,
             groups = selector.split(','),
+            id,
             item;
 
-        if (node) {
+        if (node && node.tagName) { // only test HTMLElements
             node.id = node.id || Y.guid();
             for (var i = 0, group; group = groups[i++];) {
                 group += '#' + node.id; // add ID for uniqueness
@@ -375,6 +376,7 @@ var PARENT_NODE = 'parentNode',
                 nextTest = previous && previous[COMBINATOR] ?
                         Selector.combinators[previous[COMBINATOR]] :
                         null,
+                test,
                 attr;
 
             if (//node[TAG_NAME] && // tagName limits to HTMLElements
