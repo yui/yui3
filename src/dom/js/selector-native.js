@@ -159,9 +159,10 @@ NativeSelector = {
     _test: function(node, selector) {
         var ret = false,
             groups = selector.split(','),
+            id,
             item;
 
-        if (node) {
+        if (node && node.tagName) { // only test HTMLElements
             node.id = node.id || Y.guid();
             for (var i = 0, group; group = groups[i++];) {
                 group += '#' + node.id; // add ID for uniqueness

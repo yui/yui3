@@ -1,57 +1,3 @@
-YUI.add('datatype-date-parse', function(Y) {
-
-/**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
- *
- * @module datatype
- */
-var LANG = Y.Lang;
-
-/**
- * Parse number submodule.
- *
- * @class DataType.Number
- * @submodule datatype-number-format
- * @static
- */
-Y.mix(Y.namespace("DataType.Date"), {
-    /**
-     * Converts data to type Date.
-     *
-     * @method parse
-     * @param data {String | Number} Data to convert. Values supported by the Date constructor are supported.
-     * @return {Date} A Date, or null.
-     * @static
-     */
-    parse: function(data) {
-        var date = null;
-
-        //Convert to date
-        if(!(LANG.isDate(data))) {
-            date = new Date(data);
-        }
-        else {
-            return date;
-        }
-
-        // Validate
-        if(LANG.isDate(date) && (date != "Invalid Date")) { // Workaround for bug 2527965
-            return date;
-        }
-        else {
-            return null;
-        }
-    }
-});
-
-// Add Parsers shortcut
-Y.namespace("Parsers").date = Y.DataType.Date.parse;
-
-
-
-}, '@VERSION@' );
-
 YUI.add('datatype-date-format', function(Y) {
 
 /**
@@ -307,6 +253,7 @@ var Dt = {
 		oConfig = oConfig || {};
 		
 		if(!Y.Lang.isDate(oDate)) {
+			Y.log("format called without a date", "WARN", "datatype-date");
 			return Y.Lang.isValue(oDate) ? oDate : "";
 		}
 
@@ -317,6 +264,7 @@ var Dt = {
 		
 		// Make sure we have a definition for the requested locale, or default to en.
 		if(!Dt.Locale[sLocale]) {
+			Y.log("selected locale " + sLocale + " not found, trying alternatives", "WARN", "datatype-date");
 			var tmpLocale = sLocale.replace(/-[a-zA-Z]+$/, "");
 			if(tmpLocale in Dt.Locale) {
 				sLocale = tmpLocale;
@@ -325,6 +273,7 @@ var Dt = {
 			} else {
 				sLocale = "en";
 			}
+			Y.log("falling back to " + sLocale, "INFO", "datatype-date");
 		}
 
 		var aLocale = Dt.Locale[sLocale];
@@ -346,6 +295,7 @@ var Dt = {
 						return xPad(oDate[f[0]](), f[1]);
 					} // no break; (fall through to default:)
 				default:
+					Y.log("unrecognised replacement type, please file a bug (format: " + oConfig.format || Y.config.dateFormat + ")", "WARN", "datatype-date");
 					return m1;
 			}
 		};
@@ -464,8 +414,3 @@ Y.DataType.Date.Locale["en-AU"] = Y.merge(YDateEn);
 
 
 }, '@VERSION@' );
-
-
-
-YUI.add('datatype-date', function(Y){}, '@VERSION@' ,{use:['datatype-date-parse', 'datatype-date-format']});
-

@@ -103,6 +103,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
      * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
      *     <dl>
+     *         <dt>cached (Object)</dt> <dd>True when response is cached.</dd>
      *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
      *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
      *         <dt>error (Object)</dt> <dd>Error object.</dd>
@@ -114,7 +115,10 @@ Y.extend(DataSourceCache, Y.Cache, {
      */
      _beforeDefResponseFn: function(e) {
         // Add to Cache before returning
-        this.add(e.request, e.response, (e.callback && e.callback.argument));
+        if(e.response && !e.response.cached) {
+            e.response.cached = true;
+            this.add(e.request, e.response, (e.callback && e.callback.argument));
+        }
      }
 });
 
