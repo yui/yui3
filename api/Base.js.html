@@ -48,18 +48,11 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * Base class support for objects requiring managed attributes and acting as event targets. </span>
-<span class="c">     *</span>
-<span class="c">     * The base module also provides an augmentable PluginHost interface.</span>
-<span class="c">     *</span>
-<span class="c">     * @module base</span>
-<span class="c">     */</span>
-
-    <span class="c">/**</span>
-<span class="c">     * The base-base sub-module provides the Base class, without Base.build functionality</span>
+<span class="c">     * The base-base submodule provides the Base class and augmentable PluginHost implementation, </span>
+<span class="c">     * without the extension support provided by Base.build.</span>
 <span class="c">     *</span>
 <span class="c">     * @module base</span>
-<span class="c">     * @sub-module base-base</span>
+<span class="c">     * @submodule base-base</span>
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
         <span class="nx">DOT</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">,</span>
@@ -76,15 +69,17 @@
 
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
-<span class="c">     * Provides a base class for managed attribute based</span>
-<span class="c">     * objects, which handles the chaining of initializer and destructor methods</span>
-<span class="c">     * across the hierarchy during init and destroy lifecycle methods and </span>
-<span class="c">     * handles automatic configuration of registered Attributes, through </span>
-<span class="c">     * the static &lt;a href=&quot;#property_ATTRS&quot;&gt;ATTRS&lt;/a&gt; property.</span>
+<span class="c">     * Provides a base class for which objects requiring managed attributes and </span>
+<span class="c">     * custom event support can extend. The Base class also handles the chaining of </span>
+<span class="c">     * initializer and destructor methods across the hierarchy as part of object construction</span>
+<span class="c">     * and destruction. Additionally, attributes configured through the static </span>
+<span class="c">     * &lt;a href=&quot;#property_ATTRS&quot;&gt;ATTRS&lt;/a&gt; property for each class in the hierarchy will be </span>
+<span class="c">     * initialized by Base.</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     *</span>
-<span class="c">     * &lt;p&gt;The Base class also handles prefixing of event types with the static &lt;a href=&quot;#property_NAME&quot;&gt;NAME&lt;/a&gt; </span>
-<span class="c">     * property for all events fired from instances of classes derived from Base.&lt;/p&gt;</span>
+<span class="c">     * &lt;p&gt;The static &lt;a href=&quot;#property_NAME&quot;&gt;NAME&lt;/a&gt; property of each class extending </span>
+<span class="c">     * from Base will be used as the identifier for the class, and is used by Base to prefix </span>
+<span class="c">     * all events fired by instances of that class.&lt;/p&gt;</span>
 <span class="c">     *</span>
 <span class="c">     * @constructor</span>
 <span class="c">     * @class Base</span>
@@ -106,7 +101,7 @@
 
     <span class="c">/**</span>
 <span class="c">     * The list of properties which can be configured for </span>
-<span class="c">     * each attribute (e.g. setter, getter, writeOnce etc.)</span>
+<span class="c">     * each attribute (e.g. setter, getter, writeOnce, readOnly etc.)</span>
 <span class="c">     *</span>
 <span class="c">     * @property Base._ATTR_CFG</span>
 <span class="c">     * @type Array</span>
@@ -117,12 +112,13 @@
 
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
-<span class="c">     * Name string to be used to identify instances of </span>
+<span class="c">     * The string to be used to identify instances of </span>
 <span class="c">     * this class, for example in prefixing events.</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     * &lt;p&gt;</span>
 <span class="c">     * Classes extending Base, should define their own</span>
-<span class="c">     * static NAME property.</span>
+<span class="c">     * static NAME property, which should be camelCase by</span>
+<span class="c">     * convention (e.g. MyClass.NAME = &quot;myClass&quot;;).</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     * @property NAME</span>
 <span class="c">     * @type String</span>
@@ -133,8 +129,8 @@
     <span class="c">/**</span>
 <span class="c">     * Object literal defining the set of attributes which</span>
 <span class="c">     * will be available for instances of this class, and </span>
-<span class="c">     * how they are configured. See Attributes addAtt method</span>
-<span class="c">     * for a description of configuration options available </span>
+<span class="c">     * how they are configured. See Attribute&#39;s &lt;a href=&quot;Attribute.html#method_addAttr&quot;&gt;addAttr&lt;/a&gt;</span>
+<span class="c">     * method for a description of configuration options available </span>
 <span class="c">     * for each attribute.</span>
 <span class="c">     *</span>
 <span class="c">     * @property ATTRS</span>
@@ -147,7 +143,7 @@
 <span class="c">         * has been through the init lifecycle phase.</span>
 <span class="c">         *</span>
 <span class="c">         * @attribute initialized</span>
-<span class="c">         * @readOnly</span>
+<span class="c">         * @readonly</span>
 <span class="c">         * @default false</span>
 <span class="c">         * @type boolean</span>
 <span class="c">         */</span>
@@ -161,7 +157,7 @@
 <span class="c">         * has been through the destroy lifecycle phase.</span>
 <span class="c">         *</span>
 <span class="c">         * @attribute destroyed</span>
-<span class="c">         * @readOnly</span>
+<span class="c">         * @readonly</span>
 <span class="c">         * @default false</span>
 <span class="c">         * @type boolean</span>
 <span class="c">         */</span>
@@ -175,9 +171,9 @@
 
         <span class="c">/**</span>
 <span class="c">         * Init lifecycle method, invoked during construction.</span>
-<span class="c">         * Fires the init event prior to invoking initializers on</span>
-<span class="c">         * the class hierarchy.</span>
-<span class="c">         * </span>
+<span class="c">         * Fires the init event prior to setting up attributes and </span>
+<span class="c">         * invoking initializers for the class hierarchy.</span>
+<span class="c">         *</span>
 <span class="c">         * @method init</span>
 <span class="c">         * @final</span>
 <span class="c">         * @chainable</span>
@@ -188,8 +184,9 @@
             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;init called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
 
             <span class="c">/**</span>
-<span class="c">             * The name string to be used to identify </span>
-<span class="c">             * this instance of object. </span>
+<span class="c">             * The string used to identify the class of this object.</span>
+<span class="c">             *</span>
+<span class="c">             * @deprecated Use this.constructor.NAME</span>
 <span class="c">             * @property name</span>
 <span class="c">             * @type String</span>
 <span class="c">             */</span>
@@ -198,7 +195,7 @@
             <span class="c">/**</span>
 <span class="c">             * &lt;p&gt;</span>
 <span class="c">             * Lifecycle event for the init phase, fired prior to initialization. </span>
-<span class="c">             * Invoking the preventDefault method on the event object provided </span>
+<span class="c">             * Invoking the preventDefault() method on the event object provided </span>
 <span class="c">             * to subscribers will prevent initialization from occuring.</span>
 <span class="c">             * &lt;/p&gt;</span>
 <span class="c">             * &lt;p&gt;</span>
@@ -209,8 +206,8 @@
 <span class="c">             *</span>
 <span class="c">             * @event init</span>
 <span class="c">             * @preventable _defInitFn</span>
-<span class="c">             * @param {Event.Facade} e Event object</span>
-<span class="c">             * @param config Object literal of configuration name/value pairs</span>
+<span class="c">             * @param {Event.Facade} e Event object, with a cfg property which </span>
+<span class="c">             * refers to the configuration object literal passed to the constructor.</span>
 <span class="c">             */</span>
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">INIT</span><span class="o">,</span> <span class="o">{</span>
@@ -284,7 +281,8 @@
 <span class="c">         * Default init event handler</span>
 <span class="c">         *</span>
 <span class="c">         * @method _defInitFn</span>
-<span class="c">         * @param {Event.Facade} e Event object</span>
+<span class="c">         * @param {Event.Facade} e Event object, with a cfg property which </span>
+<span class="c">         * refers to the configuration object literal passed to the constructor.</span>
 <span class="c">         * @protected</span>
 <span class="c">         */</span>
         <span class="nx">_defInitFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
@@ -313,10 +311,12 @@
 
         <span class="c">/**</span>
 <span class="c">         * Returns the class hierarchy for this object, with Base being the last class in the array.</span>
-<span class="c">         * </span>
+<span class="c">         *</span>
 <span class="c">         * @method _getClasses</span>
 <span class="c">         * @protected</span>
-<span class="c">         * @return {Function[]} An Array of classes (constructor functions), making up the class hierarchy for this object</span>
+<span class="c">         * @return {Function[]} An array of classes (constructor functions), making up the class hierarchy for this object.</span>
+<span class="c">         * This value is cached the first time the method, or _getAttrCfgs, is invoked. Subsequent invocations return the </span>
+<span class="c">         * cached value.</span>
 <span class="c">         */</span>
         <span class="nx">_getClasses</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_classes</span><span class="o">)</span> <span class="o">{</span>
@@ -331,6 +331,8 @@
 <span class="c">         * @method _getAttrCfgs</span>
 <span class="c">         * @protected</span>
 <span class="c">         * @return {Object} The hash of attribute configurations, aggregated across classes in the hierarchy</span>
+<span class="c">         * This value is cached the first time the method, or _getClasses, is invoked. Subsequent invocations return</span>
+<span class="c">         * the cached value.</span>
 <span class="c">         */</span>
         <span class="nx">_getAttrCfgs</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_attrs</span><span class="o">)</span> <span class="o">{</span>
@@ -340,10 +342,20 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
+<span class="c">         * A helper method used when processing ATTRS across the class hierarchy during </span>
+<span class="c">         * initialization. Returns a disposable object with the attributes defined for </span>
+<span class="c">         * the provided class, extracted from the set of all attributes passed in .</span>
+<span class="c">         *</span>
 <span class="c">         * @method _filterAttrCfs</span>
 <span class="c">         * @private</span>
-<span class="c">         * @param {Function} clazz</span>
-<span class="c">         * @param {Objects} allCfgs</span>
+<span class="c">         *</span>
+<span class="c">         * @param {Function} clazz The class for which the desired attributes are required.</span>
+<span class="c">         * @param {Object} allCfgs The set of all attribute configurations for this instance. </span>
+<span class="c">         * Attributes will be removed from this set, if they belong to the filtered class, so</span>
+<span class="c">         * that by the time all classes are processed, allCfgs will be empty.</span>
+<span class="c">         * </span>
+<span class="c">         * @return {Object} The set of attributes belonging to the class passed in, in the form</span>
+<span class="c">         * of an object literal with name/cfg pairs.</span>
 <span class="c">         */</span>
         <span class="nx">_filterAttrCfgs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">clazz</span><span class="o">,</span> <span class="nx">allCfgs</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">cfgs</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">;</span>
@@ -362,6 +374,10 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
+<span class="c">         * A helper method used by _getClasses and _getAttrCfgs, which determines both</span>
+<span class="c">         * the array of classes and aggregate set of attribute configurations</span>
+<span class="c">         * across the class hierarchy for the instance.</span>
+<span class="c">         * </span>
 <span class="c">         * @method _initHierarchyData</span>
 <span class="c">         * @private</span>
 <span class="c">         */</span>
@@ -386,9 +402,18 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
+<span class="c">         * A helper method, used by _initHierarchyData to aggregate </span>
+<span class="c">         * attribute configuration across the instances class hierarchy.</span>
+<span class="c">         *</span>
+<span class="c">         * The method will potect the attribute configuration value to protect the statically defined </span>
+<span class="c">         * default value in ATTRS if required (value is an object literal or array or the </span>
+<span class="c">         * attribute configuration has clone set to shallow or deep).</span>
+<span class="c">         *</span>
 <span class="c">         * @method _aggregateAttrs</span>
 <span class="c">         * @private</span>
-<span class="c">         * @param {Object} allAttrs</span>
+<span class="c">         * @param {Array} allAttrs An array of ATTRS definitions across classes in the hierarchy </span>
+<span class="c">         * (subclass first, Base last)</span>
+<span class="c">         * @return {Object} The aggregate set of ATTRS definitions for the instance</span>
 <span class="c">         */</span>
         <span class="nx">_aggregateAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">allAttrs</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">attr</span><span class="o">,</span> 
@@ -450,13 +475,13 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Initializes the class hierarchy rooted at this base class,</span>
-<span class="c">         * which includes initializing attributes for each class defined </span>
-<span class="c">         * in the class&#39;s static &lt;a href=&quot;#property_ATTRS&quot;&gt;ATTRS&lt;/a&gt; property and invoking the initializer </span>
-<span class="c">         * method on the prototype of each class in the hierarchy.</span>
+<span class="c">         * Initializes the class hierarchy for the instance, which includes </span>
+<span class="c">         * initializing attributes for each class defined in the class&#39;s </span>
+<span class="c">         * static &lt;a href=&quot;#property_ATTRS&quot;&gt;ATTRS&lt;/a&gt; property and </span>
+<span class="c">         * invoking the initializer method on the prototype of each class in the hierarchy.</span>
 <span class="c">         *</span>
 <span class="c">         * @method _initHierarchy</span>
-<span class="c">         * @param {Object} userVals Object literal containing attribute name/value pairs</span>
+<span class="c">         * @param {Object} userVals Object literal containing configuration name/value pairs</span>
 <span class="c">         * @private</span>
 <span class="c">         */</span>
         <span class="nx">_initHierarchy</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">userVals</span><span class="o">)</span> <span class="o">{</span>
@@ -489,7 +514,7 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Destroys the class hierarchy rooted at this base class by invoking</span>
+<span class="c">         * Destroys the class hierarchy for this instance by invoking</span>
 <span class="c">         * the descructor method on the prototype of each class in the hierarchy.</span>
 <span class="c">         *</span>
 <span class="c">         * @method _destroyHierarchy</span>
@@ -520,14 +545,26 @@
         <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
         <span class="o">}</span>
-
     <span class="o">};</span>
 
     <span class="c">// Straightup augment, no wrapper functions</span>
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Base</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Base</span><span class="o">,</span> <span class="nx">PluginHost</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
 
+    <span class="c">/**</span>
+<span class="c">     * Alias for &lt;a href=&quot;PluginHost.html@method_PluginHost.plug&quot;&gt;PluginHost.plug&lt;/a&gt;.</span>
+<span class="c">     *</span>
+<span class="c">     * @method Base.plug</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
     <span class="nx">Base</span><span class="o">.</span><span class="nx">plug</span> <span class="o">=</span> <span class="nx">PluginHost</span><span class="o">.</span><span class="nx">plug</span><span class="o">;</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Alias for &lt;a href=&quot;PluginHost.html@method_PluginHost.unplug&quot;&gt;PluginHost.unplug&lt;/a&gt;.</span>
+<span class="c">     *</span>
+<span class="c">     * @method Base.unplug</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
     <span class="nx">Base</span><span class="o">.</span><span class="nx">unplug</span> <span class="o">=</span> <span class="nx">PluginHost</span><span class="o">.</span><span class="nx">unplug</span><span class="o">;</span>
 
     <span class="c">// Fix constructor</span>
@@ -618,7 +655,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.plug", "url": "PluginHost.html#method_PluginHost.plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.unplug", "url": "PluginHost.html#method_PluginHost.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "Base.plug", "url": "Base.html#method_Base.plug", "type": "method"}, {"access": "", "host": "Base", "name": "Base.unplug", "url": "Base.html#method_Base.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.plug", "url": "PluginHost.html#method_PluginHost.plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.unplug", "url": "PluginHost.html#method_PluginHost.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}];
 </script>
 </body>
 </html>
