@@ -810,6 +810,10 @@ Y.extend(Slider, Y.Widget, {
             value  : val,
             offset : this._convertValueToOffset(val)
         });
+
+        // Forces a reflow of the bounding box to address IE8 inline-block
+        // container not expanding correctly. bug 2527905
+        this.get('boundingBox').toggleClass('');
     },
 
     /**
