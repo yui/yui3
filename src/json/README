@@ -7,19 +7,12 @@ The JSON Utility
         json-stringify - Serialize JavaScipt objects into valid JSON strings
 
 3.0.0 beta1
-    * Added support for native JSON.parse when available
-    * stringify now throws an error for cyclical object structures (per ECMA 5 spec)
-    * removed key sort from object stringification
-    * restructured stringify to leverage Y.Lang.type
-    * third parameter to stringify changed to indent, allowing output
-      formatting per the ECMA 5 spec.  Depth control has been removed.
-
-3.0.0 beta1
     * Leverages native JSON.parse if available
     * Stringify API change. Third argument changed from depth control to indent
-      (Per the ECMA 3.1 spec)
+      (Per the ECMA 5 spec)
     * Stringify now throws an Error if the object has cyclical references
-      (Per the ECMA 3.1 spec)
+      (Per the ECMA 5 spec)
+    * restructured stringify to leverage Y.Lang.type
 
 3.0.0pr2
     No changes
