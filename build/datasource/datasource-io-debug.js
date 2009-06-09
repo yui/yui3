@@ -1,3 +1,5 @@
+YUI.add('datasource-io', function(Y) {
+
 /**
  * The DataSource utility provides a common configurable interface for widgets to
  * access a variety of data, from JavaScript arrays to online database servers.
@@ -6,22 +8,22 @@
  */
     
 /**
- * XHR subclass for the YUI DataSource utility.
- * @class DataSource.XHR
+ * IO subclass for the YUI DataSource utility.
+ * @class DataSource.IO
  * @extends DataSource.Local
  * @constructor
  */    
-var DSXHR = function() {
-    DSXHR.superclass.constructor.apply(this, arguments);
+var DSIO = function() {
+    DSIO.superclass.constructor.apply(this, arguments);
 };
     
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.XHR static properties
+    // DataSource.IO static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(DSXHR, {
+Y.mix(DSIO, {
     /**
      * Class name.
      *
@@ -29,14 +31,14 @@ Y.mix(DSXHR, {
      * @type String
      * @static     
      * @final
-     * @value "dataSourceXHR"
+     * @value "dataSourceIO"
      */
-    NAME: "dataSourceXHR",
+    NAME: "dataSourceIO",
 
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.XHR Attributes
+    // DataSource.IO Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -55,7 +57,7 @@ Y.mix(DSXHR, {
     }
 });
     
-Y.extend(DSXHR, Y.DataSource.Local, {
+Y.extend(DSIO, Y.DataSource.Local, {
     /**
     * Internal init() handler.
     *
@@ -70,14 +72,14 @@ Y.extend(DSXHR, Y.DataSource.Local, {
     /**
     * @property _queue
     * @description Object literal to manage asynchronous request/response
-    * cycles enabled if queue needs to be managed (asyncMode/xhrConnMode):
+    * cycles enabled if queue needs to be managed (asyncMode/ioConnMode):
     * <dl>
     *     <dt>interval {Number}</dt>
     *         <dd>Interval ID of in-progress queue.</dd>
     *     <dt>conn</dt>
     *         <dd>In-progress connection identifier (if applicable).</dd>
     *     <dt>requests {Object[]}</dt>
-    *         <dd>Array of queued request objects: {request:oRequest, callback:_xhrCallback}.</dd>
+    *         <dd>Array of queued request objects: {request:oRequest, callback:_ioCallback}.</dd>
     * </dl>
     * @type Object
     * @default {interval:null, conn:null, requests:[]}
@@ -110,13 +112,13 @@ Y.extend(DSXHR, Y.DataSource.Local, {
                 on: {
                     success: function (id, response, e) {
                         this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received XHR data response for \"" + e.request + "\"", "info", "datasource-xhr");
+                        Y.log("Received IO data response for \"" + e.request + "\"", "info", "datasource-io");
                     },
                     failure: function (id, response, e) {
-                        e.error = new Error("XHR data failure");
+                        e.error = new Error("IO data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received XHR data failure for \"" + e.request + "\"", "info", "datasource-xhr");
+                        Y.log("Received IO data failure for \"" + e.request + "\"", "info", "datasource-io");
                     }
                 },
                 context: this,
@@ -128,5 +130,9 @@ Y.extend(DSXHR, Y.DataSource.Local, {
     }
 });
   
-Y.DataSource.XHR = DSXHR;
+Y.DataSource.IO = DSIO;
     
+
+
+
+}, '@VERSION@' ,{requires:['datasource-local', 'io']});

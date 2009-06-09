@@ -1,4 +1,4 @@
-YUI.add('datasource-scriptnode', function(Y) {
+YUI.add('datasource-get', function(Y) {
 
 /**
  * The DataSource utility provides a common configurable interface for widgets to
@@ -8,22 +8,22 @@ YUI.add('datasource-scriptnode', function(Y) {
  */
     
 /**
- * Dynamic script node subclass for the YUI DataSource utility.
- * @class DataSource.ScriptNode
+ * Get Utility subclass for the YUI DataSource utility.
+ * @class DataSource.Get
  * @extends DataSource.Local
  * @constructor
  */    
-var DSSN = function() {
-    DSSN.superclass.constructor.apply(this, arguments);
+var DSGet = function() {
+    DSGet.superclass.constructor.apply(this, arguments);
 };
     
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.ScriptNode static properties
+    // DataSource.Get static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(DSSN, {
+Y.mix(DSGet, {
     /**
      * Class name.
      *
@@ -31,14 +31,14 @@ Y.mix(DSSN, {
      * @type String
      * @static     
      * @final
-     * @value "dataSourceScriptNode"
+     * @value "dataSourceGet"
      */
-    NAME: "dataSourceScriptNode",
+    NAME: "dataSourceGet",
 
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.ScriptNode Attributes
+    // DataSource.Get Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -129,7 +129,7 @@ generateRequestCallback : {
     _tId : 0
 });
     
-Y.extend(DSSN, Y.DataSource.Local, {
+Y.extend(DSGet, Y.DataSource.Local, {
     /**
      * Passes query string to Get Utility. Fires <code>response</code> event when
      * response is received asynchronously.
@@ -152,7 +152,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
     _defRequestFn: function(e) {
         var uri = this.get("source"),
             get = this.get("get"),
-            id = DSSN._tId++,
+            id = DSGet._tId++,
             self = this;
             
 
@@ -170,19 +170,21 @@ Y.extend(DSSN, Y.DataSource.Local, {
     // Dynamically add handler function with a closure to the callback stack
     YUI.Env.DataSource.callbacks[id] = Y.rbind(function(response) {
         if((self.get("asyncMode") !== "ignoreStaleResponses")||
-                (id === DSSN.callbacks.length-1)) { // Must ignore stale responses
+                (id === DSGet.callbacks.length-1)) { // Must ignore stale responses
 
             self.fire("data", Y.mix({data:response}, e));
         }
         else {
+            Y.log("DataSource ignored stale response for id " + e.tId + "(" + e.request + ")", "info", "datasource-get");
         }
 
-        delete DSSN.callbacks[id];
+        delete DSGet.callbacks[id];
     }, this, id);
 
     // We are now creating a request
     uri += e.request + this.get("generateRequestCallback")(this, id);
-    //uri = this.doBeforeGetScriptNode(sUri);
+    //uri = this.doBefore(sUri);
+    Y.log("DataSource is querying URL " + uri, "info", "datasource-get");
     get.script(uri, {
         autopurge: true,
         // Works in Firefox only....
@@ -210,7 +212,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
     }
 });
   
-Y.DataSource.ScriptNode = DSSN;
+Y.DataSource.Get = DSGet;
 YUI.namespace("Env.DataSource.callbacks");
     
 
