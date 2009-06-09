@@ -402,6 +402,7 @@ Y.DOM = {
      * @param {HTMLDocument} doc An optional document context 
      */
     create: function(html, doc) {
+        html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
         if (!doc && Y.DOM._cloneCache[html]) {
             return Y.DOM._cloneCache[html].cloneNode(true); // NOTE: return
         }
@@ -432,7 +433,7 @@ Y.DOM = {
             }
         }
 
-        Y.DOM._cloneCache[html] = ret;
+        Y.DOM._cloneCache[html] = ret.cloneNode(true);
         return ret;
     },
 
@@ -521,6 +522,7 @@ Y.DOM = {
     _cloneCache: {},
 
     addHTML: function(node, content, where, execScripts) {
+        content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
         var scripts,
             newNode = Y.DOM._cloneCache[content];
             
