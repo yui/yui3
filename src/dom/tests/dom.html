@@ -169,6 +169,23 @@ form {
                 Assert.areEqual('', Y.DOM.getText(), 'getText()');
             },
 
+            test_setText: function() {
+                var node = document.createElement('div'),
+                    content = 'testing text content';
+
+                document.body.appendChild(node);
+                Y.DOM.setText(node, content);
+                Assert.areEqual(content, Y.DOM.getText(node, content), 'setText("' + content + '")');
+
+                content = '<div>testing text content</div>';
+                Y.DOM.setText(node, content);
+                Assert.areEqual(content, Y.DOM.getText(node, content), 'setText("' + content + '")');
+
+                content = '   testing     text      content    ';
+                Y.DOM.setText(node, content);
+                Assert.areEqual(content, Y.DOM.getText(node, content), 'setText("' + content + '")');
+            },
+
             test_firstChild: function() {
                 Assert.isNull(Y.DOM.firstChild(tmp), 'firstChild(tmp)');
                 Assert.isNull(Y.DOM.firstChild(null), 'firstChild(null)');

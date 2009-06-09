@@ -25,8 +25,6 @@ var NODE_TYPE = 'nodeType',
     NEXT_SIBLING = 'nextSibling',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
-    INNER_TEXT = 'innerText',
-    TEXT_CONTENT = 'textContent',
     LENGTH = 'length',
 
 
@@ -55,13 +53,37 @@ Y.DOM = {
      * @param {HTMLElement} element The html element. 
      * @return {String} The text content of the element (includes text of any descending elements).
      */
-    getText: function(element) {
-        var text = element ? element[TEXT_CONTENT] : '';
-        if (text === UNDEFINED && INNER_TEXT in element) {
-            text = element[INNER_TEXT];
-        } 
-        return text || '';
-    },
+    getText: (document.documentElement.textContent !== undefined) ?
+        function(element) {
+            var ret = '';
+            if (element) {
+                ret = element.textContent;
+            }
+            return ret || '';
+        } : function(element) {
+            var ret = '';
+            if (element) {
+                ret = element.innerText;
+            }
+            return ret || '';
+        },
+
+    /**
+     * Returns the text content of the HTMLElement. 
+     * @method getText         
+     * @param {HTMLElement} element The html element. 
+     * @return {String} The text content of the element (includes text of any descending elements).
+     */
+    setText: (document.documentElement.textContent !== undefined) ?
+        function(element, content) {
+            if (element) {
+                element.textContent = content;
+            }
+        } : function(element, content) {
+            if (element) {
+                element.innerText = content;
+            }
+        },
 
 // TODO: pull out sugar (rely on _childBy, byAxis, etc)?
     /**
