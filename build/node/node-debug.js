@@ -1563,6 +1563,13 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 }, '@VERSION@' ,{requires:['dom-screen']});
 YUI.add('node-aria', function(Y) {
 
+/**
+ * Aria support for Node
+ *
+ * @module node
+ * @submodule node-aria
+ */
+
 Y.Node.re_aria = /^(?:role$|aria-)/;
 
 Y.Node.prototype._addAriaAttr = function(name) {
