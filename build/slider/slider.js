@@ -1245,15 +1245,32 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _uiPositionThumb : function (xy) {
-        var dd  = this._dd;
+        var dd     = this._dd,
+            thumb  = dd.get('dragNode'),
+            hidden = thumb.ancestor(this._isDisplayNone);
 
-        dd._setStartPosition(dd.get('dragNode').getXY());
+        if (!hidden) {
+            dd._setStartPosition(dd.get('dragNode').getXY());
 
-        // stickX/stickY config on DD instance will negate off-axis move
-        dd._alignNode([xy,xy],true);
+            // stickX/stickY config on DD instance will negate off-axis move
+            dd._alignNode([xy,xy],true);
+        }
     },
 
-
+    /**
+     * Helper function to search up the ancestor axis looking for a node with
+     * style display: none.  This is passed as a function to node.ancestor(..)
+     * to test if a given node is in the displayed DOM and can get accurate
+     * positioning information.
+     *
+     * @method _isDisplayNone
+     * @param el {Node} ancestor node as the function walks up the parent axis
+     * @protected
+     * @return {Boolean} true if the node is styled with display: none
+     */
+    _isDisplayNone : function (node) {
+        return node.getComputedStyle('display') === 'none';
+    },
 
     /**
      * Fires the internal valueSet event in response to a change in the value
