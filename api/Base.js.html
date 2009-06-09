@@ -1,0 +1,624 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: base   Base.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>base&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_base.html" title="base">base</a>
+                
+                 &gt; Base.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre>    <span class="c">/**</span>
+<span class="c">     * Base class support for objects requiring managed attributes and acting as event targets. </span>
+<span class="c">     *</span>
+<span class="c">     * The base module also provides an augmentable PluginHost interface.</span>
+<span class="c">     *</span>
+<span class="c">     * @module base</span>
+<span class="c">     */</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The base-base sub-module provides the Base class, without Base.build functionality</span>
+<span class="c">     *</span>
+<span class="c">     * @module base</span>
+<span class="c">     * @sub-module base-base</span>
+<span class="c">     */</span>
+    <span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
+        <span class="nx">DOT</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">,</span>
+        <span class="nx">DESTROY</span> <span class="o">=</span> <span class="s2">&quot;destroy&quot;</span><span class="o">,</span>
+        <span class="nx">INIT</span> <span class="o">=</span> <span class="s2">&quot;init&quot;</span><span class="o">,</span>
+        <span class="nx">INITIALIZED</span> <span class="o">=</span> <span class="s2">&quot;initialized&quot;</span><span class="o">,</span>
+        <span class="nx">DESTROYED</span> <span class="o">=</span> <span class="s2">&quot;destroyed&quot;</span><span class="o">,</span>
+        <span class="nx">INITIALIZER</span> <span class="o">=</span> <span class="s2">&quot;initializer&quot;</span><span class="o">,</span>
+        <span class="nx">OBJECT_CONSTRUCTOR</span> <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">constructor</span><span class="o">,</span>
+        <span class="nx">DEEP</span> <span class="o">=</span> <span class="s2">&quot;deep&quot;</span><span class="o">,</span>
+        <span class="nx">SHALLOW</span> <span class="o">=</span> <span class="s2">&quot;shallow&quot;</span><span class="o">,</span>
+        <span class="nx">VALUE</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="o">,</span>
+        <span class="nx">DESTRUCTOR</span> <span class="o">=</span> <span class="s2">&quot;destructor&quot;</span><span class="o">;</span>
+
+    <span class="c">/**</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * Provides a base class for managed attribute based</span>
+<span class="c">     * objects, which handles the chaining of initializer and destructor methods</span>
+<span class="c">     * across the hierarchy during init and destroy lifecycle methods and </span>
+<span class="c">     * handles automatic configuration of registered Attributes, through </span>
+<span class="c">     * the static &lt;a href=&quot;#property_ATTRS&quot;&gt;ATTRS&lt;/a&gt; property.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * &lt;p&gt;The Base class also handles prefixing of event types with the static &lt;a href=&quot;#property_NAME&quot;&gt;NAME&lt;/a&gt; </span>
+<span class="c">     * property for all events fired from instances of classes derived from Base.&lt;/p&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * @constructor</span>
+<span class="c">     * @class Base</span>
+<span class="c">     * @uses Attribute, Plugin.Host</span>
+<span class="c">     *</span>
+<span class="c">     * @param {Object} config Object literal of configuration property name/value pairs</span>
+<span class="c">     */</span>
+    <span class="k">function</span> <span class="nx">Base</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">Host</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span> <span class="o">||</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_lazyAddAttrs</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lazyAddAttrs</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">init</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The list of properties which can be configured for </span>
+<span class="c">     * each attribute (e.g. setter, getter, writeOnce etc.)</span>
+<span class="c">     *</span>
+<span class="c">     * @property Base._ATTR_CFG</span>
+<span class="c">     * @type Array</span>
+<span class="c">     * @static</span>
+<span class="c">     * @private</span>
+<span class="c">     */</span>
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">_ATTR_CFG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">_ATTR_CFG</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="s2">&quot;cloneDefaultValue&quot;</span><span class="o">);</span>
+
+    <span class="c">/**</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * Name string to be used to identify instances of </span>
+<span class="c">     * this class, for example in prefixing events.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * Classes extending Base, should define their own</span>
+<span class="c">     * static NAME property.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * @property NAME</span>
+<span class="c">     * @type String</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;base&#39;</span><span class="o">;</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Object literal defining the set of attributes which</span>
+<span class="c">     * will be available for instances of this class, and </span>
+<span class="c">     * how they are configured. See Attributes addAtt method</span>
+<span class="c">     * for a description of configuration options available </span>
+<span class="c">     * for each attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @property ATTRS</span>
+<span class="c">     * @type Object</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">         * Flag indicating whether or not this object</span>
+<span class="c">         * has been through the init lifecycle phase.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute initialized</span>
+<span class="c">         * @readOnly</span>
+<span class="c">         * @default false</span>
+<span class="c">         * @type boolean</span>
+<span class="c">         */</span>
+        <span class="nx">initialized</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">readOnly</span><span class="o">:</span><span class="kc">true</span><span class="o">,</span>
+            <span class="nx">value</span><span class="o">:</span><span class="kc">false</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Flag indicating whether or not this object</span>
+<span class="c">         * has been through the destroy lifecycle phase.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute destroyed</span>
+<span class="c">         * @readOnly</span>
+<span class="c">         * @default false</span>
+<span class="c">         * @type boolean</span>
+<span class="c">         */</span>
+        <span class="nx">destroyed</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">readOnly</span><span class="o">:</span><span class="kc">true</span><span class="o">,</span>
+            <span class="nx">value</span><span class="o">:</span><span class="kc">false</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Init lifecycle method, invoked during construction.</span>
+<span class="c">         * Fires the init event prior to invoking initializers on</span>
+<span class="c">         * the class hierarchy.</span>
+<span class="c">         * </span>
+<span class="c">         * @method init</span>
+<span class="c">         * @final</span>
+<span class="c">         * @chainable</span>
+<span class="c">         * @param {Object} config Object literal of configuration property name/value pairs</span>
+<span class="c">         * @return {Base} A reference to this object</span>
+<span class="c">         */</span>
+        <span class="nx">init</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;init called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
+
+            <span class="c">/**</span>
+<span class="c">             * The name string to be used to identify </span>
+<span class="c">             * this instance of object. </span>
+<span class="c">             * @property name</span>
+<span class="c">             * @type String</span>
+<span class="c">             */</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">name</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span><span class="o">;</span>
+
+            <span class="c">/**</span>
+<span class="c">             * &lt;p&gt;</span>
+<span class="c">             * Lifecycle event for the init phase, fired prior to initialization. </span>
+<span class="c">             * Invoking the preventDefault method on the event object provided </span>
+<span class="c">             * to subscribers will prevent initialization from occuring.</span>
+<span class="c">             * &lt;/p&gt;</span>
+<span class="c">             * &lt;p&gt;</span>
+<span class="c">             * Subscribers to the &quot;after&quot; momemt of this event, will be notified</span>
+<span class="c">             * after initialization of the object is complete (and therefore</span>
+<span class="c">             * cannot prevent initialization).</span>
+<span class="c">             * &lt;/p&gt;</span>
+<span class="c">             *</span>
+<span class="c">             * @event init</span>
+<span class="c">             * @preventable _defInitFn</span>
+<span class="c">             * @param {Event.Facade} e Event object</span>
+<span class="c">             * @param config Object literal of configuration name/value pairs</span>
+<span class="c">             */</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">INIT</span><span class="o">,</span> <span class="o">{</span>
+                    <span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span>
+                    <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defInitFn</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">on</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">on</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">after</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">after</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">INIT</span><span class="o">,</span> <span class="o">{</span><span class="nx">cfg</span><span class="o">:</span> <span class="nx">config</span><span class="o">});</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_defInitFn</span><span class="o">({</span><span class="nx">cfg</span><span class="o">:</span> <span class="nx">config</span><span class="o">});</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * &lt;p&gt;</span>
+<span class="c">         * Destroy lifecycle method. Fires the destroy</span>
+<span class="c">         * event, prior to invoking destructors for the</span>
+<span class="c">         * class hierarchy.</span>
+<span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * &lt;p&gt;</span>
+<span class="c">         * Subscribers to the destroy</span>
+<span class="c">         * event can invoke preventDefault on the event object, to prevent destruction</span>
+<span class="c">         * from proceeding.</span>
+<span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * @method destroy</span>
+<span class="c">         * @return {Base} A reference to this object</span>
+<span class="c">         * @final</span>
+<span class="c">         * @chainable</span>
+<span class="c">         */</span>
+        <span class="nx">destroy</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;destroy called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
+
+            <span class="c">/**</span>
+<span class="c">             * &lt;p&gt;</span>
+<span class="c">             * Lifecycle event for the destroy phase, </span>
+<span class="c">             * fired prior to destruction. Invoking the preventDefault </span>
+<span class="c">             * method on the event object provided to subscribers will </span>
+<span class="c">             * prevent destruction from proceeding.</span>
+<span class="c">             * &lt;/p&gt;</span>
+<span class="c">             * &lt;p&gt;</span>
+<span class="c">             * Subscribers to the &quot;after&quot; moment of this event, will be notified</span>
+<span class="c">             * after destruction is complete (and as a result cannot prevent</span>
+<span class="c">             * destruction).</span>
+<span class="c">             * &lt;/p&gt;</span>
+<span class="c">             * @event destroy</span>
+<span class="c">             * @preventable _defDestroyFn</span>
+<span class="c">             * @param {Event.Facade} e Event object</span>
+<span class="c">             */</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">DESTROY</span><span class="o">,</span> <span class="o">{</span>
+                <span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span>
+                <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_defDestroyFn</span>
+            <span class="o">});</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">DESTROY</span><span class="o">);</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Default init event handler</span>
+<span class="c">         *</span>
+<span class="c">         * @method _defInitFn</span>
+<span class="c">         * @param {Event.Facade} e Event object</span>
+<span class="c">         * @protected</span>
+<span class="c">         */</span>
+        <span class="nx">_defInitFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_initHierarchy</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">cfg</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_initPlugins</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">cfg</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">INITIALIZED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">INITIALIZED</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Default destroy event handler</span>
+<span class="c">         *</span>
+<span class="c">         * @method _defDestroyFn</span>
+<span class="c">         * @param {Event.Facade} e Event object</span>
+<span class="c">         * @protected</span>
+<span class="c">         */</span>
+        <span class="nx">_defDestroyFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_destroyHierarchy</span><span class="o">();</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_destroyPlugins</span><span class="o">();</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">DESTROYED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Returns the class hierarchy for this object, with Base being the last class in the array.</span>
+<span class="c">         * </span>
+<span class="c">         * @method _getClasses</span>
+<span class="c">         * @protected</span>
+<span class="c">         * @return {Function[]} An Array of classes (constructor functions), making up the class hierarchy for this object</span>
+<span class="c">         */</span>
+        <span class="nx">_getClasses</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_classes</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_initHierarchyData</span><span class="o">();</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_classes</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Returns an aggregated set of attribute configurations, by traversing the class hierarchy.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _getAttrCfgs</span>
+<span class="c">         * @protected</span>
+<span class="c">         * @return {Object} The hash of attribute configurations, aggregated across classes in the hierarchy</span>
+<span class="c">         */</span>
+        <span class="nx">_getAttrCfgs</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_attrs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_initHierarchyData</span><span class="o">();</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_attrs</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * @method _filterAttrCfs</span>
+<span class="c">         * @private</span>
+<span class="c">         * @param {Function} clazz</span>
+<span class="c">         * @param {Objects} allCfgs</span>
+<span class="c">         */</span>
+        <span class="nx">_filterAttrCfgs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">clazz</span><span class="o">,</span> <span class="nx">allCfgs</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">cfgs</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">])</span> <span class="o">{</span>
+                        <span class="nx">cfgs</span> <span class="o">=</span> <span class="nx">cfgs</span> <span class="o">||</span> <span class="o">{};</span>
+                        <span class="nx">cfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">];</span>
+                        <span class="nx">delete</span> <span class="nx">allCfgs</span><span class="o">[</span><span class="nx">attr</span><span class="o">];</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">cfgs</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * @method _initHierarchyData</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_initHierarchyData</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">,</span> 
+                <span class="nx">classes</span> <span class="o">=</span> <span class="o">[],</span>
+                <span class="nx">attrs</span> <span class="o">=</span> <span class="o">[];</span>
+
+            <span class="k">while</span> <span class="o">(</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// Add to classes</span>
+<span class="c"></span>                <span class="nx">classes</span><span class="o">[</span><span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span>
+
+                <span class="c">// Add to attributes</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">attrs</span><span class="o">[</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">;</span>
+                <span class="o">}</span>
+                <span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">superclass</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_classes</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_attrs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_aggregateAttrs</span><span class="o">(</span><span class="nx">attrs</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * @method _aggregateAttrs</span>
+<span class="c">         * @private</span>
+<span class="c">         * @param {Object} allAttrs</span>
+<span class="c">         */</span>
+        <span class="nx">_aggregateAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">allAttrs</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">attr</span><span class="o">,</span> 
+                <span class="nx">attrs</span><span class="o">,</span> 
+                <span class="nx">cfg</span><span class="o">,</span> 
+                <span class="nx">val</span><span class="o">,</span> 
+                <span class="nx">path</span><span class="o">,</span> 
+                <span class="nx">i</span><span class="o">,</span> 
+                <span class="nx">clone</span><span class="o">,</span> 
+                <span class="nx">cfgProps</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">_ATTR_CFG</span><span class="o">,</span>
+                <span class="nx">aggAttrs</span> <span class="o">=</span> <span class="o">{};</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">allAttrs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">allAttrs</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">allAttrs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+
+                    <span class="k">for</span> <span class="o">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
+
+                            <span class="c">// Protect config passed in</span>
+<span class="c"></span>                            <span class="nx">cfg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({},</span> <span class="nx">attrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">cfgProps</span><span class="o">);</span>
+
+                            <span class="nx">val</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
+                            <span class="nx">clone</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">cloneDefaultValue</span><span class="o">;</span>
+
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="nx">clone</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">OBJECT_CONSTRUCTOR</span> <span class="o">===</span> <span class="nx">val</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">||</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">val</span><span class="o">)))</span> <span class="o">||</span> <span class="nx">clone</span> <span class="o">===</span> <span class="nx">DEEP</span> <span class="o">||</span> <span class="nx">clone</span> <span class="o">===</span> <span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+                                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Cloning default value for attribute:&#39;</span> <span class="o">+</span> <span class="nx">attr</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
+                                    <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+                                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">clone</span> <span class="o">===</span> <span class="nx">SHALLOW</span><span class="o">)</span> <span class="o">{</span>
+                                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Merging default value for attribute:&#39;</span> <span class="o">+</span> <span class="nx">attr</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
+                                    <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+                                <span class="o">}</span>
+                                <span class="c">// else if (clone === false), don&#39;t clone the static default value. </span>
+<span class="c"></span>                                <span class="c">// It&#39;s intended to be used by reference.</span>
+<span class="c"></span>                            <span class="o">}</span>
+
+                            <span class="nx">path</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">attr</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="nx">path</span> <span class="o">=</span> <span class="nx">attr</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
+                                <span class="nx">attr</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
+                            <span class="o">}</span>
+
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">path</span> <span class="o">&amp;&amp;</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="nx">O</span><span class="o">.</span><span class="nx">setValue</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">].</span><span class="nx">value</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
+                            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">path</span><span class="o">){</span>
+                                <span class="k">if</span> <span class="o">(!</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">])</span> <span class="o">{</span>
+                                    <span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">;</span>
+                                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">aggAttrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span> <span class="nx">cfg</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">cfgProps</span><span class="o">);</span>
+                                <span class="o">}</span>
+                            <span class="o">}</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">aggAttrs</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Initializes the class hierarchy rooted at this base class,</span>
+<span class="c">         * which includes initializing attributes for each class defined </span>
+<span class="c">         * in the class&#39;s static &lt;a href=&quot;#property_ATTRS&quot;&gt;ATTRS&lt;/a&gt; property and invoking the initializer </span>
+<span class="c">         * method on the prototype of each class in the hierarchy.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _initHierarchy</span>
+<span class="c">         * @param {Object} userVals Object literal containing attribute name/value pairs</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_initHierarchy</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">userVals</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">lazy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lazyAddAttrs</span><span class="o">,</span>
+                <span class="nx">constr</span><span class="o">,</span>
+                <span class="nx">constrProto</span><span class="o">,</span>
+                <span class="nx">ci</span><span class="o">,</span>
+                <span class="nx">ei</span><span class="o">,</span>
+                <span class="nx">el</span><span class="o">,</span>
+                <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
+                <span class="nx">attrCfgs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getAttrCfgs</span><span class="o">();</span>
+
+            <span class="k">for</span> <span class="o">(</span><span class="nx">ci</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">ci</span><span class="o">--)</span> <span class="o">{</span>
+
+                <span class="nx">constr</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">ci</span><span class="o">];</span>
+                <span class="nx">constrProto</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span> <span class="o">&amp;&amp;</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">for</span> <span class="o">(</span><span class="nx">ei</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">ei</span> <span class="o">&lt;</span> <span class="nx">el</span><span class="o">;</span> <span class="nx">ei</span><span class="o">++)</span> <span class="o">{</span>
+                        <span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">[</span><span class="nx">ei</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+
+                <span class="k">this</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_filterAttrCfgs</span><span class="o">(</span><span class="nx">constr</span><span class="o">,</span> <span class="nx">attrCfgs</span><span class="o">),</span> <span class="nx">userVals</span><span class="o">,</span> <span class="nx">lazy</span><span class="o">);</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">constrProto</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">INITIALIZER</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">constrProto</span><span class="o">.</span><span class="nx">initializer</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Destroys the class hierarchy rooted at this base class by invoking</span>
+<span class="c">         * the descructor method on the prototype of each class in the hierarchy.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _destroyHierarchy</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_destroyHierarchy</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">constr</span><span class="o">,</span>
+                <span class="nx">constrProto</span><span class="o">,</span>
+                <span class="nx">ci</span><span class="o">,</span> <span class="nx">cl</span><span class="o">,</span>
+                <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">();</span>
+
+            <span class="k">for</span> <span class="o">(</span><span class="nx">ci</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">cl</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&lt;</span> <span class="nx">cl</span><span class="o">;</span> <span class="nx">ci</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="nx">constr</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">ci</span><span class="o">];</span>
+                <span class="nx">constrProto</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">constrProto</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">DESTRUCTOR</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">constrProto</span><span class="o">.</span><span class="nx">destructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Default toString implementation. Provides the constructor NAME</span>
+<span class="c">         * and the instance ID.</span>
+<span class="c">         *</span>
+<span class="c">         * @method toString</span>
+<span class="c">         * @return {String} String representation for this object</span>
+<span class="c">         */</span>
+        <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
+        <span class="o">}</span>
+
+    <span class="o">};</span>
+
+    <span class="c">// Straightup augment, no wrapper functions</span>
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Base</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Base</span><span class="o">,</span> <span class="nx">PluginHost</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">plug</span> <span class="o">=</span> <span class="nx">PluginHost</span><span class="o">.</span><span class="nx">plug</span><span class="o">;</span>
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">unplug</span> <span class="o">=</span> <span class="nx">PluginHost</span><span class="o">.</span><span class="nx">unplug</span><span class="o">;</span>
+
+    <span class="c">// Fix constructor</span>
+<span class="c"></span>    <span class="nx">Base</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">;</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">;</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class="selected"><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Base.html" title="Base">Base</a></li>
+                                <li class=""><a href="PluginHost.html" title="PluginHost">PluginHost</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="Base.js.html" title="Base.js">Base.js</a></li>
+                                <li class=""><a href="BaseBuild.js.html" title="BaseBuild.js">BaseBuild.js</a></li>
+                                <li class=""><a href="PluginHost.js.html" title="PluginHost.js">PluginHost.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.plug", "url": "PluginHost.html#method_PluginHost.plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.unplug", "url": "PluginHost.html#method_PluginHost.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}];
+</script>
+</body>
+</html>
