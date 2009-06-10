@@ -2,15 +2,23 @@ YUI.add('base-base', function(Y) {
 
     /**
      * <p>
-     * An augmentable class, which when augmented onto a Base based class, allows 
-     * the class to support plugins, providing plug and unplug methods and the ability
-     * to add plugins through the configuration literal passed to the constructor.
+     * An augmentable class, which provides the augmented class with the ability to host plugins.
+     * It adds <a href="#method_plug">plug</a> and <a href="#method_unplug">unplug</a> methods to the augmented class, which can 
+     * be used to add or remove plugins from instances of the class.
+     * </p>
+     *
+     * <p>Plugins can also be added through the constructor configuration object passed to the host class' constructor using
+     * the "plugins" property. Supported values for the "plugins" property are those defined by the <a href="#method_plug">plug</a> method. 
+     * 
+     * For example the following code would add the AnimPlugin and IOPlugin to Overlay (the plugin host):
+     * <xmp>
+     * var o = new Overlay({plugins: [ AnimPlugin, {fn:IOPlugin, cfg:{section:"header"}}]});
+     * </xmp>
      * </p>
      * <p>
-     * PlugHost's <a href="#method_initPlugins">_initPlugins</a> and <a href="#method_destroyPlugins">_destroyPlugins</a> 
-     * methods should be invoked by the host class at the appropriate point in the instance's lifecyle. 
-     * This is done by default for the Base class, so developers extending base don't need to do 
-     * anything to get plugin support.
+     * Plug.Host's protected <a href="#method_initPlugins">_initPlugins</a> and <a href="#method_destroyPlugins">_destroyPlugins</a> 
+     * methods should be invoked by the host class at the appropriate point in the host's lifecyle. This is done by default for 
+     * the Base class, so developers extending Base or Widget don't need to do anything to enable plugin support.
      * </p>
      *
      * @class Plugin.Host
