@@ -54,12 +54,13 @@
 <span class="c">     * to add plugins through the configuration literal passed to the constructor.</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     * &lt;p&gt;</span>
-<span class="c">     * The PlugHost&#39;s _initPlugins() and _destroyPlugins() methods should be invoked by the </span>
-<span class="c">     * host class at the appropriate point in the instance&#39;s lifecyle. This is done</span>
-<span class="c">     * by default for the Base class, so developers extending base don&#39;t need to do </span>
+<span class="c">     * PlugHost&#39;s &lt;a href=&quot;#method_initPlugins&quot;&gt;_initPlugins&lt;/a&gt; and &lt;a href=&quot;#method_destroyPlugins&quot;&gt;_destroyPlugins&lt;/a&gt; </span>
+<span class="c">     * methods should be invoked by the host class at the appropriate point in the instance&#39;s lifecyle. </span>
+<span class="c">     * This is done by default for the Base class, so developers extending base don&#39;t need to do </span>
 <span class="c">     * anything to get plugin support.</span>
 <span class="c">     * &lt;/p&gt;</span>
-<span class="c">     * @class PluginHost</span>
+<span class="c">     *</span>
+<span class="c">     * @class Plugin.Host</span>
 <span class="c">     */</span>
 
     <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
@@ -131,7 +132,7 @@
 <span class="c">         * Determines if a plugin has plugged into this host.</span>
 <span class="c">         *</span>
 <span class="c">         * @method hasPlugin</span>
-<span class="c">         * @param The plugin&#39;s namespace</span>
+<span class="c">         * @param {String} ns The plugin&#39;s namespace</span>
 <span class="c">         * @return {boolean} returns true, if the plugin has been plugged into this host, false otherwise.</span>
 <span class="c">         */</span>
         <span class="nx">hasPlugin</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">ns</span><span class="o">)</span> <span class="o">{</span>
@@ -255,7 +256,7 @@
 <span class="c">     * Registers plugins to be instantiated at the class level (plugins </span>
 <span class="c">     * which should be plugged into every instance of the class by default).</span>
 <span class="c">     *</span>
-<span class="c">     * @method PluginHost.plug</span>
+<span class="c">     * @method Plugin.Host.plug</span>
 <span class="c">     * @static</span>
 <span class="c">     *</span>
 <span class="c">     * @param {Function} hostClass The host class on which to register the plugins</span>
@@ -288,7 +289,7 @@
 <span class="c">     * Unregisters any class level plugins which have been registered by the host class, or any</span>
 <span class="c">     * other class in the hierarchy.</span>
 <span class="c">     *</span>
-<span class="c">     * @method PluginHost.unplug</span>
+<span class="c">     * @method Plugin.Host.unplug</span>
 <span class="c">     * @static</span>
 <span class="c">     *</span>
 <span class="c">     * @param {Function} hostClass The host class from which to unregister the plugins</span>
@@ -375,7 +376,7 @@
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="Base.html" title="Base">Base</a></li>
-                                <li class=""><a href="PluginHost.html" title="PluginHost">PluginHost</a></li>
+                                <li class=""><a href="Plugin.Host.html" title="Plugin.Host">Plugin.Host</a></li>
                         </ul>
                     </div>
 
@@ -401,7 +402,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "Base.ATTRS", "url": "Base.html#property_Base.ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "Base.build", "url": "Base.html#method_Base.build", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._buildCfg", "url": "Base.html#property_Base._buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "Base.NAME", "url": "Base.html#property_Base.NAME", "type": "property"}, {"access": "", "host": "Base", "name": "Base.plug", "url": "Base.html#method_Base.plug", "type": "method"}, {"access": "", "host": "Base", "name": "Base.unplug", "url": "Base.html#method_Base.unplug", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.plug", "url": "PluginHost.html#method_PluginHost.plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.unplug", "url": "PluginHost.html#method_PluginHost.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "Base.ATTRS", "url": "Base.html#property_Base.ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "Base.build", "url": "Base.html#method_Base.build", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._buildCfg", "url": "Base.html#property_Base._buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "Base.NAME", "url": "Base.html#property_Base.NAME", "type": "property"}, {"access": "", "host": "Base", "name": "Base.plug", "url": "Base.html#method_Base.plug", "type": "method"}, {"access": "", "host": "Base", "name": "Base.unplug", "url": "Base.html#method_Base.unplug", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Plugin.Host", "name": "_destroyPlugins", "url": "Plugin.Host.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "hasPlugin", "url": "Plugin.Host.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "Plugin.Host", "name": "_initPlugins", "url": "Plugin.Host.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "Plugin.Host", "name": "_plug", "url": "Plugin.Host.html#method__plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "plug", "url": "Plugin.Host.html#method_plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "Plugin.Host.plug", "url": "Plugin.Host.html#method_Plugin.Host.plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "Plugin.Host.unplug", "url": "Plugin.Host.html#method_Plugin.Host.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "Plugin.Host", "name": "_unplug", "url": "Plugin.Host.html#method__unplug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "unplug", "url": "Plugin.Host.html#method_unplug", "type": "method"}];
 </script>
 </body>
 </html>
