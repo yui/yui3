@@ -57,7 +57,7 @@
      *
      * @method Base.build
      * @static
-     * @param {Function} main The name of the new class. Used to defined the NAME property for the new class.
+     * @param {Function} name The name of the new class. Used to defined the NAME property for the new class.
      * @param {Function} main The main class on which to base the built class
      * @param {Function[]} extensions The set of extension classes which will be
      * augmented/aggregated to the built class.
