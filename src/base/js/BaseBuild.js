@@ -5,6 +5,7 @@
      *
      * @module base
      * @submodule base-build
+     * @for Base
      */
 
     var Base = Y.Base,

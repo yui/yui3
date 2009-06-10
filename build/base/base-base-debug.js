@@ -1,25 +1,15 @@
 YUI.add('base-base', function(Y) {
 
     /**
-     * The base module provides the Base class, which objects requiring managed attributes 
-     * and custom event support can extend. The base module also provides two ways to reuse
-     * code - An augmentable PluginHost interface which provides plugin support 
-     * (which is augmented to the Base class) and Base.build which provides a way to 
-     * build custom classes using extensions.
-     *
-     * @module base
-     */
-
-    /**
      * <p>
-     * An augmentable class, which when added to a "Base" based class, allows 
-     * the class to support Plugins, providing plug and unplug methods and the ability
-     * to add Plugins through the configuration literal passed to the constructor.
+     * An augmentable class, which when augmented onto a Base based class, allows 
+     * the class to support plugins, providing plug and unplug methods and the ability
+     * to add plugins through the configuration literal passed to the constructor.
      * </p>
      * <p>
-     * The PlugHost's _initPlugins and _destroyPlugins should be invoked by the 
-     * host class at the appropriate point in the instances lifecyle. This is done
-     * by default for Base class, so developers extending base don't need to do 
+     * The PlugHost's _initPlugins() and _destroyPlugins() methods should be invoked by the 
+     * host class at the appropriate point in the instance's lifecyle. This is done
+     * by default for the Base class, so developers extending base don't need to do 
      * anything to get plugin support.
      * </p>
      * @class PluginHost
@@ -282,6 +272,16 @@ YUI.add('base-base', function(Y) {
     Y.namespace("Plugin").Host = PluginHost;
 
     /**
+     * The base module provides the Base class, which objects requiring managed attributes 
+     * and custom event support can extend. The base module also provides two ways to reuse
+     * code - An augmentable PluginHost interface which provides plugin support 
+     * (which is augmented to the Base class) and Base.build which provides a way to 
+     * build custom classes using extensions.
+     *
+     * @module base
+     */
+
+    /**
      * The base-base submodule provides the Base class and augmentable PluginHost implementation, 
      * without the extension support provided by Base.build.
      *
@@ -315,8 +315,8 @@ YUI.add('base-base', function(Y) {
      * from Base will be used as the identifier for the class, and is used by Base to prefix 
      * all events fired by instances of that class.</p>
      *
-     * @constructor
      * @class Base
+     * @constructor
      * @uses Attribute, Plugin.Host
      *
      * @param {Object} config Object literal of configuration property name/value pairs
@@ -786,7 +786,7 @@ YUI.add('base-base', function(Y) {
     Y.mix(Base, PluginHost, false, null, 1);
 
     /**
-     * Alias for <a href="PluginHost.html@method_PluginHost.plug">PluginHost.plug</a>.
+     * Alias for <a href="PluginHost.html#method_PluginHost.plug">PluginHost.plug</a>.
      *
      * @method Base.plug
      * @static
@@ -794,7 +794,7 @@ YUI.add('base-base', function(Y) {
     Base.plug = PluginHost.plug;
 
     /**
-     * Alias for <a href="PluginHost.html@method_PluginHost.unplug">PluginHost.unplug</a>.
+     * Alias for <a href="PluginHost.html#method_PluginHost.unplug">PluginHost.unplug</a>.
      *
      * @method Base.unplug
      * @static

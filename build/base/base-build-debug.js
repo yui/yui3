@@ -7,6 +7,7 @@ YUI.add('base-build', function(Y) {
      *
      * @module base
      * @submodule base-build
+     * @for Base
      */
 
     var Base = Y.Base,

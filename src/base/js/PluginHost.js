@@ -1,23 +1,13 @@
     /**
-     * The base module provides the Base class, which objects requiring managed attributes 
-     * and custom event support can extend. The base module also provides two ways to reuse
-     * code - An augmentable PluginHost interface which provides plugin support 
-     * (which is augmented to the Base class) and Base.build which provides a way to 
-     * build custom classes using extensions.
-     *
-     * @module base
-     */
-
-    /**
      * <p>
-     * An augmentable class, which when added to a "Base" based class, allows 
-     * the class to support Plugins, providing plug and unplug methods and the ability
-     * to add Plugins through the configuration literal passed to the constructor.
+     * An augmentable class, which when augmented onto a Base based class, allows 
+     * the class to support plugins, providing plug and unplug methods and the ability
+     * to add plugins through the configuration literal passed to the constructor.
      * </p>
      * <p>
-     * The PlugHost's _initPlugins and _destroyPlugins should be invoked by the 
-     * host class at the appropriate point in the instances lifecyle. This is done
-     * by default for Base class, so developers extending base don't need to do 
+     * The PlugHost's _initPlugins() and _destroyPlugins() methods should be invoked by the 
+     * host class at the appropriate point in the instance's lifecyle. This is done
+     * by default for the Base class, so developers extending base don't need to do 
      * anything to get plugin support.
      * </p>
      * @class PluginHost
