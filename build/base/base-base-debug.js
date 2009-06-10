@@ -7,12 +7,13 @@ YUI.add('base-base', function(Y) {
      * to add plugins through the configuration literal passed to the constructor.
      * </p>
      * <p>
-     * The PlugHost's _initPlugins() and _destroyPlugins() methods should be invoked by the 
-     * host class at the appropriate point in the instance's lifecyle. This is done
-     * by default for the Base class, so developers extending base don't need to do 
+     * PlugHost's <a href="#method_initPlugins">_initPlugins</a> and <a href="#method_destroyPlugins">_destroyPlugins</a> 
+     * methods should be invoked by the host class at the appropriate point in the instance's lifecyle. 
+     * This is done by default for the Base class, so developers extending base don't need to do 
      * anything to get plugin support.
      * </p>
-     * @class PluginHost
+     *
+     * @class Plugin.Host
      */
 
     var L = Y.Lang;
@@ -84,7 +85,7 @@ YUI.add('base-base', function(Y) {
          * Determines if a plugin has plugged into this host.
          *
          * @method hasPlugin
-         * @param The plugin's namespace
+         * @param {String} ns The plugin's namespace
          * @return {boolean} returns true, if the plugin has been plugged into this host, false otherwise.
          */
         hasPlugin : function(ns) {
@@ -208,7 +209,7 @@ YUI.add('base-base', function(Y) {
      * Registers plugins to be instantiated at the class level (plugins 
      * which should be plugged into every instance of the class by default).
      *
-     * @method PluginHost.plug
+     * @method Plugin.Host.plug
      * @static
      *
      * @param {Function} hostClass The host class on which to register the plugins
@@ -241,7 +242,7 @@ YUI.add('base-base', function(Y) {
      * Unregisters any class level plugins which have been registered by the host class, or any
      * other class in the hierarchy.
      *
-     * @method PluginHost.unplug
+     * @method Plugin.Host.unplug
      * @static
      *
      * @param {Function} hostClass The host class from which to unregister the plugins
@@ -273,7 +274,7 @@ YUI.add('base-base', function(Y) {
 
     /**
      * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
-     * The module also provides two ways to reuse code - An augmentable PluginHost interface which provides plugin support 
+     * The module also provides two ways to reuse code - An augmentable Plugin.Host interface which provides plugin support 
      * (which is augmented to the Base class) and Base.build which provides a way to 
      * build custom classes using extensions.
      *
@@ -281,7 +282,7 @@ YUI.add('base-base', function(Y) {
      */
 
     /**
-     * The base-base submodule provides the Base class and augmentable PluginHost implementation, 
+     * The base-base submodule provides the Base class and augmentable Plugin.Host implementation, 
      * without the extension support provided by Base.build.
      *
      * @module base
@@ -302,20 +303,22 @@ YUI.add('base-base', function(Y) {
 
     /**
      * <p>
-     * Provides a base class which objects requiring attributes and custom event support can 
-     * extend. The Base class also handles the chaining of initializer and destructor methods across 
+     * A base class which objects requiring attributes and custom event support can 
+     * extend. Base also handles the chaining of initializer and destructor methods across 
      * the hierarchy as part of object construction and destruction. Additionally, attributes configured 
      * through the static <a href="#property_Base.ATTRS">ATTRS</a> property for each class 
      * in the hierarchy will be initialized by Base.
      * </p>
      *
-     * <p>The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
+     * <p>
+     * The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
      * from Base will be used as the identifier for the class, and is used by Base to prefix 
-     * all events fired by instances of that class.</p>
-     *
+     * all events fired by instances of that class.
+     * </p>
      * @class Base
      * @constructor
-     * @uses Attribute, Plugin.Host
+     * @uses Attribute
+     * @uses Plugin.Host
      *
      * @param {Object} config Object literal of configuration property name/value pairs
      */
@@ -784,7 +787,8 @@ YUI.add('base-base', function(Y) {
     Y.mix(Base, PluginHost, false, null, 1);
 
     /**
-     * Alias for <a href="PluginHost.html#method_PluginHost.plug">PluginHost.plug</a>.
+     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.plug">Plugin.Host.plug</a>. See aliased 
+     * method for argument and return value details.
      *
      * @method Base.plug
      * @static
@@ -792,7 +796,8 @@ YUI.add('base-base', function(Y) {
     Base.plug = PluginHost.plug;
 
     /**
-     * Alias for <a href="PluginHost.html#method_PluginHost.unplug">PluginHost.unplug</a>.
+     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.unplug">Plugin.Host.unplug</a>. See the 
+     * aliased method for argument and return value details.
      *
      * @method Base.unplug
      * @static

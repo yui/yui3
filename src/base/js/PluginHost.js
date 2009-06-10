@@ -5,12 +5,13 @@
      * to add plugins through the configuration literal passed to the constructor.
      * </p>
      * <p>
-     * The PlugHost's _initPlugins() and _destroyPlugins() methods should be invoked by the 
-     * host class at the appropriate point in the instance's lifecyle. This is done
-     * by default for the Base class, so developers extending base don't need to do 
+     * PlugHost's <a href="#method_initPlugins">_initPlugins</a> and <a href="#method_destroyPlugins">_destroyPlugins</a> 
+     * methods should be invoked by the host class at the appropriate point in the instance's lifecyle. 
+     * This is done by default for the Base class, so developers extending base don't need to do 
      * anything to get plugin support.
      * </p>
-     * @class PluginHost
+     *
+     * @class Plugin.Host
      */
 
     var L = Y.Lang;
@@ -82,7 +83,7 @@
          * Determines if a plugin has plugged into this host.
          *
          * @method hasPlugin
-         * @param The plugin's namespace
+         * @param {String} ns The plugin's namespace
          * @return {boolean} returns true, if the plugin has been plugged into this host, false otherwise.
          */
         hasPlugin : function(ns) {
@@ -206,7 +207,7 @@
      * Registers plugins to be instantiated at the class level (plugins 
      * which should be plugged into every instance of the class by default).
      *
-     * @method PluginHost.plug
+     * @method Plugin.Host.plug
      * @static
      *
      * @param {Function} hostClass The host class on which to register the plugins
@@ -239,7 +240,7 @@
      * Unregisters any class level plugins which have been registered by the host class, or any
      * other class in the hierarchy.
      *
-     * @method PluginHost.unplug
+     * @method Plugin.Host.unplug
      * @static
      *
      * @param {Function} hostClass The host class from which to unregister the plugins

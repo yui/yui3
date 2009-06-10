@@ -1,6 +1,6 @@
     /**
      * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
-     * The module also provides two ways to reuse code - An augmentable PluginHost interface which provides plugin support 
+     * The module also provides two ways to reuse code - An augmentable Plugin.Host interface which provides plugin support 
      * (which is augmented to the Base class) and Base.build which provides a way to 
      * build custom classes using extensions.
      *
@@ -8,7 +8,7 @@
      */
 
     /**
-     * The base-base submodule provides the Base class and augmentable PluginHost implementation, 
+     * The base-base submodule provides the Base class and augmentable Plugin.Host implementation, 
      * without the extension support provided by Base.build.
      *
      * @module base
@@ -29,20 +29,22 @@
 
     /**
      * <p>
-     * Provides a base class which objects requiring attributes and custom event support can 
-     * extend. The Base class also handles the chaining of initializer and destructor methods across 
+     * A base class which objects requiring attributes and custom event support can 
+     * extend. Base also handles the chaining of initializer and destructor methods across 
      * the hierarchy as part of object construction and destruction. Additionally, attributes configured 
      * through the static <a href="#property_Base.ATTRS">ATTRS</a> property for each class 
      * in the hierarchy will be initialized by Base.
      * </p>
      *
-     * <p>The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
+     * <p>
+     * The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
      * from Base will be used as the identifier for the class, and is used by Base to prefix 
-     * all events fired by instances of that class.</p>
-     *
+     * all events fired by instances of that class.
+     * </p>
      * @class Base
      * @constructor
-     * @uses Attribute, Plugin.Host
+     * @uses Attribute
+     * @uses Plugin.Host
      *
      * @param {Object} config Object literal of configuration property name/value pairs
      */
@@ -511,7 +513,8 @@
     Y.mix(Base, PluginHost, false, null, 1);
 
     /**
-     * Alias for <a href="PluginHost.html#method_PluginHost.plug">PluginHost.plug</a>.
+     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.plug">Plugin.Host.plug</a>. See aliased 
+     * method for argument and return value details.
      *
      * @method Base.plug
      * @static
@@ -519,7 +522,8 @@
     Base.plug = PluginHost.plug;
 
     /**
-     * Alias for <a href="PluginHost.html#method_PluginHost.unplug">PluginHost.unplug</a>.
+     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.unplug">Plugin.Host.unplug</a>. See the 
+     * aliased method for argument and return value details.
      *
      * @method Base.unplug
      * @static
