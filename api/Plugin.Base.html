@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: plugin  Plugin   (YUI Library)</title>
+	<title>API: plugin  Plugin.Base   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,7 +19,7 @@
         <h3>plugin&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_plugin.html" title="plugin">plugin</a>
-                 &gt; Plugin 
+                 &gt; Plugin.Base 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,7 +48,7 @@
 
                         
                         
-                            Class <b property="yui:name">Plugin</b>
+                            Class <b property="yui:name">Plugin.Base</b>
                         <span class="extends">
                            - extends <a href="Base.html" title="Base">Base</a>
                         </span>
@@ -56,31 +56,11 @@
                     </h2>
                     <!-- class tree goes here -->
                     
-                        <dl class="subclasses" rel="yui:subclasses">
-                            <dt>Known Subclasses:</dt>
-                            <dd>
-                                    <span rel="yui:subclass" resource="DataSourceXMLSchema.html">
-                                    <a href="DataSourceXMLSchema.html" property="yui:name" title="DataSourceXMLSchema">DataSourceXMLSchema</a>
-                                    </span>
-                                    <span rel="yui:subclass" resource="DataSourceArraySchema.html">
-                                    <a href="DataSourceArraySchema.html" property="yui:name" title="DataSourceArraySchema">DataSourceArraySchema</a>
-                                    </span>
-                                    <span rel="yui:subclass" resource="DataSourceJSONSchema.html">
-                                    <a href="DataSourceJSONSchema.html" property="yui:name" title="DataSourceJSONSchema">DataSourceJSONSchema</a>
-                                    </span>
-                                    <span rel="yui:subclass" resource="Cache.html">
-                                    <a href="Cache.html" property="yui:name" title="Cache">Cache</a>
-                                    </span>
-                                    <span rel="yui:subclass" resource="DataSourceTextSchema.html">
-                                    <a href="DataSourceTextSchema.html" property="yui:name" title="DataSourceTextSchema">DataSourceTextSchema</a>
-                                    </span>
-                            </dd>
-                       </dl>
                 
   
 
                     <div class="summary description" property="yui:description">
-                        Plugin provides a base class for all Plugin classes.
+                        The base class for all Plugin instances.
                     </div>
 
                     
@@ -88,13 +68,45 @@
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="" rel="yui:property" resource="#property_Plugin.NAME">
-                                    <h4><a name="property_Plugin.NAME" property="yui:name">Plugin.NAME</a>
-                                        - <code>static <span property="yui:type">{String}</span></code>
+                                    <div class="private" rel="yui:property" resource="#property__handles">
+                                    <h4><a name="property__handles" property="yui:name">_handles</a>
+                                        - <code>private <span property="yui:type">Array</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Static property provides a string to identify the class.
+                                            The list of event handles for event listeners or AOP injected methods
+applied by the plugin to the host object.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_Plugin.Base.ATTRS">
+                                    <h4><a name="property_Plugin.Base.ATTRS" property="yui:name">Plugin.Base.ATTRS</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Object defining the set of attributes supported by the Plugin.Base class
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_Plugin.Base.NAME">
+                                    <h4><a name="property_Plugin.Base.NAME" property="yui:name">Plugin.Base.NAME</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The string identifying the Plugin.Base class. Plugins extending
+Plugin.Base should set their own NAME value.
                                         </div>
                                     </div>
      
@@ -105,12 +117,13 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_Plugin.NS">
                                     <h4><a name="property_Plugin.NS" property="yui:name">Plugin.NS</a>
-                                        - <code>static <span property="yui:type">{String}</span></code>
+                                        - <code>static <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Static property provides the namespace the plugin will be
-registered under.
+                                            The name of the property the the plugin will be attached to
+when plugged into a Plugin Host. Plugins extending Plugin.Base,
+should set their own NS value.
                                         </div>
                                     </div>
      
@@ -165,9 +178,8 @@ registered under.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            desctructor lifecycle implementation.
-Removes any listeners attached by the Plugin and restores
-and over-ridden methods.
+                                            Destructor lifecycle implementation.
+Removes any event listeners or injected methods applied by the Plugin
                                         </div>
 
                                         <div class="description">
@@ -197,7 +209,7 @@ and over-ridden methods.
                                         
                                         
                                         
-                                        
+                                        Event.Handle
                                             <strong property="yui:name">doAfter</strong>
                                            (
                                                 
@@ -217,8 +229,8 @@ and over-ridden methods.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Listens for events and methods fired by the owner widget.
-The handler is called after the event handler or method is called.
+                                            Listens for the "after" moment of events fired by the host, 
+or injects code "after" a given method on the host.
                                         </div>
 
                                         <div class="description">
@@ -227,25 +239,31 @@ The handler is called after the event handler or method is called.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">sFn</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The event of method to listen for.</span>
+                                                        <span property="yui:description">  The event to listen for, or method to inject logic after.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The handler function to call when the listener fires.</span>
+                                                        <span property="yui:description">  The handler function. For events, the "after" moment listener. For methods, the function to execute after the given method is executed.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An optional context to call the handler with.
-Default context is the plugin instance.</span>
+                                                        <span property="yui:description">  An optional context to call the handler with. The default context is the plugin instance.</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Event.Handle
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">handle  The detach handle for the handler.</dd>
+                                                </dl>
 
 
              
@@ -263,7 +281,7 @@ Default context is the plugin instance.</span>
                                         
                                         
                                         
-                                        
+                                        Event.Handle
                                             <strong property="yui:name">doBefore</strong>
                                            (
                                                 
@@ -283,8 +301,8 @@ Default context is the plugin instance.</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Listens for events and methods fired by the host.
-The handler is called before the event handler or method is called.
+                                            Listens for the "on" moment of events fired by the host, 
+or injects code "before" a given method on the host.
                                         </div>
 
                                         <div class="description">
@@ -293,25 +311,31 @@ The handler is called before the event handler or method is called.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">sFn</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The event of method to listen for.</span>
+                                                        <span property="yui:description">  The event to listen for, or method to inject logic before.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The handler function to call when the listener fires.</span>
+                                                        <span property="yui:description">  The handler function. For events, the "on" moment listener. For methods, the function to execute before the given method is executed.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An optional context to call the handler with.
-Default context is the plugin instance.</span>
+                                                        <span property="yui:description">  An optional context to call the handler with. The default context is the plugin instance.</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Event.Handle
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">handle  The detach handle for the handler.</dd>
+                                                </dl>
 
 
              
@@ -352,7 +376,7 @@ Default context is the plugin instance.</span>
                                                         <code><span property="yui:name">config</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Configuration object literal for the plugin</span>
+                                                        <span property="yui:description"> Configuration object literal for the Plugin.</span>
                                                         </dd>
                                                 </dl>
 
@@ -612,7 +636,7 @@ Default context is the plugin instance.</span>
                             <div class="content">
                                     <div class="" rel="yui:attribute" resource="#config_host">
                                     <h4><a name="config_host">host</a>
-                                        <code>- writeonce <span property="yui:type">PluginHost</span></code>
+                                        <code>- writeonce <span property="yui:type">Plugin.Host</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -701,7 +725,7 @@ Default context is the plugin instance.</span>
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class="selected"><a href="Plugin.html" title="Plugin">Plugin</a></li>
+                                <li class="selected"><a href="Plugin.Base.html" title="Plugin.Base">Plugin.Base</a></li>
                         </ul>
                     </div>
 
@@ -715,7 +739,9 @@ Default context is the plugin instance.</span>
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_Plugin.NAME" title="Plugin.NAME">Plugin.NAME</a></li>
+                                <li class="private"><a href="#property__handles" title="_handles">_handles</a></li>
+                                <li class=""><a href="#property_Plugin.Base.ATTRS" title="Plugin.Base.ATTRS">Plugin.Base.ATTRS</a></li>
+                                <li class=""><a href="#property_Plugin.Base.NAME" title="Plugin.Base.NAME">Plugin.Base.NAME</a></li>
                                 <li class=""><a href="#property_Plugin.NS" title="Plugin.NS">Plugin.NS</a></li>
                         </ul>
                     </div>
@@ -753,7 +779,7 @@ Default context is the plugin instance.</span>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Plugin", "name": "destructor", "url": "Plugin.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin", "name": "doAfter", "url": "Plugin.html#method_doAfter", "type": "method"}, {"access": "", "host": "Plugin", "name": "doBefore", "url": "Plugin.html#method_doBefore", "type": "method"}, {"access": "", "host": "Plugin", "name": "host", "url": "Plugin.html#config_host", "type": "config"}, {"access": "", "host": "Plugin", "name": "hostChange", "url": "Plugin.html#event_hostChange", "type": "event"}, {"access": "", "host": "Plugin", "name": "initializer", "url": "Plugin.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin", "name": "Plugin.NAME", "url": "Plugin.html#property_Plugin.NAME", "type": "property"}, {"access": "", "host": "Plugin", "name": "Plugin.NS", "url": "Plugin.html#property_Plugin.NS", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Base", "name": "destructor", "url": "Plugin.Base.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "doAfter", "url": "Plugin.Base.html#method_doAfter", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "doBefore", "url": "Plugin.Base.html#method_doBefore", "type": "method"}, {"access": "private", "host": "Plugin.Base", "name": "_handles", "url": "Plugin.Base.html#property__handles", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "host", "url": "Plugin.Base.html#config_host", "type": "config"}, {"access": "", "host": "Plugin.Base", "name": "hostChange", "url": "Plugin.Base.html#event_hostChange", "type": "event"}, {"access": "", "host": "Plugin.Base", "name": "initializer", "url": "Plugin.Base.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.Base.ATTRS", "url": "Plugin.Base.html#property_Plugin.Base.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.Base.NAME", "url": "Plugin.Base.html#property_Plugin.Base.NAME", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.NS", "url": "Plugin.Base.html#property_Plugin.NS", "type": "property"}];
 </script>
 </body>
 </html>
