@@ -68,22 +68,22 @@
   
 
                     <div class="summary description" property="yui:description">
-                        <p>Attribute provides configurable attribute support along with attribute change events.</p>
-<p>
-Attribute is designed to be augmented onto a host class, and provides the host with the 
-ability to configure attributes to store and retrieve state, along with attribute change events.
+                        <p>
+Attribute provides configurable attribute support along with attribute change events. It is designed to be 
+augmented onto a host class, and provides the host with the ability to configure attributes to store and retrieve state, 
+along with attribute change events.
 </p>
-<p>Attributes added to the host can be configured:</p>
+<p>For example, attributes added to the host can be configured:</p>
 <ul>
 <li>As read only.</li>
 <li>As write once.</li>
-<li>With a setter function, used to manipulate
-values passed to Attribute's set method, before they are stored.</li>
+<li>With a setter function, which can be used to manipulate
+values passed to Attribute's <a href="#method_set">set</a> method, before they are stored.</li>
 <li>With a getter function, which can be used to manipulate stored values,
-before they are returned by Attribute's get method.</li>
+before they are returned by Attribute's <a href="#method_get">get</a> method.</li>
 <li>With a validator function, to validate values before they are stored.</li>
 </ul>
-<p>See the <a href="#method_addAtt">addAttr</a> method, for the complete set of configuration
+<p>See the <a href="#method_addAttr">addAttr</a> method, for the complete set of configuration
 options available for attributes</p>.
 <p><strong>NOTE:</strong> Most implementations will be better off extending the <a href="Base.html">Base</a> class, 
 instead of augmenting Attribute directly. Base augments Attribute and will handle the initial configuration 
@@ -120,7 +120,7 @@ Y.mix operations.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             <p>The value to return from an attribute setter in order to prevent the set from going through.</p>
-<p>You can return this value from your setter, if you wish to combine validation and setter 
+<p>You can return this value from your setter if you wish to combine validator and setter 
 functionality into a single setter function, which either returns the massaged value to be stored or 
 Attribute.INVALID_VALUE to prevent invalid values from being stored.</p>
                                         </div>
@@ -600,7 +600,7 @@ the event facade passed to subscribers of the attribute's change event.</span>
                                                     <code property="yui:return">
                                                         Object
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">A reference to the host object</dd>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
                                                 </dl>
 
                                             <div class="chainable">
@@ -687,7 +687,7 @@ readOnly or writeOnce attributes which have already been set.</span>
                                                     <code property="yui:return">
                                                         Object
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">A reference to the host object</dd>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
                                                 </dl>
 
                                             <div class="chainable">
@@ -880,10 +880,10 @@ The config argument object literal supports the following optional properties:
 for cases where the attribute configuration is defined statically, but needs to 
 reference the host instance ("this") to obtain an initial value.
 If defined, this precedence over the value property.</dd>
-<dt>readOnly &#60;Boolean&#62;</dt>
+<dt>readOnly &#60;boolean&#62;</dt>
 <dd>Whether or not the attribute is read only. Attributes having readOnly set to true
 cannot be modified by invoking the set method.</dd>
-<dt>writeOnce &#60;Boolean&#62;</dt>
+<dt>writeOnce &#60;boolean&#62;</dt>
 <dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
 can only have their values set once, be it through the default configuration, 
 constructor configuration arguments, or by invoking set.</dd>
@@ -899,8 +899,8 @@ invoke get.</dd>
 <dt>validator &#60;Function&#62;</dt>
 <dd>The validator function invoked prior to setting the stored value. Returning
 false from the validator function will prevent the value from being stored.</dd>
-<dt>broadcast &#60;Int&#62;</dt>
-<dd>If and how attribute change events for this attribute should be broadcast. See Event.Custom's <a href="Event.Custom.html#property_broadcast>broadcast</a> property for 
+<dt>broadcast &#60;int&#62;</dt>
+<dd>If and how attribute change events for this attribute should be broadcast. See Event.Custom's <a href="Event.Custom.html#property_broadcast">broadcast</a> property for 
 valid values. By default attribute change events are not broadcast.</dd>
 <dt>lazyAdd &#60;boolean&#62;</dt>
 <dd>Whether or not to delay initialization of the attribute until the first call to get/set it. 
@@ -925,15 +925,17 @@ the context ("this") set to the host object.</p>
                                                         <code><span property="yui:name">config</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An object literal specifying the configuration for the attribute.</span>
+                                                        <span property="yui:description"> An object literal specifying the configuration for the attribute.
+<p>
+<strong>NOTE:</strong> The configuration object is modified when adding an attribute, so if you need 
+to protect the original values, you will need to merge the object.
+</p></span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">lazy</span>
                                                         &lt;<span property="yui:type">boolean</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> (optional) Whether or not to add this attribute lazily (on the first call to get/set). 
-<strong>NOTE:</strong> The configuration object is modified when adding an attribute, so if you need 
-to protect the original values, you will need to merge or clone the object.</span>
+                                                        <span property="yui:description"> (optional) Whether or not to add this attribute lazily (on the first call to get/set).</span>
                                                         </dd>
                                                 </dl>
 
@@ -964,7 +966,7 @@ to protect the original values, you will need to merge or clone the object.</spa
                                         
                                         
                                         
-                                        void
+                                        Object
                                             <strong property="yui:name">addAttrs</strong>
                                            (
                                                 
@@ -985,8 +987,10 @@ to protect the original values, you will need to merge or clone the object.</spa
                                         
                                         <div class="description" property="yui:description">
                                             Configures a group of attributes, and sets initial values.
-Note: This method does not isolate the configuration object by merging/cloning. 
+<p>
+<strong>NOTE:</strong> This method does not isolate the configuration object by merging/cloning. 
 The caller is responsible for merging/cloning the configuration object if required.
+</p>
                                         </div>
 
                                         <div class="description">
@@ -1019,9 +1023,9 @@ See <a href="#method_addAttr">addAttr</a>.</span>
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        void
+                                                        Object
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
                                                 </dl>
 
                                             <div class="chainable">
@@ -1075,7 +1079,7 @@ See <a href="#method_addAttr">addAttr</a>.</span>
                                                     <code property="yui:return">
                                                         boolean
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">, true if an attribute with the given name has been added.</dd>
+                                                    <dd property="yui:returnInfo">true if an attribute with the given name has been added, false if it hasn't. This method will return true for lazily added attributes.</dd>
                                                 </dl>
 
 
@@ -1169,7 +1173,7 @@ dot notation can be used to obtain the value of a property of the object (e.g. <
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">attrs</span>
-                                                        &lt;<span property="yui:type">Array | Boolean</span>&gt;
+                                                        &lt;<span property="yui:type">Array | boolean</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> Optional. An array of attribute names. If omitted, all attribute values are
 returned. If set to true, all attributes modified from their initial values are returned.</span>
@@ -1318,7 +1322,7 @@ broadcast and getter.
                                         
                                         
                                         
-                                        
+                                        Object
                                             <strong property="yui:name">reset</strong>
                                            (
                                                 
@@ -1346,6 +1350,13 @@ the attribute is not readOnly, or writeOnce.
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
+                                                </dl>
 
                                             <div class="chainable">
                                                 <strong>Chainable:</strong> This method is chainable.
@@ -1424,7 +1435,7 @@ set called externally by the application developer.</span>
                                                     <code property="yui:return">
                                                         Object
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">A reference to the host object</dd>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
                                                 </dl>
 
                                             <div class="chainable">
@@ -1446,7 +1457,7 @@ set called externally by the application developer.</span>
                                         
                                         
                                         
-                                        
+                                        Object
                                             <strong property="yui:name">setAttrs</strong>
                                            (
                                                 
@@ -1473,6 +1484,13 @@ set called externally by the application developer.</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
+                                                </dl>
 
                                             <div class="chainable">
                                                 <strong>Chainable:</strong> This method is chainable.
