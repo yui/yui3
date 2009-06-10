@@ -740,8 +740,9 @@ Y.CustomEvent.prototype = {
      * chainable event target depending on the 'chain' config.
      * @deprecated use on
      */
-    subscribe: function(fn, context) {
-        return this._on(fn, context, arguments, true);
+    subscribe: function(fn, context, x) {
+        var a = (x) ? Y.Array(arguments, 2, true): null;
+        return this._on(fn, context, a, true);
     },
 
     /**
@@ -751,8 +752,9 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
-    on: function(fn, context) {
-        return this._on(fn, context, arguments, true);
+    on: function(fn, context, x) {
+        var a = (x) ? Y.Array(arguments, 2, true): null;
+        return this._on(fn, context, a, true);
     },
 
     /**
@@ -764,8 +766,9 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
-    after: function(fn, context) {
-        return this._on(fn, context, arguments, AFTER);
+    after: function(fn, context, x) {
+        var a = (x) ? Y.Array(arguments, 2, true): null;
+        return this._on(fn, context, a, AFTER);
     },
 
     /**
@@ -1274,14 +1277,6 @@ Y.Subscriber = function(fn, context, args) {
      * @type String
      */
     this.id = Y.stamp(this);
-
-    /**
-     * Optional additional arguments supplied to subscribe().  If present,
-     * these will be appended to the arguments supplied to fire()
-     * @property args
-     * @type Array
-     */
-    // this.args = args;
 
     /*
      * }
