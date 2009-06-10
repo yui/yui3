@@ -1,3 +1,10 @@
+/**
+ * Aria support for Node
+ *
+ * @module node
+ * @submodule node-aria
+ */
+
 Y.Node.re_aria = /^(?:role$|aria-)/;
 
 Y.Node.prototype._addAriaAttr = function(name) {

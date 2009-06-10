@@ -294,6 +294,14 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             Assert.areEqual('item 1', Y.Lang.trim(nodes.get('children')[0].get('text')[0]), 'nodes.get("children")[0].get("text")[0]');
 
+            Assert.areEqual('item 1', Y.Lang.trim(nodes.get('children')[0].get('text')[0]), 'nodes.get("children")[0].get("text")[0]');
+
+            var textContainer = Y.Node.create('<div>foo</div>');
+            Assert.areEqual('foo', textContainer.get('text'), "textContainer.get('text')");
+
+            textContainer.set('text', 'bar');
+            Assert.areEqual('bar', textContainer.get('text'), "textContainer.set('text', 'bar')");
+            
             ArrayAssert.itemsAreEqual($('#test-select option'),
                     Y.NodeList.getDOMNodes(Y.get('#test-select').get('options')),
                     'Y.get("#test-select.get("options")');

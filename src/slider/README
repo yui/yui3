@@ -7,6 +7,28 @@ The Slider widget
     * renamed _defSyncUI to _defSyncFn for library nomenclature consistency
     * Added protected _convertValueToOffset to help position the thumb
     * Set bubble: false on the DD.Drag instance
+    * Created a ConsoleFilters plugin to restore the filter checkboxes familiar
+      to yui2 users. myConsole.plug(Y.Plugin.ConsoleFilters);
+    * Added collapse/expand button to header and changed input[type=button]s to
+      button elements
+    * silence the logging subsystem during the print cycle
+    * major markup and skin css overhaul
+    * added support for setting height and width in configuration
+    * logLevel filtering now only applies to messages with info|warn|error.
+      All other messages pass through.
+    * static Console.LOG_LEVEL_INFO etc are now strings
+    * added logSource attribute to support a single Console instance listening
+      to all YUI instance log statements { logSource: Y.Global }
+    * added destructor
+    * Renamed _timeout to _printLoop and _clearTimeout to _cancelPrintLoop
+    * refactored printLogEntry to call new _createEntry(meta). _addToConsole
+      subsumed into printLogEntry.  _createEntry returns an HTML string.
+    * print loop scheduled on render to display any previously buffered entries
+    * print loop only scheduled if the Console has been rendered
+    * entries added to Console via DocumentFragment and Node instance creation
+      avoided for performance
+    * buffer is spliced at the beginning of a print loop to limit entries that
+      would be removed by consoleLimit anyway
 
 3.0.0pr2
     Initial release

@@ -1,290 +1,291 @@
 YUI.add('base-base', function(Y) {
 
-/**
-* Base class support for objects requiring managed attributes and acting as event targets. 
-*
-* The base module also provides an augmentable PluginHost interface.
-*
-* @module base
-*/
-
-/**
- * An augmentable class, which when added to a "Base" based class, allows 
- * the class to support Plugins, providing plug and unplug methods.
- * 
- * The PlugHost's _initPlugins and _destroyPlugins should be invoked by the 
- * host class at the appropriate point in the classes lifecyle. This is done
- * by default for Base class.
- *
- * @class PluginHost
- */
-
-var L = Y.Lang;
-
-function PluginHost(config) {
-    this._plugins = {};
-}
-
-PluginHost.prototype = {
-
     /**
-     * Register and instantiate a plugin with the Widget.
-     *
-     * @method plug
-     * @chainable
-     * @param p {Function | Object |Array} Accepts the plugin class, or an 
-     * object literal with a "fn" property specifying the Plugin class and 
-     * a "cfg" property specifying the configuration for the Plugin.
      * <p>
-     * Additionally an Array can also be passed in, with the above function or 
-     * Object literal values, allowing for multiple plugin registration in a single call.
+     * An augmentable class, which when augmented onto a Base based class, allows 
+     * the class to support plugins, providing plug and unplug methods and the ability
+     * to add plugins through the configuration literal passed to the constructor.
      * </p>
-     * @param config Optional. If the first argument is the plugin class, the second argument
-     * can be the configuration for the plugin.
+     * <p>
+     * The PlugHost's _initPlugins() and _destroyPlugins() methods should be invoked by the 
+     * host class at the appropriate point in the instance's lifecyle. This is done
+     * by default for the Base class, so developers extending base don't need to do 
+     * anything to get plugin support.
+     * </p>
+     * @class PluginHost
      */
-    plug: function(p, config) {
-        if (p) {
-            if (L.isFunction(p)) {
-                this._plug(p, config);
-            } else if (L.isArray(p)) {
-                for (var i = 0, ln = p.length; i < ln; i++) {
-                    this.plug(p[i]);
-                }
-            } else {
-                this._plug(p.fn, p.cfg);
-            }
-        }
-        return this;
-    },
 
-    /**
-     * Unregister and destroy a plugin already instantiated on the host.
-     * 
-     * @method unplug
-     * @param {String | Function} plugin The namespace of the Plugin, or the Plugin class with the static NS namespace property defined. If not provided,
-     * all registered plugins are unplugged.
-     * @chainable
-     */
-    unplug: function(plugin) {
-        if (plugin) {
-            this._unplug(plugin);
-        } else {
-            var ns;
-            for (ns in this._plugins) {
-                if (this._plugins.hasOwnProperty(ns)) {
-                    this._unplug(ns);
-                }
-            }
-        }
-        return this;
-    },
+    var L = Y.Lang;
 
-    /**
-     * Determines if a plugin has been registered and instantiated 
-     * for this widget.
-     * 
-     * @method hasPlugin
-     * @public
-     * @return {Boolean} returns true, if the plugin has been applied
-     * to this widget.
-     */
-    hasPlugin : function(ns) {
-        return (this._plugins[ns] && this[ns]);
-    },
+    function PluginHost(config) {
+        this._plugins = {};
+    }
 
-    /**
-     * Initializes static plugins registered on the host (using the
-     * Base.plug static method) and any plugins passed in for the 
-     * instance through the "plugins" configuration property.
-     *
-     * @method _initPlugins
-     * @param {Config} the user configuration object for the host.
-     * @private
-     */
-    _initPlugins: function(config) {
+    PluginHost.prototype = {
 
-        // Class Configuration
-        var classes = this._getClasses(),
-            plug = [],
-            unplug = {},
-            constructor, i, classPlug, classUnplug, pluginClassName;
+        /**
+         * Adds a plugin to the host object. This will instantiate the 
+         * plugin and attach it to the configured namespace on the host object.
+         *
+         * @method plug
+         * @chainable
+         * @param p {Function | Object |Array} Accepts the plugin class, or an 
+         * object literal with a "fn" property specifying the plugin class and 
+         * a "cfg" property specifying the configuration for the Plugin.
+         * <p>
+         * Additionally an Array can also be passed in, with the above function or 
+         * object literal values, allowing the user to add multiple plugins in a single call.
+         * </p>
+         * @param config (Optional) If the first argument is the plugin class, the second argument
+         * can be the configuration for the plugin.
+         * @return {Base} A reference to the host object
+         */
 
-        //TODO: Room for optimization. Can we apply statically/unplug in same pass?
-        for (i = classes.length - 1; i >= 0; i--) {
-            constructor = classes[i];
-
-            classUnplug = constructor._UNPLUG;
-            if (classUnplug) {
-                // subclasses over-write
-                Y.mix(unplug, classUnplug, true);
-            }
-
-            classPlug = constructor._PLUG;
-            if (classPlug) {
-                // subclasses over-write
-                Y.mix(plug, classPlug, true);
-            }
-        }
-
-        for (pluginClassName in plug) {
-            if (plug.hasOwnProperty(pluginClassName)) {
-                if (!unplug[pluginClassName]) {
-                    this.plug(plug[pluginClassName]);
+        plug: function(p, config) {
+            if (p) {
+                if (L.isFunction(p)) {
+                    this._plug(p, config);
+                } else if (L.isArray(p)) {
+                    for (var i = 0, ln = p.length; i < ln; i++) {
+                        this.plug(p[i]);
+                    }
+                } else {
+                    this._plug(p.fn, p.cfg);
                 }
             }
-        }
+            return this;
+        },
 
-        // User Configuration
-        if (config && config.plugins) {
-            this.plug(config.plugins);
-        }
-    },
-
-    /**
-     * Private method used to unplug and destroy all plugins on the host
-     * @method _destroyPlugins
-     * @private
-     */
-    _destroyPlugins: function() {
-        this._unplug();
-    },
-
-    /**
-     * Private method used to instantiate and attach plugins to the host
-     * @method _plug
-     * @param {Function} PluginClass The plugin class to instantiate
-     * @param {Object} config The configuration object for the plugin
-     * @private
-     */
-    _plug: function(PluginClass, config) {
-        if (PluginClass && PluginClass.NS) {
-            var ns = PluginClass.NS;
-
-            config = config || {};
-            config.host = this;
-
-            if (this.hasPlugin(ns)) {
-                // Update config
-                this[ns].setAttrs(config);
+        /**
+         * Removes a plugin from the host object. This will destroy the 
+         * plugin instance and delete the namepsace from the host object. 
+         *
+         * @method unplug
+         * @param {String | Function} plugin The namespace of the plugin, or the plugin class with the static NS namespace property defined. If not provided,
+         * all registered plugins are unplugged.
+         * @return {Base} A reference to the host object
+         * @chainable
+         */
+        unplug: function(plugin) {
+            if (plugin) {
+                this._unplug(plugin);
             } else {
-                // Create new instance
-                this[ns] = new PluginClass(config);
-                this._plugins[ns] = PluginClass;
+                var ns;
+                for (ns in this._plugins) {
+                    if (this._plugins.hasOwnProperty(ns)) {
+                        this._unplug(ns);
+                    }
+                }
+            }
+            return this;
+        },
+
+        /**
+         * Determines if a plugin has plugged into this host.
+         *
+         * @method hasPlugin
+         * @param The plugin's namespace
+         * @return {boolean} returns true, if the plugin has been plugged into this host, false otherwise.
+         */
+        hasPlugin : function(ns) {
+            return (this._plugins[ns] && this[ns]);
+        },
+
+        /**
+         * Initializes static plugins registered on the host (using the
+         * Base.plug static method) and any plugins passed to the 
+         * instance through the "plugins" configuration property.
+         *
+         * @method _initPlugins
+         * @param {Config} config The configuration object literal for the host.
+         * @private
+         */
+        _initPlugins: function(config) {
+
+            // Class Configuration
+            var classes = this._getClasses(),
+                plug = [],
+                unplug = {},
+                constructor, i, classPlug, classUnplug, pluginClassName;
+
+            //TODO: Room for optimization. Can we apply statically/unplug in same pass?
+            for (i = classes.length - 1; i >= 0; i--) {
+                constructor = classes[i];
+
+                classUnplug = constructor._UNPLUG;
+                if (classUnplug) {
+                    // subclasses over-write
+                    Y.mix(unplug, classUnplug, true);
+                }
+
+                classPlug = constructor._PLUG;
+                if (classPlug) {
+                    // subclasses over-write
+                    Y.mix(plug, classPlug, true);
+                }
+            }
+    
+            for (pluginClassName in plug) {
+                if (plug.hasOwnProperty(pluginClassName)) {
+                    if (!unplug[pluginClassName]) {
+                        this.plug(plug[pluginClassName]);
+                    }
+                }
+            }
+    
+            // User Configuration
+            if (config && config.plugins) {
+                this.plug(config.plugins);
+            }
+        },
+
+        /**
+         * Unplugs and destroys all plugins on the host
+         * @method _destroyPlugins
+         * @private
+         */
+        _destroyPlugins: function() {
+            this._unplug();
+        },
+
+        /**
+         * Private method used to instantiate and attach plugins to the host
+         *
+         * @method _plug
+         * @param {Function} PluginClass The plugin class to instantiate
+         * @param {Object} config The configuration object for the plugin
+         * @private
+         */
+        _plug: function(PluginClass, config) {
+            if (PluginClass && PluginClass.NS) {
+                var ns = PluginClass.NS;
+    
+                config = config || {};
+                config.host = this;
+    
+                if (this.hasPlugin(ns)) {
+                    // Update config
+                    this[ns].setAttrs(config);
+                } else {
+                    // Create new instance
+                    this[ns] = new PluginClass(config);
+                    this._plugins[ns] = PluginClass;
+                }
+            }
+        },
+
+        /**
+         * Unplugs and destroys a plugin already instantiated with the host.
+         *
+         * @method _unplug
+         * @private
+         * @param {String | Function} plugin The namespace for the plugin, or a plugin class with the static NS property defined.
+         */
+        _unplug : function(plugin) {
+            var ns = plugin, 
+                plugins = this._plugins;
+    
+            if (L.isFunction(plugin)) {
+                ns = plugin.NS;
+                if (ns && (!plugins[ns] || plugins[ns] !== plugin)) {
+                    ns = null;
+                }
+            }
+    
+            if (ns) {
+                if (this[ns]) {
+                    this[ns].destroy();
+                    delete this[ns];
+                }
+                if (plugins[ns]) {
+                    delete plugins[ns];
+                }
             }
         }
-    },
-
+    };
+    
     /**
-     * Private method used to unregister and destroy a plugin already instantiated with the host.
+     * Registers plugins to be instantiated at the class level (plugins 
+     * which should be plugged into every instance of the class by default).
      *
-     * @method _unplug
-     * @private
-     * @param {String | Function} plugin The namespace for the Plugin, or a Plugin class, with the static NS property defined.
+     * @method PluginHost.plug
+     * @static
+     *
+     * @param {Function} hostClass The host class on which to register the plugins
+     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of object literals (with fn and cfg properties defined)
+     * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
      */
-    _unplug : function(plugin) {
-        var ns = plugin, 
-            plugins = this._plugins;
-
-        if (L.isFunction(plugin)) {
-            ns = plugin.NS;
-            if (ns && (!plugins[ns] || plugins[ns] !== plugin)) {
-                ns = null;
+    PluginHost.plug = function(hostClass, plugin, config) {
+        // Cannot plug into Base, since Plugins derive from Base [ will cause infinite recurrsion ]
+        var p, i, l, name;
+    
+        if (hostClass !== Y.Base) {
+            hostClass._PLUG = hostClass._PLUG || {};
+    
+            if (!L.isArray(plugin)) {
+                if (config) {
+                    plugin = {fn:plugin, cfg:config};
+                }
+                plugin = [plugin];
+            }
+    
+            for (i = 0, l = plugin.length; i < l;i++) {
+                p = plugin[i];
+                name = p.NAME || p.fn.NAME;
+                hostClass._PLUG[name] = p;
             }
         }
-
-        if (ns) {
-            if (this[ns]) {
-                this[ns].destroy();
-                delete this[ns];
-            }
-            if (plugins[ns]) {
-                delete plugins[ns];
-            }
-        }
-    }
-};
-
-/**
- * Registers plugins to be instantiated at the class level (plugins 
- * which should be plugged into every instance of the class by default).
- * 
- * @method PluginHost.plug
- * @static
- *
- * @param {Function} hostClass The host class on which to register the plugins
- * @param {Function | Array} plugin Either the plugin class, or an array of plugin classes/plugin fn, cfg object literals 
- * @param {Object} config If plugin is the plugin class, the configuration for the plugin can be passed
- * as the configuration for the plugin
- */
-PluginHost.plug = function(hostClass, plugin, config) {
-    // Cannot plug into Base, since Plugins derive from Base [ will cause infinite recurrsion ]
-    var p, i, l, name;
-
-    if (hostClass !== Y.Base) {
-        hostClass._PLUG = hostClass._PLUG || {};
-
-        if (!L.isArray(plugin)) {
-            if (config) {
-                plugin = {fn:plugin, cfg:config};
-            }
-            plugin = [plugin];
-        }
-
-        for (i = 0, l = plugin.length; i < l;i++) {
-            p = plugin[i];
-            name = p.NAME || p.fn.NAME;
-            hostClass._PLUG[name] = p;
-        }
-    }
-};
-
-/**
- * Unregisters plugins which have been registered by the host class, or any
- * other class in the hierarchy.
- *
- * @method PluginHost.unplug
- * @static
- *
- * @param {Function} hostClass The host class from which to unregister the plugins
- * @param {Function | Array} plugin The plugin class, or an array of plugin classes
- */
-PluginHost.unplug = function(hostClass, plugin) {
-    var p, i, l, name;
-
-    if (hostClass !== Y.Base) {
-        hostClass._UNPLUG = hostClass._UNPLUG || {};
-
-        if (!L.isArray(plugin)) {
-            plugin = [plugin];
-        }
-
-        for (i = 0, l = plugin.length; i < l; i++) {
-            p = plugin[i];
-            name = p.NAME;
-            if (!hostClass._PLUG[name]) {
-                hostClass._UNPLUG[name] = p;
-            } else {
-                delete hostClass._PLUG[name];
-            }
-        }
-    }
-};
-
-Y.namespace("Plugin").Host = PluginHost;
+    };
 
     /**
-     * Base class support for objects requiring managed attributes and acting as event targets. 
+     * Unregisters any class level plugins which have been registered by the host class, or any
+     * other class in the hierarchy.
      *
-     * The base module also provides an augmentable PluginHost interface.
+     * @method PluginHost.unplug
+     * @static
+     *
+     * @param {Function} hostClass The host class from which to unregister the plugins
+     * @param {Function | Array} plugin The plugin class, or an array of plugin classes
+     */
+    PluginHost.unplug = function(hostClass, plugin) {
+        var p, i, l, name;
+    
+        if (hostClass !== Y.Base) {
+            hostClass._UNPLUG = hostClass._UNPLUG || {};
+    
+            if (!L.isArray(plugin)) {
+                plugin = [plugin];
+            }
+    
+            for (i = 0, l = plugin.length; i < l; i++) {
+                p = plugin[i];
+                name = p.NAME;
+                if (!hostClass._PLUG[name]) {
+                    hostClass._UNPLUG[name] = p;
+                } else {
+                    delete hostClass._PLUG[name];
+                }
+            }
+        }
+    };
+
+    Y.namespace("Plugin").Host = PluginHost;
+
+    /**
+     * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
+     * The module also provides two ways to reuse code - An augmentable PluginHost interface which provides plugin support 
+     * (which is augmented to the Base class) and Base.build which provides a way to 
+     * build custom classes using extensions.
      *
      * @module base
      */
 
     /**
-     * The base-base sub-module provides the Base class, without Base.build functionality
+     * The base-base submodule provides the Base class and augmentable PluginHost implementation, 
+     * without the extension support provided by Base.build.
      *
      * @module base
-     * @sub-module base-base
+     * @submodule base-base
      */
     var O = Y.Object,
         DOT = ".",
@@ -301,18 +302,19 @@ Y.namespace("Plugin").Host = PluginHost;
 
     /**
      * <p>
-     * Provides a base class for managed attribute based
-     * objects, which handles the chaining of initializer and destructor methods
-     * across the hierarchy during init and destroy lifecycle methods and 
-     * handles automatic configuration of registered Attributes, through 
-     * the static <a href="#property_ATTRS">ATTRS</a> property.
+     * Provides a base class which objects requiring attributes and custom event support can 
+     * extend. The Base class also handles the chaining of initializer and destructor methods across 
+     * the hierarchy as part of object construction and destruction. Additionally, attributes configured 
+     * through the static <a href="#property_Base.ATTRS">ATTRS</a> property for each class 
+     * in the hierarchy will be initialized by Base.
      * </p>
      *
-     * <p>The Base class also handles prefixing of event types with the static <a href="#property_NAME">NAME</a> 
-     * property for all events fired from instances of classes derived from Base.</p>
+     * <p>The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
+     * from Base will be used as the identifier for the class, and is used by Base to prefix 
+     * all events fired by instances of that class.</p>
      *
-     * @constructor
      * @class Base
+     * @constructor
      * @uses Attribute, Plugin.Host
      *
      * @param {Object} config Object literal of configuration property name/value pairs
@@ -330,7 +332,7 @@ Y.namespace("Plugin").Host = PluginHost;
 
     /**
      * The list of properties which can be configured for 
-     * each attribute (e.g. setter, getter, writeOnce etc.)
+     * each attribute (e.g. setter, getter, writeOnce, readOnly etc.)
      *
      * @property Base._ATTR_CFG
      * @type Array
@@ -341,14 +343,15 @@ Y.namespace("Plugin").Host = PluginHost;
 
     /**
      * <p>
-     * Name string to be used to identify instances of 
+     * The string to be used to identify instances of 
      * this class, for example in prefixing events.
      * </p>
      * <p>
      * Classes extending Base, should define their own
-     * static NAME property.
+     * static NAME property, which should be camelCase by
+     * convention (e.g. MyClass.NAME = "myClass";).
      * </p>
-     * @property NAME
+     * @property Base.NAME
      * @type String
      * @static
      */
@@ -357,11 +360,11 @@ Y.namespace("Plugin").Host = PluginHost;
     /**
      * Object literal defining the set of attributes which
      * will be available for instances of this class, and 
-     * how they are configured. See Attributes addAtt method
-     * for a description of configuration options available 
+     * how they are configured. See Attribute's <a href="Attribute.html#method_addAttr">addAttr</a>
+     * method for a description of configuration options available 
      * for each attribute.
      *
-     * @property ATTRS
+     * @property Base.ATTRS
      * @type Object
      * @static
      */
@@ -371,7 +374,7 @@ Y.namespace("Plugin").Host = PluginHost;
          * has been through the init lifecycle phase.
          *
          * @attribute initialized
-         * @readOnly
+         * @readonly
          * @default false
          * @type boolean
          */
@@ -385,7 +388,7 @@ Y.namespace("Plugin").Host = PluginHost;
          * has been through the destroy lifecycle phase.
          *
          * @attribute destroyed
-         * @readOnly
+         * @readonly
          * @default false
          * @type boolean
          */
@@ -399,9 +402,9 @@ Y.namespace("Plugin").Host = PluginHost;
 
         /**
          * Init lifecycle method, invoked during construction.
-         * Fires the init event prior to invoking initializers on
-         * the class hierarchy.
-         * 
+         * Fires the init event prior to setting up attributes and 
+         * invoking initializers for the class hierarchy.
+         *
          * @method init
          * @final
          * @chainable
@@ -411,8 +414,9 @@ Y.namespace("Plugin").Host = PluginHost;
         init: function(config) {
 
             /**
-             * The name string to be used to identify 
-             * this instance of object. 
+             * The string used to identify the class of this object.
+             *
+             * @deprecated Use this.constructor.NAME
              * @property name
              * @type String
              */
@@ -421,7 +425,7 @@ Y.namespace("Plugin").Host = PluginHost;
             /**
              * <p>
              * Lifecycle event for the init phase, fired prior to initialization. 
-             * Invoking the preventDefault method on the event object provided 
+             * Invoking the preventDefault() method on the event object provided 
              * to subscribers will prevent initialization from occuring.
              * </p>
              * <p>
@@ -432,8 +436,8 @@ Y.namespace("Plugin").Host = PluginHost;
              *
              * @event init
              * @preventable _defInitFn
-             * @param {Event.Facade} e Event object
-             * @param config Object literal of configuration name/value pairs
+             * @param {Event.Facade} e Event object, with a cfg property which 
+             * refers to the configuration object literal passed to the constructor.
              */
             if (!this._silentInit) {
                 this.publish(INIT, {
@@ -506,7 +510,8 @@ Y.namespace("Plugin").Host = PluginHost;
          * Default init event handler
          *
          * @method _defInitFn
-         * @param {Event.Facade} e Event object
+         * @param {Event.Facade} e Event object, with a cfg property which 
+         * refers to the configuration object literal passed to the constructor.
          * @protected
          */
         _defInitFn : function(e) {
@@ -535,10 +540,12 @@ Y.namespace("Plugin").Host = PluginHost;
 
         /**
          * Returns the class hierarchy for this object, with Base being the last class in the array.
-         * 
+         *
          * @method _getClasses
          * @protected
-         * @return {Function[]} An Array of classes (constructor functions), making up the class hierarchy for this object
+         * @return {Function[]} An array of classes (constructor functions), making up the class hierarchy for this object.
+         * This value is cached the first time the method, or _getAttrCfgs, is invoked. Subsequent invocations return the 
+         * cached value.
          */
         _getClasses : function() {
             if (!this._classes) {
@@ -553,6 +560,8 @@ Y.namespace("Plugin").Host = PluginHost;
          * @method _getAttrCfgs
          * @protected
          * @return {Object} The hash of attribute configurations, aggregated across classes in the hierarchy
+         * This value is cached the first time the method, or _getClasses, is invoked. Subsequent invocations return
+         * the cached value.
          */
         _getAttrCfgs : function() {
             if (!this._attrs) {
@@ -562,10 +571,20 @@ Y.namespace("Plugin").Host = PluginHost;
         },
 
         /**
+         * A helper method used when processing ATTRS across the class hierarchy during 
+         * initialization. Returns a disposable object with the attributes defined for 
+         * the provided class, extracted from the set of all attributes passed in .
+         *
          * @method _filterAttrCfs
          * @private
-         * @param {Function} clazz
-         * @param {Objects} allCfgs
+         *
+         * @param {Function} clazz The class for which the desired attributes are required.
+         * @param {Object} allCfgs The set of all attribute configurations for this instance. 
+         * Attributes will be removed from this set, if they belong to the filtered class, so
+         * that by the time all classes are processed, allCfgs will be empty.
+         * 
+         * @return {Object} The set of attributes belonging to the class passed in, in the form
+         * of an object literal with name/cfg pairs.
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
             var cfgs = null, attr, attrs = clazz.ATTRS;
@@ -584,6 +603,10 @@ Y.namespace("Plugin").Host = PluginHost;
         },
 
         /**
+         * A helper method used by _getClasses and _getAttrCfgs, which determines both
+         * the array of classes and aggregate set of attribute configurations
+         * across the class hierarchy for the instance.
+         * 
          * @method _initHierarchyData
          * @private
          */
@@ -608,9 +631,18 @@ Y.namespace("Plugin").Host = PluginHost;
         },
 
         /**
+         * A helper method, used by _initHierarchyData to aggregate 
+         * attribute configuration across the instances class hierarchy.
+         *
+         * The method will potect the attribute configuration value to protect the statically defined 
+         * default value in ATTRS if required (value is an object literal or array or the 
+         * attribute configuration has clone set to shallow or deep).
+         *
          * @method _aggregateAttrs
          * @private
-         * @param {Object} allAttrs
+         * @param {Array} allAttrs An array of ATTRS definitions across classes in the hierarchy 
+         * (subclass first, Base last)
+         * @return {Object} The aggregate set of ATTRS definitions for the instance
          */
         _aggregateAttrs : function(allAttrs) {
             var attr, 
@@ -670,13 +702,13 @@ Y.namespace("Plugin").Host = PluginHost;
         },
 
         /**
-         * Initializes the class hierarchy rooted at this base class,
-         * which includes initializing attributes for each class defined 
-         * in the class's static <a href="#property_ATTRS">ATTRS</a> property and invoking the initializer 
-         * method on the prototype of each class in the hierarchy.
+         * Initializes the class hierarchy for the instance, which includes 
+         * initializing attributes for each class defined in the class's 
+         * static <a href="#property_Base.ATTRS">ATTRS</a> property and 
+         * invoking the initializer method on the prototype of each class in the hierarchy.
          *
          * @method _initHierarchy
-         * @param {Object} userVals Object literal containing attribute name/value pairs
+         * @param {Object} userVals Object literal containing configuration name/value pairs
          * @private
          */
         _initHierarchy : function(userVals) {
@@ -709,7 +741,7 @@ Y.namespace("Plugin").Host = PluginHost;
         },
 
         /**
-         * Destroys the class hierarchy rooted at this base class by invoking
+         * Destroys the class hierarchy for this instance by invoking
          * the descructor method on the prototype of each class in the hierarchy.
          *
          * @method _destroyHierarchy
@@ -740,14 +772,26 @@ Y.namespace("Plugin").Host = PluginHost;
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
         }
-
     };
 
     // Straightup augment, no wrapper functions
     Y.mix(Base, Y.Attribute, false, null, 1);
     Y.mix(Base, PluginHost, false, null, 1);
 
+    /**
+     * Alias for <a href="PluginHost.html#method_PluginHost.plug">PluginHost.plug</a>.
+     *
+     * @method Base.plug
+     * @static
+     */
     Base.plug = PluginHost.plug;
+
+    /**
+     * Alias for <a href="PluginHost.html#method_PluginHost.unplug">PluginHost.unplug</a>.
+     *
+     * @method Base.unplug
+     * @static
+     */
     Base.unplug = PluginHost.unplug;
 
     // Fix constructor
@@ -762,23 +806,26 @@ Y.namespace("Plugin").Host = PluginHost;
 YUI.add('base-build', function(Y) {
 
     /**
-     * The base-build sub-module provides the Base.build functionality
+     * The base-build submodule provides Base.build functionality, which
+     * can be used to create custom classes, by aggregating extensions onto 
+     * a main class.
      *
      * @module base
-     * @sub-module base-build
+     * @submodule base-build
+     * @for Base
      */
 
     var Base = Y.Base,
         L = Y.Lang;
 
-
     /**
      * The build configuration for the Base class.
-     * Defines the static fields which need to be aggregated,
-     * when this class is used as the main class passed to 
-     * the <a href="#method_build">Base.build</a> method.
      *
-     * @property _buildCfg
+     * Defines the static fields which need to be aggregated
+     * when the Base class is used as the main class passed to 
+     * the <a href="#method_Base.build">Base.build</a> method.
+     *
+     * @property Base._buildCfg
      * @type Object
      * @static
      * @final
@@ -790,9 +837,10 @@ YUI.add('base-build', function(Y) {
 
     /**
      * <p>
-     * Builds a constructor function (class) from the
+     * Builds a custom constructor function (class) from the
      * main function, and array of extension functions (classes)
-     * provided.
+     * provided. The NAME field for the constructor function is 
+     * defined by the first argument passed in.
      * </p>
      * <p>
      * The cfg object literal supports the following properties
@@ -804,23 +852,23 @@ YUI.add('base-build', function(Y) {
      *    is created which extends the main class, and acts as the 
      *    host on which the extension classes are augmented.</p>
      *    <p>If false, the extensions classes are augmented directly to
-     *    the main class, modifying the main classes prototype.</p>
+     *    the main class, modifying the main class' prototype.</p>
      *    </dd>
      *    <dt>aggregates &#60;String[]&#62;</dt>
      *    <dd>An array of static property names, which will get aggregated
      *    on to the built class, in addition to the default properties build 
-     *    will always aggregate as defined by the main class' _buildCfg
+     *    will always aggregate as defined by the main class' static _buildCfg
      *    property.
      *    </dd>
      * </dl>
      *
-     * @method build
+     * @method Base.build
      * @static
-     * @param {Function} main The name of the new class
+     * @param {Function} main The name of the new class. Used to defined the NAME property for the new class.
      * @param {Function} main The main class on which to base the built class
      * @param {Function[]} extensions The set of extension classes which will be
      * augmented/aggregated to the built class.
-     * @param {Object} cfg Optional. Configuration for the class.
+     * @param {Object} cfg Optional. Build configuration for the class (see description).
      * @return {Function} A custom class, created from the provided main and extension classes
      */
     Base.build = function(name, main, extensions, cfg) {

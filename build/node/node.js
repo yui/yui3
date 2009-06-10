@@ -257,7 +257,10 @@ Node.ATTRS = {
             return Y.DOM.getText(g_nodes[this[UID]]);
         },
 
-        readOnly: true
+        setter: function(content) {
+            Y.DOM.setText(g_nodes[this[UID]], content);
+            return content;
+        }
     },
 
     'options': {
@@ -297,7 +300,8 @@ Node.ATTRS = {
         },
 
         setter: function(val) {
-            return Y.DOM.setValue(g_nodes[this[UID]], val);
+            Y.DOM.setValue(g_nodes[this[UID]], val);
+            return val;
         }
     },
 
@@ -1549,6 +1553,13 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 
 }, '@VERSION@' ,{requires:['dom-screen']});
 YUI.add('node-aria', function(Y) {
+
+/**
+ * Aria support for Node
+ *
+ * @module node
+ * @submodule node-aria
+ */
 
 Y.Node.re_aria = /^(?:role$|aria-)/;
 

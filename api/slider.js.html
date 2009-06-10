@@ -1,0 +1,1612 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: slider   slider.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>slider&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_slider.html" title="slider">slider</a>
+                
+                 &gt; slider.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * Create a sliding value range input visualized as a draggable thumb on a</span>
+<span class="c"> * background element.</span>
+<span class="c"> * </span>
+<span class="c"> * @module slider</span>
+<span class="c"> */</span>
+
+<span class="k">var</span> <span class="nx">SLIDER</span> <span class="o">=</span> <span class="s1">&#39;slider&#39;</span><span class="o">,</span>
+    <span class="nx">RAIL</span>   <span class="o">=</span> <span class="s1">&#39;rail&#39;</span><span class="o">,</span>
+    <span class="nx">THUMB</span>  <span class="o">=</span> <span class="s1">&#39;thumb&#39;</span><span class="o">,</span>
+    <span class="nx">VALUE</span>  <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="o">,</span>
+    <span class="nx">MIN</span>    <span class="o">=</span> <span class="s1">&#39;min&#39;</span><span class="o">,</span>
+    <span class="nx">MAX</span>    <span class="o">=</span> <span class="s1">&#39;max&#39;</span><span class="o">,</span>
+    <span class="nx">MIN_GUTTER</span> <span class="o">=</span> <span class="s1">&#39;minGutter&#39;</span><span class="o">,</span>
+    <span class="nx">MAX_GUTTER</span> <span class="o">=</span> <span class="s1">&#39;maxGutter&#39;</span><span class="o">,</span>
+    <span class="nx">THUMB_IMAGE</span> <span class="o">=</span> <span class="s1">&#39;thumbImage&#39;</span><span class="o">,</span>
+    <span class="nx">RAIL_SIZE</span>   <span class="o">=</span> <span class="s1">&#39;railSize&#39;</span><span class="o">,</span>
+    <span class="nx">CONTENT_BOX</span> <span class="o">=</span> <span class="s1">&#39;contentBox&#39;</span><span class="o">,</span>
+
+    <span class="nx">SLIDE_START</span> <span class="o">=</span> <span class="s1">&#39;slideStart&#39;</span><span class="o">,</span>
+    <span class="nx">SLIDE_END</span>   <span class="o">=</span> <span class="s1">&#39;slideEnd&#39;</span><span class="o">,</span>
+
+    <span class="nx">THUMB_DRAG</span>  <span class="o">=</span> <span class="s1">&#39;thumbDrag&#39;</span><span class="o">,</span>
+    <span class="nx">SYNC</span>        <span class="o">=</span> <span class="s1">&#39;sync&#39;</span><span class="o">,</span>
+    <span class="nx">POSITION_THUMB</span> <span class="o">=</span> <span class="s1">&#39;positionThumb&#39;</span><span class="o">,</span>
+    <span class="nx">RENDERED</span>    <span class="o">=</span> <span class="s1">&#39;rendered&#39;</span><span class="o">,</span>
+    <span class="nx">DISABLED</span>    <span class="o">=</span> <span class="s1">&#39;disabled&#39;</span><span class="o">,</span>
+    <span class="nx">DISABLED_CHANGE</span> <span class="o">=</span> <span class="s1">&#39;disabledChange&#39;</span><span class="o">,</span>
+
+    <span class="nx">DOT</span>      <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">,</span>
+    <span class="nx">PX</span>       <span class="o">=</span> <span class="s1">&#39;px&#39;</span><span class="o">,</span>
+    <span class="nx">WIDTH</span>    <span class="o">=</span> <span class="s1">&#39;width&#39;</span><span class="o">,</span>
+    <span class="nx">HEIGHT</span>   <span class="o">=</span> <span class="s1">&#39;height&#39;</span><span class="o">,</span>
+    <span class="nx">COMPLETE</span> <span class="o">=</span> <span class="s1">&#39;complete&#39;</span><span class="o">,</span>
+
+    <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+    <span class="nx">isBoolean</span><span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isBoolean</span><span class="o">,</span>
+    <span class="nx">isString</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">,</span>
+    <span class="nx">isNumber</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">,</span>
+    
+    <span class="nx">getCN</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">ClassNameManager</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">,</span>
+
+    <span class="nx">IMAGE</span>         <span class="o">=</span> <span class="s1">&#39;image&#39;</span><span class="o">,</span>
+    <span class="nx">C_RAIL</span>        <span class="o">=</span> <span class="nx">getCN</span><span class="o">(</span><span class="nx">SLIDER</span><span class="o">,</span><span class="nx">RAIL</span><span class="o">),</span>
+    <span class="nx">C_THUMB</span>       <span class="o">=</span> <span class="nx">getCN</span><span class="o">(</span><span class="nx">SLIDER</span><span class="o">,</span><span class="nx">THUMB</span><span class="o">),</span>
+    <span class="nx">C_THUMB_IMAGE</span> <span class="o">=</span> <span class="nx">getCN</span><span class="o">(</span><span class="nx">SLIDER</span><span class="o">,</span><span class="nx">THUMB</span><span class="o">,</span><span class="nx">IMAGE</span><span class="o">),</span>
+    <span class="nx">C_IMAGE_ERROR</span> <span class="o">=</span> <span class="nx">getCN</span><span class="o">(</span><span class="nx">SLIDER</span><span class="o">,</span><span class="nx">IMAGE</span><span class="o">,</span><span class="s1">&#39;error&#39;</span><span class="o">),</span>
+
+    <span class="nx">M</span>        <span class="o">=</span> <span class="nb">Math</span><span class="o">,</span>
+    <span class="nx">max</span>      <span class="o">=</span> <span class="nx">M</span><span class="o">.</span><span class="nx">max</span><span class="o">,</span>
+    <span class="nx">round</span>    <span class="o">=</span> <span class="nx">M</span><span class="o">.</span><span class="nx">round</span><span class="o">,</span>
+    <span class="nx">floor</span>    <span class="o">=</span> <span class="nx">M</span><span class="o">.</span><span class="nx">floor</span><span class="o">;</span>
+
+<span class="c">/**</span>
+<span class="c"> * Create a slider to represent an integer value between a given minimum and</span>
+<span class="c"> * maximum.</span>
+<span class="c"> *</span>
+<span class="c"> * @class Slider</span>
+<span class="c"> * @extends Widget</span>
+<span class="c"> * @param config {Object} Configuration object</span>
+<span class="c"> * @constructor</span>
+<span class="c"> */</span>
+<span class="k">function</span> <span class="nx">Slider</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nx">Slider</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span><span class="nx">arguments</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Slider</span><span class="o">,</span> <span class="o">{</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The identity of the widget.</span>
+<span class="c">     *</span>
+<span class="c">     * @property Slider.NAME</span>
+<span class="c">     * @type String</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">NAME</span> <span class="o">:</span> <span class="nx">SLIDER</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Object property names used for respective X and Y axis Sliders (e.g.</span>
+<span class="c">     * &amp;quot;left&amp;quot; vs. &amp;quot;top&amp;quot; for placing the thumb according to</span>
+<span class="c">     * its representative value).</span>
+<span class="c">     *</span>
+<span class="c">     * @property Slider.AXIS_KEYS</span>
+<span class="c">     * @type Object</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">AXIS_KEYS</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="nx">x</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">dim</span>           <span class="o">:</span> <span class="nx">WIDTH</span><span class="o">,</span>
+            <span class="nx">offAxisDim</span>    <span class="o">:</span> <span class="nx">HEIGHT</span><span class="o">,</span>
+            <span class="nx">eventPageAxis</span> <span class="o">:</span> <span class="s1">&#39;pageX&#39;</span><span class="o">,</span>
+            <span class="nx">ddStick</span>       <span class="o">:</span> <span class="s1">&#39;stickX&#39;</span><span class="o">,</span>
+            <span class="nx">xyIndex</span>       <span class="o">:</span> <span class="m">0</span>
+        <span class="o">},</span>
+        <span class="nx">y</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">dim</span>           <span class="o">:</span> <span class="nx">HEIGHT</span><span class="o">,</span>
+            <span class="nx">offAxisDim</span>    <span class="o">:</span> <span class="nx">WIDTH</span><span class="o">,</span>
+            <span class="nx">eventPageAxis</span> <span class="o">:</span> <span class="s1">&#39;pageY&#39;</span><span class="o">,</span>
+            <span class="nx">ddStick</span>       <span class="o">:</span> <span class="s1">&#39;stickY&#39;</span><span class="o">,</span>
+            <span class="nx">xyIndex</span>       <span class="o">:</span> <span class="m">1</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Static Object hash used to capture existing markup for progressive</span>
+<span class="c">     * enhancement.  Keys correspond to config attribute names and values</span>
+<span class="c">     * are selectors used to inspect the contentBox for an existing node</span>
+<span class="c">     * structure.</span>
+<span class="c">     *</span>
+<span class="c">     * @property Slider.HTML_PARSER</span>
+<span class="c">     * @Type Object</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">HTML_PARSER</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="nx">rail</span>       <span class="o">:</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">C_RAIL</span><span class="o">,</span>
+        <span class="nx">thumb</span>      <span class="o">:</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">C_THUMB</span><span class="o">,</span>
+        <span class="nx">thumbImage</span> <span class="o">:</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">C_THUMB_IMAGE</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Static property used to define the default attribute configuration of</span>
+<span class="c">     * the Widget.</span>
+<span class="c">     *</span>
+<span class="c">     * @property Slider.ATTRS</span>
+<span class="c">     * @Type Object</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">ATTRS</span> <span class="o">:</span> <span class="o">{</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Axis upon which the Slider&#39;s thumb moves.  &amp;quot;x&amp;quot; for</span>
+<span class="c">         * horizontal, &amp;quot;y&amp;quot; for vertical.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute axis</span>
+<span class="c">         * @type String</span>
+<span class="c">         * @default &amp;quot;x&amp;quot;</span>
+<span class="c">         * @writeOnce</span>
+<span class="c">         */</span>
+        <span class="nx">axis</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;x&#39;</span><span class="o">,</span>
+            <span class="nx">writeOnce</span> <span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewAxis</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">},</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setAxisFn</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Integer value associated with the left or top terminus of the</span>
+<span class="c">         * Slider&#39;s rail, depending on the configured axis.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute min</span>
+<span class="c">         * @type Number</span>
+<span class="c">         * @default 0</span>
+<span class="c">         */</span>
+        <span class="nx">min</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewMin</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Integer value associated with the right or bottom terminus of the</span>
+<span class="c">         * Slider&#39;s rail, depending on the configured axis.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute max</span>
+<span class="c">         * @type Number</span>
+<span class="c">         * @default 100</span>
+<span class="c">         */</span>
+        <span class="nx">max</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="m">100</span><span class="o">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewMax</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The current value of the Slider.  This value is interpretted into a</span>
+<span class="c">         * position for the thumb along the Slider&#39;s rail.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute value</span>
+<span class="c">         * @type Number</span>
+<span class="c">         * @default 0</span>
+<span class="c">         */</span>
+        <span class="nx">value</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewValue</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">},</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setValueFn</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The Node representing the Slider&#39;s rail, usually visualized as a</span>
+<span class="c">         * bar of some sort using a background image, along which the thumb</span>
+<span class="c">         * moves.  This Node contains the thumb Node.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute rail</span>
+<span class="c">         * @type Node</span>
+<span class="c">         * @default null</span>
+<span class="c">         */</span>
+        <span class="nx">rail</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewRail</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">},</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setRailFn</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The Node representing the Slider&#39;s thumb, usually visualized as a</span>
+<span class="c">         * pointer using a contained image Node (see thumbImage).  The current</span>
+<span class="c">         * value of the Slider is calculated from the centerpoint of this</span>
+<span class="c">         * Node in relation to the rail Node.  If provided, the thumbImage</span>
+<span class="c">         * Node is contained within this Node.</span>
+<span class="c">         *</span>
+<span class="c">         * If no thumbImage is provided and the Node passed as the thumb is an</span>
+<span class="c">         * &lt;code&gt;img&lt;/code&gt; element, the assigned Node will be allocated to the</span>
+<span class="c">         * thumbImage and the thumb container defaulted.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute thumb</span>
+<span class="c">         * @type Node</span>
+<span class="c">         * @default null</span>
+<span class="c">         */</span>
+        <span class="nx">thumb</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewThumb</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">},</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setThumbFn</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The Node representing the image element to use for the Slider&#39;s</span>
+<span class="c">         * thumb.</span>
+<span class="c">         *</span>
+<span class="c">         * Alternately, an image URL can be passed and an &lt;code&gt;img&lt;/code&gt;</span>
+<span class="c">         * Node will be generated accordingly.</span>
+<span class="c">         *</span>
+<span class="c">         * If no thumbImage is provided and the Node passed as the thumb is an</span>
+<span class="c">         * &lt;code&gt;img&lt;/code&gt; element, the assigned Node will be allocated to the</span>
+<span class="c">         * thumbImage and the thumb container defaulted.</span>
+<span class="c">         *</span>
+<span class="c">         * If thumbImage is provided but its URL resolves to a 404, a default</span>
+<span class="c">         * style will be applied to maintain basic functionality.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute thumbImage</span>
+<span class="c">         * @type Node|String</span>
+<span class="c">         * @default null</span>
+<span class="c">         */</span>
+        <span class="nx">thumbImage</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewThumbImage</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">},</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setThumbImageFn</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The width or height of the rail element representing the physical</span>
+<span class="c">         * space along which the thumb can move.  CSS size values (e.g. &#39;30em&#39;)</span>
+<span class="c">         * accepted but converted to pixels during render.</span>
+<span class="c">         *</span>
+<span class="c">         * Alternately, but not recommended, this attribute can be left</span>
+<span class="c">         * unassigned in favor of specifying height or width.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute railSize</span>
+<span class="c">         * @type String</span>
+<span class="c">         * @default &#39;0&#39;</span>
+<span class="c">         */</span>
+        <span class="nx">railSize</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="o">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateNewRailSize</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Boolean indicating whether clicking and dragging on the rail will</span>
+<span class="c">         * trigger thumb movement.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute railEnabled</span>
+<span class="c">         * @type Boolean</span>
+<span class="c">         * @default true</span>
+<span class="c">         */</span>
+        <span class="nx">railEnabled</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="nx">isBoolean</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Like CSS padding, the distance in pixels from the inner top left</span>
+<span class="c">         * corner of the rail node within which the thumb can travel.  Negative</span>
+<span class="c">         * values allow the edge of the thumb to escape the rail node</span>
+<span class="c">         * boundaries.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute minGutter</span>
+<span class="c">         * @type Number</span>
+<span class="c">         * @default 0</span>
+<span class="c">         */</span>
+        <span class="nx">minGutter</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="nx">isNumber</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Like CSS padding, the distance in pixels from the inner bottom right</span>
+<span class="c">         * corner of the rail node within which the thumb can travel.  Negative</span>
+<span class="c">         * values allow the edge of the thumb to escape the rail node</span>
+<span class="c">         * boundaries.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute maxGutter</span>
+<span class="c">         * @type Number</span>
+<span class="c">         * @default 0</span>
+<span class="c">         */</span>
+        <span class="nx">maxGutter</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="nx">isNumber</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">Slider</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Widget</span><span class="o">,</span> <span class="o">{</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Collection of object property names from the appropriate hash set in</span>
+<span class="c">     * Slider.AXIS_KEYS.</span>
+<span class="c">     *</span>
+<span class="c">     * @property _key</span>
+<span class="c">     * @type Object</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_key</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Factor used to translate positional coordinates (e.g. left or top) to</span>
+<span class="c">     * the Slider&#39;s value.</span>
+<span class="c">     *</span>
+<span class="c">     * @property _factor</span>
+<span class="c">     * @type Number</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_factor</span> <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Pixel dimension of the rail Node&#39;s width for X axis Sliders or height</span>
+<span class="c">     * for Y axis Sliders.  Used with _factor to calculate positional</span>
+<span class="c">     * coordinates for the thumb.</span>
+<span class="c">     *</span>
+<span class="c">     * @property _railSize</span>
+<span class="c">     * @type Number</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_railSize</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Pixel dimension of the thumb Node&#39;s width for X axis Sliders or height</span>
+<span class="c">     * for Y axis Sliders.  Used with _factor to calculate positional</span>
+<span class="c">     * coordinates for the thumb.</span>
+<span class="c">     *</span>
+<span class="c">     * @property _thumbSize</span>
+<span class="c">     * @type Number</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_thumbSize</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Pixel offset of the point in the thumb element from its top/left edge</span>
+<span class="c">     * to where the value calculation should take place.  By default, this is</span>
+<span class="c">     * calculated to half the width of the thumb, causing the value to be</span>
+<span class="c">     * marked from the center of the thumb.</span>
+<span class="c">     *</span>
+<span class="c">     * @property _thumbOffset</span>
+<span class="c">     * @type Number</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_thumbOffset</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Object returned from temporary subscription to disabledChange event to</span>
+<span class="c">     * defer setting the disabled state while Slider is loading the thumb</span>
+<span class="c">     * image.</span>
+<span class="c">     *</span>
+<span class="c">     * @property _stall</span>
+<span class="c">     * @type Object</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_stall</span> <span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Deferred value for the disabled attribute when stalled (see _stall</span>
+<span class="c">     * property).</span>
+<span class="c">     *</span>
+<span class="c">     * @property _disabled</span>
+<span class="c">     * @type Boolean</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_disabled</span> <span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Construction logic executed durint Slider instantiation. Subscribe to</span>
+<span class="c">     * after events for min, max, and railSize.  Publish custom events</span>
+<span class="c">     * including slideStart and slideEnd.</span>
+<span class="c">     *</span>
+<span class="c">     * @method initializer</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">initializer</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_key</span> <span class="o">=</span> <span class="nx">Slider</span><span class="o">.</span><span class="nx">AXIS_KEYS</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;axis&#39;</span><span class="o">)];</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;minChange&#39;</span><span class="o">,</span>      <span class="k">this</span><span class="o">.</span><span class="nx">_afterMinChange</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;maxChange&#39;</span><span class="o">,</span>      <span class="k">this</span><span class="o">.</span><span class="nx">_afterMaxChange</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;railSizeChange&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterRailSizeChange</span><span class="o">);</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Signals the beginning of a thumb drag operation.  Payload includes</span>
+<span class="c">         * the DD.Drag instance&#39;s drag:start event under key ddEvent.</span>
+<span class="c">         *</span>
+<span class="c">         * @event slideStart</span>
+<span class="c">         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:</span>
+<span class="c">         *  &lt;dl&gt;</span>
+<span class="c">         *      &lt;dt&gt;ddEvent&lt;/dt&gt;</span>
+<span class="c">         *          &lt;dd&gt;&lt;code&gt;drag:start&lt;/code&gt; event from the managed DD.Drag instance&lt;/dd&gt;</span>
+<span class="c">         *  &lt;/dl&gt;</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">SLIDE_START</span><span class="o">);</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Signals the end of a thumb drag operation.  Payload includes</span>
+<span class="c">         * the DD.Drag instance&#39;s drag:end event under key ddEvent.</span>
+<span class="c">         *</span>
+<span class="c">         * @event slideEnd</span>
+<span class="c">         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:</span>
+<span class="c">         *  &lt;dl&gt;</span>
+<span class="c">         *      &lt;dt&gt;ddEvent&lt;/dt&gt;</span>
+<span class="c">         *          &lt;dd&gt;&lt;code&gt;drag:end&lt;/code&gt; event from the managed DD.Drag instance&lt;/dd&gt;</span>
+<span class="c">         *  &lt;/dl&gt;</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">SLIDE_END</span><span class="o">);</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Communicates a request to synchronize the Slider UI with the</span>
+<span class="c">         * attribute state.  Links the sync request with the default sync</span>
+<span class="c">         * logic in the default function _defSyncFn.</span>
+<span class="c">         *</span>
+<span class="c">         * @event sync</span>
+<span class="c">         * @param event {Event.Facade} Event Facade object</span>
+<span class="c">         * @preventable _defSyncFn</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">SYNC</span><span class="o">,</span> <span class="o">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_defSyncFn</span> <span class="o">});</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Signals a value change via API, requiring the thumb position to be</span>
+<span class="c">         * updated.  Triggers the thumb placement logic in the default function</span>
+<span class="c">         * _defSetThumbPosition.</span>
+<span class="c">         *</span>
+<span class="c">         * @event valueSet</span>
+<span class="c">         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:</span>
+<span class="c">         *  &lt;dl&gt;</span>
+<span class="c">         *      &lt;dt&gt;changeEv&lt;/dt&gt;</span>
+<span class="c">         *          &lt;dd&gt;&lt;code&gt;valueChange&lt;/code&gt; event fired in response to the change in the value attribute&lt;/dd&gt;</span>
+<span class="c">         *  &lt;/dl&gt;</span>
+<span class="c">         * @preventable _defPositionThumbFn</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">POSITION_THUMB</span><span class="o">,</span> <span class="o">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_defPositionThumbFn</span> <span class="o">});</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Create the DOM structure for the Slider.  Calls _initRail and _initThumb.</span>
+<span class="c">     *</span>
+<span class="c">     * @method renderUI</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">renderUI</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_initRail</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_initThumb</span><span class="o">();</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Creates the rail element if not provided or discovered via HTML_PARSER.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _initRail</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_initRail</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">cb</span>   <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CONTENT_BOX</span><span class="o">),</span>
+            <span class="nx">rail</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RAIL</span><span class="o">);</span>
+
+        <span class="c">// Create rail if necessary. Make sure it&#39;s in the contentBox</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="nx">rail</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">rail</span> <span class="o">=</span> <span class="nx">cb</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;div class=&quot;&#39;</span><span class="o">+</span><span class="nx">C_RAIL</span><span class="o">+</span><span class="s1">&#39;&quot;&gt;&lt;/div&gt;&#39;</span><span class="o">));</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">RAIL</span><span class="o">,</span><span class="nx">rail</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">cb</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">rail</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">cb</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">rail</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nx">rail</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">C_RAIL</span><span class="o">);</span>
+        <span class="nx">rail</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">RAIL</span><span class="o">,</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;axis&#39;</span><span class="o">)));</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Creates the thumb element (not image) if not provided or discovered via</span>
+<span class="c">     * HTML_PARSER.  If thumb is present and an &lt;code&gt;img&lt;/code&gt; element</span>
+<span class="c">     * &lt;em&gt;and&lt;/em&gt; no thumbImage provided, reassigns the thumb element to the</span>
+<span class="c">     * thumbImage and defaults the thumb element as a div.</span>
+<span class="c">     *</span>
+<span class="c">     * Makes sure the thumb is a child of the rail element and calls</span>
+<span class="c">     * _initThumbImage if thumbImage is provided.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _initThumb</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_initThumb</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">rail</span>    <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RAIL</span><span class="o">),</span>
+            <span class="nx">thumb</span>   <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB</span><span class="o">);</span>
+
+        <span class="c">// Passed an img element as the thumb</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">thumb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB_IMAGE</span><span class="o">)</span> <span class="o">&amp;&amp;</span>
+            <span class="nx">thumb</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;nodeName&#39;</span><span class="o">).</span><span class="nx">toLowerCase</span><span class="o">()</span> <span class="o">===</span> <span class="s1">&#39;img&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">THUMB_IMAGE</span><span class="o">,</span> <span class="nx">thumb</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">THUMB</span><span class="o">,</span><span class="kc">null</span><span class="o">);</span>
+            <span class="nx">thumb</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">thumb</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">thumb</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span>
+                <span class="s1">&#39;&lt;div class=&quot;&#39;</span><span class="o">+</span><span class="nx">C_THUMB</span><span class="o">+</span><span class="s1">&#39;&quot;&gt;&lt;/div&gt;&#39;</span><span class="o">);</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">THUMB</span><span class="o">,</span><span class="nx">thumb</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nx">thumb</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">C_THUMB</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">rail</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">thumb</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">rail</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">thumb</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB_IMAGE</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_initThumbImage</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Ensures the thumbImage is a child of the thumb element.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _initThumbImage</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_initThumbImage</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">thumb</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB</span><span class="o">),</span>
+            <span class="nx">img</span>   <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB_IMAGE</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">img</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">img</span><span class="o">.</span><span class="nx">replaceClass</span><span class="o">(</span><span class="nx">C_THUMB</span><span class="o">,</span><span class="nx">C_THUMB_IMAGE</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">thumb</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">img</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">thumb</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">img</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Calls _bindThumbDD to create the Y.DD instance used to handle the thumb</span>
+<span class="c">     * movement and binds Slider interaction to the configured value model.</span>
+<span class="c">     *</span>
+<span class="c">     * @method bindUI</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">bindUI</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">         * Communicates user interaction with the thumb.  Triggers the logic</span>
+<span class="c">         * to update the value via the default function _defUpdateValueFromDD.</span>
+<span class="c">         *</span>
+<span class="c">         * @event thumbDrag</span>
+<span class="c">         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:</span>
+<span class="c">         *  &lt;dl&gt;</span>
+<span class="c">         *      &lt;dt&gt;ddEvent&lt;/dt&gt;</span>
+<span class="c">         *          &lt;dd&gt;&lt;code&gt;drag:drag&lt;/code&gt; event from the managed DD.Drag instance&lt;/dd&gt;</span>
+<span class="c">         *  &lt;/dl&gt;</span>
+<span class="c">         * @preventable _defUpdateValueFromDD</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">THUMB_DRAG</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_defUpdateValueFromDD</span><span class="o">});</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_bindThumbDD</span><span class="o">();</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;valueChange&#39;</span><span class="o">,</span>      <span class="k">this</span><span class="o">.</span><span class="nx">_afterValueChange</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;thumbImageChange&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterThumbImageChange</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">DISABLED_CHANGE</span><span class="o">,</span>    <span class="k">this</span><span class="o">.</span><span class="nx">_afterDisabledChange</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Creates the Y.DD instance used to handle the thumb interaction.</span>
+<span class="c">     * </span>
+<span class="c">     * @method _bindThumbDD</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_bindThumbDD</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">ddConf</span> <span class="o">=</span> <span class="o">{</span>
+                <span class="nx">node</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB</span><span class="o">),</span>
+                <span class="nx">bubble</span> <span class="o">:</span> <span class="kc">false</span>
+            <span class="o">},</span>
+            <span class="nx">conConf</span> <span class="o">=</span> <span class="o">{</span>
+                <span class="nx">constrain2node</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RAIL</span><span class="o">)</span>
+            <span class="o">};</span>
+
+        <span class="nx">conConf</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_key</span><span class="o">.</span><span class="nx">ddStick</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">Drag</span><span class="o">(</span><span class="nx">ddConf</span><span class="o">).</span><span class="nx">plug</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">DDConstrained</span><span class="o">,</span> <span class="nx">conConf</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;drag:start&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onDDStartDrag</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;drag:drag&#39;</span><span class="o">,</span>  <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onDDDrag</span><span class="o">,</span>      <span class="k">this</span><span class="o">));</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;drag:end&#39;</span><span class="o">,</span>   <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onDDEndDrag</span><span class="o">,</span>   <span class="k">this</span><span class="o">));</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_initRailDD</span><span class="o">();</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Subscribes to the rail Node&#39;s mousedown event to actuate the thumb when</span>
+<span class="c">     * backgroundEnabled is true.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _initRailDD</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_initRailDD</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RAIL</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mousedown&#39;</span><span class="o">,</span><span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_handleRailMouseDown</span><span class="o">,</span><span class="k">this</span><span class="o">));</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Moves the thumb to the mousedown position and hands control over to DD</span>
+<span class="c">     * if the Slider is not disabled and railEnabled is true.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _handleRailMouseDown</span>
+<span class="c">     * @param e {Event} Mousedown event facade</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_handleRailMouseDown</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;railEnabled&#39;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">dd</span>      <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">,</span>
+                <span class="nx">xyIndex</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_key</span><span class="o">.</span><span class="nx">xyIndex</span><span class="o">,</span>
+                <span class="nx">xy</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">dd</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;primaryButtonOnly&#39;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="o">.</span><span class="nx">button</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Mousedown was not produced by the primary button&#39;</span><span class="o">,</span>
+                      <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-drag&#39;</span><span class="o">);</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="nx">dd</span><span class="o">.</span><span class="nx">_dragThreshMet</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+            <span class="nx">dd</span><span class="o">.</span><span class="nx">_fixIEMouseDown</span><span class="o">();</span>
+            <span class="nx">e</span><span class="o">.</span><span class="nx">halt</span><span class="o">();</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span> <span class="o">=</span> <span class="nx">dd</span><span class="o">;</span>
+
+            <span class="c">// Adjust registered starting position by half the thumb&#39;s x/y</span>
+<span class="c"></span>            <span class="nx">xy</span> <span class="o">=</span> <span class="nx">dd</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragNode&#39;</span><span class="o">).</span><span class="nx">getXY</span><span class="o">();</span>
+            <span class="nx">xy</span><span class="o">[</span><span class="nx">xyIndex</span><span class="o">]</span> <span class="o">+=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_thumbOffset</span><span class="o">;</span>
+
+            <span class="nx">dd</span><span class="o">.</span><span class="nx">_setStartPosition</span><span class="o">(</span><span class="nx">xy</span><span class="o">);</span>
+            <span class="nx">dd</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;activeHandle&#39;</span><span class="o">,</span><span class="nx">dd</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragNode&#39;</span><span class="o">));</span>
+
+            <span class="nx">dd</span><span class="o">.</span><span class="nx">start</span><span class="o">();</span>
+            <span class="nx">dd</span><span class="o">.</span><span class="nx">_alignNode</span><span class="o">([</span><span class="nx">e</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span><span class="nx">e</span><span class="o">.</span><span class="nx">pageY</span><span class="o">]);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Synchronizes the DOM state with the attribute settings (most notably</span>
+<span class="c">     * railSize and value).  If thumbImage is provided and is still loading,</span>
+<span class="c">     * sync is delayed until it is complete, since the image&#39;s dimensions are</span>
+<span class="c">     * taken into consideration for calculations.</span>
+<span class="c">     *</span>
+<span class="c">     * @method syncUI</span>
+<span class="c">     */</span>
+    <span class="nx">syncUI</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CONTENT_BOX</span><span class="o">).</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">C_IMAGE_ERROR</span><span class="o">);</span>
+
+        <span class="k">var</span> <span class="nx">img</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB_IMAGE</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_isImageLoading</span><span class="o">(</span><span class="nx">img</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Thumb image loading. Scheduling sync.&#39;</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+            <span class="c">// Schedule the sync for when the image loads/errors</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_scheduleSync</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;No thumb image, or image already loaded. Syncing immediately.&#39;</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_ready</span><span class="o">(</span><span class="nx">img</span><span class="o">,!</span><span class="k">this</span><span class="o">.</span><span class="nx">_isImageLoaded</span><span class="o">(</span><span class="nx">img</span><span class="o">));</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Binds to the load and error event on the thumbImage to sync the DOM</span>
+<span class="c">     * state with the attribute settings when the image resource is resolved.</span>
+<span class="c">     * The Slider is disabled while it waits.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _scheduleSync</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_scheduleSync</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">img</span><span class="o">,</span> <span class="nx">handler</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_stall</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// disable the control until the image is loaded</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_disabled</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">,</span><span class="kc">true</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_stall</span>    <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">DISABLED_CHANGE</span><span class="o">,</span><span class="k">this</span><span class="o">.</span><span class="nx">_stallDisabledChange</span><span class="o">);</span>
+
+            <span class="nx">img</span>     <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB_IMAGE</span><span class="o">);</span>
+            <span class="nx">handler</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_imageLoaded</span><span class="o">,</span><span class="k">this</span><span class="o">,</span><span class="nx">img</span><span class="o">);</span>
+            <span class="nx">img</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;load&#39;</span><span class="o">,</span> <span class="nx">handler</span><span class="o">);</span>
+            <span class="nx">img</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;error&#39;</span><span class="o">,</span><span class="nx">handler</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Method subscribed to the disabledChange event when thumbImage is being</span>
+<span class="c">     * loaded.  Prevents manually enabling the Slider until the thumbImage</span>
+<span class="c">     * resource is resolved.  Intended value is stored during load and set upon</span>
+<span class="c">     * completion.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _stallDisabledChange</span>
+<span class="c">     * @param e {Event} Change event for the disabled attribute</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_stallDisabledChange</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_disabled</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">;</span>
+        <span class="nx">e</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Event handler assigned to the thumbImage&#39;s load and error event if it</span>
+<span class="c">     * was not loaded prior to instantiation.  Calls _ready method and restores</span>
+<span class="c">     * the Slider&#39;s disabled attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _imageLoaded</span>
+<span class="c">     * @param img {Node} The thumbImage Node</span>
+<span class="c">     * @param e {Event} load or error event fired by the thumbImage</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_imageLoaded</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">img</span><span class="o">,</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">error</span> <span class="o">=</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">type</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">().</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;error&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_stall</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_stall</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
+        <span class="o">}</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Thumb image &#39;</span><span class="o">+</span><span class="nx">e</span><span class="o">.</span><span class="nx">type</span><span class="o">+</span><span class="s1">&#39;ed.  Syncing&#39;</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_stall</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_ready</span><span class="o">(</span><span class="nx">img</span><span class="o">,</span><span class="nx">error</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">,</span><span class="k">this</span><span class="o">.</span><span class="nx">_disabled</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Fires the internal sync event, which barring preventDefault should</span>
+<span class="c">     * execute _defSyncFn.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _ready</span>
+<span class="c">     * @param img {Node} the thumbImage Node</span>
+<span class="c">     * @param error {Boolean} Indicates an error while loading the thumbImage</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_ready</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">img</span><span class="o">,</span><span class="nx">error</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">method</span> <span class="o">=</span> <span class="nx">error</span> <span class="o">?</span> <span class="s1">&#39;addClass&#39;</span> <span class="o">:</span> <span class="s1">&#39;removeClass&#39;</span><span class="o">;</span>
+
+        <span class="c">// If the thumb image url results in 404, assign a class to provide</span>
+<span class="c"></span>        <span class="c">// default thumb dimensions/UI</span>
+<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CONTENT_BOX</span><span class="o">)[</span><span class="nx">method</span><span class="o">](</span><span class="nx">C_IMAGE_ERROR</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">SYNC</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The default synchronization behavior, updating the Slider&#39;s DOM state to</span>
+<span class="c">     * match the current attribute values.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _defSyncFn</span>
+<span class="c">     * @param e {Event} Internal sync event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_defSyncFn</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetThumbSize</span><span class="o">();</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_setThumbOffset</span><span class="o">();</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetRailSize</span><span class="o">();</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_setRailOffsetXY</span><span class="o">();</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_setDDGutter</span><span class="o">();</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_resetDDCacheRegion</span><span class="o">();</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_setFactor</span><span class="o">();</span>
+
+        <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">VALUE</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">POSITION_THUMB</span><span class="o">,</span> <span class="o">{</span>
+            <span class="nx">value</span>  <span class="o">:</span> <span class="nx">val</span><span class="o">,</span>
+            <span class="nx">offset</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_convertValueToOffset</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span>
+        <span class="o">});</span>
+
+        <span class="c">// Forces a reflow of the bounding box to address IE8 inline-block</span>
+<span class="c"></span>        <span class="c">// container not expanding correctly. bug 2527905</span>
+<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="o">).</span><span class="nx">toggleClass</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Captures the thumbs pixel height or width, depending on the Slider&#39;s</span>
+<span class="c">     * axis, for use in positioning calculations.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _uiSetThumbSize</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_uiSetThumbSize</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">thumb</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB</span><span class="o">),</span>
+            <span class="nx">dim</span>   <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_key</span><span class="o">.</span><span class="nx">dim</span><span class="o">,</span>
+            <span class="nx">img</span>   <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB_IMAGE</span><span class="o">),</span>
+            <span class="nx">size</span><span class="o">;</span>
+
+        <span class="c">// offsetWidth fails in hidden containers</span>
+<span class="c"></span>        <span class="nx">size</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">thumb</span><span class="o">.</span><span class="nx">getComputedStyle</span><span class="o">(</span><span class="nx">dim</span><span class="o">),</span><span class="m">10</span><span class="o">);</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;thumb &#39;</span><span class="o">+</span><span class="nx">dim</span><span class="o">+</span><span class="s1">&#39;: &#39;</span><span class="o">+</span><span class="nx">size</span><span class="o">+</span><span class="s1">&#39;px&#39;</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">img</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_isImageLoaded</span><span class="o">(</span><span class="nx">img</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;using thumbImage &#39;</span><span class="o">+</span><span class="nx">dim</span><span class="o">+</span><span class="s1">&#39; (&#39;</span><span class="o">+</span><span class="nx">img</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">dim</span><span class="o">)+</span><span class="s1">&#39;) for _thumbSize&#39;</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+
+            <span class="nx">size</span> <span class="o">=</span> <span class="nx">img</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">dim</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_thumbSize</span> <span class="o">=</span> <span class="nx">size</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Sets the _thumbOffset property for use in establishing the point in the</span>
+<span class="c">     * thumb that should align to the rail position representing the calculated</span>
+<span class="c">     * value.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _setThumbOffset</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_setThumbOffset</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_thumbOffset</span> <span class="o">=</span> <span class="nx">floor</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_thumbSize</span> <span class="o">/</span> <span class="m">2</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;_thumbOffset calculated to &#39;</span><span class="o">+</span><span class="k">this</span><span class="o">.</span><span class="nx">_thumbOffset</span><span class="o">+</span><span class="s1">&#39;px&#39;</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Stores the rail Node&#39;s pixel height or width, depending on the Slider&#39;s</span>
+<span class="c">     * axis, for use in calculating thumb position from the value.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _uiSetRailSize</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_uiSetRailSize</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">rail</span>  <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RAIL</span><span class="o">),</span>
+            <span class="nx">thumb</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB</span><span class="o">),</span>
+            <span class="nx">img</span>   <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB_IMAGE</span><span class="o">),</span>
+            <span class="nx">dim</span>   <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_key</span><span class="o">.</span><span class="nx">dim</span><span class="o">,</span>
+            <span class="nx">size</span>  <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RAIL_SIZE</span><span class="o">),</span>
+            <span class="nx">setxy</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">size</span><span class="o">,</span><span class="m">10</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;railSize provided: &#39;</span><span class="o">+</span><span class="nx">size</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+
+            <span class="c">// Convert to pixels</span>
+<span class="c"></span>            <span class="nx">rail</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">dim</span><span class="o">,</span><span class="nx">size</span><span class="o">);</span>
+            <span class="nx">size</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">rail</span><span class="o">.</span><span class="nx">getComputedStyle</span><span class="o">(</span><span class="nx">dim</span><span class="o">),</span><span class="m">10</span><span class="o">);</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;pixel &#39;</span><span class="o">+</span><span class="nx">dim</span><span class="o">+</span><span class="s1">&#39; of railSize: &#39;</span><span class="o">+</span><span class="nx">size</span><span class="o">+</span><span class="s1">&#39;px&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;defaulting railSize from max of computed style and configured &#39;</span><span class="o">+</span><span class="nx">dim</span><span class="o">+</span><span class="s1">&#39; attribute value&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+            <span class="c">// Default from height or width (axis respective), or dims assigned</span>
+<span class="c"></span>            <span class="c">// via css to the rail or thumb, whichever is largest.</span>
+<span class="c"></span>            <span class="c">// Dear implementers, please use railSize, not height/width to</span>
+<span class="c"></span>            <span class="c">// set the rail dims</span>
+<span class="c"></span>            <span class="nx">size</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">dim</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">size</span><span class="o">,</span><span class="m">10</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">setxy</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="nx">rail</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">dim</span><span class="o">,</span><span class="nx">size</span><span class="o">);</span>
+                <span class="nx">size</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">rail</span><span class="o">.</span><span class="nx">getComputedStyle</span><span class="o">(</span><span class="nx">dim</span><span class="o">),</span><span class="m">10</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="nx">size</span> <span class="o">=</span> <span class="nx">max</span><span class="o">(</span>
+                    <span class="nx">size</span><span class="o">|</span><span class="m">0</span><span class="o">,</span>
+                    <span class="nb">parseInt</span><span class="o">(</span><span class="nx">thumb</span><span class="o">.</span><span class="nx">getComputedStyle</span><span class="o">(</span><span class="nx">dim</span><span class="o">),</span><span class="m">10</span><span class="o">),</span>
+                    <span class="nb">parseInt</span><span class="o">(</span><span class="nx">rail</span><span class="o">.</span><span class="nx">getComputedStyle</span><span class="o">(</span><span class="nx">dim</span><span class="o">),</span><span class="m">10</span><span class="o">));</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;pixel &#39;</span><span class="o">+</span><span class="nx">dim</span><span class="o">+</span><span class="s1">&#39; of rail: &#39;</span><span class="o">+</span><span class="nx">size</span><span class="o">+</span><span class="s1">&#39;px&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">img</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_isImageLoaded</span><span class="o">(</span><span class="nx">img</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;using max of thumbImage &#39;</span><span class="o">+</span><span class="nx">dim</span><span class="o">+</span><span class="s1">&#39; (&#39;</span><span class="o">+</span><span class="nx">img</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">dim</span><span class="o">)+</span><span class="s1">&#39; and &#39;</span><span class="o">+</span><span class="nx">size</span><span class="o">+</span><span class="s1">&#39; for railSize&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+
+                <span class="nx">size</span> <span class="o">=</span> <span class="nx">max</span><span class="o">(</span><span class="nx">img</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">dim</span><span class="o">),</span><span class="nx">size</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="nx">rail</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">dim</span><span class="o">,</span> <span class="nx">size</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_railSize</span> <span class="o">=</span> <span class="nx">size</span><span class="o">;</span>
+
+        <span class="c">// handle the (not recommended) fallback case of setting rail size via</span>
+<span class="c"></span>        <span class="c">// widget height/width params.  This is the only case that sets the</span>
+<span class="c"></span>        <span class="c">// off-axis rail dim in the code.</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">setxy</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">dim</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_key</span><span class="o">.</span><span class="nx">offAxisDim</span><span class="o">;</span>
+            <span class="nx">size</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">dim</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">size</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">rail</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">dim</span><span class="o">,</span><span class="nx">size</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Store the current XY position of the rail Node on the page.  For use in calculating thumb position from value.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _setRailOffsetXY</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_setRailOffsetXY</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_offsetXY</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RAIL</span><span class="o">).</span><span class="nx">getXY</span><span class="o">()[</span><span class="k">this</span><span class="o">.</span><span class="nx">_key</span><span class="o">.</span><span class="nx">xyIndex</span><span class="o">]</span> <span class="o">+</span>
+                         <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MIN_GUTTER</span><span class="o">);</span>
+    <span class="o">},</span>
+
+   <span class="c">/**</span>
+<span class="c">    * Passes the gutter attribute value to the DDConstrain gutter attribute.</span>
+<span class="c">    *</span>
+<span class="c">    * @method _setDDGutter</span>
+<span class="c">    * @protected</span>
+<span class="c">    */</span>
+    <span class="nx">_setDDGutter</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">gutter</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_key</span><span class="o">.</span><span class="nx">xyIndex</span> <span class="o">?</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MIN_GUTTER</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; 0 &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MAX_GUTTER</span><span class="o">)</span> <span class="o">:</span>
+            <span class="s2">&quot;0 &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MAX_GUTTER</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; 0 &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MIN_GUTTER</span><span class="o">);</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;setting DDConstrain gutter &quot;&#39;</span><span class="o">+</span><span class="nx">gutter</span><span class="o">+</span><span class="s1">&#39;&quot;&#39;</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">con</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;gutter&#39;</span><span class="o">,</span> <span class="nx">gutter</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Resets the cached region inside the DD constrain instance to support</span>
+<span class="c">     * repositioning the Slider after instantiation. Workaround for ticket </span>
+<span class="c">     *</span>
+<span class="c">     * @method _resetDDCacheRegion</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_resetDDCacheRegion</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">con</span><span class="o">.</span><span class="nx">_cacheRegion</span><span class="o">();</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Calculates the multiplier used to translate the value into a thumb</span>
+<span class="c">     * position.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _setFactor</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_setFactor</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">range</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_railSize</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">_thumbSize</span> <span class="o">-</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MIN_GUTTER</span><span class="o">)</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MAX_GUTTER</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_factor</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_railSize</span> <span class="o">?</span>
+            <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MAX</span><span class="o">)</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MIN</span><span class="o">))</span> <span class="o">/</span> <span class="nx">range</span> <span class="o">:</span>
+            <span class="m">1</span><span class="o">;</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;_factor set to &#39;</span><span class="o">+</span><span class="k">this</span><span class="o">.</span><span class="nx">_factor</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Convenience method for accessing the current value of the Slider.</span>
+<span class="c">     * Equivalent to &lt;code&gt;slider.get(&amp;quot;value&amp;quot;)&lt;/code&gt;.</span>
+<span class="c">     *</span>
+<span class="c">     * @method getValue</span>
+<span class="c">     * @return {Number} the value</span>
+<span class="c">     */</span>
+    <span class="nx">getValue</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">VALUE</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Convenience method for updating the current value of the Slider.</span>
+<span class="c">     * Equivalent to &lt;code&gt;slider.set(&amp;quot;value&amp;quot;,val)&lt;/code&gt;.</span>
+<span class="c">     *</span>
+<span class="c">     * @method setValue</span>
+<span class="c">     * @param val {Number} the new value</span>
+<span class="c">     */</span>
+    <span class="nx">setValue</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">VALUE</span><span class="o">,</span><span class="nx">val</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Validator applied to new values for the axis attribute. Only</span>
+<span class="c">     * &amp;quot;x&amp;quot; and &amp;quot;y&amp;quot; are permitted.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _validateNewAxis</span>
+<span class="c">     * @param v {String} proposed value for the axis attribute</span>
+<span class="c">     * @return Boolean</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_validateNewAxis</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">isString</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;xXyY&#39;</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">charAt</span><span class="o">(</span><span class="m">0</span><span class="o">))</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Validator applied to the min attribute. Only numbers are allowed.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _validateNewMin</span>
+<span class="c">     * @param v {String} proposed value for the min attribute</span>
+<span class="c">     * @return Boolean</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_validateNewMin</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">isNumber</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Validator applied to the max attribute. Only numbers are allowed.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _validateNewMax</span>
+<span class="c">     * @param v {String} proposed value for the max attribute</span>
+<span class="c">     * @return Boolean</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_validateNewMax</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">isNumber</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Validator applied to the value attribute. Only numbers between the min</span>
+<span class="c">     * and max are allowed.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _validateNewValue</span>
+<span class="c">     * @param v {String} proposed value for the value attribute</span>
+<span class="c">     * @return Boolean</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_validateNewValue</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">min</span>    <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MIN</span><span class="o">),</span>
+            <span class="nx">max</span>    <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MAX</span><span class="o">);</span>
+
+        <span class="k">return</span> <span class="nx">isNumber</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">&amp;&amp;</span>
+                <span class="o">(</span><span class="nx">min</span> <span class="o">&lt;</span> <span class="nx">max</span> <span class="o">?</span> <span class="o">(</span><span class="nx">v</span> <span class="o">&gt;=</span> <span class="nx">min</span> <span class="o">&amp;&amp;</span> <span class="nx">v</span> <span class="o">&lt;=</span> <span class="nx">max</span><span class="o">)</span> <span class="o">:</span> <span class="o">(</span><span class="nx">v</span> <span class="o">&gt;=</span> <span class="nx">max</span> <span class="o">&amp;&amp;</span> <span class="nx">v</span> <span class="o">&lt;=</span> <span class="nx">min</span><span class="o">));</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Validator applied to the rail attribute. Only allows values through</span>
+<span class="c">     * before the Slider is rendered.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _validateNewRail</span>
+<span class="c">     * @param v {String} proposed value for the rail attribute</span>
+<span class="c">     * @return Boolean</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_validateNewRail</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RENDERED</span><span class="o">)</span> <span class="o">||</span> <span class="nx">v</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Validator applied to the thumb attribute. Only allows values through</span>
+<span class="c">     * before the Slider is rendered.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _validateNewThumb</span>
+<span class="c">     * @param v {String} proposed value for the thumb attribute</span>
+<span class="c">     * @return Boolean</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_validateNewThumb</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RENDERED</span><span class="o">)</span> <span class="o">||</span> <span class="nx">v</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Validator applied to the thumbImage attribute. Only allows values through</span>
+<span class="c">     * before the Slider is rendered.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _validateNewThumbImage</span>
+<span class="c">     * @param v {String} proposed value for the thumbImage attribute</span>
+<span class="c">     * @return Boolean</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_validateNewThumbImage</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RENDERED</span><span class="o">)</span> <span class="o">||</span> <span class="nx">v</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Validator applied to the railSize attribute. Only css size values (e.g.</span>
+<span class="c">     * &#39;200px&#39; are allowed.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _validateNewRailSize</span>
+<span class="c">     * @param v {String} proposed value for the railSize attribute</span>
+<span class="c">     * @return Boolean</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_validateNewRailSize</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">isString</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">&amp;&amp;</span>
+            <span class="o">(</span><span class="nx">v</span> <span class="o">===</span> <span class="s1">&#39;0&#39;</span> <span class="o">||</span> <span class="sr">/^\d+(?:p[xtc]|%|e[mx]|in|[mc]m)$/</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">v</span><span class="o">));</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Setter applied to the input when updating the railSize attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _setAxisFn</span>
+<span class="c">     * @param v {String} proposed value for the axis attribute</span>
+<span class="c">     * @return {String} lowercased first character of the input string</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_setAxisFn</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">v</span><span class="o">.</span><span class="nx">charAt</span><span class="o">(</span><span class="m">0</span><span class="o">).</span><span class="nx">toLowerCase</span><span class="o">();</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Setter applied to the input when updating the value attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _setValueFn</span>
+<span class="c">     * @param v {Number} proposed new value for the Slider</span>
+<span class="c">     * @return {Number} rounded value or configured min if non-number input</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_setValueFn</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="nx">v</span><span class="o">;</span> <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Setter applied to the input when updating the rail attribute.  Input can</span>
+<span class="c">     * be a Node, raw HTMLElement, or a selector string to locate it.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _setRailFn</span>
+<span class="c">     * @param v {Node|String|HTMLElement} The rail element Node or selector</span>
+<span class="c">     * @return {Node} The Node if found.  Otherwise null.</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_setRailFn</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">||</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Setter applied to the input when updating the thumb attribute.  Input can</span>
+<span class="c">     * be a Node, raw HTMLElement, or a selector string to locate it.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _setThumbFn</span>
+<span class="c">     * @param v {Node|String|HTMLElement} The thumb element Node or selector</span>
+<span class="c">     * @return {Node} The Node if found.  Otherwise null.</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_setThumbFn</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">||</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Setter applied to the input when updating the thumbImage attribute.</span>
+<span class="c">     * Input can be a Node, raw HTMLElement, selector string to locate it, or</span>
+<span class="c">     * the URL for an image resource.</span>
+<span class="c">     *</span>
+<span class="c">     * String input will be treated as a selector.  If no element is found using</span>
+<span class="c">     * the selector, an &lt;code&gt;img&lt;/code&gt; Node will be created with the string</span>
+<span class="c">     * used as the &lt;code&gt;src&lt;/code&gt; attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _setThumbImageFn</span>
+<span class="c">     * @param v {Node|String|HTMLElement} The thumbImage element Node, selector,</span>
+<span class="c">     *          or image URL</span>
+<span class="c">     * @return {Node} The Node if found or created.  Otherwise null.</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_setThumbImageFn</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">v</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">||</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;img src=&quot;&#39;</span><span class="o">+</span><span class="nx">v</span><span class="o">+</span><span class="s1">&#39;&quot; alt=&quot;Slider thumb&quot;&gt;&#39;</span><span class="o">)</span> <span class="o">:</span>
+                <span class="kc">null</span><span class="o">;</span>
+    <span class="o">},</span>
+
+
+
+    <span class="c">/**</span>
+<span class="c">     * Caches the current page position of the rail element and fires the</span>
+<span class="c">     * slideStart event in response to the DD&#39;s drag:start.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _onDDStartDrag</span>
+<span class="c">     * @param e {Event} the DD instance&#39;s drag:start custom event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_onDDStartDrag</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;slide start&#39;</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_setRailOffsetXY</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">SLIDE_START</span><span class="o">,{</span> <span class="nx">ddEvent</span><span class="o">:</span> <span class="nx">e</span> <span class="o">});</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Fires the thumbDrag event to queue Slider value update.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _onDDDrag</span>
+<span class="c">     * @param e {Event} the DD instance&#39;s drag:drag custom event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_onDDDrag</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;thumb drag&#39;</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">THUMB_DRAG</span><span class="o">,</span> <span class="o">{</span> <span class="nx">ddEvent</span><span class="o">:</span> <span class="nx">e</span> <span class="o">});</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The default value update behavior in response to Slider thumb</span>
+<span class="c">     * interaction.  Calculates the value using stored offsets, the _factor</span>
+<span class="c">     * multiplier and the min value.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _defUpdateValueFromDD</span>
+<span class="c">     * @param e {Event} the internal thumbDrag event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_defUpdateValueFromDD</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">before</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">VALUE</span><span class="o">),</span>
+            <span class="nx">val</span>    <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">ddEvent</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_key</span><span class="o">.</span><span class="nx">eventPageAxis</span><span class="o">]</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">_offsetXY</span><span class="o">;</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;setting value from thumb drag: before(&#39;</span><span class="o">+</span><span class="nx">before</span><span class="o">+</span><span class="s1">&#39;) raw(&#39;</span><span class="o">+</span><span class="nx">val</span><span class="o">+</span><span class="s1">&#39;) factored(&#39;</span><span class="o">+</span><span class="nx">round</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MIN</span><span class="o">)</span> <span class="o">+</span> <span class="o">(</span><span class="nx">val</span> <span class="o">*</span> <span class="k">this</span><span class="o">.</span><span class="nx">_factor</span><span class="o">))+</span><span class="s1">&#39;)&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+
+        <span class="nx">val</span> <span class="o">=</span> <span class="nx">round</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MIN</span><span class="o">)</span> <span class="o">+</span> <span class="o">(</span><span class="nx">val</span> <span class="o">*</span> <span class="k">this</span><span class="o">.</span><span class="nx">_factor</span><span class="o">));</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">before</span> <span class="o">!==</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">VALUE</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="o">{</span> <span class="nx">ddEvent</span><span class="o">:</span> <span class="nx">e</span><span class="o">.</span><span class="nx">ddEvent</span> <span class="o">});</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Fires the slideEnd event.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _onDDEndDrag</span>
+<span class="c">     * @param e {Event} the DD instance&#39;s drag:end custom event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_onDDEndDrag</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;slide end&#39;</span><span class="o">,</span><span class="s1">&#39;info&#39;</span><span class="o">,</span><span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">SLIDE_END</span><span class="o">,{</span> <span class="nx">ddEvent</span><span class="o">:</span> <span class="nx">e</span> <span class="o">});</span>
+    <span class="o">},</span>
+
+
+
+
+    <span class="c">/**</span>
+<span class="c">     * Calls _uiPositionThumb with the value of the custom event&#39;s</span>
+<span class="c">     * &amp;quot;offset&amp;quot; property.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _defPositionThumbFn</span>
+<span class="c">     * @param e {Event} the positionThumb custom event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_defPositionThumbFn</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;setting thumb offset (&#39;</span><span class="o">+</span><span class="nx">e</span><span class="o">.</span><span class="nx">offset</span><span class="o">+</span><span class="s1">&#39;) from value attribute update (&#39;</span><span class="o">+</span><span class="nx">e</span><span class="o">.</span><span class="nx">value</span><span class="o">+</span><span class="s1">&#39;)&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_uiPositionThumb</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">offset</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Places the thumb at a particular X or Y location based on the configured</span>
+<span class="c">     * axis.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _uiPositionThumb</span>
+<span class="c">     * @param xy {Number} the desired left or top pixel position of the thumb</span>
+<span class="c">     *           in relation to the rail Node.</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_uiPositionThumb</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">xy</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">dd</span>     <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">,</span>
+            <span class="nx">thumb</span>  <span class="o">=</span> <span class="nx">dd</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragNode&#39;</span><span class="o">),</span>
+            <span class="nx">hidden</span> <span class="o">=</span> <span class="nx">thumb</span><span class="o">.</span><span class="nx">ancestor</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_isDisplayNone</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">hidden</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">dd</span><span class="o">.</span><span class="nx">_setStartPosition</span><span class="o">(</span><span class="nx">dd</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragNode&#39;</span><span class="o">).</span><span class="nx">getXY</span><span class="o">());</span>
+
+            <span class="c">// stickX/stickY config on DD instance will negate off-axis move</span>
+<span class="c"></span>            <span class="nx">dd</span><span class="o">.</span><span class="nx">_alignNode</span><span class="o">([</span><span class="nx">xy</span><span class="o">,</span><span class="nx">xy</span><span class="o">],</span><span class="kc">true</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Helper function to search up the ancestor axis looking for a node with</span>
+<span class="c">     * style display: none.  This is passed as a function to node.ancestor(..)</span>
+<span class="c">     * to test if a given node is in the displayed DOM and can get accurate</span>
+<span class="c">     * positioning information.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _isDisplayNone</span>
+<span class="c">     * @param el {Node} ancestor node as the function walks up the parent axis</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @return {Boolean} true if the node is styled with display: none</span>
+<span class="c">     */</span>
+    <span class="nx">_isDisplayNone</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getComputedStyle</span><span class="o">(</span><span class="s1">&#39;display&#39;</span><span class="o">)</span> <span class="o">===</span> <span class="s1">&#39;none&#39;</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Fires the internal valueSet event in response to a change in the value</span>
+<span class="c">     * attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterValueChange</span>
+<span class="c">     * @param e {Event} valueChange custom event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_afterValueChange</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">e</span><span class="o">.</span><span class="nx">ddEvent</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_convertValueToOffset</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">);</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;firing positionThumb to position thumb&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;slider&#39;</span><span class="o">);</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">POSITION_THUMB</span><span class="o">,{</span> <span class="nx">value</span><span class="o">:</span> <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">,</span> <span class="nx">offset</span><span class="o">:</span> <span class="nx">xy</span> <span class="o">});</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Converts a value to an integer offset for the thumb position on the rail.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _convertValueToOffset</span>
+<span class="c">     * @param v {Number} value between the Slider&#39;s min and max</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_convertValueToOffset</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">round</span><span class="o">((</span><span class="nx">v</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">MIN</span><span class="o">))</span> <span class="o">/</span> <span class="k">this</span><span class="o">.</span><span class="nx">_factor</span><span class="o">)</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">_offsetXY</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Replaces the thumb Node in response to a change in the thumb attribute.</span>
+<span class="c">     * This only has effect before the Slider is rendered.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterThumbChange</span>
+<span class="c">     * @param e {Event} thumbChange custom event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_afterThumbChange</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">thumb</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RENDERED</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">prevValue</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">e</span><span class="o">.</span><span class="nx">prevValue</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;parentNode&#39;</span><span class="o">).</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">prevValue</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_initThumb</span><span class="o">();</span>
+            
+            <span class="nx">thumb</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">THUMB</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">,</span><span class="nx">thumb</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;dragNode&#39;</span><span class="o">,</span><span class="nx">thumb</span><span class="o">);</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">syncUI</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Sets or replaces the thumb&#39;s contained &lt;code&gt;img&lt;/code&gt; Node with the</span>
+<span class="c">     * new Node in response to a change in the thumbImage attribute.  This only</span>
+<span class="c">     * has effect before the Slider is rendered.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterThumbImageChange</span>
+<span class="c">     * @param e {Event} thumbImageChange custom event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_afterThumbImageChange</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RENDERED</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">prevValue</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">e</span><span class="o">.</span><span class="nx">prevValue</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;parentNode&#39;</span><span class="o">).</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">prevValue</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_initThumbImage</span><span class="o">();</span>
+            
+            <span class="k">this</span><span class="o">.</span><span class="nx">syncUI</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Calls syncUI to update the Slider UI in response to change in the min</span>
+<span class="c">     * attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterMinChange</span>
+<span class="c">     * @param e {Event} minChange custom event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_afterMinChange</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_refresh</span><span class="o">(</span><span class="nx">e</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Calls syncUI to update the Slider UI in response to change in the max</span>
+<span class="c">     * attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterMaxChange</span>
+<span class="c">     * @param e {Event} maxChange custom event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_afterMaxChange</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_refresh</span><span class="o">(</span><span class="nx">e</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Calls syncUI to update the Slider UI in response to change in the</span>
+<span class="c">     * railSize attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterRailSizeChange</span>
+<span class="c">     * @param e {Event} railSizeChange custom event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_afterRailSizeChange</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_refresh</span><span class="o">(</span><span class="nx">e</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Locks or unlocks the DD instance in response to a change in the disabled</span>
+<span class="c">     * attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterDisabledChange</span>
+<span class="c">     * @param e {Event} disabledChange custom event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_afterDisabledChange</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;lock&#39;</span><span class="o">,</span><span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Common handler to call syncUI in response to change events that occurred</span>
+<span class="c">     * after the Slider is rendered.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _refresh</span>
+<span class="c">     * @param e {Event} An attribute change event</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_refresh</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span> <span class="o">!==</span> <span class="nx">e</span><span class="o">.</span><span class="nx">prevVal</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RENDERED</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">syncUI</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Used to determine if there is a current or pending request for the</span>
+<span class="c">     * thumbImage resource.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _isImageLoading</span>
+<span class="c">     * @param img {Node} &lt;code&gt;img&lt;/code&gt; Node</span>
+<span class="c">     * @return Boolean</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_isImageLoading</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">img</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">img</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">img</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">COMPLETE</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Used to determine if the image resource loaded successfully or there was</span>
+<span class="c">     * an error.</span>
+<span class="c">     *</span>
+<span class="c">     * NOTES:</span>
+<span class="c">     * &lt;ul&gt;</span>
+<span class="c">     *    &lt;li&gt;img load error fired xbrowser for image resources not yet resolved&lt;/li&gt;</span>
+<span class="c">     *    &lt;li&gt;img.complete reports false in IE for images not yet loaded as well as images that failed to load&lt;/li&gt;</span>
+<span class="c">     *    &lt;li&gt;img.complete true &amp;&amp; img.naturalWidth == 0 in FF and Safari indicate image failed to load&lt;/li&gt;</span>
+<span class="c">     *    &lt;li&gt;img.complete &amp;&amp; img.width == 0 in Opera indicates image failed to load&lt;/li&gt;</span>
+<span class="c">     * &lt;/ul&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * @method _isImageLoaded</span>
+<span class="c">     * @param img {Node} &lt;code&gt;img&lt;/code&gt; Node</span>
+<span class="c">     * @return Boolean</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_isImageLoaded</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">img</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">img</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="nx">img</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;naturalWidth&#39;</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">img</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">COMPLETE</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">w</span><span class="o">)</span> <span class="o">?</span> <span class="nx">img</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">WIDTH</span><span class="o">)</span> <span class="o">:</span> <span class="nx">w</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="o">}</span>
+
+<span class="o">});</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Slider</span> <span class="o">=</span> <span class="nx">Slider</span><span class="o">;</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
+                                <li class="selected"><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Slider.html" title="Slider">Slider</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="slider.js.html" title="slider.js">slider.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "protected", "host": "Slider", "name": "_afterDisabledChange", "url": "Slider.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMaxChange", "url": "Slider.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMinChange", "url": "Slider.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterRailSizeChange", "url": "Slider.html#method__afterRailSizeChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbChange", "url": "Slider.html#method__afterThumbChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbImageChange", "url": "Slider.html#method__afterThumbImageChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterValueChange", "url": "Slider.html#method__afterValueChange", "type": "method"}, {"access": "", "host": "Slider", "name": "axis", "url": "Slider.html#config_axis", "type": "config"}, {"access": "", "host": "Slider", "name": "axisChange", "url": "Slider.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_bindThumbDD", "url": "Slider.html#method__bindThumbDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "bindUI", "url": "Slider.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_convertValueToOffset", "url": "Slider.html#method__convertValueToOffset", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defPositionThumbFn", "url": "Slider.html#method__defPositionThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defSyncFn", "url": "Slider.html#method__defSyncFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defUpdateValueFromDD", "url": "Slider.html#method__defUpdateValueFromDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_disabled", "url": "Slider.html#property__disabled", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_factor", "url": "Slider.html#property__factor", "type": "property"}, {"access": "", "host": "Slider", "name": "getValue", "url": "Slider.html#method_getValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_handleRailMouseDown", "url": "Slider.html#method__handleRailMouseDown", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_imageLoaded", "url": "Slider.html#method__imageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "initializer", "url": "Slider.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRail", "url": "Slider.html#method__initRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRailDD", "url": "Slider.html#method__initRailDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumb", "url": "Slider.html#method__initThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumbImage", "url": "Slider.html#method__initThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isDisplayNone", "url": "Slider.html#method__isDisplayNone", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoaded", "url": "Slider.html#method__isImageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoading", "url": "Slider.html#method__isImageLoading", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_key", "url": "Slider.html#property__key", "type": "property"}, {"access": "", "host": "Slider", "name": "max", "url": "Slider.html#config_max", "type": "config"}, {"access": "", "host": "Slider", "name": "maxChange", "url": "Slider.html#event_maxChange", "type": "event"}, {"access": "", "host": "Slider", "name": "maxGutter", "url": "Slider.html#config_maxGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "maxGutterChange", "url": "Slider.html#event_maxGutterChange", "type": "event"}, {"access": "", "host": "Slider", "name": "min", "url": "Slider.html#config_min", "type": "config"}, {"access": "", "host": "Slider", "name": "minChange", "url": "Slider.html#event_minChange", "type": "event"}, {"access": "", "host": "Slider", "name": "minGutter", "url": "Slider.html#config_minGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "minGutterChange", "url": "Slider.html#event_minGutterChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_onDDDrag", "url": "Slider.html#method__onDDDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDEndDrag", "url": "Slider.html#method__onDDEndDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDStartDrag", "url": "Slider.html#method__onDDStartDrag", "type": "method"}, {"access": "", "host": "Slider", "name": "rail", "url": "Slider.html#config_rail", "type": "config"}, {"access": "", "host": "Slider", "name": "railChange", "url": "Slider.html#event_railChange", "type": "event"}, {"access": "", "host": "Slider", "name": "railEnabled", "url": "Slider.html#config_railEnabled", "type": "config"}, {"access": "", "host": "Slider", "name": "railEnabledChange", "url": "Slider.html#event_railEnabledChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_railSize", "url": "Slider.html#property__railSize", "type": "property"}, {"access": "", "host": "Slider", "name": "railSize", "url": "Slider.html#config_railSize", "type": "config"}, {"access": "", "host": "Slider", "name": "railSizeChange", "url": "Slider.html#event_railSizeChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_ready", "url": "Slider.html#method__ready", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_refresh", "url": "Slider.html#method__refresh", "type": "method"}, {"access": "protected", "host": "Slider", "name": "renderUI", "url": "Slider.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_resetDDCacheRegion", "url": "Slider.html#method__resetDDCacheRegion", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_scheduleSync", "url": "Slider.html#method__scheduleSync", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setAxisFn", "url": "Slider.html#method__setAxisFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setDDGutter", "url": "Slider.html#method__setDDGutter", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setFactor", "url": "Slider.html#method__setFactor", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailFn", "url": "Slider.html#method__setRailFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailOffsetXY", "url": "Slider.html#method__setRailOffsetXY", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbFn", "url": "Slider.html#method__setThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbImageFn", "url": "Slider.html#method__setThumbImageFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbOffset", "url": "Slider.html#method__setThumbOffset", "type": "method"}, {"access": "", "host": "Slider", "name": "setValue", "url": "Slider.html#method_setValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setValueFn", "url": "Slider.html#method__setValueFn", "type": "method"}, {"access": "", "host": "Slider", "name": "slideEnd", "url": "Slider.html#event_slideEnd", "type": "event"}, {"access": "", "host": "Slider", "name": "Slider.ATTRS", "url": "Slider.html#property_Slider.ATTRS", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.AXIS_KEYS", "url": "Slider.html#property_Slider.AXIS_KEYS", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.HTML_PARSER", "url": "Slider.html#property_Slider.HTML_PARSER", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.NAME", "url": "Slider.html#property_Slider.NAME", "type": "property"}, {"access": "", "host": "Slider", "name": "slideStart", "url": "Slider.html#event_slideStart", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_stall", "url": "Slider.html#property__stall", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_stallDisabledChange", "url": "Slider.html#method__stallDisabledChange", "type": "method"}, {"access": "", "host": "Slider", "name": "sync", "url": "Slider.html#event_sync", "type": "event"}, {"access": "", "host": "Slider", "name": "syncUI", "url": "Slider.html#method_syncUI", "type": "method"}, {"access": "", "host": "Slider", "name": "thumb", "url": "Slider.html#config_thumb", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbChange", "url": "Slider.html#event_thumbChange", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbDrag", "url": "Slider.html#event_thumbDrag", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbImage", "url": "Slider.html#config_thumbImage", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbImageChange", "url": "Slider.html#event_thumbImageChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_thumbOffset", "url": "Slider.html#property__thumbOffset", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_thumbSize", "url": "Slider.html#property__thumbSize", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_uiPositionThumb", "url": "Slider.html#method__uiPositionThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetRailSize", "url": "Slider.html#method__uiSetRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetThumbSize", "url": "Slider.html#method__uiSetThumbSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewAxis", "url": "Slider.html#method__validateNewAxis", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMax", "url": "Slider.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMin", "url": "Slider.html#method__validateNewMin", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRail", "url": "Slider.html#method__validateNewRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRailSize", "url": "Slider.html#method__validateNewRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumb", "url": "Slider.html#method__validateNewThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumbImage", "url": "Slider.html#method__validateNewThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewValue", "url": "Slider.html#method__validateNewValue", "type": "method"}, {"access": "", "host": "Slider", "name": "value", "url": "Slider.html#config_value", "type": "config"}, {"access": "", "host": "Slider", "name": "valueChange", "url": "Slider.html#event_valueChange", "type": "event"}, {"access": "", "host": "Slider", "name": "valueSet", "url": "Slider.html#event_valueSet", "type": "event"}];
+</script>
+</body>
+</html>

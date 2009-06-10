@@ -1,0 +1,1302 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: dd  Plugin.DragConstrained   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>dd&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_dd.html" title="dd">dd</a>
+                 &gt; Plugin.DragConstrained 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">Plugin.DragConstrained</b>
+                        <span class="extends">
+                           - extends <a href="Base.html" title="Base">Base</a>
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a renodenode or viewport. It anode* supports tick based moves and XY axis constraints.
+                    </div>
+
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong property="yui:name">Plugin.DragConstrained</strong>
+                                <code>
+                                    (
+                                    )
+                                </code>
+                                <div class="description">
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:property" resource="#property__regionCache">
+                                    <h4><a name="property__regionCache" property="yui:name">_regionCache</a>
+                                        - <code>private <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Store a cache of the region that we are constraining to
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_con">
+                                    <h4><a name="property_con" property="yui:name">con</a>
+                                        - <code><span property="yui:type">{String}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The Constrained instance will be placed on the Drag instance under the con namespace.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Properties inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                        <span rel="yui:property" resource="Base.html#property_name">
+                                        <a class=" deprecated" href="Base.html#property_name" property="yui:name" title="name">name</a>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:method" resource="#method__cacheRegion">
+                                    <h4>
+                                        <a name="method__cacheRegion">_cacheRegion</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_cacheRegion</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Get's the region and caches it, called from window.resize and when the cache is null
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__checkRegion">
+                                    <h4>
+                                        <a name="method__checkRegion">_checkRegion</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Array
+                                            <strong property="yui:name">_checkRegion</strong>
+                                           (
+                                                
+                                                        
+                                                         _xy
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Check if xy is inside a given region, if not change to it be inside.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">_xy</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The XY to check if it's in the current region, if it isn't inside the region, it will reset the xy array to be inside the region.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The new XY that is inside the region</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__checkTicks">
+                                    <h4>
+                                        <a name="method__checkTicks">_checkTicks</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Array
+                                            <strong property="yui:name">_checkTicks</strong>
+                                           (
+                                                
+                                                        
+                                                         xy
+                                                    
+                                                
+                                                        , 
+                                                         r
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            This method delegates the proper helper method for tick calculations
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">xy</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The XY coords for the Drag</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">r</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The optional region that we are bound to.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The calced XY coords</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__handleStart">
+                                    <h4>
+                                        <a name="method__handleStart">_handleStart</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_handleStart</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires on drag:start and clears the _regionCache
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_align">
+                                    <h4>
+                                        <a name="method_align">align</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">align</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Modifies the Drag.actXY method from the after drag:align event. This is where the constraining happens.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getRegion">
+                                    <h4>
+                                        <a name="method_getRegion">getRegion</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">getRegion</strong>
+                                           (
+                                                
+                                                        
+                                                         inc
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Get the active region: viewport, node, custom region
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">inc</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Include the node's height and width</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_inRegion">
+                                    <h4>
+                                        <a name="method_inRegion">inRegion</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong property="yui:name">inRegion</strong>
+                                           (
+                                                
+                                                        
+                                                         xy
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Checks if the XY passed or the dragNode is inside the active region.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">xy</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional XY to check, if not supplied this.get('dragNode').getXY() is used.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">True if the XY is inside the region, false otherwise.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">                    
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                                <h4>Methods inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Base.html#method__aggregateAttrs">                                        
+                                            <a class="private" href="Base.html#method__aggregateAttrs" property="yui:name" title="_aggregateAttrs">_aggregateAttrs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__defDestroyFn">                                        
+                                            <a class="protected" href="Base.html#method__defDestroyFn" property="yui:name" title="_defDestroyFn">_defDestroyFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__defInitFn">                                        
+                                            <a class="protected" href="Base.html#method__defInitFn" property="yui:name" title="_defInitFn">_defInitFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__destroyHierarchy">                                        
+                                            <a class="private" href="Base.html#method__destroyHierarchy" property="yui:name" title="_destroyHierarchy">_destroyHierarchy</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__filterAttrCfs">                                        
+                                            <a class="private" href="Base.html#method__filterAttrCfs" property="yui:name" title="_filterAttrCfs">_filterAttrCfs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__getAttrCfgs">                                        
+                                            <a class="protected" href="Base.html#method__getAttrCfgs" property="yui:name" title="_getAttrCfgs">_getAttrCfgs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__getClasses">                                        
+                                            <a class="protected" href="Base.html#method__getClasses" property="yui:name" title="_getClasses">_getClasses</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__initHierarchy">                                        
+                                            <a class="private" href="Base.html#method__initHierarchy" property="yui:name" title="_initHierarchy">_initHierarchy</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__initHierarchyData">                                        
+                                            <a class="private" href="Base.html#method__initHierarchyData" property="yui:name" title="_initHierarchyData">_initHierarchyData</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_destroy">                                        
+                                            <a class="" href="Base.html#method_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_init">                                        
+                                            <a class="" href="Base.html#method_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_toString">                                        
+                                            <a class="" href="Base.html#method_toString" property="yui:name" title="toString">toString</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_constrain2nodeChange">
+                                    <h4>
+                                        <a name="event_constrain2nodeChange">constrain2nodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">constrain2nodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'constrain2node' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_constrain2regionChange">
+                                    <h4>
+                                        <a name="event_constrain2regionChange">constrain2regionChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">constrain2regionChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'constrain2region' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_constrain2viewChange">
+                                    <h4>
+                                        <a name="event_constrain2viewChange">constrain2viewChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">constrain2viewChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'constrain2view' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_gutterChange">
+                                    <h4>
+                                        <a name="event_gutterChange">gutterChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">gutterChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'gutter' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_stickXChange">
+                                    <h4>
+                                        <a name="event_stickXChange">stickXChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">stickXChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'stickX' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_stickYChange">
+                                    <h4>
+                                        <a name="event_stickYChange">stickYChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">stickYChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'stickY' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_tickXArrayChange">
+                                    <h4>
+                                        <a name="event_tickXArrayChange">tickXArrayChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">tickXArrayChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'tickXArray' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_tickXChange">
+                                    <h4>
+                                        <a name="event_tickXChange">tickXChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">tickXChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'tickX' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_tickYArrayChange">
+                                    <h4>
+                                        <a name="event_tickYArrayChange">tickYArrayChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">tickYArrayChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'tickYArray' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_tickYChange">
+                                    <h4>
+                                        <a name="event_tickYChange">tickYChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">tickYChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'tickY' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                        <div rel="yui:inheritance">                    
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Events inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="Base.html#event_destroy">
+                                        <a class="" href="Base.html#event_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_destroyedChange">
+                                        <a class="" href="Base.html#event_destroyedChange" property="yui:name" title="destroyedChange">destroyedChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_init">
+                                        <a class="" href="Base.html#event_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_initializedChange">
+                                        <a class="" href="Base.html#event_initializedChange" property="yui:name" title="initializedChange">initializedChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_constrain2node">
+                                    <h4><a name="config_constrain2node">constrain2node</a>
+                                        <code>- <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Will attempt to constrain the drag node to the bounderies of this node.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_constrain2region">
+                                    <h4><a name="config_constrain2region">constrain2region</a>
+                                        <code>- <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            An Object Literal containing a valid region (top, right, bottom, left) of page positions to constrain the drag node to.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_constrain2view">
+                                    <h4><a name="config_constrain2view">constrain2view</a>
+                                        <code>- <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Will attempt to constrain the drag node to the bounderies of the viewport region.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_gutter">
+                                    <h4><a name="config_gutter">gutter</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            CSS style string for the gutter of a region (supports negative values): '5 0' (sets top and bottom to 5px, left and right to 0px), '1 2 3 4' (top 1px, right 2px, bottom 3px, left 4px)
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_stickX">
+                                    <h4><a name="config_stickX">stickX</a>
+                                        <code>- <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Stick the drag movement to the X-Axis. Default: false
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_stickY">
+                                    <h4><a name="config_stickY">stickY</a>
+                                        <code>- <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Stick the drag movement to the Y-Axis
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_tickX">
+                                    <h4><a name="config_tickX">tickX</a>
+                                        <code>- <span property="yui:type">Number/false</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The X tick offset the drag node should snap to on each drag move. False for no ticks. Default: false
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_tickXArray">
+                                    <h4><a name="config_tickXArray">tickXArray</a>
+                                        <code>- <span property="yui:type">Array</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            An array of page coordinates to use as X ticks for drag movement.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_tickY">
+                                    <h4><a name="config_tickY">tickY</a>
+                                        <code>- <span property="yui:type">Number/false</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The Y tick offset the drag node should snap to on each drag move. False for no ticks. Default: false
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_tickYArray">
+                                    <h4><a name="config_tickYArray">tickYArray</a>
+                                        <code>- <span property="yui:type">Array</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            An array of page coordinates to use as Y ticks for drag movement.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">                    
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Configuration attributes inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="Base.html#config_destroyed">                                        
+                                        <a class="" href="Base.html#config_destroyed" property="yui:name" title="destroyed">destroyed</a><span class="">,</span>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
+                                        <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a><span class="">,</span>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class="selected"><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DD.DDM.html" title="DD.DDM">DD.DDM</a></li>
+                                <li class=""><a href="DD.Drag.html" title="DD.Drag">DD.Drag</a></li>
+                                <li class=""><a href="DD.Drop.html" title="DD.Drop">DD.Drop</a></li>
+                                <li class=""><a href="DD.Scroll.html" title="DD.Scroll">DD.Scroll</a></li>
+                                <li class=""><a href="Plugin.DDNodeScroll.html" title="Plugin.DDNodeScroll">Plugin.DDNodeScroll</a></li>
+                                <li class=""><a href="Plugin.DDProxy.html" title="Plugin.DDProxy">Plugin.DDProxy</a></li>
+                                <li class=""><a href="Plugin.DDWindowScroll.html" title="Plugin.DDWindowScroll">Plugin.DDWindowScroll</a></li>
+                                <li class=""><a href="Plugin.Drag.html" title="Plugin.Drag">Plugin.Drag</a></li>
+                                <li class="selected"><a href="Plugin.DragConstrained.html" title="Plugin.DragConstrained">Plugin.DragConstrained</a></li>
+                                <li class=""><a href="Plugin.Drop.html" title="Plugin.Drop">Plugin.Drop</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="constrain.js.html" title="constrain.js">constrain.js</a></li>
+                                <li class=""><a href="dd-drop-plugin.js.html" title="dd-drop-plugin.js">dd-drop-plugin.js</a></li>
+                                <li class=""><a href="dd-plugin.js.html" title="dd-plugin.js">dd-plugin.js</a></li>
+                                <li class=""><a href="ddm-base.js.html" title="ddm-base.js">ddm-base.js</a></li>
+                                <li class=""><a href="ddm-drop.js.html" title="ddm-drop.js">ddm-drop.js</a></li>
+                                <li class=""><a href="ddm.js.html" title="ddm.js">ddm.js</a></li>
+                                <li class=""><a href="drag.js.html" title="drag.js">drag.js</a></li>
+                                <li class=""><a href="drop.js.html" title="drop.js">drop.js</a></li>
+                                <li class=""><a href="proxy.js.html" title="proxy.js">proxy.js</a></li>
+                                <li class=""><a href="scroll.js.html" title="scroll.js">scroll.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__regionCache" title="_regionCache">_regionCache</a></li>
+                                <li class=""><a href="#property_con" title="con">con</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#method__cacheRegion" title="_cacheRegion">_cacheRegion</a></li>
+                                <li class="private"><a href="#method__checkRegion" title="_checkRegion">_checkRegion</a></li>
+                                <li class="private"><a href="#method__checkTicks" title="_checkTicks">_checkTicks</a></li>
+                                <li class="private"><a href="#method__handleStart" title="_handleStart">_handleStart</a></li>
+                                <li class=""><a href="#method_align" title="align">align</a></li>
+                                <li class=""><a href="#method_getRegion" title="getRegion">getRegion</a></li>
+                                <li class=""><a href="#method_inRegion" title="inRegion">inRegion</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_constrain2nodeChange" title="constrain2nodeChange">constrain2nodeChange</a></li>
+                                <li class=""><a href="#event_constrain2regionChange" title="constrain2regionChange">constrain2regionChange</a></li>
+                                <li class=""><a href="#event_constrain2viewChange" title="constrain2viewChange">constrain2viewChange</a></li>
+                                <li class=""><a href="#event_gutterChange" title="gutterChange">gutterChange</a></li>
+                                <li class=""><a href="#event_stickXChange" title="stickXChange">stickXChange</a></li>
+                                <li class=""><a href="#event_stickYChange" title="stickYChange">stickYChange</a></li>
+                                <li class=""><a href="#event_tickXArrayChange" title="tickXArrayChange">tickXArrayChange</a></li>
+                                <li class=""><a href="#event_tickXChange" title="tickXChange">tickXChange</a></li>
+                                <li class=""><a href="#event_tickYArrayChange" title="tickYArrayChange">tickYArrayChange</a></li>
+                                <li class=""><a href="#event_tickYChange" title="tickYChange">tickYChange</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_constrain2node" title="constrain2node">constrain2node</a></li>
+                                <li class=""><a href="#config_constrain2region" title="constrain2region">constrain2region</a></li>
+                                <li class=""><a href="#config_constrain2view" title="constrain2view">constrain2view</a></li>
+                                <li class=""><a href="#config_gutter" title="gutter">gutter</a></li>
+                                <li class=""><a href="#config_stickX" title="stickX">stickX</a></li>
+                                <li class=""><a href="#config_stickY" title="stickY">stickY</a></li>
+                                <li class=""><a href="#config_tickX" title="tickX">tickX</a></li>
+                                <li class=""><a href="#config_tickXArray" title="tickXArray">tickXArray</a></li>
+                                <li class=""><a href="#config_tickY" title="tickY">tickY</a></li>
+                                <li class=""><a href="#config_tickYArray" title="tickYArray">tickYArray</a></li>
+                        </ul>
+                    </div>
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "DD.Scroll", "name": "align", "url": "DD.Scroll.html#method_align", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "align", "url": "Plugin.DragConstrained.html#method_align", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "buffer", "url": "DD.Scroll.html#config_buffer", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "bufferChange", "url": "DD.Scroll.html#event_bufferChange", "type": "event"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_cacheRegion", "url": "Plugin.DragConstrained.html#method__cacheRegion", "type": "method"}, {"access": "private", "host": "DD.Scroll", "name": "_cancelScroll", "url": "DD.Scroll.html#method__cancelScroll", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_checkRegion", "url": "Plugin.DragConstrained.html#method__checkRegion", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_checkTicks", "url": "Plugin.DragConstrained.html#method__checkTicks", "type": "method"}, {"access": "private", "host": "DD.Scroll", "name": "_checkWinScroll", "url": "DD.Scroll.html#method__checkWinScroll", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "con", "url": "Plugin.DragConstrained.html#property_con", "type": "property"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2node", "url": "Plugin.DragConstrained.html#config_constrain2node", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2nodeChange", "url": "Plugin.DragConstrained.html#event_constrain2nodeChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2region", "url": "Plugin.DragConstrained.html#config_constrain2region", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2regionChange", "url": "Plugin.DragConstrained.html#event_constrain2regionChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2view", "url": "Plugin.DragConstrained.html#config_constrain2view", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2viewChange", "url": "Plugin.DragConstrained.html#event_constrain2viewChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_dimCache", "url": "DD.Scroll.html#property__dimCache", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "end", "url": "DD.Scroll.html#method_end", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "getRegion", "url": "Plugin.DragConstrained.html#method_getRegion", "type": "method"}, {"access": "private", "host": "DD.Scroll", "name": "_getVPRegion", "url": "DD.Scroll.html#method__getVPRegion", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "gutter", "url": "Plugin.DragConstrained.html#config_gutter", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "gutterChange", "url": "Plugin.DragConstrained.html#event_gutterChange", "type": "event"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_handleStart", "url": "Plugin.DragConstrained.html#method__handleStart", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "horizontal", "url": "DD.Scroll.html#config_horizontal", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "horizontalChange", "url": "DD.Scroll.html#event_horizontalChange", "type": "event"}, {"access": "", "host": "DD.Scroll", "name": "host", "url": "DD.Scroll.html#config_host", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "hostChange", "url": "DD.Scroll.html#event_hostChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_initScroll", "url": "DD.Scroll.html#method__initScroll", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "inRegion", "url": "Plugin.DragConstrained.html#method_inRegion", "type": "method"}, {"access": "", "host": "Plugin.Drop", "name": "NAME", "url": "Plugin.Drop.html#property_NAME", "type": "property"}, {"access": "", "host": "Plugin.DDNodeScroll", "name": "node", "url": "Plugin.DDNodeScroll.html#config_node", "type": "config"}, {"access": "", "host": "Plugin.DDNodeScroll", "name": "nodeChange", "url": "Plugin.DDNodeScroll.html#event_nodeChange", "type": "event"}, {"access": "", "host": "Plugin.Drop", "name": "NS", "url": "Plugin.Drop.html#property_NS", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "parentScroll", "url": "DD.Scroll.html#config_parentScroll", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "parentScrollChange", "url": "DD.Scroll.html#event_parentScrollChange", "type": "event"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_regionCache", "url": "Plugin.DragConstrained.html#property__regionCache", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "scrollDelay", "url": "DD.Scroll.html#config_scrollDelay", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "scrollDelayChange", "url": "DD.Scroll.html#event_scrollDelayChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_scrolling", "url": "DD.Scroll.html#property__scrolling", "type": "property"}, {"access": "private", "host": "DD.Scroll", "name": "_scrollTimer", "url": "DD.Scroll.html#property__scrollTimer", "type": "property"}, {"access": "private", "host": "DD.Scroll", "name": "_setDimCache", "url": "DD.Scroll.html#method__setDimCache", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "start", "url": "DD.Scroll.html#method_start", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickX", "url": "Plugin.DragConstrained.html#config_stickX", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickXChange", "url": "Plugin.DragConstrained.html#event_stickXChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickY", "url": "Plugin.DragConstrained.html#config_stickY", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickYChange", "url": "Plugin.DragConstrained.html#event_stickYChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickX", "url": "Plugin.DragConstrained.html#config_tickX", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickXArray", "url": "Plugin.DragConstrained.html#config_tickXArray", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickXArrayChange", "url": "Plugin.DragConstrained.html#event_tickXArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickXChange", "url": "Plugin.DragConstrained.html#event_tickXChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickY", "url": "Plugin.DragConstrained.html#config_tickY", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickYArray", "url": "Plugin.DragConstrained.html#config_tickYArray", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickYArrayChange", "url": "Plugin.DragConstrained.html#event_tickYArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickYChange", "url": "Plugin.DragConstrained.html#event_tickYChange", "type": "event"}, {"access": "", "host": "DD.Scroll", "name": "toString", "url": "DD.Scroll.html#method_toString", "type": "method"}, {"access": "", "host": "DD.Scroll", "name": "vertical", "url": "DD.Scroll.html#config_vertical", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "verticalChange", "url": "DD.Scroll.html#event_verticalChange", "type": "event"}, {"access": "private", "host": "DD.Scroll", "name": "_vpRegionCache", "url": "DD.Scroll.html#property__vpRegionCache", "type": "property"}, {"access": "", "host": "DD.Scroll", "name": "windowScroll", "url": "DD.Scroll.html#config_windowScroll", "type": "config"}, {"access": "", "host": "Plugin.DDWindowScroll", "name": "windowScroll", "url": "Plugin.DDWindowScroll.html#config_windowScroll", "type": "config"}, {"access": "", "host": "DD.Scroll", "name": "windowScrollChange", "url": "DD.Scroll.html#event_windowScrollChange", "type": "event"}, {"access": "", "host": "Plugin.DDWindowScroll", "name": "windowScrollChange", "url": "Plugin.DDWindowScroll.html#event_windowScrollChange", "type": "event"}];
+</script>
+</body>
+</html>
