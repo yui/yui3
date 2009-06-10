@@ -307,11 +307,11 @@ YUI.add('base-base', function(Y) {
      * custom event support can extend. The Base class also handles the chaining of 
      * initializer and destructor methods across the hierarchy as part of object construction
      * and destruction. Additionally, attributes configured through the static 
-     * <a href="#property_ATTRS">ATTRS</a> property for each class in the hierarchy will be 
+     * <a href="#property_Base.ATTRS">ATTRS</a> property for each class in the hierarchy will be 
      * initialized by Base.
      * </p>
      *
-     * <p>The static <a href="#property_NAME">NAME</a> property of each class extending 
+     * <p>The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
      * from Base will be used as the identifier for the class, and is used by Base to prefix 
      * all events fired by instances of that class.</p>
      *
@@ -353,7 +353,7 @@ YUI.add('base-base', function(Y) {
      * static NAME property, which should be camelCase by
      * convention (e.g. MyClass.NAME = "myClass";).
      * </p>
-     * @property NAME
+     * @property Base.NAME
      * @type String
      * @static
      */
@@ -366,7 +366,7 @@ YUI.add('base-base', function(Y) {
      * method for a description of configuration options available 
      * for each attribute.
      *
-     * @property ATTRS
+     * @property Base.ATTRS
      * @type Object
      * @static
      */
@@ -706,7 +706,7 @@ YUI.add('base-base', function(Y) {
         /**
          * Initializes the class hierarchy for the instance, which includes 
          * initializing attributes for each class defined in the class's 
-         * static <a href="#property_ATTRS">ATTRS</a> property and 
+         * static <a href="#property_Base.ATTRS">ATTRS</a> property and 
          * invoking the initializer method on the prototype of each class in the hierarchy.
          *
          * @method _initHierarchy
@@ -825,9 +825,9 @@ YUI.add('base-build', function(Y) {
      *
      * Defines the static fields which need to be aggregated
      * when the Base class is used as the main class passed to 
-     * the <a href="#method_build">Base.build</a> method.
+     * the <a href="#method_Base.build">Base.build</a> method.
      *
-     * @property _buildCfg
+     * @property Base._buildCfg
      * @type Object
      * @static
      * @final
@@ -859,12 +859,12 @@ YUI.add('base-build', function(Y) {
      *    <dt>aggregates &#60;String[]&#62;</dt>
      *    <dd>An array of static property names, which will get aggregated
      *    on to the built class, in addition to the default properties build 
-     *    will always aggregate as defined by the main class' _buildCfg
+     *    will always aggregate as defined by the main class' static _buildCfg
      *    property.
      *    </dd>
      * </dl>
      *
-     * @method build
+     * @method Base.build
      * @static
      * @param {Function} main The name of the new class. Used to defined the NAME property for the new class.
      * @param {Function} main The main class on which to base the built class
