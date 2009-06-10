@@ -319,8 +319,8 @@ Y.CustomEvent.prototype = {
      * chainable event target depending on the 'chain' config.
      * @deprecated use on
      */
-    subscribe: function(fn, context, x) {
-        var a = (x) ? Y.Array(arguments, 2, true): null;
+    subscribe: function(fn, context) {
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
         return this._on(fn, context, a, true);
     },
 
@@ -331,8 +331,8 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
-    on: function(fn, context, x) {
-        var a = (x) ? Y.Array(arguments, 2, true): null;
+    on: function(fn, context) {
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
         return this._on(fn, context, a, true);
     },
 
@@ -345,8 +345,8 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
-    after: function(fn, context, x) {
-        var a = (x) ? Y.Array(arguments, 2, true): null;
+    after: function(fn, context) {
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
         return this._on(fn, context, a, AFTER);
     },
 
