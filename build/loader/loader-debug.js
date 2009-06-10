@@ -364,13 +364,13 @@ var GLOBAL_ENV = YUI.Env,
                 'datasource-polling': {
                     requires: [DATASOURCELOCAL]
                 },
-                'datasource-scriptnode': {
+                'datasource-get': {
                     requires: [DATASOURCELOCAL, GET]
                 },
                 'datasource-textschema': {
                     requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-text']
                 },
-                'datasource-xhr': {
+                'datasource-io': {
                     requires: [DATASOURCELOCAL, IOBASE]
                 },
                 'datasource-xmlschema': {
