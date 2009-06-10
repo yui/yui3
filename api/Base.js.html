@@ -48,6 +48,16 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
+<span class="c">     * The base module provides the Base class, which objects requiring managed attributes </span>
+<span class="c">     * and custom event support can extend. The base module also provides two ways to reuse</span>
+<span class="c">     * code - An augmentable PluginHost interface which provides plugin support </span>
+<span class="c">     * (which is augmented to the Base class) and Base.build which provides a way to </span>
+<span class="c">     * build custom classes using extensions.</span>
+<span class="c">     *</span>
+<span class="c">     * @module base</span>
+<span class="c">     */</span>
+
+    <span class="c">/**</span>
 <span class="c">     * The base-base submodule provides the Base class and augmentable PluginHost implementation, </span>
 <span class="c">     * without the extension support provided by Base.build.</span>
 <span class="c">     *</span>
@@ -73,16 +83,16 @@
 <span class="c">     * custom event support can extend. The Base class also handles the chaining of </span>
 <span class="c">     * initializer and destructor methods across the hierarchy as part of object construction</span>
 <span class="c">     * and destruction. Additionally, attributes configured through the static </span>
-<span class="c">     * &lt;a href=&quot;#property_ATTRS&quot;&gt;ATTRS&lt;/a&gt; property for each class in the hierarchy will be </span>
+<span class="c">     * &lt;a href=&quot;#property_Base.ATTRS&quot;&gt;ATTRS&lt;/a&gt; property for each class in the hierarchy will be </span>
 <span class="c">     * initialized by Base.</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     *</span>
-<span class="c">     * &lt;p&gt;The static &lt;a href=&quot;#property_NAME&quot;&gt;NAME&lt;/a&gt; property of each class extending </span>
+<span class="c">     * &lt;p&gt;The static &lt;a href=&quot;#property_Base.NAME&quot;&gt;NAME&lt;/a&gt; property of each class extending </span>
 <span class="c">     * from Base will be used as the identifier for the class, and is used by Base to prefix </span>
 <span class="c">     * all events fired by instances of that class.&lt;/p&gt;</span>
 <span class="c">     *</span>
-<span class="c">     * @constructor</span>
 <span class="c">     * @class Base</span>
+<span class="c">     * @constructor</span>
 <span class="c">     * @uses Attribute, Plugin.Host</span>
 <span class="c">     *</span>
 <span class="c">     * @param {Object} config Object literal of configuration property name/value pairs</span>
@@ -120,7 +130,7 @@
 <span class="c">     * static NAME property, which should be camelCase by</span>
 <span class="c">     * convention (e.g. MyClass.NAME = &quot;myClass&quot;;).</span>
 <span class="c">     * &lt;/p&gt;</span>
-<span class="c">     * @property NAME</span>
+<span class="c">     * @property Base.NAME</span>
 <span class="c">     * @type String</span>
 <span class="c">     * @static</span>
 <span class="c">     */</span>
@@ -133,7 +143,7 @@
 <span class="c">     * method for a description of configuration options available </span>
 <span class="c">     * for each attribute.</span>
 <span class="c">     *</span>
-<span class="c">     * @property ATTRS</span>
+<span class="c">     * @property Base.ATTRS</span>
 <span class="c">     * @type Object</span>
 <span class="c">     * @static</span>
 <span class="c">     */</span>
@@ -477,7 +487,7 @@
         <span class="c">/**</span>
 <span class="c">         * Initializes the class hierarchy for the instance, which includes </span>
 <span class="c">         * initializing attributes for each class defined in the class&#39;s </span>
-<span class="c">         * static &lt;a href=&quot;#property_ATTRS&quot;&gt;ATTRS&lt;/a&gt; property and </span>
+<span class="c">         * static &lt;a href=&quot;#property_Base.ATTRS&quot;&gt;ATTRS&lt;/a&gt; property and </span>
 <span class="c">         * invoking the initializer method on the prototype of each class in the hierarchy.</span>
 <span class="c">         *</span>
 <span class="c">         * @method _initHierarchy</span>
@@ -552,7 +562,7 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Base</span><span class="o">,</span> <span class="nx">PluginHost</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
 
     <span class="c">/**</span>
-<span class="c">     * Alias for &lt;a href=&quot;PluginHost.html@method_PluginHost.plug&quot;&gt;PluginHost.plug&lt;/a&gt;.</span>
+<span class="c">     * Alias for &lt;a href=&quot;PluginHost.html#method_PluginHost.plug&quot;&gt;PluginHost.plug&lt;/a&gt;.</span>
 <span class="c">     *</span>
 <span class="c">     * @method Base.plug</span>
 <span class="c">     * @static</span>
@@ -560,7 +570,7 @@
     <span class="nx">Base</span><span class="o">.</span><span class="nx">plug</span> <span class="o">=</span> <span class="nx">PluginHost</span><span class="o">.</span><span class="nx">plug</span><span class="o">;</span>
 
     <span class="c">/**</span>
-<span class="c">     * Alias for &lt;a href=&quot;PluginHost.html@method_PluginHost.unplug&quot;&gt;PluginHost.unplug&lt;/a&gt;.</span>
+<span class="c">     * Alias for &lt;a href=&quot;PluginHost.html#method_PluginHost.unplug&quot;&gt;PluginHost.unplug&lt;/a&gt;.</span>
 <span class="c">     *</span>
 <span class="c">     * @method Base.unplug</span>
 <span class="c">     * @static</span>
@@ -655,7 +665,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "Base.plug", "url": "Base.html#method_Base.plug", "type": "method"}, {"access": "", "host": "Base", "name": "Base.unplug", "url": "Base.html#method_Base.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.plug", "url": "PluginHost.html#method_PluginHost.plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.unplug", "url": "PluginHost.html#method_PluginHost.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "Base.ATTRS", "url": "Base.html#property_Base.ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "Base.build", "url": "Base.html#method_Base.build", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._buildCfg", "url": "Base.html#property_Base._buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "Base.NAME", "url": "Base.html#property_Base.NAME", "type": "property"}, {"access": "", "host": "Base", "name": "Base.plug", "url": "Base.html#method_Base.plug", "type": "method"}, {"access": "", "host": "Base", "name": "Base.unplug", "url": "Base.html#method_Base.unplug", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.plug", "url": "PluginHost.html#method_PluginHost.plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.unplug", "url": "PluginHost.html#method_PluginHost.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}];
 </script>
 </body>
 </html>

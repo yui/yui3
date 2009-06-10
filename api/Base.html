@@ -114,10 +114,10 @@ Provides a base class for which objects requiring managed attributes and
 custom event support can extend. The Base class also handles the chaining of 
 initializer and destructor methods across the hierarchy as part of object construction
 and destruction. Additionally, attributes configured through the static 
-<a href="#property_ATTRS">ATTRS</a> property for each class in the hierarchy will be 
+<a href="#property_Base.ATTRS">ATTRS</a> property for each class in the hierarchy will be 
 initialized by Base.
 </p>
-<p>The static <a href="#property_NAME">NAME</a> property of each class extending 
+<p>The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
 from Base will be used as the identifier for the class, and is used by Base to prefix 
 all events fired by instances of that class.</p>
                     </div>
@@ -156,16 +156,14 @@ all events fired by instances of that class.</p>
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="private" rel="yui:property" resource="#property__buildCfg">
-                                    <h4><a name="property__buildCfg" property="yui:name">_buildCfg</a>
-                                        - <code>private static final <span property="yui:type">Object</span></code>
+                                    <div class="private" rel="yui:property" resource="#property_Base._ATTR_CFG">
+                                    <h4><a name="property_Base._ATTR_CFG" property="yui:name">Base._ATTR_CFG</a>
+                                        - <code>private static <span property="yui:type">Array</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The build configuration for the Base class.
-Defines the static fields which need to be aggregated
-when the Base class is used as the main class passed to 
-the <a href="#method_build">Base.build</a> method.
+                                            The list of properties which can be configured for 
+each attribute (e.g. setter, getter, writeOnce, readOnly etc.)
                                         </div>
                                     </div>
      
@@ -174,8 +172,26 @@ the <a href="#method_build">Base.build</a> method.
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_ATTRS">
-                                    <h4><a name="property_ATTRS" property="yui:name">ATTRS</a>
+                                    <div class="private" rel="yui:property" resource="#property_Base._buildCfg">
+                                    <h4><a name="property_Base._buildCfg" property="yui:name">Base._buildCfg</a>
+                                        - <code>private static final <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The build configuration for the Base class.
+Defines the static fields which need to be aggregated
+when the Base class is used as the main class passed to 
+the <a href="#method_Base.build">Base.build</a> method.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_Base.ATTRS">
+                                    <h4><a name="property_Base.ATTRS" property="yui:name">Base.ATTRS</a>
                                         - <code>static <span property="yui:type">Object</span></code>
                                     </h4>
                                     <div class="detail">
@@ -193,14 +209,21 @@ for each attribute.
 
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:property" resource="#property_Base._ATTR_CFG">
-                                    <h4><a name="property_Base._ATTR_CFG" property="yui:name">Base._ATTR_CFG</a>
-                                        - <code>private static <span property="yui:type">Array</span></code>
+                                    <div class="" rel="yui:property" resource="#property_Base.NAME">
+                                    <h4><a name="property_Base.NAME" property="yui:name">Base.NAME</a>
+                                        - <code>static <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The list of properties which can be configured for 
-each attribute (e.g. setter, getter, writeOnce, readOnly etc.)
+                                            <p>
+The string to be used to identify instances of 
+this class, for example in prefixing events.
+</p>
+<p>
+Classes extending Base, should define their own
+static NAME property, which should be camelCase by
+convention (e.g. MyClass.NAME = "myClass";).
+</p>
                                         </div>
                                     </div>
      
@@ -224,29 +247,6 @@ each attribute (e.g. setter, getter, writeOnce, readOnly etc.)
                                     <div class="deprecated" property="yui:deprecated">
                                         <strong>Deprecated:</strong> Use this.constructor.NAME
                                     </div>        
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_NAME">
-                                    <h4><a name="property_NAME" property="yui:name">NAME</a>
-                                        - <code>static <span property="yui:type">String</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            <p>
-The string to be used to identify instances of 
-this class, for example in prefixing events.
-</p>
-<p>
-Classes extending Base, should define their own
-static NAME property, which should be camelCase by
-convention (e.g. MyClass.NAME = "myClass";).
-</p>
-                                        </div>
-                                    </div>
-     
-                                        
-
 
                                     <hr />
                                     </div>
@@ -622,7 +622,7 @@ cached value.</dd>
                                         <div class="description" property="yui:description">
                                             Initializes the class hierarchy for the instance, which includes 
 initializing attributes for each class defined in the class's 
-static <a href="#property_ATTRS">ATTRS</a> property and 
+static <a href="#property_Base.ATTRS">ATTRS</a> property and 
 invoking the initializer method on the prototype of each class in the hierarchy.
                                         </div>
 
@@ -693,90 +693,16 @@ across the class hierarchy for the instance.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_Base.plug">
+                                    <div class="" rel="yui:method" resource="#method_Base.build">
                                     <h4>
-                                        <a name="method_Base.plug">Base.plug</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        void
-                                            <strong property="yui:name">Base.plug</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Alias for <a href="PluginHost.html@method_PluginHost.plug">PluginHost.plug</a>.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_Base.unplug">
-                                    <h4>
-                                        <a name="method_Base.unplug">Base.unplug</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        void
-                                            <strong property="yui:name">Base.unplug</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Alias for <a href="PluginHost.html@method_PluginHost.unplug">PluginHost.unplug</a>.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_build">
-                                    <h4>
-                                        <a name="method_build">build</a></h4>
+                                        <a name="method_Base.build">Base.build</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
                                         Function
-                                            <strong property="yui:name">build</strong>
+                                            <strong property="yui:name">Base.build</strong>
                                            (
                                                 
                                                         
@@ -818,7 +744,7 @@ the main class, modifying the main class' prototype.</p>
 <dt>aggregates &#60;String[]&#62;</dt>
 <dd>An array of static property names, which will get aggregated
 on to the built class, in addition to the default properties build 
-will always aggregate as defined by the main class' _buildCfg
+will always aggregate as defined by the main class' static _buildCfg
 property.
 </dd>
 </dl>
@@ -861,6 +787,80 @@ augmented/aggregated to the built class.</span>
                                                         Function
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A custom class, created from the provided main and extension classes</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Base.plug">
+                                    <h4>
+                                        <a name="method_Base.plug">Base.plug</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">Base.plug</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Alias for <a href="PluginHost.html#method_PluginHost.plug">PluginHost.plug</a>.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Base.unplug">
+                                    <h4>
+                                        <a name="method_Base.unplug">Base.unplug</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">Base.unplug</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Alias for <a href="PluginHost.html#method_PluginHost.unplug">PluginHost.unplug</a>.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -1349,11 +1349,11 @@ has been through the init lifecycle phase.
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#property__buildCfg" title="_buildCfg">_buildCfg</a></li>
-                                <li class=""><a href="#property_ATTRS" title="ATTRS">ATTRS</a></li>
                                 <li class="private"><a href="#property_Base._ATTR_CFG" title="Base._ATTR_CFG">Base._ATTR_CFG</a></li>
+                                <li class="private"><a href="#property_Base._buildCfg" title="Base._buildCfg">Base._buildCfg</a></li>
+                                <li class=""><a href="#property_Base.ATTRS" title="Base.ATTRS">Base.ATTRS</a></li>
+                                <li class=""><a href="#property_Base.NAME" title="Base.NAME">Base.NAME</a></li>
                                 <li class=" deprecated"><a href="#property_name" title="name">name</a></li>
-                                <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
                         </ul>
                     </div>
 
@@ -1369,9 +1369,9 @@ has been through the init lifecycle phase.
                                 <li class="protected"><a href="#method__getClasses" title="_getClasses">_getClasses</a></li>
                                 <li class="private"><a href="#method__initHierarchy" title="_initHierarchy">_initHierarchy</a></li>
                                 <li class="private"><a href="#method__initHierarchyData" title="_initHierarchyData">_initHierarchyData</a></li>
+                                <li class=""><a href="#method_Base.build" title="Base.build">Base.build</a></li>
                                 <li class=""><a href="#method_Base.plug" title="Base.plug">Base.plug</a></li>
                                 <li class=""><a href="#method_Base.unplug" title="Base.unplug">Base.unplug</a></li>
-                                <li class=""><a href="#method_build" title="build">build</a></li>
                                 <li class=""><a href="#method_destroy" title="destroy">destroy</a></li>
                                 <li class=""><a href="#method_init" title="init">init</a></li>
                                 <li class=""><a href="#method_toString" title="toString">toString</a></li>
@@ -1405,7 +1405,7 @@ has been through the init lifecycle phase.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "Base.plug", "url": "Base.html#method_Base.plug", "type": "method"}, {"access": "", "host": "Base", "name": "Base.unplug", "url": "Base.html#method_Base.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.plug", "url": "PluginHost.html#method_PluginHost.plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.unplug", "url": "PluginHost.html#method_PluginHost.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "Base.ATTRS", "url": "Base.html#property_Base.ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "Base.build", "url": "Base.html#method_Base.build", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._buildCfg", "url": "Base.html#property_Base._buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "Base.NAME", "url": "Base.html#property_Base.NAME", "type": "property"}, {"access": "", "host": "Base", "name": "Base.plug", "url": "Base.html#method_Base.plug", "type": "method"}, {"access": "", "host": "Base", "name": "Base.unplug", "url": "Base.html#method_Base.unplug", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.plug", "url": "PluginHost.html#method_PluginHost.plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.unplug", "url": "PluginHost.html#method_PluginHost.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}];
 </script>
 </body>
 </html>
