@@ -49,15 +49,23 @@
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
-<span class="c">     * An augmentable class, which when augmented onto a Base based class, allows </span>
-<span class="c">     * the class to support plugins, providing plug and unplug methods and the ability</span>
-<span class="c">     * to add plugins through the configuration literal passed to the constructor.</span>
+<span class="c">     * An augmentable class, which provides the augmented class with the ability to host plugins.</span>
+<span class="c">     * It adds &lt;a href=&quot;#method_plug&quot;&gt;plug&lt;/a&gt; and &lt;a href=&quot;#method_unplug&quot;&gt;unplug&lt;/a&gt; methods to the augmented class, which can </span>
+<span class="c">     * be used to add or remove plugins from instances of the class.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * &lt;p&gt;Plugins can also be added through the constructor configuration object passed to the host class&#39; constructor using</span>
+<span class="c">     * the &quot;plugins&quot; property. Supported values for the &quot;plugins&quot; property are those defined by the &lt;a href=&quot;#method_plug&quot;&gt;plug&lt;/a&gt; method. </span>
+<span class="c">     * </span>
+<span class="c">     * For example the following code would add the AnimPlugin and IOPlugin to Overlay (the plugin host):</span>
+<span class="c">     * &lt;xmp&gt;</span>
+<span class="c">     * var o = new Overlay({plugins: [ AnimPlugin, {fn:IOPlugin, cfg:{section:&quot;header&quot;}}]});</span>
+<span class="c">     * &lt;/xmp&gt;</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     * &lt;p&gt;</span>
-<span class="c">     * PlugHost&#39;s &lt;a href=&quot;#method_initPlugins&quot;&gt;_initPlugins&lt;/a&gt; and &lt;a href=&quot;#method_destroyPlugins&quot;&gt;_destroyPlugins&lt;/a&gt; </span>
-<span class="c">     * methods should be invoked by the host class at the appropriate point in the instance&#39;s lifecyle. </span>
-<span class="c">     * This is done by default for the Base class, so developers extending base don&#39;t need to do </span>
-<span class="c">     * anything to get plugin support.</span>
+<span class="c">     * Plug.Host&#39;s protected &lt;a href=&quot;#method_initPlugins&quot;&gt;_initPlugins&lt;/a&gt; and &lt;a href=&quot;#method_destroyPlugins&quot;&gt;_destroyPlugins&lt;/a&gt; </span>
+<span class="c">     * methods should be invoked by the host class at the appropriate point in the host&#39;s lifecyle. This is done by default for </span>
+<span class="c">     * the Base class, so developers extending Base or Widget don&#39;t need to do anything to enable plugin support.</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     *</span>
 <span class="c">     * @class Plugin.Host</span>
