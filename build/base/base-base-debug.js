@@ -272,9 +272,8 @@ YUI.add('base-base', function(Y) {
     Y.namespace("Plugin").Host = PluginHost;
 
     /**
-     * The base module provides the Base class, which objects requiring managed attributes 
-     * and custom event support can extend. The base module also provides two ways to reuse
-     * code - An augmentable PluginHost interface which provides plugin support 
+     * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
+     * The module also provides two ways to reuse code - An augmentable PluginHost interface which provides plugin support 
      * (which is augmented to the Base class) and Base.build which provides a way to 
      * build custom classes using extensions.
      *
@@ -303,12 +302,11 @@ YUI.add('base-base', function(Y) {
 
     /**
      * <p>
-     * Provides a base class for which objects requiring managed attributes and 
-     * custom event support can extend. The Base class also handles the chaining of 
-     * initializer and destructor methods across the hierarchy as part of object construction
-     * and destruction. Additionally, attributes configured through the static 
-     * <a href="#property_Base.ATTRS">ATTRS</a> property for each class in the hierarchy will be 
-     * initialized by Base.
+     * Provides a base class which objects requiring attributes and custom event support can 
+     * extend. The Base class also handles the chaining of initializer and destructor methods across 
+     * the hierarchy as part of object construction and destruction. Additionally, attributes configured 
+     * through the static <a href="#property_Base.ATTRS">ATTRS</a> property for each class 
+     * in the hierarchy will be initialized by Base.
      * </p>
      *
      * <p>The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
