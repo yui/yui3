@@ -49,7 +49,7 @@
     color: #000;
     font-size: 11px;
     overflow: auto;
-    overflow-x: hidden;
+    overflow-x: auto;
     overflow-y: scroll;
     _width: 100%;
 }
@@ -107,6 +107,8 @@
 /* Log entries */
 .yui-skin-sam .yui-console-entry {
     border-bottom: 1px solid #aaa;
+    min-height: 32px;
+    _height: 32px;
 }
 
 .yui-skin-sam .yui-console-entry-meta {
