@@ -1,3 +1,4 @@
+(function(Y) {
 /**
  * The selector-native module provides support for native querySelector
  * @module selector-native
@@ -10,10 +11,7 @@
 
 Y.namespace('Selector'); // allow native module to standalone
 
-var PARENT_NODE = 'parentNode',
-    LENGTH = 'length',
-
-NativeSelector = {
+var NativeSelector = {
     _reLead: /^\s*([>+~]|:self)/,
     _reUnSupported: /!./,
 
@@ -27,13 +25,15 @@ NativeSelector = {
     },
 
     _toArray: function(nodes) { // TODO: move to Y.Array
-        var ret = nodes;
+        var ret = nodes,
+            i, len;
+
         if (!nodes.slice) {
             try {
                 ret = Array.prototype.slice.call(nodes);
             } catch(e) { // IE: requires manual copy
                 ret = [];
-                for (var i = 0, len = nodes[LENGTH]; i < len; ++i) {
+                for (i = 0, len = nodes.length; i < len; ++i) {
                     ret[i] = nodes[i];
                 }
             }
@@ -42,8 +42,10 @@ NativeSelector = {
     },
 
     _clearFoundCache: function() {
-        var foundCache = NativeSelector._foundCache;
-        for (var i = 0, len = foundCache[LENGTH]; i < len; ++i) {
+        var foundCache = NativeSelector._foundCache,
+            i, len;
+
+        for (i = 0, len = foundCache.length; i < len; ++i) {
             try { // IE no like delete
                 delete foundCache[i]._found;
             } catch(e) {
@@ -68,11 +70,12 @@ NativeSelector = {
 
     _deDupe: function(nodes) {
         var ret = [],
-            cache = NativeSelector._foundCache;
+            cache = NativeSelector._foundCache,
+            i, node;
 
-        for (var i = 0, node; node = nodes[i++];) {
+        for (i = 0, node; node = nodes[i++];) {
             if (!node._found) {
-                ret[ret[LENGTH]] = cache[cache[LENGTH]] = node;
+                ret[ret.length] = cache[cache.length] = node;
                 node._found = true;
             }
         }
@@ -85,13 +88,14 @@ NativeSelector = {
     _prepQuery: function(root, selector) {
         var groups = selector.split(','),
             queries = [],
-            isDocRoot = (root && root.nodeType === 9);
+            isDocRoot = (root && root.nodeType === 9),
+            i, len;
 
         if (root) {
             if (!isDocRoot) {
                 root.id = root.id || Y.guid();
                 // break into separate queries for element scoping
-                for (var i = 0, len = groups[LENGTH]; i < len; ++i) {
+                for (i = 0, len = groups.length; i < len; ++i) {
                     selector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
                     queries.push({root: root.ownerDocument, selector: selector});
                 }
@@ -111,7 +115,8 @@ NativeSelector = {
         var ret = firstOnly ? null : [],
             queryName = firstOnly ? 'querySelector' : 'querySelectorAll',
             result,
-            queries;
+            queries,
+            i, query;
 
         root = root || Y.config.doc;
 
@@ -119,7 +124,7 @@ NativeSelector = {
             queries = NativeSelector._prepQuery(root, selector);
             ret = [];
 
-            for (var i = 0, query; query = queries[i++];) {
+            for (i = 0, query; query = queries[i++];) {
                 try {
                     result = query.root[queryName](query.selector);
                     if (queryName === 'querySelectorAll') { // convert NodeList to Array
@@ -131,7 +136,7 @@ NativeSelector = {
                 }
             }
 
-            if (queries[LENGTH] > 1) { // remove dupes and sort by doc order 
+            if (queries.length > 1) { // remove dupes and sort by doc order 
                 ret = NativeSelector._sort(NativeSelector._deDupe(ret));
             }
             ret = (!firstOnly) ? ret : ret[0] || null;
@@ -140,12 +145,13 @@ NativeSelector = {
     },
 
     _filter: function(nodes, selector) {
-        var ret = [];
+        var ret = [],
+            i, node;
 
         if (nodes && selector) {
-            for (var i = 0, node; (node = nodes[i++]);) {
+            for (i = 0, node; (node = nodes[i++]);) {
                 if (Y.Selector._test(node, selector)) {
-                    ret[ret[LENGTH]] = node;
+                    ret[ret.length] = node;
                 }
             }
         } else {
@@ -159,12 +165,12 @@ NativeSelector = {
     _test: function(node, selector) {
         var ret = false,
             groups = selector.split(','),
-            id,
-            item;
+            item,
+            i, group;
 
         if (node && node.tagName) { // only test HTMLElements
             node.id = node.id || Y.guid();
-            for (var i = 0, group; group = groups[i++];) {
+            for (i = 0, group; group = groups[i++];) {
                 group += '#' + node.id; // add ID for uniqueness
                 item = Y.Selector.query(group, null, true);
                 ret = (item === node);
@@ -194,3 +200,5 @@ if (NativeSelector._supportsNative()) {
 }
 Y.Selector.test = NativeSelector._test;
 Y.Selector.filter = NativeSelector._filter;
+
+})(Y);

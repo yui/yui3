@@ -1,3 +1,4 @@
+(function(Y) {
 
 /**
  * Adds position and region management functionality to DOM.
@@ -102,7 +103,6 @@ Y.mix(Y.DOM, {
                 var xy = null,
                     scrollLeft,
                     scrollTop,
-                    pos,
                     box,
                     off1, off2,
                     bLeft, bTop,
@@ -118,7 +118,8 @@ Y.mix(Y.DOM, {
                         xy = [box.left, box.top];
 
                             if (Y.UA.ie) {
-                                off1 = 2, off2 = 2;
+                                off1 = 2;
+                                off2 = 2;
                                 mode = doc[COMPAT_MODE];
                                 bLeft = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH);
                                 bTop = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_TOP_WIDTH);
@@ -161,7 +162,7 @@ Y.mix(Y.DOM, {
                     parentNode,
                     bCheck,
                     scrollTop,
-                    scrolLLeft;
+                    scrollLeft;
 
                 if (node) {
                     if (Y.DOM.inDoc(node)) {
@@ -385,3 +386,4 @@ Y.mix(Y.DOM, {
         return { height: root.scrollHeight, width: root.scrollWidth };
     }
 });
+})(Y);

@@ -1,5 +1,6 @@
 YUI.add('dom-base', function(Y) {
 
+(function(Y) {
 /** 
  * The DOM utility provides a cross-browser abtraction layer
  * normalizing DOM tasks, and adds extra helper functionality
@@ -27,8 +28,6 @@ var NODE_TYPE = 'nodeType',
     NEXT_SIBLING = 'nextSibling',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
-
-    UNDEFINED = undefined,
 
     re_tag = /<([a-z]+)/i;
 
@@ -803,7 +802,7 @@ Y.DOM = {
 };
 
 
-(function() {
+(function(Y) {
     var creators = Y.DOM.creators,
         create = Y.DOM.create,
         re_tbody = /(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)>)+\s*<tbody/,
@@ -912,7 +911,9 @@ Y.DOM = {
             return val;
         }
     });
-})();
+})(Y);
+
+})(Y);
 /** 
  * The DOM utility provides a cross-browser abtraction layer
  * normalizing DOM tasks, and adds extra helper functionality
