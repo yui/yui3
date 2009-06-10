@@ -7,6 +7,7 @@ YUI.add('base-build', function(Y) {
      *
      * @module base
      * @submodule base-build
+     * @for Base
      */
 
     var Base = Y.Base,
@@ -17,9 +18,9 @@ YUI.add('base-build', function(Y) {
      *
      * Defines the static fields which need to be aggregated
      * when the Base class is used as the main class passed to 
-     * the <a href="#method_build">Base.build</a> method.
+     * the <a href="#method_Base.build">Base.build</a> method.
      *
-     * @property _buildCfg
+     * @property Base._buildCfg
      * @type Object
      * @static
      * @final
@@ -51,12 +52,12 @@ YUI.add('base-build', function(Y) {
      *    <dt>aggregates &#60;String[]&#62;</dt>
      *    <dd>An array of static property names, which will get aggregated
      *    on to the built class, in addition to the default properties build 
-     *    will always aggregate as defined by the main class' _buildCfg
+     *    will always aggregate as defined by the main class' static _buildCfg
      *    property.
      *    </dd>
      * </dl>
      *
-     * @method build
+     * @method Base.build
      * @static
      * @param {Function} main The name of the new class. Used to defined the NAME property for the new class.
      * @param {Function} main The main class on which to base the built class
