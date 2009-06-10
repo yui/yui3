@@ -1,3 +1,4 @@
+(function(Y) {
 /**
  * Extended Node interface for managing classNames.
  * @module node
@@ -51,3 +52,4 @@
 
     Y.Node.importMethod(Y.DOM, methods);
     Y.NodeList.importMethod(Y.Node.prototype, methods);
+})(Y);
