@@ -50,9 +50,8 @@
 
                     </h3>
                     <div class="description summary">
-                        The base module provides the Base class, which objects requiring managed attributes 
-and custom event support can extend. The base module also provides two ways to reuse
-code - An augmentable PluginHost interface which provides plugin support 
+                        The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
+The module also provides two ways to reuse code - An augmentable PluginHost interface which provides plugin support 
 (which is augmented to the Base class) and Base.build which provides a way to 
 build custom classes using extensions.
                     </div>
@@ -64,7 +63,7 @@ build custom classes using extensions.
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nProvides a base class for which objects requiring managed attributes and \ncustom event support can extend. The Base class also handles the chaining of \ninitializer and destructor methods across the hierarchy as part of object construction\nand destruction. Additionally, attributes configured through the static \n<a href=\"#property_Base.ATTRS\">ATTRS<\/a> property for each class in the hierarchy will be \ninitialized by Base.\n<\/p>\n<p>The static <a href=\"#property_Base.NAME\">NAME<\/a> property of each class extending \nfrom Base will be used as the identifier for the class, and is used by Base to prefix \nall events fired by instances of that class.<\/p>", "guessedname": "Base", "name": "Base"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nAn augmentable class, which when augmented onto a Base based class, allows \nthe class to support plugins, providing plug and unplug methods and the ability\nto add plugins through the configuration literal passed to the constructor.\n<\/p>\n<p>\nThe PlugHost's _initPlugins() and _destroyPlugins() methods should be invoked by the \nhost class at the appropriate point in the instance's lifecyle. This is done\nby default for the Base class, so developers extending base don't need to do \nanything to get plugin support.\n<\/p>", "guessedname": "PluginHost", "name": "PluginHost"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nProvides a base class which objects requiring attributes and custom event support can \nextend. The Base class also handles the chaining of initializer and destructor methods across \nthe hierarchy as part of object construction and destruction. Additionally, attributes configured \nthrough the static <a href=\"#property_Base.ATTRS\">ATTRS<\/a> property for each class \nin the hierarchy will be initialized by Base.\n<\/p>\n<p>The static <a href=\"#property_Base.NAME\">NAME<\/a> property of each class extending \nfrom Base will be used as the identifier for the class, and is used by Base to prefix \nall events fired by instances of that class.<\/p>", "guessedname": "Base", "name": "Base"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>\nAn augmentable class, which when augmented onto a Base based class, allows \nthe class to support plugins, providing plug and unplug methods and the ability\nto add plugins through the configuration literal passed to the constructor.\n<\/p>\n<p>\nThe PlugHost's _initPlugins() and _destroyPlugins() methods should be invoked by the \nhost class at the appropriate point in the instance's lifecyle. This is done\nby default for the Base class, so developers extending base don't need to do \nanything to get plugin support.\n<\/p>", "guessedname": "PluginHost", "name": "PluginHost"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
@@ -79,12 +78,11 @@ build custom classes using extensions.
                                         <dl>
                                             <dt><code><a href="Base.html" title="base-base">base-base</a></code></dt>
                                             <dd><p>
-Provides a base class for which objects requiring managed attributes and 
-custom event support can extend. The Base class also handles the chaining of 
-initializer and destructor methods across the hierarchy as part of object construction
-and destruction. Additionally, attributes configured through the static 
-<a href="#property_Base.ATTRS">ATTRS</a> property for each class in the hierarchy will be 
-initialized by Base.
+Provides a base class which objects requiring attributes and custom event support can 
+extend. The Base class also handles the chaining of initializer and destructor methods across 
+the hierarchy as part of object construction and destruction. Additionally, attributes configured 
+through the static <a href="#property_Base.ATTRS">ATTRS</a> property for each class 
+in the hierarchy will be initialized by Base.
 </p>
 <p>The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
 from Base will be used as the identifier for the class, and is used by Base to prefix 

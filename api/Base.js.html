@@ -48,9 +48,8 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * The base module provides the Base class, which objects requiring managed attributes </span>
-<span class="c">     * and custom event support can extend. The base module also provides two ways to reuse</span>
-<span class="c">     * code - An augmentable PluginHost interface which provides plugin support </span>
+<span class="c">     * The base module provides the Base class, which objects requiring attribute and custom event support can extend. </span>
+<span class="c">     * The module also provides two ways to reuse code - An augmentable PluginHost interface which provides plugin support </span>
 <span class="c">     * (which is augmented to the Base class) and Base.build which provides a way to </span>
 <span class="c">     * build custom classes using extensions.</span>
 <span class="c">     *</span>
@@ -79,12 +78,11 @@
 
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
-<span class="c">     * Provides a base class for which objects requiring managed attributes and </span>
-<span class="c">     * custom event support can extend. The Base class also handles the chaining of </span>
-<span class="c">     * initializer and destructor methods across the hierarchy as part of object construction</span>
-<span class="c">     * and destruction. Additionally, attributes configured through the static </span>
-<span class="c">     * &lt;a href=&quot;#property_Base.ATTRS&quot;&gt;ATTRS&lt;/a&gt; property for each class in the hierarchy will be </span>
-<span class="c">     * initialized by Base.</span>
+<span class="c">     * Provides a base class which objects requiring attributes and custom event support can </span>
+<span class="c">     * extend. The Base class also handles the chaining of initializer and destructor methods across </span>
+<span class="c">     * the hierarchy as part of object construction and destruction. Additionally, attributes configured </span>
+<span class="c">     * through the static &lt;a href=&quot;#property_Base.ATTRS&quot;&gt;ATTRS&lt;/a&gt; property for each class </span>
+<span class="c">     * in the hierarchy will be initialized by Base.</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     *</span>
 <span class="c">     * &lt;p&gt;The static &lt;a href=&quot;#property_Base.NAME&quot;&gt;NAME&lt;/a&gt; property of each class extending </span>
