@@ -120,7 +120,7 @@ YUI.add('attribute', function(Y) {
     };
 
     /**
-     * The attribute module provies an augmentable Attribute implementation, which 
+     * The attribute module provides an augmentable Attribute implementation, which 
      * adds configurable attributes and attribute change events to the class being 
      * augmented. It also provides a State class, which is used internally by Attribute,
      * but can also be used independently to provide a name/property/value data structure to
@@ -165,23 +165,23 @@ YUI.add('attribute', function(Y) {
         MODIFIABLE[BROADCAST] = 1;
 
     /**
-     * <p>Attribute provides configurable attribute support along with attribute change events.</p>
      * <p>
-     * Attribute is designed to be augmented onto a host class, and provides the host with the 
-     * ability to configure attributes to store and retrieve state, along with attribute change events.
+     * Attribute provides configurable attribute support along with attribute change events. It is designed to be 
+     * augmented onto a host class, and provides the host with the ability to configure attributes to store and retrieve state, 
+     * along with attribute change events.
      * </p>
-     * <p>Attributes added to the host can be configured:</p>
+     * <p>For example, attributes added to the host can be configured:</p>
      * <ul>
      *     <li>As read only.</li>
      *     <li>As write once.</li>
-     *     <li>With a setter function, used to manipulate
-     *     values passed to Attribute's set method, before they are stored.</li>
+     *     <li>With a setter function, which can be used to manipulate
+     *     values passed to Attribute's <a href="#method_set">set</a> method, before they are stored.</li>
      *     <li>With a getter function, which can be used to manipulate stored values,
-     *     before they are returned by Attribute's get method.</li>
+     *     before they are returned by Attribute's <a href="#method_get">get</a> method.</li>
      *     <li>With a validator function, to validate values before they are stored.</li>
      * </ul>
      *
-     * <p>See the <a href="#method_addAtt">addAttr</a> method, for the complete set of configuration
+     * <p>See the <a href="#method_addAttr">addAttr</a> method, for the complete set of configuration
      * options available for attributes</p>.
      * 
      * <p><strong>NOTE:</strong> Most implementations will be better off extending the <a href="Base.html">Base</a> class, 
@@ -204,7 +204,7 @@ YUI.add('attribute', function(Y) {
     /**
      * <p>The value to return from an attribute setter in order to prevent the set from going through.</p>
      * 
-     * <p>You can return this value from your setter, if you wish to combine validation and setter 
+     * <p>You can return this value from your setter if you wish to combine validator and setter 
      * functionality into a single setter function, which either returns the massaged value to be stored or 
      * Attribute.INVALID_VALUE to prevent invalid values from being stored.</p>
      *
@@ -238,40 +238,50 @@ YUI.add('attribute', function(Y) {
          * <p>
          * The config argument object literal supports the following optional properties:
          * </p>
+         * 
          * <dl>
          *    <dt>value &#60;Any&#62;</dt>
          *    <dd>The initial value to set on the attribute</dd>
+         *
          *    <dt>valueFn &#60;Function&#62;</dt>
          *    <dd>A function, which will return the initial value to set on the attribute. This is useful
          *    for cases where the attribute configuration is defined statically, but needs to 
          *    reference the host instance ("this") to obtain an initial value.
          *    If defined, this precedence over the value property.</dd>
-         *    <dt>readOnly &#60;Boolean&#62;</dt>
+         *
+         *    <dt>readOnly &#60;boolean&#62;</dt>
          *    <dd>Whether or not the attribute is read only. Attributes having readOnly set to true
          *        cannot be modified by invoking the set method.</dd>
-         *    <dt>writeOnce &#60;Boolean&#62;</dt>
+         *
+         *    <dt>writeOnce &#60;boolean&#62;</dt>
          *    <dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
          *        can only have their values set once, be it through the default configuration, 
          *        constructor configuration arguments, or by invoking set.</dd>
+         *
          *    <dt>setter &#60;Function&#62;</dt>
          *    <dd>The setter function used to massage or normalize the value passed to the set method for the attribute. 
          *    The value returned by the setter will be the final stored value. Returning
          *    <a href="#property_Attribute.INVALID_VALUE">Attribute.INVALID_VALUE</a>, from the setter will prevent
          *    the value from being stored.</dd>
+         *
          *    <dt>getter &#60;Function&#62;</dt>
          *    <dd>The getter function used to massage or normalize the value returned by the get method for the attribute.
          *    The value returned by the getter function is the value which will be returned to the user when they 
          *    invoke get.</dd>
+         *
          *    <dt>validator &#60;Function&#62;</dt>
          *    <dd>The validator function invoked prior to setting the stored value. Returning
          *    false from the validator function will prevent the value from being stored.</dd>
-         *    <dt>broadcast &#60;Int&#62;</dt>
-         *    <dd>If and how attribute change events for this attribute should be broadcast. See Event.Custom's <a href="Event.Custom.html#property_broadcast>broadcast</a> property for 
+         *    
+         *    <dt>broadcast &#60;int&#62;</dt>
+         *    <dd>If and how attribute change events for this attribute should be broadcast. See Event.Custom's <a href="Event.Custom.html#property_broadcast">broadcast</a> property for 
          *    valid values. By default attribute change events are not broadcast.</dd>
+         *
          *    <dt>lazyAdd &#60;boolean&#62;</dt>
          *    <dd>Whether or not to delay initialization of the attribute until the first call to get/set it. 
          *    This flag can be used to over-ride lazy initialization on a per attribute basis, when adding multiple attributes through 
          *    the <a href="#method_addAttrs">addAttrs</a> method.</dd>
+         *
          * </dl>
          *
          * <p>The setter, getter and validator are invoked with the value and name passed in as the first and second arguments, and with
@@ -281,10 +291,13 @@ YUI.add('attribute', function(Y) {
          *
          * @param {String} name The name of the attribute.
          * @param {Object} config An object literal specifying the configuration for the attribute.
-         * @param {boolean} lazy (optional) Whether or not to add this attribute lazily (on the first call to get/set). 
          *
+         * <p>
          * <strong>NOTE:</strong> The configuration object is modified when adding an attribute, so if you need 
-         * to protect the original values, you will need to merge or clone the object.
+         * to protect the original values, you will need to merge the object.
+         * </p>
+         *
+         * @param {boolean} lazy (optional) Whether or not to add this attribute lazily (on the first call to get/set). 
          *
          * @return {Object} A reference to the host object.
          *
@@ -342,7 +355,7 @@ YUI.add('attribute', function(Y) {
          *
          * @method attrAdded
          * @param {String} name The name of the attribute to check.
-         * @return {boolean}, true if an attribute with the given name has been added.
+         * @return {boolean} true if an attribute with the given name has been added, false if it hasn't. This method will return true for lazily added attributes.
          */
         attrAdded: function(name) {
             return !!this._conf.get(name, ADDED);
@@ -486,7 +499,7 @@ YUI.add('attribute', function(Y) {
          * the developer to distinguish between set called internally by the host, vs. 
          * set called externally by the application developer.
          *
-         * @return {Object} A reference to the host object
+         * @return {Object} A reference to the host object.
          */
         set : function(name, val, opts) {
             return this._setAttr(name, val, opts);
@@ -498,7 +511,7 @@ YUI.add('attribute', function(Y) {
          *
          * @method reset
          * @param {String} name Optional. The name of the attribute to reset.  If omitted, all attributes are reset.
-         * @return A reference to the host object.
+         * @return {Object} A reference to the host object.
          * @chainable
          */
         reset : function(name) {
@@ -527,7 +540,7 @@ YUI.add('attribute', function(Y) {
          * @param {Any} val The value to set the attribute to.
          * @param {Object} opts (Optional) Optional event data to be mixed into
          * the event facade passed to subscribers of the attribute's change event.
-         * @return {Object} A reference to the host object
+         * @return {Object} A reference to the host object.
          */
         _set : function(name, val, opts) {
             return this._setAttr(name, val, opts, true);
@@ -549,7 +562,7 @@ YUI.add('attribute', function(Y) {
          * @param {boolean} force If true, allows the caller to set values for 
          * readOnly or writeOnce attributes which have already been set.
          *
-         * @return {Object} A reference to the host object
+         * @return {Object} A reference to the host object.
          */
         _setAttr : function(name, val, opts, force) {
             var allowSet = true,
@@ -742,7 +755,7 @@ YUI.add('attribute', function(Y) {
          *
          * @method setAttrs
          * @param {Object} attrs  An object literal of attributes name/value pairs.
-         * @return A reference to the host object.
+         * @return {Object} A reference to the host object.
          * @chainable
          */
         setAttrs : function(attrs) {
@@ -758,7 +771,7 @@ YUI.add('attribute', function(Y) {
          * Gets multiple attribute values.
          *
          * @method getAttrs
-         * @param {Array | Boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
+         * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
          * returned. If set to true, all attributes modified from their initial values are returned.
          * @return {Object} An object literal of attribute name/value pairs.
          */
@@ -784,8 +797,10 @@ YUI.add('attribute', function(Y) {
         /**
          * Configures a group of attributes, and sets initial values.
          *
-         * Note: This method does not isolate the configuration object by merging/cloning. 
+         * <p>
+         * <strong>NOTE:</strong> This method does not isolate the configuration object by merging/cloning. 
          * The caller is responsible for merging/cloning the configuration object if required.
+         * </p>
          *
          * @method addAttrs
          * @chainable
@@ -796,6 +811,8 @@ YUI.add('attribute', function(Y) {
          * @param {boolean} lazy Whether or not to delay the intialization of these attributes until the first call to get/set.
          * Individual attributes can over-ride this behavior by defining a lazyAdd configuration property in their configuration.
          * See <a href="#method_addAttr">addAttr</a>.
+         * 
+         * @return {Object} A reference to the host object.
          */
         addAttrs : function(cfgs, values, lazy) {
             if (cfgs) {
