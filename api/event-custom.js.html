@@ -367,8 +367,9 @@
 <span class="c">     * chainable event target depending on the &#39;chain&#39; config.</span>
 <span class="c">     * @deprecated use on</span>
 <span class="c">     */</span>
-    <span class="nx">subscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_on</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="nx">subscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">x</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">):</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_on</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -378,8 +379,9 @@
 <span class="c">     * @return {EventHandle|EventTarget} unsubscribe handle or a</span>
 <span class="c">     * chainable event target depending on the &#39;chain&#39; config.</span>
 <span class="c">     */</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_on</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">x</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">):</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_on</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -391,8 +393,9 @@
 <span class="c">     * @return {EventHandle|EventTarget} unsubscribe handle or a</span>
 <span class="c">     * chainable event target depending on the &#39;chain&#39; config.</span>
 <span class="c">     */</span>
-    <span class="nx">after</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_on</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">,</span> <span class="nx">AFTER</span><span class="o">);</span>
+    <span class="nx">after</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">x</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">):</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_on</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">AFTER</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -904,14 +907,6 @@
 <span class="c">     */</span>
     <span class="k">this</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Optional additional arguments supplied to subscribe().  If present,</span>
-<span class="c">     * these will be appended to the arguments supplied to fire()</span>
-<span class="c">     * @property args</span>
-<span class="c">     * @type Array</span>
-<span class="c">     */</span>
-    <span class="c">// this.args = args;</span>
-<span class="c"></span>
     <span class="c">/*</span>
 <span class="c">     * }</span>
 <span class="c">     * fn bound to obj with additional arguments applied via Y.rbind</span>
