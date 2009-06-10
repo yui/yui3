@@ -743,8 +743,8 @@ Y.CustomEvent.prototype = {
      * chainable event target depending on the 'chain' config.
      * @deprecated use on
      */
-    subscribe: function(fn, context, x) {
-        var a = (x) ? Y.Array(arguments, 2, true): null;
+    subscribe: function(fn, context) {
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
         return this._on(fn, context, a, true);
     },
 
@@ -755,8 +755,8 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
-    on: function(fn, context, x) {
-        var a = (x) ? Y.Array(arguments, 2, true): null;
+    on: function(fn, context) {
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
         return this._on(fn, context, a, true);
     },
 
@@ -769,8 +769,8 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle|EventTarget} unsubscribe handle or a
      * chainable event target depending on the 'chain' config.
      */
-    after: function(fn, context, x) {
-        var a = (x) ? Y.Array(arguments, 2, true): null;
+    after: function(fn, context) {
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
         return this._on(fn, context, a, AFTER);
     },
 
@@ -1526,7 +1526,7 @@ ET.prototype = {
      * @param fn {Function} The callback
      * @return the event target or a detach handle per 'chain' config
      */
-    on: function(type, fn, context) {
+    on: function(type, fn, context, x) {
 
         var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
@@ -1606,11 +1606,11 @@ ET.prototype = {
 
             // Y.log('parts: ' + parts);
             ce     = this._yuievt.events[type] || this.publish(type);
-            args   = Y.Array(arguments, 1, true);
+            // args   = Y.Array(arguments, 1, true);
+            // f = (after) ? ce.after : ce.on;
+            // handle = f.apply(ce, args);
 
-            f = (after) ? ce.after : ce.on;
-
-            handle = f.apply(ce, args);
+            handle = ce._on(fn, context, (arguments.length > 2) ? Y.Array(arguments, 2, true) : null, (after) ? 'after' : true);
         }
 
         if (detachcategory) {
@@ -1618,7 +1618,6 @@ ET.prototype = {
             store[detachcategory] = store[detachcategory] || {};
             store[detachcategory][type] = store[detachcategory][type] || [];
             store[detachcategory][type].push(handle);
-
 
             // Y.log('storing: ' + key);
         }
