@@ -344,7 +344,7 @@ YUI.add('dd-scroll', function(Y) {
                 }
                 return scroll;
             }
-        },
+        }
     });
     Y.extend(WS, S, {
         //Shouldn't have to do this..

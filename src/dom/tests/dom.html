@@ -169,6 +169,23 @@ form {
                 Assert.areEqual('', Y.DOM.getText(), 'getText()');
             },
 
+            test_setText: function() {
+                var node = document.createElement('div'),
+                    content = 'testing text content';
+
+                document.body.appendChild(node);
+                Y.DOM.setText(node, content);
+                Assert.areEqual(content, Y.DOM.getText(node, content), 'setText("' + content + '")');
+
+                content = '<div>testing text content</div>';
+                Y.DOM.setText(node, content);
+                Assert.areEqual(content, Y.DOM.getText(node, content), 'setText("' + content + '")');
+
+                content = '   testing     text      content    ';
+                Y.DOM.setText(node, content);
+                Assert.areEqual(content, Y.DOM.getText(node, content), 'setText("' + content + '")');
+            },
+
             test_firstChild: function() {
                 Assert.isNull(Y.DOM.firstChild(tmp), 'firstChild(tmp)');
                 Assert.isNull(Y.DOM.firstChild(null), 'firstChild(null)');
@@ -404,11 +421,6 @@ form {
                 Assert.areEqual('THEAD', el.tagName, html);
 
 
-                html = '<option selected>foo</option>';
-                el = Y.DOM.create(html);
-                document.getElementById('test-select').appendChild(el);
-                Assert.isTrue(el.selected, 'el.selected');
-
                 html = '<li><a href=""></a></li>';
                 el = Y.DOM.create(html);
                 Assert.areEqual('A', el.firstChild.tagName, html);
@@ -417,6 +429,11 @@ form {
                 el = Y.DOM.create(html);
                 document.getElementById('test-select').appendChild(el);
                 Assert.isFalse(el.selected, 'el.selected');
+
+                // trim leading space
+                html = ' <div>foo</div>';
+                el = Y.DOM.create(html);
+                Assert.isTrue(el.tagName === 'DIV', html);
 
                 html = '<thead><tr><td><table><thead></thead><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead>';
                 el = Y.DOM.create(html);
@@ -448,11 +465,6 @@ form {
                 html = '<thead><tr><td><table><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead><tbody></tbody>';
                 el = Y.DOM.create(html);
                 Assert.areEqual(2, el.childNodes.length, html);
-
-                // leading space creates textNode
-                html = ' <div>foo</div>';
-                el = Y.DOM.create(html);
-                Assert.isTrue(el.childNodes[1].tagName === 'DIV', html);
 
             },
 

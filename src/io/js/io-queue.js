@@ -57,7 +57,7 @@
 
 		Y.log('Object queued.  Transaction id is' + o.id, 'info', 'io');
 		return o;
-	};
+	}
 
    /**
 	* @description Method Process the first transaction from the
@@ -74,7 +74,7 @@
 		_activeId = o.id;
 		_qState = 0;
 		Y.io(o.uri, o.cfg, o.id);
-	};
+	}
 
    /**
 	* @description Method for promoting a transaction to the top of the queue.
@@ -86,14 +86,14 @@
 	*/
 	function _unshift(o) {
 		_q.promote(o);
-	};
+	}
 
 	function _next(id) {
 		_qState = 1;
 		if (_activeId === id && _q.size() > 0) {
 			_shift();
 		}
-	};
+	}
 
    /**
 	* @description Method for removing a specific, pending transaction from
@@ -106,7 +106,7 @@
 	*/
 	function _remove(o) {
 		_q.remove(o);
-	};
+	}
 
 	function _start() {
 		_qState = 1;

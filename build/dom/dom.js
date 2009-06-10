@@ -27,9 +27,6 @@ var NODE_TYPE = 'nodeType',
     NEXT_SIBLING = 'nextSibling',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
-    INNER_TEXT = 'innerText',
-    TEXT_CONTENT = 'textContent',
-
 
     UNDEFINED = undefined,
 
@@ -55,13 +52,37 @@ Y.DOM = {
      * @param {HTMLElement} element The html element. 
      * @return {String} The text content of the element (includes text of any descending elements).
      */
-    getText: function(element) {
-        var text = element ? element[TEXT_CONTENT] : '';
-        if (text === UNDEFINED && INNER_TEXT in element) {
-            text = element[INNER_TEXT];
-        } 
-        return text || '';
-    },
+    getText: (document.documentElement.textContent !== undefined) ?
+        function(element) {
+            var ret = '';
+            if (element) {
+                ret = element.textContent;
+            }
+            return ret || '';
+        } : function(element) {
+            var ret = '';
+            if (element) {
+                ret = element.innerText;
+            }
+            return ret || '';
+        },
+
+    /**
+     * Returns the text content of the HTMLElement. 
+     * @method getText         
+     * @param {HTMLElement} element The html element. 
+     * @return {String} The text content of the element (includes text of any descending elements).
+     */
+    setText: (document.documentElement.textContent !== undefined) ?
+        function(element, content) {
+            if (element) {
+                element.textContent = content;
+            }
+        } : function(element, content) {
+            if (element) {
+                element.innerText = content;
+            }
+        },
 
 // TODO: pull out sugar (rely on _childBy, byAxis, etc)?
     /**
@@ -401,6 +422,11 @@ Y.DOM = {
      * @param {HTMLDocument} doc An optional document context 
      */
     create: function(html, doc) {
+        html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
+        if (!doc && Y.DOM._cloneCache[html]) {
+            return Y.DOM._cloneCache[html].cloneNode(true); // NOTE: return
+        }
+
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html),
             create = Y.DOM._create,
@@ -427,6 +453,7 @@ Y.DOM = {
             }
         }
 
+        Y.DOM._cloneCache[html] = ret.cloneNode(true);
         return ret;
     },
 
@@ -510,33 +537,51 @@ Y.DOM = {
         }
     },
 
-    addHTML: function(node, content, where, execScripts) {
-        var scripts,
-            newNode = (content.nodeType) ? content : Y.DOM.create(content);
+    _cloneCache: {},
 
-        if (where && where.nodeType) {
-            node.insertBefore(newNode, where);
+    addHTML: function(node, content, where, execScripts) {
+        content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
+        var scripts,
+            newNode = Y.DOM._cloneCache[content];
+            
+        if (newNode) {
+            newNode = newNode.cloneNode(true);
         } else {
-            switch (where) {
-                case 'replace':
-                    while (node.firstChild) {
-                        node.removeChild(node.firstChild);
-                    }
-                    node.appendChild(newNode);
-                    break;
-                case 'before':
-                    node.parentNode.insertBefore(newNode, node);
-                    break;
-                case 'after':
-                    if (node.nextSibling) { // IE errors if refNode is null
-                        node.parentNode.insertBefore(newNode, node.nextSibling);
-                    } else {
-                        node.parentNode.appendChild(newNode);
-                    }
-                    break;
-                default:
-                    node.appendChild(newNode);
+            if (content.nodeType) { // domNode
+                newNode = content;
+            } else { // create from string and cache
+                newNode = Y.DOM.create(content);
             }
+        }
+
+        if (where) {
+            if (where.nodeType) { // insert regardless of relationship to node
+                // TODO: check if node.contains(where)?
+                where.parentNode.insertBefore(newNode, where);
+            } else {
+                switch (where) {
+                    case 'replace':
+                        while (node.firstChild) {
+                            node.removeChild(node.firstChild);
+                        }
+                        node.appendChild(newNode);
+                        break;
+                    case 'before':
+                        node.parentNode.insertBefore(newNode, node);
+                        break;
+                    case 'after':
+                        if (node.nextSibling) { // IE errors if refNode is null
+                            node.parentNode.insertBefore(newNode, node.nextSibling);
+                        } else {
+                            node.parentNode.appendChild(newNode);
+                        }
+                        break;
+                    default:
+                        node.appendChild(newNode);
+                }
+            }
+        } else {
+            node.appendChild(newNode);
         }
 
         if (execScripts) {
@@ -991,8 +1036,8 @@ Y.mix(Y.DOM, {
      * @param {String} att The style property to set. 
      * @param {String|Number} val The value. 
      */
-    setStyle: function(node, att, val) {
-        var style = node[STYLE],
+    setStyle: function(node, att, val, style) {
+        var style = node.style,
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
 
         if (style) {
@@ -1046,8 +1091,9 @@ Y.mix(Y.DOM, {
      * @param {Object} hash An object literal of property:value pairs. 
      */
     setStyles: function(node, hash) {
+        var style = node.style;
         Y.each(hash, function(v, n) {
-            Y.DOM.setStyle(node, n, v);
+            Y.DOM.setStyle(node, n, v, style);
         }, Y.DOM);
     },
 
@@ -2167,9 +2213,10 @@ NativeSelector = {
     _test: function(node, selector) {
         var ret = false,
             groups = selector.split(','),
+            id,
             item;
 
-        if (node) {
+        if (node && node.tagName) { // only test HTMLElements
             node.id = node.id || Y.guid();
             for (var i = 0, group; group = groups[i++];) {
                 group += '#' + node.id; // add ID for uniqueness
@@ -2384,6 +2431,7 @@ var PARENT_NODE = 'parentNode',
                 nextTest = previous && previous[COMBINATOR] ?
                         Selector.combinators[previous[COMBINATOR]] :
                         null,
+                test,
                 attr;
 
             if (//node[TAG_NAME] && // tagName limits to HTMLElements

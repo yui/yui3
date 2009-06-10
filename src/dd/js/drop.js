@@ -47,6 +47,7 @@
         
 
     Drop = function() {
+        this._lazyAddAttrs = false;
         Drop.superclass.constructor.apply(this, arguments);
 
 

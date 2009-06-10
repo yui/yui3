@@ -333,7 +333,7 @@ var GLOBAL_ENV = YUI.Env,
                     requires: [DATASCHEMABASE]
                 },
                 'dataschema-json': {
-                    requires: [DATASCHEMABASE]
+                    requires: [DATASCHEMABASE, 'json']
                 },
                 'dataschema-text': {
                     requires: [DATASCHEMABASE]

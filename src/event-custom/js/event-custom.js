@@ -21,6 +21,7 @@ var AFTER = 'after',
         'broadcast',
         'bubbles',
         'context',
+        'contextFn',
         'configured',
         'currentTarget',
         'defaultFn',
@@ -292,17 +293,9 @@ Y.CustomEvent.prototype = {
             Y.error("Invalid callback for CE: " + this.type);
         }
 
-        // var se = this.subscribeEvent, s;
-        // if (se) {
-        //     se.fire.apply(se, args);
-        // }
-
         var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-
-            // this._notify(s);
-            
             Y.later(0, this, this._notify, s);
         }
 
@@ -453,7 +446,7 @@ Y.CustomEvent.prototype = {
 
         this.log(this.type + "->" + ": " +  s);
 
-        var ret, ct;
+        var ret;
 
         // emit an EventFacade if this is that sort of event
         if (this.emitFacade) {
@@ -472,16 +465,7 @@ Y.CustomEvent.prototype = {
             }
         }
 
-        // The default context should be the object/element that
-        // the listener was bound to.
-        
-        // @TODO this breaks some expectations documented here:
-        // http://yuilibrary.com/projects/yui3/ticket/2527854
-        // confirm that their isn't a case that the bubbled
-        // context should be used.
-        // ct = (args && Y.Lang.isObject(args[0]) && args[0].currentTarget);
-
-        ret = s.notify(ct || this.context, args, this);
+        ret = s.notify(args, this);
 
         if (false === ret || this.stopped > 1) {
             this.log(this.type + " cancelled by subscriber");
@@ -880,13 +864,20 @@ Y.Subscriber = function(fn, context, args) {
      */
     // this.args = args;
 
-    /**
+    /*
      * }
      * fn bound to obj with additional arguments applied via Y.rbind
      * @property wrappedFn
      * @type Function
      */
-    this.wrappedFn = fn;
+    // this.wrappedFn = fn;
+
+    /**
+     * Additional arguments to propagate to the subscriber
+     * @property args
+     * @type Array
+     */
+    this.args = args;
 
     /**
      * Custom events for a given fire transaction.
@@ -895,45 +886,58 @@ Y.Subscriber = function(fn, context, args) {
      */
     this.events = null;
     
-    if (context) {
-        this.wrappedFn = Y.rbind.apply(Y, args);
-    }
+    // if (context) {
+    //     this.wrappedFn = Y.rbind.apply(Y, args);
+    // }
     
+
 };
 
 Y.Subscriber.prototype = {
 
+    _notify: function(c, args, ce) {
+        var a = this.args, ret;
+        switch (ce.signature) {
+            case 0:
+                ret = this.fn.call(c, ce.type, args, c);
+                break;
+            case 1:
+                ret = this.fn.call(c, args[0] || null, c);
+                break;
+            default:
+                if (a || args) {
+                    args = args || [];
+                    a = (a) ? args.concat(a) : args;
+                    ret = this.fn.apply(c, a);
+                } else {
+                    ret = this.fn.call(c);
+                }
+        }
+
+        return ret;
+    },
+
     /**
      * Executes the subscriber.
      * @method notify
-     * @param defaultContext The execution context if not overridden
-     * by the subscriber
      * @param args {Array} Arguments array for the subscriber
      * @param ce {Event.Custom} The custom event that sent the notification
      */
-    notify: function(defaultContext, args, ce) {
-        var c = this.context || defaultContext, ret = true,
+    notify: function(args, ce) {
+        var c = this.context,
+            ret = true;
 
-            f = function() {
-                switch (ce.signature) {
-                    case 0:
-                        ret = this.fn.call(c, ce.type, args, this.context);
-                        break;
-                    case 1:
-                        ret = this.fn.call(c, args[0] || null, this.context);
-                        break;
-                    default:
-                        ret = this.wrappedFn.apply(c, args || []);
-                }
-            };
+        if (!c) {
+            c = (ce.contextFn) ? ce.contextFn() : ce.context;
+        }
 
         // Ease debugging by only catching errors if we will not re-throw
         // them.
         if (Y.config.throwFail) {
-            f.call(this);
+            ret = this._notify(c, args, ce);
         } else {
             try {
-                f.call(this);
+                ret = this._notify(c, args, ce);
             } catch(e) {
                 Y.error(this + ' failed: ' + e.message, e);
             }

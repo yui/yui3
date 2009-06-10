@@ -63,7 +63,8 @@ Y.ClassNameManager = function () {
 		getClassName: Y.cached(function (c, x) {
 
 			var sClass = sPrefix + sDelimiter + 
-                   ((x) ? Y.Array(arguments, 0, true).join(sDelimiter) : c);
+                   // ((x) ? Y.Array(arguments, 0, true).join(sDelimiter) : c);
+                   ((x) ? Array.prototype.join.call(arguments, sDelimiter) : c);
 
 			return sClass.replace(/\s/g, '');
 

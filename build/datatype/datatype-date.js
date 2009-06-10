@@ -1,4 +1,58 @@
-YUI.add('datatype-date', function(Y) {
+YUI.add('datatype-date-parse', function(Y) {
+
+/**
+ * The DataType utility provides a set of utility functions to operate on native
+ * JavaScript data types.
+ *
+ * @module datatype
+ */
+var LANG = Y.Lang;
+
+/**
+ * Parse number submodule.
+ *
+ * @class DataType.Number
+ * @submodule datatype-number-format
+ * @static
+ */
+Y.mix(Y.namespace("DataType.Date"), {
+    /**
+     * Converts data to type Date.
+     *
+     * @method parse
+     * @param data {String | Number} Data to convert. Values supported by the Date constructor are supported.
+     * @return {Date} A Date, or null.
+     * @static
+     */
+    parse: function(data) {
+        var date = null;
+
+        //Convert to date
+        if(!(LANG.isDate(data))) {
+            date = new Date(data);
+        }
+        else {
+            return date;
+        }
+
+        // Validate
+        if(LANG.isDate(date) && (date != "Invalid Date")) { // Workaround for bug 2527965
+            return date;
+        }
+        else {
+            return null;
+        }
+    }
+});
+
+// Add Parsers shortcut
+Y.namespace("Parsers").date = Y.DataType.Date.parse;
+
+
+
+}, '@VERSION@' );
+
+YUI.add('datatype-date-format', function(Y) {
 
 /**
  * The Date formatter utility implements strftime formatters for javascript based on the 
@@ -310,7 +364,7 @@ var Dt = {
 	}
 };
 
-Y.namespace("DataType").Date=Dt;
+Y.mix(Y.namespace("DataType.Date"), Dt);
 
 /**
  * The Date.Locale class is a container for all localised date strings
@@ -410,3 +464,8 @@ Y.DataType.Date.Locale["en-AU"] = Y.merge(YDateEn);
 
 
 }, '@VERSION@' );
+
+
+
+YUI.add('datatype-date', function(Y){}, '@VERSION@' ,{use:['datatype-date-parse', 'datatype-date-format']});
+

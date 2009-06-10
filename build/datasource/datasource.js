@@ -525,7 +525,7 @@ Y.mix(DSSN, {
  *     <dd>Send all requests and handle all responses.</dd>
  * </dl>
  *
- * @property asyncMode
+ * @attribute asyncMode
  * @type String
  * @default "allowAll"
  */
@@ -538,7 +538,7 @@ asyncMode: {
  * requests are sent to
  * &#60;URI&#62;?&#60;scriptCallbackParam&#62;=callbackFunction
  *
- * @property scriptCallbackParam
+ * @attribute scriptCallbackParam
  * @type String
  * @default "callback"
  */
@@ -547,14 +547,13 @@ scriptCallbackParam : {
 },
 
 /**
- * Creates a request callback that gets appended to the script URI. Implementers
+ * Accepts the DataSource instance and a callback ID, and returns a callback
+ * param/value string that gets appended to the script URI. Implementers
  * can customize this string to match their server's query syntax.
  *
- * @method generateRequestCallback
- * @return {String} String fragment that gets appended to script URI that
- * specifies the callback function
+ * @attribute generateRequestCallback
+ * @type Function
  */
-
 generateRequestCallback : {
     value: function(self, id) {
         return "&" + self.get("scriptCallbackParam") + "=YUI.Env.DataSource.callbacks["+id+"]" ;
@@ -882,6 +881,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
      * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
      *     <dl>
+     *         <dt>cached (Object)</dt> <dd>True when response is cached.</dd>
      *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
      *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
      *         <dt>error (Object)</dt> <dd>Error object.</dd>
@@ -893,7 +893,10 @@ Y.extend(DataSourceCache, Y.Cache, {
      */
      _beforeDefResponseFn: function(e) {
         // Add to Cache before returning
-        this.add(e.request, e.response, (e.callback && e.callback.argument));
+        if(e.response && !e.response.cached) {
+            e.response.cached = true;
+            this.add(e.request, e.response, (e.callback && e.callback.argument));
+        }
      }
 });
 
@@ -988,7 +991,7 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = ((this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+        var data = (Y.DataSource.XHR && (this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
             response = Y.DataSchema.JSON.apply(this.get("schema"), data);
             
         // Default
@@ -1095,7 +1098,7 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = ((this.get("host") instanceof Y.DataSource.XHR) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
+        var data = (Y.DataSource.XHR && (this.get("host") instanceof Y.DataSource.XHR) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
             response = Y.DataSchema.XML.apply(this.get("schema"), data);
             
         // Default
@@ -1202,7 +1205,7 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = ((this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+        var data = (Y.DataSource.XHR && (this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
             response = Y.DataSchema.Array.apply(this.get("schema"), data);
             
         // Default
@@ -1309,7 +1312,7 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = ((this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+        var data = (Y.DataSource.XHR && (this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
             response = Y.DataSchema.Text.apply(this.get("schema"), data);
             
         // Default

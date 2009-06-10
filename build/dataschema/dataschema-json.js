@@ -283,4 +283,4 @@ Y.DataSchema.JSON = Y.mix(SchemaJSON, Y.DataSchema.Base);
 
 
 
-}, '@VERSION@' ,{requires:['dataschema-base']});
+}, '@VERSION@' ,{requires:['json', 'dataschema-base']});

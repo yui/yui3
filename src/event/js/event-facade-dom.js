@@ -242,7 +242,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         } else {
             e.cancelBubble = true;
         }
-        wrapper.stopPropagation();
+        if (wrapper) {
+            wrapper.stopPropagation();
+        }
     };
 
     /**
@@ -259,7 +261,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             this.stopPropagation();
         }
 
-        wrapper.stopImmediatePropagation();
+        if (wrapper) {
+            wrapper.stopImmediatePropagation();
+        }
     };
 
     /**
@@ -273,7 +277,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             e.returnValue = false;
         }
 
-        wrapper.preventDefault();
+        if (wrapper) {
+            wrapper.preventDefault();
+        }
     };
 
     /**

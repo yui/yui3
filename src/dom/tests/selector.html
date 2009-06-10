@@ -271,7 +271,8 @@ onload = function() {
             },
 
             testTag: function() {
-                Assert.isTrue(Selector.test(Y.Dom.get('demo'), 'div'), 'tag match');
+                Assert.isTrue(Selector.test(Y.Dom.get('demo'), 'div'), 'div');
+                Assert.isTrue(Selector.test(Y.Dom.get('demo'), 'body div'), 'body div');
                 Assert.isFalse(Selector.test(Y.Dom.get('demo'), 'span'), 'tag false positive');
                 Assert.isTrue(Selector.test(Y.Dom.get('demo'), '*'), 'universal tag');
             },

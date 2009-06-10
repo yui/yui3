@@ -34,6 +34,10 @@ var g_nodes = {},
     Node = function(node, restricted) {
         var config = null;
         this[UID] = Y.stamp(node);
+        if (!this[UID]) { // stamp failed; likely IE non-HTMLElement
+            this[UID] = Y.guid(); 
+        }
+
         g_nodes[this[UID]] = node;
         Node._instances[this[UID]] = this;
 
@@ -76,6 +80,13 @@ Node.DOM_EVENTS = {
     close: true,
     command: true,
     contextmenu: true,
+    drag: true,
+    dragstart: true,
+    dragenter: true,
+    dragover: true,
+    dragleave: true,
+    dragend: true,
+    drop: true,
     dblclick: true,
     error: true,
     focus: true,
@@ -245,7 +256,10 @@ Node.ATTRS = {
             return Y.DOM.getText(g_nodes[this[UID]]);
         },
 
-        readOnly: true
+        setter: function(content) {
+            Y.DOM.setText(g_nodes[this[UID]], content);
+            return content;
+        }
     },
 
     'options': {
@@ -285,7 +299,8 @@ Node.ATTRS = {
         },
 
         setter: function(val) {
-            return Y.DOM.setValue(g_nodes[this[UID]], val);
+            Y.DOM.setValue(g_nodes[this[UID]], val);
+            return val;
         }
     },
 
@@ -308,12 +323,12 @@ Node.DEFAULT_SETTER = function(name, val) {
     var node = g_nodes[this[UID]],
         strPath;
 
-    if (name.indexOf(DOT) !== -1) {
+    if (name.indexOf(DOT) > -1) {
         strPath = name;
         name = name.split(DOT);
         Y.Object.setValue(node, name, val);
-    } else {
-        node[name] = val;    
+    } else if (node[name] !== undefined) { // only set DOM attributes
+        node[name] = val;
     }
 
     return this;
@@ -376,10 +391,9 @@ Y.mix(Node.prototype, {
     },
 
     get: function(attr) {
-        if (!this.attrAdded(attr)) {
-            if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
-                this._addDOMAttr(attr);
-                //return Node.DEFAULT_GETTER.apply(this, arguments);
+        if (!this.attrAdded(attr)) { // use DEFAULT_GETTER for unconfigured attrs
+            if (Node.re_aria && Node.re_aria.test(attr)) { // except for aria
+                this._addAriaAttr(attr);
             } else {
                 return Node.DEFAULT_GETTER.apply(this, arguments);
             }
@@ -389,15 +403,20 @@ Y.mix(Node.prototype, {
     },
 
     set: function(attr, val) {
-        if (!this.attrAdded(attr)) {
-            if (attr.indexOf(DOT) < 0) { // handling chained properties at Node level
+        if (!this.attrAdded(attr)) { // use DEFAULT_SETTER for unconfigured attrs
+            // except for aria
+            if (Node.re_aria && Node.re_aria.test(attr)) {
+                this._addAriaAttr(attr);
+            //  or chained properties or if no change listeners
+            } else if (attr.indexOf(DOT) < 0 && this._yuievt.events['Node:' + attr + 'Change']) {
                 this._addDOMAttr(attr);
             } else {
-                return Node.DEFAULT_SETTER.call(this, attr, val);
+                Node.DEFAULT_SETTER.call(this, attr, val);
+                return this; // NOTE: return
             }
         }
-
-        return SuperConstrProto.set.apply(this, arguments);
+        SuperConstrProto.set.apply(this, arguments);
+        return this;
     },
 
     create: Node.create,
@@ -609,9 +628,11 @@ Y.mix(Node.prototype, {
                 where = g_nodes[this[UID]].childNodes[where];
             }
             if (typeof content !== 'string') { // pass the DOM node
-                content = g_nodes[content[UID]];
+                content = Y.Node.getDOMNode(content);
             }
-            if (!where || (!g_restrict[this[UID]] || this.contains(where))) { // only allow inserting into this Node's subtree
+            if (!where || // only allow inserting into this Node's subtree
+                (!g_restrict[this[UID]] || 
+                    (typeof where !== 'string' && this.contains(where)))) { 
                 Y.DOM.addHTML(g_nodes[this[UID]], content, where, execScripts);
             }
         }
@@ -654,18 +675,6 @@ Y.mix(Node.prototype, {
         execScripts = (execScripts && Node.EXEC_SCRIPTS);
         Y.DOM.addHTML(g_nodes[this[UID]], content, 'replace', execScripts);
         return this;
-    },
-
-    addEventListener: function() {
-        var args = g_slice.call(arguments);
-        args.unshift(g_nodes[this[UID]]);
-        return Y.Event.nativeAdd.apply(Y.Event, args);
-    },
-    
-    removeEventListener: function() {
-        var args = g_slice.call(arguments);
-        args.unshift(g_nodes[this[UID]]);
-        return Y.Event.nativeRemove.apply(Y.Event, args);
     },
 
     // TODO: need this?

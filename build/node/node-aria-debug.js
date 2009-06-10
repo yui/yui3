@@ -1,22 +1,25 @@
 YUI.add('node-aria', function(Y) {
 
-var _addDOMAttr = Y.Node.prototype._addDOMAttr;
+/**
+ * Aria support for Node
+ *
+ * @module node
+ * @submodule node-aria
+ */
 
-Y.Node.prototype._addDOMAttr = function(name) {
-    if (/^(?:role$|aria-)/.test(name)) {
-        this.addAttr(name, {
-            getter: function() {
-                return Y.Node.getDOMNode(this).getAttribute(name, 2); 
-            },
+Y.Node.re_aria = /^(?:role$|aria-)/;
 
-            setter: function(val) {
-                Y.Node.getDOMNode(this).setAttribute(name, val);
-                return val; 
-            }
-        });
-    } else {
-        _addDOMAttr.call(this, name);
-    }
+Y.Node.prototype._addAriaAttr = function(name) {
+    this.addAttr(name, {
+        getter: function() {
+            return Y.Node.getDOMNode(this).getAttribute(name, 2); 
+        },
+
+        setter: function(val) {
+            Y.Node.getDOMNode(this).setAttribute(name, val);
+            return val; 
+        }
+    });
 };
 
 
