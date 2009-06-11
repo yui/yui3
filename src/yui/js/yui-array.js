@@ -4,7 +4,6 @@
  * @module yui
  */
 
-
 var L = Y.Lang, Native = Array.prototype,
 
 /**

@@ -735,26 +735,19 @@ var instance = Y,
  * @return {YUI}      YUI instance
  */
 instance.log = function(msg, cat, src, silent) {
-
     var Y = instance, c = Y.config, bail = false, exc, inc, m, f;
-
     // suppress log message if the config is off or the event stack
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
-
         // apply source filters
         if (src) {
 
             exc = c.logExclude; 
             inc = c.logInclude;
 
-            // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
-
             if (inc && !(src in inc)) {
-                // console.log('bail: inc list found, but src is not in list: ' + src);
                 bail = true;
             } else if (exc && (src in exc)) {
-                // console.log('bail: exc list found, and src is in it: ' + src);
                 bail = true;
             }
         }
@@ -786,9 +779,6 @@ instance.log = function(msg, cat, src, silent) {
                     cat: cat, 
                     src: src
                 });
-                
-
-                // Y.fire('yui:log', msg, cat, src);
             }
         }
     }
@@ -1048,7 +1038,6 @@ L.type = function (o) {
  * YUI core
  * @module yui
  */
-
 
 var L = Y.Lang, Native = Array.prototype,
 
@@ -2011,7 +2000,7 @@ YUI.add('get', function(Y) {
 
 var ua         = Y.UA, 
     L          = Y.Lang,
-    PREFIX     = Y.guid(),
+    // PREFIX     = Y.guid(),
     TYPE_JS    = "text/javascript",
     TYPE_CSS   = "text/css",
     STYLESHEET = "stylesheet";
@@ -2089,7 +2078,7 @@ Y.Get = function() {
      */
     _linkNode = function(url, win, attributes) {
         var o = {
-            id:   PREFIX + (nidx++),
+            id:   Y.guid(),
             type: TYPE_CSS,
             rel:  STYLESHEET,
             href: url
@@ -2111,7 +2100,7 @@ Y.Get = function() {
      */
     _scriptNode = function(url, win, attributes) {
         var o = {
-            id:   PREFIX + (nidx++),
+            id:   Y.guid(),
             type: TYPE_JS,
             src:  url
         };
@@ -3755,16 +3744,16 @@ Y.Loader.prototype = {
      * @param mod {string} optional: the name of a module to skin
      * @return {string} the full skin module name
      */
-    formatSkin: function(skin, mod) {
+    formatSkin: Y.cached(function(skin, mod) {
         var s = this.SKIN_PREFIX + skin;
         if (mod) {
             s = s + "-" + mod;
         }
 
         return s;
-    },
+    }),
 
-    /**
+    /*
      * Reverses <code>formatSkin</code>, providing the skin name and
      * module name if the string matches the pattern for skins.
      * @method parseSkin
@@ -3772,16 +3761,18 @@ Y.Loader.prototype = {
      * @return {skin: string, module: string} the parsed skin name 
      * and module name, or null if the supplied string does not match
      * the skin pattern
+     * 
+     * This isn't being used at the moment
+     *
      */
-    parseSkin: function(mod) {
-        
-        if (mod.indexOf(this.SKIN_PREFIX) === 0) {
-            var a = mod.split("-");
-            return {skin: a[1], module: a[2]};
-        } 
-
-        return null;
-    },
+    // parseSkin: function(mod) {
+    //     
+    //     if (mod.indexOf(this.SKIN_PREFIX) === 0) {
+    //         var a = mod.split("-");
+    //         return {skin: a[1], module: a[2]};
+    //     } 
+    //     return null;
+    // },
 
     /**
      * Adds the skin def to the module info
