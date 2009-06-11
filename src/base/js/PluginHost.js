@@ -37,11 +37,11 @@
          * @method plug
          * @chainable
          * @param p {Function | Object |Array} Accepts the plugin class, or an 
-         * object literal with a "fn" property specifying the plugin class and 
+         * object with a "fn" property specifying the plugin class and 
          * a "cfg" property specifying the configuration for the Plugin.
          * <p>
          * Additionally an Array can also be passed in, with the above function or 
-         * object literal values, allowing the user to add multiple plugins in a single call.
+         * object values, allowing the user to add multiple plugins in a single call.
          * </p>
          * @param config (Optional) If the first argument is the plugin class, the second argument
          * can be the configuration for the plugin.
@@ -104,7 +104,7 @@
          * instance through the "plugins" configuration property.
          *
          * @method _initPlugins
-         * @param {Config} config The configuration object literal for the host.
+         * @param {Config} config The configuration object with property name/value pairs.
          * @private
          */
         _initPlugins: function(config) {
@@ -219,7 +219,7 @@
      * @static
      *
      * @param {Function} hostClass The host class on which to register the plugins
-     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of object literals (with fn and cfg properties defined)
+     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
      * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
      */
     PluginHost.plug = function(hostClass, plugin, config) {
