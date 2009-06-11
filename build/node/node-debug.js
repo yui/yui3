@@ -960,6 +960,20 @@ Y.mix(NodeList.prototype, {
         return this;
     },
 
+    on: function(type, fn, context) {
+        context = context || this;
+        this.batch(function(node) {
+            node.on.call(node, type, fn, context);
+        });
+    },
+
+    after: function(type, fn, context) {
+        context = context || this;
+        this.batch(function(node) {
+            node.after.call(node, type, fn, context);
+        });
+    },
+
     /**
      * Returns the current number of items in the NodeList.
      * @method size
@@ -1013,13 +1027,13 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-    'after',
+//    'after',
     'append',
     'create',
     'detach',
     'detachAll',
     'insert',
-    'on',
+//    'on',
     'plug',
     'prepend',
     'remove',
