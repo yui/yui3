@@ -58,8 +58,8 @@
 
 <span class="k">var</span> <span class="nx">ua</span>         <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">,</span> 
     <span class="nx">L</span>          <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
-    <span class="nx">PREFIX</span>     <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(),</span>
-    <span class="nx">TYPE_JS</span>    <span class="o">=</span> <span class="s2">&quot;text/javascript&quot;</span><span class="o">,</span>
+    <span class="c">// PREFIX     = Y.guid(),</span>
+<span class="c"></span>    <span class="nx">TYPE_JS</span>    <span class="o">=</span> <span class="s2">&quot;text/javascript&quot;</span><span class="o">,</span>
     <span class="nx">TYPE_CSS</span>   <span class="o">=</span> <span class="s2">&quot;text/css&quot;</span><span class="o">,</span>
     <span class="nx">STYLESHEET</span> <span class="o">=</span> <span class="s2">&quot;stylesheet&quot;</span><span class="o">;</span>
 
@@ -136,7 +136,7 @@
 <span class="c">     */</span>
     <span class="nx">_linkNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">win</span><span class="o">,</span> <span class="nx">attributes</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{</span>
-            <span class="nx">id</span><span class="o">:</span>   <span class="nx">PREFIX</span> <span class="o">+</span> <span class="o">(</span><span class="nx">nidx</span><span class="o">++),</span>
+            <span class="nx">id</span><span class="o">:</span>   <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(),</span>
             <span class="nx">type</span><span class="o">:</span> <span class="nx">TYPE_CSS</span><span class="o">,</span>
             <span class="nx">rel</span><span class="o">:</span>  <span class="nx">STYLESHEET</span><span class="o">,</span>
             <span class="nx">href</span><span class="o">:</span> <span class="nx">url</span>
@@ -158,7 +158,7 @@
 <span class="c">     */</span>
     <span class="nx">_scriptNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">win</span><span class="o">,</span> <span class="nx">attributes</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{</span>
-            <span class="nx">id</span><span class="o">:</span>   <span class="nx">PREFIX</span> <span class="o">+</span> <span class="o">(</span><span class="nx">nidx</span><span class="o">++),</span>
+            <span class="nx">id</span><span class="o">:</span>   <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(),</span>
             <span class="nx">type</span><span class="o">:</span> <span class="nx">TYPE_JS</span><span class="o">,</span>
             <span class="nx">src</span><span class="o">:</span>  <span class="nx">url</span>
         <span class="o">};</span>
