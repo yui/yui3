@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: datasource  DataSource.ScriptNode   (YUI Library)</title>
+	<title>API: datasource  DataSource.IO   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,7 +19,7 @@
         <h3>datasource&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_datasource.html" title="datasource">datasource</a>
-                 &gt; DataSource.ScriptNode 
+                 &gt; DataSource.IO 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,7 +48,7 @@
 
                         
                         
-                            Class <b property="yui:name">DataSource.ScriptNode</b>
+                            Class <b property="yui:name">DataSource.IO</b>
                         <span class="extends">
                            - extends <a href="DataSource.Local.html" title="DataSource.Local">DataSource.Local</a>
                         </span>
@@ -60,14 +60,14 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Dynamic script node subclass for the YUI DataSource utility.
+                        IO subclass for the YUI DataSource utility.
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
                         <h3 id="constructor">Constructor</h3>
                         <div class="content">
                             <div class="detail">
-                                <strong property="yui:name">DataSource.ScriptNode</strong>
+                                <strong property="yui:name">DataSource.IO</strong>
                                 <code>
                                     (
                                     )
@@ -84,32 +84,29 @@
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="private" rel="yui:property" resource="#property__tId">
-                                    <h4><a name="property__tId" property="yui:name">_tId</a>
-                                        - <code>private static <span property="yui:type">Number</span></code>
+                                    <div class="private" rel="yui:property" resource="#property__queue">
+                                    <h4><a name="property__queue" property="yui:name">_queue</a>
+                                        - <code>private <span property="yui:type">Object</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Unique ID to track requests.
+                                            Object literal to manage asynchronous request/response
+cycles enabled if queue needs to be managed (asyncMode/ioConnMode):
+<dl>
+<dt>interval {Number}</dt>
+<dd>Interval ID of in-progress queue.</dd>
+<dt>conn</dt>
+<dd>In-progress connection identifier (if applicable).</dd>
+<dt>requests {Object[]}</dt>
+<dd>Array of queued request objects: {request:request, callback:callback}.</dd>
+</dl>
                                         </div>
                                     </div>
      
                                         
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_callbacks">
-                                    <h4><a name="property_callbacks" property="yui:name">callbacks</a>
-                                        - <code>static <span property="yui:type">Function[]</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Global array of callback functions, one for each request sent.
-                                        </div>
-                                    </div>
-     
-                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: {interval:null, conn:null, requests:[]}
+                                    </div>        
 
 
                                     <hr />
@@ -188,7 +185,7 @@
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes query string to Get Utility. Fires <code>response</code> event when
+                                            Passes query string to IO. Fires <code>response</code> event when
 response is received asynchronously.
                                         </div>
 
@@ -212,6 +209,57 @@ response is received asynchronously.
 </dd>
 <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
 </dl></span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method_initializer">
+                                    <h4>
+                                        <a name="method_initializer">initializer</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">initializer</strong>
+                                           (
+                                                
+                                                        
+                                                         config
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Internal init() handler.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">config</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Config object.</span>
                                                         </dd>
                                                 </dl>
 
@@ -418,15 +466,15 @@ response is received asynchronously.
                         <div class="section method details">
                             <h3 id="events">Events</h3>
                             <div class="content">
-                                    <div class="" rel="yui:event" resource="#event_asyncModeChange">
+                                    <div class="" rel="yui:event" resource="#event_ioChange">
                                     <h4>
-                                        <a name="event_asyncModeChange">asyncModeChange</a></h4>
+                                        <a name="event_ioChange">ioChange</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong property="yui:name">asyncModeChange</strong>
+                                            <strong property="yui:name">ioChange</strong>
 
                                             (
                                                 
@@ -439,139 +487,7 @@ response is received asynchronously.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Fires when the value for the configuration attribute 'asyncMode' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">event</span>
-                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                            </code>
-                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
-                                                        </dd>
-                                                        
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:event" resource="#event_generateRequestCallbackChange">
-                                    <h4>
-                                        <a name="event_generateRequestCallbackChange">generateRequestCallbackChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">generateRequestCallbackChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         event
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Fires when the value for the configuration attribute 'generateRequestCallback' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">event</span>
-                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                            </code>
-                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
-                                                        </dd>
-                                                        
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:event" resource="#event_getChange">
-                                    <h4>
-                                        <a name="event_getChange">getChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">getChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         event
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Fires when the value for the configuration attribute 'get' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">event</span>
-                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                            </code>
-                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
-                                                        </dd>
-                                                        
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:event" resource="#event_scriptCallbackParamChange">
-                                    <h4>
-                                        <a name="event_scriptCallbackParamChange">scriptCallbackParamChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">scriptCallbackParamChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         event
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Fires when the value for the configuration attribute 'scriptCallbackParam' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                            Fires when the value for the configuration attribute 'io' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -649,81 +565,19 @@ response is received asynchronously.
                         <div class="section field details">
                             <h3 id="configattributes">Configuration Attributes</h3>
                             <div class="content">
-                                    <div class="" rel="yui:attribute" resource="#config_asyncMode">
-                                    <h4><a name="config_asyncMode">asyncMode</a>
-                                        <code>- <span property="yui:type">String</span></code>
+                                    <div class="" rel="yui:attribute" resource="#config_io">
+                                    <h4><a name="config_io">io</a>
+                                        <code>- <span property="yui:type">Y.io</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Defines request/response management in the following manner:
-<dl>
-<!--<dt>queueRequests</dt>
-<dd>If a request is already in progress, wait until response is returned before sending the next request.</dd>
-<dt>cancelStaleRequests</dt>
-<dd>If a request is already in progress, cancel it before sending the next request.</dd>-->
-<dt>ignoreStaleResponses</dt>
-<dd>Send all requests, but handle only the response for the most recently sent request.</dd>
-<dt>allowAll</dt>
-<dd>Send all requests and handle all responses.</dd>
-</dl>
+                                            Pointer to IO Utility.
                                         </div>
                                     </div>
  
      
                                     <div class="default">
-                                        Default Value: "allowAll"
-                                    </div>        
-
-                                    <hr />
-                                    </div>        
-                                    <div class="" rel="yui:attribute" resource="#config_generateRequestCallback">
-                                    <h4><a name="config_generateRequestCallback">generateRequestCallback</a>
-                                        <code>- <span property="yui:type">Function</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Accepts the DataSource instance and a callback ID, and returns a callback
-param/value string that gets appended to the script URI. Implementers
-can customize this string to match their server's query syntax.
-                                        </div>
-                                    </div>
- 
-     
-
-                                    <hr />
-                                    </div>        
-                                    <div class="" rel="yui:attribute" resource="#config_get">
-                                    <h4><a name="config_get">get</a>
-                                        <code>- <span property="yui:type">Y.Get</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Pointer to Get Utility.
-                                        </div>
-                                    </div>
- 
-     
-                                    <div class="default">
-                                        Default Value: Y.Get
-                                    </div>        
-
-                                    <hr />
-                                    </div>        
-                                    <div class="" rel="yui:attribute" resource="#config_scriptCallbackParam">
-                                    <h4><a name="config_scriptCallbackParam">scriptCallbackParam</a>
-                                        <code>- <span property="yui:type">String</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Callback string parameter name sent to the remote script. By default,
-requests are sent to
-&#60;URI&#62;?&#60;scriptCallbackParam&#62;=callbackFunction
-                                        </div>
-                                    </div>
- 
-     
-                                    <div class="default">
-                                        Default Value: "callback"
+                                        Default Value: Y.io
                                     </div>        
 
                                     <hr />
@@ -817,9 +671,9 @@ requests are sent to
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="DataSource.Function.html" title="DataSource.Function">DataSource.Function</a></li>
+                                <li class=""><a href="DataSource.Get.html" title="DataSource.Get">DataSource.Get</a></li>
+                                <li class="selected"><a href="DataSource.IO.html" title="DataSource.IO">DataSource.IO</a></li>
                                 <li class=""><a href="DataSource.Local.html" title="DataSource.Local">DataSource.Local</a></li>
-                                <li class="selected"><a href="DataSource.ScriptNode.html" title="DataSource.ScriptNode">DataSource.ScriptNode</a></li>
-                                <li class=""><a href="DataSource.XHR.html" title="DataSource.XHR">DataSource.XHR</a></li>
                                 <li class=""><a href="DataSourceArraySchema.html" title="DataSourceArraySchema">DataSourceArraySchema</a></li>
                                 <li class=""><a href="DataSourceCache.html" title="DataSourceCache">DataSourceCache</a></li>
                                 <li class=""><a href="DataSourceJSONSchema.html" title="DataSourceJSONSchema">DataSourceJSONSchema</a></li>
@@ -835,12 +689,12 @@ requests are sent to
                                 <li class=""><a href="datasource-arrayschema.js.html" title="datasource-arrayschema.js">datasource-arrayschema.js</a></li>
                                 <li class=""><a href="datasource-cache.js.html" title="datasource-cache.js">datasource-cache.js</a></li>
                                 <li class=""><a href="datasource-function.js.html" title="datasource-function.js">datasource-function.js</a></li>
+                                <li class=""><a href="datasource-get.js.html" title="datasource-get.js">datasource-get.js</a></li>
+                                <li class=""><a href="datasource-io.js.html" title="datasource-io.js">datasource-io.js</a></li>
                                 <li class=""><a href="datasource-jsonschema.js.html" title="datasource-jsonschema.js">datasource-jsonschema.js</a></li>
                                 <li class=""><a href="datasource-local.js.html" title="datasource-local.js">datasource-local.js</a></li>
                                 <li class=""><a href="datasource-polling.js.html" title="datasource-polling.js">datasource-polling.js</a></li>
-                                <li class=""><a href="datasource-scriptnode.js.html" title="datasource-scriptnode.js">datasource-scriptnode.js</a></li>
                                 <li class=""><a href="datasource-textschema.js.html" title="datasource-textschema.js">datasource-textschema.js</a></li>
-                                <li class=""><a href="datasource-xhr.js.html" title="datasource-xhr.js">datasource-xhr.js</a></li>
                                 <li class=""><a href="datasource-xmlschema.js.html" title="datasource-xmlschema.js">datasource-xmlschema.js</a></li>
                         </ul>
                     </div>
@@ -848,8 +702,7 @@ requests are sent to
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#property__tId" title="_tId">_tId</a></li>
-                                <li class=""><a href="#property_callbacks" title="callbacks">callbacks</a></li>
+                                <li class="private"><a href="#property__queue" title="_queue">_queue</a></li>
                                 <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
                         </ul>
                     </div>
@@ -858,26 +711,21 @@ requests are sent to
                         <h4>Methods</h4>
                         <ul class="content">        
                                 <li class="protected"><a href="#method__defRequestFn" title="_defRequestFn">_defRequestFn</a></li>
+                                <li class="private"><a href="#method_initializer" title="initializer">initializer</a></li>
                         </ul>
                     </div>
 
                     <div id="eventsList" class="module">
                         <h4>Events</h4>
                         <ul class="content">        
-                                <li class=""><a href="#event_asyncModeChange" title="asyncModeChange">asyncModeChange</a></li>
-                                <li class=""><a href="#event_generateRequestCallbackChange" title="generateRequestCallbackChange">generateRequestCallbackChange</a></li>
-                                <li class=""><a href="#event_getChange" title="getChange">getChange</a></li>
-                                <li class=""><a href="#event_scriptCallbackParamChange" title="scriptCallbackParamChange">scriptCallbackParamChange</a></li>
+                                <li class=""><a href="#event_ioChange" title="ioChange">ioChange</a></li>
                         </ul>
                     </div>
 
                     <div id="configList" class="module">
                         <h4>Configuration Attributes</h4>
                         <ul class="content">        
-                                <li class=""><a href="#config_asyncMode" title="asyncMode">asyncMode</a></li>
-                                <li class=""><a href="#config_generateRequestCallback" title="generateRequestCallback">generateRequestCallback</a></li>
-                                <li class=""><a href="#config_get" title="get">get</a></li>
-                                <li class=""><a href="#config_scriptCallbackParam" title="scriptCallbackParam">scriptCallbackParam</a></li>
+                                <li class=""><a href="#config_io" title="io">io</a></li>
                         </ul>
                     </div>
 
@@ -890,7 +738,7 @@ requests are sent to
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DataSource.ScriptNode", "name": "asyncMode", "url": "DataSource.ScriptNode.html#config_asyncMode", "type": "config"}, {"access": "", "host": "DataSource.ScriptNode", "name": "asyncModeChange", "url": "DataSource.ScriptNode.html#event_asyncModeChange", "type": "event"}, {"access": "protected", "host": "DataSourceArraySchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "url": "DataSourceArraySchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "type": "method"}, {"access": "", "host": "DataSource.ScriptNode", "name": "callbacks", "url": "DataSource.ScriptNode.html#property_callbacks", "type": "property"}, {"access": "", "host": "Pollable", "name": "clearAllIntervals", "url": "Pollable.html#method_clearAllIntervals", "type": "method"}, {"access": "", "host": "Pollable", "name": "clearInterval", "url": "Pollable.html#method_clearInterval", "type": "method"}, {"access": "protected", "host": "DataSource.Function", "name": "_defRequestFn", "url": "DataSource.Function.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.ScriptNode", "name": "_defRequestFn", "url": "DataSource.ScriptNode.html#method__defRequestFn", "type": "method"}, {"access": "", "host": "DataSource.ScriptNode", "name": "generateRequestCallback", "url": "DataSource.ScriptNode.html#config_generateRequestCallback", "type": "config"}, {"access": "", "host": "DataSource.ScriptNode", "name": "generateRequestCallbackChange", "url": "DataSource.ScriptNode.html#event_generateRequestCallbackChange", "type": "event"}, {"access": "", "host": "DataSource.ScriptNode", "name": "get", "url": "DataSource.ScriptNode.html#config_get", "type": "config"}, {"access": "", "host": "DataSource.ScriptNode", "name": "getChange", "url": "DataSource.ScriptNode.html#event_getChange", "type": "event"}, {"access": "private", "host": "DataSourceArraySchema", "name": "initializer", "url": "DataSourceArraySchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "Pollable", "name": "_intervals", "url": "Pollable.html#property__intervals", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "NAME", "url": "DataSource.Function.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NAME", "url": "DataSourceArraySchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.ScriptNode", "name": "NAME", "url": "DataSource.ScriptNode.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NS", "url": "DataSourceArraySchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSource.ScriptNode", "name": "scriptCallbackParam", "url": "DataSource.ScriptNode.html#config_scriptCallbackParam", "type": "config"}, {"access": "", "host": "DataSource.ScriptNode", "name": "scriptCallbackParamChange", "url": "DataSource.ScriptNode.html#event_scriptCallbackParamChange", "type": "event"}, {"access": "", "host": "Pollable", "name": "setInterval", "url": "Pollable.html#method_setInterval", "type": "method"}, {"access": "", "host": "DataSource.Function", "name": "source", "url": "DataSource.Function.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Function", "name": "sourceChange", "url": "DataSource.Function.html#event_sourceChange", "type": "event"}, {"access": "private", "host": "DataSource.ScriptNode", "name": "_tId", "url": "DataSource.ScriptNode.html#property__tId", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DataSource.Get", "name": "asyncMode", "url": "DataSource.Get.html#config_asyncMode", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "asyncModeChange", "url": "DataSource.Get.html#event_asyncModeChange", "type": "event"}, {"access": "protected", "host": "DataSourceArraySchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "url": "DataSourceArraySchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "type": "method"}, {"access": "protected", "host": "DataSourceXMLSchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "url": "DataSourceXMLSchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "type": "method"}, {"access": "protected", "host": "DataSourceJSONSchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "url": "DataSourceJSONSchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)<\/dt> <dd>Unique transaction ID.<\/dd>\n<dt>request (Object)<\/dt> <dd>The request.<\/dd>\n<dt>callback (Object)<\/dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)<\/dt> <dd>Success handler.<\/dd>\n<dt>failure (Function)<\/dt> <dd>Failure handler.<\/dd>\n<\/dl>\n<\/dd>\n<dt>data (Object)<\/dt> <dd>Raw data.<\/dd>\n<\/dl>", "type": "method"}, {"access": "", "host": "DataSource.Get", "name": "callbacks", "url": "DataSource.Get.html#property_callbacks", "type": "property"}, {"access": "", "host": "Pollable", "name": "clearAllIntervals", "url": "Pollable.html#method_clearAllIntervals", "type": "method"}, {"access": "", "host": "Pollable", "name": "clearInterval", "url": "Pollable.html#method_clearInterval", "type": "method"}, {"access": "protected", "host": "DataSource.Get", "name": "_defRequestFn", "url": "DataSource.Get.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Function", "name": "_defRequestFn", "url": "DataSource.Function.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.IO", "name": "_defRequestFn", "url": "DataSource.IO.html#method__defRequestFn", "type": "method"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallback", "url": "DataSource.Get.html#config_generateRequestCallback", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallbackChange", "url": "DataSource.Get.html#event_generateRequestCallbackChange", "type": "event"}, {"access": "", "host": "DataSource.Get", "name": "get", "url": "DataSource.Get.html#config_get", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "getChange", "url": "DataSource.Get.html#event_getChange", "type": "event"}, {"access": "private", "host": "DataSourceArraySchema", "name": "initializer", "url": "DataSourceArraySchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceXMLSchema", "name": "initializer", "url": "DataSourceXMLSchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceJSONSchema", "name": "initializer", "url": "DataSourceJSONSchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSource.IO", "name": "initializer", "url": "DataSource.IO.html#method_initializer", "type": "method"}, {"access": "private", "host": "Pollable", "name": "_intervals", "url": "Pollable.html#property__intervals", "type": "property"}, {"access": "", "host": "DataSource.IO", "name": "io", "url": "DataSource.IO.html#config_io", "type": "config"}, {"access": "", "host": "DataSource.IO", "name": "ioChange", "url": "DataSource.IO.html#event_ioChange", "type": "event"}, {"access": "", "host": "DataSource.Get", "name": "NAME", "url": "DataSource.Get.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "NAME", "url": "DataSource.Function.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NAME", "url": "DataSourceArraySchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceXMLSchema", "name": "NAME", "url": "DataSourceXMLSchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceJSONSchema", "name": "NAME", "url": "DataSourceJSONSchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.IO", "name": "NAME", "url": "DataSource.IO.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NS", "url": "DataSourceArraySchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceXMLSchema", "name": "NS", "url": "DataSourceXMLSchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceJSONSchema", "name": "NS", "url": "DataSourceJSONSchema.html#property_NS", "type": "property"}, {"access": "private", "host": "DataSource.IO", "name": "_queue", "url": "DataSource.IO.html#property__queue", "type": "property"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParam", "url": "DataSource.Get.html#config_scriptCallbackParam", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParamChange", "url": "DataSource.Get.html#event_scriptCallbackParamChange", "type": "event"}, {"access": "", "host": "Pollable", "name": "setInterval", "url": "Pollable.html#method_setInterval", "type": "method"}, {"access": "", "host": "DataSource.Function", "name": "source", "url": "DataSource.Function.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Function", "name": "sourceChange", "url": "DataSource.Function.html#event_sourceChange", "type": "event"}, {"access": "private", "host": "DataSource.Get", "name": "_tId", "url": "DataSource.Get.html#property__tId", "type": "property"}];
 </script>
 </body>
 </html>
