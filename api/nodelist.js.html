@@ -319,6 +319,20 @@
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">},</span>
 
+    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">batch</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">);</span>
+        <span class="o">});</span>
+    <span class="o">},</span>
+
+    <span class="nx">after</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">batch</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">);</span>
+        <span class="o">});</span>
+    <span class="o">},</span>
+
     <span class="c">/**</span>
 <span class="c">     * Returns the current number of items in the NodeList.</span>
 <span class="c">     * @method size</span>
@@ -372,14 +386,14 @@
 <span class="o">},</span> <span class="kc">true</span><span class="o">);</span>
 
 <span class="nx">NodeList</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="o">[</span>
-    <span class="s1">&#39;after&#39;</span><span class="o">,</span>
-    <span class="s1">&#39;append&#39;</span><span class="o">,</span>
+<span class="c">//    &#39;after&#39;,</span>
+<span class="c"></span>    <span class="s1">&#39;append&#39;</span><span class="o">,</span>
     <span class="s1">&#39;create&#39;</span><span class="o">,</span>
     <span class="s1">&#39;detach&#39;</span><span class="o">,</span>
     <span class="s1">&#39;detachAll&#39;</span><span class="o">,</span>
     <span class="s1">&#39;insert&#39;</span><span class="o">,</span>
-    <span class="s1">&#39;on&#39;</span><span class="o">,</span>
-    <span class="s1">&#39;plug&#39;</span><span class="o">,</span>
+<span class="c">//    &#39;on&#39;,</span>
+<span class="c"></span>    <span class="s1">&#39;plug&#39;</span><span class="o">,</span>
     <span class="s1">&#39;prepend&#39;</span><span class="o">,</span>
     <span class="s1">&#39;remove&#39;</span><span class="o">,</span>
     <span class="s1">&#39;set&#39;</span><span class="o">,</span>
