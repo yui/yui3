@@ -67,7 +67,6 @@
     <span class="nx">PSEUDOS</span> <span class="o">=</span> <span class="s1">&#39;pseudos&#39;</span><span class="o">,</span>
     <span class="nx">PREVIOUS</span> <span class="o">=</span> <span class="s1">&#39;previous&#39;</span><span class="o">,</span>
     <span class="nx">PREVIOUS_SIBLING</span> <span class="o">=</span> <span class="s1">&#39;previousSibling&#39;</span><span class="o">,</span>
-    <span class="nx">LENGTH</span> <span class="o">=</span> <span class="s1">&#39;length&#39;</span><span class="o">,</span>
 
     <span class="nx">_childCache</span> <span class="o">=</span> <span class="o">[],</span> <span class="c">// cache to cleanup expando node.children</span>
 <span class="c"></span>
@@ -76,11 +75,12 @@
     <span class="nx">SelectorCSS2</span> <span class="o">=</span> <span class="o">{</span>
         <span class="nx">SORT_RESULTS</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
         <span class="nx">_children</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">children</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">children</span><span class="o">,</span>
+                <span class="nx">i</span><span class="o">,</span> <span class="nx">n</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">])</span> <span class="o">{</span> <span class="c">// only HTMLElements have children</span>
 <span class="c"></span>                <span class="nx">ret</span> <span class="o">=</span> <span class="o">[];</span>
-                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">n</span><span class="o">;</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">childNodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">n</span><span class="o">;</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">childNodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">n</span><span class="o">.</span><span class="nx">tagName</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">ret</span><span class="o">[</span><span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">n</span><span class="o">;</span>
                     <span class="o">}</span>
@@ -146,7 +146,7 @@
                     <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_query</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">root</span><span class="o">,</span> <span class="nx">firstOnly</span><span class="o">);</span>
                 <span class="o">}</span>
 
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;query: &#39;</span> <span class="o">+</span> <span class="nx">selector</span> <span class="o">+</span> <span class="s1">&#39; returning: &#39;</span> <span class="o">+</span> <span class="nx">ret</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">],</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Selector&#39;</span><span class="o">);</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;query: &#39;</span> <span class="o">+</span> <span class="nx">selector</span> <span class="o">+</span> <span class="s1">&#39; returning: &#39;</span> <span class="o">+</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Selector&#39;</span><span class="o">);</span>
                 <span class="nx">Selector</span><span class="o">.</span><span class="nx">_cleanup</span><span class="o">();</span>
                 <span class="k">return</span> <span class="o">(</span><span class="nx">firstOnly</span><span class="o">)</span> <span class="o">?</span> <span class="o">(</span><span class="nx">ret</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">||</span> <span class="kc">null</span><span class="o">)</span> <span class="o">:</span> <span class="nx">ret</span><span class="o">;</span>
             <span class="o">}</span>
@@ -167,10 +167,11 @@
                 <span class="nx">groups</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;,&#39;</span><span class="o">),</span> <span class="c">// TODO: handle comma in attribute/pseudo</span>
 <span class="c"></span>                <span class="nx">nodes</span> <span class="o">=</span> <span class="o">[],</span>
                 <span class="nx">tokens</span><span class="o">,</span>
-                <span class="nx">token</span><span class="o">;</span>
+                <span class="nx">token</span><span class="o">,</span>
+                <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">groups</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">]</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">groups</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">];</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">groups</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">groups</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="nx">arguments</span><span class="o">.</span><span class="nx">callee</span><span class="o">(</span><span class="nx">groups</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span>
                             <span class="nx">root</span><span class="o">,</span> <span class="nx">firstOnly</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span> 
                 <span class="o">}</span>
@@ -204,11 +205,11 @@
                     <span class="o">}</span>
 
                     <span class="c">// TODO: no prefilter for off-dom id</span>
-<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">nodes</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">token</span><span class="o">.</span><span class="nx">prefilter</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="nx">token</span><span class="o">.</span><span class="nx">prefilter</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">token</span><span class="o">.</span><span class="nx">prefilter</span><span class="o">(</span><span class="nx">root</span><span class="o">,</span> <span class="nx">token</span><span class="o">);</span>
                     <span class="o">}</span>
 
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">firstOnly</span><span class="o">)</span> <span class="o">{</span>
                             <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">some</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_testToken</span><span class="o">,</span> <span class="nx">token</span><span class="o">);</span>
                         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
@@ -223,8 +224,8 @@
         <span class="o">},</span>
 
         <span class="nx">_testToken</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">nodes</span><span class="o">,</span> <span class="nx">token</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">token</span> <span class="o">||</span> <span class="k">this</span><span class="o">,</span>
-                <span class="nx">tag</span> <span class="o">=</span> <span class="nx">token</span><span class="o">.</span><span class="nx">tag</span><span class="o">,</span>
+            <span class="nx">token</span> <span class="o">=</span> <span class="nx">token</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">tag</span> <span class="o">=</span> <span class="nx">token</span><span class="o">.</span><span class="nx">tag</span><span class="o">,</span>
                 <span class="nx">previous</span> <span class="o">=</span> <span class="nx">token</span><span class="o">[</span><span class="nx">PREVIOUS</span><span class="o">],</span>
                 <span class="nx">result</span> <span class="o">=</span> <span class="nx">token</span><span class="o">.</span><span class="nx">result</span><span class="o">,</span>
                 <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span>
@@ -398,8 +399,9 @@
 <span class="c"></span>                <span class="nx">tokens</span> <span class="o">=</span> <span class="o">[],</span>    <span class="c">// array of tokens</span>
 <span class="c"></span>                <span class="nx">found</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>  <span class="c">// whether or not any matches were found this pass</span>
 <span class="c"></span>                <span class="nx">test</span><span class="o">,</span>
-                <span class="nx">match</span><span class="o">;</span>          <span class="c">// the regex match</span>
-<span class="c"></span>
+                <span class="nx">match</span><span class="o">,</span>         <span class="c">// the regex match</span>
+<span class="c"></span>                <span class="nx">i</span><span class="o">,</span> <span class="nx">parser</span><span class="o">;</span>
+
             <span class="c">/*</span>
 <span class="c">                Search for selector patterns, store, and strip them from the selector string</span>
 <span class="c">                until no patterns match (invalid selector) or we run out of chars.</span>
@@ -411,7 +413,7 @@
             <span class="nx">outer</span><span class="o">:</span>
             <span class="k">do</span> <span class="o">{</span>
                 <span class="nx">found</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span> <span class="c">// reset after full pass</span>
-<span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">parser</span><span class="o">;</span> <span class="nx">parser</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_parsers</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span>
+<span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">parser</span><span class="o">;</span> <span class="nx">parser</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_parsers</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="nx">match</span> <span class="o">=</span> <span class="nx">parser</span><span class="o">.</span><span class="nx">re</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">selector</span><span class="o">))</span> <span class="o">)</span> <span class="o">{</span> <span class="c">// note assignment</span>
 <span class="c"></span>                        <span class="nx">test</span> <span class="o">=</span> <span class="nx">parser</span><span class="o">.</span><span class="nx">fn</span><span class="o">(</span><span class="nx">token</span><span class="o">,</span> <span class="nx">match</span><span class="o">);</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">test</span><span class="o">)</span> <span class="o">{</span>
@@ -425,7 +427,7 @@
 
                             <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                             <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">match</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="s1">&#39;&#39;</span><span class="o">);</span> <span class="c">// strip current match from selector</span>
-<span class="c"></span>                            <span class="k">if</span> <span class="o">(!</span><span class="nx">selector</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">]</span> <span class="o">||</span> <span class="nx">parser</span><span class="o">.</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">COMBINATOR</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>                            <span class="k">if</span> <span class="o">(!</span><span class="nx">selector</span><span class="o">.</span><span class="nx">length</span> <span class="o">||</span> <span class="nx">parser</span><span class="o">.</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">COMBINATOR</span><span class="o">)</span> <span class="o">{</span>
                                 <span class="nx">token</span><span class="o">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span><span class="o">;</span>
                                 <span class="nx">tokens</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">token</span><span class="o">);</span>
                                 <span class="nx">token</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_getToken</span><span class="o">(</span><span class="nx">token</span><span class="o">);</span>
@@ -441,28 +443,29 @@
             <span class="k">if</span> <span class="o">(!</span><span class="nx">found</span> <span class="o">||</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span> <span class="c">// not fully parsed</span>
 <span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;query: &#39;</span> <span class="o">+</span> <span class="nx">query</span> <span class="o">+</span> <span class="s1">&#39; contains unsupported token in: &#39;</span> <span class="o">+</span> <span class="nx">selector</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;Selector&#39;</span><span class="o">);</span>
                 <span class="nx">tokens</span> <span class="o">=</span> <span class="o">[];</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">tokens</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">])</span> <span class="o">{</span>
-                <span class="nx">tokens</span><span class="o">[</span><span class="nx">tokens</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">]</span> <span class="o">-</span> <span class="m">1</span><span class="o">].</span><span class="nx">last</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">tokens</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">tokens</span><span class="o">[</span><span class="nx">tokens</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">].</span><span class="nx">last</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
             <span class="o">}</span>
             <span class="k">return</span> <span class="nx">tokens</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="nx">_replaceShorthand</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">shorthand</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">shorthand</span><span class="o">,</span>
-                <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_re</span><span class="o">.</span><span class="nx">attr</span><span class="o">);</span> <span class="c">// pull attributes to avoid false pos on &quot;.&quot; and &quot;#&quot;</span>
-<span class="c"></span>
+                <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_re</span><span class="o">.</span><span class="nx">attr</span><span class="o">),</span> <span class="c">// pull attributes to avoid false pos on &quot;.&quot; and &quot;#&quot;</span>
+<span class="c"></span>                <span class="nx">re</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
+
             <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_re</span><span class="o">.</span><span class="nx">attr</span><span class="o">,</span> <span class="s1">&#39;REPLACED_ATTRIBUTE&#39;</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">re</span> <span class="k">in</span> <span class="nx">shorthand</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">re</span> <span class="k">in</span> <span class="nx">shorthand</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">shorthand</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">re</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getRegExp</span><span class="o">(</span><span class="nx">re</span><span class="o">,</span> <span class="s1">&#39;gi&#39;</span><span class="o">),</span> <span class="nx">shorthand</span><span class="o">[</span><span class="nx">re</span><span class="o">]);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">attrs</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">];</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">attrs</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="s1">&#39;REPLACED_ATTRIBUTE&#39;</span><span class="o">,</span> <span class="nx">attrs</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
                 <span class="o">}</span>
             <span class="o">}</span>

@@ -55,8 +55,6 @@
 <span class="c"> * @for Node</span>
 <span class="c"> */</span>
 
-<span class="k">var</span> <span class="nx">NODE_TYPE</span> <span class="o">=</span> <span class="s1">&#39;nodeType&#39;</span><span class="o">;</span>
-
 <span class="c">// these are all &quot;safe&quot; returns, no wrapping required</span>
 <span class="c"></span><span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">([</span>
     <span class="c">/**</span>
@@ -124,7 +122,7 @@
         <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="s1">&#39;scrollLeft&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">node</span><span class="o">.</span><span class="nx">scrollLeft</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nb">document</span> <span class="o">||</span> <span class="nx">node</span><span class="o">[</span><span class="nx">NODE_TYPE</span><span class="o">]</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">{</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nb">document</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getWin</span><span class="o">(</span><span class="nx">node</span><span class="o">).</span><span class="nx">scrollTo</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollY</span><span class="o">(</span><span class="nx">node</span><span class="o">));</span> <span class="c">// scroll window if win or doc</span>
 <span class="c"></span>            <span class="o">}</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
@@ -144,7 +142,7 @@
         <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="s1">&#39;scrollTop&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">node</span><span class="o">.</span><span class="nx">scrollTop</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nb">document</span> <span class="o">||</span> <span class="nx">node</span><span class="o">[</span><span class="nx">NODE_TYPE</span><span class="o">]</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">{</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nb">document</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getWin</span><span class="o">(</span><span class="nx">node</span><span class="o">).</span><span class="nx">scrollTo</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollX</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span> <span class="nx">val</span><span class="o">);</span> <span class="c">// scroll window if win or doc</span>
 <span class="c"></span>            <span class="o">}</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>

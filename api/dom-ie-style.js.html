@@ -47,7 +47,8 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">/**</span>
+<div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+<span class="c">/**</span>
 <span class="c"> * Add style management functionality to DOM.</span>
 <span class="c"> * @module dom</span>
 <span class="c"> * @submodule dom-style</span>
@@ -56,23 +57,183 @@
 
 <span class="k">var</span> <span class="nx">CLIENT_TOP</span> <span class="o">=</span> <span class="s1">&#39;clientTop&#39;</span><span class="o">,</span>
     <span class="nx">CLIENT_LEFT</span> <span class="o">=</span> <span class="s1">&#39;clientLeft&#39;</span><span class="o">,</span>
-    <span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s1">&#39;parentNode&#39;</span><span class="o">,</span>
-    <span class="nx">RIGHT</span> <span class="o">=</span> <span class="s1">&#39;right&#39;</span><span class="o">,</span>
     <span class="nx">HAS_LAYOUT</span> <span class="o">=</span> <span class="s1">&#39;hasLayout&#39;</span><span class="o">,</span>
     <span class="nx">PX</span> <span class="o">=</span> <span class="s1">&#39;px&#39;</span><span class="o">,</span>
     <span class="nx">FILTER</span> <span class="o">=</span> <span class="s1">&#39;filter&#39;</span><span class="o">,</span>
     <span class="nx">FILTERS</span> <span class="o">=</span> <span class="s1">&#39;filters&#39;</span><span class="o">,</span>
     <span class="nx">OPACITY</span> <span class="o">=</span> <span class="s1">&#39;opacity&#39;</span><span class="o">,</span>
     <span class="nx">AUTO</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="o">,</span>
-    <span class="nx">CURRENT_STYLE</span> <span class="o">=</span> <span class="s1">&#39;currentStyle&#39;</span><span class="o">,</span>
+    <span class="nx">BORDER_TOP_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;borderTopWidth&#39;</span><span class="o">,</span>
+    <span class="nx">BORDER_RIGHT_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;borderRightWidth&#39;</span><span class="o">,</span>
+    <span class="nx">BORDER_BOTTOM_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;borderBottomWidth&#39;</span><span class="o">,</span>
+    <span class="nx">BORDER_LEFT_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;borderLeftWidth&#39;</span><span class="o">,</span>
+    <span class="nx">WIDTH</span> <span class="o">=</span> <span class="s1">&#39;width&#39;</span><span class="o">,</span>
+    <span class="nx">HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;height&#39;</span><span class="o">,</span>
+    <span class="nx">TRANSPARENT</span> <span class="o">=</span> <span class="s1">&#39;transparent&#39;</span><span class="o">,</span>
+    <span class="nx">VISIBLE</span> <span class="o">=</span> <span class="s1">&#39;visible&#39;</span><span class="o">,</span>
+    <span class="nx">GET_COMPUTED_STYLE</span> <span class="o">=</span> <span class="s1">&#39;getComputedStyle&#39;</span><span class="o">,</span>
+    <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="kc">undefined</span><span class="o">,</span>
+    <span class="nx">documentElement</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">,</span>
+
+    <span class="c">// TODO: unit-less lineHeight (e.g. 1.22)</span>
+<span class="c"></span>    <span class="nx">re_size</span> <span class="o">=</span> <span class="sr">/^width|height$/</span><span class="o">,</span>
+    <span class="nx">re_unit</span> <span class="o">=</span> <span class="sr">/^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i</span><span class="o">,</span>
 
     <span class="nx">_getStyleObj</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">node</span><span class="o">[</span><span class="nx">CURRENT_STYLE</span><span class="o">]</span> <span class="o">||</span> <span class="nx">node</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">];</span>
-    <span class="o">};</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">currentStyle</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">style</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="nx">ComputedStyle</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="nx">CUSTOM_STYLES</span><span class="o">:</span> <span class="o">{},</span>
+
+        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">property</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
+                <span class="nx">current</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">current</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">el</span><span class="o">)[</span><span class="nx">property</span><span class="o">];</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">property</span> <span class="o">===</span> <span class="nx">OPACITY</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">OPACITY</span><span class="o">].</span><span class="nx">get</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>        
+                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">current</span> <span class="o">||</span> <span class="o">(</span><span class="nx">current</span><span class="o">.</span><span class="nx">indexOf</span> <span class="o">&amp;&amp;</span> <span class="nx">current</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">PX</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">))</span> <span class="o">{</span> <span class="c">// no need to convert</span>
+<span class="c"></span>                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">current</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">IE</span><span class="o">.</span><span class="nx">COMPUTED</span><span class="o">[</span><span class="nx">property</span><span class="o">])</span> <span class="o">{</span> <span class="c">// use compute function</span>
+<span class="c"></span>                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">IE</span><span class="o">.</span><span class="nx">COMPUTED</span><span class="o">[</span><span class="nx">property</span><span class="o">](</span><span class="nx">el</span><span class="o">,</span> <span class="nx">property</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">re_unit</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">current</span><span class="o">))</span> <span class="o">{</span> <span class="c">// convert to pixel</span>
+<span class="c"></span>                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="o">.</span><span class="nx">getPixel</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">property</span><span class="o">)</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">current</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">value</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="nx">getOffset</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">prop</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">current</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">el</span><span class="o">)[</span><span class="nx">prop</span><span class="o">],</span>                     <span class="c">// value of &quot;width&quot;, &quot;top&quot;, etc.</span>
+<span class="c"></span>                <span class="nx">capped</span> <span class="o">=</span> <span class="nx">prop</span><span class="o">.</span><span class="nx">charAt</span><span class="o">(</span><span class="m">0</span><span class="o">).</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">+</span> <span class="nx">prop</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">1</span><span class="o">),</span> <span class="c">// &quot;Width&quot;, &quot;Top&quot;, etc.</span>
+<span class="c"></span>                <span class="nx">offset</span> <span class="o">=</span> <span class="s1">&#39;offset&#39;</span> <span class="o">+</span> <span class="nx">capped</span><span class="o">,</span>                             <span class="c">// &quot;offsetWidth&quot;, &quot;offsetTop&quot;, etc.</span>
+<span class="c"></span>                <span class="nx">pixel</span> <span class="o">=</span> <span class="s1">&#39;pixel&#39;</span> <span class="o">+</span> <span class="nx">capped</span><span class="o">,</span>                               <span class="c">// &quot;pixelWidth&quot;, &quot;pixelTop&quot;, etc.</span>
+<span class="c"></span>                <span class="nx">actual</span><span class="o">,</span>
+                <span class="nx">value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">current</span> <span class="o">===</span> <span class="nx">AUTO</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">actual</span> <span class="o">=</span> <span class="nx">el</span><span class="o">[</span><span class="nx">offset</span><span class="o">];</span> <span class="c">// offsetHeight/Top etc.</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">actual</span> <span class="o">===</span> <span class="nx">UNDEFINED</span><span class="o">)</span> <span class="o">{</span> <span class="c">// likely &quot;right&quot; or &quot;bottom&quot;</span>
+<span class="c"></span>                    <span class="nx">value</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+                <span class="o">}</span>
+
+                <span class="nx">value</span> <span class="o">=</span> <span class="nx">actual</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">re_size</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">prop</span><span class="o">))</span> <span class="o">{</span> <span class="c">// account for box model diff </span>
+<span class="c"></span>                    <span class="nx">el</span><span class="o">.</span><span class="nx">style</span><span class="o">[</span><span class="nx">prop</span><span class="o">]</span> <span class="o">=</span> <span class="nx">actual</span><span class="o">;</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">[</span><span class="nx">offset</span><span class="o">]</span> <span class="o">&gt;</span> <span class="nx">actual</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="c">// the difference is padding + border (works in Standards &amp; Quirks modes)</span>
+<span class="c"></span>                        <span class="nx">value</span> <span class="o">=</span> <span class="nx">actual</span> <span class="o">-</span> <span class="o">(</span><span class="nx">el</span><span class="o">[</span><span class="nx">offset</span><span class="o">]</span> <span class="o">-</span> <span class="nx">actual</span><span class="o">);</span>
+                    <span class="o">}</span>
+                    <span class="nx">el</span><span class="o">.</span><span class="nx">style</span><span class="o">[</span><span class="nx">prop</span><span class="o">]</span> <span class="o">=</span> <span class="nx">AUTO</span><span class="o">;</span> <span class="c">// revert to auto</span>
+<span class="c"></span>                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// convert units to px</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">current</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;%&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span> <span class="c">// IE pixelWidth incorrect for percent; manually compute </span>
+<span class="c"></span>                    <span class="nx">current</span> <span class="o">=</span> <span class="nx">el</span><span class="o">.</span><span class="nx">clientWidth</span> <span class="o">-</span> <span class="c">// offsetWidth - borderWidth</span>
+<span class="c"></span>                            <span class="nx">ComputedStyle</span><span class="o">.</span><span class="nx">getPixel</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="s1">&#39;paddingRight&#39;</span><span class="o">)</span> <span class="o">-</span>
+                            <span class="nx">ComputedStyle</span><span class="o">.</span><span class="nx">getPixel</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="s1">&#39;paddingLeft&#39;</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">el</span><span class="o">.</span><span class="nx">style</span><span class="o">[</span><span class="nx">pixel</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">el</span><span class="o">.</span><span class="nx">style</span><span class="o">[</span><span class="nx">prop</span><span class="o">])</span> <span class="o">{</span> <span class="c">// need to map style.width to currentStyle (no currentStyle.pixelWidth)</span>
+<span class="c"></span>                    <span class="nx">el</span><span class="o">.</span><span class="nx">style</span><span class="o">[</span><span class="nx">prop</span><span class="o">]</span> <span class="o">=</span> <span class="nx">current</span><span class="o">;</span>              <span class="c">// no style.pixelWidth if no style.width</span>
+<span class="c"></span>                <span class="o">}</span>
+                <span class="nx">value</span> <span class="o">=</span> <span class="nx">el</span><span class="o">.</span><span class="nx">style</span><span class="o">[</span><span class="nx">pixel</span><span class="o">];</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">value</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="nx">getBorderWidth</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">property</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// clientHeight/Width = paddingBox (e.g. offsetWidth - borderWidth)</span>
+<span class="c"></span>            <span class="c">// clientTop/Left = borderWidth</span>
+<span class="c"></span>            <span class="k">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">el</span><span class="o">.</span><span class="nx">currentStyle</span> <span class="o">||</span> <span class="o">!</span><span class="nx">el</span><span class="o">.</span><span class="nx">currentStyle</span><span class="o">[</span><span class="nx">HAS_LAYOUT</span><span class="o">])</span> <span class="o">{</span> <span class="c">// TODO: unset layout?</span>
+<span class="c"></span>                <span class="nx">el</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">zoom</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span> <span class="c">// need layout to measure client</span>
+<span class="c"></span>            <span class="o">}</span>
+
+            <span class="nx">switch</span><span class="o">(</span><span class="nx">property</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">case</span> <span class="nx">BORDER_TOP_WIDTH</span><span class="o">:</span>
+                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">el</span><span class="o">[</span><span class="nx">CLIENT_TOP</span><span class="o">];</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="nx">case</span> <span class="nx">BORDER_BOTTOM_WIDTH</span><span class="o">:</span>
+                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">el</span><span class="o">.</span><span class="nx">offsetHeight</span> <span class="o">-</span> <span class="nx">el</span><span class="o">.</span><span class="nx">clientHeight</span> <span class="o">-</span> <span class="nx">el</span><span class="o">[</span><span class="nx">CLIENT_TOP</span><span class="o">];</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="nx">case</span> <span class="nx">BORDER_LEFT_WIDTH</span><span class="o">:</span>
+                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">el</span><span class="o">[</span><span class="nx">CLIENT_LEFT</span><span class="o">];</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="nx">case</span> <span class="nx">BORDER_RIGHT_WIDTH</span><span class="o">:</span>
+                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">el</span><span class="o">.</span><span class="nx">offsetWidth</span> <span class="o">-</span> <span class="nx">el</span><span class="o">.</span><span class="nx">clientWidth</span> <span class="o">-</span> <span class="nx">el</span><span class="o">[</span><span class="nx">CLIENT_LEFT</span><span class="o">];</span>
+                    <span class="k">break</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">value</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="nx">getPixel</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// use pixelRight to convert to px</span>
+<span class="c"></span>            <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
+                <span class="nx">style</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span>
+                <span class="nx">styleRight</span> <span class="o">=</span> <span class="nx">style</span><span class="o">.</span><span class="nx">right</span><span class="o">,</span>
+                <span class="nx">current</span> <span class="o">=</span> <span class="nx">style</span><span class="o">[</span><span class="nx">att</span><span class="o">];</span>
+
+            <span class="nx">node</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">right</span> <span class="o">=</span> <span class="nx">current</span><span class="o">;</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">pixelRight</span><span class="o">;</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">right</span> <span class="o">=</span> <span class="nx">styleRight</span><span class="o">;</span> <span class="c">// revert</span>
+<span class="c"></span>
+            <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="nx">getMargin</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">val</span><span class="o">,</span>
+                <span class="nx">style</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">style</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">==</span> <span class="nx">AUTO</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="o">.</span><span class="nx">getPixel</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">val</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="nx">getVisibility</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">current</span><span class="o">;</span>
+            <span class="k">while</span> <span class="o">(</span> <span class="o">(</span><span class="nx">current</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">currentStyle</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">current</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;inherit&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// NOTE: assignment in test</span>
+<span class="c"></span>                <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="o">(</span><span class="nx">current</span><span class="o">)</span> <span class="o">?</span> <span class="nx">current</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">:</span> <span class="nx">VISIBLE</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="nx">getColor</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">current</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">node</span><span class="o">)[</span><span class="nx">att</span><span class="o">];</span>
+
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">current</span> <span class="o">||</span> <span class="nx">current</span> <span class="o">===</span> <span class="nx">TRANSPARENT</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="s1">&#39;parentNode&#39;</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">parent</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">current</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">parent</span><span class="o">)[</span><span class="nx">att</span><span class="o">];</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">current</span> <span class="o">&amp;&amp;</span> <span class="nx">current</span> <span class="o">!==</span> <span class="nx">TRANSPARENT</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">node</span> <span class="o">=</span> <span class="nx">parent</span><span class="o">;</span>
+                        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toRGB</span><span class="o">(</span><span class="nx">current</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="nx">getBorderColor</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">current</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">current</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">||</span> <span class="nx">current</span><span class="o">.</span><span class="nx">color</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toRGB</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toHex</span><span class="o">(</span><span class="nx">val</span><span class="o">));</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">//fontSize: getPixelFont,</span>
+<span class="c"></span>    <span class="nx">IEComputed</span> <span class="o">=</span> <span class="o">{};</span>
 
 <span class="c">// use alpha filter for IE opacity</span>
-<span class="c"></span><span class="k">if</span> <span class="o">(</span><span class="nb">document</span><span class="o">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="o">][</span><span class="nx">STYLE</span><span class="o">][</span><span class="nx">OPACITY</span><span class="o">]</span> <span class="o">===</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span>
-        <span class="nb">document</span><span class="o">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="o">][</span><span class="nx">FILTERS</span><span class="o">])</span> <span class="o">{</span>
+<span class="c"></span><span class="k">if</span> <span class="o">(</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">style</span><span class="o">[</span><span class="nx">OPACITY</span><span class="o">]</span> <span class="o">===</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span>
+        <span class="nx">documentElement</span><span class="o">[</span><span class="nx">FILTERS</span><span class="o">])</span> <span class="o">{</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">OPACITY</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span>
         <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="m">100</span><span class="o">;</span>
@@ -102,7 +263,7 @@
             <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">style</span><span class="o">[</span><span class="nx">FILTER</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// in case not appended</span>
 <span class="c"></span>                <span class="nx">style</span><span class="o">[</span><span class="nx">FILTER</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;alpha(&#39;</span> <span class="o">+</span> <span class="nx">OPACITY</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">*</span> <span class="m">100</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="o">;</span>
                 
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">[</span><span class="nx">CURRENT_STYLE</span><span class="o">]</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="o">[</span><span class="nx">CURRENT_STYLE</span><span class="o">][</span><span class="nx">HAS_LAYOUT</span><span class="o">])</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">currentStyle</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="o">.</span><span class="nx">currentStyle</span><span class="o">[</span><span class="nx">HAS_LAYOUT</span><span class="o">])</span> <span class="o">{</span>
                     <span class="nx">style</span><span class="o">.</span><span class="nx">zoom</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span> <span class="c">// needs layout </span>
 <span class="c"></span>                <span class="o">}</span>
             <span class="o">}</span>
@@ -116,7 +277,7 @@
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">.</span><span class="nx">height</span> <span class="o">=</span> <span class="o">{</span>
         <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">style</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="m">10</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">style</span><span class="o">[</span><span class="s1">&#39;height&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
+                <span class="nx">style</span><span class="o">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;invalid style value for height: &#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dom-style&#39;</span><span class="o">);</span>
             <span class="o">}</span>
@@ -126,166 +287,13 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">.</span><span class="nx">width</span> <span class="o">=</span> <span class="o">{</span>
         <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">style</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="m">10</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">style</span><span class="o">[</span><span class="s1">&#39;width&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
+                <span class="nx">style</span><span class="o">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;invalid style value for width: &#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dom-style&#39;</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">};</span>
 <span class="o">}</span>
-
-<span class="c">// IE getComputedStyle</span>
-<span class="c">// TODO: unit-less lineHeight (e.g. 1.22)</span>
-<span class="c"></span><span class="k">var</span> <span class="nx">re_size</span> <span class="o">=</span> <span class="sr">/^width|height$/</span><span class="o">,</span>
-    <span class="nx">re_unit</span> <span class="o">=</span> <span class="sr">/^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i</span><span class="o">,</span>
-
-<span class="nx">ComputedStyle</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">CUSTOM_STYLES</span><span class="o">:</span> <span class="o">{},</span>
-
-    <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">property</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
-            <span class="nx">current</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">current</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">el</span><span class="o">)[</span><span class="nx">property</span><span class="o">];</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">property</span> <span class="o">===</span> <span class="nx">OPACITY</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">OPACITY</span><span class="o">].</span><span class="nx">get</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>        
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">current</span> <span class="o">||</span> <span class="o">(</span><span class="nx">current</span><span class="o">.</span><span class="nx">indexOf</span> <span class="o">&amp;&amp;</span> <span class="nx">current</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">PX</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">))</span> <span class="o">{</span> <span class="c">// no need to convert</span>
-<span class="c"></span>                <span class="nx">value</span> <span class="o">=</span> <span class="nx">current</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">IE</span><span class="o">.</span><span class="nx">COMPUTED</span><span class="o">[</span><span class="nx">property</span><span class="o">])</span> <span class="o">{</span> <span class="c">// use compute function</span>
-<span class="c"></span>                <span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">IE</span><span class="o">.</span><span class="nx">COMPUTED</span><span class="o">[</span><span class="nx">property</span><span class="o">](</span><span class="nx">el</span><span class="o">,</span> <span class="nx">property</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">re_unit</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">current</span><span class="o">))</span> <span class="o">{</span> <span class="c">// convert to pixel</span>
-<span class="c"></span>                <span class="nx">value</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="o">.</span><span class="nx">getPixel</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">property</span><span class="o">)</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">value</span> <span class="o">=</span> <span class="nx">current</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="nx">value</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="nx">getOffset</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">prop</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">current</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">el</span><span class="o">)[</span><span class="nx">prop</span><span class="o">],</span>                     <span class="c">// value of &quot;width&quot;, &quot;top&quot;, etc.</span>
-<span class="c"></span>            <span class="nx">capped</span> <span class="o">=</span> <span class="nx">prop</span><span class="o">.</span><span class="nx">charAt</span><span class="o">(</span><span class="m">0</span><span class="o">).</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">+</span> <span class="nx">prop</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">1</span><span class="o">),</span> <span class="c">// &quot;Width&quot;, &quot;Top&quot;, etc.</span>
-<span class="c"></span>            <span class="nx">offset</span> <span class="o">=</span> <span class="s1">&#39;offset&#39;</span> <span class="o">+</span> <span class="nx">capped</span><span class="o">,</span>                             <span class="c">// &quot;offsetWidth&quot;, &quot;offsetTop&quot;, etc.</span>
-<span class="c"></span>            <span class="nx">pixel</span> <span class="o">=</span> <span class="s1">&#39;pixel&#39;</span> <span class="o">+</span> <span class="nx">capped</span><span class="o">,</span>                               <span class="c">// &quot;pixelWidth&quot;, &quot;pixelTop&quot;, etc.</span>
-<span class="c"></span>            <span class="nx">actual</span><span class="o">,</span>
-            <span class="nx">value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">current</span> <span class="o">===</span> <span class="nx">AUTO</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">actual</span> <span class="o">=</span> <span class="nx">el</span><span class="o">[</span><span class="nx">offset</span><span class="o">];</span> <span class="c">// offsetHeight/Top etc.</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">actual</span> <span class="o">===</span> <span class="nx">UNDEFINED</span><span class="o">)</span> <span class="o">{</span> <span class="c">// likely &quot;right&quot; or &quot;bottom&quot;</span>
-<span class="c"></span>                <span class="nx">value</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-            <span class="o">}</span>
-
-            <span class="nx">value</span> <span class="o">=</span> <span class="nx">actual</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">re_size</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">prop</span><span class="o">))</span> <span class="o">{</span> <span class="c">// account for box model diff </span>
-<span class="c"></span>                <span class="nx">el</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">][</span><span class="nx">prop</span><span class="o">]</span> <span class="o">=</span> <span class="nx">actual</span><span class="o">;</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">[</span><span class="nx">offset</span><span class="o">]</span> <span class="o">&gt;</span> <span class="nx">actual</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c">// the difference is padding + border (works in Standards &amp; Quirks modes)</span>
-<span class="c"></span>                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">actual</span> <span class="o">-</span> <span class="o">(</span><span class="nx">el</span><span class="o">[</span><span class="nx">offset</span><span class="o">]</span> <span class="o">-</span> <span class="nx">actual</span><span class="o">);</span>
-                <span class="o">}</span>
-                <span class="nx">el</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">][</span><span class="nx">prop</span><span class="o">]</span> <span class="o">=</span> <span class="nx">AUTO</span><span class="o">;</span> <span class="c">// revert to auto</span>
-<span class="c"></span>            <span class="o">}</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// convert units to px</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">current</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;%&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span> <span class="c">// IE pixelWidth incorrect for percent; manually compute </span>
-<span class="c"></span>                <span class="nx">current</span> <span class="o">=</span> <span class="nx">el</span><span class="o">.</span><span class="nx">clientWidth</span> <span class="o">-</span> <span class="c">// offsetWidth - borderWidth</span>
-<span class="c"></span>                        <span class="nx">ComputedStyle</span><span class="o">.</span><span class="nx">getPixel</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="s1">&#39;paddingRight&#39;</span><span class="o">)</span> <span class="o">-</span>
-                        <span class="nx">ComputedStyle</span><span class="o">.</span><span class="nx">getPixel</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="s1">&#39;paddingLeft&#39;</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">el</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">][</span><span class="nx">pixel</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">el</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">][</span><span class="nx">prop</span><span class="o">])</span> <span class="o">{</span> <span class="c">// need to map style.width to currentStyle (no currentStyle.pixelWidth)</span>
-<span class="c"></span>                <span class="nx">el</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">][</span><span class="nx">prop</span><span class="o">]</span> <span class="o">=</span> <span class="nx">current</span><span class="o">;</span>              <span class="c">// no style.pixelWidth if no style.width</span>
-<span class="c"></span>            <span class="o">}</span>
-            <span class="nx">value</span> <span class="o">=</span> <span class="nx">el</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">][</span><span class="nx">pixel</span><span class="o">];</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">value</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="nx">getBorderWidth</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">property</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">// clientHeight/Width = paddingBox (e.g. offsetWidth - borderWidth)</span>
-<span class="c"></span>        <span class="c">// clientTop/Left = borderWidth</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">el</span><span class="o">[</span><span class="nx">CURRENT_STYLE</span><span class="o">]</span> <span class="o">||</span> <span class="o">!</span><span class="nx">el</span><span class="o">[</span><span class="nx">CURRENT_STYLE</span><span class="o">][</span><span class="nx">HAS_LAYOUT</span><span class="o">])</span> <span class="o">{</span> <span class="c">// TODO: unset layout?</span>
-<span class="c"></span>            <span class="nx">el</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">].</span><span class="nx">zoom</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span> <span class="c">// need layout to measure client</span>
-<span class="c"></span>        <span class="o">}</span>
-
-        <span class="nx">switch</span><span class="o">(</span><span class="nx">property</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">case</span> <span class="nx">BORDER_TOP_WIDTH</span><span class="o">:</span>
-                <span class="nx">value</span> <span class="o">=</span> <span class="nx">el</span><span class="o">[</span><span class="nx">CLIENT_TOP</span><span class="o">];</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="nx">case</span> <span class="nx">BORDER_BOTTOM_WIDTH</span><span class="o">:</span>
-                <span class="nx">value</span> <span class="o">=</span> <span class="nx">el</span><span class="o">.</span><span class="nx">offsetHeight</span> <span class="o">-</span> <span class="nx">el</span><span class="o">.</span><span class="nx">clientHeight</span> <span class="o">-</span> <span class="nx">el</span><span class="o">[</span><span class="nx">CLIENT_TOP</span><span class="o">];</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="nx">case</span> <span class="nx">BORDER_LEFT_WIDTH</span><span class="o">:</span>
-                <span class="nx">value</span> <span class="o">=</span> <span class="nx">el</span><span class="o">[</span><span class="nx">CLIENT_LEFT</span><span class="o">];</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="nx">case</span> <span class="nx">BORDER_RIGHT_WIDTH</span><span class="o">:</span>
-                <span class="nx">value</span> <span class="o">=</span> <span class="nx">el</span><span class="o">.</span><span class="nx">offsetWidth</span> <span class="o">-</span> <span class="nx">el</span><span class="o">.</span><span class="nx">clientWidth</span> <span class="o">-</span> <span class="nx">el</span><span class="o">[</span><span class="nx">CLIENT_LEFT</span><span class="o">];</span>
-                <span class="k">break</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">value</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="nx">getPixel</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">// use pixelRight to convert to px</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">style</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span>
-            <span class="nx">styleRight</span> <span class="o">=</span> <span class="nx">style</span><span class="o">[</span><span class="nx">RIGHT</span><span class="o">],</span>
-            <span class="nx">current</span> <span class="o">=</span> <span class="nx">style</span><span class="o">[</span><span class="nx">att</span><span class="o">];</span>
-
-        <span class="nx">node</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">][</span><span class="nx">RIGHT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">current</span><span class="o">;</span>
-        <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">].</span><span class="nx">pixelRight</span><span class="o">;</span>
-        <span class="nx">node</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">][</span><span class="nx">RIGHT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">styleRight</span><span class="o">;</span> <span class="c">// revert</span>
-<span class="c"></span>
-        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="nx">getMargin</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">val</span><span class="o">,</span>
-            <span class="nx">style</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">style</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">==</span> <span class="nx">AUTO</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="o">.</span><span class="nx">getPixel</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">val</span> <span class="o">+</span> <span class="nx">PX</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="nx">getVisibility</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">current</span><span class="o">;</span>
-        <span class="k">while</span> <span class="o">(</span> <span class="o">(</span><span class="nx">current</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">CURRENT_STYLE</span><span class="o">])</span> <span class="o">&amp;&amp;</span> <span class="nx">current</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;inherit&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// NOTE: assignment in test</span>
-<span class="c"></span>            <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">PARENT_NODE</span><span class="o">];</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="o">(</span><span class="nx">current</span><span class="o">)</span> <span class="o">?</span> <span class="nx">current</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">:</span> <span class="nx">VISIBLE</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="nx">getColor</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">current</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">node</span><span class="o">)[</span><span class="nx">att</span><span class="o">];</span>
-
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">current</span> <span class="o">||</span> <span class="nx">current</span> <span class="o">===</span> <span class="nx">TRANSPARENT</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">PARENT_NODE</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">parent</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">current</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">parent</span><span class="o">)[</span><span class="nx">att</span><span class="o">];</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">current</span> <span class="o">&amp;&amp;</span> <span class="nx">current</span> <span class="o">!==</span> <span class="nx">TRANSPARENT</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">node</span> <span class="o">=</span> <span class="nx">parent</span><span class="o">;</span>
-                    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-                <span class="o">}</span>
-            <span class="o">});</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toRGB</span><span class="o">(</span><span class="nx">current</span><span class="o">);</span>
-    <span class="o">},</span>
-
-    <span class="nx">getBorderColor</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">current</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">current</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">||</span> <span class="nx">current</span><span class="o">.</span><span class="nx">color</span><span class="o">;</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toRGB</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toHex</span><span class="o">(</span><span class="nx">val</span><span class="o">));</span>
-    <span class="o">}</span>
-<span class="o">},</span>
-
-<span class="c">//fontSize: getPixelFont,</span>
-<span class="c"></span><span class="nx">IEComputed</span> <span class="o">=</span> <span class="o">{};</span>
 
 <span class="c">// TODO: top, right, bottom, left</span>
 <span class="c"></span><span class="nx">IEComputed</span><span class="o">[</span><span class="nx">WIDTH</span><span class="o">]</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="o">[</span><span class="nx">HEIGHT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="o">.</span><span class="nx">getOffset</span><span class="o">;</span>
@@ -311,6 +319,8 @@
 <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;DOM.IE&#39;</span><span class="o">);</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">IE</span><span class="o">.</span><span class="nx">COMPUTED</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="o">;</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">IE</span><span class="o">.</span><span class="nx">ComputedStyle</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="o">;</span>
+
+<span class="o">})(</span><span class="nx">Y</span><span class="o">);</span>
 </pre></div>
                     </div>
 			</div>

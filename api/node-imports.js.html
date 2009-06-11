@@ -47,9 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="k">var</span> <span class="nx">UID</span> <span class="o">=</span> <span class="s1">&#39;_yuid&#39;</span><span class="o">;</span>
-
-<span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">([</span>
+<div class="highlight" ><pre><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">([</span>
     <span class="c">/**</span>
 <span class="c">     * Passes through to DOM method.</span>
 <span class="c">     * @method replaceChild</span>
@@ -209,7 +207,9 @@
 <span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="o">[</span><span class="s1">&#39;getAttribute&#39;</span><span class="o">,</span> <span class="s1">&#39;setAttribute&#39;</span><span class="o">]);</span>
 
 <span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="c">// IE clones expandos; regenerate UID</span>
-<span class="c"></span>    <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s1">&#39;div&#39;</span><span class="o">);</span>
+<span class="c"></span>    <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s1">&#39;div&#39;</span><span class="o">),</span>
+        <span class="nx">UID</span> <span class="o">=</span> <span class="s1">&#39;_yuid&#39;</span><span class="o">;</span>
+
     <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
     <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">[</span><span class="nx">UID</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">)[</span><span class="nx">UID</span><span class="o">])</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">cloneNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">deep</span><span class="o">)</span> <span class="o">{</span>
