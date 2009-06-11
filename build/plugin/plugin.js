@@ -11,7 +11,7 @@ YUI.add('plugin', function(Y) {
      *
      * @class Plugin.Base 
      * @extends Base
-     * @param {Object} config Object literal of configuration property name/value pairs.
+     * @param {Object} config Configuration object with property name/value pairs.
      */
     function Plugin(config) {
         Plugin.superclass.constructor.apply(this, arguments);
@@ -43,7 +43,7 @@ YUI.add('plugin', function(Y) {
      * Plugin.Base should set their own NAME value.
      *
      * @property Plugin.Base.NAME
-     * @type {String}
+     * @type String
      * @static
      */
     Plugin.NAME = 'plugin';
@@ -54,7 +54,7 @@ YUI.add('plugin', function(Y) {
      * should set their own NS value.
      *
      * @property Plugin.NS
-     * @type {String}
+     * @type String
      * @static
      */
     Plugin.NS = 'plugin';
@@ -76,7 +76,7 @@ YUI.add('plugin', function(Y) {
          * Initializer lifecycle implementation.
          *
          * @method initializer
-         * @param {Object} config Configuration object literal for the Plugin.
+         * @param {Object} config Configuration object with property name/value pairs.
          */
         initializer : function(config) {
             this._handles = [];

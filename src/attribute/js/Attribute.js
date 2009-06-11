@@ -115,7 +115,7 @@
          * Adds an attribute with the provided configuration to the host object.
          * </p>
          * <p>
-         * The config argument object literal supports the following optional properties:
+         * The config argument object supports the following properties:
          * </p>
          * 
          * <dl>
@@ -169,7 +169,7 @@
          * @method addAttr
          *
          * @param {String} name The name of the attribute.
-         * @param {Object} config An object literal specifying the configuration for the attribute.
+         * @param {Object} config An object with attribute configuration property/value pairs, specifying the configuration for the attribute.
          *
          * <p>
          * <strong>NOTE:</strong> The configuration object is modified when adding an attribute, so if you need 
@@ -250,7 +250,7 @@
          * </p>
          * @method modifyAttr
          * @param {String} name The name of the attribute whose configuration is to be updated.
-         * @param {Object} config An object literal with the updated configuration properties.
+         * @param {Object} config An object with configuration property/value pairs, specifying the configuration properties to modify.
          */
         modifyAttr: function(name, config) {
             if (this.attrAdded(name)) {
@@ -633,7 +633,7 @@
          * Sets multiple attribute values.
          *
          * @method setAttrs
-         * @param {Object} attrs  An object literal of attributes name/value pairs.
+         * @param {Object} attrs  An object with attributes name/value pairs.
          * @return {Object} A reference to the host object.
          * @chainable
          */
@@ -652,7 +652,7 @@
          * @method getAttrs
          * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
          * returned. If set to true, all attributes modified from their initial values are returned.
-         * @return {Object} An object literal of attribute name/value pairs.
+         * @return {Object} An object with attribute name/value pairs.
          */
         getAttrs : function(attrs) {
             var o = {}, i, l, attr, val,
@@ -684,8 +684,8 @@
          * @method addAttrs
          * @chainable
          *
-         * @param {Object} cfgs An object literal of attribute name/configuration pairs.
-         * @param {Object} values An object literal of attribute name/value pairs, defining the initial values to apply.
+         * @param {Object} cfgs An object with attribute name/configuration pairs.
+         * @param {Object} values An object with attribute name/value pairs, defining the initial values to apply.
          * Values defined in the cfgs argument will be over-written by values in this argument unless defined as read only.
          * @param {boolean} lazy Whether or not to delay the intialization of these attributes until the first call to get/set.
          * Individual attributes can over-ride this behavior by defining a lazyAdd configuration property in their configuration.
@@ -716,8 +716,8 @@
          *
          * @method _addAttrs
          * @private
-         * @param {Object} cfgs An object literal of attribute name/configuration pairs.
-         * @param {Object} values An object literal of attribute name/value pairs, defining the initial values to apply.
+         * @param {Object} cfgs An object with attribute name/configuration pairs.
+         * @param {Object} values An object with attribute name/value pairs, defining the initial values to apply.
          * Values defined in the cfgs argument will be over-written by values in this argument unless defined as read only.
          * @param {boolean} lazy Whether or not to delay the intialization of these attributes until the first call to get/set.
          * Individual attributes can over-ride this behavior by defining a lazyAdd configuration property in their configuration.
@@ -757,9 +757,9 @@
          * attributes can be keyed by the top level attribute name.
          *
          * @method _splitAttrVals
-         * @param {Object} valueHash Object literal of name/value pairs
+         * @param {Object} valueHash An object with attribute name/value pairs
          *
-         * @return {Object} Object literal with 2 properties - "simple" and "complex",
+         * @return {Object} An object literal with 2 properties - "simple" and "complex",
          * containing simple and complex attribute values respectively keyed 
          * by the top level attribute name, or null, if valueHash is falsey.
          *
@@ -801,9 +801,8 @@
          * provided and the attribute is not read-only.
          *
          * @param {String} attr The name of the attribute
-         * @param {Object} cfg The attribute configuration object literal
-         * @param {Object} initValues The object literal of name/value pairs returned 
-         * from _splitAttrVals
+         * @param {Object} cfg The attribute configuration object
+         * @param {Object} initValues The object with simple and complex attribute name/value pairs returned from _splitAttrVals
          *
          * @return {Any} The initial value of the attribute.
          *

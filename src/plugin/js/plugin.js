@@ -9,7 +9,7 @@
      *
      * @class Plugin.Base 
      * @extends Base
-     * @param {Object} config Object literal of configuration property name/value pairs.
+     * @param {Object} config Configuration object with property name/value pairs.
      */
     function Plugin(config) {
         Plugin.superclass.constructor.apply(this, arguments);
@@ -74,7 +74,7 @@
          * Initializer lifecycle implementation.
          *
          * @method initializer
-         * @param {Object} config Configuration object literal for the Plugin.
+         * @param {Object} config Configuration object with property name/value pairs.
          */
         initializer : function(config) {
             this._handles = [];
