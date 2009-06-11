@@ -1537,7 +1537,7 @@ var Lang = Y.Lang,
 			ename,
 			elements,
 			nElements,
-			element,
+			matched,
 			ev,
 			i;
 
@@ -1549,15 +1549,15 @@ var Lang = Y.Lang,
 				if (nElements > 0) {
 					i = elements.length - 1;
 					do {
-						element = elements[i];
-	                    if (element === target || Y.DOM.contains(element, target)) {
+						matched = elements[i];
+	                    if (matched === target || Y.DOM.contains(matched, target)) {
 
                             if (!ev) {
                                 ev = new Y.DOMEventFacade(e, el);
-                                ev.originalTarget = ev.target;
+	                            ev.container = ev.currentTarget;
                             }
 
-	                        ev.target = Y.Node.get(element);
+	                        ev.currentTarget = Y.Node.get(matched);
 	                        Y.fire(ename, ev);
 	                    }
 					}
