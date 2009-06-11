@@ -1,3 +1,4 @@
+(function(Y) {
 /** 
  * The DOM utility provides a cross-browser abtraction layer
  * normalizing DOM tasks, and adds extra helper functionality
@@ -25,12 +26,7 @@ var NODE_TYPE = 'nodeType',
     NEXT_SIBLING = 'nextSibling',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
-    LENGTH = 'length',
 
-
-    UNDEFINED = undefined,
-
-    g_slice = Array.slice,
     re_tag = /<([a-z]+)/i;
 
 Y.DOM = {
@@ -146,7 +142,7 @@ Y.DOM = {
                         if (tag) {
                             wrapFn = function(el) {
                                 return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
-                            }
+                            };
                         }
                     }
 
@@ -266,11 +262,12 @@ Y.DOM = {
         root = root || Y.config.doc;
 
         var elements = root.getElementsByTagName(tag),
-            retNodes = [];
+            retNodes = [],
+            i, len;
 
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
+        for (i = 0, len = elements.length; i < len; ++i) {
             if ( !fn || fn(elements[i]) ) {
-                retNodes[retNodes[LENGTH]] = elements[i];
+                retNodes[retNodes.length] = elements[i];
             }
         }
         return retNodes;
@@ -290,9 +287,10 @@ Y.DOM = {
         root = root || Y.config.doc;
 
         var elements = root.getElementsByTagName(tag),
-            ret = null;
+            ret = null,
+            i, len;
 
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
+        for (i = 0, len = elements.length; i < len; ++i) {
             if ( !fn || fn(elements[i]) ) {
                 ret = elements[i];
                 break;
@@ -311,14 +309,15 @@ Y.DOM = {
      * @return {Array} The filtered collection of HTMLElements.
      */
     filterElementsBy: function(elements, fn, firstOnly) {
-        var ret = (firstOnly) ? null : [];
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
+        var ret = (firstOnly) ? null : [],
+            i, len;
+        for (i = 0, len = elements.length; i < len; ++i) {
             if (elements[i][TAG_NAME] && (!fn || fn(elements[i]))) {
                 if (firstOnly) {
                     ret = elements[i];
                     break;
                 } else {
-                    ret[ret[LENGTH]] = elements[i];
+                    ret[ret.length] = elements[i];
                 }
             }
         }
@@ -532,8 +531,6 @@ Y.DOM = {
     },
 
     _removeChildNodes: function(node) {
-        var childNodes = node.childNodes, i;
-
         while (node.firstChild) {
             node.removeChild(node.firstChild);
         }
@@ -636,17 +633,21 @@ Y.DOM = {
     },
 
     _stripScripts: function(node) {
-        var scripts = node.getElementsByTagName('script');
-        for (var i = 0, script; script = scripts[i++];) {
+        var scripts = node.getElementsByTagName('script'),
+            i, script;
+
+        for (i = 0, script; script = scripts[i++];) {
             script.parentNode.removeChild(script);
         }
     },
 
     _execScripts: function(scripts, startIndex) {
-        var newScript;
+        var newScript,
+            i, script;
+
         startIndex = startIndex || 0;
 
-        for (var i = startIndex, script; script = scripts[i++];) {
+        for (i = startIndex, script; script = scripts[i++];) {
             newScript = script.ownerDocument.createElement('script');
             script.parentNode.replaceChild(newScript, script);
             if (script.text) {
@@ -661,7 +662,9 @@ Y.DOM = {
                         if (/loaded|complete/.test(script.readyState)) {
                             event.srcElement.onreadystatechange = null; 
                             // timer to help ensure exec order
-                            setTimeout(function() {Y.DOM._execScripts(scripts, i++)}, 0);
+                            setTimeout(function() {
+                                Y.DOM._execScripts(scripts, i++);
+                            }, 0);
                         }
                     };
                 } else {
@@ -767,14 +770,11 @@ Y.DOM = {
 
     _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
         fn = (typeof name === 'string') ? Y.DOM[fn] : fn;
-        var args = arguments,
-            result,
+        var result,
             ret = [];
 
         if (fn && nodes) {
-            //args = g_slice.call(args, 1);
             Y.each(nodes, function(node) {
-                //args.splice(0, 1, node);
                 if ((result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc)) !== undefined) {
                     ret[ret.length] = result;
                 }
@@ -800,7 +800,7 @@ Y.DOM = {
 };
 
 
-(function() {
+(function(Y) {
     var creators = Y.DOM.creators,
         create = Y.DOM.create,
         re_tbody = /(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)>)+\s*<tbody/,
@@ -840,7 +840,7 @@ Y.DOM = {
                 var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc),
                     tb = frag.children.tags('tbody')[0];
 
-                if (frag.children[LENGTH] > 1 && tb && !re_tbody.test(html)) {
+                if (frag.children.length > 1 && tb && !re_tbody.test(html)) {
                     tb[PARENT_NODE].removeChild(tb); // strip extraneous tbody
                 }
                 return frag;
@@ -865,7 +865,7 @@ Y.DOM = {
         Y.mix(Y.DOM.VALUE_SETTERS, {
             // IE: node.value changes the button text, which should be handled via innerHTML
             button: function(node, val) {
-                var attr = node.attributes['value'];
+                var attr = node.attributes.value;
                 if (!attr) {
                     attr = node[OWNER_DOCUMENT].createAttribute('value');
                     node.setAttributeNode(attr);
@@ -896,8 +896,7 @@ Y.DOM = {
 
         select: function(node) {
             var val = node.value,
-                options = node.options,
-                i, opt;
+                options = node.options;
 
             if (options && val === '') {
                 if (node.multiple) {
@@ -910,4 +909,6 @@ Y.DOM = {
             return val;
         }
     });
-})();
+})(Y);
+
+})(Y);
