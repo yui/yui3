@@ -411,13 +411,13 @@
                 <span class="s1">&#39;datasource-polling&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">]</span>
                 <span class="o">},</span>
-                <span class="s1">&#39;datasource-scriptnode&#39;</span><span class="o">:</span> <span class="o">{</span>
+                <span class="s1">&#39;datasource-get&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">,</span> <span class="nx">GET</span><span class="o">]</span>
                 <span class="o">},</span>
                 <span class="s1">&#39;datasource-textschema&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">,</span> <span class="nx">PLUGIN</span><span class="o">,</span> <span class="s1">&#39;dataschema-text&#39;</span><span class="o">]</span>
                 <span class="o">},</span>
-                <span class="s1">&#39;datasource-xhr&#39;</span><span class="o">:</span> <span class="o">{</span>
+                <span class="s1">&#39;datasource-io&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DATASOURCELOCAL</span><span class="o">,</span> <span class="nx">IOBASE</span><span class="o">]</span>
                 <span class="o">},</span>
                 <span class="s1">&#39;datasource-xmlschema&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -1075,16 +1075,16 @@
 <span class="c">     * @param mod {string} optional: the name of a module to skin</span>
 <span class="c">     * @return {string} the full skin module name</span>
 <span class="c">     */</span>
-    <span class="nx">formatSkin</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">skin</span><span class="o">,</span> <span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">formatSkin</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">skin</span><span class="o">,</span> <span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">SKIN_PREFIX</span> <span class="o">+</span> <span class="nx">skin</span><span class="o">;</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nx">mod</span><span class="o">;</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">s</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="o">}),</span>
 
-    <span class="c">/**</span>
+    <span class="c">/*</span>
 <span class="c">     * Reverses &lt;code&gt;formatSkin&lt;/code&gt;, providing the skin name and</span>
 <span class="c">     * module name if the string matches the pattern for skins.</span>
 <span class="c">     * @method parseSkin</span>
@@ -1092,17 +1092,19 @@
 <span class="c">     * @return {skin: string, module: string} the parsed skin name </span>
 <span class="c">     * and module name, or null if the supplied string does not match</span>
 <span class="c">     * the skin pattern</span>
+<span class="c">     * </span>
+<span class="c">     * This isn&#39;t being used at the moment</span>
+<span class="c">     *</span>
 <span class="c">     */</span>
-    <span class="nx">parseSkin</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
-        
-        <span class="k">if</span> <span class="o">(</span><span class="nx">mod</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">SKIN_PREFIX</span><span class="o">)</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">mod</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s2">&quot;-&quot;</span><span class="o">);</span>
-            <span class="k">return</span> <span class="o">{</span><span class="nx">skin</span><span class="o">:</span> <span class="nx">a</span><span class="o">[</span><span class="m">1</span><span class="o">],</span> <span class="nx">module</span><span class="o">:</span> <span class="nx">a</span><span class="o">[</span><span class="m">2</span><span class="o">]};</span>
-        <span class="o">}</span> 
-
-        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="o">},</span>
-
+    <span class="c">// parseSkin: function(mod) {</span>
+<span class="c"></span>    <span class="c">//     </span>
+<span class="c"></span>    <span class="c">//     if (mod.indexOf(this.SKIN_PREFIX) === 0) {</span>
+<span class="c"></span>    <span class="c">//         var a = mod.split(&quot;-&quot;);</span>
+<span class="c"></span>    <span class="c">//         return {skin: a[1], module: a[2]};</span>
+<span class="c"></span>    <span class="c">//     } </span>
+<span class="c"></span>    <span class="c">//     return null;</span>
+<span class="c"></span>    <span class="c">// },</span>
+<span class="c"></span>
     <span class="c">/**</span>
 <span class="c">     * Adds the skin def to the module info</span>
 <span class="c">     * @method _addSkin</span>

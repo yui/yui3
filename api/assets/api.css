@@ -53,6 +53,7 @@ a:visited { color: #003399;}
 #yui-classopts-form fieldset legend { display: none; }
 
 /* undo reset.css styles for description block formatting */
+#doc3 .description dl { margin: 5px 0 10px 0; }
 #doc3 .description ul { padding: 10px 0 10px 28px; font-size: 90%; list-style: disc}
 #doc3 .description li { list-style: disc}
 #doc3 .description p { padding-bottom: 10px}

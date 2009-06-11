@@ -1,16 +1,25 @@
     /**
      * <p>
-     * An augmentable class, which when augmented onto a Base based class, allows 
-     * the class to support plugins, providing plug and unplug methods and the ability
-     * to add plugins through the configuration literal passed to the constructor.
+     * An augmentable class, which provides the augmented class with the ability to host plugins.
+     * It adds <a href="#method_plug">plug</a> and <a href="#method_unplug">unplug</a> methods to the augmented class, which can 
+     * be used to add or remove plugins from instances of the class.
+     * </p>
+     *
+     * <p>Plugins can also be added through the constructor configuration object passed to the host class' constructor using
+     * the "plugins" property. Supported values for the "plugins" property are those defined by the <a href="#method_plug">plug</a> method. 
+     * 
+     * For example the following code would add the AnimPlugin and IOPlugin to Overlay (the plugin host):
+     * <xmp>
+     * var o = new Overlay({plugins: [ AnimPlugin, {fn:IOPlugin, cfg:{section:"header"}}]});
+     * </xmp>
      * </p>
      * <p>
-     * The PlugHost's _initPlugins() and _destroyPlugins() methods should be invoked by the 
-     * host class at the appropriate point in the instance's lifecyle. This is done
-     * by default for the Base class, so developers extending base don't need to do 
-     * anything to get plugin support.
+     * Plug.Host's protected <a href="#method_initPlugins">_initPlugins</a> and <a href="#method_destroyPlugins">_destroyPlugins</a> 
+     * methods should be invoked by the host class at the appropriate point in the host's lifecyle. This is done by default for 
+     * the Base class, so developers extending Base or Widget don't need to do anything to enable plugin support.
      * </p>
-     * @class PluginHost
+     *
+     * @class Plugin.Host
      */
 
     var L = Y.Lang;
@@ -28,11 +37,11 @@
          * @method plug
          * @chainable
          * @param p {Function | Object |Array} Accepts the plugin class, or an 
-         * object literal with a "fn" property specifying the plugin class and 
+         * object with a "fn" property specifying the plugin class and 
          * a "cfg" property specifying the configuration for the Plugin.
          * <p>
          * Additionally an Array can also be passed in, with the above function or 
-         * object literal values, allowing the user to add multiple plugins in a single call.
+         * object values, allowing the user to add multiple plugins in a single call.
          * </p>
          * @param config (Optional) If the first argument is the plugin class, the second argument
          * can be the configuration for the plugin.
@@ -82,7 +91,7 @@
          * Determines if a plugin has plugged into this host.
          *
          * @method hasPlugin
-         * @param The plugin's namespace
+         * @param {String} ns The plugin's namespace
          * @return {boolean} returns true, if the plugin has been plugged into this host, false otherwise.
          */
         hasPlugin : function(ns) {
@@ -95,7 +104,7 @@
          * instance through the "plugins" configuration property.
          *
          * @method _initPlugins
-         * @param {Config} config The configuration object literal for the host.
+         * @param {Config} config The configuration object with property name/value pairs.
          * @private
          */
         _initPlugins: function(config) {
@@ -206,11 +215,11 @@
      * Registers plugins to be instantiated at the class level (plugins 
      * which should be plugged into every instance of the class by default).
      *
-     * @method PluginHost.plug
+     * @method Plugin.Host.plug
      * @static
      *
      * @param {Function} hostClass The host class on which to register the plugins
-     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of object literals (with fn and cfg properties defined)
+     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
      * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
      */
     PluginHost.plug = function(hostClass, plugin, config) {
@@ -239,7 +248,7 @@
      * Unregisters any class level plugins which have been registered by the host class, or any
      * other class in the hierarchy.
      *
-     * @method PluginHost.unplug
+     * @method Plugin.Host.unplug
      * @static
      *
      * @param {Function} hostClass The host class from which to unregister the plugins

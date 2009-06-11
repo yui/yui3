@@ -20,6 +20,7 @@ YUI.add('node-base', function(Y) {
 
 // "globals"
 var g_nodes = {},
+    g_nodelists = {},
     g_restrict = {},
     g_slice = Array.prototype.slice,
 
@@ -158,7 +159,6 @@ Node.getDOMNode = function(node) {
 };
  
 Node.scrubVal = function(val, node, depth) {
-    var isWindow = false;
     if (node && val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y.DOM.isWindow(val)) {// node || window
@@ -683,23 +683,23 @@ Y.mix(Node.prototype, {
 
 Y.Node = Node;
 Y.get = Y.Node.get;
-    /**
-     * The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
-     * @module node
-     * @submodule node-list
-     */    
+/**
+ * The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
+ * @module node
+ * @submodule node-list
+ */    
 
-    /**
-     * The NodeList class provides a wrapper for manipulating DOM NodeLists.
-     * NodeList properties can be accessed via the set/get methods.
-     * Use Y.get() to retrieve NodeList instances.
-     *
-     * <strong>NOTE:</strong> NodeList properties are accessed using
-     * the <code>set</code> and <code>get</code> methods.
-     *
-     * @class NodeList
-     * @constructor
-     */
+/**
+ * The NodeList class provides a wrapper for manipulating DOM NodeLists.
+ * NodeList properties can be accessed via the set/get methods.
+ * Use Y.get() to retrieve NodeList instances.
+ *
+ * <strong>NOTE:</strong> NodeList properties are accessed using
+ * the <code>set</code> and <code>get</code> methods.
+ *
+ * @class NodeList
+ * @constructor
+ */
 
 Y.Array._diff = function(a, b) {
     var removed = [],
@@ -729,29 +729,23 @@ Y.Array.diff = function(a, b) {
     }; 
 };
 
-// "globals"
-var g_nodelists = {},
-    g_slice = Array.prototype.slice,
+var NodeList = function(config) {
+    var doc = config.doc || Y.config.doc,
+        nodes = config.nodes || [];
 
-    UID = '_yuid',
+    if (typeof nodes === 'string') {
+        this._query = nodes;
+        nodes = Y.Selector.query(nodes, doc);
+    }
 
-    NodeList = function(config) {
-        var doc = config.doc || Y.config.doc,
-            nodes = config.nodes || [];
+    Y.stamp(this);
+    NodeList._instances[this[UID]] = this;
+    g_nodelists[this[UID]] = nodes;
 
-        if (typeof nodes === 'string') {
-            this._query = nodes;
-            nodes = Y.Selector.query(nodes, doc);
-        }
-
-        Y.stamp(this);
-        NodeList._instances[this[UID]] = this;
-        g_nodelists[this[UID]] = nodes;
-
-        if (config.restricted) {
-            g_restrict = this[UID];
-        }
-    };
+    if (config.restricted) {
+        g_restrict = this[UID];
+    }
+};
 // end "globals"
 
 NodeList.NAME = 'NodeList';
@@ -860,7 +854,7 @@ Y.mix(NodeList.prototype, {
     },
 
     batch: function(fn, context) {
-        var nodelist = this;
+        var nodelist = this,
             tmp = NodeList._getTempNode();
 
         Y.Array.each(g_nodelists[this[UID]], function(node, index) {
@@ -1040,8 +1034,6 @@ Y.all = function(nodes, doc, restrict) {
     return nodeList;
 };
 Y.Node.all = Y.all; // TODO: deprecated
-var UID = '_yuid';
-
 Y.Array.each([
     /**
      * Passes through to DOM method.
@@ -1202,7 +1194,9 @@ if (!document.documentElement.hasAttribute) { // IE < 8
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 
 (function() { // IE clones expandos; regenerate UID
-    var node = document.createElement('div');
+    var node = document.createElement('div'),
+        UID = '_yuid';
+
     Y.stamp(node);
     if (node[UID] === node.cloneNode(true)[UID]) {
         Y.Node.prototype.cloneNode = function(deep) {
@@ -1212,6 +1206,7 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
         };
     }
 })();
+(function(Y) {
 /**
  * Extended Node interface for managing classNames.
  * @module node
@@ -1265,6 +1260,7 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 
     Y.Node.importMethod(Y.DOM, methods);
     Y.NodeList.importMethod(Y.Node.prototype, methods);
+})(Y);
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'base', 'selector']});

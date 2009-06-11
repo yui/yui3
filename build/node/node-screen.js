@@ -8,8 +8,6 @@ YUI.add('node-screen', function(Y) {
  * @for Node
  */
 
-var NODE_TYPE = 'nodeType';
-
 // these are all "safe" returns, no wrapping required
 Y.each([
     /**
@@ -77,7 +75,7 @@ Y.Node.ATTRS.scrollLeft = {
         if (node) {
             if ('scrollLeft' in node) {
                 node.scrollLeft = val;
-            } else if (node.document || node[NODE_TYPE] === 9) {
+            } else if (node.document || node.nodeType === 9) {
                 Y.DOM._getWin(node).scrollTo(val, Y.DOM.docScrollY(node)); // scroll window if win or doc
             }
         } else {
@@ -96,7 +94,7 @@ Y.Node.ATTRS.scrollTop = {
         if (node) {
             if ('scrollTop' in node) {
                 node.scrollTop = val;
-            } else if (node.document || node[NODE_TYPE] === 9) {
+            } else if (node.document || node.nodeType === 9) {
                 Y.DOM._getWin(node).scrollTo(Y.DOM.docScrollX(node), val); // scroll window if win or doc
             }
         } else {

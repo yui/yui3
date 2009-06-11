@@ -48,7 +48,7 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * The attribute module provies an augmentable Attribute implementation, which </span>
+<span class="c">     * The attribute module provides an augmentable Attribute implementation, which </span>
 <span class="c">     * adds configurable attributes and attribute change events to the class being </span>
 <span class="c">     * augmented. It also provides a State class, which is used internally by Attribute,</span>
 <span class="c">     * but can also be used independently to provide a name/property/value data structure to</span>
@@ -93,23 +93,23 @@
         <span class="nx">MODIFIABLE</span><span class="o">[</span><span class="nx">BROADCAST</span><span class="o">]</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
 
     <span class="c">/**</span>
-<span class="c">     * &lt;p&gt;Attribute provides configurable attribute support along with attribute change events.&lt;/p&gt;</span>
 <span class="c">     * &lt;p&gt;</span>
-<span class="c">     * Attribute is designed to be augmented onto a host class, and provides the host with the </span>
-<span class="c">     * ability to configure attributes to store and retrieve state, along with attribute change events.</span>
+<span class="c">     * Attribute provides configurable attribute support along with attribute change events. It is designed to be </span>
+<span class="c">     * augmented onto a host class, and provides the host with the ability to configure attributes to store and retrieve state, </span>
+<span class="c">     * along with attribute change events.</span>
 <span class="c">     * &lt;/p&gt;</span>
-<span class="c">     * &lt;p&gt;Attributes added to the host can be configured:&lt;/p&gt;</span>
+<span class="c">     * &lt;p&gt;For example, attributes added to the host can be configured:&lt;/p&gt;</span>
 <span class="c">     * &lt;ul&gt;</span>
 <span class="c">     *     &lt;li&gt;As read only.&lt;/li&gt;</span>
 <span class="c">     *     &lt;li&gt;As write once.&lt;/li&gt;</span>
-<span class="c">     *     &lt;li&gt;With a setter function, used to manipulate</span>
-<span class="c">     *     values passed to Attribute&#39;s set method, before they are stored.&lt;/li&gt;</span>
+<span class="c">     *     &lt;li&gt;With a setter function, which can be used to manipulate</span>
+<span class="c">     *     values passed to Attribute&#39;s &lt;a href=&quot;#method_set&quot;&gt;set&lt;/a&gt; method, before they are stored.&lt;/li&gt;</span>
 <span class="c">     *     &lt;li&gt;With a getter function, which can be used to manipulate stored values,</span>
-<span class="c">     *     before they are returned by Attribute&#39;s get method.&lt;/li&gt;</span>
+<span class="c">     *     before they are returned by Attribute&#39;s &lt;a href=&quot;#method_get&quot;&gt;get&lt;/a&gt; method.&lt;/li&gt;</span>
 <span class="c">     *     &lt;li&gt;With a validator function, to validate values before they are stored.&lt;/li&gt;</span>
 <span class="c">     * &lt;/ul&gt;</span>
 <span class="c">     *</span>
-<span class="c">     * &lt;p&gt;See the &lt;a href=&quot;#method_addAtt&quot;&gt;addAttr&lt;/a&gt; method, for the complete set of configuration</span>
+<span class="c">     * &lt;p&gt;See the &lt;a href=&quot;#method_addAttr&quot;&gt;addAttr&lt;/a&gt; method, for the complete set of configuration</span>
 <span class="c">     * options available for attributes&lt;/p&gt;.</span>
 <span class="c">     * </span>
 <span class="c">     * &lt;p&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; Most implementations will be better off extending the &lt;a href=&quot;Base.html&quot;&gt;Base&lt;/a&gt; class, </span>
@@ -132,7 +132,7 @@
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;The value to return from an attribute setter in order to prevent the set from going through.&lt;/p&gt;</span>
 <span class="c">     * </span>
-<span class="c">     * &lt;p&gt;You can return this value from your setter, if you wish to combine validation and setter </span>
+<span class="c">     * &lt;p&gt;You can return this value from your setter if you wish to combine validator and setter </span>
 <span class="c">     * functionality into a single setter function, which either returns the massaged value to be stored or </span>
 <span class="c">     * Attribute.INVALID_VALUE to prevent invalid values from being stored.&lt;/p&gt;</span>
 <span class="c">     *</span>
@@ -164,42 +164,52 @@
 <span class="c">         * Adds an attribute with the provided configuration to the host object.</span>
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * &lt;p&gt;</span>
-<span class="c">         * The config argument object literal supports the following optional properties:</span>
+<span class="c">         * The config argument object supports the following properties:</span>
 <span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * </span>
 <span class="c">         * &lt;dl&gt;</span>
 <span class="c">         *    &lt;dt&gt;value &amp;#60;Any&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;The initial value to set on the attribute&lt;/dd&gt;</span>
+<span class="c">         *</span>
 <span class="c">         *    &lt;dt&gt;valueFn &amp;#60;Function&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;A function, which will return the initial value to set on the attribute. This is useful</span>
 <span class="c">         *    for cases where the attribute configuration is defined statically, but needs to </span>
 <span class="c">         *    reference the host instance (&quot;this&quot;) to obtain an initial value.</span>
 <span class="c">         *    If defined, this precedence over the value property.&lt;/dd&gt;</span>
-<span class="c">         *    &lt;dt&gt;readOnly &amp;#60;Boolean&amp;#62;&lt;/dt&gt;</span>
+<span class="c">         *</span>
+<span class="c">         *    &lt;dt&gt;readOnly &amp;#60;boolean&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;Whether or not the attribute is read only. Attributes having readOnly set to true</span>
 <span class="c">         *        cannot be modified by invoking the set method.&lt;/dd&gt;</span>
-<span class="c">         *    &lt;dt&gt;writeOnce &amp;#60;Boolean&amp;#62;&lt;/dt&gt;</span>
+<span class="c">         *</span>
+<span class="c">         *    &lt;dt&gt;writeOnce &amp;#60;boolean&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;Whether or not the attribute is &quot;write once&quot;. Attributes having writeOnce set to true, </span>
 <span class="c">         *        can only have their values set once, be it through the default configuration, </span>
 <span class="c">         *        constructor configuration arguments, or by invoking set.&lt;/dd&gt;</span>
+<span class="c">         *</span>
 <span class="c">         *    &lt;dt&gt;setter &amp;#60;Function&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;The setter function used to massage or normalize the value passed to the set method for the attribute. </span>
 <span class="c">         *    The value returned by the setter will be the final stored value. Returning</span>
 <span class="c">         *    &lt;a href=&quot;#property_Attribute.INVALID_VALUE&quot;&gt;Attribute.INVALID_VALUE&lt;/a&gt;, from the setter will prevent</span>
 <span class="c">         *    the value from being stored.&lt;/dd&gt;</span>
+<span class="c">         *</span>
 <span class="c">         *    &lt;dt&gt;getter &amp;#60;Function&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;The getter function used to massage or normalize the value returned by the get method for the attribute.</span>
 <span class="c">         *    The value returned by the getter function is the value which will be returned to the user when they </span>
 <span class="c">         *    invoke get.&lt;/dd&gt;</span>
+<span class="c">         *</span>
 <span class="c">         *    &lt;dt&gt;validator &amp;#60;Function&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;The validator function invoked prior to setting the stored value. Returning</span>
 <span class="c">         *    false from the validator function will prevent the value from being stored.&lt;/dd&gt;</span>
-<span class="c">         *    &lt;dt&gt;broadcast &amp;#60;Int&amp;#62;&lt;/dt&gt;</span>
-<span class="c">         *    &lt;dd&gt;If and how attribute change events for this attribute should be broadcast. See Event.Custom&#39;s &lt;a href=&quot;Event.Custom.html#property_broadcast&gt;broadcast&lt;/a&gt; property for </span>
+<span class="c">         *    </span>
+<span class="c">         *    &lt;dt&gt;broadcast &amp;#60;int&amp;#62;&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dd&gt;If and how attribute change events for this attribute should be broadcast. See Event.Custom&#39;s &lt;a href=&quot;Event.Custom.html#property_broadcast&quot;&gt;broadcast&lt;/a&gt; property for </span>
 <span class="c">         *    valid values. By default attribute change events are not broadcast.&lt;/dd&gt;</span>
+<span class="c">         *</span>
 <span class="c">         *    &lt;dt&gt;lazyAdd &amp;#60;boolean&amp;#62;&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;Whether or not to delay initialization of the attribute until the first call to get/set it. </span>
 <span class="c">         *    This flag can be used to over-ride lazy initialization on a per attribute basis, when adding multiple attributes through </span>
 <span class="c">         *    the &lt;a href=&quot;#method_addAttrs&quot;&gt;addAttrs&lt;/a&gt; method.&lt;/dd&gt;</span>
+<span class="c">         *</span>
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         *</span>
 <span class="c">         * &lt;p&gt;The setter, getter and validator are invoked with the value and name passed in as the first and second arguments, and with</span>
@@ -208,11 +218,14 @@
 <span class="c">         * @method addAttr</span>
 <span class="c">         *</span>
 <span class="c">         * @param {String} name The name of the attribute.</span>
-<span class="c">         * @param {Object} config An object literal specifying the configuration for the attribute.</span>
-<span class="c">         * @param {boolean} lazy (optional) Whether or not to add this attribute lazily (on the first call to get/set). </span>
+<span class="c">         * @param {Object} config An object with attribute configuration property/value pairs, specifying the configuration for the attribute.</span>
 <span class="c">         *</span>
+<span class="c">         * &lt;p&gt;</span>
 <span class="c">         * &lt;strong&gt;NOTE:&lt;/strong&gt; The configuration object is modified when adding an attribute, so if you need </span>
-<span class="c">         * to protect the original values, you will need to merge or clone the object.</span>
+<span class="c">         * to protect the original values, you will need to merge the object.</span>
+<span class="c">         * &lt;/p&gt;</span>
+<span class="c">         *</span>
+<span class="c">         * @param {boolean} lazy (optional) Whether or not to add this attribute lazily (on the first call to get/set). </span>
 <span class="c">         *</span>
 <span class="c">         * @return {Object} A reference to the host object.</span>
 <span class="c">         *</span>
@@ -270,7 +283,7 @@
 <span class="c">         *</span>
 <span class="c">         * @method attrAdded</span>
 <span class="c">         * @param {String} name The name of the attribute to check.</span>
-<span class="c">         * @return {boolean}, true if an attribute with the given name has been added.</span>
+<span class="c">         * @return {boolean} true if an attribute with the given name has been added, false if it hasn&#39;t. This method will return true for lazily added attributes.</span>
 <span class="c">         */</span>
         <span class="nx">attrAdded</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="o">!!</span><span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">ADDED</span><span class="o">);</span>
@@ -286,7 +299,7 @@
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * @method modifyAttr</span>
 <span class="c">         * @param {String} name The name of the attribute whose configuration is to be updated.</span>
-<span class="c">         * @param {Object} config An object literal with the updated configuration properties.</span>
+<span class="c">         * @param {Object} config An object with configuration property/value pairs, specifying the configuration properties to modify.</span>
 <span class="c">         */</span>
         <span class="nx">modifyAttr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
@@ -414,7 +427,7 @@
 <span class="c">         * the developer to distinguish between set called internally by the host, vs. </span>
 <span class="c">         * set called externally by the application developer.</span>
 <span class="c">         *</span>
-<span class="c">         * @return {Object} A reference to the host object</span>
+<span class="c">         * @return {Object} A reference to the host object.</span>
 <span class="c">         */</span>
         <span class="nx">set</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setAttr</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">);</span>
@@ -426,7 +439,7 @@
 <span class="c">         *</span>
 <span class="c">         * @method reset</span>
 <span class="c">         * @param {String} name Optional. The name of the attribute to reset.  If omitted, all attributes are reset.</span>
-<span class="c">         * @return A reference to the host object.</span>
+<span class="c">         * @return {Object} A reference to the host object.</span>
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
         <span class="nx">reset</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
@@ -455,7 +468,7 @@
 <span class="c">         * @param {Any} val The value to set the attribute to.</span>
 <span class="c">         * @param {Object} opts (Optional) Optional event data to be mixed into</span>
 <span class="c">         * the event facade passed to subscribers of the attribute&#39;s change event.</span>
-<span class="c">         * @return {Object} A reference to the host object</span>
+<span class="c">         * @return {Object} A reference to the host object.</span>
 <span class="c">         */</span>
         <span class="nx">_set</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setAttr</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
@@ -477,7 +490,7 @@
 <span class="c">         * @param {boolean} force If true, allows the caller to set values for </span>
 <span class="c">         * readOnly or writeOnce attributes which have already been set.</span>
 <span class="c">         *</span>
-<span class="c">         * @return {Object} A reference to the host object</span>
+<span class="c">         * @return {Object} A reference to the host object.</span>
 <span class="c">         */</span>
         <span class="nx">_setAttr</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">,</span> <span class="nx">force</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
@@ -669,8 +682,8 @@
 <span class="c">         * Sets multiple attribute values.</span>
 <span class="c">         *</span>
 <span class="c">         * @method setAttrs</span>
-<span class="c">         * @param {Object} attrs  An object literal of attributes name/value pairs.</span>
-<span class="c">         * @return A reference to the host object.</span>
+<span class="c">         * @param {Object} attrs  An object with attributes name/value pairs.</span>
+<span class="c">         * @return {Object} A reference to the host object.</span>
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
         <span class="nx">setAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
@@ -686,9 +699,9 @@
 <span class="c">         * Gets multiple attribute values.</span>
 <span class="c">         *</span>
 <span class="c">         * @method getAttrs</span>
-<span class="c">         * @param {Array | Boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are</span>
+<span class="c">         * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are</span>
 <span class="c">         * returned. If set to true, all attributes modified from their initial values are returned.</span>
-<span class="c">         * @return {Object} An object literal of attribute name/value pairs.</span>
+<span class="c">         * @return {Object} An object with attribute name/value pairs.</span>
 <span class="c">         */</span>
         <span class="nx">getAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span>
@@ -712,18 +725,22 @@
         <span class="c">/**</span>
 <span class="c">         * Configures a group of attributes, and sets initial values.</span>
 <span class="c">         *</span>
-<span class="c">         * Note: This method does not isolate the configuration object by merging/cloning. </span>
+<span class="c">         * &lt;p&gt;</span>
+<span class="c">         * &lt;strong&gt;NOTE:&lt;/strong&gt; This method does not isolate the configuration object by merging/cloning. </span>
 <span class="c">         * The caller is responsible for merging/cloning the configuration object if required.</span>
+<span class="c">         * &lt;/p&gt;</span>
 <span class="c">         *</span>
 <span class="c">         * @method addAttrs</span>
 <span class="c">         * @chainable</span>
 <span class="c">         *</span>
-<span class="c">         * @param {Object} cfgs An object literal of attribute name/configuration pairs.</span>
-<span class="c">         * @param {Object} values An object literal of attribute name/value pairs, defining the initial values to apply.</span>
+<span class="c">         * @param {Object} cfgs An object with attribute name/configuration pairs.</span>
+<span class="c">         * @param {Object} values An object with attribute name/value pairs, defining the initial values to apply.</span>
 <span class="c">         * Values defined in the cfgs argument will be over-written by values in this argument unless defined as read only.</span>
 <span class="c">         * @param {boolean} lazy Whether or not to delay the intialization of these attributes until the first call to get/set.</span>
 <span class="c">         * Individual attributes can over-ride this behavior by defining a lazyAdd configuration property in their configuration.</span>
 <span class="c">         * See &lt;a href=&quot;#method_addAttr&quot;&gt;addAttr&lt;/a&gt;.</span>
+<span class="c">         * </span>
+<span class="c">         * @return {Object} A reference to the host object.</span>
 <span class="c">         */</span>
         <span class="nx">addAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">cfgs</span><span class="o">,</span> <span class="nx">values</span><span class="o">,</span> <span class="nx">lazy</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">cfgs</span><span class="o">)</span> <span class="o">{</span>
@@ -748,8 +765,8 @@
 <span class="c">         *</span>
 <span class="c">         * @method _addAttrs</span>
 <span class="c">         * @private</span>
-<span class="c">         * @param {Object} cfgs An object literal of attribute name/configuration pairs.</span>
-<span class="c">         * @param {Object} values An object literal of attribute name/value pairs, defining the initial values to apply.</span>
+<span class="c">         * @param {Object} cfgs An object with attribute name/configuration pairs.</span>
+<span class="c">         * @param {Object} values An object with attribute name/value pairs, defining the initial values to apply.</span>
 <span class="c">         * Values defined in the cfgs argument will be over-written by values in this argument unless defined as read only.</span>
 <span class="c">         * @param {boolean} lazy Whether or not to delay the intialization of these attributes until the first call to get/set.</span>
 <span class="c">         * Individual attributes can over-ride this behavior by defining a lazyAdd configuration property in their configuration.</span>
@@ -789,9 +806,9 @@
 <span class="c">         * attributes can be keyed by the top level attribute name.</span>
 <span class="c">         *</span>
 <span class="c">         * @method _splitAttrVals</span>
-<span class="c">         * @param {Object} valueHash Object literal of name/value pairs</span>
+<span class="c">         * @param {Object} valueHash An object with attribute name/value pairs</span>
 <span class="c">         *</span>
-<span class="c">         * @return {Object} Object literal with 2 properties - &quot;simple&quot; and &quot;complex&quot;,</span>
+<span class="c">         * @return {Object} An object literal with 2 properties - &quot;simple&quot; and &quot;complex&quot;,</span>
 <span class="c">         * containing simple and complex attribute values respectively keyed </span>
 <span class="c">         * by the top level attribute name, or null, if valueHash is falsey.</span>
 <span class="c">         *</span>
@@ -833,9 +850,8 @@
 <span class="c">         * provided and the attribute is not read-only.</span>
 <span class="c">         *</span>
 <span class="c">         * @param {String} attr The name of the attribute</span>
-<span class="c">         * @param {Object} cfg The attribute configuration object literal</span>
-<span class="c">         * @param {Object} initValues The object literal of name/value pairs returned </span>
-<span class="c">         * from _splitAttrVals</span>
+<span class="c">         * @param {Object} cfg The attribute configuration object</span>
+<span class="c">         * @param {Object} initValues The object with simple and complex attribute name/value pairs returned from _splitAttrVals</span>
 <span class="c">         *</span>
 <span class="c">         * @return {Any} The initial value of the attribute.</span>
 <span class="c">         *</span>

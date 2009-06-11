@@ -81,7 +81,7 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = (Y.DataSource.XHR && (this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+        var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
             response = Y.DataSchema.Array.apply(this.get("schema"), data);
             
         // Default

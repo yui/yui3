@@ -81,7 +81,7 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = (Y.DataSource.XHR && (this.get("host") instanceof Y.DataSource.XHR) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
+        var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
             response = Y.DataSchema.XML.apply(this.get("schema"), data);
             
         // Default

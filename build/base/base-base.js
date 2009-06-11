@@ -2,17 +2,26 @@ YUI.add('base-base', function(Y) {
 
     /**
      * <p>
-     * An augmentable class, which when augmented onto a Base based class, allows 
-     * the class to support plugins, providing plug and unplug methods and the ability
-     * to add plugins through the configuration literal passed to the constructor.
+     * An augmentable class, which provides the augmented class with the ability to host plugins.
+     * It adds <a href="#method_plug">plug</a> and <a href="#method_unplug">unplug</a> methods to the augmented class, which can 
+     * be used to add or remove plugins from instances of the class.
+     * </p>
+     *
+     * <p>Plugins can also be added through the constructor configuration object passed to the host class' constructor using
+     * the "plugins" property. Supported values for the "plugins" property are those defined by the <a href="#method_plug">plug</a> method. 
+     * 
+     * For example the following code would add the AnimPlugin and IOPlugin to Overlay (the plugin host):
+     * <xmp>
+     * var o = new Overlay({plugins: [ AnimPlugin, {fn:IOPlugin, cfg:{section:"header"}}]});
+     * </xmp>
      * </p>
      * <p>
-     * The PlugHost's _initPlugins() and _destroyPlugins() methods should be invoked by the 
-     * host class at the appropriate point in the instance's lifecyle. This is done
-     * by default for the Base class, so developers extending base don't need to do 
-     * anything to get plugin support.
+     * Plug.Host's protected <a href="#method_initPlugins">_initPlugins</a> and <a href="#method_destroyPlugins">_destroyPlugins</a> 
+     * methods should be invoked by the host class at the appropriate point in the host's lifecyle. This is done by default for 
+     * the Base class, so developers extending Base or Widget don't need to do anything to enable plugin support.
      * </p>
-     * @class PluginHost
+     *
+     * @class Plugin.Host
      */
 
     var L = Y.Lang;
@@ -30,11 +39,11 @@ YUI.add('base-base', function(Y) {
          * @method plug
          * @chainable
          * @param p {Function | Object |Array} Accepts the plugin class, or an 
-         * object literal with a "fn" property specifying the plugin class and 
+         * object with a "fn" property specifying the plugin class and 
          * a "cfg" property specifying the configuration for the Plugin.
          * <p>
          * Additionally an Array can also be passed in, with the above function or 
-         * object literal values, allowing the user to add multiple plugins in a single call.
+         * object values, allowing the user to add multiple plugins in a single call.
          * </p>
          * @param config (Optional) If the first argument is the plugin class, the second argument
          * can be the configuration for the plugin.
@@ -84,7 +93,7 @@ YUI.add('base-base', function(Y) {
          * Determines if a plugin has plugged into this host.
          *
          * @method hasPlugin
-         * @param The plugin's namespace
+         * @param {String} ns The plugin's namespace
          * @return {boolean} returns true, if the plugin has been plugged into this host, false otherwise.
          */
         hasPlugin : function(ns) {
@@ -97,7 +106,7 @@ YUI.add('base-base', function(Y) {
          * instance through the "plugins" configuration property.
          *
          * @method _initPlugins
-         * @param {Config} config The configuration object literal for the host.
+         * @param {Config} config The configuration object with property name/value pairs.
          * @private
          */
         _initPlugins: function(config) {
@@ -208,11 +217,11 @@ YUI.add('base-base', function(Y) {
      * Registers plugins to be instantiated at the class level (plugins 
      * which should be plugged into every instance of the class by default).
      *
-     * @method PluginHost.plug
+     * @method Plugin.Host.plug
      * @static
      *
      * @param {Function} hostClass The host class on which to register the plugins
-     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of object literals (with fn and cfg properties defined)
+     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
      * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
      */
     PluginHost.plug = function(hostClass, plugin, config) {
@@ -241,7 +250,7 @@ YUI.add('base-base', function(Y) {
      * Unregisters any class level plugins which have been registered by the host class, or any
      * other class in the hierarchy.
      *
-     * @method PluginHost.unplug
+     * @method Plugin.Host.unplug
      * @static
      *
      * @param {Function} hostClass The host class from which to unregister the plugins
@@ -273,7 +282,7 @@ YUI.add('base-base', function(Y) {
 
     /**
      * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
-     * The module also provides two ways to reuse code - An augmentable PluginHost interface which provides plugin support 
+     * The module also provides two ways to reuse code - An augmentable Plugin.Host interface which provides plugin support 
      * (which is augmented to the Base class) and Base.build which provides a way to 
      * build custom classes using extensions.
      *
@@ -281,7 +290,7 @@ YUI.add('base-base', function(Y) {
      */
 
     /**
-     * The base-base submodule provides the Base class and augmentable PluginHost implementation, 
+     * The base-base submodule provides the Base class and augmentable Plugin.Host implementation, 
      * without the extension support provided by Base.build.
      *
      * @module base
@@ -302,22 +311,24 @@ YUI.add('base-base', function(Y) {
 
     /**
      * <p>
-     * Provides a base class which objects requiring attributes and custom event support can 
-     * extend. The Base class also handles the chaining of initializer and destructor methods across 
+     * A base class which objects requiring attributes and custom event support can 
+     * extend. Base also handles the chaining of initializer and destructor methods across 
      * the hierarchy as part of object construction and destruction. Additionally, attributes configured 
      * through the static <a href="#property_Base.ATTRS">ATTRS</a> property for each class 
      * in the hierarchy will be initialized by Base.
      * </p>
      *
-     * <p>The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
+     * <p>
+     * The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
      * from Base will be used as the identifier for the class, and is used by Base to prefix 
-     * all events fired by instances of that class.</p>
-     *
+     * all events fired by instances of that class.
+     * </p>
      * @class Base
      * @constructor
-     * @uses Attribute, Plugin.Host
+     * @uses Attribute
+     * @uses Plugin.Host
      *
-     * @param {Object} config Object literal of configuration property name/value pairs
+     * @param {Object} config Object with configuration property name/value pairs
      */
     function Base() {
 
@@ -358,11 +369,14 @@ YUI.add('base-base', function(Y) {
     Base.NAME = 'base';
 
     /**
-     * Object literal defining the set of attributes which
-     * will be available for instances of this class, and 
-     * how they are configured. See Attribute's <a href="Attribute.html#method_addAttr">addAttr</a>
-     * method for a description of configuration options available 
-     * for each attribute.
+     * The default set of attributes which will be available for instances of this class, and 
+     * their configuration. In addition to the configuration properties listed by 
+     * Attribute's <a href="Attribute.html#method_addAttr">addAttr</a> method, the attribute 
+     * can also be configured with a "cloneDefaultValue" property, which defines how the statically
+     * defined value field should be protected ("shallow", "deep" and false are supported values). 
+     *
+     * By default if the value is an object literal or an array it will be "shallow" cloned, to 
+     * protect the default value.
      *
      * @property Base.ATTRS
      * @type Object
@@ -408,7 +422,7 @@ YUI.add('base-base', function(Y) {
          * @method init
          * @final
          * @chainable
-         * @param {Object} config Object literal of configuration property name/value pairs
+         * @param {Object} config Object with configuration property name/value pairs
          * @return {Base} A reference to this object
          */
         init: function(config) {
@@ -437,7 +451,7 @@ YUI.add('base-base', function(Y) {
              * @event init
              * @preventable _defInitFn
              * @param {Event.Facade} e Event object, with a cfg property which 
-             * refers to the configuration object literal passed to the constructor.
+             * refers to the configuration object passed to the constructor.
              */
             if (!this._silentInit) {
                 this.publish(INIT, {
@@ -511,7 +525,7 @@ YUI.add('base-base', function(Y) {
          *
          * @method _defInitFn
          * @param {Event.Facade} e Event object, with a cfg property which 
-         * refers to the configuration object literal passed to the constructor.
+         * refers to the configuration object passed to the constructor.
          * @protected
          */
         _defInitFn : function(e) {
@@ -584,7 +598,7 @@ YUI.add('base-base', function(Y) {
          * that by the time all classes are processed, allCfgs will be empty.
          * 
          * @return {Object} The set of attributes belonging to the class passed in, in the form
-         * of an object literal with name/cfg pairs.
+         * of an object with attribute name/configuration pairs.
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
             var cfgs = null, attr, attrs = clazz.ATTRS;
@@ -635,8 +649,8 @@ YUI.add('base-base', function(Y) {
          * attribute configuration across the instances class hierarchy.
          *
          * The method will potect the attribute configuration value to protect the statically defined 
-         * default value in ATTRS if required (value is an object literal or array or the 
-         * attribute configuration has clone set to shallow or deep).
+         * default value in ATTRS if required (if the value is an object literal, array or the 
+         * attribute configuration has cloneDefaultValue set to shallow or deep).
          *
          * @method _aggregateAttrs
          * @private
@@ -708,7 +722,7 @@ YUI.add('base-base', function(Y) {
          * invoking the initializer method on the prototype of each class in the hierarchy.
          *
          * @method _initHierarchy
-         * @param {Object} userVals Object literal containing configuration name/value pairs
+         * @param {Object} userVals Object with configuration property name/value pairs
          * @private
          */
         _initHierarchy : function(userVals) {
@@ -779,7 +793,8 @@ YUI.add('base-base', function(Y) {
     Y.mix(Base, PluginHost, false, null, 1);
 
     /**
-     * Alias for <a href="PluginHost.html#method_PluginHost.plug">PluginHost.plug</a>.
+     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.plug">Plugin.Host.plug</a>. See aliased 
+     * method for argument and return value details.
      *
      * @method Base.plug
      * @static
@@ -787,7 +802,8 @@ YUI.add('base-base', function(Y) {
     Base.plug = PluginHost.plug;
 
     /**
-     * Alias for <a href="PluginHost.html#method_PluginHost.unplug">PluginHost.unplug</a>.
+     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.unplug">Plugin.Host.unplug</a>. See the 
+     * aliased method for argument and return value details.
      *
      * @method Base.unplug
      * @static

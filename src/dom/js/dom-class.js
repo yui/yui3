@@ -7,8 +7,6 @@
  * @for DOM
  */
 
-var CLASS_NAME = 'className';
-
 Y.mix(Y.DOM, {
     /**
      * Determines whether a DOM element has the given className.
@@ -19,7 +17,7 @@ Y.mix(Y.DOM, {
      */
     hasClass: function(node, className) {
         var re = Y.DOM._getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
-        return re.test(node[CLASS_NAME]);
+        return re.test(node.className);
     },
 
     /**
@@ -30,7 +28,7 @@ Y.mix(Y.DOM, {
      */
     addClass: function(node, className) {
         if (!Y.DOM.hasClass(node, className)) { // skip if already present 
-            node[CLASS_NAME] = Y.Lang.trim([node[CLASS_NAME], className].join(' '));
+            node.className = Y.Lang.trim([node.className, className].join(' '));
         }
     },
 
@@ -42,7 +40,7 @@ Y.mix(Y.DOM, {
      */
     removeClass: function(node, className) {
         if (className && Y.DOM.hasClass(node, className)) {
-            node[CLASS_NAME] = Y.Lang.trim(node[CLASS_NAME].replace(Y.DOM._getRegExp('(?:^|\\s+)' +
+            node.className = Y.Lang.trim(node.className.replace(Y.DOM._getRegExp('(?:^|\\s+)' +
                             className + '(?:\\s+|$)'), ' '));
 
             if ( Y.DOM.hasClass(node, className) ) { // in case of multiple adjacent

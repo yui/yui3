@@ -1,5 +1,6 @@
 YUI.add('node-style', function(Y) {
 
+(function(Y) {
 /**
  * Extended Node interface for managing node styles.
  * @module node
@@ -43,6 +44,7 @@ var methods = [
 ];
 Y.Node.importMethod(Y.DOM, methods);
 Y.NodeList.importMethod(Y.Node.prototype, methods);
+})(Y);
 
 
 }, '@VERSION@' ,{requires:['dom-style', 'node-base']});

@@ -1,5 +1,3 @@
-var UID = '_yuid';
-
 Y.Array.each([
     /**
      * Passes through to DOM method.
@@ -160,7 +158,9 @@ if (!document.documentElement.hasAttribute) { // IE < 8
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 
 (function() { // IE clones expandos; regenerate UID
-    var node = document.createElement('div');
+    var node = document.createElement('div'),
+        UID = '_yuid';
+
     Y.stamp(node);
     if (node[UID] === node.cloneNode(true)[UID]) {
         Y.Node.prototype.cloneNode = function(deep) {

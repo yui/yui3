@@ -47,7 +47,8 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">/** </span>
+<div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+<span class="c">/** </span>
 <span class="c"> * Add style management functionality to DOM.</span>
 <span class="c"> * @module dom</span>
 <span class="c"> * @submodule dom-style</span>
@@ -62,13 +63,6 @@
     <span class="nx">CSS_FLOAT</span> <span class="o">=</span> <span class="s1">&#39;cssFloat&#39;</span><span class="o">,</span>
     <span class="nx">STYLE_FLOAT</span> <span class="o">=</span> <span class="s1">&#39;styleFloat&#39;</span><span class="o">,</span>
     <span class="nx">TRANSPARENT</span> <span class="o">=</span> <span class="s1">&#39;transparent&#39;</span><span class="o">,</span>
-    <span class="nx">VISIBLE</span> <span class="o">=</span> <span class="s1">&#39;visible&#39;</span><span class="o">,</span>
-    <span class="nx">WIDTH</span> <span class="o">=</span> <span class="s1">&#39;width&#39;</span><span class="o">,</span>
-    <span class="nx">HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;height&#39;</span><span class="o">,</span>
-    <span class="nx">BORDER_TOP_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;borderTopWidth&#39;</span><span class="o">,</span>
-    <span class="nx">BORDER_RIGHT_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;borderRightWidth&#39;</span><span class="o">,</span>
-    <span class="nx">BORDER_BOTTOM_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;borderBottomWidth&#39;</span><span class="o">,</span>
-    <span class="nx">BORDER_LEFT_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;borderLeftWidth&#39;</span><span class="o">,</span>
     <span class="nx">GET_COMPUTED_STYLE</span> <span class="o">=</span> <span class="s1">&#39;getComputedStyle&#39;</span><span class="o">,</span>
 
     <span class="nx">DOCUMENT</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">,</span>
@@ -90,8 +84,8 @@
 <span class="c">     * @param {String|Number} val The value. </span>
 <span class="c">     */</span>
     <span class="nx">setStyle</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">style</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">style</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">style</span><span class="o">,</span>
-            <span class="nx">CUSTOM_STYLES</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">;</span>
+        <span class="nx">style</span> <span class="o">=</span> <span class="nx">style</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">style</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">CUSTOM_STYLES</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">style</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
@@ -204,6 +198,7 @@
     <span class="o">};</span>
 
 <span class="o">}</span>
+<span class="o">})(</span><span class="nx">Y</span><span class="o">);</span>
 </pre></div>
                     </div>
 			</div>

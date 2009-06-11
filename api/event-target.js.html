@@ -181,7 +181,7 @@
 <span class="c">     * @param fn {Function} The callback</span>
 <span class="c">     * @return the event target or a detach handle per &#39;chain&#39; config</span>
 <span class="c">     */</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span>
             <span class="nx">detachcategory</span><span class="o">,</span> <span class="nx">handle</span><span class="o">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">handles</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">adapt</span><span class="o">,</span> <span class="nx">shorttype</span><span class="o">,</span>
@@ -261,11 +261,11 @@
 
             <span class="c">// Y.log(&#39;parts: &#39; + parts);</span>
 <span class="c"></span>            <span class="nx">ce</span>     <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
-            <span class="nx">args</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-
-            <span class="nx">f</span> <span class="o">=</span> <span class="o">(</span><span class="nx">after</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">after</span> <span class="o">:</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">on</span><span class="o">;</span>
-
-            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+            <span class="c">// args   = Y.Array(arguments, 1, true);</span>
+<span class="c"></span>            <span class="c">// f = (after) ? ce.after : ce.on;</span>
+<span class="c"></span>            <span class="c">// handle = f.apply(ce, args);</span>
+<span class="c"></span>
+            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">_on</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="o">(</span><span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">2</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span> <span class="o">(</span><span class="nx">after</span><span class="o">)</span> <span class="o">?</span> <span class="s1">&#39;after&#39;</span> <span class="o">:</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">detachcategory</span><span class="o">)</span> <span class="o">{</span>
@@ -273,7 +273,6 @@
             <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">]</span> <span class="o">=</span> <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">]</span> <span class="o">||</span> <span class="o">{};</span>
             <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">][</span><span class="nx">type</span><span class="o">]</span> <span class="o">=</span> <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">][</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="o">[];</span>
             <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">][</span><span class="nx">type</span><span class="o">].</span><span class="nx">push</span><span class="o">(</span><span class="nx">handle</span><span class="o">);</span>
-
 
             <span class="c">// Y.log(&#39;storing: &#39; + key);</span>
 <span class="c"></span>        <span class="o">}</span>
