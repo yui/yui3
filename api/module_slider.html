@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: slider   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>slider&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_slider.html" title="slider">slider</a>
+                
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                   
+                    <h3>Module: slider
+                    
+
+
+                    </h3>
+                    <div class="description summary">
+                        Create a sliding value range input visualized as a draggable thumb on a
+background element.
+                    </div>
+
+
+
+                <div class="yui-gc">
+                    <div class="yui-u first">
+
+                            <p>This module contains the following classes:</p>
+                            <script>
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"Plugin.Host": "Plugin.Host", "Attribute": "Attribute", "Widget": "Widget", "Base": "Base", "Event.Target": "Event.Target"}, "events": {"Widget": [{"access": "", "deprecated": false, "name": "boundingBoxChange"}, {"access": "", "deprecated": false, "name": "contentBoxChange"}, {"access": "", "deprecated": false, "name": "disabledChange"}, {"access": "", "deprecated": false, "name": "focusedChange"}, {"access": "", "deprecated": false, "name": "heightChange"}, {"access": "", "deprecated": false, "name": "localeChange"}, {"access": "", "deprecated": false, "name": "moveStylesChange"}, {"access": "", "deprecated": false, "name": "renderedChange"}, {"access": "", "deprecated": false, "name": "stringsChange"}, {"access": "", "deprecated": false, "name": "tabIndexChange"}, {"access": "", "deprecated": false, "name": "visibleChange"}, {"access": "", "deprecated": false, "name": "widget:contentUpdate"}, {"access": "", "deprecated": false, "name": "widget:render"}, {"access": "", "deprecated": false, "name": "widthChange"}], "Base": [{"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "destroyedChange"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "initializedChange"}]}, "configs": {"Widget": [{"access": "", "deprecated": false, "name": "boundingBox"}, {"access": "", "deprecated": false, "name": "contentBox"}, {"access": "", "deprecated": false, "name": "disabled"}, {"access": "", "deprecated": false, "name": "focused"}, {"access": "", "deprecated": false, "name": "height"}, {"access": "", "deprecated": false, "name": "locale"}, {"access": "", "deprecated": false, "name": "moveStyles"}, {"access": "", "deprecated": false, "name": "rendered"}, {"access": "", "deprecated": false, "name": "strings"}, {"access": "", "deprecated": false, "name": "tabIndex"}, {"access": "", "deprecated": false, "name": "visible"}, {"access": "", "deprecated": false, "name": "width"}], "Base": [{"access": "", "deprecated": false, "name": "destroyed"}, {"access": "", "deprecated": false, "name": "initialized"}]}, "properties": {"Attribute": [], "Widget": [{"access": "private", "deprecated": false, "name": "_strings"}, {"access": "", "deprecated": false, "name": "BOUNDING_TEMPLATE"}, {"access": "", "deprecated": false, "name": "CONTENT_TEMPLATE"}, {"access": "", "deprecated": false, "name": "DEF_UNIT"}, {"access": "", "deprecated": false, "name": "WRAP_STYLES"}], "Base": [{"access": "", "deprecated": true, "name": "name"}]}, "methods": {"Plugin.Host": [{"access": "private", "deprecated": false, "name": "_destroyPlugins"}, {"access": "private", "deprecated": false, "name": "_initPlugins"}, {"access": "private", "deprecated": false, "name": "_plug"}, {"access": "private", "deprecated": false, "name": "_unplug"}, {"access": "", "deprecated": false, "name": "hasPlugin"}, {"access": "", "deprecated": false, "name": "plug"}, {"access": "", "deprecated": false, "name": "unplug"}], "Attribute": [{"access": "private", "deprecated": false, "name": "_addAttrs"}, {"access": "private", "deprecated": false, "name": "_addLazyAttr"}, {"access": "private", "deprecated": false, "name": "_defAttrChangeFn"}, {"access": "private", "deprecated": false, "name": "_fireAttrChange"}, {"access": "private", "deprecated": false, "name": "_getAttrInitVal"}, {"access": "private", "deprecated": false, "name": "_isLazyAttr"}, {"access": "protected", "deprecated": false, "name": "_set"}, {"access": "protected", "deprecated": false, "name": "_setAttr"}, {"access": "private", "deprecated": false, "name": "_setAttrVal"}, {"access": "private", "deprecated": false, "name": "_splitAttrVals"}, {"access": "", "deprecated": false, "name": "addAttr"}, {"access": "", "deprecated": false, "name": "addAttrs"}, {"access": "", "deprecated": false, "name": "attrAdded"}, {"access": "", "deprecated": false, "name": "get"}, {"access": "", "deprecated": false, "name": "getAttrs"}, {"access": "", "deprecated": false, "name": "modifyAttr"}, {"access": "", "deprecated": false, "name": "removeAttr"}, {"access": "", "deprecated": false, "name": "reset"}, {"access": "", "deprecated": false, "name": "set"}, {"access": "", "deprecated": false, "name": "setAttrs"}], "Widget": [{"access": "protected", "deprecated": false, "name": "_afterDisabledChange"}, {"access": "protected", "deprecated": false, "name": "_afterFocusedChange"}, {"access": "protected", "deprecated": false, "name": "_afterHeightChange"}, {"access": "protected", "deprecated": false, "name": "_afterVisibleChange"}, {"access": "protected", "deprecated": false, "name": "_afterWidthChange"}, {"access": "protected", "deprecated": false, "name": "_bindDOMListeners"}, {"access": "protected", "deprecated": false, "name": "_bindUI"}, {"access": "protected", "deprecated": false, "name": "_defRenderFn"}, {"access": "", "deprecated": false, "name": "_getHtmlParser"}, {"access": "protected", "deprecated": false, "name": "_getStrings"}, {"access": "private", "deprecated": false, "name": "_moveStyles"}, {"access": "protected", "deprecated": false, "name": "_onDocMouseDown"}, {"access": "protected", "deprecated": false, "name": "_onFocus"}, {"access": "private", "deprecated": false, "name": "_parseHTML"}, {"access": "private", "deprecated": false, "name": "_renderBox"}, {"access": "protected", "deprecated": false, "name": "_renderBoxClassNames"}, {"access": "protected", "deprecated": false, "name": "_renderUI"}, {"access": "private", "deprecated": false, "name": "_setBoundingBox"}, {"access": "private", "deprecated": false, "name": "_setBox"}, {"access": "private", "deprecated": false, "name": "_setContentBox"}, {"access": "protected", "deprecated": false, "name": "_setStrings"}, {"access": "protected", "deprecated": false, "name": "_syncUI"}, {"access": "protected", "deprecated": false, "name": "_uiSetDisabled"}, {"access": "protected", "deprecated": false, "name": "_uiSetFocused"}, {"access": "protected", "deprecated": false, "name": "_uiSetHeight"}, {"access": "protected", "deprecated": false, "name": "_uiSetTabIndex"}, {"access": "protected", "deprecated": false, "name": "_uiSetVisible"}, {"access": "protected", "deprecated": false, "name": "_uiSetWidth"}, {"access": "protected", "deprecated": false, "name": "bindUI"}, {"access": "", "deprecated": false, "name": "blur"}, {"access": "protected", "deprecated": false, "name": "destructor"}, {"access": "", "deprecated": false, "name": "disabled"}, {"access": "", "deprecated": false, "name": "enable"}, {"access": "", "deprecated": false, "name": "focus"}, {"access": "", "deprecated": false, "name": "getClassName"}, {"access": "", "deprecated": false, "name": "getDefaultLocale"}, {"access": "", "deprecated": false, "name": "getString"}, {"access": "", "deprecated": false, "name": "getStrings"}, {"access": "", "deprecated": false, "name": "hide"}, {"access": "protected", "deprecated": false, "name": "initializer"}, {"access": "", "deprecated": false, "name": "render"}, {"access": "protected", "deprecated": false, "name": "renderer"}, {"access": "protected", "deprecated": false, "name": "renderUI"}, {"access": "", "deprecated": false, "name": "show"}, {"access": "", "deprecated": false, "name": "syncUI"}, {"access": "", "deprecated": false, "name": "toString"}], "Base": [{"access": "private", "deprecated": false, "name": "_aggregateAttrs"}, {"access": "protected", "deprecated": false, "name": "_defDestroyFn"}, {"access": "protected", "deprecated": false, "name": "_defInitFn"}, {"access": "private", "deprecated": false, "name": "_destroyHierarchy"}, {"access": "private", "deprecated": false, "name": "_filterAttrCfs"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfgs"}, {"access": "protected", "deprecated": false, "name": "_getClasses"}, {"access": "private", "deprecated": false, "name": "_initHierarchy"}, {"access": "private", "deprecated": false, "name": "_initHierarchyData"}, {"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "toString"}], "Event.Target": [{"access": "", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_parseType"}]}}, "description": "Create a slider to represent an integer value between a given minimum and\nmaximum.", "guessedname": "Slider", "name": "Slider"}];
+                            </script>
+                            <div id="splash_classList">
+                                <ul>
+                                    <li><a href="Slider.html" title="Slider" id="class_0">Slider</a></li>
+                                </ul>
+                            </div>
+                    </div>
+                    <div class="yui-u">
+
+                        </div>
+                </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
+                                <li class="selected"><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Slider.html" title="Slider">Slider</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="slider.js.html" title="slider.js">slider.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "protected", "host": "Slider", "name": "_afterDisabledChange", "url": "Slider.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMaxChange", "url": "Slider.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMinChange", "url": "Slider.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterRailSizeChange", "url": "Slider.html#method__afterRailSizeChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbChange", "url": "Slider.html#method__afterThumbChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbImageChange", "url": "Slider.html#method__afterThumbImageChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterValueChange", "url": "Slider.html#method__afterValueChange", "type": "method"}, {"access": "", "host": "Slider", "name": "axis", "url": "Slider.html#config_axis", "type": "config"}, {"access": "", "host": "Slider", "name": "axisChange", "url": "Slider.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_bindThumbDD", "url": "Slider.html#method__bindThumbDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "bindUI", "url": "Slider.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_convertValueToOffset", "url": "Slider.html#method__convertValueToOffset", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defPositionThumbFn", "url": "Slider.html#method__defPositionThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defSyncFn", "url": "Slider.html#method__defSyncFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defUpdateValueFromDD", "url": "Slider.html#method__defUpdateValueFromDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_disabled", "url": "Slider.html#property__disabled", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_factor", "url": "Slider.html#property__factor", "type": "property"}, {"access": "", "host": "Slider", "name": "getValue", "url": "Slider.html#method_getValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_handleRailMouseDown", "url": "Slider.html#method__handleRailMouseDown", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_imageLoaded", "url": "Slider.html#method__imageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "initializer", "url": "Slider.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRail", "url": "Slider.html#method__initRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRailDD", "url": "Slider.html#method__initRailDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumb", "url": "Slider.html#method__initThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumbImage", "url": "Slider.html#method__initThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isDisplayNone", "url": "Slider.html#method__isDisplayNone", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoaded", "url": "Slider.html#method__isImageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoading", "url": "Slider.html#method__isImageLoading", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_key", "url": "Slider.html#property__key", "type": "property"}, {"access": "", "host": "Slider", "name": "max", "url": "Slider.html#config_max", "type": "config"}, {"access": "", "host": "Slider", "name": "maxChange", "url": "Slider.html#event_maxChange", "type": "event"}, {"access": "", "host": "Slider", "name": "maxGutter", "url": "Slider.html#config_maxGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "maxGutterChange", "url": "Slider.html#event_maxGutterChange", "type": "event"}, {"access": "", "host": "Slider", "name": "min", "url": "Slider.html#config_min", "type": "config"}, {"access": "", "host": "Slider", "name": "minChange", "url": "Slider.html#event_minChange", "type": "event"}, {"access": "", "host": "Slider", "name": "minGutter", "url": "Slider.html#config_minGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "minGutterChange", "url": "Slider.html#event_minGutterChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_onDDDrag", "url": "Slider.html#method__onDDDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDEndDrag", "url": "Slider.html#method__onDDEndDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDStartDrag", "url": "Slider.html#method__onDDStartDrag", "type": "method"}, {"access": "", "host": "Slider", "name": "rail", "url": "Slider.html#config_rail", "type": "config"}, {"access": "", "host": "Slider", "name": "railChange", "url": "Slider.html#event_railChange", "type": "event"}, {"access": "", "host": "Slider", "name": "railEnabled", "url": "Slider.html#config_railEnabled", "type": "config"}, {"access": "", "host": "Slider", "name": "railEnabledChange", "url": "Slider.html#event_railEnabledChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_railSize", "url": "Slider.html#property__railSize", "type": "property"}, {"access": "", "host": "Slider", "name": "railSize", "url": "Slider.html#config_railSize", "type": "config"}, {"access": "", "host": "Slider", "name": "railSizeChange", "url": "Slider.html#event_railSizeChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_ready", "url": "Slider.html#method__ready", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_refresh", "url": "Slider.html#method__refresh", "type": "method"}, {"access": "protected", "host": "Slider", "name": "renderUI", "url": "Slider.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_resetDDCacheRegion", "url": "Slider.html#method__resetDDCacheRegion", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_scheduleSync", "url": "Slider.html#method__scheduleSync", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setAxisFn", "url": "Slider.html#method__setAxisFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setDDGutter", "url": "Slider.html#method__setDDGutter", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setFactor", "url": "Slider.html#method__setFactor", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailFn", "url": "Slider.html#method__setRailFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailOffsetXY", "url": "Slider.html#method__setRailOffsetXY", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbFn", "url": "Slider.html#method__setThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbImageFn", "url": "Slider.html#method__setThumbImageFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbOffset", "url": "Slider.html#method__setThumbOffset", "type": "method"}, {"access": "", "host": "Slider", "name": "setValue", "url": "Slider.html#method_setValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setValueFn", "url": "Slider.html#method__setValueFn", "type": "method"}, {"access": "", "host": "Slider", "name": "slideEnd", "url": "Slider.html#event_slideEnd", "type": "event"}, {"access": "", "host": "Slider", "name": "Slider.ATTRS", "url": "Slider.html#property_Slider.ATTRS", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.AXIS_KEYS", "url": "Slider.html#property_Slider.AXIS_KEYS", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.HTML_PARSER", "url": "Slider.html#property_Slider.HTML_PARSER", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.NAME", "url": "Slider.html#property_Slider.NAME", "type": "property"}, {"access": "", "host": "Slider", "name": "slideStart", "url": "Slider.html#event_slideStart", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_stall", "url": "Slider.html#property__stall", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_stallDisabledChange", "url": "Slider.html#method__stallDisabledChange", "type": "method"}, {"access": "", "host": "Slider", "name": "sync", "url": "Slider.html#event_sync", "type": "event"}, {"access": "", "host": "Slider", "name": "syncUI", "url": "Slider.html#method_syncUI", "type": "method"}, {"access": "", "host": "Slider", "name": "thumb", "url": "Slider.html#config_thumb", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbChange", "url": "Slider.html#event_thumbChange", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbDrag", "url": "Slider.html#event_thumbDrag", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbImage", "url": "Slider.html#config_thumbImage", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbImageChange", "url": "Slider.html#event_thumbImageChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_thumbOffset", "url": "Slider.html#property__thumbOffset", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_thumbSize", "url": "Slider.html#property__thumbSize", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_uiPositionThumb", "url": "Slider.html#method__uiPositionThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetRailSize", "url": "Slider.html#method__uiSetRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetThumbSize", "url": "Slider.html#method__uiSetThumbSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewAxis", "url": "Slider.html#method__validateNewAxis", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMax", "url": "Slider.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMin", "url": "Slider.html#method__validateNewMin", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRail", "url": "Slider.html#method__validateNewRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRailSize", "url": "Slider.html#method__validateNewRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumb", "url": "Slider.html#method__validateNewThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumbImage", "url": "Slider.html#method__validateNewThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewValue", "url": "Slider.html#method__validateNewValue", "type": "method"}, {"access": "", "host": "Slider", "name": "value", "url": "Slider.html#config_value", "type": "config"}, {"access": "", "host": "Slider", "name": "valueChange", "url": "Slider.html#event_valueChange", "type": "event"}, {"access": "", "host": "Slider", "name": "valueSet", "url": "Slider.html#event_valueSet", "type": "event"}];
+</script>
+</body>
+</html>

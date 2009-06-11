@@ -24,7 +24,7 @@
             ARRAYASSERT = Y.ArrayAssert,
             OBJECTASSERT = Y.ObjectAssert,
             BTNRUN = Y.get("#btnRun"),
-            WAITTIMEOUT = 1000; // On a slow connection set to 5000
+            WAITTIMEOUT = 2000; // On a slow connection set to 5000
 
         // Set up the page
         
@@ -39,15 +39,15 @@
         
             testConstructor: function() {
                 var ds = new Y.DataSource.Local();
-                ASSERT.areSame((ds instanceof Y.Base), true, "Expected Base instance.");
-                ASSERT.areSame((ds instanceof Y.DataSource.Local), true, "Expected Local instance.");
+                ASSERT.areSame((ds instanceof Y.Base), true, "Expected DataSource.Base instance.");
+                ASSERT.areSame((ds instanceof Y.DataSource.Local), true, "Expected DataSource.Local instance.");
             },
 
-            testConstructorXHR: function() {
-                var ds = new Y.DataSource.XHR();
+            testConstructorIO: function() {
+                var ds = new Y.DataSource.IO();
                 ASSERT.areSame((ds instanceof Y.Base), true, "Expected Base instance.");
-                ASSERT.areSame((ds instanceof Y.DataSource.Local), true, "Expected Local instance.");
-                ASSERT.areSame((ds instanceof Y.DataSource.XHR), true, "Expected XHR instance.");
+                ASSERT.areSame((ds instanceof Y.DataSource.Local), true, "Expected DataSource.Local instance.");
+                ASSERT.areSame((ds instanceof Y.DataSource.IO), true, "Expected DataSource.IO instance.");
             }
         });
         
@@ -70,7 +70,7 @@
                 ds.sendRequest(null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
-                        ASSERT.fail("XHR failure case.");
+                        ASSERT.fail("IO failure case.");
                     }
                 });
                 
@@ -146,11 +146,11 @@
             }
         });
 
-        var testXHR = new Y.Test.Case({
-            name: "DataSource.XHR Tests",
+        var testIO = new Y.Test.Case({
+            name: "DataSource.IO Tests",
 
-            testXHRDefaults: function() {
-                var ds = new Y.DataSource.XHR({
+            testIODefaults: function() {
+                var ds = new Y.DataSource.IO({
                     source: "./php/ysearch_json_madonna.php"
                 });
 
@@ -167,15 +167,15 @@
                 ds.sendRequest(null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
-                        ASSERT.fail("XHR failure case.");
+                        ASSERT.fail("IO failure case.");
                     }
                 });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             },
 
-            testXHRPost: function() {
-                var ds = new Y.DataSource.XHR({
+            testIOPost: function() {
+                var ds = new Y.DataSource.IO({
                     source: "./php/ysearch_json_madonna.php"
                 });
 
@@ -192,7 +192,7 @@
                 ds.sendRequest(null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
-                        ASSERT.fail("XHR failure case.");
+                        ASSERT.fail("IO failure case.");
                     }
                 },{
                     method: "POST",
@@ -202,8 +202,8 @@
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             },
 
-            testXHREvents: function() {
-                var ds = new Y.DataSource.XHR({
+            testIOEvents: function() {
+                var ds = new Y.DataSource.IO({
                     source: "./php/ysearch_json_madonna.php"
                 });
                 ds.plug({fn: Y.Plugin.DataSourceJSONSchema, cfg: {
@@ -253,8 +253,8 @@
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             },
 
-            testXHRError: function() {
-                var ds = new Y.DataSource.XHR({
+            testIOError: function() {
+                var ds = new Y.DataSource.IO({
                     source: "./php/ysearch_json_madonna.php"
                 });
                 ds.plug({fn: Y.Plugin.DataSourceJSONSchema, cfg: {
@@ -283,11 +283,11 @@
             }
         });
 
-        var testScriptNode = new Y.Test.Case({
-            name: "DataSource.ScriptNode Tests",
+        var testGet = new Y.Test.Case({
+            name: "DataSource.Get Tests",
 
-            testScriptNodeDefaults: function() {
-                var ds = new Y.DataSource.ScriptNode({
+            testGetDefaults: function() {
+                var ds = new Y.DataSource.Get({
                     source: "http://query.yahooapis.com/v1/public/yql?format=json&"
                 });
 
@@ -304,15 +304,15 @@
                 ds.sendRequest("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", {
                     success: handler.handleSuccess,
                     failure: function(e) {
-                        ASSERT.fail("ScriptNode failure case.");
+                        ASSERT.fail("Get failure case.");
                     }
                 });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             },
 
-            testScriptNodeEvents: function() {
-                var ds = new Y.DataSource.ScriptNode({
+            testGetEvents: function() {
+                var ds = new Y.DataSource.Get({
                     source: "http://query.yahooapis.com/v1/public/yql?format=json&"
                 });
                 ds.plug({fn: Y.Plugin.DataSourceJSONSchema, cfg: {
@@ -363,8 +363,8 @@
             },
 
             // Only FF can detect error state in Get Utility...
-            testScriptNodeError: (Y.UA.gecko) ? function() {
-                var ds = new Y.DataSource.ScriptNode({
+            testGetError: (Y.UA.gecko) ? function() {
+                var ds = new Y.DataSource.Get({
                     source: "http://query.yahooapis.com/v1/public/yql?format=json&"
                 });
                 ds.plug({fn: Y.Plugin.DataSourceJSONSchema, cfg: {
@@ -507,7 +507,7 @@
             name: "DataSource DataSchema Plugin Tests",
 
             testJSONSchema: function() {
-                var ds = new Y.DataSource.XHR({
+                var ds = new Y.DataSource.IO({
                     source: "./php/ysearch_json_madonna.php"
                 });
                 ds.plug({fn: Y.Plugin.DataSourceJSONSchema, cfg: {
@@ -532,7 +532,7 @@
                 ds.sendRequest(null, {
                     success: Y.bind(handler.handleSuccess, this),
                     failure: Y.bind(function(e) {
-                        ASSERT.fail("XHR failure case.");
+                        ASSERT.fail("IO failure case.");
                     }, this)
                 });
 
@@ -540,7 +540,7 @@
             },
 
             testXMLSchema: function() {
-                var ds = new Y.DataSource.XHR({
+                var ds = new Y.DataSource.IO({
                     source: "./php/ysearch_xml_madonna.php"
                 });
                 ds.plug({fn: Y.Plugin.DataSourceXMLSchema, cfg: {
@@ -565,7 +565,7 @@
                 ds.sendRequest(null, {
                     success: Y.bind(handler.handleSuccess, this),
                     failure: Y.bind(function(e) {
-                        ASSERT.fail("XHR failure case.");
+                        ASSERT.fail("IO failure case.");
                     }, this)
                 });
 
@@ -715,12 +715,12 @@
 
             testClass: function() {
                 var ds = new Y.DataSource.Local();
-                ASSERT.isNotUndefined((ds.setInterval), "Expected setInterval() method on Local.");
-                ASSERT.isNotUndefined((ds.clearInterval), "Expected clearInterval() method on Local.");
+                ASSERT.isNotUndefined((ds.setInterval), "Expected setInterval() method on DataSource.Local.");
+                ASSERT.isNotUndefined((ds.clearInterval), "Expected clearInterval() method on DataSource.Local.");
 
-                ds = new Y.DataSource.XHR();
-                ASSERT.isNotUndefined((ds.setInterval), "Expected setInterval() method on XHR.");
-                ASSERT.isNotUndefined((ds.clearInterval), "Expected clearInterval() method on XHR.");
+                ds = new Y.DataSource.IO();
+                ASSERT.isNotUndefined((ds.setInterval), "Expected setInterval() method on DataSource.IO.");
+                ASSERT.isNotUndefined((ds.clearInterval), "Expected clearInterval() method on DataSource.IO.");
             },
 
             testSetAndClear: function() {
@@ -736,7 +736,7 @@
                 var id = ds.setInterval(500, null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
-                        ASSERT.fail("XHR failure case.");
+                        ASSERT.fail("IO failure case.");
                     }
                 });
                 
@@ -763,19 +763,19 @@
                 ds.setInterval(500, null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
-                        ASSERT.fail("XHR failure case.");
+                        ASSERT.fail("IO failure case.");
                     }
                 });
                 ds.setInterval(500, null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
-                        ASSERT.fail("XHR failure case.");
+                        ASSERT.fail("IO failure case.");
                     }
                 });
                 ds.setInterval(500, null, {
                     success: handler.handleSuccess,
                     failure: function(e) {
-                        ASSERT.fail("XHR failure case.");
+                        ASSERT.fail("IO failure case.");
                     }
                 });
 
@@ -790,8 +790,8 @@
 
         Y.Test.Runner.add(testClass);
         Y.Test.Runner.add(testLocal);
-        Y.Test.Runner.add(testXHR);
-        Y.Test.Runner.add(testScriptNode);
+        Y.Test.Runner.add(testIO);
+        Y.Test.Runner.add(testGet);
         Y.Test.Runner.add(testFunction);
         Y.Test.Runner.add(testDataSchemaPlugin);
         Y.Test.Runner.add(testCaching);

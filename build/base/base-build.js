@@ -38,7 +38,7 @@ YUI.add('base-build', function(Y) {
      * defined by the first argument passed in.
      * </p>
      * <p>
-     * The cfg object literal supports the following properties
+     * The cfg object supports the following properties
      * </p>
      * <dl>
      *    <dt>dynamic &#60;boolean&#62;</dt>

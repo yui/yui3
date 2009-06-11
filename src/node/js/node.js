@@ -18,6 +18,7 @@
 
 // "globals"
 var g_nodes = {},
+    g_nodelists = {},
     g_restrict = {},
     g_slice = Array.prototype.slice,
 
@@ -156,7 +157,6 @@ Node.getDOMNode = function(node) {
 };
  
 Node.scrubVal = function(val, node, depth) {
-    var isWindow = false;
     if (node && val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y.DOM.isWindow(val)) {// node || window

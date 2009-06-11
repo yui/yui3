@@ -46,7 +46,7 @@
      * @uses Attribute
      * @uses Plugin.Host
      *
-     * @param {Object} config Object literal of configuration property name/value pairs
+     * @param {Object} config Object with configuration property name/value pairs
      */
     function Base() {
         Y.log('constructor called', 'life', 'base');
@@ -88,11 +88,14 @@
     Base.NAME = 'base';
 
     /**
-     * Object literal defining the set of attributes which
-     * will be available for instances of this class, and 
-     * how they are configured. See Attribute's <a href="Attribute.html#method_addAttr">addAttr</a>
-     * method for a description of configuration options available 
-     * for each attribute.
+     * The default set of attributes which will be available for instances of this class, and 
+     * their configuration. In addition to the configuration properties listed by 
+     * Attribute's <a href="Attribute.html#method_addAttr">addAttr</a> method, the attribute 
+     * can also be configured with a "cloneDefaultValue" property, which defines how the statically
+     * defined value field should be protected ("shallow", "deep" and false are supported values). 
+     *
+     * By default if the value is an object literal or an array it will be "shallow" cloned, to 
+     * protect the default value.
      *
      * @property Base.ATTRS
      * @type Object
@@ -138,7 +141,7 @@
          * @method init
          * @final
          * @chainable
-         * @param {Object} config Object literal of configuration property name/value pairs
+         * @param {Object} config Object with configuration property name/value pairs
          * @return {Base} A reference to this object
          */
         init: function(config) {
@@ -168,7 +171,7 @@
              * @event init
              * @preventable _defInitFn
              * @param {Event.Facade} e Event object, with a cfg property which 
-             * refers to the configuration object literal passed to the constructor.
+             * refers to the configuration object passed to the constructor.
              */
             if (!this._silentInit) {
                 this.publish(INIT, {
@@ -243,7 +246,7 @@
          *
          * @method _defInitFn
          * @param {Event.Facade} e Event object, with a cfg property which 
-         * refers to the configuration object literal passed to the constructor.
+         * refers to the configuration object passed to the constructor.
          * @protected
          */
         _defInitFn : function(e) {
@@ -316,7 +319,7 @@
          * that by the time all classes are processed, allCfgs will be empty.
          * 
          * @return {Object} The set of attributes belonging to the class passed in, in the form
-         * of an object literal with name/cfg pairs.
+         * of an object with attribute name/configuration pairs.
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
             var cfgs = null, attr, attrs = clazz.ATTRS;
@@ -367,8 +370,8 @@
          * attribute configuration across the instances class hierarchy.
          *
          * The method will potect the attribute configuration value to protect the statically defined 
-         * default value in ATTRS if required (value is an object literal or array or the 
-         * attribute configuration has clone set to shallow or deep).
+         * default value in ATTRS if required (if the value is an object literal, array or the 
+         * attribute configuration has cloneDefaultValue set to shallow or deep).
          *
          * @method _aggregateAttrs
          * @private
@@ -442,7 +445,7 @@
          * invoking the initializer method on the prototype of each class in the hierarchy.
          *
          * @method _initHierarchy
-         * @param {Object} userVals Object literal containing configuration name/value pairs
+         * @param {Object} userVals Object with configuration property name/value pairs
          * @private
          */
         _initHierarchy : function(userVals) {

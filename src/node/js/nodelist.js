@@ -1,20 +1,20 @@
-    /**
-     * The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
-     * @module node
-     * @submodule node-list
-     */    
+/**
+ * The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
+ * @module node
+ * @submodule node-list
+ */    
 
-    /**
-     * The NodeList class provides a wrapper for manipulating DOM NodeLists.
-     * NodeList properties can be accessed via the set/get methods.
-     * Use Y.get() to retrieve NodeList instances.
-     *
-     * <strong>NOTE:</strong> NodeList properties are accessed using
-     * the <code>set</code> and <code>get</code> methods.
-     *
-     * @class NodeList
-     * @constructor
-     */
+/**
+ * The NodeList class provides a wrapper for manipulating DOM NodeLists.
+ * NodeList properties can be accessed via the set/get methods.
+ * Use Y.get() to retrieve NodeList instances.
+ *
+ * <strong>NOTE:</strong> NodeList properties are accessed using
+ * the <code>set</code> and <code>get</code> methods.
+ *
+ * @class NodeList
+ * @constructor
+ */
 
 Y.Array._diff = function(a, b) {
     var removed = [],
@@ -44,29 +44,23 @@ Y.Array.diff = function(a, b) {
     }; 
 };
 
-// "globals"
-var g_nodelists = {},
-    g_slice = Array.prototype.slice,
+var NodeList = function(config) {
+    var doc = config.doc || Y.config.doc,
+        nodes = config.nodes || [];
 
-    UID = '_yuid',
+    if (typeof nodes === 'string') {
+        this._query = nodes;
+        nodes = Y.Selector.query(nodes, doc);
+    }
 
-    NodeList = function(config) {
-        var doc = config.doc || Y.config.doc,
-            nodes = config.nodes || [];
+    Y.stamp(this);
+    NodeList._instances[this[UID]] = this;
+    g_nodelists[this[UID]] = nodes;
 
-        if (typeof nodes === 'string') {
-            this._query = nodes;
-            nodes = Y.Selector.query(nodes, doc);
-        }
-
-        Y.stamp(this);
-        NodeList._instances[this[UID]] = this;
-        g_nodelists[this[UID]] = nodes;
-
-        if (config.restricted) {
-            g_restrict = this[UID];
-        }
-    };
+    if (config.restricted) {
+        g_restrict = this[UID];
+    }
+};
 // end "globals"
 
 NodeList.NAME = 'NodeList';
@@ -177,7 +171,7 @@ Y.mix(NodeList.prototype, {
     },
 
     batch: function(fn, context) {
-        var nodelist = this;
+        var nodelist = this,
             tmp = NodeList._getTempNode();
 
         Y.Array.each(g_nodelists[this[UID]], function(node, index) {
