@@ -2028,14 +2028,6 @@ Y.Get = function() {
         qidx=0, 
         
     /**
-     * node index used to generate unique node ids
-     * @property nidx
-     * @type int
-     * @private
-     */
-        nidx=0, 
-
-    /**
      * interal property used to prevent multiple simultaneous purge 
      * processes
      * @property purging

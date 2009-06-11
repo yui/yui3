@@ -39,32 +39,46 @@
 				
 				test_simple_delegate_for_anchors: function(){
 					
-					var foo = false, t;
+					var foo = false, t, ct, boundEl;
 					
 					Y.on('delegate', function(e) {
 						foo = true;
 						t = e.target;
+						ct = e.currentTarget;
+						boundEl = e.container;
 					}, '#mod1', 'click', 'a');
 					
 					Y.Event.simulate (document.getElementById('firstlink'), 'click');
 					Y.Assert.isTrue(foo, "simple delegation fails, mod1 should pickup the event and test target [firstlink]");
-					Y.Assert.areEqual(t, Y.get('#firstlink'), "event delegate works but the target is an incorrect node, should be the matching node");
+					// Y.Assert.areEqual(t, Y.get('#firstlink'), "event delegate works but the target is an incorrect node, should be the matching node");
+
+					Y.Assert.areEqual(ct, Y.get('#firstlink'), "event delegate works but the currentTarget is an incorrect node, should be the matching node");
+					Y.Assert.areEqual(t, Y.get('#firstlink'), "event delegate works but the target is an incorrect node, should be the actual click target");
+					Y.Assert.areEqual(boundEl, Y.get('#mod1'), "event delegate works but the container property should be the bound element");
 					
 				},
 				
 				test_checking_delegation_target: function(){
 					
-					var foo = false, t;
+					var foo = false, t, ct, boundEl;
 					
 					Y.on('delegate', function(e) {
 						foo = true;
 						t = e.target;
+						ct = e.currentTarget;
+						boundEl = e.container;
 					}, '#mod1', 'click', 'a');
 					
 					Y.Event.simulate (document.getElementById('fakeimage'), 'click');
 					Y.Assert.isTrue(foo, "delegation fails for an image within an anchor, mod1 should pickup the event and test target [secondlink]");
 					// in this case, the target should be the anchor, and not the image
-					Y.Assert.areEqual(t, Y.get('#secondlink'), "event delegate works but the target is an incorrect node, should be the matching node");
+					// Y.Assert.areEqual(t, Y.get('#secondlink'), "event delegate works but the target is an incorrect node, should be the matching node");
+
+                    // this has been changed.  the target is unchanged, the anchor is
+
+					Y.Assert.areEqual(ct, Y.get('#secondlink'), "event delegate works but the currentTarget is an incorrect node, should be the matching node");
+					Y.Assert.areEqual(t, Y.get('#fakeimage'), "event delegate works but the target is an incorrect node, should be the actual click target");
+					Y.Assert.areEqual(boundEl, Y.get('#mod1'), "event delegate works but the container property should be the bound element");
 					
 				},
 				
@@ -112,33 +126,38 @@
 				
 				test_multiple_delegate_matches: function(){
 					
-					var foo1 = false, foo2 = false, t1, t2;
+					var foo1 = false, foo2 = false, t1, t2, ct1, ct2;
 					
 					Y.on('delegate', function(e) {
 						foo1 = true;
 						t1 = e.target;
+						ct1 = e.currentTarget;
 					}, '#mod1', 'click', 'a');
 					
 					Y.on('delegate', function(e) {
 						foo2 = true;
 						t2 = e.target;
+						ct2 = e.currentTarget;
 					}, '#mod1', 'click', 'a span');
 					
 					Y.Event.simulate (document.getElementById('spanwithinlink'), 'click');
 					Y.Assert.isTrue(foo1, "first match fail, delegate should be able to match [a]");
 					Y.Assert.isTrue(foo2, "second match fail, delegate should be able to match [a span]");
-					Y.Assert.areEqual(t1, Y.get('#secondlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
-					Y.Assert.areEqual(t2, Y.get('#spanwithinlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
+					Y.Assert.areEqual(ct1, Y.get('#secondlink'), "event delegate works but the currentTarget is an incorrect node, should be the matching selector");
+					Y.Assert.areEqual(t1, Y.get('#spanwithinlink'), "event delegate works but the target is an incorrect node, should be the clicked node");
+					Y.Assert.areEqual(ct2, Y.get('#spanwithinlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
+					Y.Assert.areEqual(t2, Y.get('#spanwithinlink'), "event delegate works but the target is an incorrect node, should be the clicked");
 					
 				},
 				
 				test_bubble_up_after_delegate: function(){
 					
-					var foo1 = false, foo2 = false, t1, t2;
+					var foo1 = false, foo2 = false, t1, t2, ct;
 					
 					Y.on('delegate', function(e) {
 						foo1 = true;
 						t1 = e.target;
+						ct = e.currentTarget;
 					}, '#mod1', 'click', 'a');
 					
 					Y.on('click', function(e) {
@@ -149,7 +168,12 @@
 					Y.Event.simulate (document.getElementById('spanwithinlink'), 'click');
 					Y.Assert.isTrue(foo1, "first match fail, delegate should be able to match [a]");
 					Y.Assert.isTrue(foo2, "second match fail, the event doesn't bubble up after the delegate routine");
-					Y.Assert.areEqual(t1, Y.get('#secondlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
+                    // changed
+					// Y.Assert.areEqual(t1, Y.get('#secondlink'), "event delegate works but the target is an incorrect node, should be the matching selector");
+					Y.Assert.areEqual(ct, Y.get('#secondlink'), "event delegate works but the currentTarget is an incorrect node, should be the matching selector");
+					Y.Assert.areEqual(t1, Y.get('#spanwithinlink'), "event delegate works but the target is an incorrect node, should be the actual target");
+
+                    // obsolete
 					Y.Assert.areEqual(t2, Y.get('#spanwithinlink'), "event delegate works but it doesn't restore e.target to the original value.");
 				},
 				
