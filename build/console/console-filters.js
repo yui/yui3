@@ -374,7 +374,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
         }
 
         if (cat && !e.fromUI) {
-            this._uiSetCheckbox(CATEGORY, cat, after);
+            this._uiSetCheckbox(CATEGORY, cat, after[cat]);
         }
     },
 
@@ -400,7 +400,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
         }
 
         if (src && !e.fromUI) {
-            this._uiSetCheckbox(SOURCE, src, after);
+            this._uiSetCheckbox(SOURCE, src, after[src]);
         }
     },
 
