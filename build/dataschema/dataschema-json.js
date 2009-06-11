@@ -242,8 +242,8 @@ SchemaJSON = {
                         record[key] = null;
                     }
                 }
+                results[i] = record;
             }
-            results[i] = record;
         }
         data_out.results = results;
         return data_out;
