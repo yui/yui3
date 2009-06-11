@@ -58,7 +58,7 @@
 <span class="c">     *</span>
 <span class="c">     * @class Plugin.Base </span>
 <span class="c">     * @extends Base</span>
-<span class="c">     * @param {Object} config Object literal of configuration property name/value pairs.</span>
+<span class="c">     * @param {Object} config Configuration object with property name/value pairs.</span>
 <span class="c">     */</span>
     <span class="k">function</span> <span class="nx">Plugin</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">Plugin</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
@@ -123,7 +123,7 @@
 <span class="c">         * Initializer lifecycle implementation.</span>
 <span class="c">         *</span>
 <span class="c">         * @method initializer</span>
-<span class="c">         * @param {Object} config Configuration object literal for the Plugin.</span>
+<span class="c">         * @param {Object} config Configuration object with property name/value pairs.</span>
 <span class="c">         */</span>
         <span class="nx">initializer</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_handles</span> <span class="o">=</span> <span class="o">[];</span>

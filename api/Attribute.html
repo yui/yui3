@@ -183,13 +183,13 @@ been added (on demand initialization).
                                                         <code><span property="yui:name">cfgs</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An object literal of attribute name/configuration pairs.</span>
+                                                        <span property="yui:description"> An object with attribute name/configuration pairs.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">values</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An object literal of attribute name/value pairs, defining the initial values to apply.
+                                                        <span property="yui:description"> An object with attribute name/value pairs, defining the initial values to apply.
 Values defined in the cfgs argument will be over-written by values in this argument unless defined as read only.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
@@ -460,14 +460,13 @@ provided and the attribute is not read-only.
                                                         <code><span property="yui:name">cfg</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The attribute configuration object literal</span>
+                                                        <span property="yui:description"> The attribute configuration object</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">initValues</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The object literal of name/value pairs returned 
-from _splitAttrVals</span>
+                                                        <span property="yui:description"> The object with simple and complex attribute name/value pairs returned from _splitAttrVals</span>
                                                         </dd>
                                                 </dl>
 
@@ -816,7 +815,7 @@ attributes can be keyed by the top level attribute name.
                                                         <code><span property="yui:name">valueHash</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Object literal of name/value pairs</span>
+                                                        <span property="yui:description"> An object with attribute name/value pairs</span>
                                                         </dd>
                                                 </dl>
 
@@ -825,7 +824,7 @@ attributes can be keyed by the top level attribute name.
                                                     <code property="yui:return">
                                                         Object
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Object literal with 2 properties - "simple" and "complex",
+                                                    <dd property="yui:returnInfo">An object literal with 2 properties - "simple" and "complex",
 containing simple and complex attribute values respectively keyed 
 by the top level attribute name, or null, if valueHash is falsey.</dd>
                                                 </dl>
@@ -870,7 +869,7 @@ by the top level attribute name, or null, if valueHash is falsey.</dd>
 Adds an attribute with the provided configuration to the host object.
 </p>
 <p>
-The config argument object literal supports the following optional properties:
+The config argument object supports the following properties:
 </p>
 <dl>
 <dt>value &#60;Any&#62;</dt>
@@ -925,7 +924,7 @@ the context ("this") set to the host object.</p>
                                                         <code><span property="yui:name">config</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An object literal specifying the configuration for the attribute.
+                                                        <span property="yui:description"> An object with attribute configuration property/value pairs, specifying the configuration for the attribute.
 <p>
 <strong>NOTE:</strong> The configuration object is modified when adding an attribute, so if you need 
 to protect the original values, you will need to merge the object.
@@ -1001,13 +1000,13 @@ The caller is responsible for merging/cloning the configuration object if requir
                                                         <code><span property="yui:name">cfgs</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An object literal of attribute name/configuration pairs.</span>
+                                                        <span property="yui:description"> An object with attribute name/configuration pairs.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">values</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An object literal of attribute name/value pairs, defining the initial values to apply.
+                                                        <span property="yui:description"> An object with attribute name/value pairs, defining the initial values to apply.
 Values defined in the cfgs argument will be over-written by values in this argument unless defined as read only.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
@@ -1185,7 +1184,7 @@ returned. If set to true, all attributes modified from their initial values are 
                                                     <code property="yui:return">
                                                         Object
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">An object literal of attribute name/value pairs.</dd>
+                                                    <dd property="yui:returnInfo">An object with attribute name/value pairs.</dd>
                                                 </dl>
 
 
@@ -1243,7 +1242,7 @@ broadcast and getter.
                                                         <code><span property="yui:name">config</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An object literal with the updated configuration properties.</span>
+                                                        <span property="yui:description"> An object with configuration property/value pairs, specifying the configuration properties to modify.</span>
                                                         </dd>
                                                 </dl>
 
@@ -1480,7 +1479,7 @@ set called externally by the application developer.</span>
                                                         <code><span property="yui:name">attrs</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  An object literal of attributes name/value pairs.</span>
+                                                        <span property="yui:description">  An object with attributes name/value pairs.</span>
                                                         </dd>
                                                 </dl>
 

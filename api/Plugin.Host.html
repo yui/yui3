@@ -157,7 +157,7 @@ instance through the "plugins" configuration property.
                                                         <code><span property="yui:name">config</span>
                                                         &lt;<span property="yui:type">Config</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The configuration object literal for the host.</span>
+                                                        <span property="yui:description"> The configuration object with property name/value pairs.</span>
                                                         </dd>
                                                 </dl>
 
@@ -377,11 +377,11 @@ plugin and attach it to the configured namespace on the host object.
                                                         &lt;<span property="yui:type">Function | Object |Array</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  Accepts the plugin class, or an 
-object literal with a "fn" property specifying the plugin class and 
+object with a "fn" property specifying the plugin class and 
 a "cfg" property specifying the configuration for the Plugin.
 <p>
 Additionally an Array can also be passed in, with the above function or 
-object literal values, allowing the user to add multiple plugins in a single call.
+object values, allowing the user to add multiple plugins in a single call.
 </p></span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
@@ -458,7 +458,7 @@ which should be plugged into every instance of the class by default).
                                                         <code><span property="yui:name">plugin</span>
                                                         &lt;<span property="yui:type">Function | Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Either the plugin class, an array of plugin classes or an array of object literals (with fn and cfg properties defined)</span>
+                                                        <span property="yui:description"> Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">config</span>

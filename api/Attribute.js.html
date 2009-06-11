@@ -164,7 +164,7 @@
 <span class="c">         * Adds an attribute with the provided configuration to the host object.</span>
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * &lt;p&gt;</span>
-<span class="c">         * The config argument object literal supports the following optional properties:</span>
+<span class="c">         * The config argument object supports the following properties:</span>
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * </span>
 <span class="c">         * &lt;dl&gt;</span>
@@ -218,7 +218,7 @@
 <span class="c">         * @method addAttr</span>
 <span class="c">         *</span>
 <span class="c">         * @param {String} name The name of the attribute.</span>
-<span class="c">         * @param {Object} config An object literal specifying the configuration for the attribute.</span>
+<span class="c">         * @param {Object} config An object with attribute configuration property/value pairs, specifying the configuration for the attribute.</span>
 <span class="c">         *</span>
 <span class="c">         * &lt;p&gt;</span>
 <span class="c">         * &lt;strong&gt;NOTE:&lt;/strong&gt; The configuration object is modified when adding an attribute, so if you need </span>
@@ -299,7 +299,7 @@
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * @method modifyAttr</span>
 <span class="c">         * @param {String} name The name of the attribute whose configuration is to be updated.</span>
-<span class="c">         * @param {Object} config An object literal with the updated configuration properties.</span>
+<span class="c">         * @param {Object} config An object with configuration property/value pairs, specifying the configuration properties to modify.</span>
 <span class="c">         */</span>
         <span class="nx">modifyAttr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
@@ -682,7 +682,7 @@
 <span class="c">         * Sets multiple attribute values.</span>
 <span class="c">         *</span>
 <span class="c">         * @method setAttrs</span>
-<span class="c">         * @param {Object} attrs  An object literal of attributes name/value pairs.</span>
+<span class="c">         * @param {Object} attrs  An object with attributes name/value pairs.</span>
 <span class="c">         * @return {Object} A reference to the host object.</span>
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
@@ -701,7 +701,7 @@
 <span class="c">         * @method getAttrs</span>
 <span class="c">         * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are</span>
 <span class="c">         * returned. If set to true, all attributes modified from their initial values are returned.</span>
-<span class="c">         * @return {Object} An object literal of attribute name/value pairs.</span>
+<span class="c">         * @return {Object} An object with attribute name/value pairs.</span>
 <span class="c">         */</span>
         <span class="nx">getAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span>
@@ -733,8 +733,8 @@
 <span class="c">         * @method addAttrs</span>
 <span class="c">         * @chainable</span>
 <span class="c">         *</span>
-<span class="c">         * @param {Object} cfgs An object literal of attribute name/configuration pairs.</span>
-<span class="c">         * @param {Object} values An object literal of attribute name/value pairs, defining the initial values to apply.</span>
+<span class="c">         * @param {Object} cfgs An object with attribute name/configuration pairs.</span>
+<span class="c">         * @param {Object} values An object with attribute name/value pairs, defining the initial values to apply.</span>
 <span class="c">         * Values defined in the cfgs argument will be over-written by values in this argument unless defined as read only.</span>
 <span class="c">         * @param {boolean} lazy Whether or not to delay the intialization of these attributes until the first call to get/set.</span>
 <span class="c">         * Individual attributes can over-ride this behavior by defining a lazyAdd configuration property in their configuration.</span>
@@ -765,8 +765,8 @@
 <span class="c">         *</span>
 <span class="c">         * @method _addAttrs</span>
 <span class="c">         * @private</span>
-<span class="c">         * @param {Object} cfgs An object literal of attribute name/configuration pairs.</span>
-<span class="c">         * @param {Object} values An object literal of attribute name/value pairs, defining the initial values to apply.</span>
+<span class="c">         * @param {Object} cfgs An object with attribute name/configuration pairs.</span>
+<span class="c">         * @param {Object} values An object with attribute name/value pairs, defining the initial values to apply.</span>
 <span class="c">         * Values defined in the cfgs argument will be over-written by values in this argument unless defined as read only.</span>
 <span class="c">         * @param {boolean} lazy Whether or not to delay the intialization of these attributes until the first call to get/set.</span>
 <span class="c">         * Individual attributes can over-ride this behavior by defining a lazyAdd configuration property in their configuration.</span>
@@ -806,9 +806,9 @@
 <span class="c">         * attributes can be keyed by the top level attribute name.</span>
 <span class="c">         *</span>
 <span class="c">         * @method _splitAttrVals</span>
-<span class="c">         * @param {Object} valueHash Object literal of name/value pairs</span>
+<span class="c">         * @param {Object} valueHash An object with attribute name/value pairs</span>
 <span class="c">         *</span>
-<span class="c">         * @return {Object} Object literal with 2 properties - &quot;simple&quot; and &quot;complex&quot;,</span>
+<span class="c">         * @return {Object} An object literal with 2 properties - &quot;simple&quot; and &quot;complex&quot;,</span>
 <span class="c">         * containing simple and complex attribute values respectively keyed </span>
 <span class="c">         * by the top level attribute name, or null, if valueHash is falsey.</span>
 <span class="c">         *</span>
@@ -850,9 +850,8 @@
 <span class="c">         * provided and the attribute is not read-only.</span>
 <span class="c">         *</span>
 <span class="c">         * @param {String} attr The name of the attribute</span>
-<span class="c">         * @param {Object} cfg The attribute configuration object literal</span>
-<span class="c">         * @param {Object} initValues The object literal of name/value pairs returned </span>
-<span class="c">         * from _splitAttrVals</span>
+<span class="c">         * @param {Object} cfg The attribute configuration object</span>
+<span class="c">         * @param {Object} initValues The object with simple and complex attribute name/value pairs returned from _splitAttrVals</span>
 <span class="c">         *</span>
 <span class="c">         * @return {Any} The initial value of the attribute.</span>
 <span class="c">         *</span>

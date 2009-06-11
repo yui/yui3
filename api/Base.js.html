@@ -95,7 +95,7 @@
 <span class="c">     * @uses Attribute</span>
 <span class="c">     * @uses Plugin.Host</span>
 <span class="c">     *</span>
-<span class="c">     * @param {Object} config Object literal of configuration property name/value pairs</span>
+<span class="c">     * @param {Object} config Object with configuration property name/value pairs</span>
 <span class="c">     */</span>
     <span class="k">function</span> <span class="nx">Base</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
@@ -137,11 +137,14 @@
     <span class="nx">Base</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;base&#39;</span><span class="o">;</span>
 
     <span class="c">/**</span>
-<span class="c">     * Object literal defining the set of attributes which</span>
-<span class="c">     * will be available for instances of this class, and </span>
-<span class="c">     * how they are configured. See Attribute&#39;s &lt;a href=&quot;Attribute.html#method_addAttr&quot;&gt;addAttr&lt;/a&gt;</span>
-<span class="c">     * method for a description of configuration options available </span>
-<span class="c">     * for each attribute.</span>
+<span class="c">     * The default set of attributes which will be available for instances of this class, and </span>
+<span class="c">     * their configuration. In addition to the configuration properties listed by </span>
+<span class="c">     * Attribute&#39;s &lt;a href=&quot;Attribute.html#method_addAttr&quot;&gt;addAttr&lt;/a&gt; method, the attribute </span>
+<span class="c">     * can also be configured with a &quot;cloneDefaultValue&quot; property, which defines how the statically</span>
+<span class="c">     * defined value field should be protected (&quot;shallow&quot;, &quot;deep&quot; and false are supported values). </span>
+<span class="c">     *</span>
+<span class="c">     * By default if the value is an object literal or an array it will be &quot;shallow&quot; cloned, to </span>
+<span class="c">     * protect the default value.</span>
 <span class="c">     *</span>
 <span class="c">     * @property Base.ATTRS</span>
 <span class="c">     * @type Object</span>
@@ -187,7 +190,7 @@
 <span class="c">         * @method init</span>
 <span class="c">         * @final</span>
 <span class="c">         * @chainable</span>
-<span class="c">         * @param {Object} config Object literal of configuration property name/value pairs</span>
+<span class="c">         * @param {Object} config Object with configuration property name/value pairs</span>
 <span class="c">         * @return {Base} A reference to this object</span>
 <span class="c">         */</span>
         <span class="nx">init</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
@@ -217,7 +220,7 @@
 <span class="c">             * @event init</span>
 <span class="c">             * @preventable _defInitFn</span>
 <span class="c">             * @param {Event.Facade} e Event object, with a cfg property which </span>
-<span class="c">             * refers to the configuration object literal passed to the constructor.</span>
+<span class="c">             * refers to the configuration object passed to the constructor.</span>
 <span class="c">             */</span>
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_silentInit</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">INIT</span><span class="o">,</span> <span class="o">{</span>
@@ -292,7 +295,7 @@
 <span class="c">         *</span>
 <span class="c">         * @method _defInitFn</span>
 <span class="c">         * @param {Event.Facade} e Event object, with a cfg property which </span>
-<span class="c">         * refers to the configuration object literal passed to the constructor.</span>
+<span class="c">         * refers to the configuration object passed to the constructor.</span>
 <span class="c">         * @protected</span>
 <span class="c">         */</span>
         <span class="nx">_defInitFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
@@ -365,7 +368,7 @@
 <span class="c">         * that by the time all classes are processed, allCfgs will be empty.</span>
 <span class="c">         * </span>
 <span class="c">         * @return {Object} The set of attributes belonging to the class passed in, in the form</span>
-<span class="c">         * of an object literal with name/cfg pairs.</span>
+<span class="c">         * of an object with attribute name/configuration pairs.</span>
 <span class="c">         */</span>
         <span class="nx">_filterAttrCfgs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">clazz</span><span class="o">,</span> <span class="nx">allCfgs</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">cfgs</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">clazz</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">;</span>
@@ -416,8 +419,8 @@
 <span class="c">         * attribute configuration across the instances class hierarchy.</span>
 <span class="c">         *</span>
 <span class="c">         * The method will potect the attribute configuration value to protect the statically defined </span>
-<span class="c">         * default value in ATTRS if required (value is an object literal or array or the </span>
-<span class="c">         * attribute configuration has clone set to shallow or deep).</span>
+<span class="c">         * default value in ATTRS if required (if the value is an object literal, array or the </span>
+<span class="c">         * attribute configuration has cloneDefaultValue set to shallow or deep).</span>
 <span class="c">         *</span>
 <span class="c">         * @method _aggregateAttrs</span>
 <span class="c">         * @private</span>
@@ -491,7 +494,7 @@
 <span class="c">         * invoking the initializer method on the prototype of each class in the hierarchy.</span>
 <span class="c">         *</span>
 <span class="c">         * @method _initHierarchy</span>
-<span class="c">         * @param {Object} userVals Object literal containing configuration name/value pairs</span>
+<span class="c">         * @param {Object} userVals Object with configuration property name/value pairs</span>
 <span class="c">         * @private</span>
 <span class="c">         */</span>
         <span class="nx">_initHierarchy</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">userVals</span><span class="o">)</span> <span class="o">{</span>

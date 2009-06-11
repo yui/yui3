@@ -147,7 +147,7 @@ all events fired by instances of that class.
                                                     <code><span property="yui:name">config</span>
                                                     &lt;<span property="yui:type">Object</span>&gt;
                                                     </code>
-                                                    <span property="yui:description"> Object literal of configuration property name/value pairs</span>
+                                                    <span property="yui:description"> Object with configuration property name/value pairs</span>
                                                 </dd>
                                         </dl>
                                     
@@ -201,11 +201,13 @@ the <a href="#method_Base.build">Base.build</a> method.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Object literal defining the set of attributes which
-will be available for instances of this class, and 
-how they are configured. See Attribute's <a href="Attribute.html#method_addAttr">addAttr</a>
-method for a description of configuration options available 
-for each attribute.
+                                            The default set of attributes which will be available for instances of this class, and 
+their configuration. In addition to the configuration properties listed by 
+Attribute's <a href="Attribute.html#method_addAttr">addAttr</a> method, the attribute 
+can also be configured with a "cloneDefaultValue" property, which defines how the statically
+defined value field should be protected ("shallow", "deep" and false are supported values). 
+By default if the value is an object literal or an array it will be "shallow" cloned, to 
+protect the default value.
                                         </div>
                                     </div>
      
@@ -297,8 +299,8 @@ convention (e.g. MyClass.NAME = "myClass";).
                                             A helper method, used by _initHierarchyData to aggregate 
 attribute configuration across the instances class hierarchy.
 The method will potect the attribute configuration value to protect the statically defined 
-default value in ATTRS if required (value is an object literal or array or the 
-attribute configuration has clone set to shallow or deep).
+default value in ATTRS if required (if the value is an object literal, array or the 
+attribute configuration has cloneDefaultValue set to shallow or deep).
                                         </div>
 
                                         <div class="description">
@@ -413,7 +415,7 @@ attribute configuration has clone set to shallow or deep).
                                                         &lt;<span property="yui:type">Event.Facade</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> Event object, with a cfg property which 
-refers to the configuration object literal passed to the constructor.</span>
+refers to the configuration object passed to the constructor.</span>
                                                         </dd>
                                                 </dl>
 
@@ -526,7 +528,7 @@ that by the time all classes are processed, allCfgs will be empty.</span>
                                                         Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">The set of attributes belonging to the class passed in, in the form
-of an object literal with name/cfg pairs.</dd>
+of an object with attribute name/configuration pairs.</dd>
                                                 </dl>
 
 
@@ -649,7 +651,7 @@ invoking the initializer method on the prototype of each class in the hierarchy.
                                                         <code><span property="yui:name">userVals</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Object literal containing configuration name/value pairs</span>
+                                                        <span property="yui:description"> Object with configuration property name/value pairs</span>
                                                         </dd>
                                                 </dl>
 
@@ -747,7 +749,7 @@ provided. The NAME field for the constructor function is
 defined by the first argument passed in.
 </p>
 <p>
-The cfg object literal supports the following properties
+The cfg object supports the following properties
 </p>
 <dl>
 <dt>dynamic &#60;boolean&#62;</dt>
@@ -972,7 +974,7 @@ invoking initializers for the class hierarchy.
                                                         <code><span property="yui:name">config</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Object literal of configuration property name/value pairs</span>
+                                                        <span property="yui:description"> Object with configuration property name/value pairs</span>
                                                         </dd>
                                                 </dl>
 
@@ -1296,7 +1298,7 @@ cannot prevent initialization).
                                                                 &lt;<span property="yui:type">Event.Facade</span>&gt;
                                                             </code>
                                                             <span property="yui:description"> Event object, with a cfg property which 
-refers to the configuration object literal passed to the constructor.</span>
+refers to the configuration object passed to the constructor.</span>
                                                         </dd>
                                                         
                                                 </dl>

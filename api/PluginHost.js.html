@@ -86,11 +86,11 @@
 <span class="c">         * @method plug</span>
 <span class="c">         * @chainable</span>
 <span class="c">         * @param p {Function | Object |Array} Accepts the plugin class, or an </span>
-<span class="c">         * object literal with a &quot;fn&quot; property specifying the plugin class and </span>
+<span class="c">         * object with a &quot;fn&quot; property specifying the plugin class and </span>
 <span class="c">         * a &quot;cfg&quot; property specifying the configuration for the Plugin.</span>
 <span class="c">         * &lt;p&gt;</span>
 <span class="c">         * Additionally an Array can also be passed in, with the above function or </span>
-<span class="c">         * object literal values, allowing the user to add multiple plugins in a single call.</span>
+<span class="c">         * object values, allowing the user to add multiple plugins in a single call.</span>
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * @param config (Optional) If the first argument is the plugin class, the second argument</span>
 <span class="c">         * can be the configuration for the plugin.</span>
@@ -153,7 +153,7 @@
 <span class="c">         * instance through the &quot;plugins&quot; configuration property.</span>
 <span class="c">         *</span>
 <span class="c">         * @method _initPlugins</span>
-<span class="c">         * @param {Config} config The configuration object literal for the host.</span>
+<span class="c">         * @param {Config} config The configuration object with property name/value pairs.</span>
 <span class="c">         * @private</span>
 <span class="c">         */</span>
         <span class="nx">_initPlugins</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
@@ -268,7 +268,7 @@
 <span class="c">     * @static</span>
 <span class="c">     *</span>
 <span class="c">     * @param {Function} hostClass The host class on which to register the plugins</span>
-<span class="c">     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of object literals (with fn and cfg properties defined)</span>
+<span class="c">     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)</span>
 <span class="c">     * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin</span>
 <span class="c">     */</span>
     <span class="nx">PluginHost</span><span class="o">.</span><span class="nx">plug</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">hostClass</span><span class="o">,</span> <span class="nx">plugin</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
