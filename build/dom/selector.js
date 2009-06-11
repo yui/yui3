@@ -164,7 +164,6 @@ var NativeSelector = {
     _test: function(node, selector) {
         var ret = false,
             groups = selector.split(','),
-            id,
             item,
             i, group;
 
@@ -222,7 +221,6 @@ var PARENT_NODE = 'parentNode',
     PSEUDOS = 'pseudos',
     PREVIOUS = 'previous',
     PREVIOUS_SIBLING = 'previousSibling',
-    LENGTH = 'length',
 
     _childCache = [], // cache to cleanup expando node.children
 
@@ -379,8 +377,8 @@ var PARENT_NODE = 'parentNode',
         },
 
         _testToken: function(node, index, nodes, token) {
-            var token = token || this,
-                tag = token.tag,
+            token = token || this;
+            var tag = token.tag,
                 previous = token[PREVIOUS],
                 result = token.result,
                 i = 0,

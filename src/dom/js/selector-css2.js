@@ -175,8 +175,8 @@ var PARENT_NODE = 'parentNode',
         },
 
         _testToken: function(node, index, nodes, token) {
-            token = token || this,
-                tag = token.tag,
+            token = token || this;
+            var tag = token.tag,
                 previous = token[PREVIOUS],
                 result = token.result,
                 i = 0,
