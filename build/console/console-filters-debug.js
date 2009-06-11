@@ -38,7 +38,9 @@ var getCN = Y.ClassNameManager.getClassName,
     C_BODY       = DOT + Y.Console.CHROME_CLASSES.console_bd_class,
     C_FOOT       = DOT + Y.Console.CHROME_CLASSES.console_ft_class,
 
-    SEL_CHECK    = 'input[type=checkbox].';
+    SEL_CHECK    = 'input[type=checkbox].',
+    
+    isString = Y.Lang.isString;
 
 function ConsoleFilters() {
     ConsoleFilters.superclass.constructor.apply(this,arguments);
@@ -374,7 +376,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
         }
 
         if (cat && !e.fromUI) {
-            this._uiSetCheckbox(CATEGORY, cat, after);
+            this._uiSetCheckbox(CATEGORY, cat, after[cat]);
         }
     },
 
@@ -400,7 +402,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
         }
 
         if (src && !e.fromUI) {
-            this._uiSetCheckbox(SOURCE, src, after);
+            this._uiSetCheckbox(SOURCE, src, after[src]);
         }
     },
 
@@ -541,7 +543,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @param cat* {String} 1..n categories to filter out of the UI
      */
     hideCategory : function (cat, multiple) {
-        if (multiple) {
+        if (isString(multiple)) {
             Y.Array.each(arguments, arguments.callee, this);
         } else {
             this.set(CATEGORY_DOT + cat, false);
@@ -557,7 +559,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @param cat* {String} 1..n categories to allow to display in the UI
      */
     showCategory : function (cat, multiple) {
-        if (multiple) {
+        if (isString(multiple)) {
             Y.Array.each(arguments, arguments.callee, this);
         } else {
             this.set(CATEGORY_DOT + cat, true);
@@ -573,10 +575,10 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @param src* {String} 1..n sources to filter out of the UI
      */
     hideSource : function (src, multiple) {
-        if (multiple) {
+        if (isString(multiple)) {
             Y.Array.each(arguments, arguments.callee, this);
         } else {
-            this.set(CATEGORY_DOT + src, false);
+            this.set(SOURCE_DOT + src, false);
         }
     },
 
@@ -589,10 +591,10 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @param cat* {String} 1..n sources to allow to display in the UI
      */
     showSource : function (src, multiple) {
-        if (multiple) {
+        if (isString(multiple)) {
             Y.Array.each(arguments, arguments.callee, this);
         } else {
-            this.set(CATEGORY_DOT + src, true);
+            this.set(SOURCE_DOT + src, true);
         }
     },
 
