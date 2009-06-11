@@ -331,7 +331,7 @@ Node.DEFAULT_SETTER = function(name, val) {
         node[name] = val;
     }
 
-    return this;
+    return val;
 };
 
 // call with instance context
