@@ -460,23 +460,24 @@ var Dt = {
 		}
 
 		var format = oConfig.format || Y.config.dateFormat,
-			sLocale = oConfig.locale || Y.config.locale;
+			sLocale = oConfig.locale || Y.config.locale,
+			LOCALE = Y.DataType.Date.Locale;
 
 		sLocale = sLocale.replace(/_/g, "-");
 		
 		// Make sure we have a definition for the requested locale, or default to en.
-		if(!Dt.Locale[sLocale]) {
+		if(!LOCALE[sLocale]) {
 			var tmpLocale = sLocale.replace(/-[a-zA-Z]+$/, "");
-			if(tmpLocale in Dt.Locale) {
+			if(tmpLocale in LOCALE) {
 				sLocale = tmpLocale;
-			} else if(Y.config.locale in Dt.Locale) {
+			} else if(Y.config.locale in LOCALE) {
 				sLocale = Y.config.locale;
 			} else {
 				sLocale = "en";
 			}
 		}
 
-		var aLocale = Dt.Locale[sLocale];
+		var aLocale = LOCALE[sLocale];
 
 		var replace_aggs = function (m0, m1) {
 			var f = Dt.aggregates[m1];
