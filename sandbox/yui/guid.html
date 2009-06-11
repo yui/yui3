@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI 3.0</title>
+<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+<body>
+
+<script type="text/javascript">
+YUI({
+        base: '../../build/'
+    }).use('node', function(Y) {
+
+
+    var guids = {},
+        scripts = document.getElementsByTagName('script'),
+        i = 0,
+        count = 20,
+        guid;
+
+    while (i < scripts.length) {
+        guids[scripts[i].id] = true;
+        i++;
+    }
+
+    i = 0;
+    while (i < count) {
+        guid = Y.guid();
+        if (!guids[guid]) {
+            guids[guid] = true;
+        } else {
+            Y.log('guid: ' + guid + ' already in use');
+        }
+
+        i++;
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>
+
