@@ -15,16 +15,17 @@ YUI.add('io-form', function(Y) {
         * @method _serialize
         * @private
         * @static
-        * @param {object} o - HTML form object or id.
+        * @param {object} o - YUI form node or HTML form id.
         * @return string
         */
         _serialize: function(o) {
-            var f = (typeof o.id === 'object') ? o.id : Y.config.doc.getElementById(o.id),
-            eUC = encodeURIComponent,
-            data = [],
-            useDf = o.useDisabled || false,
-            item = 0,
-            e, n, v, d, i, ilen, j, jlen, o;
+			var id = (typeof o.id === 'string') ? o.id : o.id._userCfgs.node.id,
+            	f = Y.config.doc.getElementById(id),
+            	eUC = encodeURIComponent,
+            	data = [],
+            	useDf = o.useDisabled || false,
+            	item = 0,
+            	e, n, v, d, i, ilen, j, jlen, o;
 
             // Iterate over the form elements collection to construct the
             // label-value pairs.

@@ -232,7 +232,7 @@ YUI.add('io-base', function(Y) {
    		/* End Configuration Properties */
 
    		o.c.onreadystatechange = function() { _readyState(o, c); };
-   		try { _open(o.c, m, uri); } catch (e) {}
+   		try { _open(o.c, m, uri); } catch (e0) {}
    		_setHeaders(o.c, (c.headers || {}));
 
    		// Do not pass null, in the absence of data, as this
@@ -702,7 +702,7 @@ YUI.add('io-base', function(Y) {
    				status = 0;
    			}
    		}
-   		catch(e) {
+   		catch(e1) {
    			status = 0;
    			Y.log('HTTP status unreadable. The transaction is: ' + o.id, 'warn', 'io');
    		}
@@ -788,16 +788,17 @@ YUI.add('io-form', function(Y) {
         * @method _serialize
         * @private
         * @static
-        * @param {object} o - HTML form object or id.
+        * @param {object} o - YUI form node or HTML form id.
         * @return string
         */
         _serialize: function(o) {
-            var f = (typeof o.id === 'object') ? o.id : Y.config.doc.getElementById(o.id),
-            eUC = encodeURIComponent,
-            data = [],
-            useDf = o.useDisabled || false,
-            item = 0,
-            e, n, v, d, i, ilen, j, jlen, o;
+			var id = (typeof o.id === 'string') ? o.id : o.id._userCfgs.node.id,
+            	f = Y.config.doc.getElementById(id),
+            	eUC = encodeURIComponent,
+            	data = [],
+            	useDf = o.useDisabled || false,
+            	item = 0,
+            	e, n, v, d, i, ilen, j, jlen, o;
 
             // Iterate over the form elements collection to construct the
             // label-value pairs.
@@ -1185,7 +1186,7 @@ YUI.add('io-queue', function(Y) {
 	var _q = new Y.Queue(),
 
    /**
-	* @description
+	* @description Reference to "io:complete" event handler.
 	*
 	* @property _e
 	* @private
