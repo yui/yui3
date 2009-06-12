@@ -12,42 +12,43 @@ YUI.add('node-screen', function(Y) {
 Y.each([
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
-     * @property winWidth
+     * @attribute winWidth
+     * @for Node
      * @type {Int}
      */
     'winWidth',
 
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
-     * @property winHeight
+     * @attribute winHeight
      * @type {Int}
      */
     'winHeight',
 
     /**
      * Document width 
-     * @property winHeight
+     * @attribute winHeight
      * @type {Int}
      */
     'docWidth',
 
     /**
      * Document height 
-     * @property docHeight
+     * @attribute docHeight
      * @type {Int}
      */
     'docHeight',
 
     /**
      * Amount page has been scroll vertically 
-     * @property docScrollX
+     * @attribute docScrollX
      * @type {Int}
      */
     'docScrollX',
 
     /**
      * Amount page has been scroll horizontally 
-     * @property docScrollY
+     * @attribute docScrollY
      * @type {Int}
      */
     'docScrollY'
@@ -110,6 +111,7 @@ Y.Node.importMethod(Y.DOM, [
  * Nodes must be part of the DOM tree to have page coordinates
  * (display:none or nodes not appended return false).
  * @method getXY
+ * @for Node
  * @return {Array} The XY position of the node
 */
     'getXY',
@@ -170,7 +172,8 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Returns a region object for the node 
- * @property region
+ * @attribute region
+ * @for Node
  * @type Node
  */
 Y.Node.ATTRS.region = {
@@ -189,7 +192,7 @@ Y.Node.ATTRS.region = {
     
 /**
  * Returns a region object for the node's viewport 
- * @property viewportRegion
+ * @attribute viewportRegion
  * @type Node
  */
 Y.Node.ATTRS.viewportRegion = {
@@ -204,6 +207,7 @@ Y.Node.importMethod(Y.DOM, 'inViewportRegion');
 /**
  * Compares the intersection of the node with another node or region 
  * @method intersect         
+ * @for Node
  * @param {Node|Object} node2 The node or region to compare with.
  * @param {Object} altRegion An alternate region to use (rather than this node's). 
  * @return {Object} An object representing the intersection of the regions. 

@@ -83,7 +83,7 @@
         <span class="o">}</span>
 
         <span class="c">// Validate</span>
-<span class="c"></span>        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isDate</span><span class="o">(</span><span class="nx">date</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">date</span> <span class="o">!=</span> <span class="s2">&quot;Invalid Date&quot;</span><span class="o">))</span> <span class="o">{</span> <span class="c">// Workaround for bug 2527965</span>
+<span class="c"></span>        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isDate</span><span class="o">(</span><span class="nx">date</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">date</span> <span class="o">!=</span> <span class="s2">&quot;Invalid Date&quot;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nb">isNaN</span><span class="o">(</span><span class="nx">date</span><span class="o">))</span> <span class="o">{</span> <span class="c">// Workaround for bug 2527965</span>
 <span class="c"></span>            <span class="k">return</span> <span class="nx">date</span><span class="o">;</span>
         <span class="o">}</span>
         <span class="k">else</span> <span class="o">{</span>

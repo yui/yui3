@@ -7,11 +7,11 @@ YUI.add('node-base', function(Y) {
  */    
 
 /**
- * The NodeList class provides a wrapper for manipulating DOM NodeLists.
- * NodeList properties can be accessed via the set/get methods.
- * Use Y.get() to retrieve NodeList instances.
+ * The Node class provides a wrapper for manipulating DOM Nodes.
+ * Node properties can be accessed via the set/get methods.
+ * Use Y.get() to retrieve Node instances.
  *
- * <strong>NOTE:</strong> NodeList properties are accessed using
+ * <strong>NOTE:</strong> Node properties are accessed using
  * the <code>set</code> and <code>get</code> methods.
  *
  * @class Node
@@ -124,6 +124,16 @@ Node.EXEC_SCRIPTS = true;
 
 Node._instances = {};
 
+/**
+ * Registers plugins to be instantiated at the class level (plugins 
+ * which should be plugged into every instance of Node by default).
+ *
+ * @method plug
+ * @static
+ *
+ * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
+ * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
+ */
 Node.plug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
@@ -131,6 +141,14 @@ Node.plug = function() {
     return Node;
 };
 
+/**
+ * Unregisters any class level plugins which have been registered by the Node
+ *
+ * @method unplug
+ * @static
+ *
+ * @param {Function | Array} plugin The plugin class, or an array of plugin classes
+ */
 Node.unplug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
@@ -222,6 +240,16 @@ Node.importMethod = function(host, name, altName) {
     }
 };
 
+/**
+ * Returns a single Node instance bound to the node or the
+ * first element matching the given selector.
+ * @method Y.get
+ * @static
+ * @param {String | HTMLElement} node a node or Selector 
+ * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
+ * @param {Boolean} restrict Whether or not the Node instance should be restricted to accessing
+ * its subtree only.
+ */
 Node.get = function(node, doc, restrict) {
     var instance = null;
 
@@ -248,11 +276,24 @@ Node.get = function(node, doc, restrict) {
     return instance;
 };
 
+/**
+ * Creates a new dom node using the provided markup string. 
+ * @method create
+ * @static
+ * @param {String} html The markup used to create the element
+ * @param {HTMLDocument} doc An optional document context 
+ */
 Node.create = function() {
     return Node.get(Y.DOM.create.apply(Y.DOM, arguments));
 };
 
 Node.ATTRS = {
+    /**
+     * Allows for getting and setting the text of an element.
+     * Formatting is preserved and special characters are treated literally.
+     * @attribute text
+     * @type String
+     */
     text: {
         getter: function() {
             return Y.DOM.getText(g_nodes[this[UID]]);
@@ -271,8 +312,9 @@ Node.ATTRS = {
     },
 
     /**
-     * Returns a NodeList instance. 
-     * @property children
+     * Returns a NodeList instance of all HTMLElement children.
+     * @readOnly
+     * @attribute children
      * @type NodeList
      */
     'children': {
@@ -314,6 +356,12 @@ Node.ATTRS = {
     },
 */
 
+    /**
+     * Whether or not this Node can traverse outside of its subtree.
+     * @attribute restricted
+     * @writeOnce
+     * @type Boolean
+     */
     restricted: {
         writeOnce: true,
         value: false
@@ -421,6 +469,12 @@ Y.mix(Node.prototype, {
         return this;
     },
 
+    /**
+     * Creates a new Node using the provided markup string. 
+     * @method create
+     * @param {String} html The markup used to create the element
+     * @param {HTMLDocument} doc An optional document context 
+     */
     create: Node.create,
 
     /**
@@ -548,7 +602,14 @@ Y.mix(Node.prototype, {
         return this;
     },
 
-    // TODO: safe enough? 
+    /**
+     * Invokes a method on the Node instance 
+     * @method invoke
+     * @return Whatever the underly method returns. 
+     * DOM Nodes and Collections return values
+     * are converted to Node/NodeList instances.
+     *
+     */
     invoke: function(method, a, b, c, d, e) {
         var node = g_nodes[this[UID]],
             ret;
@@ -566,6 +627,7 @@ Y.mix(Node.prototype, {
     },
 
     destructor: function() {
+        // TODO: What about shared instances?
         //var uid = this[UID];
 
         //delete g_nodes[uid];
@@ -580,7 +642,6 @@ Y.mix(Node.prototype, {
      * @param {Function} fn The function to apply 
      * @param {Object} context optional An optional context to apply the function with
      * Default context is the NodeList instance
-     * @return {NodeList} NodeList containing the updated collection 
      * @chainable
      */
     each: function(fn, context) {
@@ -622,7 +683,6 @@ Y.mix(Node.prototype, {
      * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    //TODO: restrict
     insert: function(content, where, execScripts) {
         if (content) {
             execScripts = (execScripts && Node.EXEC_SCRIPTS);
@@ -697,10 +757,7 @@ Y.get = Y.Node.get;
 /**
  * The NodeList class provides a wrapper for manipulating DOM NodeLists.
  * NodeList properties can be accessed via the set/get methods.
- * Use Y.get() to retrieve NodeList instances.
- *
- * <strong>NOTE:</strong> NodeList properties are accessed using
- * the <code>set</code> and <code>get</code> methods.
+ * Use Y.all() to retrieve NodeList instances.
  *
  * @class NodeList
  * @constructor
@@ -928,10 +985,22 @@ Y.mix(NodeList.prototype, {
         return Y.all(nodes);
     },
 
+    /**
+     * Creates a new NodeList containing all nodes at odd indices
+     * (zero-based index).
+     * @method odd
+     * @return {NodeList} NodeList containing the updated collection 
+     */
     odd: function() {
         return this.modulus(2, 1);
     },
 
+    /**
+     * Creates a new NodeList containing all nodes at even indices
+     * (zero-based index), including zero. 
+     * @method even
+     * @return {NodeList} NodeList containing the updated collection 
+     */
     even: function() {
         return this.modulus(2);
     },
@@ -960,6 +1029,16 @@ Y.mix(NodeList.prototype, {
         return this;
     },
 
+    /**
+     * Applies an event listens to each Node bound to the NodeList. 
+     * @method on
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance. 
+     * @return {Object} Returns an event handle that can later be use to detach(). 
+     * @see Event.on
+     */
     on: function(type, fn, context) {
         context = context || this;
         this.batch(function(node) {
@@ -967,6 +1046,18 @@ Y.mix(NodeList.prototype, {
         });
     },
 
+    /**
+     * Applies an event listens to each Node bound to the NodeList. 
+     * The handler is called only after all on() handlers are called
+     * and the event is not prevented.
+     * @method after
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance. 
+     * @return {Object} Returns an event handle that can later be use to detach(). 
+     * @see Event.on
+     */
     after: function(type, fn, context) {
         context = context || this;
         this.batch(function(node) {
@@ -983,6 +1074,10 @@ Y.mix(NodeList.prototype, {
         return g_nodelists[this[UID]].length;
     },
 
+    /** Called on each Node instance
+      * @get
+      * @see Node
+      */
     // one-off because we cant import from Node due to undefined return values
     get: function(name) {
         var ret = [],
@@ -1027,18 +1122,66 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-//    'after',
+    /**
+     * Called on each Node instance
+     * @append
+     * @see Node
+     */
     'append',
-    'create',
+
+    /**
+      * Called on each Node instance
+      * @detach
+      * @see Node
+      */
     'detach',
+    
+    /** Called on each Node instance
+      * @detachAll
+      * @see Node
+      */
     'detachAll',
+
+    /** Called on each Node instance
+      * @insert
+      * @see Node
+      */
     'insert',
-//    'on',
+
+    /** Called on each Node instance
+      * @plug
+      * @see Node
+      */
     'plug',
+
+    /** Called on each Node instance
+      * @prepend
+      * @see Node
+      */
     'prepend',
+
+    /** Called on each Node instance
+      * @remove
+      * @see Node
+      */
     'remove',
+
+    /** Called on each Node instance
+      * @set
+      * @see Node
+      */
     'set',
+
+    /** Called on each Node instance
+      * @setContent
+      * @see Node
+      */
     'setContent',
+
+    /** Called on each Node instance
+      * @unplug
+      * @see Node
+      */
     'unplug'
 ]);
 
@@ -1239,6 +1382,7 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
         /**
          * Determines whether the node has the given className.
          * @method hasClass
+         * @for Node
          * @param {String} className the class name to search for
          * @return {Boolean} Whether or not the node has the given class. 
          */
@@ -1322,6 +1466,7 @@ var methods = [
     /**
      * Returns the style's current value.
      * @method getStyle
+     * @for Node
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The current value of the style property for the element.
      */
@@ -1372,42 +1517,43 @@ YUI.add('node-screen', function(Y) {
 Y.each([
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
-     * @property winWidth
+     * @attribute winWidth
+     * @for Node
      * @type {Int}
      */
     'winWidth',
 
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
-     * @property winHeight
+     * @attribute winHeight
      * @type {Int}
      */
     'winHeight',
 
     /**
      * Document width 
-     * @property winHeight
+     * @attribute winHeight
      * @type {Int}
      */
     'docWidth',
 
     /**
      * Document height 
-     * @property docHeight
+     * @attribute docHeight
      * @type {Int}
      */
     'docHeight',
 
     /**
      * Amount page has been scroll vertically 
-     * @property docScrollX
+     * @attribute docScrollX
      * @type {Int}
      */
     'docScrollX',
 
     /**
      * Amount page has been scroll horizontally 
-     * @property docScrollY
+     * @attribute docScrollY
      * @type {Int}
      */
     'docScrollY'
@@ -1470,6 +1616,7 @@ Y.Node.importMethod(Y.DOM, [
  * Nodes must be part of the DOM tree to have page coordinates
  * (display:none or nodes not appended return false).
  * @method getXY
+ * @for Node
  * @return {Array} The XY position of the node
 */
     'getXY',
@@ -1530,7 +1677,8 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Returns a region object for the node 
- * @property region
+ * @attribute region
+ * @for Node
  * @type Node
  */
 Y.Node.ATTRS.region = {
@@ -1549,7 +1697,7 @@ Y.Node.ATTRS.region = {
     
 /**
  * Returns a region object for the node's viewport 
- * @property viewportRegion
+ * @attribute viewportRegion
  * @type Node
  */
 Y.Node.ATTRS.viewportRegion = {
@@ -1564,6 +1712,7 @@ Y.Node.importMethod(Y.DOM, 'inViewportRegion');
 /**
  * Compares the intersection of the node with another node or region 
  * @method intersect         
+ * @for Node
  * @param {Node|Object} node2 The node or region to compare with.
  * @param {Object} altRegion An alternate region to use (rather than this node's). 
  * @return {Object} An object representing the intersection of the regions. 

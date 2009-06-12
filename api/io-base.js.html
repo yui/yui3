@@ -279,7 +279,7 @@
    		<span class="c">/* End Configuration Properties */</span>
 
    		<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="nx">_readyState</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span> <span class="o">};</span>
-   		<span class="k">try</span> <span class="o">{</span> <span class="nx">_open</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">uri</span><span class="o">);</span> <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{}</span>
+   		<span class="k">try</span> <span class="o">{</span> <span class="nx">_open</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">uri</span><span class="o">);</span> <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">e0</span><span class="o">)</span> <span class="o">{}</span>
    		<span class="nx">_setHeaders</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">headers</span> <span class="o">||</span> <span class="o">{}));</span>
 
    		<span class="c">// Do not pass null, in the absence of data, as this</span>
@@ -749,7 +749,7 @@
    				<span class="nx">status</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
    			<span class="o">}</span>
    		<span class="o">}</span>
-   		<span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+   		<span class="k">catch</span><span class="o">(</span><span class="nx">e1</span><span class="o">)</span> <span class="o">{</span>
    			<span class="nx">status</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
    			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;HTTP status unreadable. The transaction is: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    		<span class="o">}</span>
