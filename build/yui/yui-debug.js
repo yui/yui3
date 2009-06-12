@@ -3025,7 +3025,12 @@ var GLOBAL_ENV = YUI.Env,
 
         console: {
             requires: [WIDGET, SUBSTITUTE],
-            skinnable: true
+            skinnable: true,
+            plugins: {
+                'console-filters': {
+                    skinnable: true
+                }
+            }
         },
         
         cookie: { 

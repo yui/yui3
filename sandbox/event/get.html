@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>GET Transaction</title>
+
+<style type="text/css">
+/*margin and padding on body element
+  can introduce errors in determining
+  element position and are not recommended;
+  we turn them off as a foundation for YUI
+  CSS treatments. */
+body {
+	margin:0;
+	padding:0;
+}
+</style>
+
+<link type="text/css" rel="stylesheet" href="../../build/cssfonts/fonts-min.css" />
+<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+
+
+<!--begin custom header content for this example-->
+
+<style type="text/css">
+#container li {margin-left:2em;}
+#container { background-color:#FFFFFF; border:1px dotted #666666; padding:1em; margin-bottom:1em;}
+</style>
+
+
+<!--end custom header content for this example-->
+
+</head>
+
+<body class=" yui-skin-sam">
+
+<h1>GET Transaction</h1>
+
+<div class="exampleIntro">
+	<p>This example demonstrates how to send HTTP GET requests, using IO.  One transaction uses Global event listeners to handle the transaction lifecycles and response.  The other transaction uses both Global and Transaction events.</p>
+
+</div>
+
+<!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+
+<div id="container">
+	<ul>
+    	<li>IO GET response data will appear here.</li>
+    </ul>
+</div>
+<form>
+	<input id="get1" type="button" value="GET with Global Listeners. " />
+	<input id="get2" type="button" value="GET with Global and Transaction Listeners" />
+
+</form>
+
+<script>
+YUI({base:"../../build/", filter: "debug", timeout: 10000}).use("io",
+
+	function(Y) {
+
+		//Get a reference to the DIV that we are using
+		//to report results.
+		var d = document.getElementById('container');
+
+		/* global listener object */
+		var gH = {
+			write: function(str, args) {
+					 d.innerHTML += "ID: " + str;
+					 if (args) {
+					 	d.innerHTML += " " + "The arguments are: " + args;
+					 }
+					 d.innerHTML += "<br>";
+				   },
+			start: function(id, args) {
+					 this.write(id + ": Global Event Start.", args);
+				   },
+			complete: function(id, o, args) {
+						this.write(id + ": Global Event Complete.  The status code is: " + o.status + ".", args);
+				   },
+			success: function(id, o, args) {
+					   this.write(id + ": Global Event Success.  The response is: " + o.responseText + ".", args);
+					 },
+			failure: function(id, o, args) {
+					   this.write(id + ": Global Event Failure.  The status text is: " + o.statusText + ".", args);
+					 },
+			end: function(id, args) {
+					 this.write(id + ": Global Event End.", args);
+			}
+		}
+		/* end global listener object */
+
+		/* transaction event object */
+		var tH = {
+			write: function(str, args) {
+					 d.innerHTML += "ID: " + str;
+					 if (args) {
+					 	d.innerHTML += " " + "The arguments are: " + args;
+					 }
+					 d.innerHTML += "<br>";
+				   },
+			start: function(id, args) {
+					 this.write(id + ": Transaction Event Start.", args.start);
+				   },
+			complete: function(id, o, args) {
+						this.write(id + ": Transaction Event Complete.  The status code is: " + o.status + ".", args.complete);
+				   },
+			success: function(id, o, args) {
+					   this.write(id + ": Transaction Event Success.  The response is: " + o.responseText + ".", args.success);
+					 },
+			failure: function(id, o, args) {
+					   this.write(id + ": Transaction Event Failure.  The status text is: " + o.statusText + ".", args.failure);
+					 },
+			end: function(id, args) {
+					 this.write(id + ": Transaction Event End.", args);
+			}
+		}
+		/* end transaction event object */
+
+		/* attach global listeners */
+		Y.on('io:start', gH.start, gH, 'global foo');
+		Y.on('io:complete', gH.complete, gH, 'global bar');
+		Y.on('io:success', gH.success, gH, 'global baz');
+		Y.on('io:failure', gH.failure, gH);
+		Y.on('io:end', gH.end, gH, 'global boo');
+		/* end global listener binding */
+
+		/* configuration object for transactions */
+		var cfg = {
+			on: {
+				start: tH.start,
+				complete: tH.complete,
+				success: tH.success,
+				failure: tH.failure,
+				end: tH.end
+			},
+			context: tH,
+			headers: { 'X-Transaction': 'GET Example'},
+			arguments: {
+					   start: 'foo',
+					   complete: 'bar',
+					   success: 'baz',
+					   failure: 'Oh no!',
+					   end: 'boo'
+					   }
+		};
+		/* end configuration object */
+
+		function call(e, b) {
+			if (b) {
+				Y.io('assets/get.php?user=YDN&allListeners=1', cfg);
+			}
+			else {
+				Y.io('assets/get.php?user=YDN&globalListeners=1');
+			}
+		}
+
+		Y.on('click', call, "#get1", this, false);
+		Y.on('click', call, "#get2", this, true);
+	});
+</script>
+<!--END SOURCE CODE FOR EXAMPLE =============================== -->
+
+</body>
+</html>
