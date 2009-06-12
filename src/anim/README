@@ -1,8 +1,8 @@
-**** version 3.0.0 PR2 ***
+version 3.0.0 beta 1
+- no change
 
-* easing attribute now accepts string ("easeOut" resolves to Y.Easing.easeOut)
+version 3.0.0 PR2
+- easing attribute now accepts string ("easeOut" resolves to Y.Easing.easeOut)
 
-
-**** version 3.0.0 PR1 ***
-
-* initial 3.0 revision
+version 3.0.0 PR1
+- initial 3.0 revision
