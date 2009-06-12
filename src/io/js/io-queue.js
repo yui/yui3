@@ -16,7 +16,7 @@
 	var _q = new Y.Queue(),
 
    /**
-	* @description
+	* @description Reference to "io:complete" event handler.
 	*
 	* @property _e
 	* @private

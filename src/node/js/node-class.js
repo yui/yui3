@@ -10,6 +10,7 @@
         /**
          * Determines whether the node has the given className.
          * @method hasClass
+         * @for Node
          * @param {String} className the class name to search for
          * @return {Boolean} Whether or not the node has the given class. 
          */

@@ -62,16 +62,17 @@
 <span class="c">        * @method _serialize</span>
 <span class="c">        * @private</span>
 <span class="c">        * @static</span>
-<span class="c">        * @param {object} o - HTML form object or id.</span>
+<span class="c">        * @param {object} o - YUI form node or HTML form id.</span>
 <span class="c">        * @return string</span>
 <span class="c">        */</span>
         <span class="nx">_serialize</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">),</span>
-            <span class="nx">eUC</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="o">,</span>
-            <span class="nx">data</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">useDf</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">useDisabled</span> <span class="o">||</span> <span class="kc">false</span><span class="o">,</span>
-            <span class="nx">item</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span>
-            <span class="nx">e</span><span class="o">,</span> <span class="nx">n</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">ilen</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">jlen</span><span class="o">,</span> <span class="nx">o</span><span class="o">;</span>
+			<span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">.</span><span class="nx">_userCfgs</span><span class="o">.</span><span class="nx">node</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span>
+            	<span class="nx">f</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">),</span>
+            	<span class="nx">eUC</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="o">,</span>
+            	<span class="nx">data</span> <span class="o">=</span> <span class="o">[],</span>
+            	<span class="nx">useDf</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">useDisabled</span> <span class="o">||</span> <span class="kc">false</span><span class="o">,</span>
+            	<span class="nx">item</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span>
+            	<span class="nx">e</span><span class="o">,</span> <span class="nx">n</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">ilen</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">jlen</span><span class="o">,</span> <span class="nx">o</span><span class="o">;</span>
 
             <span class="c">// Iterate over the form elements collection to construct the</span>
 <span class="c"></span>            <span class="c">// label-value pairs.</span>
