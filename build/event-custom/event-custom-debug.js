@@ -1610,7 +1610,7 @@ ET.prototype = {
             // f = (after) ? ce.after : ce.on;
             // handle = f.apply(ce, args);
 
-            handle = ce._on(fn, context, (arguments.length > 2) ? Y.Array(arguments, 2, true) : null, (after) ? 'after' : true);
+            handle = ce._on(fn, context, (arguments.length > 2) ? Y.Array(arguments, 3, true) : null, (after) ? 'after' : true);
         }
 
         if (detachcategory) {
