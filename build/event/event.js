@@ -1687,7 +1687,8 @@ var isString = Y.Lang.isString,
 
 		if (!node.compareTo(relatedTarget) && !node.contains(relatedTarget)) {
 
-			e.target = node;
+			e.container = e.currentTarget;
+			e.currentTarget = node;
 
 			Y.fire(eventName, e);
 			

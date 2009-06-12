@@ -53,7 +53,8 @@
 
 		<span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">relatedTarget</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">relatedTarget</span><span class="o">))</span> <span class="o">{</span>
 
-			<span class="nx">e</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
+			<span class="nx">e</span><span class="o">.</span><span class="nx">container</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">;</span>
+			<span class="nx">e</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
 
 			<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">eventName</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
 			
