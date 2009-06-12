@@ -305,17 +305,18 @@
 		<span class="o">}</span>
 
 		<span class="k">var</span> <span class="nx">format</span> <span class="o">=</span> <span class="nx">oConfig</span><span class="o">.</span><span class="nx">format</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">dateFormat</span><span class="o">,</span>
-			<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">oConfig</span><span class="o">.</span><span class="nx">locale</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span><span class="o">;</span>
+			<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">oConfig</span><span class="o">.</span><span class="nx">locale</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span><span class="o">,</span>
+			<span class="nx">LOCALE</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataType</span><span class="o">.</span><span class="nb">Date</span><span class="o">.</span><span class="nx">Locale</span><span class="o">;</span>
 
 		<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">sLocale</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/_/g</span><span class="o">,</span> <span class="s2">&quot;-&quot;</span><span class="o">);</span>
 		
 		<span class="c">// Make sure we have a definition for the requested locale, or default to en.</span>
-<span class="c"></span>		<span class="k">if</span><span class="o">(!</span><span class="nx">Dt</span><span class="o">.</span><span class="nx">Locale</span><span class="o">[</span><span class="nx">sLocale</span><span class="o">])</span> <span class="o">{</span>
+<span class="c"></span>		<span class="k">if</span><span class="o">(!</span><span class="nx">LOCALE</span><span class="o">[</span><span class="nx">sLocale</span><span class="o">])</span> <span class="o">{</span>
 			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;selected locale &quot;</span> <span class="o">+</span> <span class="nx">sLocale</span> <span class="o">+</span> <span class="s2">&quot; not found, trying alternatives&quot;</span><span class="o">,</span> <span class="s2">&quot;WARN&quot;</span><span class="o">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="o">);</span>
 			<span class="k">var</span> <span class="nx">tmpLocale</span> <span class="o">=</span> <span class="nx">sLocale</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/-[a-zA-Z]+$/</span><span class="o">,</span> <span class="s2">&quot;&quot;</span><span class="o">);</span>
-			<span class="k">if</span><span class="o">(</span><span class="nx">tmpLocale</span> <span class="k">in</span> <span class="nx">Dt</span><span class="o">.</span><span class="nx">Locale</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span><span class="o">(</span><span class="nx">tmpLocale</span> <span class="k">in</span> <span class="nx">LOCALE</span><span class="o">)</span> <span class="o">{</span>
 				<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">tmpLocale</span><span class="o">;</span>
-			<span class="o">}</span> <span class="k">else</span> <span class="k">if</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span> <span class="k">in</span> <span class="nx">Dt</span><span class="o">.</span><span class="nx">Locale</span><span class="o">)</span> <span class="o">{</span>
+			<span class="o">}</span> <span class="k">else</span> <span class="k">if</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span> <span class="k">in</span> <span class="nx">LOCALE</span><span class="o">)</span> <span class="o">{</span>
 				<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span><span class="o">;</span>
 			<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 				<span class="nx">sLocale</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="o">;</span>
@@ -323,7 +324,7 @@
 			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;falling back to &quot;</span> <span class="o">+</span> <span class="nx">sLocale</span><span class="o">,</span> <span class="s2">&quot;INFO&quot;</span><span class="o">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="o">);</span>
 		<span class="o">}</span>
 
-		<span class="k">var</span> <span class="nx">aLocale</span> <span class="o">=</span> <span class="nx">Dt</span><span class="o">.</span><span class="nx">Locale</span><span class="o">[</span><span class="nx">sLocale</span><span class="o">];</span>
+		<span class="k">var</span> <span class="nx">aLocale</span> <span class="o">=</span> <span class="nx">LOCALE</span><span class="o">[</span><span class="nx">sLocale</span><span class="o">];</span>
 
 		<span class="k">var</span> <span class="nx">replace_aggs</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">m0</span><span class="o">,</span> <span class="nx">m1</span><span class="o">)</span> <span class="o">{</span>
 			<span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">Dt</span><span class="o">.</span><span class="nx">aggregates</span><span class="o">[</span><span class="nx">m1</span><span class="o">];</span>

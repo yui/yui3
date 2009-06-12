@@ -17,69 +17,8 @@
 
 var L = Y.Lang,
     PREFIX_DELIMITER = ':',
-    CATEGORY_DELIMITER = '|',
+    DETACH_PREFIX_SPLITTER = /[,|]\s*/,
     AFTER_PREFIX = '~AFTER~',
-
-    /**
-     * If the instance has a prefix attribute and the
-     * event type is not prefixed, the instance prefix is
-     * applied to the supplied type.
-     * @method _getType
-     */
-    _getType = Y.cached(function(type, pre) {
-
-        if (!pre || !L.isString(type) || type.indexOf(PREFIX_DELIMITER) > -1) {
-            return type;
-        } 
-
-        return pre + PREFIX_DELIMITER + type;
-    }),
-
-    /**lt
-     * Returns an array with the detach key (if provided),
-     * and the prefixed event name from _getType
-     * Y.on('detachcategory, menu:click', fn)
-     * @method _parseType
-     * @private
-     */
-    _parseType = Y.cached(function(type, pre) {
-
-        var t = type, detachcategory, after, i, full_t;
-
-        if (!L.isString(t)) {
-            return t;
-        } 
-        
-        i = t.indexOf(AFTER_PREFIX);
-
-        if (i > -1) {
-            after = true;
-            t = t.substr(AFTER_PREFIX.length);
-            // Y.log(t);
-        }
-
-        // parts = t.split(DETACH_PREFIX_SPLITTER);
-        // if (parts.length > 1) {
-        //     detachcategory = parts[0];
-        //     t = parts[1];
-        //     if (t == '*') {
-        //          t = null;
-        //     }
-        // }
-        
-        i = t.indexOf(CATEGORY_DELIMITER);
-        if (i > -1) {
-            detachcategory = t.substr(0, (i));
-            t = t.substr(i+1);
-            if (t == '*') {
-                t = null;
-            }
-        }
-
-        full_t = _getType(t, pre);
-
-        return [detachcategory, full_t, after, t];
-    }),
 
     /**
      * An event target can fire events and be targeted by events.
@@ -95,21 +34,9 @@ var L = Y.Lang,
 
         // console.log('Event.Target constructor executed: ' + this._yuid);
 
-        var o = (L.isObject(opts)) ? opts : {};
+        var o = (L.isObject(opts)) ? opts : {},
 
-        this._yuievt = {
-
-            id: Y.guid(),
-
-            events: {},
-
-            targets: {},
-
-            config: o,
-
-            chain: ('chain' in o) ? o.chain : Y.config.chain,
-
-            defaults: {
+            defaults = {
                 context: o.context || this, 
                 host: this,
                 emitFacade: o.emitFacade,
@@ -117,13 +44,80 @@ var L = Y.Lang,
                 queuable: o.queuable,
                 broadcast: o.broadcast,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
-            }
+            };
+
+        this._yuievt = {
+            id: Y.guid(),
+            events: {},
+            targets: {},
+            config: o,
+            chain: ('chain' in o) ? o.chain : Y.config.chain,
+            defaults: defaults,
+            defaultkeys: Y.Object.keys(defaults)
         };
+
+
+        this._getType = Y.cached(function(type) {
+
+            var t = type,
+                pre = this._yuievt.config.prefix;
+
+            if (!L.isString(t)) {
+                return t;
+            } 
+
+            if (t == '*') {
+                return null;
+            }
+            
+            if (t.indexOf(PREFIX_DELIMITER) == -1 && pre) {
+                t = pre + PREFIX_DELIMITER + t;
+            }
+
+            return t;
+        });
+
+        /**
+         * Returns an array with the detach key (if provided),
+         * and the prefixed event name from _getType
+         * Y.on('detachcategory, menu:click', fn)
+         * @method _parseType
+         * @private
+         */
+        this._parseType = Y.cached(function(type) {
+
+            var t = type, parts, detachcategory, after, i, full_t,
+                pre = this._yuievt.config.prefix;
+
+            if (!L.isString(t)) {
+                return t;
+            } 
+            
+            i = t.indexOf(AFTER_PREFIX);
+
+            if (i > -1) {
+                after = true;
+                t = t.substr(AFTER_PREFIX.length);
+                // Y.log(t);
+            }
+
+            parts = t.split(DETACH_PREFIX_SPLITTER);
+
+            if (parts.length > 1) {
+                detachcategory = parts[0];
+                t = parts[1];
+            }
+
+            full_t = this._getType(t);
+
+            return [detachcategory, full_t, after, t];
+        });
 
     };
 
 
 ET.prototype = {
+
 
     /**
      * Subscribe to a custom event hosted by this object
@@ -132,9 +126,9 @@ ET.prototype = {
      * @param fn {Function} The callback
      * @return the event target or a detach handle per 'chain' config
      */
-    on: function(type, fn, context, x) {
+    on: function(type, fn, context) {
 
-        var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
+        var parts = this._parseType(type), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n;
 
@@ -203,7 +197,7 @@ ET.prototype = {
             //     return o.on.apply(o, a);
             // } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
             } else if ((!type) || (!adapt && Node && (shorttype in Node.DOM_EVENTS))) {
-                handle = Y.Event._attach(args);
+                handle = Y.Event.attach.apply(Y.Event, args);
             }
 
         } 
@@ -212,11 +206,11 @@ ET.prototype = {
 
             // Y.log('parts: ' + parts);
             ce     = this._yuievt.events[type] || this.publish(type);
-            // args   = Y.Array(arguments, 1, true);
-            // f = (after) ? ce.after : ce.on;
-            // handle = f.apply(ce, args);
+            args   = Y.Array(arguments, 1, true);
 
-            handle = ce._on(fn, context, (arguments.length > 3) ? Y.Array(arguments, 3, true) : null, (after) ? 'after' : true);
+            f = (after) ? ce.after : ce.on;
+
+            handle = f.apply(ce, args);
         }
 
         if (detachcategory) {
@@ -224,6 +218,7 @@ ET.prototype = {
             store[detachcategory] = store[detachcategory] || {};
             store[detachcategory][type] = store[detachcategory][type] || [];
             store[detachcategory][type].push(handle);
+
 
             // Y.log('storing: ' + key);
         }
@@ -259,7 +254,7 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
 
-        var parts = _parseType(type, this._yuievt.config.prefix), 
+        var parts = this._parseType(type), 
         detachcategory = L.isArray(parts) ? parts[0] : null,
         shorttype = (parts) ? parts[3] : null,
         handle, adapt, store = Y.Env.evt.handles, cat, args,
@@ -354,7 +349,7 @@ ET.prototype = {
      * @param type {string}   The type, or name of the event
      */
     detachAll: function(type) {
-        type = _getType(type, this._yuievt.config.prefix);
+        type = this._getType(type);
         return this.detach(type);
     },
 
@@ -429,9 +424,9 @@ ET.prototype = {
     publish: function(type, opts) {
         // this._yuievt.config.prefix
 
-        type = _getType(type, this._yuievt.config.prefix);
+        var events, ce, ret, o = opts || {}, meta = this._yuievt;
 
-        var events, ce, ret, o;
+        type = this._getType(type);
 
         if (L.isObject(type)) {
             ret = {};
@@ -442,7 +437,7 @@ ET.prototype = {
             return ret;
         }
 
-        events = this._yuievt.events; 
+        events = meta.events; 
         ce = events[type];
 
         //if (ce && !ce.configured) {
@@ -453,18 +448,21 @@ ET.prototype = {
             }
 
         } else {
-            o = (opts) ?  Y.mix(opts, this._yuievt.defaults) : this._yuievt.defaults;
             // apply defaults
+            Y.mix(o, meta.defaults, false, meta.defaultkeys);
 
             ce = new Y.CustomEvent(type, o);
 
             events[type] = ce;
 
+            // if (o.onSubscribeCallback) {
+            //     ce.subscribeEvent.on(o.onSubscribeCallback);
+            // }
         }
 
         // make sure we turn the broadcast flag off if this
         // event was published as a result of bubbling
-        if (opts instanceof Y.CustomEvent) {
+        if (typeof o == Y.CustomEvent) {
             events[type].broadcast = false;
         }
 
@@ -517,7 +515,7 @@ ET.prototype = {
             t = (typeIncluded) ? type : (type && type.type),
             ce, a, ret;
 
-        t = _getType(t, this._yuievt.config.prefix);
+        t = this._getType(t);
         ce = this.getEvent(t);
 
         // this event has not been published or subscribed to
@@ -526,11 +524,10 @@ ET.prototype = {
             // if this object has bubble targets, we need to publish the
             // event in order for it to bubble.
             if (this._yuievt.hasTargets) {
-                // ce = this.publish(t);
-                // ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
-                
-                a = (typeIncluded) ? arguments : Y.Array(arguments, 0, true).unshift(t);
-                return this.bubble(null, a, this);
+                ce = this.publish(t);
+                ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
+
+                return this.bubble(ce);
             }
 
             // otherwise there is nothing to be done
@@ -556,7 +553,7 @@ ET.prototype = {
      * @return {Event.Custom} the custom event or null
      */
     getEvent: function(type) {
-        type = _getType(type, this._yuievt.config.prefix);
+        type = this._getType(type);
         var e = this._yuievt.events;
         return (e && type in e) ? e[type] : null;
     },
@@ -567,19 +564,22 @@ ET.prototype = {
      * @param evt {Event.Custom} the custom event to propagate
      * @return {boolean} the aggregated return value from Event.Custom.fire
      */
-    bubble: function(evt, args, target) {
+    bubble: function(evt) {
 
         var targs = this._yuievt.targets, ret = true,
-            t, type, ce, i;
+            t, type, ce, targetProp, i;
 
-        if (!evt || (!evt.stopped && targs)) {
+        if (!evt.stopped && targs) {
 
             // Y.log('Bubbling ' + evt.type);
+
             for (i in targs) {
                 if (targs.hasOwnProperty(i)) {
+
                     t = targs[i]; 
-                    // type = evt && evt.type;
+                    type = evt.type;
                     ce = t.getEvent(type); 
+                    targetProp = evt.target || this;
                         
                     // if this event was not published on the bubble target,
                     // publish it with sensible default properties
@@ -587,33 +587,29 @@ ET.prototype = {
 
                         // publish the event on the bubble target using this event
                         // for its configuration
-                        // ce = t.publish(type, evt);
+                        ce = t.publish(type, evt);
+                        // ce.configured = false;
 
                         // set the host and context appropriately
-                        // ce.context = (evt.host === evt.context) ? t : evt.context;
-                        // ce.host = t;
+                        ce.context = (evt.host === evt.context) ? t : evt.context;
+                        ce.host = t;
 
                         // clear handlers if specified on this event
-                        // ce.defaultFn = null;
-                        // ce.preventedFn = null;
-                        // ce.stoppedFn = null;
+                        ce.defaultFn = null;
+                        ce.preventedFn = null;
+                        ce.stoppedFn = null;
+                    }
 
-                        if (t._yuievt.hasTargets) {
-                            t.bubble.call(t, evt, args, target);
-                        }
+                    ce.target = targetProp;
+                    ce.currentTarget = t;
 
-                    } else {
+                    // ce.target = evt.target;
 
-                        ce.target = target || (evt && evt.target) || this;
+                    ret = ret && ce.fire.apply(ce, evt.details);
 
-                        ce.currentTarget = t;
-
-                        ret = ret && ce.fire.apply(ce, args || evt.details);
-
-                        // stopPropagation() was called
-                        if (ce.stopped) {
-                            break;
-                        }
+                    // stopPropagation() was called
+                    if (ce.stopped) {
+                        break;
                     }
                 }
             }

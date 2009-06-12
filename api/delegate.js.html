@@ -66,7 +66,7 @@
 			<span class="nx">ename</span><span class="o">,</span>
 			<span class="nx">elements</span><span class="o">,</span>
 			<span class="nx">nElements</span><span class="o">,</span>
-			<span class="nx">element</span><span class="o">,</span>
+			<span class="nx">matched</span><span class="o">,</span>
 			<span class="nx">ev</span><span class="o">,</span>
 			<span class="nx">i</span><span class="o">;</span>
 
@@ -78,15 +78,15 @@
 				<span class="k">if</span> <span class="o">(</span><span class="nx">nElements</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
 					<span class="nx">i</span> <span class="o">=</span> <span class="nx">elements</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span>
 					<span class="k">do</span> <span class="o">{</span>
-						<span class="nx">element</span> <span class="o">=</span> <span class="nx">elements</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-	                    <span class="k">if</span> <span class="o">(</span><span class="nx">element</span> <span class="o">===</span> <span class="nx">target</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">target</span><span class="o">))</span> <span class="o">{</span>
+						<span class="nx">matched</span> <span class="o">=</span> <span class="nx">elements</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+	                    <span class="k">if</span> <span class="o">(</span><span class="nx">matched</span> <span class="o">===</span> <span class="nx">target</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">matched</span><span class="o">,</span> <span class="nx">target</span><span class="o">))</span> <span class="o">{</span>
 
                             <span class="k">if</span> <span class="o">(!</span><span class="nx">ev</span><span class="o">)</span> <span class="o">{</span>
                                 <span class="nx">ev</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOMEventFacade</span><span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">el</span><span class="o">);</span>
-                                <span class="nx">ev</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="nx">ev</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
+	                            <span class="nx">ev</span><span class="o">.</span><span class="nx">container</span> <span class="o">=</span> <span class="nx">ev</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">;</span>
                             <span class="o">}</span>
 
-	                        <span class="nx">ev</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">element</span><span class="o">);</span>
+	                        <span class="nx">ev</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">matched</span><span class="o">);</span>
 	                        <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ename</span><span class="o">,</span> <span class="nx">ev</span><span class="o">);</span>
 	                    <span class="o">}</span>
 					<span class="o">}</span>
