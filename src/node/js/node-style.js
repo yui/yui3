@@ -10,6 +10,7 @@ var methods = [
     /**
      * Returns the style's current value.
      * @method getStyle
+     * @for Node
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The current value of the style property for the element.
      */

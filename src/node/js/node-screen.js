@@ -10,42 +10,43 @@
 Y.each([
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
-     * @property winWidth
+     * @attribute winWidth
+     * @for Node
      * @type {Int}
      */
     'winWidth',
 
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
-     * @property winHeight
+     * @attribute winHeight
      * @type {Int}
      */
     'winHeight',
 
     /**
      * Document width 
-     * @property winHeight
+     * @attribute winHeight
      * @type {Int}
      */
     'docWidth',
 
     /**
      * Document height 
-     * @property docHeight
+     * @attribute docHeight
      * @type {Int}
      */
     'docHeight',
 
     /**
      * Amount page has been scroll vertically 
-     * @property docScrollX
+     * @attribute docScrollX
      * @type {Int}
      */
     'docScrollX',
 
     /**
      * Amount page has been scroll horizontally 
-     * @property docScrollY
+     * @attribute docScrollY
      * @type {Int}
      */
     'docScrollY'
@@ -108,6 +109,7 @@ Y.Node.importMethod(Y.DOM, [
  * Nodes must be part of the DOM tree to have page coordinates
  * (display:none or nodes not appended return false).
  * @method getXY
+ * @for Node
  * @return {Array} The XY position of the node
 */
     'getXY',
