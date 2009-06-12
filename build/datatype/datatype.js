@@ -185,7 +185,7 @@ Y.mix(Y.namespace("DataType.Date"), {
         }
 
         // Validate
-        if(LANG.isDate(date) && (date != "Invalid Date")) { // Workaround for bug 2527965
+        if(LANG.isDate(date) && (date != "Invalid Date") && !isNaN(date)) { // Workaround for bug 2527965
             return date;
         }
         else {
