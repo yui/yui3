@@ -85,7 +85,9 @@
     <span class="nx">C_BODY</span>       <span class="o">=</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Console</span><span class="o">.</span><span class="nx">CHROME_CLASSES</span><span class="o">.</span><span class="nx">console_bd_class</span><span class="o">,</span>
     <span class="nx">C_FOOT</span>       <span class="o">=</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Console</span><span class="o">.</span><span class="nx">CHROME_CLASSES</span><span class="o">.</span><span class="nx">console_ft_class</span><span class="o">,</span>
 
-    <span class="nx">SEL_CHECK</span>    <span class="o">=</span> <span class="s1">&#39;input[type=checkbox].&#39;</span><span class="o">;</span>
+    <span class="nx">SEL_CHECK</span>    <span class="o">=</span> <span class="s1">&#39;input[type=checkbox].&#39;</span><span class="o">,</span>
+    
+    <span class="nx">isString</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">;</span>
 
 <span class="k">function</span> <span class="nx">ConsoleFilters</span><span class="o">()</span> <span class="o">{</span>
     <span class="nx">ConsoleFilters</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span><span class="nx">arguments</span><span class="o">);</span>
@@ -421,7 +423,7 @@
         <span class="o">}</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">cat</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">e</span><span class="o">.</span><span class="nx">fromUI</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetCheckbox</span><span class="o">(</span><span class="nx">CATEGORY</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">after</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetCheckbox</span><span class="o">(</span><span class="nx">CATEGORY</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">after</span><span class="o">[</span><span class="nx">cat</span><span class="o">]);</span>
         <span class="o">}</span>
     <span class="o">},</span>
 
@@ -447,7 +449,7 @@
         <span class="o">}</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">src</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">e</span><span class="o">.</span><span class="nx">fromUI</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetCheckbox</span><span class="o">(</span><span class="nx">SOURCE</span><span class="o">,</span> <span class="nx">src</span><span class="o">,</span> <span class="nx">after</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetCheckbox</span><span class="o">(</span><span class="nx">SOURCE</span><span class="o">,</span> <span class="nx">src</span><span class="o">,</span> <span class="nx">after</span><span class="o">[</span><span class="nx">src</span><span class="o">]);</span>
         <span class="o">}</span>
     <span class="o">},</span>
 
@@ -588,7 +590,7 @@
 <span class="c">     * @param cat* {String} 1..n categories to filter out of the UI</span>
 <span class="c">     */</span>
     <span class="nx">hideCategory</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">cat</span><span class="o">,</span> <span class="nx">multiple</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">multiple</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">isString</span><span class="o">(</span><span class="nx">multiple</span><span class="o">))</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">.</span><span class="nx">callee</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">CATEGORY_DOT</span> <span class="o">+</span> <span class="nx">cat</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
@@ -604,7 +606,7 @@
 <span class="c">     * @param cat* {String} 1..n categories to allow to display in the UI</span>
 <span class="c">     */</span>
     <span class="nx">showCategory</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">cat</span><span class="o">,</span> <span class="nx">multiple</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">multiple</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">isString</span><span class="o">(</span><span class="nx">multiple</span><span class="o">))</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">.</span><span class="nx">callee</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">CATEGORY_DOT</span> <span class="o">+</span> <span class="nx">cat</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
@@ -620,10 +622,10 @@
 <span class="c">     * @param src* {String} 1..n sources to filter out of the UI</span>
 <span class="c">     */</span>
     <span class="nx">hideSource</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">src</span><span class="o">,</span> <span class="nx">multiple</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">multiple</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">isString</span><span class="o">(</span><span class="nx">multiple</span><span class="o">))</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">.</span><span class="nx">callee</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">CATEGORY_DOT</span> <span class="o">+</span> <span class="nx">src</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">SOURCE_DOT</span> <span class="o">+</span> <span class="nx">src</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">},</span>
 
@@ -636,10 +638,10 @@
 <span class="c">     * @param cat* {String} 1..n sources to allow to display in the UI</span>
 <span class="c">     */</span>
     <span class="nx">showSource</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">src</span><span class="o">,</span> <span class="nx">multiple</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">multiple</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">isString</span><span class="o">(</span><span class="nx">multiple</span><span class="o">))</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">.</span><span class="nx">callee</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">CATEGORY_DOT</span> <span class="o">+</span> <span class="nx">src</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">SOURCE_DOT</span> <span class="o">+</span> <span class="nx">src</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">},</span>
 

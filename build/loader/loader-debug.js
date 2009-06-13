@@ -317,7 +317,12 @@ var GLOBAL_ENV = YUI.Env,
 
         console: {
             requires: [WIDGET, SUBSTITUTE],
-            skinnable: true
+            skinnable: true,
+            plugins: {
+                'console-filters': {
+                    skinnable: true
+                }
+            }
         },
         
         cookie: { 
@@ -364,13 +369,13 @@ var GLOBAL_ENV = YUI.Env,
                 'datasource-polling': {
                     requires: [DATASOURCELOCAL]
                 },
-                'datasource-scriptnode': {
+                'datasource-get': {
                     requires: [DATASOURCELOCAL, GET]
                 },
                 'datasource-textschema': {
                     requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-text']
                 },
-                'datasource-xhr': {
+                'datasource-io': {
                     requires: [DATASOURCELOCAL, IOBASE]
                 },
                 'datasource-xmlschema': {
@@ -1028,16 +1033,16 @@ Y.Loader.prototype = {
      * @param mod {string} optional: the name of a module to skin
      * @return {string} the full skin module name
      */
-    formatSkin: function(skin, mod) {
+    formatSkin: Y.cached(function(skin, mod) {
         var s = this.SKIN_PREFIX + skin;
         if (mod) {
             s = s + "-" + mod;
         }
 
         return s;
-    },
+    }),
 
-    /**
+    /*
      * Reverses <code>formatSkin</code>, providing the skin name and
      * module name if the string matches the pattern for skins.
      * @method parseSkin
@@ -1045,16 +1050,18 @@ Y.Loader.prototype = {
      * @return {skin: string, module: string} the parsed skin name 
      * and module name, or null if the supplied string does not match
      * the skin pattern
+     * 
+     * This isn't being used at the moment
+     *
      */
-    parseSkin: function(mod) {
-        
-        if (mod.indexOf(this.SKIN_PREFIX) === 0) {
-            var a = mod.split("-");
-            return {skin: a[1], module: a[2]};
-        } 
-
-        return null;
-    },
+    // parseSkin: function(mod) {
+    //     
+    //     if (mod.indexOf(this.SKIN_PREFIX) === 0) {
+    //         var a = mod.split("-");
+    //         return {skin: a[1], module: a[2]};
+    //     } 
+    //     return null;
+    // },
 
     /**
      * Adds the skin def to the module info

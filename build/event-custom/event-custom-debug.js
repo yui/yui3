@@ -445,6 +445,7 @@ var AFTER = 'after',
         'broadcast',
         'bubbles',
         'context',
+        'contextFn',
         'configured',
         'currentTarget',
         'defaultFn',
@@ -716,17 +717,9 @@ Y.CustomEvent.prototype = {
             Y.error("Invalid callback for CE: " + this.type);
         }
 
-        // var se = this.subscribeEvent, s;
-        // if (se) {
-        //     se.fire.apply(se, args);
-        // }
-
         var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-
-            // this._notify(s);
-            
             Y.later(0, this, this._notify, s);
         }
 
@@ -751,7 +744,8 @@ Y.CustomEvent.prototype = {
      * @deprecated use on
      */
     subscribe: function(fn, context) {
-        return this._on(fn, context, arguments, true);
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
+        return this._on(fn, context, a, true);
     },
 
     /**
@@ -762,7 +756,8 @@ Y.CustomEvent.prototype = {
      * chainable event target depending on the 'chain' config.
      */
     on: function(fn, context) {
-        return this._on(fn, context, arguments, true);
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
+        return this._on(fn, context, a, true);
     },
 
     /**
@@ -775,7 +770,8 @@ Y.CustomEvent.prototype = {
      * chainable event target depending on the 'chain' config.
      */
     after: function(fn, context) {
-        return this._on(fn, context, arguments, AFTER);
+        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
+        return this._on(fn, context, a, AFTER);
     },
 
     /**
@@ -877,7 +873,7 @@ Y.CustomEvent.prototype = {
 
         this.log(this.type + "->" + ": " +  s);
 
-        var ret, ct;
+        var ret;
 
         // emit an EventFacade if this is that sort of event
         if (this.emitFacade) {
@@ -896,16 +892,7 @@ Y.CustomEvent.prototype = {
             }
         }
 
-        // The default context should be the object/element that
-        // the listener was bound to.
-        
-        // @TODO this breaks some expectations documented here:
-        // http://yuilibrary.com/projects/yui3/ticket/2527854
-        // confirm that their isn't a case that the bubbled
-        // context should be used.
-        // ct = (args && Y.Lang.isObject(args[0]) && args[0].currentTarget);
-
-        ret = s.notify(ct || this.context, args, this);
+        ret = s.notify(args, this);
 
         if (false === ret || this.stopped > 1) {
             this.log(this.type + " cancelled by subscriber");
@@ -1296,21 +1283,20 @@ Y.Subscriber = function(fn, context, args) {
      */
     this.id = Y.stamp(this);
 
-    /**
-     * Optional additional arguments supplied to subscribe().  If present,
-     * these will be appended to the arguments supplied to fire()
-     * @property args
-     * @type Array
-     */
-    // this.args = args;
-
-    /**
+    /*
      * }
      * fn bound to obj with additional arguments applied via Y.rbind
      * @property wrappedFn
      * @type Function
      */
-    this.wrappedFn = fn;
+    // this.wrappedFn = fn;
+
+    /**
+     * Additional arguments to propagate to the subscriber
+     * @property args
+     * @type Array
+     */
+    this.args = args;
 
     /**
      * Custom events for a given fire transaction.
@@ -1319,45 +1305,58 @@ Y.Subscriber = function(fn, context, args) {
      */
     this.events = null;
     
-    if (context) {
-        this.wrappedFn = Y.rbind.apply(Y, args);
-    }
+    // if (context) {
+    //     this.wrappedFn = Y.rbind.apply(Y, args);
+    // }
     
+
 };
 
 Y.Subscriber.prototype = {
 
+    _notify: function(c, args, ce) {
+        var a = this.args, ret;
+        switch (ce.signature) {
+            case 0:
+                ret = this.fn.call(c, ce.type, args, c);
+                break;
+            case 1:
+                ret = this.fn.call(c, args[0] || null, c);
+                break;
+            default:
+                if (a || args) {
+                    args = args || [];
+                    a = (a) ? args.concat(a) : args;
+                    ret = this.fn.apply(c, a);
+                } else {
+                    ret = this.fn.call(c);
+                }
+        }
+
+        return ret;
+    },
+
     /**
      * Executes the subscriber.
      * @method notify
-     * @param defaultContext The execution context if not overridden
-     * by the subscriber
      * @param args {Array} Arguments array for the subscriber
      * @param ce {Event.Custom} The custom event that sent the notification
      */
-    notify: function(defaultContext, args, ce) {
-        var c = this.context || defaultContext, ret = true,
+    notify: function(args, ce) {
+        var c = this.context,
+            ret = true;
 
-            f = function() {
-                switch (ce.signature) {
-                    case 0:
-                        ret = this.fn.call(c, ce.type, args, this.context);
-                        break;
-                    case 1:
-                        ret = this.fn.call(c, args[0] || null, this.context);
-                        break;
-                    default:
-                        ret = this.wrappedFn.apply(c, args || []);
-                }
-            };
+        if (!c) {
+            c = (ce.contextFn) ? ce.contextFn() : ce.context;
+        }
 
         // Ease debugging by only catching errors if we will not re-throw
         // them.
         if (Y.config.throwFail) {
-            f.call(this);
+            ret = this._notify(c, args, ce);
         } else {
             try {
-                f.call(this);
+                ret = this._notify(c, args, ce);
             } catch(e) {
                 Y.error(this + ' failed: ' + e.message, e);
             }
@@ -1412,7 +1411,6 @@ Y.Subscriber.prototype = {
 
 var L = Y.Lang,
     PREFIX_DELIMITER = ':',
-    DETACH_PREFIX_SPLITTER = /[,|]\s*/,
     CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
 
@@ -1440,7 +1438,7 @@ var L = Y.Lang,
      */
     _parseType = Y.cached(function(type, pre) {
 
-        var t = type, parts, detachcategory, after, i, full_t;
+        var t = type, detachcategory, after, i, full_t;
 
         if (!L.isString(t)) {
             return t;
@@ -1454,22 +1452,23 @@ var L = Y.Lang,
             // Y.log(t);
         }
 
-        parts = t.split(DETACH_PREFIX_SPLITTER);
-
-        if (parts.length > 1) {
-            detachcategory = parts[0];
-            t = parts[1];
+        // parts = t.split(DETACH_PREFIX_SPLITTER);
+        // if (parts.length > 1) {
+        //     detachcategory = parts[0];
+        //     t = parts[1];
+        //     if (t == '*') {
+        //          t = null;
+        //     }
+        // }
+        
+        i = t.indexOf(CATEGORY_DELIMITER);
+        if (i > -1) {
+            detachcategory = t.substr(0, (i));
+            t = t.substr(i+1);
             if (t == '*') {
-                 t = null;
+                t = null;
             }
         }
-        
-        // i = t.indexOf(CATEGORY_DELIMITER);
-        // if (i > -1) {
-        //     detachcategory = t.substr(0, AFTER_PREFIX.length-1);
-        //     t = t.substr(AFTER_PREFIX.length);
-        //     // Y.log(t);
-        // }
 
         full_t = _getType(t, pre);
 
@@ -1527,7 +1526,7 @@ ET.prototype = {
      * @param fn {Function} The callback
      * @return the event target or a detach handle per 'chain' config
      */
-    on: function(type, fn, context) {
+    on: function(type, fn, context, x) {
 
         var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
@@ -1607,11 +1606,11 @@ ET.prototype = {
 
             // Y.log('parts: ' + parts);
             ce     = this._yuievt.events[type] || this.publish(type);
-            args   = Y.Array(arguments, 1, true);
+            // args   = Y.Array(arguments, 1, true);
+            // f = (after) ? ce.after : ce.on;
+            // handle = f.apply(ce, args);
 
-            f = (after) ? ce.after : ce.on;
-
-            handle = f.apply(ce, args);
+            handle = ce._on(fn, context, (arguments.length > 3) ? Y.Array(arguments, 3, true) : null, (after) ? 'after' : true);
         }
 
         if (detachcategory) {
@@ -1619,7 +1618,6 @@ ET.prototype = {
             store[detachcategory] = store[detachcategory] || {};
             store[detachcategory][type] = store[detachcategory][type] || [];
             store[detachcategory][type].push(handle);
-
 
             // Y.log('storing: ' + key);
         }
@@ -1827,7 +1825,7 @@ ET.prototype = {
 
         type = _getType(type, this._yuievt.config.prefix);
 
-        var events, ce, ret, o = opts || {};
+        var events, ce, ret, o;
 
         if (L.isObject(type)) {
             ret = {};
@@ -1849,21 +1847,18 @@ ET.prototype = {
             }
 
         } else {
+            o = (opts) ?  Y.mix(opts, this._yuievt.defaults) : this._yuievt.defaults;
             // apply defaults
-            Y.mix(o, this._yuievt.defaults);
 
             ce = new Y.CustomEvent(type, o);
 
             events[type] = ce;
 
-            // if (o.onSubscribeCallback) {
-            //     ce.subscribeEvent.on(o.onSubscribeCallback);
-            // }
         }
 
         // make sure we turn the broadcast flag off if this
         // event was published as a result of bubbling
-        if (o instanceof Y.CustomEvent) {
+        if (opts instanceof Y.CustomEvent) {
             events[type].broadcast = false;
         }
 
@@ -1925,10 +1920,11 @@ ET.prototype = {
             // if this object has bubble targets, we need to publish the
             // event in order for it to bubble.
             if (this._yuievt.hasTargets) {
-                ce = this.publish(t);
-                ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
-
-                return this.bubble(ce);
+                // ce = this.publish(t);
+                // ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
+                
+                a = (typeIncluded) ? arguments : Y.Array(arguments, 0, true).unshift(t);
+                return this.bubble(null, a, this);
             }
 
             // otherwise there is nothing to be done
@@ -1965,22 +1961,19 @@ ET.prototype = {
      * @param evt {Event.Custom} the custom event to propagate
      * @return {boolean} the aggregated return value from Event.Custom.fire
      */
-    bubble: function(evt) {
+    bubble: function(evt, args, target) {
 
         var targs = this._yuievt.targets, ret = true,
-            t, type, ce, targetProp, i;
+            t, type, ce, i;
 
-        if (!evt.stopped && targs) {
+        if (!evt || (!evt.stopped && targs)) {
 
             // Y.log('Bubbling ' + evt.type);
-
             for (i in targs) {
                 if (targs.hasOwnProperty(i)) {
-
                     t = targs[i]; 
-                    type = evt.type;
+                    // type = evt && evt.type;
                     ce = t.getEvent(type); 
-                    targetProp = evt.target || this;
                         
                     // if this event was not published on the bubble target,
                     // publish it with sensible default properties
@@ -1988,29 +1981,33 @@ ET.prototype = {
 
                         // publish the event on the bubble target using this event
                         // for its configuration
-                        ce = t.publish(type, evt);
-                        // ce.configured = false;
+                        // ce = t.publish(type, evt);
 
                         // set the host and context appropriately
-                        ce.context = (evt.host === evt.context) ? t : evt.context;
-                        ce.host = t;
+                        // ce.context = (evt.host === evt.context) ? t : evt.context;
+                        // ce.host = t;
 
                         // clear handlers if specified on this event
-                        ce.defaultFn = null;
-                        ce.preventedFn = null;
-                        ce.stoppedFn = null;
-                    }
+                        // ce.defaultFn = null;
+                        // ce.preventedFn = null;
+                        // ce.stoppedFn = null;
 
-                    ce.target = targetProp;
-                    ce.currentTarget = t;
+                        if (t._yuievt.hasTargets) {
+                            t.bubble.call(t, evt, args, target);
+                        }
 
-                    // ce.target = evt.target;
+                    } else {
 
-                    ret = ret && ce.fire.apply(ce, evt.details);
+                        ce.target = target || (evt && evt.target) || this;
 
-                    // stopPropagation() was called
-                    if (ce.stopped) {
-                        break;
+                        ce.currentTarget = t;
+
+                        ret = ret && ce.fire.apply(ce, args || evt.details);
+
+                        // stopPropagation() was called
+                        if (ce.stopped) {
+                            break;
+                        }
                     }
                 }
             }

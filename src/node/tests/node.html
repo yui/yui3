@@ -294,6 +294,14 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             Assert.areEqual('item 1', Y.Lang.trim(nodes.get('children')[0].get('text')[0]), 'nodes.get("children")[0].get("text")[0]');
 
+            Assert.areEqual('item 1', Y.Lang.trim(nodes.get('children')[0].get('text')[0]), 'nodes.get("children")[0].get("text")[0]');
+
+            var textContainer = Y.Node.create('<div>foo</div>');
+            Assert.areEqual('foo', textContainer.get('text'), "textContainer.get('text')");
+
+            textContainer.set('text', 'bar');
+            Assert.areEqual('bar', textContainer.get('text'), "textContainer.set('text', 'bar')");
+            
             ArrayAssert.itemsAreEqual($('#test-select option'),
                     Y.NodeList.getDOMNodes(Y.get('#test-select').get('options')),
                     'Y.get("#test-select.get("options")');
@@ -337,6 +345,20 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             var html = '<li><a href=""></a></li>';
             node = Y.Node.create(html);
             Assert.areEqual('A', node.get('firstChild.tagName'), html);
+
+            html = 'baz';
+            node = Y.Node.create(html);
+            Assert.areEqual('3', node.get('nodeType'), "node.get('nodeType')");
+            Assert.areEqual('3', Y.Node.getDOMNode(node).nodeType, "Y.Node.getDOMNode(node).nodeType");
+
+            html = '<div>bar</div>';
+            node = Y.Node.create(html);
+            Assert.areEqual('3', node.get('firstChild.nodeType'), "node.get('firstChild.nodeType')");
+            Assert.areEqual('3', node.get('firstChild').get('nodeType'), "node.get('firstChild').get('nodeType')");
+            Assert.areEqual('3', Y.Node.getDOMNode(node.get('firstChild')).nodeType, "Y.Node.getDOMNode(node.get('firstChild')).nodeType");
+            node.insertBefore(Y.Node.create('foo'), node.get('firstChild'));
+            Assert.areEqual('foobar', node.get('innerHTML'), "node.get('innerHTML')");
+            Assert.areEqual('foobar', node.get('text'), "node.get('text')");
         },
 
         test_setter: function() {

@@ -1,3 +1,4 @@
+(function(Y) {
 
 /**
  * Adds position and region management functionality to DOM.
@@ -6,23 +7,15 @@
  * @for DOM
  */
 
-var OFFSET_TOP = 'offsetTop',
-
-    DOCUMENT_ELEMENT = 'documentElement',
+var DOCUMENT_ELEMENT = 'documentElement',
     COMPAT_MODE = 'compatMode',
-    OFFSET_LEFT = 'offsetLeft',
-    OFFSET_PARENT = 'offsetParent',
     POSITION = 'position',
     FIXED = 'fixed',
     RELATIVE = 'relative',
     LEFT = 'left',
     TOP = 'top',
-    SCROLL_LEFT = 'scrollLeft',
-    SCROLL_TOP = 'scrollTop',
     _BACK_COMPAT = 'BackCompat',
     MEDIUM = 'medium',
-    HEIGHT = 'height',
-    WIDTH = 'width',
     BORDER_LEFT_WIDTH = 'borderLeftWidth',
     BORDER_TOP_WIDTH = 'borderTopWidth',
     GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
@@ -39,7 +32,7 @@ Y.mix(Y.DOM, {
 
      */
     winHeight: function(node) {
-        var h = Y.DOM._getWinSize(node)[HEIGHT];
+        var h = Y.DOM._getWinSize(node).height;
         Y.log('winHeight returning ' + h, 'info', 'dom-screen');
         return h;
     },
@@ -50,7 +43,7 @@ Y.mix(Y.DOM, {
 
      */
     winWidth: function(node) {
-        var w = Y.DOM._getWinSize(node)[WIDTH];
+        var w = Y.DOM._getWinSize(node).width;
         Y.log('winWidth returning ' + w, 'info', 'dom-screen');
         return w;
     },
@@ -61,9 +54,9 @@ Y.mix(Y.DOM, {
 
      */
     docHeight:  function(node) {
-        var h = Y.DOM._getDocSize(node)[HEIGHT];
+        var h = Y.DOM._getDocSize(node).height;
         Y.log('docHeight returning ' + h, 'info', 'dom-screen');
-        return Math.max(h, Y.DOM._getWinSize(node)[HEIGHT]);
+        return Math.max(h, Y.DOM._getWinSize(node).height);
     },
 
     /**
@@ -71,9 +64,9 @@ Y.mix(Y.DOM, {
      * @method docWidth
      */
     docWidth:  function(node) {
-        var w = Y.DOM._getDocSize(node)[WIDTH];
+        var w = Y.DOM._getDocSize(node).width;
         Y.log('docWidth returning ' + w, 'info', 'dom-screen');
-        return Math.max(w, Y.DOM._getWinSize(node)[WIDTH]);
+        return Math.max(w, Y.DOM._getWinSize(node).width);
     },
 
     /**
@@ -82,7 +75,7 @@ Y.mix(Y.DOM, {
      */
     docScrollX: function(node) {
         var doc = Y.DOM._getDoc(node);
-        return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_LEFT], doc.body[SCROLL_LEFT]);
+        return Math.max(doc[DOCUMENT_ELEMENT].scrollLeft, doc.body.scrollLeft);
     },
 
     /**
@@ -91,7 +84,7 @@ Y.mix(Y.DOM, {
      */
     docScrollY:  function(node) {
         var doc = Y.DOM._getDoc(node);
-        return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_TOP], doc.body[SCROLL_TOP]);
+        return Math.max(doc[DOCUMENT_ELEMENT].scrollTop, doc.body.scrollTop);
     },
 
     /**
@@ -110,8 +103,10 @@ Y.mix(Y.DOM, {
                 var xy = null,
                     scrollLeft,
                     scrollTop,
-                    pos,
                     box,
+                    off1, off2,
+                    bLeft, bTop,
+                    mode,
                     doc;
 
                 if (node) {
@@ -120,12 +115,13 @@ Y.mix(Y.DOM, {
                         scrollTop = Y.DOM.docScrollY(node);
                         box = node[GET_BOUNDING_CLIENT_RECT]();
                         doc = Y.DOM._getDoc(node);
-                        xy = [box[LEFT], box[TOP]];
+                        xy = [box.left, box.top];
 
                             if (Y.UA.ie) {
-                                var off1 = 2, off2 = 2,
-                                mode = doc[COMPAT_MODE],
-                                bLeft = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH),
+                                off1 = 2;
+                                off2 = 2;
+                                mode = doc[COMPAT_MODE];
+                                bLeft = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH);
                                 bTop = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_TOP_WIDTH);
 
                                 if (Y.UA.ie === 6) {
@@ -166,19 +162,19 @@ Y.mix(Y.DOM, {
                     parentNode,
                     bCheck,
                     scrollTop,
-                    scrolLLeft;
+                    scrollLeft;
 
                 if (node) {
                     if (Y.DOM.inDoc(node)) {
-                        xy = [node[OFFSET_LEFT], node[OFFSET_TOP]];
+                        xy = [node.offsetLeft, node.offsetTop];
                         parentNode = node;
                         // TODO: refactor with !! or just falsey
                         bCheck = ((Y.UA.gecko || Y.UA.webkit > 519) ? true : false);
 
                         // TODO: worth refactoring for TOP/LEFT only?
-                        while ((parentNode = parentNode[OFFSET_PARENT])) {
-                            xy[0] += parentNode[OFFSET_LEFT];
-                            xy[1] += parentNode[OFFSET_TOP];
+                        while ((parentNode = parentNode.offsetParent)) {
+                            xy[0] += parentNode.offsetLeft;
+                            xy[1] += parentNode.offsetTop;
                             if (bCheck) {
                                 xy = Y.DOM._calcBorders(parentNode, xy);
                             }
@@ -189,8 +185,8 @@ Y.mix(Y.DOM, {
                             parentNode = node;
 
                             while ((parentNode = parentNode.parentNode)) {
-                                scrollTop = parentNode[SCROLL_TOP];
-                                scrollLeft = parentNode[SCROLL_LEFT];
+                                scrollTop = parentNode.scrollTop;
+                                scrollLeft = parentNode.scrollLeft;
 
                                 //Firefox does something funky with borders when overflow is not visible.
                                 if (Y.UA.gecko && (Y.DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
@@ -235,14 +231,14 @@ Y.mix(Y.DOM, {
             if ( isNaN(xy[0]) ) { // in case of 'auto'
                 xy[0] = parseInt(Y.DOM.getStyle(node, LEFT), 10); // try inline
                 if ( isNaN(xy[0]) ) { // default to offset value
-                    xy[0] = (pos === RELATIVE) ? 0 : node[OFFSET_LEFT] || 0;
+                    xy[0] = (pos === RELATIVE) ? 0 : node.offsetLeft || 0;
                 }
             } 
 
             if ( isNaN(xy[1]) ) { // in case of 'auto'
                 xy[1] = parseInt(Y.DOM.getStyle(node, TOP), 10); // try inline
                 if ( isNaN(xy[1]) ) { // default to offset value
-                    xy[1] = (pos === RELATIVE) ? 0 : node[OFFSET_TOP] || 0;
+                    xy[1] = (pos === RELATIVE) ? 0 : node.offsetTop || 0;
                 }
             } 
         }
@@ -390,3 +386,4 @@ Y.mix(Y.DOM, {
         return { height: root.scrollHeight, width: root.scrollWidth };
     }
 });
+})(Y);

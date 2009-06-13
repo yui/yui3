@@ -1,3 +1,4 @@
+(function(Y) {
 /** 
  * Add style management functionality to DOM.
  * @module dom
@@ -13,13 +14,6 @@ var DOCUMENT_ELEMENT = 'documentElement',
     CSS_FLOAT = 'cssFloat',
     STYLE_FLOAT = 'styleFloat',
     TRANSPARENT = 'transparent',
-    VISIBLE = 'visible',
-    WIDTH = 'width',
-    HEIGHT = 'height',
-    BORDER_TOP_WIDTH = 'borderTopWidth',
-    BORDER_RIGHT_WIDTH = 'borderRightWidth',
-    BORDER_BOTTOM_WIDTH = 'borderBottomWidth',
-    BORDER_LEFT_WIDTH = 'borderLeftWidth',
     GET_COMPUTED_STYLE = 'getComputedStyle',
 
     DOCUMENT = Y.config.doc,
@@ -40,9 +34,9 @@ Y.mix(Y.DOM, {
      * @param {String} att The style property to set. 
      * @param {String|Number} val The value. 
      */
-    setStyle: function(node, att, val) {
-        var style = node[STYLE],
-            CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
+    setStyle: function(node, att, val, style) {
+        style = style || node.style;
+        var CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
 
         if (style) {
             if (val === null) {
@@ -95,8 +89,9 @@ Y.mix(Y.DOM, {
      * @param {Object} hash An object literal of property:value pairs. 
      */
     setStyles: function(node, hash) {
+        var style = node.style;
         Y.each(hash, function(v, n) {
-            Y.DOM.setStyle(node, n, v);
+            Y.DOM.setStyle(node, n, v, style);
         }, Y.DOM);
     },
 
@@ -154,4 +149,4 @@ if (Y.UA.webkit) {
     };
 
 }
-
+})(Y);

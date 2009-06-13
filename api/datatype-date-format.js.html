@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: datatype   date-formatter.js  (YUI Library)</title>
+	<title>API: datatype   datatype-date-format.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_datatype.html" title="datatype">datatype</a>
                 
-                 &gt; date-formatter.js (source view) 
+                 &gt; datatype-date-format.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -305,17 +305,18 @@
 		<span class="o">}</span>
 
 		<span class="k">var</span> <span class="nx">format</span> <span class="o">=</span> <span class="nx">oConfig</span><span class="o">.</span><span class="nx">format</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">dateFormat</span><span class="o">,</span>
-			<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">oConfig</span><span class="o">.</span><span class="nx">locale</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span><span class="o">;</span>
+			<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">oConfig</span><span class="o">.</span><span class="nx">locale</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span><span class="o">,</span>
+			<span class="nx">LOCALE</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataType</span><span class="o">.</span><span class="nb">Date</span><span class="o">.</span><span class="nx">Locale</span><span class="o">;</span>
 
 		<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">sLocale</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/_/g</span><span class="o">,</span> <span class="s2">&quot;-&quot;</span><span class="o">);</span>
 		
 		<span class="c">// Make sure we have a definition for the requested locale, or default to en.</span>
-<span class="c"></span>		<span class="k">if</span><span class="o">(!</span><span class="nx">Dt</span><span class="o">.</span><span class="nx">Locale</span><span class="o">[</span><span class="nx">sLocale</span><span class="o">])</span> <span class="o">{</span>
+<span class="c"></span>		<span class="k">if</span><span class="o">(!</span><span class="nx">LOCALE</span><span class="o">[</span><span class="nx">sLocale</span><span class="o">])</span> <span class="o">{</span>
 			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;selected locale &quot;</span> <span class="o">+</span> <span class="nx">sLocale</span> <span class="o">+</span> <span class="s2">&quot; not found, trying alternatives&quot;</span><span class="o">,</span> <span class="s2">&quot;WARN&quot;</span><span class="o">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="o">);</span>
 			<span class="k">var</span> <span class="nx">tmpLocale</span> <span class="o">=</span> <span class="nx">sLocale</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/-[a-zA-Z]+$/</span><span class="o">,</span> <span class="s2">&quot;&quot;</span><span class="o">);</span>
-			<span class="k">if</span><span class="o">(</span><span class="nx">tmpLocale</span> <span class="k">in</span> <span class="nx">Dt</span><span class="o">.</span><span class="nx">Locale</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span><span class="o">(</span><span class="nx">tmpLocale</span> <span class="k">in</span> <span class="nx">LOCALE</span><span class="o">)</span> <span class="o">{</span>
 				<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">tmpLocale</span><span class="o">;</span>
-			<span class="o">}</span> <span class="k">else</span> <span class="k">if</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span> <span class="k">in</span> <span class="nx">Dt</span><span class="o">.</span><span class="nx">Locale</span><span class="o">)</span> <span class="o">{</span>
+			<span class="o">}</span> <span class="k">else</span> <span class="k">if</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span> <span class="k">in</span> <span class="nx">LOCALE</span><span class="o">)</span> <span class="o">{</span>
 				<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span><span class="o">;</span>
 			<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 				<span class="nx">sLocale</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="o">;</span>
@@ -323,7 +324,7 @@
 			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;falling back to &quot;</span> <span class="o">+</span> <span class="nx">sLocale</span><span class="o">,</span> <span class="s2">&quot;INFO&quot;</span><span class="o">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="o">);</span>
 		<span class="o">}</span>
 
-		<span class="k">var</span> <span class="nx">aLocale</span> <span class="o">=</span> <span class="nx">Dt</span><span class="o">.</span><span class="nx">Locale</span><span class="o">[</span><span class="nx">sLocale</span><span class="o">];</span>
+		<span class="k">var</span> <span class="nx">aLocale</span> <span class="o">=</span> <span class="nx">LOCALE</span><span class="o">[</span><span class="nx">sLocale</span><span class="o">];</span>
 
 		<span class="k">var</span> <span class="nx">replace_aggs</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">m0</span><span class="o">,</span> <span class="nx">m1</span><span class="o">)</span> <span class="o">{</span>
 			<span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">Dt</span><span class="o">.</span><span class="nx">aggregates</span><span class="o">[</span><span class="nx">m1</span><span class="o">];</span>
@@ -361,7 +362,7 @@
 	<span class="o">}</span>
 <span class="o">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;DataType&quot;</span><span class="o">).</span><span class="nb">Date</span><span class="o">=</span><span class="nx">Dt</span><span class="o">;</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;DataType.Date&quot;</span><span class="o">),</span> <span class="nx">Dt</span><span class="o">);</span>
 </pre></div>
                     </div>
 			</div>
@@ -423,6 +424,7 @@
                                 <li class=""><a href="DataType.Date.Locale.html" title="DataType.Date.Locale">DataType.Date.Locale</a></li>
                                 <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
                                 <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
+                                <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
                                 <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
                                 <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
                         </ul>
@@ -431,12 +433,13 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class="selected"><a href="datatype-date-format.js.html" title="datatype-date-format.js">datatype-date-format.js</a></li>
+                                <li class=""><a href="datatype-date-locale.js.html" title="datatype-date-locale.js">datatype-date-locale.js</a></li>
+                                <li class=""><a href="datatype-date-parse.js.html" title="datatype-date-parse.js">datatype-date-parse.js</a></li>
                                 <li class=""><a href="datatype-number-format.js.html" title="datatype-number-format.js">datatype-number-format.js</a></li>
                                 <li class=""><a href="datatype-number-parse.js.html" title="datatype-number-parse.js">datatype-number-parse.js</a></li>
                                 <li class=""><a href="datatype-xml-format.js.html" title="datatype-xml-format.js">datatype-xml-format.js</a></li>
                                 <li class=""><a href="datatype-xml-parse.js.html" title="datatype-xml-parse.js">datatype-xml-parse.js</a></li>
-                                <li class="selected"><a href="date-formatter.js.html" title="date-formatter.js">date-formatter.js</a></li>
-                                <li class=""><a href="date-locales.js.html" title="date-locales.js">date-locales.js</a></li>
                         </ul>
                     </div>
 
@@ -453,7 +456,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "private", "host": "DataType.Number", "name": "xPad", "url": "DataType.Number.html#method_xPad", "type": "method"}, {"access": "private", "host": "DataType.Number", "name": "xPad", "url": "DataType.Number.html#method_xPad", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}];
 </script>
 </body>
 </html>

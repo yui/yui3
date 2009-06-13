@@ -1,14 +1,11 @@
     /**
-     * Managed Attribute Provider
-     * @module attribute
-     */
-
-    /**
-     * Maintain state for a collection of items.  Individual properties 
-     * are stored in hash tables.  This is instead of having state objects 
-     * for each item in the collection.  For large collections, especially 
-     * changing ones, this approach may perform better.
-     * 
+     * The State class maintains state for a collection of named items, with 
+     * a varying number of properties defined.
+     *
+     * It avoids the need to create a separate class for the item, and separate instances 
+     * of these classes for each item, by storing the state in a 2 level hash table, 
+     * improving performance when the number of items is likely to be large.
+     *
      * @constructor
      * @class State
      */
@@ -23,12 +20,12 @@
     Y.State.prototype = {
 
         /**
-         * Add an item with the property and value provided
+         * Adds a property to an item.
          *
          * @method add
-         * @param name {string} identifier for this attribute
-         * @param key {string} property identifier
-         * @param val {Any} property value
+         * @param name {String} The name of the item.
+         * @param key {String} The name of the property.
+         * @param val {Any} The value of the property.
          */
         add : function(name, key, val) {
             var d = this.data;
@@ -37,11 +34,11 @@
         },
 
         /**
-         * Add an item with all of the properties in the supplied object.
-         * 
+         * Adds multiple properties to an item.
+         *
          * @method addAll
-         * @param name {string} identifier for this attribute
-         * @param o hash of attributes
+         * @param name {String} The name of the item.
+         * @param o {Object} A hash of property/value pairs.
          */
         addAll: function(name, o) {
             var key;
@@ -53,11 +50,11 @@
         },
 
         /**
-         * Remove the given key for a specific item
+         * Removes a property from an item.
          *
          * @method remove
-         * @param name {string} name of attribute
-         * @param o {string} The key to delete.
+         * @param name {String} The name of the item.
+         * @param key {String} The property to remove.
          */
         remove: function(name, key) {
             var d = this.data;
@@ -67,11 +64,11 @@
         },
 
         /**
-         * Remove entire item, or optionally specified fields
-         * 
+         * Removes multiple properties from an item, or remove the item completely.
+         *
          * @method removeAll
-         * @param name {string} name of attribute
-         * @param o {object|array} Collection of keys to delete. If not provided, entire item is removed.
+         * @param name {String} The name of the item.
+         * @param o {Object|Array} Collection of properties to delete. If not provided, the entire item is removed.
          */
         removeAll: function(name, o) {
             var d = this.data;
@@ -86,12 +83,12 @@
         },
 
         /**
-         * For a given item, returns the value of the attribute requested, or undefined if not found.
+         * For a given item, returns the value of the property requested, or undefined if not found.
          *
          * @method get
-         * @param name {string} name of attribute
-         * @param key {string} optional The attribute value to retrieve.
-         * @return The value of the supplied key.
+         * @param name {String} The name of the item
+         * @param key {String} Optional. The property value to retrieve.
+         * @return {Any} The value of the supplied property.
          */
         get: function(name, key) {
             var d = this.data;
@@ -99,12 +96,12 @@
         },
 
         /**
-         * For a given item, returns a disposable object with all attribute 
-         * name/value pairs.
+         * For the given item, returns a disposable object with all of the
+         * item's property/value pairs.
          *
          * @method getAll
-         * @param name {string} name of attribute
-         * @return An object withall data.
+         * @param name {String} The name of the item
+         * @return {Object} An object with property/value pairs for the item.
          */
         getAll : function(name) {
             var d = this.data, o;

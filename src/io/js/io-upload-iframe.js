@@ -31,7 +31,7 @@
 		}
 
 		return e;
-	};
+	}
 
 	function _removeData(f, e) {
 		var i, l;
@@ -40,7 +40,7 @@
 				f.removeChild(e[i]);
 			}
 		}
-	};
+	}
 
 	function _create(o, c) {
 		var i = Y.Node.create('<iframe id="ioupload' + o.id + '" name="ioupload' + o.id + '" />'),
@@ -54,7 +54,7 @@
 		Y.get('body').appendChild(i);
 		// Bind the onload handler to the iframe to detect the file upload response.
 		Y.on("load", function() { _handle(o, c) }, '#ioupload' + o.id);
-	};
+	}
 
 	// Create the upload callback handler that fires when the iframe
 	// receives the load event.  Subsequently, the event handler is detached
@@ -76,7 +76,7 @@
 		// the event listener bound to the iframe transport, and then
 		// destroy the iframe.
 		setTimeout( function() { _destroy(o.id); }, 0);
-	};
+	}
 
    /**
 	* @description Starts timeout count if the configuration object
@@ -91,7 +91,7 @@
 	*/
 	function _startTimeout(o, c) {
 		Y.io._timeout[o.id] = w.setTimeout(function() { Y.io.abort(o, c); }, c.timeout);
-	};
+	}
 
    /**
 	* @description Clears the timeout interval started by _startTimeout().
@@ -105,13 +105,13 @@
 	function _clearTimeout(id) {
 		w.clearTimeout(Y.io._timeout[id]);
 		delete Y.io._timeout[id];
-	};
+	}
 
 	function _destroy(id) {
 		Y.Event.purgeElement('#ioupload' + id, false);
 		Y.get('body').removeChild(Y.get('#ioupload' + id));
         Y.log('The iframe transport for transaction ' + id + 'has been destroyed.', 'info', 'io');
-	};
+	}
 
 	Y.mix(Y.io, {
 
@@ -142,7 +142,7 @@
 			f.setAttribute('action', uri);
 			f.setAttribute('method', 'POST');
 			f.setAttribute('target', 'ioupload' + o.id );
-			f.setAttribute((Y.UA.ie) ? 'encoding' : 'enctype', 'multipart/form-data');
+			f.setAttribute((Y.UA.ie && !document.documentMode) ? 'encoding' : 'enctype', 'multipart/form-data');
 
 			if (c.data) {
 				fields = _addData(f, c.data);

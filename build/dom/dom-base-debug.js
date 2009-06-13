@@ -1,5 +1,6 @@
 YUI.add('dom-base', function(Y) {
 
+(function(Y) {
 /** 
  * The DOM utility provides a cross-browser abtraction layer
  * normalizing DOM tasks, and adds extra helper functionality
@@ -27,14 +28,7 @@ var NODE_TYPE = 'nodeType',
     NEXT_SIBLING = 'nextSibling',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
-    INNER_TEXT = 'innerText',
-    TEXT_CONTENT = 'textContent',
-    LENGTH = 'length',
 
-
-    UNDEFINED = undefined,
-
-    g_slice = Array.slice,
     re_tag = /<([a-z]+)/i;
 
 Y.DOM = {
@@ -57,13 +51,37 @@ Y.DOM = {
      * @param {HTMLElement} element The html element. 
      * @return {String} The text content of the element (includes text of any descending elements).
      */
-    getText: function(element) {
-        var text = element ? element[TEXT_CONTENT] : '';
-        if (text === UNDEFINED && INNER_TEXT in element) {
-            text = element[INNER_TEXT];
-        } 
-        return text || '';
-    },
+    getText: (document.documentElement.textContent !== undefined) ?
+        function(element) {
+            var ret = '';
+            if (element) {
+                ret = element.textContent;
+            }
+            return ret || '';
+        } : function(element) {
+            var ret = '';
+            if (element) {
+                ret = element.innerText;
+            }
+            return ret || '';
+        },
+
+    /**
+     * Returns the text content of the HTMLElement. 
+     * @method getText         
+     * @param {HTMLElement} element The html element. 
+     * @return {String} The text content of the element (includes text of any descending elements).
+     */
+    setText: (document.documentElement.textContent !== undefined) ?
+        function(element, content) {
+            if (element) {
+                element.textContent = content;
+            }
+        } : function(element, content) {
+            if (element) {
+                element.innerText = content;
+            }
+        },
 
 // TODO: pull out sugar (rely on _childBy, byAxis, etc)?
     /**
@@ -126,7 +144,7 @@ Y.DOM = {
                         if (tag) {
                             wrapFn = function(el) {
                                 return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
-                            }
+                            };
                         }
                     }
 
@@ -246,11 +264,12 @@ Y.DOM = {
         root = root || Y.config.doc;
 
         var elements = root.getElementsByTagName(tag),
-            retNodes = [];
+            retNodes = [],
+            i, len;
 
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
+        for (i = 0, len = elements.length; i < len; ++i) {
             if ( !fn || fn(elements[i]) ) {
-                retNodes[retNodes[LENGTH]] = elements[i];
+                retNodes[retNodes.length] = elements[i];
             }
         }
         return retNodes;
@@ -270,9 +289,10 @@ Y.DOM = {
         root = root || Y.config.doc;
 
         var elements = root.getElementsByTagName(tag),
-            ret = null;
+            ret = null,
+            i, len;
 
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
+        for (i = 0, len = elements.length; i < len; ++i) {
             if ( !fn || fn(elements[i]) ) {
                 ret = elements[i];
                 break;
@@ -291,14 +311,15 @@ Y.DOM = {
      * @return {Array} The filtered collection of HTMLElements.
      */
     filterElementsBy: function(elements, fn, firstOnly) {
-        var ret = (firstOnly) ? null : [];
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
+        var ret = (firstOnly) ? null : [],
+            i, len;
+        for (i = 0, len = elements.length; i < len; ++i) {
             if (elements[i][TAG_NAME] && (!fn || fn(elements[i]))) {
                 if (firstOnly) {
                     ret = elements[i];
                     break;
                 } else {
-                    ret[ret[LENGTH]] = elements[i];
+                    ret[ret.length] = elements[i];
                 }
             }
         }
@@ -402,6 +423,11 @@ Y.DOM = {
      * @param {HTMLDocument} doc An optional document context 
      */
     create: function(html, doc) {
+        html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
+        if (!doc && Y.DOM._cloneCache[html]) {
+            return Y.DOM._cloneCache[html].cloneNode(true); // NOTE: return
+        }
+
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html),
             create = Y.DOM._create,
@@ -428,6 +454,7 @@ Y.DOM = {
             }
         }
 
+        Y.DOM._cloneCache[html] = ret.cloneNode(true);
         return ret;
     },
 
@@ -506,40 +533,56 @@ Y.DOM = {
     },
 
     _removeChildNodes: function(node) {
-        var childNodes = node.childNodes, i;
-
         while (node.firstChild) {
             node.removeChild(node.firstChild);
         }
     },
 
-    addHTML: function(node, content, where, execScripts) {
-        var scripts,
-            newNode = (content.nodeType) ? content : Y.DOM.create(content);
+    _cloneCache: {},
 
-        if (where && where.nodeType) {
-            node.insertBefore(newNode, where);
+    addHTML: function(node, content, where, execScripts) {
+        content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
+        var scripts,
+            newNode = Y.DOM._cloneCache[content];
+            
+        if (newNode) {
+            newNode = newNode.cloneNode(true);
         } else {
-            switch (where) {
-                case 'replace':
-                    while (node.firstChild) {
-                        node.removeChild(node.firstChild);
-                    }
-                    node.appendChild(newNode);
-                    break;
-                case 'before':
-                    node.parentNode.insertBefore(newNode, node);
-                    break;
-                case 'after':
-                    if (node.nextSibling) { // IE errors if refNode is null
-                        node.parentNode.insertBefore(newNode, node.nextSibling);
-                    } else {
-                        node.parentNode.appendChild(newNode);
-                    }
-                    break;
-                default:
-                    node.appendChild(newNode);
+            if (content.nodeType) { // domNode
+                newNode = content;
+            } else { // create from string and cache
+                newNode = Y.DOM.create(content);
             }
+        }
+
+        if (where) {
+            if (where.nodeType) { // insert regardless of relationship to node
+                // TODO: check if node.contains(where)?
+                where.parentNode.insertBefore(newNode, where);
+            } else {
+                switch (where) {
+                    case 'replace':
+                        while (node.firstChild) {
+                            node.removeChild(node.firstChild);
+                        }
+                        node.appendChild(newNode);
+                        break;
+                    case 'before':
+                        node.parentNode.insertBefore(newNode, node);
+                        break;
+                    case 'after':
+                        if (node.nextSibling) { // IE errors if refNode is null
+                            node.parentNode.insertBefore(newNode, node.nextSibling);
+                        } else {
+                            node.parentNode.appendChild(newNode);
+                        }
+                        break;
+                    default:
+                        node.appendChild(newNode);
+                }
+            }
+        } else {
+            node.appendChild(newNode);
         }
 
         if (execScripts) {
@@ -592,17 +635,21 @@ Y.DOM = {
     },
 
     _stripScripts: function(node) {
-        var scripts = node.getElementsByTagName('script');
-        for (var i = 0, script; script = scripts[i++];) {
+        var scripts = node.getElementsByTagName('script'),
+            i, script;
+
+        for (i = 0, script; script = scripts[i++];) {
             script.parentNode.removeChild(script);
         }
     },
 
     _execScripts: function(scripts, startIndex) {
-        var newScript;
+        var newScript,
+            i, script;
+
         startIndex = startIndex || 0;
 
-        for (var i = startIndex, script; script = scripts[i++];) {
+        for (i = startIndex, script; script = scripts[i++];) {
             newScript = script.ownerDocument.createElement('script');
             script.parentNode.replaceChild(newScript, script);
             if (script.text) {
@@ -617,7 +664,9 @@ Y.DOM = {
                         if (/loaded|complete/.test(script.readyState)) {
                             event.srcElement.onreadystatechange = null; 
                             // timer to help ensure exec order
-                            setTimeout(function() {Y.DOM._execScripts(scripts, i++)}, 0);
+                            setTimeout(function() {
+                                Y.DOM._execScripts(scripts, i++);
+                            }, 0);
                         }
                     };
                 } else {
@@ -723,14 +772,11 @@ Y.DOM = {
 
     _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
         fn = (typeof name === 'string') ? Y.DOM[fn] : fn;
-        var args = arguments,
-            result,
+        var result,
             ret = [];
 
         if (fn && nodes) {
-            //args = g_slice.call(args, 1);
             Y.each(nodes, function(node) {
-                //args.splice(0, 1, node);
                 if ((result = fn.call(Y.DOM, node, arg1, arg2, arg3, etc)) !== undefined) {
                     ret[ret.length] = result;
                 }
@@ -756,7 +802,7 @@ Y.DOM = {
 };
 
 
-(function() {
+(function(Y) {
     var creators = Y.DOM.creators,
         create = Y.DOM.create,
         re_tbody = /(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)>)+\s*<tbody/,
@@ -796,7 +842,7 @@ Y.DOM = {
                 var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc),
                     tb = frag.children.tags('tbody')[0];
 
-                if (frag.children[LENGTH] > 1 && tb && !re_tbody.test(html)) {
+                if (frag.children.length > 1 && tb && !re_tbody.test(html)) {
                     tb[PARENT_NODE].removeChild(tb); // strip extraneous tbody
                 }
                 return frag;
@@ -821,7 +867,7 @@ Y.DOM = {
         Y.mix(Y.DOM.VALUE_SETTERS, {
             // IE: node.value changes the button text, which should be handled via innerHTML
             button: function(node, val) {
-                var attr = node.attributes['value'];
+                var attr = node.attributes.value;
                 if (!attr) {
                     attr = node[OWNER_DOCUMENT].createAttribute('value');
                     node.setAttributeNode(attr);
@@ -852,8 +898,7 @@ Y.DOM = {
 
         select: function(node) {
             var val = node.value,
-                options = node.options,
-                i, opt;
+                options = node.options;
 
             if (options && val === '') {
                 if (node.multiple) {
@@ -866,7 +911,9 @@ Y.DOM = {
             return val;
         }
     });
-})();
+})(Y);
+
+})(Y);
 /** 
  * The DOM utility provides a cross-browser abtraction layer
  * normalizing DOM tasks, and adds extra helper functionality
@@ -875,8 +922,6 @@ Y.DOM = {
  * @submodule dom-base
  * @for DOM
  */
-
-var CLASS_NAME = 'className';
 
 Y.mix(Y.DOM, {
     /**
@@ -888,7 +933,7 @@ Y.mix(Y.DOM, {
      */
     hasClass: function(node, className) {
         var re = Y.DOM._getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
-        return re.test(node[CLASS_NAME]);
+        return re.test(node.className);
     },
 
     /**
@@ -899,7 +944,7 @@ Y.mix(Y.DOM, {
      */
     addClass: function(node, className) {
         if (!Y.DOM.hasClass(node, className)) { // skip if already present 
-            node[CLASS_NAME] = Y.Lang.trim([node[CLASS_NAME], className].join(' '));
+            node.className = Y.Lang.trim([node.className, className].join(' '));
         }
     },
 
@@ -911,7 +956,7 @@ Y.mix(Y.DOM, {
      */
     removeClass: function(node, className) {
         if (className && Y.DOM.hasClass(node, className)) {
-            node[CLASS_NAME] = Y.Lang.trim(node[CLASS_NAME].replace(Y.DOM._getRegExp('(?:^|\\s+)' +
+            node.className = Y.Lang.trim(node.className.replace(Y.DOM._getRegExp('(?:^|\\s+)' +
                             className + '(?:\\s+|$)'), ' '));
 
             if ( Y.DOM.hasClass(node, className) ) { // in case of multiple adjacent

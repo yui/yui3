@@ -242,8 +242,8 @@ SchemaJSON = {
                         record[key] = null;
                     }
                 }
+                results[i] = record;
             }
-            results[i] = record;
         }
         data_out.results = results;
         return data_out;
@@ -283,4 +283,4 @@ Y.DataSchema.JSON = Y.mix(SchemaJSON, Y.DataSchema.Base);
 
 
 
-}, '@VERSION@' ,{requires:['dataschema-base', 'json']});
+}, '@VERSION@' ,{requires:['json', 'dataschema-base']});

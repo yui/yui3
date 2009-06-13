@@ -1,16 +1,18 @@
     /**
-     * Base class support for objects requiring managed attributes and acting as event targets. 
-     *
-     * The base module also provides an augmentable PluginHost interface.
+     * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
+     * The module also provides two ways to reuse code - An augmentable Plugin.Host interface which provides plugin support 
+     * (which is augmented to the Base class) and Base.build which provides a way to 
+     * build custom classes using extensions.
      *
      * @module base
      */
 
     /**
-     * The base-base sub-module provides the Base class, without Base.build functionality
+     * The base-base submodule provides the Base class and augmentable Plugin.Host implementation, 
+     * without the extension support provided by Base.build.
      *
      * @module base
-     * @sub-module base-base
+     * @submodule base-base
      */
     var O = Y.Object,
         DOT = ".",
@@ -27,21 +29,24 @@
 
     /**
      * <p>
-     * Provides a base class for managed attribute based
-     * objects, which handles the chaining of initializer and destructor methods
-     * across the hierarchy during init and destroy lifecycle methods and 
-     * handles automatic configuration of registered Attributes, through 
-     * the static <a href="#property_ATTRS">ATTRS</a> property.
+     * A base class which objects requiring attributes and custom event support can 
+     * extend. Base also handles the chaining of initializer and destructor methods across 
+     * the hierarchy as part of object construction and destruction. Additionally, attributes configured 
+     * through the static <a href="#property_Base.ATTRS">ATTRS</a> property for each class 
+     * in the hierarchy will be initialized by Base.
      * </p>
      *
-     * <p>The Base class also handles prefixing of event types with the static <a href="#property_NAME">NAME</a> 
-     * property for all events fired from instances of classes derived from Base.</p>
-     *
-     * @constructor
+     * <p>
+     * The static <a href="#property_Base.NAME">NAME</a> property of each class extending 
+     * from Base will be used as the identifier for the class, and is used by Base to prefix 
+     * all events fired by instances of that class.
+     * </p>
      * @class Base
-     * @uses Attribute, Plugin.Host
+     * @constructor
+     * @uses Attribute
+     * @uses Plugin.Host
      *
-     * @param {Object} config Object literal of configuration property name/value pairs
+     * @param {Object} config Object with configuration property name/value pairs
      */
     function Base() {
         Y.log('constructor called', 'life', 'base');
@@ -57,7 +62,7 @@
 
     /**
      * The list of properties which can be configured for 
-     * each attribute (e.g. setter, getter, writeOnce etc.)
+     * each attribute (e.g. setter, getter, writeOnce, readOnly etc.)
      *
      * @property Base._ATTR_CFG
      * @type Array
@@ -68,27 +73,31 @@
 
     /**
      * <p>
-     * Name string to be used to identify instances of 
+     * The string to be used to identify instances of 
      * this class, for example in prefixing events.
      * </p>
      * <p>
      * Classes extending Base, should define their own
-     * static NAME property.
+     * static NAME property, which should be camelCase by
+     * convention (e.g. MyClass.NAME = "myClass";).
      * </p>
-     * @property NAME
+     * @property Base.NAME
      * @type String
      * @static
      */
     Base.NAME = 'base';
 
     /**
-     * Object literal defining the set of attributes which
-     * will be available for instances of this class, and 
-     * how they are configured. See Attributes addAtt method
-     * for a description of configuration options available 
-     * for each attribute.
+     * The default set of attributes which will be available for instances of this class, and 
+     * their configuration. In addition to the configuration properties listed by 
+     * Attribute's <a href="Attribute.html#method_addAttr">addAttr</a> method, the attribute 
+     * can also be configured with a "cloneDefaultValue" property, which defines how the statically
+     * defined value field should be protected ("shallow", "deep" and false are supported values). 
      *
-     * @property ATTRS
+     * By default if the value is an object literal or an array it will be "shallow" cloned, to 
+     * protect the default value.
+     *
+     * @property Base.ATTRS
      * @type Object
      * @static
      */
@@ -98,7 +107,7 @@
          * has been through the init lifecycle phase.
          *
          * @attribute initialized
-         * @readOnly
+         * @readonly
          * @default false
          * @type boolean
          */
@@ -112,7 +121,7 @@
          * has been through the destroy lifecycle phase.
          *
          * @attribute destroyed
-         * @readOnly
+         * @readonly
          * @default false
          * @type boolean
          */
@@ -126,21 +135,22 @@
 
         /**
          * Init lifecycle method, invoked during construction.
-         * Fires the init event prior to invoking initializers on
-         * the class hierarchy.
-         * 
+         * Fires the init event prior to setting up attributes and 
+         * invoking initializers for the class hierarchy.
+         *
          * @method init
          * @final
          * @chainable
-         * @param {Object} config Object literal of configuration property name/value pairs
+         * @param {Object} config Object with configuration property name/value pairs
          * @return {Base} A reference to this object
          */
         init: function(config) {
             Y.log('init called', 'life', 'base');
 
             /**
-             * The name string to be used to identify 
-             * this instance of object. 
+             * The string used to identify the class of this object.
+             *
+             * @deprecated Use this.constructor.NAME
              * @property name
              * @type String
              */
@@ -149,7 +159,7 @@
             /**
              * <p>
              * Lifecycle event for the init phase, fired prior to initialization. 
-             * Invoking the preventDefault method on the event object provided 
+             * Invoking the preventDefault() method on the event object provided 
              * to subscribers will prevent initialization from occuring.
              * </p>
              * <p>
@@ -160,8 +170,8 @@
              *
              * @event init
              * @preventable _defInitFn
-             * @param {Event.Facade} e Event object
-             * @param config Object literal of configuration name/value pairs
+             * @param {Event.Facade} e Event object, with a cfg property which 
+             * refers to the configuration object passed to the constructor.
              */
             if (!this._silentInit) {
                 this.publish(INIT, {
@@ -235,7 +245,8 @@
          * Default init event handler
          *
          * @method _defInitFn
-         * @param {Event.Facade} e Event object
+         * @param {Event.Facade} e Event object, with a cfg property which 
+         * refers to the configuration object passed to the constructor.
          * @protected
          */
         _defInitFn : function(e) {
@@ -264,10 +275,12 @@
 
         /**
          * Returns the class hierarchy for this object, with Base being the last class in the array.
-         * 
+         *
          * @method _getClasses
          * @protected
-         * @return {Function[]} An Array of classes (constructor functions), making up the class hierarchy for this object
+         * @return {Function[]} An array of classes (constructor functions), making up the class hierarchy for this object.
+         * This value is cached the first time the method, or _getAttrCfgs, is invoked. Subsequent invocations return the 
+         * cached value.
          */
         _getClasses : function() {
             if (!this._classes) {
@@ -282,6 +295,8 @@
          * @method _getAttrCfgs
          * @protected
          * @return {Object} The hash of attribute configurations, aggregated across classes in the hierarchy
+         * This value is cached the first time the method, or _getClasses, is invoked. Subsequent invocations return
+         * the cached value.
          */
         _getAttrCfgs : function() {
             if (!this._attrs) {
@@ -291,10 +306,20 @@
         },
 
         /**
+         * A helper method used when processing ATTRS across the class hierarchy during 
+         * initialization. Returns a disposable object with the attributes defined for 
+         * the provided class, extracted from the set of all attributes passed in .
+         *
          * @method _filterAttrCfs
          * @private
-         * @param {Function} clazz
-         * @param {Objects} allCfgs
+         *
+         * @param {Function} clazz The class for which the desired attributes are required.
+         * @param {Object} allCfgs The set of all attribute configurations for this instance. 
+         * Attributes will be removed from this set, if they belong to the filtered class, so
+         * that by the time all classes are processed, allCfgs will be empty.
+         * 
+         * @return {Object} The set of attributes belonging to the class passed in, in the form
+         * of an object with attribute name/configuration pairs.
          */
         _filterAttrCfgs : function(clazz, allCfgs) {
             var cfgs = null, attr, attrs = clazz.ATTRS;
@@ -313,6 +338,10 @@
         },
 
         /**
+         * A helper method used by _getClasses and _getAttrCfgs, which determines both
+         * the array of classes and aggregate set of attribute configurations
+         * across the class hierarchy for the instance.
+         * 
          * @method _initHierarchyData
          * @private
          */
@@ -337,9 +366,18 @@
         },
 
         /**
+         * A helper method, used by _initHierarchyData to aggregate 
+         * attribute configuration across the instances class hierarchy.
+         *
+         * The method will potect the attribute configuration value to protect the statically defined 
+         * default value in ATTRS if required (if the value is an object literal, array or the 
+         * attribute configuration has cloneDefaultValue set to shallow or deep).
+         *
          * @method _aggregateAttrs
          * @private
-         * @param {Object} allAttrs
+         * @param {Array} allAttrs An array of ATTRS definitions across classes in the hierarchy 
+         * (subclass first, Base last)
+         * @return {Object} The aggregate set of ATTRS definitions for the instance
          */
         _aggregateAttrs : function(allAttrs) {
             var attr, 
@@ -401,13 +439,13 @@
         },
 
         /**
-         * Initializes the class hierarchy rooted at this base class,
-         * which includes initializing attributes for each class defined 
-         * in the class's static <a href="#property_ATTRS">ATTRS</a> property and invoking the initializer 
-         * method on the prototype of each class in the hierarchy.
+         * Initializes the class hierarchy for the instance, which includes 
+         * initializing attributes for each class defined in the class's 
+         * static <a href="#property_Base.ATTRS">ATTRS</a> property and 
+         * invoking the initializer method on the prototype of each class in the hierarchy.
          *
          * @method _initHierarchy
-         * @param {Object} userVals Object literal containing attribute name/value pairs
+         * @param {Object} userVals Object with configuration property name/value pairs
          * @private
          */
         _initHierarchy : function(userVals) {
@@ -440,7 +478,7 @@
         },
 
         /**
-         * Destroys the class hierarchy rooted at this base class by invoking
+         * Destroys the class hierarchy for this instance by invoking
          * the descructor method on the prototype of each class in the hierarchy.
          *
          * @method _destroyHierarchy
@@ -471,14 +509,28 @@
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
         }
-
     };
 
     // Straightup augment, no wrapper functions
     Y.mix(Base, Y.Attribute, false, null, 1);
     Y.mix(Base, PluginHost, false, null, 1);
 
+    /**
+     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.plug">Plugin.Host.plug</a>. See aliased 
+     * method for argument and return value details.
+     *
+     * @method Base.plug
+     * @static
+     */
     Base.plug = PluginHost.plug;
+
+    /**
+     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.unplug">Plugin.Host.unplug</a>. See the 
+     * aliased method for argument and return value details.
+     *
+     * @method Base.unplug
+     * @static
+     */
     Base.unplug = PluginHost.unplug;
 
     // Fix constructor

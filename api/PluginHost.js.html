@@ -47,277 +47,285 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">/**</span>
-<span class="c">* Base class support for objects requiring managed attributes and acting as event targets. </span>
-<span class="c">*</span>
-<span class="c">* The base module also provides an augmentable PluginHost interface.</span>
-<span class="c">*</span>
-<span class="c">* @module base</span>
-<span class="c">*/</span>
-
-<span class="c">/**</span>
-<span class="c"> * An augmentable class, which when added to a &quot;Base&quot; based class, allows </span>
-<span class="c"> * the class to support Plugins, providing plug and unplug methods.</span>
-<span class="c"> * </span>
-<span class="c"> * The PlugHost&#39;s _initPlugins and _destroyPlugins should be invoked by the </span>
-<span class="c"> * host class at the appropriate point in the classes lifecyle. This is done</span>
-<span class="c"> * by default for Base class.</span>
-<span class="c"> *</span>
-<span class="c"> * @class PluginHost</span>
-<span class="c"> */</span>
-
-<span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
-
-<span class="k">function</span> <span class="nx">PluginHost</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">this</span><span class="o">.</span><span class="nx">_plugins</span> <span class="o">=</span> <span class="o">{};</span>
-<span class="o">}</span>
-
-<span class="nx">PluginHost</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Register and instantiate a plugin with the Widget.</span>
-<span class="c">     *</span>
-<span class="c">     * @method plug</span>
-<span class="c">     * @chainable</span>
-<span class="c">     * @param p {Function | Object |Array} Accepts the plugin class, or an </span>
-<span class="c">     * object literal with a &quot;fn&quot; property specifying the Plugin class and </span>
-<span class="c">     * a &quot;cfg&quot; property specifying the configuration for the Plugin.</span>
+<div class="highlight" ><pre>    <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
-<span class="c">     * Additionally an Array can also be passed in, with the above function or </span>
-<span class="c">     * Object literal values, allowing for multiple plugin registration in a single call.</span>
+<span class="c">     * An augmentable class, which provides the augmented class with the ability to host plugins.</span>
+<span class="c">     * It adds &lt;a href=&quot;#method_plug&quot;&gt;plug&lt;/a&gt; and &lt;a href=&quot;#method_unplug&quot;&gt;unplug&lt;/a&gt; methods to the augmented class, which can </span>
+<span class="c">     * be used to add or remove plugins from instances of the class.</span>
 <span class="c">     * &lt;/p&gt;</span>
-<span class="c">     * @param config Optional. If the first argument is the plugin class, the second argument</span>
-<span class="c">     * can be the configuration for the plugin.</span>
-<span class="c">     */</span>
-    <span class="nx">plug</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">p</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">p</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_plug</span><span class="o">(</span><span class="nx">p</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">p</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">ln</span> <span class="o">=</span> <span class="nx">p</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">ln</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">plug</span><span class="o">(</span><span class="nx">p</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-                <span class="o">}</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_plug</span><span class="o">(</span><span class="nx">p</span><span class="o">.</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">p</span><span class="o">.</span><span class="nx">cfg</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Unregister and destroy a plugin already instantiated on the host.</span>
-<span class="c">     * </span>
-<span class="c">     * @method unplug</span>
-<span class="c">     * @param {String | Function} plugin The namespace of the Plugin, or the Plugin class with the static NS namespace property defined. If not provided,</span>
-<span class="c">     * all registered plugins are unplugged.</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-    <span class="nx">unplug</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">plugin</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">plugin</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_unplug</span><span class="o">(</span><span class="nx">plugin</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">ns</span><span class="o">;</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nx">ns</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">_plugins</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_plugins</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">ns</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_unplug</span><span class="o">(</span><span class="nx">ns</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Determines if a plugin has been registered and instantiated </span>
-<span class="c">     * for this widget.</span>
-<span class="c">     * </span>
-<span class="c">     * @method hasPlugin</span>
-<span class="c">     * @public</span>
-<span class="c">     * @return {Boolean} returns true, if the plugin has been applied</span>
-<span class="c">     * to this widget.</span>
-<span class="c">     */</span>
-    <span class="nx">hasPlugin</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">ns</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_plugins</span><span class="o">[</span><span class="nx">ns</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">]);</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Initializes static plugins registered on the host (using the</span>
-<span class="c">     * Base.plug static method) and any plugins passed in for the </span>
-<span class="c">     * instance through the &quot;plugins&quot; configuration property.</span>
 <span class="c">     *</span>
-<span class="c">     * @method _initPlugins</span>
-<span class="c">     * @param {Config} the user configuration object for the host.</span>
-<span class="c">     * @private</span>
+<span class="c">     * &lt;p&gt;Plugins can also be added through the constructor configuration object passed to the host class&#39; constructor using</span>
+<span class="c">     * the &quot;plugins&quot; property. Supported values for the &quot;plugins&quot; property are those defined by the &lt;a href=&quot;#method_plug&quot;&gt;plug&lt;/a&gt; method. </span>
+<span class="c">     * </span>
+<span class="c">     * For example the following code would add the AnimPlugin and IOPlugin to Overlay (the plugin host):</span>
+<span class="c">     * &lt;xmp&gt;</span>
+<span class="c">     * var o = new Overlay({plugins: [ AnimPlugin, {fn:IOPlugin, cfg:{section:&quot;header&quot;}}]});</span>
+<span class="c">     * &lt;/xmp&gt;</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * Plug.Host&#39;s protected &lt;a href=&quot;#method_initPlugins&quot;&gt;_initPlugins&lt;/a&gt; and &lt;a href=&quot;#method_destroyPlugins&quot;&gt;_destroyPlugins&lt;/a&gt; </span>
+<span class="c">     * methods should be invoked by the host class at the appropriate point in the host&#39;s lifecyle. This is done by default for </span>
+<span class="c">     * the Base class, so developers extending Base or Widget don&#39;t need to do anything to enable plugin support.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * @class Plugin.Host</span>
 <span class="c">     */</span>
-    <span class="nx">_initPlugins</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="c">// Class Configuration</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
-            <span class="nx">plug</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">unplug</span> <span class="o">=</span> <span class="o">{},</span>
-            <span class="nx">constructor</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">classPlug</span><span class="o">,</span> <span class="nx">classUnplug</span><span class="o">,</span> <span class="nx">pluginClassName</span><span class="o">;</span>
+    <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
 
-        <span class="c">//TODO: Room for optimization. Can we apply statically/unplug in same pass?</span>
-<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">--)</span> <span class="o">{</span>
-            <span class="nx">constructor</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+    <span class="k">function</span> <span class="nx">PluginHost</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_plugins</span> <span class="o">=</span> <span class="o">{};</span>
+    <span class="o">}</span>
 
-            <span class="nx">classUnplug</span> <span class="o">=</span> <span class="nx">constructor</span><span class="o">.</span><span class="nx">_UNPLUG</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">classUnplug</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// subclasses over-write</span>
-<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">unplug</span><span class="o">,</span> <span class="nx">classUnplug</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="nx">PluginHost</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Adds a plugin to the host object. This will instantiate the </span>
+<span class="c">         * plugin and attach it to the configured namespace on the host object.</span>
+<span class="c">         *</span>
+<span class="c">         * @method plug</span>
+<span class="c">         * @chainable</span>
+<span class="c">         * @param p {Function | Object |Array} Accepts the plugin class, or an </span>
+<span class="c">         * object with a &quot;fn&quot; property specifying the plugin class and </span>
+<span class="c">         * a &quot;cfg&quot; property specifying the configuration for the Plugin.</span>
+<span class="c">         * &lt;p&gt;</span>
+<span class="c">         * Additionally an Array can also be passed in, with the above function or </span>
+<span class="c">         * object values, allowing the user to add multiple plugins in a single call.</span>
+<span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * @param config (Optional) If the first argument is the plugin class, the second argument</span>
+<span class="c">         * can be the configuration for the plugin.</span>
+<span class="c">         * @return {Base} A reference to the host object</span>
+<span class="c">         */</span>
+
+        <span class="nx">plug</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">p</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">p</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_plug</span><span class="o">(</span><span class="nx">p</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">p</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">ln</span> <span class="o">=</span> <span class="nx">p</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">ln</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                        <span class="k">this</span><span class="o">.</span><span class="nx">plug</span><span class="o">(</span><span class="nx">p</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_plug</span><span class="o">(</span><span class="nx">p</span><span class="o">.</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">p</span><span class="o">.</span><span class="nx">cfg</span><span class="o">);</span>
+                <span class="o">}</span>
             <span class="o">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">},</span>
 
-            <span class="nx">classPlug</span> <span class="o">=</span> <span class="nx">constructor</span><span class="o">.</span><span class="nx">_PLUG</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">classPlug</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// subclasses over-write</span>
-<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">plug</span><span class="o">,</span> <span class="nx">classPlug</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="c">/**</span>
+<span class="c">         * Removes a plugin from the host object. This will destroy the </span>
+<span class="c">         * plugin instance and delete the namepsace from the host object. </span>
+<span class="c">         *</span>
+<span class="c">         * @method unplug</span>
+<span class="c">         * @param {String | Function} plugin The namespace of the plugin, or the plugin class with the static NS namespace property defined. If not provided,</span>
+<span class="c">         * all registered plugins are unplugged.</span>
+<span class="c">         * @return {Base} A reference to the host object</span>
+<span class="c">         * @chainable</span>
+<span class="c">         */</span>
+        <span class="nx">unplug</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">plugin</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">plugin</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_unplug</span><span class="o">(</span><span class="nx">plugin</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">ns</span><span class="o">;</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">ns</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">_plugins</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_plugins</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">ns</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="k">this</span><span class="o">.</span><span class="nx">_unplug</span><span class="o">(</span><span class="nx">ns</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
             <span class="o">}</span>
-        <span class="o">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">},</span>
 
-        <span class="k">for</span> <span class="o">(</span><span class="nx">pluginClassName</span> <span class="k">in</span> <span class="nx">plug</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">plug</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">pluginClassName</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">unplug</span><span class="o">[</span><span class="nx">pluginClassName</span><span class="o">])</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">plug</span><span class="o">(</span><span class="nx">plug</span><span class="o">[</span><span class="nx">pluginClassName</span><span class="o">]);</span>
+        <span class="c">/**</span>
+<span class="c">         * Determines if a plugin has plugged into this host.</span>
+<span class="c">         *</span>
+<span class="c">         * @method hasPlugin</span>
+<span class="c">         * @param {String} ns The plugin&#39;s namespace</span>
+<span class="c">         * @return {boolean} returns true, if the plugin has been plugged into this host, false otherwise.</span>
+<span class="c">         */</span>
+        <span class="nx">hasPlugin</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">ns</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_plugins</span><span class="o">[</span><span class="nx">ns</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">]);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Initializes static plugins registered on the host (using the</span>
+<span class="c">         * Base.plug static method) and any plugins passed to the </span>
+<span class="c">         * instance through the &quot;plugins&quot; configuration property.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _initPlugins</span>
+<span class="c">         * @param {Config} config The configuration object with property name/value pairs.</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_initPlugins</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="c">// Class Configuration</span>
+<span class="c"></span>            <span class="k">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">(),</span>
+                <span class="nx">plug</span> <span class="o">=</span> <span class="o">[],</span>
+                <span class="nx">unplug</span> <span class="o">=</span> <span class="o">{},</span>
+                <span class="nx">constructor</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">classPlug</span><span class="o">,</span> <span class="nx">classUnplug</span><span class="o">,</span> <span class="nx">pluginClassName</span><span class="o">;</span>
+
+            <span class="c">//TODO: Room for optimization. Can we apply statically/unplug in same pass?</span>
+<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">--)</span> <span class="o">{</span>
+                <span class="nx">constructor</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+
+                <span class="nx">classUnplug</span> <span class="o">=</span> <span class="nx">constructor</span><span class="o">.</span><span class="nx">_UNPLUG</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">classUnplug</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c">// subclasses over-write</span>
+<span class="c"></span>                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">unplug</span><span class="o">,</span> <span class="nx">classUnplug</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                <span class="o">}</span>
+
+                <span class="nx">classPlug</span> <span class="o">=</span> <span class="nx">constructor</span><span class="o">.</span><span class="nx">_PLUG</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">classPlug</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c">// subclasses over-write</span>
+<span class="c"></span>                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">plug</span><span class="o">,</span> <span class="nx">classPlug</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+    
+            <span class="k">for</span> <span class="o">(</span><span class="nx">pluginClassName</span> <span class="k">in</span> <span class="nx">plug</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">plug</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">pluginClassName</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(!</span><span class="nx">unplug</span><span class="o">[</span><span class="nx">pluginClassName</span><span class="o">])</span> <span class="o">{</span>
+                        <span class="k">this</span><span class="o">.</span><span class="nx">plug</span><span class="o">(</span><span class="nx">plug</span><span class="o">[</span><span class="nx">pluginClassName</span><span class="o">]);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+    
+            <span class="c">// User Configuration</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="o">.</span><span class="nx">plugins</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">plug</span><span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">plugins</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Unplugs and destroys all plugins on the host</span>
+<span class="c">         * @method _destroyPlugins</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_destroyPlugins</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_unplug</span><span class="o">();</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Private method used to instantiate and attach plugins to the host</span>
+<span class="c">         *</span>
+<span class="c">         * @method _plug</span>
+<span class="c">         * @param {Function} PluginClass The plugin class to instantiate</span>
+<span class="c">         * @param {Object} config The configuration object for the plugin</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_plug</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">PluginClass</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">PluginClass</span> <span class="o">&amp;&amp;</span> <span class="nx">PluginClass</span><span class="o">.</span><span class="nx">NS</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">ns</span> <span class="o">=</span> <span class="nx">PluginClass</span><span class="o">.</span><span class="nx">NS</span><span class="o">;</span>
+    
+                <span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="o">{};</span>
+                <span class="nx">config</span><span class="o">.</span><span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+    
+                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">hasPlugin</span><span class="o">(</span><span class="nx">ns</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="c">// Update config</span>
+<span class="c"></span>                    <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">].</span><span class="nx">setAttrs</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="c">// Create new instance</span>
+<span class="c"></span>                    <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PluginClass</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_plugins</span><span class="o">[</span><span class="nx">ns</span><span class="o">]</span> <span class="o">=</span> <span class="nx">PluginClass</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Unplugs and destroys a plugin already instantiated with the host.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _unplug</span>
+<span class="c">         * @private</span>
+<span class="c">         * @param {String | Function} plugin The namespace for the plugin, or a plugin class with the static NS property defined.</span>
+<span class="c">         */</span>
+        <span class="nx">_unplug</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">plugin</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">ns</span> <span class="o">=</span> <span class="nx">plugin</span><span class="o">,</span> 
+                <span class="nx">plugins</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_plugins</span><span class="o">;</span>
+    
+            <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">plugin</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">ns</span> <span class="o">=</span> <span class="nx">plugin</span><span class="o">.</span><span class="nx">NS</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">ns</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">plugins</span><span class="o">[</span><span class="nx">ns</span><span class="o">]</span> <span class="o">||</span> <span class="nx">plugins</span><span class="o">[</span><span class="nx">ns</span><span class="o">]</span> <span class="o">!==</span> <span class="nx">plugin</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">ns</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+    
+            <span class="k">if</span> <span class="o">(</span><span class="nx">ns</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">].</span><span class="nx">destroy</span><span class="o">();</span>
+                    <span class="nx">delete</span> <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">];</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">plugins</span><span class="o">[</span><span class="nx">ns</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="nx">delete</span> <span class="nx">plugins</span><span class="o">[</span><span class="nx">ns</span><span class="o">];</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">}</span>
-
-        <span class="c">// User Configuration</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="o">.</span><span class="nx">plugins</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">plug</span><span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">plugins</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
-
+    <span class="o">};</span>
+    
     <span class="c">/**</span>
-<span class="c">     * Private method used to unplug and destroy all plugins on the host</span>
-<span class="c">     * @method _destroyPlugins</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_destroyPlugins</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_unplug</span><span class="o">();</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Private method used to instantiate and attach plugins to the host</span>
-<span class="c">     * @method _plug</span>
-<span class="c">     * @param {Function} PluginClass The plugin class to instantiate</span>
-<span class="c">     * @param {Object} config The configuration object for the plugin</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_plug</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">PluginClass</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">PluginClass</span> <span class="o">&amp;&amp;</span> <span class="nx">PluginClass</span><span class="o">.</span><span class="nx">NS</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">ns</span> <span class="o">=</span> <span class="nx">PluginClass</span><span class="o">.</span><span class="nx">NS</span><span class="o">;</span>
-
-            <span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="o">{};</span>
-            <span class="nx">config</span><span class="o">.</span><span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">hasPlugin</span><span class="o">(</span><span class="nx">ns</span><span class="o">))</span> <span class="o">{</span>
-                <span class="c">// Update config</span>
-<span class="c"></span>                <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">].</span><span class="nx">setAttrs</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="c">// Create new instance</span>
-<span class="c"></span>                <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PluginClass</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_plugins</span><span class="o">[</span><span class="nx">ns</span><span class="o">]</span> <span class="o">=</span> <span class="nx">PluginClass</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Private method used to unregister and destroy a plugin already instantiated with the host.</span>
+<span class="c">     * Registers plugins to be instantiated at the class level (plugins </span>
+<span class="c">     * which should be plugged into every instance of the class by default).</span>
 <span class="c">     *</span>
-<span class="c">     * @method _unplug</span>
-<span class="c">     * @private</span>
-<span class="c">     * @param {String | Function} plugin The namespace for the Plugin, or a Plugin class, with the static NS property defined.</span>
+<span class="c">     * @method Plugin.Host.plug</span>
+<span class="c">     * @static</span>
+<span class="c">     *</span>
+<span class="c">     * @param {Function} hostClass The host class on which to register the plugins</span>
+<span class="c">     * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)</span>
+<span class="c">     * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin</span>
 <span class="c">     */</span>
-    <span class="nx">_unplug</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">plugin</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">ns</span> <span class="o">=</span> <span class="nx">plugin</span><span class="o">,</span> 
-            <span class="nx">plugins</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_plugins</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">plugin</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">ns</span> <span class="o">=</span> <span class="nx">plugin</span><span class="o">.</span><span class="nx">NS</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">ns</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">plugins</span><span class="o">[</span><span class="nx">ns</span><span class="o">]</span> <span class="o">||</span> <span class="nx">plugins</span><span class="o">[</span><span class="nx">ns</span><span class="o">]</span> <span class="o">!==</span> <span class="nx">plugin</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">ns</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="nx">PluginHost</span><span class="o">.</span><span class="nx">plug</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">hostClass</span><span class="o">,</span> <span class="nx">plugin</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c">// Cannot plug into Base, since Plugins derive from Base [ will cause infinite recurrsion ]</span>
+<span class="c"></span>        <span class="k">var</span> <span class="nx">p</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">name</span><span class="o">;</span>
+    
+        <span class="k">if</span> <span class="o">(</span><span class="nx">hostClass</span> <span class="o">!==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_PLUG</span> <span class="o">=</span> <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_PLUG</span> <span class="o">||</span> <span class="o">{};</span>
+    
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">plugin</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">plugin</span> <span class="o">=</span> <span class="o">{</span><span class="nx">fn</span><span class="o">:</span><span class="nx">plugin</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">:</span><span class="nx">config</span><span class="o">};</span>
+                <span class="o">}</span>
+                <span class="nx">plugin</span> <span class="o">=</span> <span class="o">[</span><span class="nx">plugin</span><span class="o">];</span>
+            <span class="o">}</span>
+    
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">plugin</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span><span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="nx">p</span> <span class="o">=</span> <span class="nx">plugin</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                <span class="nx">name</span> <span class="o">=</span> <span class="nx">p</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">||</span> <span class="nx">p</span><span class="o">.</span><span class="nx">fn</span><span class="o">.</span><span class="nx">NAME</span><span class="o">;</span>
+                <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_PLUG</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">p</span><span class="o">;</span>
             <span class="o">}</span>
         <span class="o">}</span>
+    <span class="o">};</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">ns</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">])</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">].</span><span class="nx">destroy</span><span class="o">();</span>
-                <span class="nx">delete</span> <span class="k">this</span><span class="o">[</span><span class="nx">ns</span><span class="o">];</span>
+    <span class="c">/**</span>
+<span class="c">     * Unregisters any class level plugins which have been registered by the host class, or any</span>
+<span class="c">     * other class in the hierarchy.</span>
+<span class="c">     *</span>
+<span class="c">     * @method Plugin.Host.unplug</span>
+<span class="c">     * @static</span>
+<span class="c">     *</span>
+<span class="c">     * @param {Function} hostClass The host class from which to unregister the plugins</span>
+<span class="c">     * @param {Function | Array} plugin The plugin class, or an array of plugin classes</span>
+<span class="c">     */</span>
+    <span class="nx">PluginHost</span><span class="o">.</span><span class="nx">unplug</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">hostClass</span><span class="o">,</span> <span class="nx">plugin</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">p</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">name</span><span class="o">;</span>
+    
+        <span class="k">if</span> <span class="o">(</span><span class="nx">hostClass</span> <span class="o">!==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_UNPLUG</span> <span class="o">=</span> <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_UNPLUG</span> <span class="o">||</span> <span class="o">{};</span>
+    
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">plugin</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">plugin</span> <span class="o">=</span> <span class="o">[</span><span class="nx">plugin</span><span class="o">];</span>
             <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">plugins</span><span class="o">[</span><span class="nx">ns</span><span class="o">])</span> <span class="o">{</span>
-                <span class="nx">delete</span> <span class="nx">plugins</span><span class="o">[</span><span class="nx">ns</span><span class="o">];</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">};</span>
-
-<span class="c">/**</span>
-<span class="c"> * Registers plugins to be instantiated at the class level (plugins </span>
-<span class="c"> * which should be plugged into every instance of the class by default).</span>
-<span class="c"> * </span>
-<span class="c"> * @method PluginHost.plug</span>
-<span class="c"> * @static</span>
-<span class="c"> *</span>
-<span class="c"> * @param {Function} hostClass The host class on which to register the plugins</span>
-<span class="c"> * @param {Function | Array} plugin Either the plugin class, or an array of plugin classes/plugin fn, cfg object literals </span>
-<span class="c"> * @param {Object} config If plugin is the plugin class, the configuration for the plugin can be passed</span>
-<span class="c"> * as the configuration for the plugin</span>
-<span class="c"> */</span>
-<span class="nx">PluginHost</span><span class="o">.</span><span class="nx">plug</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">hostClass</span><span class="o">,</span> <span class="nx">plugin</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c">// Cannot plug into Base, since Plugins derive from Base [ will cause infinite recurrsion ]</span>
-<span class="c"></span>    <span class="k">var</span> <span class="nx">p</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">name</span><span class="o">;</span>
-
-    <span class="k">if</span> <span class="o">(</span><span class="nx">hostClass</span> <span class="o">!==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_PLUG</span> <span class="o">=</span> <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_PLUG</span> <span class="o">||</span> <span class="o">{};</span>
-
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">plugin</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">plugin</span> <span class="o">=</span> <span class="o">{</span><span class="nx">fn</span><span class="o">:</span><span class="nx">plugin</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">:</span><span class="nx">config</span><span class="o">};</span>
-            <span class="o">}</span>
-            <span class="nx">plugin</span> <span class="o">=</span> <span class="o">[</span><span class="nx">plugin</span><span class="o">];</span>
-        <span class="o">}</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">plugin</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span><span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="nx">p</span> <span class="o">=</span> <span class="nx">plugin</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-            <span class="nx">name</span> <span class="o">=</span> <span class="nx">p</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">||</span> <span class="nx">p</span><span class="o">.</span><span class="nx">fn</span><span class="o">.</span><span class="nx">NAME</span><span class="o">;</span>
-            <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_PLUG</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">p</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">};</span>
-
-<span class="c">/**</span>
-<span class="c"> * Unregisters plugins which have been registered by the host class, or any</span>
-<span class="c"> * other class in the hierarchy.</span>
-<span class="c"> *</span>
-<span class="c"> * @method PluginHost.unplug</span>
-<span class="c"> * @static</span>
-<span class="c"> *</span>
-<span class="c"> * @param {Function} hostClass The host class from which to unregister the plugins</span>
-<span class="c"> * @param {Function | Array} plugin The plugin class, or an array of plugin classes</span>
-<span class="c"> */</span>
-<span class="nx">PluginHost</span><span class="o">.</span><span class="nx">unplug</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">hostClass</span><span class="o">,</span> <span class="nx">plugin</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">p</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">name</span><span class="o">;</span>
-
-    <span class="k">if</span> <span class="o">(</span><span class="nx">hostClass</span> <span class="o">!==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_UNPLUG</span> <span class="o">=</span> <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_UNPLUG</span> <span class="o">||</span> <span class="o">{};</span>
-
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">plugin</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">plugin</span> <span class="o">=</span> <span class="o">[</span><span class="nx">plugin</span><span class="o">];</span>
-        <span class="o">}</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">plugin</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="nx">p</span> <span class="o">=</span> <span class="nx">plugin</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-            <span class="nx">name</span> <span class="o">=</span> <span class="nx">p</span><span class="o">.</span><span class="nx">NAME</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">hostClass</span><span class="o">.</span><span class="nx">_PLUG</span><span class="o">[</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span>
-                <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_UNPLUG</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">p</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">delete</span> <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_PLUG</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
+    
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">plugin</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="nx">p</span> <span class="o">=</span> <span class="nx">plugin</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                <span class="nx">name</span> <span class="o">=</span> <span class="nx">p</span><span class="o">.</span><span class="nx">NAME</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">hostClass</span><span class="o">.</span><span class="nx">_PLUG</span><span class="o">[</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_UNPLUG</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">p</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">delete</span> <span class="nx">hostClass</span><span class="o">.</span><span class="nx">_PLUG</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
+                <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+    <span class="o">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Plugin&quot;</span><span class="o">).</span><span class="nx">Host</span> <span class="o">=</span> <span class="nx">PluginHost</span><span class="o">;</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Plugin&quot;</span><span class="o">).</span><span class="nx">Host</span> <span class="o">=</span> <span class="nx">PluginHost</span><span class="o">;</span>
 </pre></div>
                     </div>
 			</div>
@@ -376,7 +384,7 @@
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="Base.html" title="Base">Base</a></li>
-                                <li class=""><a href="PluginHost.html" title="PluginHost">PluginHost</a></li>
+                                <li class=""><a href="Plugin.Host.html" title="Plugin.Host">Plugin.Host</a></li>
                         </ul>
                     </div>
 
@@ -402,7 +410,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "", "host": "Base", "name": "ATTRS", "url": "Base.html#property_ATTRS", "type": "property"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "build", "url": "Base.html#method_build", "type": "method"}, {"access": "private", "host": "Base", "name": "_buildCfg", "url": "Base.html#property__buildCfg", "type": "property"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_destroyPlugins", "url": "PluginHost.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "PluginHost", "name": "hasPlugin", "url": "PluginHost.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "PluginHost", "name": "_initPlugins", "url": "PluginHost.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "NAME", "url": "Base.html#property_NAME", "type": "property"}, {"access": "private", "host": "PluginHost", "name": "_plug", "url": "PluginHost.html#method__plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "plug", "url": "PluginHost.html#method_plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.plug", "url": "PluginHost.html#method_PluginHost.plug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "PluginHost.unplug", "url": "PluginHost.html#method_PluginHost.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "PluginHost", "name": "_unplug", "url": "PluginHost.html#method__unplug", "type": "method"}, {"access": "", "host": "PluginHost", "name": "unplug", "url": "PluginHost.html#method_unplug", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "Base.ATTRS", "url": "Base.html#property_Base.ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "Base.build", "url": "Base.html#method_Base.build", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._buildCfg", "url": "Base.html#property_Base._buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "Base.NAME", "url": "Base.html#property_Base.NAME", "type": "property"}, {"access": "", "host": "Base", "name": "Base.plug", "url": "Base.html#method_Base.plug", "type": "method"}, {"access": "", "host": "Base", "name": "Base.unplug", "url": "Base.html#method_Base.unplug", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Plugin.Host", "name": "_destroyPlugins", "url": "Plugin.Host.html#method__destroyPlugins", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "hasPlugin", "url": "Plugin.Host.html#method_hasPlugin", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "private", "host": "Plugin.Host", "name": "_initPlugins", "url": "Plugin.Host.html#method__initPlugins", "type": "method"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "Plugin.Host", "name": "_plug", "url": "Plugin.Host.html#method__plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "plug", "url": "Plugin.Host.html#method_plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "Plugin.Host.plug", "url": "Plugin.Host.html#method_Plugin.Host.plug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "Plugin.Host.unplug", "url": "Plugin.Host.html#method_Plugin.Host.unplug", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}, {"access": "private", "host": "Plugin.Host", "name": "_unplug", "url": "Plugin.Host.html#method__unplug", "type": "method"}, {"access": "", "host": "Plugin.Host", "name": "unplug", "url": "Plugin.Host.html#method_unplug", "type": "method"}];
 </script>
 </body>
 </html>

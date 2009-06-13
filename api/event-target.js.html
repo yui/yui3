@@ -66,7 +66,6 @@
 
 <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
     <span class="nx">PREFIX_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="o">,</span>
-    <span class="nx">DETACH_PREFIX_SPLITTER</span> <span class="o">=</span> <span class="sr">/[,|]\s*/</span><span class="o">,</span>
     <span class="nx">CATEGORY_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="o">,</span>
     <span class="nx">AFTER_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;~AFTER~&#39;</span><span class="o">,</span>
 
@@ -94,7 +93,7 @@
 <span class="c">     */</span>
     <span class="nx">_parseType</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">parts</span><span class="o">,</span> <span class="nx">detachcategory</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">full_t</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">detachcategory</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">full_t</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">t</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">t</span><span class="o">;</span>
@@ -108,23 +107,24 @@
             <span class="c">// Y.log(t);</span>
 <span class="c"></span>        <span class="o">}</span>
 
-        <span class="nx">parts</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DETACH_PREFIX_SPLITTER</span><span class="o">);</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">parts</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">detachcategory</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
-            <span class="nx">t</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
+        <span class="c">// parts = t.split(DETACH_PREFIX_SPLITTER);</span>
+<span class="c"></span>        <span class="c">// if (parts.length &gt; 1) {</span>
+<span class="c"></span>        <span class="c">//     detachcategory = parts[0];</span>
+<span class="c"></span>        <span class="c">//     t = parts[1];</span>
+<span class="c"></span>        <span class="c">//     if (t == &#39;*&#39;) {</span>
+<span class="c"></span>        <span class="c">//          t = null;</span>
+<span class="c"></span>        <span class="c">//     }</span>
+<span class="c"></span>        <span class="c">// }</span>
+<span class="c"></span>        
+        <span class="nx">i</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">CATEGORY_DELIMITER</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">detachcategory</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="o">(</span><span class="nx">i</span><span class="o">));</span>
+            <span class="nx">t</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">);</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="o">)</span> <span class="o">{</span>
-                 <span class="nx">t</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                <span class="nx">t</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
             <span class="o">}</span>
         <span class="o">}</span>
-        
-        <span class="c">// i = t.indexOf(CATEGORY_DELIMITER);</span>
-<span class="c"></span>        <span class="c">// if (i &gt; -1) {</span>
-<span class="c"></span>        <span class="c">//     detachcategory = t.substr(0, AFTER_PREFIX.length-1);</span>
-<span class="c"></span>        <span class="c">//     t = t.substr(AFTER_PREFIX.length);</span>
-<span class="c"></span>        <span class="c">//     // Y.log(t);</span>
-<span class="c"></span>        <span class="c">// }</span>
-<span class="c"></span>
+
         <span class="nx">full_t</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">pre</span><span class="o">);</span>
 
         <span class="k">return</span> <span class="o">[</span><span class="nx">detachcategory</span><span class="o">,</span> <span class="nx">full_t</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">t</span><span class="o">];</span>
@@ -181,7 +181,7 @@
 <span class="c">     * @param fn {Function} The callback</span>
 <span class="c">     * @return the event target or a detach handle per &#39;chain&#39; config</span>
 <span class="c">     */</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span>
             <span class="nx">detachcategory</span><span class="o">,</span> <span class="nx">handle</span><span class="o">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">handles</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">adapt</span><span class="o">,</span> <span class="nx">shorttype</span><span class="o">,</span>
@@ -261,11 +261,11 @@
 
             <span class="c">// Y.log(&#39;parts: &#39; + parts);</span>
 <span class="c"></span>            <span class="nx">ce</span>     <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
-            <span class="nx">args</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-
-            <span class="nx">f</span> <span class="o">=</span> <span class="o">(</span><span class="nx">after</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">after</span> <span class="o">:</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">on</span><span class="o">;</span>
-
-            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+            <span class="c">// args   = Y.Array(arguments, 1, true);</span>
+<span class="c"></span>            <span class="c">// f = (after) ? ce.after : ce.on;</span>
+<span class="c"></span>            <span class="c">// handle = f.apply(ce, args);</span>
+<span class="c"></span>
+            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">_on</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="o">(</span><span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">3</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">3</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span> <span class="o">(</span><span class="nx">after</span><span class="o">)</span> <span class="o">?</span> <span class="s1">&#39;after&#39;</span> <span class="o">:</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">detachcategory</span><span class="o">)</span> <span class="o">{</span>
@@ -273,7 +273,6 @@
             <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">]</span> <span class="o">=</span> <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">]</span> <span class="o">||</span> <span class="o">{};</span>
             <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">][</span><span class="nx">type</span><span class="o">]</span> <span class="o">=</span> <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">][</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="o">[];</span>
             <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">][</span><span class="nx">type</span><span class="o">].</span><span class="nx">push</span><span class="o">(</span><span class="nx">handle</span><span class="o">);</span>
-
 
             <span class="c">// Y.log(&#39;storing: &#39; + key);</span>
 <span class="c"></span>        <span class="o">}</span>
@@ -481,7 +480,7 @@
 <span class="c"></span>
         <span class="nx">type</span> <span class="o">=</span> <span class="nx">_getType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">);</span>
 
-        <span class="k">var</span> <span class="nx">events</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="o">{};</span>
+        <span class="k">var</span> <span class="nx">events</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">o</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="o">{};</span>
@@ -503,21 +502,18 @@
             <span class="o">}</span>
 
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">o</span> <span class="o">=</span> <span class="o">(</span><span class="nx">opts</span><span class="o">)</span> <span class="o">?</span>  <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">opts</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">defaults</span><span class="o">)</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">defaults</span><span class="o">;</span>
             <span class="c">// apply defaults</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">defaults</span><span class="o">);</span>
-
+<span class="c"></span>
             <span class="nx">ce</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">o</span><span class="o">);</span>
 
             <span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">;</span>
 
-            <span class="c">// if (o.onSubscribeCallback) {</span>
-<span class="c"></span>            <span class="c">//     ce.subscribeEvent.on(o.onSubscribeCallback);</span>
-<span class="c"></span>            <span class="c">// }</span>
-<span class="c"></span>        <span class="o">}</span>
+        <span class="o">}</span>
 
         <span class="c">// make sure we turn the broadcast flag off if this</span>
 <span class="c"></span>        <span class="c">// event was published as a result of bubbling</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">opts</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">].</span><span class="nx">broadcast</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
         <span class="o">}</span>
 
@@ -579,10 +575,11 @@
             <span class="c">// if this object has bubble targets, we need to publish the</span>
 <span class="c"></span>            <span class="c">// event in order for it to bubble.</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">hasTargets</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
-                <span class="nx">ce</span><span class="o">.</span><span class="nx">details</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-
-                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">bubble</span><span class="o">(</span><span class="nx">ce</span><span class="o">);</span>
+                <span class="c">// ce = this.publish(t);</span>
+<span class="c"></span>                <span class="c">// ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);</span>
+<span class="c"></span>                
+                <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="nx">arguments</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">).</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">bubble</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="c">// otherwise there is nothing to be done</span>
@@ -619,22 +616,19 @@
 <span class="c">     * @param evt {Event.Custom} the custom event to propagate</span>
 <span class="c">     * @return {boolean} the aggregated return value from Event.Custom.fire</span>
 <span class="c">     */</span>
-    <span class="nx">bubble</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">evt</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">bubble</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">evt</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">target</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">targs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">targets</span><span class="o">,</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
-            <span class="nx">t</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">targetProp</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+            <span class="nx">t</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">evt</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&amp;&amp;</span> <span class="nx">targs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">evt</span> <span class="o">||</span> <span class="o">(!</span><span class="nx">evt</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&amp;&amp;</span> <span class="nx">targs</span><span class="o">))</span> <span class="o">{</span>
 
             <span class="c">// Y.log(&#39;Bubbling &#39; + evt.type);</span>
-<span class="c"></span>
-            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">targs</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">targs</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">targs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-
                     <span class="nx">t</span> <span class="o">=</span> <span class="nx">targs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span> 
-                    <span class="nx">type</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">type</span><span class="o">;</span>
-                    <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span> 
-                    <span class="nx">targetProp</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">target</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
+                    <span class="c">// type = evt &amp;&amp; evt.type;</span>
+<span class="c"></span>                    <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span> 
                         
                     <span class="c">// if this event was not published on the bubble target,</span>
 <span class="c"></span>                    <span class="c">// publish it with sensible default properties</span>
@@ -642,29 +636,33 @@
 
                         <span class="c">// publish the event on the bubble target using this event</span>
 <span class="c"></span>                        <span class="c">// for its configuration</span>
-<span class="c"></span>                        <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">evt</span><span class="o">);</span>
-                        <span class="c">// ce.configured = false;</span>
+<span class="c"></span>                        <span class="c">// ce = t.publish(type, evt);</span>
 <span class="c"></span>
                         <span class="c">// set the host and context appropriately</span>
-<span class="c"></span>                        <span class="nx">ce</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="o">(</span><span class="nx">evt</span><span class="o">.</span><span class="nx">host</span> <span class="o">===</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">context</span><span class="o">)</span> <span class="o">?</span> <span class="nx">t</span> <span class="o">:</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">context</span><span class="o">;</span>
-                        <span class="nx">ce</span><span class="o">.</span><span class="nx">host</span> <span class="o">=</span> <span class="nx">t</span><span class="o">;</span>
-
-                        <span class="c">// clear handlers if specified on this event</span>
-<span class="c"></span>                        <span class="nx">ce</span><span class="o">.</span><span class="nx">defaultFn</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                        <span class="nx">ce</span><span class="o">.</span><span class="nx">preventedFn</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                        <span class="nx">ce</span><span class="o">.</span><span class="nx">stoppedFn</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                    <span class="o">}</span>
-
-                    <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">targetProp</span><span class="o">;</span>
-                    <span class="nx">ce</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">t</span><span class="o">;</span>
-
-                    <span class="c">// ce.target = evt.target;</span>
+<span class="c"></span>                        <span class="c">// ce.context = (evt.host === evt.context) ? t : evt.context;</span>
+<span class="c"></span>                        <span class="c">// ce.host = t;</span>
 <span class="c"></span>
-                    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">details</span><span class="o">);</span>
+                        <span class="c">// clear handlers if specified on this event</span>
+<span class="c"></span>                        <span class="c">// ce.defaultFn = null;</span>
+<span class="c"></span>                        <span class="c">// ce.preventedFn = null;</span>
+<span class="c"></span>                        <span class="c">// ce.stoppedFn = null;</span>
+<span class="c"></span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">hasTargets</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">t</span><span class="o">.</span><span class="nx">bubble</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">evt</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">target</span><span class="o">);</span>
+                        <span class="o">}</span>
 
-                    <span class="c">// stopPropagation() was called</span>
-<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">ce</span><span class="o">.</span><span class="nx">stopped</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">break</span><span class="o">;</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+
+                        <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span> <span class="o">||</span> <span class="o">(</span><span class="nx">evt</span> <span class="o">&amp;&amp;</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">target</span><span class="o">)</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
+
+                        <span class="nx">ce</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">t</span><span class="o">;</span>
+
+                        <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">args</span> <span class="o">||</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">details</span><span class="o">);</span>
+
+                        <span class="c">// stopPropagation() was called</span>
+<span class="c"></span>                        <span class="k">if</span> <span class="o">(</span><span class="nx">ce</span><span class="o">.</span><span class="nx">stopped</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">break</span><span class="o">;</span>
+                        <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>

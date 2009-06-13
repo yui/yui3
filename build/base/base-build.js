@@ -1,23 +1,26 @@
 YUI.add('base-build', function(Y) {
 
     /**
-     * The base-build sub-module provides the Base.build functionality
+     * The base-build submodule provides Base.build functionality, which
+     * can be used to create custom classes, by aggregating extensions onto 
+     * a main class.
      *
      * @module base
-     * @sub-module base-build
+     * @submodule base-build
+     * @for Base
      */
 
     var Base = Y.Base,
         L = Y.Lang;
 
-
     /**
      * The build configuration for the Base class.
-     * Defines the static fields which need to be aggregated,
-     * when this class is used as the main class passed to 
-     * the <a href="#method_build">Base.build</a> method.
      *
-     * @property _buildCfg
+     * Defines the static fields which need to be aggregated
+     * when the Base class is used as the main class passed to 
+     * the <a href="#method_Base.build">Base.build</a> method.
+     *
+     * @property Base._buildCfg
      * @type Object
      * @static
      * @final
@@ -29,12 +32,13 @@ YUI.add('base-build', function(Y) {
 
     /**
      * <p>
-     * Builds a constructor function (class) from the
+     * Builds a custom constructor function (class) from the
      * main function, and array of extension functions (classes)
-     * provided.
+     * provided. The NAME field for the constructor function is 
+     * defined by the first argument passed in.
      * </p>
      * <p>
-     * The cfg object literal supports the following properties
+     * The cfg object supports the following properties
      * </p>
      * <dl>
      *    <dt>dynamic &#60;boolean&#62;</dt>
@@ -43,23 +47,23 @@ YUI.add('base-build', function(Y) {
      *    is created which extends the main class, and acts as the 
      *    host on which the extension classes are augmented.</p>
      *    <p>If false, the extensions classes are augmented directly to
-     *    the main class, modifying the main classes prototype.</p>
+     *    the main class, modifying the main class' prototype.</p>
      *    </dd>
      *    <dt>aggregates &#60;String[]&#62;</dt>
      *    <dd>An array of static property names, which will get aggregated
      *    on to the built class, in addition to the default properties build 
-     *    will always aggregate as defined by the main class' _buildCfg
+     *    will always aggregate as defined by the main class' static _buildCfg
      *    property.
      *    </dd>
      * </dl>
      *
-     * @method build
+     * @method Base.build
      * @static
-     * @param {Function} main The name of the new class
+     * @param {Function} name The name of the new class. Used to defined the NAME property for the new class.
      * @param {Function} main The main class on which to base the built class
      * @param {Function[]} extensions The set of extension classes which will be
      * augmented/aggregated to the built class.
-     * @param {Object} cfg Optional. Configuration for the class.
+     * @param {Object} cfg Optional. Build configuration for the class (see description).
      * @return {Function} A custom class, created from the provided main and extension classes
      */
     Base.build = function(name, main, extensions, cfg) {

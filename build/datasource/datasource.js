@@ -318,7 +318,7 @@ Y.namespace("DataSource").Local = DSLocal;
 
 }, '@VERSION@' ,{requires:['base']});
 
-YUI.add('datasource-xhr', function(Y) {
+YUI.add('datasource-io', function(Y) {
 
 /**
  * The DataSource utility provides a common configurable interface for widgets to
@@ -328,22 +328,22 @@ YUI.add('datasource-xhr', function(Y) {
  */
     
 /**
- * XHR subclass for the YUI DataSource utility.
- * @class DataSource.XHR
+ * IO subclass for the YUI DataSource utility.
+ * @class DataSource.IO
  * @extends DataSource.Local
  * @constructor
  */    
-var DSXHR = function() {
-    DSXHR.superclass.constructor.apply(this, arguments);
+var DSIO = function() {
+    DSIO.superclass.constructor.apply(this, arguments);
 };
     
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.XHR static properties
+    // DataSource.IO static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(DSXHR, {
+Y.mix(DSIO, {
     /**
      * Class name.
      *
@@ -351,14 +351,14 @@ Y.mix(DSXHR, {
      * @type String
      * @static     
      * @final
-     * @value "dataSourceXHR"
+     * @value "dataSourceIO"
      */
-    NAME: "dataSourceXHR",
+    NAME: "dataSourceIO",
 
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.XHR Attributes
+    // DataSource.IO Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -377,7 +377,7 @@ Y.mix(DSXHR, {
     }
 });
     
-Y.extend(DSXHR, Y.DataSource.Local, {
+Y.extend(DSIO, Y.DataSource.Local, {
     /**
     * Internal init() handler.
     *
@@ -392,14 +392,14 @@ Y.extend(DSXHR, Y.DataSource.Local, {
     /**
     * @property _queue
     * @description Object literal to manage asynchronous request/response
-    * cycles enabled if queue needs to be managed (asyncMode/xhrConnMode):
+    * cycles enabled if queue needs to be managed (asyncMode/ioConnMode):
     * <dl>
     *     <dt>interval {Number}</dt>
     *         <dd>Interval ID of in-progress queue.</dd>
     *     <dt>conn</dt>
     *         <dd>In-progress connection identifier (if applicable).</dd>
     *     <dt>requests {Object[]}</dt>
-    *         <dd>Array of queued request objects: {request:oRequest, callback:_xhrCallback}.</dd>
+    *         <dd>Array of queued request objects: {request:oRequest, callback:_ioCallback}.</dd>
     * </dl>
     * @type Object
     * @default {interval:null, conn:null, requests:[]}
@@ -434,7 +434,7 @@ Y.extend(DSXHR, Y.DataSource.Local, {
                         this.fire("data", Y.mix({data:response}, e));
                     },
                     failure: function (id, response, e) {
-                        e.error = new Error("XHR data failure");
+                        e.error = new Error("IO data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
                     }
@@ -448,14 +448,14 @@ Y.extend(DSXHR, Y.DataSource.Local, {
     }
 });
   
-Y.DataSource.XHR = DSXHR;
+Y.DataSource.IO = DSIO;
     
 
 
 
 }, '@VERSION@' ,{requires:['datasource-local', 'io']});
 
-YUI.add('datasource-scriptnode', function(Y) {
+YUI.add('datasource-get', function(Y) {
 
 /**
  * The DataSource utility provides a common configurable interface for widgets to
@@ -465,22 +465,22 @@ YUI.add('datasource-scriptnode', function(Y) {
  */
     
 /**
- * Dynamic script node subclass for the YUI DataSource utility.
- * @class DataSource.ScriptNode
+ * Get Utility subclass for the YUI DataSource utility.
+ * @class DataSource.Get
  * @extends DataSource.Local
  * @constructor
  */    
-var DSSN = function() {
-    DSSN.superclass.constructor.apply(this, arguments);
+var DSGet = function() {
+    DSGet.superclass.constructor.apply(this, arguments);
 };
     
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.ScriptNode static properties
+    // DataSource.Get static properties
     //
     /////////////////////////////////////////////////////////////////////////////
-Y.mix(DSSN, {
+Y.mix(DSGet, {
     /**
      * Class name.
      *
@@ -488,14 +488,14 @@ Y.mix(DSSN, {
      * @type String
      * @static     
      * @final
-     * @value "dataSourceScriptNode"
+     * @value "dataSourceGet"
      */
-    NAME: "dataSourceScriptNode",
+    NAME: "dataSourceGet",
 
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    // DataSource.ScriptNode Attributes
+    // DataSource.Get Attributes
     //
     /////////////////////////////////////////////////////////////////////////////
 
@@ -586,7 +586,7 @@ generateRequestCallback : {
     _tId : 0
 });
     
-Y.extend(DSSN, Y.DataSource.Local, {
+Y.extend(DSGet, Y.DataSource.Local, {
     /**
      * Passes query string to Get Utility. Fires <code>response</code> event when
      * response is received asynchronously.
@@ -609,7 +609,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
     _defRequestFn: function(e) {
         var uri = this.get("source"),
             get = this.get("get"),
-            id = DSSN._tId++,
+            id = DSGet._tId++,
             self = this;
             
 
@@ -627,19 +627,19 @@ Y.extend(DSSN, Y.DataSource.Local, {
     // Dynamically add handler function with a closure to the callback stack
     YUI.Env.DataSource.callbacks[id] = Y.rbind(function(response) {
         if((self.get("asyncMode") !== "ignoreStaleResponses")||
-                (id === DSSN.callbacks.length-1)) { // Must ignore stale responses
+                (id === DSGet.callbacks.length-1)) { // Must ignore stale responses
 
             self.fire("data", Y.mix({data:response}, e));
         }
         else {
         }
 
-        delete DSSN.callbacks[id];
+        delete DSGet.callbacks[id];
     }, this, id);
 
     // We are now creating a request
     uri += e.request + this.get("generateRequestCallback")(this, id);
-    //uri = this.doBeforeGetScriptNode(sUri);
+    //uri = this.doBefore(sUri);
     get.script(uri, {
         autopurge: true,
         // Works in Firefox only....
@@ -667,7 +667,7 @@ Y.extend(DSSN, Y.DataSource.Local, {
     }
 });
   
-Y.DataSource.ScriptNode = DSSN;
+Y.DataSource.Get = DSGet;
 YUI.namespace("Env.DataSource.callbacks");
     
 
@@ -881,6 +881,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
      * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
      *     <dl>
+     *         <dt>cached (Object)</dt> <dd>True when response is cached.</dd>
      *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
      *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
      *         <dt>error (Object)</dt> <dd>Error object.</dd>
@@ -892,7 +893,10 @@ Y.extend(DataSourceCache, Y.Cache, {
      */
      _beforeDefResponseFn: function(e) {
         // Add to Cache before returning
-        this.add(e.request, e.response, (e.callback && e.callback.argument));
+        if(e.response && !e.response.cached) {
+            e.response.cached = true;
+            this.add(e.request, e.response, (e.callback && e.callback.argument));
+        }
      }
 });
 
@@ -987,7 +991,7 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = (Y.DataSource.XHR && (this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+        var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
             response = Y.DataSchema.JSON.apply(this.get("schema"), data);
             
         // Default
@@ -1094,7 +1098,7 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = (Y.DataSource.XHR && (this.get("host") instanceof Y.DataSource.XHR) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
+        var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && e.data.responseXML && (e.data.responseXML.nodeType === 9)) ? e.data.responseXML : e.data,
             response = Y.DataSchema.XML.apply(this.get("schema"), data);
             
         // Default
@@ -1201,7 +1205,7 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = (Y.DataSource.XHR && (this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+        var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
             response = Y.DataSchema.Array.apply(this.get("schema"), data);
             
         // Default
@@ -1308,7 +1312,7 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = (Y.DataSource.XHR && (this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+        var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
             response = Y.DataSchema.Text.apply(this.get("schema"), data);
             
         // Default
@@ -1419,5 +1423,5 @@ Y.augment(Y.DataSource.Local, Pollable);
 
 
 
-YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-local','datasource-xhr','datasource-scriptnode','datasource-function','datasource-cache','datasource-jsonschema','datasource-xmlschema','datasource-arrayschema','datasource-textschema','datasource-polling']});
+YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-local','datasource-io','datasource-get','datasource-function','datasource-cache','datasource-jsonschema','datasource-xmlschema','datasource-arrayschema','datasource-textschema','datasource-polling']});
 

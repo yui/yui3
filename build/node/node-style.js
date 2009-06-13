@@ -1,5 +1,6 @@
 YUI.add('node-style', function(Y) {
 
+(function(Y) {
 /**
  * Extended Node interface for managing node styles.
  * @module node
@@ -11,6 +12,7 @@ var methods = [
     /**
      * Returns the style's current value.
      * @method getStyle
+     * @for Node
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The current value of the style property for the element.
      */
@@ -43,6 +45,7 @@ var methods = [
 ];
 Y.Node.importMethod(Y.DOM, methods);
 Y.NodeList.importMethod(Y.Node.prototype, methods);
+})(Y);
 
 
 }, '@VERSION@' ,{requires:['dom-style', 'node-base']});

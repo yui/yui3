@@ -763,7 +763,11 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 cewrapper = Y.publish(key, {
                     //silent: true,
                     // host: this,
-                    bubbles: false
+                    bubbles: false,
+                    contextFn: function() {
+                        cewrapper.nodeRef = cewrapper.nodeRef || Y.get(cewrapper.el);
+                        return cewrapper.nodeRef;
+                    }
                 });
             
                 // for later removeListener calls
@@ -895,7 +899,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             }
 
             // switched from obj to trimmedArgs[2] to deal with appened compat param
-            context = trimmedArgs[2] || ((compat) ? el : Y.get(el));
+            // context = trimmedArgs[2] || ((compat) ? el : Y.get(el));
+            context = trimmedArgs[2];
             
             // set the context as the second arg to subscribe
             trimmedArgs[1] = context;
@@ -1532,7 +1537,7 @@ var Lang = Y.Lang,
 			ename,
 			elements,
 			nElements,
-			element,
+			matched,
 			ev,
 			i;
 
@@ -1544,15 +1549,15 @@ var Lang = Y.Lang,
 				if (nElements > 0) {
 					i = elements.length - 1;
 					do {
-						element = elements[i];
-	                    if (element === target || Y.DOM.contains(element, target)) {
+						matched = elements[i];
+	                    if (matched === target || Y.DOM.contains(matched, target)) {
 
                             if (!ev) {
                                 ev = new Y.DOMEventFacade(e, el);
-                                ev.originalTarget = ev.target;
+	                            ev.container = ev.currentTarget;
                             }
 
-	                        ev.target = Y.Node.get(element);
+	                        ev.currentTarget = Y.Node.get(matched);
 	                        Y.fire(ename, ev);
 	                    }
 					}
@@ -1702,7 +1707,8 @@ var isString = Y.Lang.isString,
 
 		if (!node.compareTo(relatedTarget) && !node.contains(relatedTarget)) {
 
-			e.target = node;
+			e.container = e.currentTarget;
+			e.currentTarget = node;
 
 			Y.fire(eventName, e);
 			
