@@ -10,7 +10,7 @@ YUI.add('datasource-textschema', function(Y) {
 /**
  * Adds schema-parsing to the YUI DataSource utility.
  * @class DataSourceTextSchema
- * @extends Plugin
+ * @extends Plugin.Base
  */    
 var DataSourceTextSchema = function() {
     DataSourceTextSchema.superclass.constructor.apply(this, arguments);

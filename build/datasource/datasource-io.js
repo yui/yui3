@@ -79,7 +79,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
     *     <dt>conn</dt>
     *         <dd>In-progress connection identifier (if applicable).</dd>
     *     <dt>requests {Object[]}</dt>
-    *         <dd>Array of queued request objects: {request:oRequest, callback:_ioCallback}.</dd>
+    *         <dd>Array of queued request objects: {request:request, callback:callback}.</dd>
     * </dl>
     * @type Object
     * @default {interval:null, conn:null, requests:[]}
