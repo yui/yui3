@@ -153,7 +153,7 @@ Y.extend(DSLocal, Y.Base, {
          * </dd>
          * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
-         * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+         * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
          *     <dl>
          *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
          *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
@@ -181,7 +181,7 @@ Y.extend(DSLocal, Y.Base, {
          * </dd>
          * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
-         * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+         * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
          *     <dl>
          *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
          *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
@@ -276,7 +276,7 @@ Y.extend(DSLocal, Y.Base, {
      * </dd>
      * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
-     * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+     * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
      *     <dl>
      *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
      *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
