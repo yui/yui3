@@ -10,8 +10,9 @@ YUI OOP Utilities
     to the function when executed).
 
   * bind() supports a string representing a function on the
-    context object in order to allow subclassing of bound
-    methods.
+    context object in order to allow overriding methods on
+    superclasses that are bound to a function displaced by
+    aop.
 
   * Fixed array handling in clone
 

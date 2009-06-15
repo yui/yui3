@@ -1031,14 +1031,14 @@ Y.Loader.prototype = {
      * @param mod {string} optional: the name of a module to skin
      * @return {string} the full skin module name
      */
-    formatSkin: Y.cached(function(skin, mod) {
+    formatSkin: function(skin, mod) {
         var s = this.SKIN_PREFIX + skin;
         if (mod) {
             s = s + "-" + mod;
         }
 
         return s;
-    }),
+    },
 
     /*
      * Reverses <code>formatSkin</code>, providing the skin name and
