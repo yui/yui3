@@ -1559,6 +1559,42 @@ var methods = [
     'setStyles'
 ];
 Y.Node.importMethod(Y.DOM, methods);
+/**
+ * Returns an array of values for each node.
+ * @method getStyle
+ * @for NodeList
+ * @see Node.getStyle
+ * @param {String} attr The style attribute to retrieve. 
+ * @return {Array} The current values of the style property for the element.
+ */
+
+/**
+ * Returns an array of the computed value for each node.
+ * @method getComputedStyle
+ * @see Node.getComputedStyle
+ * @param {String} attr The style attribute to retrieve. 
+ * @return {Array} The computed values for each node.
+ */
+'getComputedStyle',
+
+/**
+ * Sets a style property on each node.
+ * @method setStyle
+ * @see Node.setStyle
+ * @param {String} attr The style attribute to set. 
+ * @param {String|Number} val The value. 
+ * @chainable
+ */
+'setStyle',
+
+/**
+ * Sets multiple style properties on each node.
+ * @method setStyles
+ * @see Node.setStyles
+ * @param {Object} hash An object literal of property:value pairs. 
+ * @chainable
+ */
+'setStyles'
 Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 
@@ -1672,8 +1708,6 @@ Y.Node.ATTRS.scrollTop = {
 Y.Node.importMethod(Y.DOM, [
 /**
  * Gets the current position of the node in page coordinates. 
- * Nodes must be part of the DOM tree to have page coordinates
- * (display:none or nodes not appended return false).
  * @method getXY
  * @for Node
  * @return {Array} The XY position of the node
@@ -1682,7 +1716,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
- * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
  * @method setXY
  * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
  * @chainable
@@ -1691,8 +1724,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Gets the current position of the node in page coordinates. 
- * Nodes must be part of the DOM tree to have page coordinates
- * (display:none or nodes not appended return false).
  * @method getX
  * @return {Int} The X position of the node
 */
@@ -1700,7 +1731,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
- * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
  * @method setX
  * @param {Int} x X value for new position (coordinates are page-based)
  * @chainable
@@ -1709,8 +1739,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Gets the current position of the node in page coordinates. 
- * Nodes must be part of the DOM tree to have page coordinates
- * (display:none or nodes not appended return false).
  * @method getY
  * @return {Int} The Y position of the node
 */
@@ -1718,7 +1746,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
- * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
  * @method setY
  * @param {Int} y Y value for new position (coordinates are page-based)
  * @chainable
