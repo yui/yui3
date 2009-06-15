@@ -1125,62 +1125,63 @@ NodeList.importMethod(Y.Node.prototype, [
     /**
      * Called on each Node instance
      * @append
-     * @see Node
+     * @for NodeList
+     * @see Node.append
      */
     'append',
 
     /**
       * Called on each Node instance
       * @detach
-      * @see Node
+      * @see Node.detach
       */
     'detach',
     
     /** Called on each Node instance
       * @detachAll
-      * @see Node
+      * @see Node.detachAll
       */
     'detachAll',
 
     /** Called on each Node instance
       * @insert
-      * @see Node
+      * @see NodeInsert
       */
     'insert',
 
     /** Called on each Node instance
       * @plug
-      * @see Node
+      * @see Node.plug
       */
     'plug',
 
     /** Called on each Node instance
       * @prepend
-      * @see Node
+      * @see Node.prepend
       */
     'prepend',
 
     /** Called on each Node instance
       * @remove
-      * @see Node
+      * @see Node.remove
       */
     'remove',
 
     /** Called on each Node instance
       * @set
-      * @see Node
+      * @see Node.set
       */
     'set',
 
     /** Called on each Node instance
       * @setContent
-      * @see Node
+      * @see Node.setContent
       */
     'setContent',
 
     /** Called on each Node instance
       * @unplug
-      * @see Node
+      * @see Node.unplug
       */
     'unplug'
 ]);
@@ -1404,13 +1405,55 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
  */
 
     var methods = [
+    /**
+     * Determines whether each node has the given className.
+     * @method hasClass
+     * @for Node
+     * @param {String} className the class name to search for
+     * @return {Array} An array of booleans for each node bound to the NodeList. 
+     */
+     'hasClass',
+
+    /**
+     * Adds a class name to each node.
+     * @method addClass         
+     * @param {String} className the class name to add to the node's class attribute
+     * @chainable
+     */
+     'addClass',
+
+    /**
+     * Removes a class name from each node.
+     * @method removeClass         
+     * @param {String} className the class name to remove from the node's class attribute
+     * @chainable
+     */
+     'removeClass',
+
+    /**
+     * Replace a class with another class for each node.
+     * If no oldClassName is present, the newClassName is simply added.
+     * @method replaceClass  
+     * @param {String} oldClassName the class name to be replaced
+     * @param {String} newClassName the class name that will be replacing the old class name
+     * @chainable
+     */
+     'replaceClass',
+
+    /**
+     * If the className exists on the node it is removed, if it doesn't exist it is added.
+     * @method toggleClass  
+     * @param {String} className the class name to be toggled
+     * @chainable
+     */
+     'toggleClass'
     ];
 
     Y.Node.importMethod(Y.DOM, methods);
     /**
      * Determines whether each node has the given className.
      * @method hasClass
-     * @see Node
+     * @see Node.hasClass
      * @for NodeList
      * @param {String} className the class name to search for
      * @return {Array} An array of booleans for each node bound to the NodeList. 
@@ -1419,7 +1462,7 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
     /**
      * Adds a class name to each node.
      * @method addClass         
-     * @see Node
+     * @see Node.addClass
      * @param {String} className the class name to add to the node's class attribute
      * @chainable
      */
@@ -1427,7 +1470,7 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
     /**
      * Removes a class name from each node.
      * @method removeClass         
-     * @see Node
+     * @see Node.removeClass
      * @param {String} className the class name to remove from the node's class attribute
      * @chainable
      */
@@ -1436,7 +1479,7 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
      * Replace a class with another class for each node.
      * If no oldClassName is present, the newClassName is simply added.
      * @method replaceClass  
-     * @see Node
+     * @see Node.replaceClass
      * @param {String} oldClassName the class name to be replaced
      * @param {String} newClassName the class name that will be replacing the old class name
      * @chainable
@@ -1445,7 +1488,7 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
     /**
      * If the className exists on the node it is removed, if it doesn't exist it is added.
      * @method toggleClass  
-     * @see Node
+     * @see Node.toggleClass
      * @param {String} className the class name to be toggled
      * @chainable
      */
