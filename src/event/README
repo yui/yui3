@@ -1,7 +1,7 @@
 YUI Event Utility
     DOM event utilities
 
-3.0.0b1
+3.0.0beta1
     - DOM event, custom event, and simulate event moved to separate modules.
     - Event.attach returns a single handle if the result from collection processing is a single item.
     - purgeElement only reads element guids, it does not create new ones for elements without one.
@@ -10,6 +10,9 @@ YUI Event Utility
     - Added Y.on('mouseleave', fn, el, 'click', 'selector' ...
     - Added Y.on('windowresize', fn)
     - Fixed unsubscribeAll return value.
+    - Added ability to skip facade creation where performance is a concern.
+    - Moved DOMReady core to yui-base.
+    - Focus/blur abstraction works in Opera when the bound element is the target
 
 3.0.0pr2
     - Fixed IE notification error when no arguments are supplied.
