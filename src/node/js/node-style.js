@@ -10,6 +10,7 @@ var methods = [
     /**
      * Returns the style's current value.
      * @method getStyle
+     * @for Node
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The current value of the style property for the element.
      */
@@ -41,5 +42,41 @@ var methods = [
     'setStyles'
 ];
 Y.Node.importMethod(Y.DOM, methods);
+/**
+ * Returns an array of values for each node.
+ * @method getStyle
+ * @for NodeList
+ * @see Node.getStyle
+ * @param {String} attr The style attribute to retrieve. 
+ * @return {Array} The current values of the style property for the element.
+ */
+
+/**
+ * Returns an array of the computed value for each node.
+ * @method getComputedStyle
+ * @see Node.getComputedStyle
+ * @param {String} attr The style attribute to retrieve. 
+ * @return {Array} The computed values for each node.
+ */
+'getComputedStyle',
+
+/**
+ * Sets a style property on each node.
+ * @method setStyle
+ * @see Node.setStyle
+ * @param {String} attr The style attribute to set. 
+ * @param {String|Number} val The value. 
+ * @chainable
+ */
+'setStyle',
+
+/**
+ * Sets multiple style properties on each node.
+ * @method setStyles
+ * @see Node.setStyles
+ * @param {Object} hash An object literal of property:value pairs. 
+ * @chainable
+ */
+'setStyles'
 Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);

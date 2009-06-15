@@ -5,11 +5,11 @@
  */    
 
 /**
- * The NodeList class provides a wrapper for manipulating DOM NodeLists.
- * NodeList properties can be accessed via the set/get methods.
- * Use Y.get() to retrieve NodeList instances.
+ * The Node class provides a wrapper for manipulating DOM Nodes.
+ * Node properties can be accessed via the set/get methods.
+ * Use Y.get() to retrieve Node instances.
  *
- * <strong>NOTE:</strong> NodeList properties are accessed using
+ * <strong>NOTE:</strong> Node properties are accessed using
  * the <code>set</code> and <code>get</code> methods.
  *
  * @class Node
@@ -122,6 +122,16 @@ Node.EXEC_SCRIPTS = true;
 
 Node._instances = {};
 
+/**
+ * Registers plugins to be instantiated at the class level (plugins 
+ * which should be plugged into every instance of Node by default).
+ *
+ * @method Node.plug
+ * @static
+ *
+ * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
+ * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
+ */
 Node.plug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
@@ -129,6 +139,14 @@ Node.plug = function() {
     return Node;
 };
 
+/**
+ * Unregisters any class level plugins which have been registered by the Node
+ *
+ * @method Node.unplug
+ * @static
+ *
+ * @param {Function | Array} plugin The plugin class, or an array of plugin classes
+ */
 Node.unplug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
@@ -138,7 +156,7 @@ Node.unplug = function() {
 
 /**
  * Retrieves the DOM node bound to a Node instance
- * @method getDOMNode
+ * @method Node.getDOMNode
  * @static
  *
  * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
@@ -220,6 +238,16 @@ Node.importMethod = function(host, name, altName) {
     }
 };
 
+/**
+ * Returns a single Node instance bound to the node or the
+ * first element matching the given selector.
+ * @method Y.get
+ * @static
+ * @param {String | HTMLElement} node a node or Selector 
+ * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
+ * @param {Boolean} restrict Whether or not the Node instance should be restricted to accessing
+ * its subtree only.
+ */
 Node.get = function(node, doc, restrict) {
     var instance = null;
 
@@ -246,11 +274,24 @@ Node.get = function(node, doc, restrict) {
     return instance;
 };
 
+/**
+ * Creates a new dom node using the provided markup string. 
+ * @method create
+ * @static
+ * @param {String} html The markup used to create the element
+ * @param {HTMLDocument} doc An optional document context 
+ */
 Node.create = function() {
     return Node.get(Y.DOM.create.apply(Y.DOM, arguments));
 };
 
 Node.ATTRS = {
+    /**
+     * Allows for getting and setting the text of an element.
+     * Formatting is preserved and special characters are treated literally.
+     * @attribute text
+     * @type String
+     */
     text: {
         getter: function() {
             return Y.DOM.getText(g_nodes[this[UID]]);
@@ -269,8 +310,9 @@ Node.ATTRS = {
     },
 
     /**
-     * Returns a NodeList instance. 
-     * @property children
+     * Returns a NodeList instance of all HTMLElement children.
+     * @readOnly
+     * @attribute children
      * @type NodeList
      */
     'children': {
@@ -312,6 +354,12 @@ Node.ATTRS = {
     },
 */
 
+    /**
+     * Whether or not this Node can traverse outside of its subtree.
+     * @attribute restricted
+     * @writeOnce
+     * @type Boolean
+     */
     restricted: {
         writeOnce: true,
         value: false
@@ -419,6 +467,12 @@ Y.mix(Node.prototype, {
         return this;
     },
 
+    /**
+     * Creates a new Node using the provided markup string. 
+     * @method create
+     * @param {String} html The markup used to create the element
+     * @param {HTMLDocument} doc An optional document context 
+     */
     create: Node.create,
 
     /**
@@ -479,7 +533,6 @@ Y.mix(Node.prototype, {
      * @method previous
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
-     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
      * @return {Node} Node instance or null if not found
      */
     previous: function(fn, all) {
@@ -492,7 +545,6 @@ Y.mix(Node.prototype, {
      * @method next
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
-     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
      * @return {Node} Node instance or null if not found
      */
     next: function(node, fn, all) {
@@ -546,7 +598,16 @@ Y.mix(Node.prototype, {
         return this;
     },
 
-    // TODO: safe enough? 
+    /**
+     * Invokes a method on the Node instance 
+     * @method invoke
+     * @param {String} method The name of the method to invoke
+     * @param {Any}  a, b, c, etc. Arguments to invoke the method with. 
+     * @return Whatever the underly method returns. 
+     * DOM Nodes and Collections return values
+     * are converted to Node/NodeList instances.
+     *
+     */
     invoke: function(method, a, b, c, d, e) {
         var node = g_nodes[this[UID]],
             ret;
@@ -564,6 +625,7 @@ Y.mix(Node.prototype, {
     },
 
     destructor: function() {
+        // TODO: What about shared instances?
         //var uid = this[UID];
 
         //delete g_nodes[uid];
@@ -578,7 +640,6 @@ Y.mix(Node.prototype, {
      * @param {Function} fn The function to apply 
      * @param {Object} context optional An optional context to apply the function with
      * Default context is the NodeList instance
-     * @return {NodeList} NodeList containing the updated collection 
      * @chainable
      */
     each: function(fn, context) {
@@ -620,7 +681,6 @@ Y.mix(Node.prototype, {
      * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    //TODO: restrict
     insert: function(content, where, execScripts) {
         if (content) {
             execScripts = (execScripts && Node.EXEC_SCRIPTS);

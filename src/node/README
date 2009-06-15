@@ -1,10 +1,11 @@
-Development Master
+release 3.0.0 beta 1
 - Node and NodeList broken into separate classes
 - NodeList no longer contains DOM related methods (appendChild, removeChild, contains, etc.)
 - Node no longer contains NodeList methods (size, each, filter, etc.)
-- Both Node and NodeList extend Base
+- Node extends Base
 - set() fires attribute change events
 - zero length NodeLists now return an empty NodeList rather than null
+- added insert, prepend, append, setContent methods
 
 release 3.0.0 PR2
 - Node instances now have NodeList api

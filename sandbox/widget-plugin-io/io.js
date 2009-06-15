@@ -62,7 +62,7 @@ var M = function(Y) {
 
     };
 
-
+    // Extend
     Y.lang.extend(io, Y.Plugin, proto);
     Y.IOPlugin = io;
 };

@@ -232,7 +232,7 @@ YUI.add('io-base', function(Y) {
    		/* End Configuration Properties */
 
    		o.c.onreadystatechange = function() { _readyState(o, c); };
-   		try { _open(o.c, m, uri); } catch (e) {}
+   		try { _open(o.c, m, uri); } catch (e0) {}
    		_setHeaders(o.c, (c.headers || {}));
 
    		// Do not pass null, in the absence of data, as this
@@ -702,7 +702,7 @@ YUI.add('io-base', function(Y) {
    				status = 0;
    			}
    		}
-   		catch(e) {
+   		catch(e1) {
    			status = 0;
    			Y.log('HTTP status unreadable. The transaction is: ' + o.id, 'warn', 'io');
    		}

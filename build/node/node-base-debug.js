@@ -7,11 +7,11 @@ YUI.add('node-base', function(Y) {
  */    
 
 /**
- * The NodeList class provides a wrapper for manipulating DOM NodeLists.
- * NodeList properties can be accessed via the set/get methods.
- * Use Y.get() to retrieve NodeList instances.
+ * The Node class provides a wrapper for manipulating DOM Nodes.
+ * Node properties can be accessed via the set/get methods.
+ * Use Y.get() to retrieve Node instances.
  *
- * <strong>NOTE:</strong> NodeList properties are accessed using
+ * <strong>NOTE:</strong> Node properties are accessed using
  * the <code>set</code> and <code>get</code> methods.
  *
  * @class Node
@@ -124,6 +124,16 @@ Node.EXEC_SCRIPTS = true;
 
 Node._instances = {};
 
+/**
+ * Registers plugins to be instantiated at the class level (plugins 
+ * which should be plugged into every instance of Node by default).
+ *
+ * @method Node.plug
+ * @static
+ *
+ * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
+ * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
+ */
 Node.plug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
@@ -131,6 +141,14 @@ Node.plug = function() {
     return Node;
 };
 
+/**
+ * Unregisters any class level plugins which have been registered by the Node
+ *
+ * @method Node.unplug
+ * @static
+ *
+ * @param {Function | Array} plugin The plugin class, or an array of plugin classes
+ */
 Node.unplug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
@@ -140,7 +158,7 @@ Node.unplug = function() {
 
 /**
  * Retrieves the DOM node bound to a Node instance
- * @method getDOMNode
+ * @method Node.getDOMNode
  * @static
  *
  * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
@@ -222,6 +240,16 @@ Node.importMethod = function(host, name, altName) {
     }
 };
 
+/**
+ * Returns a single Node instance bound to the node or the
+ * first element matching the given selector.
+ * @method Y.get
+ * @static
+ * @param {String | HTMLElement} node a node or Selector 
+ * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
+ * @param {Boolean} restrict Whether or not the Node instance should be restricted to accessing
+ * its subtree only.
+ */
 Node.get = function(node, doc, restrict) {
     var instance = null;
 
@@ -248,11 +276,24 @@ Node.get = function(node, doc, restrict) {
     return instance;
 };
 
+/**
+ * Creates a new dom node using the provided markup string. 
+ * @method create
+ * @static
+ * @param {String} html The markup used to create the element
+ * @param {HTMLDocument} doc An optional document context 
+ */
 Node.create = function() {
     return Node.get(Y.DOM.create.apply(Y.DOM, arguments));
 };
 
 Node.ATTRS = {
+    /**
+     * Allows for getting and setting the text of an element.
+     * Formatting is preserved and special characters are treated literally.
+     * @attribute text
+     * @type String
+     */
     text: {
         getter: function() {
             return Y.DOM.getText(g_nodes[this[UID]]);
@@ -271,8 +312,9 @@ Node.ATTRS = {
     },
 
     /**
-     * Returns a NodeList instance. 
-     * @property children
+     * Returns a NodeList instance of all HTMLElement children.
+     * @readOnly
+     * @attribute children
      * @type NodeList
      */
     'children': {
@@ -314,6 +356,12 @@ Node.ATTRS = {
     },
 */
 
+    /**
+     * Whether or not this Node can traverse outside of its subtree.
+     * @attribute restricted
+     * @writeOnce
+     * @type Boolean
+     */
     restricted: {
         writeOnce: true,
         value: false
@@ -421,6 +469,12 @@ Y.mix(Node.prototype, {
         return this;
     },
 
+    /**
+     * Creates a new Node using the provided markup string. 
+     * @method create
+     * @param {String} html The markup used to create the element
+     * @param {HTMLDocument} doc An optional document context 
+     */
     create: Node.create,
 
     /**
@@ -481,7 +535,6 @@ Y.mix(Node.prototype, {
      * @method previous
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
-     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
      * @return {Node} Node instance or null if not found
      */
     previous: function(fn, all) {
@@ -494,7 +547,6 @@ Y.mix(Node.prototype, {
      * @method next
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
-     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
      * @return {Node} Node instance or null if not found
      */
     next: function(node, fn, all) {
@@ -548,7 +600,16 @@ Y.mix(Node.prototype, {
         return this;
     },
 
-    // TODO: safe enough? 
+    /**
+     * Invokes a method on the Node instance 
+     * @method invoke
+     * @param {String} method The name of the method to invoke
+     * @param {Any}  a, b, c, etc. Arguments to invoke the method with. 
+     * @return Whatever the underly method returns. 
+     * DOM Nodes and Collections return values
+     * are converted to Node/NodeList instances.
+     *
+     */
     invoke: function(method, a, b, c, d, e) {
         var node = g_nodes[this[UID]],
             ret;
@@ -566,6 +627,7 @@ Y.mix(Node.prototype, {
     },
 
     destructor: function() {
+        // TODO: What about shared instances?
         //var uid = this[UID];
 
         //delete g_nodes[uid];
@@ -580,7 +642,6 @@ Y.mix(Node.prototype, {
      * @param {Function} fn The function to apply 
      * @param {Object} context optional An optional context to apply the function with
      * Default context is the NodeList instance
-     * @return {NodeList} NodeList containing the updated collection 
      * @chainable
      */
     each: function(fn, context) {
@@ -622,7 +683,6 @@ Y.mix(Node.prototype, {
      * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    //TODO: restrict
     insert: function(content, where, execScripts) {
         if (content) {
             execScripts = (execScripts && Node.EXEC_SCRIPTS);
@@ -697,10 +757,7 @@ Y.get = Y.Node.get;
 /**
  * The NodeList class provides a wrapper for manipulating DOM NodeLists.
  * NodeList properties can be accessed via the set/get methods.
- * Use Y.get() to retrieve NodeList instances.
- *
- * <strong>NOTE:</strong> NodeList properties are accessed using
- * the <code>set</code> and <code>get</code> methods.
+ * Use Y.all() to retrieve NodeList instances.
  *
  * @class NodeList
  * @constructor
@@ -757,7 +814,7 @@ NodeList.NAME = 'NodeList';
 
 /**
  * Retrieves the DOM nodes bound to a NodeList instance
- * @method getDOMNodes
+ * @method NodeList.getDOMNodes
  * @static
  *
  * @param {Y.NodeList} node The NodeList instance
@@ -928,10 +985,22 @@ Y.mix(NodeList.prototype, {
         return Y.all(nodes);
     },
 
+    /**
+     * Creates a new NodeList containing all nodes at odd indices
+     * (zero-based index).
+     * @method odd
+     * @return {NodeList} NodeList containing the updated collection 
+     */
     odd: function() {
         return this.modulus(2, 1);
     },
 
+    /**
+     * Creates a new NodeList containing all nodes at even indices
+     * (zero-based index), including zero. 
+     * @method even
+     * @return {NodeList} NodeList containing the updated collection 
+     */
     even: function() {
         return this.modulus(2);
     },
@@ -960,6 +1029,16 @@ Y.mix(NodeList.prototype, {
         return this;
     },
 
+    /**
+     * Applies an event listens to each Node bound to the NodeList. 
+     * @method on
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance. 
+     * @return {Object} Returns an event handle that can later be use to detach(). 
+     * @see Event.on
+     */
     on: function(type, fn, context) {
         context = context || this;
         this.batch(function(node) {
@@ -967,6 +1046,18 @@ Y.mix(NodeList.prototype, {
         });
     },
 
+    /**
+     * Applies an event listens to each Node bound to the NodeList. 
+     * The handler is called only after all on() handlers are called
+     * and the event is not prevented.
+     * @method after
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance. 
+     * @return {Object} Returns an event handle that can later be use to detach(). 
+     * @see Event.on
+     */
     after: function(type, fn, context) {
         context = context || this;
         this.batch(function(node) {
@@ -983,6 +1074,10 @@ Y.mix(NodeList.prototype, {
         return g_nodelists[this[UID]].length;
     },
 
+    /** Called on each Node instance
+      * @get
+      * @see Node
+      */
     // one-off because we cant import from Node due to undefined return values
     get: function(name) {
         var ret = [],
@@ -1027,18 +1122,67 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-//    'after',
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method append
+     * @see Node.append
+     */
     'append',
-    'create',
+
+    /**
+      * Called on each Node instance
+      * @method detach
+      * @see Node.detach
+      */
     'detach',
+    
+    /** Called on each Node instance
+      * @method detachAll
+      * @see Node.detachAll
+      */
     'detachAll',
+
+    /** Called on each Node instance
+      * @method insert
+      * @see NodeInsert
+      */
     'insert',
-//    'on',
+
+    /** Called on each Node instance
+      * @method plug
+      * @see Node.plug
+      */
     'plug',
+
+    /** Called on each Node instance
+      * @method prepend
+      * @see Node.prepend
+      */
     'prepend',
+
+    /** Called on each Node instance
+      * @method remove
+      * @see Node.remove
+      */
     'remove',
+
+    /** Called on each Node instance
+      * @method set
+      * @see Node.set
+      */
     'set',
+
+    /** Called on each Node instance
+      * @method setContent
+      * @see Node.setContent
+      */
     'setContent',
+
+    /** Called on each Node instance
+      * @method unplug
+      * @see Node.unplug
+      */
     'unplug'
 ]);
 
@@ -1059,6 +1203,7 @@ Y.Array.each([
     /**
      * Passes through to DOM method.
      * @method replaceChild
+     * @for Node
      * @param {HTMLElement | Node} node Node to be inserted 
      * @param {HTMLElement | Node} refNode Node to be replaced 
      * @return {Node} The replaced node 
@@ -1183,23 +1328,27 @@ Node.importMethod(Y.DOM, [
     /**
      * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
      * @method contains
-     * @chainable
      * @param {Node | HTMLElement} needle The possible node or descendent
      * @return {Boolean} Whether or not this node is the needle its ancestor
      */
     'contains',
     /**
-     * Normalizes troublesome attributes 
-     * @chainable
+     * Allows setting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
      * @method setAttribute
+     * @for Node
+     * @for NodeList
+     * @chainable
      * @param {string} name The attribute name 
      * @param {string} value The value to set
      */
     'setAttribute',
     /**
-     * Normalizes troublesome attributes 
-     * @chainable
+     * Allows getting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
      * @method getAttribute
+     * @for Node
+     * @for NodeList
      * @param {string} name The attribute name 
      * @return {string} The attribute value 
      */
@@ -1212,6 +1361,26 @@ if (!document.documentElement.hasAttribute) { // IE < 8
     };
 }
 
+/**
+ * Allows setting attributes on DOM nodes, normalizing in some cases.
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method setAttribute
+ * @see Node
+ * @for NodeList
+ * @chainable
+ * @param {string} name The attribute name 
+ * @param {string} value The value to set
+ */
+
+/**
+ * Allows getting attributes on DOM nodes, normalizing in some cases.
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method getAttribute
+ * @see Node
+ * @for NodeList
+ * @param {string} name The attribute name 
+ * @return {string} The attribute value 
+ */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 
 (function() { // IE clones expandos; regenerate UID
@@ -1236,50 +1405,93 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
  */
 
     var methods = [
-        /**
-         * Determines whether the node has the given className.
-         * @method hasClass
-         * @param {String} className the class name to search for
-         * @return {Boolean} Whether or not the node has the given class. 
-         */
-        'hasClass',
+    /**
+     * Determines whether each node has the given className.
+     * @method hasClass
+     * @for Node
+     * @param {String} className the class name to search for
+     * @return {Array} An array of booleans for each node bound to the NodeList. 
+     */
+     'hasClass',
 
-        /**
-         * Adds a class name to the node.
-         * @method addClass         
-         * @param {String} className the class name to add to the node's class attribute
-         * @chainable
-         */
-        'addClass',
+    /**
+     * Adds a class name to each node.
+     * @method addClass         
+     * @param {String} className the class name to add to the node's class attribute
+     * @chainable
+     */
+     'addClass',
 
-        /**
-         * Removes a class name from the node.
-         * @method removeClass         
-         * @param {String} className the class name to remove from the node's class attribute
-         * @chainable
-         */
-        'removeClass',
+    /**
+     * Removes a class name from each node.
+     * @method removeClass         
+     * @param {String} className the class name to remove from the node's class attribute
+     * @chainable
+     */
+     'removeClass',
 
-        /**
-         * Replace a class with another class.
-         * If no oldClassName is present, the newClassName is simply added.
-         * @method replaceClass  
-         * @param {String} oldClassName the class name to be replaced
-         * @param {String} newClassName the class name that will be replacing the old class name
-         * @chainable
-         */
-        'replaceClass',
+    /**
+     * Replace a class with another class for each node.
+     * If no oldClassName is present, the newClassName is simply added.
+     * @method replaceClass  
+     * @param {String} oldClassName the class name to be replaced
+     * @param {String} newClassName the class name that will be replacing the old class name
+     * @chainable
+     */
+     'replaceClass',
 
-        /**
-         * If the className exists on the node it is removed, if it doesn't exist it is added.
-         * @method toggleClass  
-         * @param {String} className the class name to be toggled
-         * @chainable
-         */
-        'toggleClass'
+    /**
+     * If the className exists on the node it is removed, if it doesn't exist it is added.
+     * @method toggleClass  
+     * @param {String} className the class name to be toggled
+     * @chainable
+     */
+     'toggleClass'
     ];
 
     Y.Node.importMethod(Y.DOM, methods);
+    /**
+     * Determines whether each node has the given className.
+     * @method hasClass
+     * @see Node.hasClass
+     * @for NodeList
+     * @param {String} className the class name to search for
+     * @return {Array} An array of booleans for each node bound to the NodeList. 
+     */
+
+    /**
+     * Adds a class name to each node.
+     * @method addClass         
+     * @see Node.addClass
+     * @param {String} className the class name to add to the node's class attribute
+     * @chainable
+     */
+
+    /**
+     * Removes a class name from each node.
+     * @method removeClass         
+     * @see Node.removeClass
+     * @param {String} className the class name to remove from the node's class attribute
+     * @chainable
+     */
+
+    /**
+     * Replace a class with another class for each node.
+     * If no oldClassName is present, the newClassName is simply added.
+     * @method replaceClass  
+     * @see Node.replaceClass
+     * @param {String} oldClassName the class name to be replaced
+     * @param {String} newClassName the class name that will be replacing the old class name
+     * @chainable
+     */
+
+    /**
+     * If the className exists on the node it is removed, if it doesn't exist it is added.
+     * @method toggleClass  
+     * @see Node.toggleClass
+     * @param {String} className the class name to be toggled
+     * @chainable
+     */
     Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 /*

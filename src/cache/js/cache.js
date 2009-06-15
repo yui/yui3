@@ -9,7 +9,7 @@ var LANG = Y.Lang,
 /**
  * Base class for the YUI Cache utility.
  * @class Cache
- * @extends Plugin
+ * @extends Plugin.Base
  * @constructor
  */    
 Cache = function() {
