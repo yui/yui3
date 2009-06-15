@@ -1,19 +1,13 @@
 YUI.add('datatype-xml-parse', function(Y) {
 
-/**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
- *
- * @module datatype
- */
 var LANG = Y.Lang;
 
 /**
  * Parse XML submodule.
  *
- * @class DataType.XML
+ * @module datatype
  * @submodule datatype-xml-parse
- * @static
+ * @for DataType.XML
  */
  
 Y.mix(Y.namespace("DataType.XML"), {
@@ -23,7 +17,6 @@ Y.mix(Y.namespace("DataType.XML"), {
      * @method parse
      * @param data {String} Data to convert.
      * @return {XMLDoc} XML Document.
-     * @static
      */
     parse: function(data) {
         var xmlDoc = null;
