@@ -128,7 +128,7 @@ Node._instances = {};
  * Registers plugins to be instantiated at the class level (plugins 
  * which should be plugged into every instance of Node by default).
  *
- * @method plug
+ * @method Node.plug
  * @static
  *
  * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
@@ -144,7 +144,7 @@ Node.plug = function() {
 /**
  * Unregisters any class level plugins which have been registered by the Node
  *
- * @method unplug
+ * @method Node.unplug
  * @static
  *
  * @param {Function | Array} plugin The plugin class, or an array of plugin classes
@@ -158,7 +158,7 @@ Node.unplug = function() {
 
 /**
  * Retrieves the DOM node bound to a Node instance
- * @method getDOMNode
+ * @method Node.getDOMNode
  * @static
  *
  * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
@@ -814,7 +814,7 @@ NodeList.NAME = 'NodeList';
 
 /**
  * Retrieves the DOM nodes bound to a NodeList instance
- * @method getDOMNodes
+ * @method NodeList.getDOMNodes
  * @static
  *
  * @param {Y.NodeList} node The NodeList instance
@@ -1124,8 +1124,8 @@ Y.mix(NodeList.prototype, {
 NodeList.importMethod(Y.Node.prototype, [
     /**
      * Called on each Node instance
-     * @append
      * @for NodeList
+     * @append
      * @see Node.append
      */
     'append',
