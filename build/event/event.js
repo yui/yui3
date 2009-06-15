@@ -28,7 +28,7 @@ var GLOBAL_ENV = YUI.Env,
             if (!GLOBAL_ENV.DOMReady) {
                 GLOBAL_ENV.DOMReady=true;
 
-                // Remove the DOMContentLoaded (FF/Opera)
+                // Remove the DOMContentLoaded (FF/Opera/Safari)
                 if (D.removeEventListener) {
                     D.removeEventListener("DOMContentLoaded", _ready, false);
                 }
@@ -37,9 +37,7 @@ var GLOBAL_ENV = YUI.Env,
 
         // create custom event
 
-        /////////////////////////////////////////////////////////////
-        // DOMReady
-        // based on work by: Dean Edwards/John Resig/Matthias Miller 
+/*!  DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */
 
         // Internet Explorer: use the readyState of a defered script.
         // This isolates what appears to be a safe moment to manipulate
@@ -58,8 +56,8 @@ var GLOBAL_ENV = YUI.Env,
                 }
             }, POLL_INTERVAL); 
 
-        // FireFox and Opera: These browsers provide a event for this
-        // moment.  The latest WebKit releases now support this event.
+        // FireFox, Opera, Safari 3+: These browsers provide a event for this
+        // moment.
         } else {
             D.addEventListener("DOMContentLoaded", _ready, false);
         }
