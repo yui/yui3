@@ -64,7 +64,7 @@ NodeList.NAME = 'NodeList';
 
 /**
  * Retrieves the DOM nodes bound to a NodeList instance
- * @method getDOMNodes
+ * @method NodeList.getDOMNodes
  * @static
  *
  * @param {Y.NodeList} node The NodeList instance
@@ -374,8 +374,8 @@ Y.mix(NodeList.prototype, {
 NodeList.importMethod(Y.Node.prototype, [
     /**
      * Called on each Node instance
-     * @append
      * @for NodeList
+     * @append
      * @see Node.append
      */
     'append',
