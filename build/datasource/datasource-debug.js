@@ -153,7 +153,7 @@ Y.extend(DSLocal, Y.Base, {
          * </dd>
          * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
-         * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+         * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
          *     <dl>
          *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
          *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
@@ -181,7 +181,7 @@ Y.extend(DSLocal, Y.Base, {
          * </dd>
          * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
-         * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+         * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
          *     <dl>
          *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
          *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
@@ -276,7 +276,7 @@ Y.extend(DSLocal, Y.Base, {
      * </dd>
      * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
-     * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+     * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
      *     <dl>
      *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
      *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
@@ -403,7 +403,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
     *     <dt>conn</dt>
     *         <dd>In-progress connection identifier (if applicable).</dd>
     *     <dt>requests {Object[]}</dt>
-    *         <dd>Array of queued request objects: {request:oRequest, callback:_ioCallback}.</dd>
+    *         <dd>Array of queued request objects: {request:request, callback:callback}.</dd>
     * </dl>
     * @type Object
     * @default {interval:null, conn:null, requests:[]}
@@ -887,7 +887,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      *     </dl>
      * </dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
-     * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+     * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
      *     <dl>
      *         <dt>cached (Object)</dt> <dd>True when response is cached.</dd>
      *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
@@ -926,7 +926,7 @@ YUI.add('datasource-jsonschema', function(Y) {
 /**
  * Adds schema-parsing to the YUI DataSource utility.
  * @class DataSourceJSONSchema
- * @extends Plugin
+ * @extends Plugin.Base
  */    
 var DataSourceJSONSchema = function() {
     DataSourceJSONSchema.superclass.constructor.apply(this, arguments);
@@ -1033,7 +1033,7 @@ YUI.add('datasource-xmlschema', function(Y) {
 /**
  * Adds schema-parsing to the YUI DataSource utility.
  * @class DataSourceXMLSchema
- * @extends Plugin
+ * @extends Plugin.Base
  */    
 var DataSourceXMLSchema = function() {
     DataSourceXMLSchema.superclass.constructor.apply(this, arguments);
@@ -1140,7 +1140,7 @@ YUI.add('datasource-arrayschema', function(Y) {
 /**
  * Adds schema-parsing to the YUI DataSource utility.
  * @class DataSourceArraySchema
- * @extends Plugin
+ * @extends Plugin.Base
  */    
 var DataSourceArraySchema = function() {
     DataSourceArraySchema.superclass.constructor.apply(this, arguments);
@@ -1247,7 +1247,7 @@ YUI.add('datasource-textschema', function(Y) {
 /**
  * Adds schema-parsing to the YUI DataSource utility.
  * @class DataSourceTextSchema
- * @extends Plugin
+ * @extends Plugin.Base
  */    
 var DataSourceTextSchema = function() {
     DataSourceTextSchema.superclass.constructor.apply(this, arguments);

@@ -8,7 +8,7 @@
 /**
  * Adds schema-parsing to the YUI DataSource utility.
  * @class DataSourceJSONSchema
- * @extends Plugin
+ * @extends Plugin.Base
  */    
 var DataSourceJSONSchema = function() {
     DataSourceJSONSchema.superclass.constructor.apply(this, arguments);

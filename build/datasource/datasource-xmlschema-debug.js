@@ -10,7 +10,7 @@ YUI.add('datasource-xmlschema', function(Y) {
 /**
  * Adds schema-parsing to the YUI DataSource utility.
  * @class DataSourceXMLSchema
- * @extends Plugin
+ * @extends Plugin.Base
  */    
 var DataSourceXMLSchema = function() {
     DataSourceXMLSchema.superclass.constructor.apply(this, arguments);
