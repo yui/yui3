@@ -1,7 +1,7 @@
 YUI Custom Events
     Custom event system
 
-3.0.0b1
+3.0.0beta1
     - Implemented the broadcast flag.  broadcast = 1: local, accessible
       via Y.on('prefix:event'). broadcast = 2: global, accessible
       via Y.on or globally via Y.Global.on('prefix:event).  Broadcast 
@@ -16,3 +16,14 @@ YUI Custom Events
     - Exposed methods are 'on' for the before moment, 'after' for
       the after moment, and 'detach' for unsubscribe.  subscribe,
       before, unsubscribe, and corresponding methods are deprecated.
+    - Event type accepts a event category which can be used to
+      detach events.  
+      Y.on('category|prefix:event', fn);
+      Y.detach('category|prefix:event');
+      Y.detach('category|*');
+    - Added 'chain' config to events that makes the return value the 
+      event target rather than a detach handle.  Use with the detach
+      category prefix.
+    - The type parameter can be an object containing multiple events to attach
+      Y.on( { 'event1': fn1, 'event2': fn2 }
+    - Y.fire payload for event facades can be another facade or a custom event.

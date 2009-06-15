@@ -518,6 +518,8 @@ Y.CustomEvent = function(type, o) {
 
     this.id = Y.stamp(this);
 
+    this.calls = 0;
+
     /**
      * The type of event, returned to subscribers when the event fires
      * @property type
@@ -934,7 +936,7 @@ Y.CustomEvent.prototype = {
 
         var es = Y.Env._eventstack,
             subs, s, args, i, ef, q, queue, ce, hasSub,
-            ret = true, events;
+            ret = true, events, tId = Y.guid();
 
         // @TODO find a better way to short circuit this.  
         // if (!this.broadcast && !this.defaultFn && !this.hasSubscribers && !this.hasAfters) {
@@ -942,22 +944,20 @@ Y.CustomEvent.prototype = {
         // }
 
         if (es) {
-
             // queue this event if the current item in the queue bubbles
             // if (b && this.queuable && this.type != es.next.type) {
             if (this.queuable && this.type != es.next.type) {
-
                 this.log('queue ' + this.type);
-
                 es.queue.push([this, arguments]);
                 return true;
             }
 
         } else {
 
-            Y.Env._eventstack = {
+            es = {
                // id of the first event in the stack
                id: this.id,
+               tId: tId,
                next: this,
                silent: this.silent,
                logging: (this.type === YUI_LOG),
@@ -966,7 +966,7 @@ Y.CustomEvent.prototype = {
                queue: []
             };
 
-            es = Y.Env._eventstack;
+            Y.Env._eventstack = es;
         }
 
         if (this.fireOnce && this.fired) {
@@ -1115,7 +1115,7 @@ Y.CustomEvent.prototype = {
             }
         }
 
-        if (es.id === this.id) {
+        if (es.tId === tId) {
 // console.log('clearing stack: ' + es.id + ', ' + this);
 
 // reset propragation properties while processing the rest of the queue

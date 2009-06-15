@@ -1,15 +1,27 @@
 YUI Event Utility
     DOM event utilities
 
-3.0.0b1
+3.0.0beta1
     - DOM event, custom event, and simulate event moved to separate modules.
-    - Event.attach returns a single handle if the result from collection processing is a single item.
-    - purgeElement only reads element guids, it does not create new ones for elements without one.
-    - Added Y.on('delegate', fn, el, 'click', 'selector' ...
-    - Added Y.on('mouseenter', fn, el, 'click', 'selector' ...
-    - Added Y.on('mouseleave', fn, el, 'click', 'selector' ...
-    - Added Y.on('windowresize', fn)
+    - Added an event for DOM event delegation.  It only fires it the target or its descendants
+      match a supplied selector.
+        Y.on('delegate', fn, el, 'click', 'selector' ...
+      The event facade sets the following properties:
+        target: the target of the event
+        currentTarget: the element that the selector matched
+        container: the bound element (the delegation container)
+    - Added mouseenter/mouseleave events
+        Y.on('mouseenter', fn, el, 'click', 'selector' ...
+        Y.on('mouseleave', fn, el, 'click', 'selector' ...
+    - Added Y.on('windowresize', fn), which attempts to normalize
+      when the event fires across all browsers (once at the end
+      of the resize rather than continuously during the resize).
     - Fixed unsubscribeAll return value.
+    - Added ability to skip facade creation where performance is a concern.
+    - Moved DOMReady core to yui-base.
+    - Focus/blur abstraction works in Opera when the bound element is the target
+    - purgeElement only reads element guids, it does not create new ones for elements without one.
+    - Event.attach returns a single handle if the result from collection processing is a single item.
 
 3.0.0pr2
     - Fixed IE notification error when no arguments are supplied.

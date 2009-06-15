@@ -1080,14 +1080,14 @@
 <span class="c">     * @param mod {string} optional: the name of a module to skin</span>
 <span class="c">     * @return {string} the full skin module name</span>
 <span class="c">     */</span>
-    <span class="nx">formatSkin</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">skin</span><span class="o">,</span> <span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">formatSkin</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">skin</span><span class="o">,</span> <span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">SKIN_PREFIX</span> <span class="o">+</span> <span class="nx">skin</span><span class="o">;</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nx">mod</span><span class="o">;</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">s</span><span class="o">;</span>
-    <span class="o">}),</span>
+    <span class="o">},</span>
 
     <span class="c">/*</span>
 <span class="c">     * Reverses &lt;code&gt;formatSkin&lt;/code&gt;, providing the skin name and</span>
@@ -1564,6 +1564,7 @@
             <span class="o">}</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">rollups</span> <span class="o">=</span> <span class="nx">rollups</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">forceMap</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">force</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">hash</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">force</span><span class="o">)</span> <span class="o">:</span> <span class="o">{};</span>
         <span class="o">}</span>
 
         <span class="c">// make as many passes as needed to pick up rollup rollups</span>
@@ -1575,8 +1576,8 @@
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">rollups</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
 
-                    <span class="c">// there can be only one</span>
-<span class="c"></span>                    <span class="k">if</span> <span class="o">(!</span><span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">loaded</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="c">// there can be only one, unless forced</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(!</span><span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">((!</span><span class="k">this</span><span class="o">.</span><span class="nx">loaded</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">forceMap</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
                         <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getModule</span><span class="o">(</span><span class="nx">i</span><span class="o">);</span> 
                         <span class="nx">s</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">supersedes</span> <span class="o">||</span> <span class="o">[];</span> 
                         <span class="nx">roll</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
@@ -1591,25 +1592,27 @@
                         <span class="c">// check the threshold</span>
 <span class="c"></span>                        <span class="k">for</span> <span class="o">(</span><span class="nx">j</span><span class="o">=</span><span class="m">0</span><span class="o">;</span><span class="nx">j</span><span class="o">&lt;</span><span class="nx">s</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span><span class="nx">j</span><span class="o">=</span><span class="nx">j</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
 
+
                             <span class="c">// if the superseded module is loaded, we can&#39;t load the rollup</span>
-<span class="c"></span>                            <span class="c">// if (this.loaded[s[j]] &amp;&amp; (!_Y.dupsAllowed[s[j]])) {</span>
-<span class="c"></span>                            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">loaded</span><span class="o">[</span><span class="nx">s</span><span class="o">[</span><span class="nx">j</span><span class="o">]])</span> <span class="o">{</span>
+<span class="c"></span>                            <span class="c">// unless it has been forced</span>
+<span class="c"></span>                            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">loaded</span><span class="o">[</span><span class="nx">s</span><span class="o">[</span><span class="nx">j</span><span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">forceMap</span><span class="o">[</span><span class="nx">s</span><span class="o">[</span><span class="nx">j</span><span class="o">]])</span> <span class="o">{</span>
                                 <span class="nx">roll</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
                                 <span class="k">break</span><span class="o">;</span>
                             <span class="c">// increment the counter if this module is required.  if we are</span>
 <span class="c"></span>                            <span class="c">// beyond the rollup threshold, we will use the rollup module</span>
 <span class="c"></span>                            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">[</span><span class="nx">s</span><span class="o">[</span><span class="nx">j</span><span class="o">]])</span> <span class="o">{</span>
                                 <span class="nx">c</span><span class="o">++;</span>
-                                <span class="nx">roll</span> <span class="o">=</span> <span class="o">(</span><span class="nx">c</span> <span class="o">&gt;=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">rollup</span><span class="o">);</span>
+                                <span class="c">// Y.log(&quot;adding to thresh: &quot; + c + &quot;, &quot; + s[j]);</span>
+<span class="c"></span>                                <span class="nx">roll</span> <span class="o">=</span> <span class="o">(</span><span class="nx">c</span> <span class="o">&gt;=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">rollup</span><span class="o">);</span>
                                 <span class="k">if</span> <span class="o">(</span><span class="nx">roll</span><span class="o">)</span> <span class="o">{</span>
-                                    <span class="c">// Y.log(&quot;over thresh &quot; + c + &quot;, &quot; + L.dump(r));</span>
+                                    <span class="c">// Y.log(&quot;over thresh &quot; + c + &quot;, &quot; + s[j]);</span>
 <span class="c"></span>                                    <span class="k">break</span><span class="o">;</span>
                                 <span class="o">}</span>
                             <span class="o">}</span>
                         <span class="o">}</span>
 
                         <span class="k">if</span> <span class="o">(</span><span class="nx">roll</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="c">// Y.log(&quot;rollup: &quot; +  i + &quot;, &quot; + L.dump(this, 1));</span>
+                            <span class="c">// Y.log(&quot;adding rollup: &quot; +  i);</span>
 <span class="c"></span>                            <span class="c">// add the rollup</span>
 <span class="c"></span>                            <span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                             <span class="nx">rolled</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
@@ -1642,7 +1645,7 @@
             <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
 
                 <span class="c">// remove if already loaded</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">loaded</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">ignoreRegistered</span><span class="o">)</span> <span class="o">{</span> 
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">loaded</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">forceMap</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">ignoreRegistered</span><span class="o">)</span> <span class="o">{</span> 
                     <span class="nx">delete</span> <span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
 
                 <span class="c">// remove anything this module supersedes</span>
