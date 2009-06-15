@@ -1080,14 +1080,14 @@
 <span class="c">     * @param mod {string} optional: the name of a module to skin</span>
 <span class="c">     * @return {string} the full skin module name</span>
 <span class="c">     */</span>
-    <span class="nx">formatSkin</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">skin</span><span class="o">,</span> <span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">formatSkin</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">skin</span><span class="o">,</span> <span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">SKIN_PREFIX</span> <span class="o">+</span> <span class="nx">skin</span><span class="o">;</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">mod</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nx">mod</span><span class="o">;</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">s</span><span class="o">;</span>
-    <span class="o">}),</span>
+    <span class="o">},</span>
 
     <span class="c">/*</span>
 <span class="c">     * Reverses &lt;code&gt;formatSkin&lt;/code&gt;, providing the skin name and</span>
