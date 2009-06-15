@@ -535,7 +535,6 @@ Y.mix(Node.prototype, {
      * @method previous
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
-     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
      * @return {Node} Node instance or null if not found
      */
     previous: function(fn, all) {
@@ -548,7 +547,6 @@ Y.mix(Node.prototype, {
      * @method next
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
-     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
      * @return {Node} Node instance or null if not found
      */
     next: function(node, fn, all) {
@@ -605,6 +603,8 @@ Y.mix(Node.prototype, {
     /**
      * Invokes a method on the Node instance 
      * @method invoke
+     * @param {String} method The name of the method to invoke
+     * @param {Any}  a, b, c, etc. Arguments to invoke the method with. 
      * @return Whatever the underly method returns. 
      * DOM Nodes and Collections return values
      * are converted to Node/NodeList instances.
@@ -1202,6 +1202,7 @@ Y.Array.each([
     /**
      * Passes through to DOM method.
      * @method replaceChild
+     * @for Node
      * @param {HTMLElement | Node} node Node to be inserted 
      * @param {HTMLElement | Node} refNode Node to be replaced 
      * @return {Node} The replaced node 
@@ -1326,23 +1327,27 @@ Node.importMethod(Y.DOM, [
     /**
      * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
      * @method contains
-     * @chainable
      * @param {Node | HTMLElement} needle The possible node or descendent
      * @return {Boolean} Whether or not this node is the needle its ancestor
      */
     'contains',
     /**
-     * Normalizes troublesome attributes 
-     * @chainable
+     * Allows setting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
      * @method setAttribute
+     * @for Node
+     * @for NodeList
+     * @chainable
      * @param {string} name The attribute name 
      * @param {string} value The value to set
      */
     'setAttribute',
     /**
-     * Normalizes troublesome attributes 
-     * @chainable
+     * Allows getting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
      * @method getAttribute
+     * @for Node
+     * @for NodeList
      * @param {string} name The attribute name 
      * @return {string} The attribute value 
      */
