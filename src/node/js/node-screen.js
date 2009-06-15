@@ -106,8 +106,6 @@ Y.Node.ATTRS.scrollTop = {
 Y.Node.importMethod(Y.DOM, [
 /**
  * Gets the current position of the node in page coordinates. 
- * Nodes must be part of the DOM tree to have page coordinates
- * (display:none or nodes not appended return false).
  * @method getXY
  * @for Node
  * @return {Array} The XY position of the node
@@ -116,7 +114,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
- * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
  * @method setXY
  * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
  * @chainable
@@ -125,8 +122,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Gets the current position of the node in page coordinates. 
- * Nodes must be part of the DOM tree to have page coordinates
- * (display:none or nodes not appended return false).
  * @method getX
  * @return {Int} The X position of the node
 */
@@ -134,7 +129,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
- * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
  * @method setX
  * @param {Int} x X value for new position (coordinates are page-based)
  * @chainable
@@ -143,8 +137,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Gets the current position of the node in page coordinates. 
- * Nodes must be part of the DOM tree to have page coordinates
- * (display:none or nodes not appended return false).
  * @method getY
  * @return {Int} The Y position of the node
 */
@@ -152,7 +144,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
- * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
  * @method setY
  * @param {Int} y Y value for new position (coordinates are page-based)
  * @chainable
