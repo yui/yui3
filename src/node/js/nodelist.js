@@ -375,62 +375,63 @@ NodeList.importMethod(Y.Node.prototype, [
     /**
      * Called on each Node instance
      * @append
-     * @see Node
+     * @for NodeList
+     * @see Node.append
      */
     'append',
 
     /**
       * Called on each Node instance
       * @detach
-      * @see Node
+      * @see Node.detach
       */
     'detach',
     
     /** Called on each Node instance
       * @detachAll
-      * @see Node
+      * @see Node.detachAll
       */
     'detachAll',
 
     /** Called on each Node instance
       * @insert
-      * @see Node
+      * @see NodeInsert
       */
     'insert',
 
     /** Called on each Node instance
       * @plug
-      * @see Node
+      * @see Node.plug
       */
     'plug',
 
     /** Called on each Node instance
       * @prepend
-      * @see Node
+      * @see Node.prepend
       */
     'prepend',
 
     /** Called on each Node instance
       * @remove
-      * @see Node
+      * @see Node.remove
       */
     'remove',
 
     /** Called on each Node instance
       * @set
-      * @see Node
+      * @see Node.set
       */
     'set',
 
     /** Called on each Node instance
       * @setContent
-      * @see Node
+      * @see Node.setContent
       */
     'setContent',
 
     /** Called on each Node instance
       * @unplug
-      * @see Node
+      * @see Node.unplug
       */
     'unplug'
 ]);
