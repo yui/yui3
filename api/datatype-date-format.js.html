@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>DataType Date Formatter Submodule&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>datatype&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_datatype.html" title="datatype">datatype</a>
                 
@@ -48,30 +48,32 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The Date formatter utility implements strftime formatters for javascript based on the </span>
+<span class="c"> * The DataType Utility provides type-conversion and string-formatting</span>
+<span class="c"> * convenience methods for various JavaScript object types.</span>
+<span class="c"> *</span>
+<span class="c"> * @module datatype</span>
+<span class="c"> */</span>
+
+<span class="c">/**</span>
+<span class="c"> * DataType.Date provides a set of utility functions to operate against Date objects.</span>
+<span class="c"> *</span>
+<span class="c"> * @class DataType.Date</span>
+<span class="c"> * @static</span>
+<span class="c"> */</span>
+
+<span class="c">/**</span>
+<span class="c"> * Format date submodule implements strftime formatters for javascript based on the</span>
 <span class="c"> * Open Group specification defined at</span>
 <span class="c"> * http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html</span>
 <span class="c"> * This implementation does not include modified conversion specifiers (i.e., Ex and Ox)</span>
 <span class="c"> *</span>
-<span class="c"> * The following format specifiers are supported:</span>
-<span class="c"> *</span>
-<span class="c"> * \copydoc formats</span>
-<span class="c"> *</span>
-<span class="c"> * \par Usage:</span>
-<span class="c"> * This library may be used as follows:</span>
-<span class="c"> * \code</span>
-<span class="c"> *	var d = Y.DataType.Date.format(new Date(&quot;2009/04/10&quot;, { format: &quot;Today is %A, the %d of %B, %Y&quot; });</span>
-<span class="c"> * \endcode</span>
-<span class="c"> *</span>
-<span class="c"> *</span>
 <span class="c"> * @module datatype</span>
-<span class="c"> * @submodule datatype-date</span>
-<span class="c"> * @requires oop</span>
-<span class="c"> * @title DataType Date Formatter Submodule</span>
+<span class="c"> * @submodule datatype-date-format</span>
 <span class="c"> */</span>
 
 <span class="c">/**</span>
 <span class="c"> * Pad a number with leading spaces, zeroes or something else</span>
+<span class="c"> * @method xPad</span>
 <span class="c"> * @param x {Number}	The number to be padded</span>
 <span class="c"> * @param pad {String}  The character to pad the number with</span>
 <span class="c"> * @param r {Number}	(optional) The base of the pad, eg, 10 implies to two digits, 100 implies to 3 digits.</span>
@@ -90,15 +92,25 @@
 	<span class="k">return</span> <span class="nx">x</span><span class="o">.</span><span class="nx">toString</span><span class="o">();</span>
 <span class="o">};</span>
 
+<span class="c">/**</span>
+<span class="c"> * Default date format.</span>
+<span class="c"> *</span>
+<span class="c"> * @for config</span>
+<span class="c"> * @property dateFormat</span>
+<span class="c"> * @type String</span>
+<span class="c"> * @value &quot;%Y-%m-%d&quot;</span>
+<span class="c"> */</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">dateFormat</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">dateFormat</span> <span class="o">||</span> <span class="s2">&quot;%Y-%m-%d&quot;</span><span class="o">;</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span> <span class="o">||</span> <span class="s2">&quot;en&quot;</span><span class="o">;</span>
 
 <span class="c">/**</span>
-<span class="c"> * Date subclass for the YUI DataType utility.</span>
-<span class="c"> * @class DataType.Date</span>
-<span class="c"> * @requires base</span>
-<span class="c"> * @static</span>
+<span class="c"> * Default locale for the YUI instance.</span>
+<span class="c"> *</span>
+<span class="c"> * @property locale</span>
+<span class="c"> * @type String</span>
+<span class="c"> * @value &quot;en&quot;</span>
 <span class="c"> */</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">locale</span> <span class="o">||</span> <span class="s2">&quot;en&quot;</span><span class="o">;</span>
+
 <span class="k">var</span> <span class="nx">Dt</span> <span class="o">=</span> <span class="o">{</span>
 	<span class="nx">formats</span><span class="o">:</span> <span class="o">{</span>
 		<span class="nx">a</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">d</span><span class="o">,</span> <span class="nx">l</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="nx">l</span><span class="o">.</span><span class="nx">a</span><span class="o">[</span><span class="nx">d</span><span class="o">.</span><span class="nx">getDay</span><span class="o">()];</span> <span class="o">},</span>
@@ -209,6 +221,7 @@
 	 <span class="c">/**</span>
 <span class="c">	 * Takes a native JavaScript Date and formats it as a string for display to user.</span>
 <span class="c">	 *</span>
+<span class="c">	 * @for DataType.Date</span>
 <span class="c">	 * @method format</span>
 <span class="c">	 * @param oDate {Date} Date.</span>
 <span class="c">	 * @param oConfig {Object} (Optional) Object literal of configuration values:</span>
@@ -294,7 +307,6 @@
 <span class="c">	 *  &lt;/dd&gt;</span>
 <span class="c">	 * &lt;/dl&gt;</span>
 <span class="c">	 * @return {String} Formatted date for display.</span>
-<span class="c">	 * @sa Y.DataType.Date.Locale</span>
 <span class="c">	 */</span>
 	<span class="nx">format</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">oDate</span><span class="o">,</span> <span class="nx">oConfig</span><span class="o">)</span> <span class="o">{</span>
 		<span class="nx">oConfig</span> <span class="o">=</span> <span class="nx">oConfig</span> <span class="o">||</span> <span class="o">{};</span>
@@ -423,9 +435,6 @@
                                 <li class=""><a href="DataType.Date.html" title="DataType.Date">DataType.Date</a></li>
                                 <li class=""><a href="DataType.Date.Locale.html" title="DataType.Date.Locale">DataType.Date.Locale</a></li>
                                 <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
-                                <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
-                                <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
-                                <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
                                 <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
                         </ul>
                     </div>
@@ -456,7 +465,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Date", "name": "parse", "url": "DataType.Date.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "private", "host": "DataType.Date", "name": "xPad", "url": "DataType.Date.html#method_xPad", "type": "method"}];
 </script>
 </body>
 </html>
