@@ -24,3 +24,6 @@ YUI Custom Events
     - Added 'chain' config to events that makes the return value the 
       event target rather than a detach handle.  Use with the detach
       category prefix.
+    - The type parameter can be an object containing multiple events to attach
+      Y.on( { 'event1': fn1, 'event2': fn2 }
+    - Y.fire payload for event facades can be another facade or a custom event.
