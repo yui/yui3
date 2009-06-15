@@ -291,7 +291,7 @@ Node.ATTRS = {
     /**
      * Allows for getting and setting the text of an element.
      * Formatting is preserved and special characters are treated literally.
-     * @attribute text
+     * @config text
      * @type String
      */
     text: {
@@ -314,7 +314,7 @@ Node.ATTRS = {
     /**
      * Returns a NodeList instance of all HTMLElement children.
      * @readOnly
-     * @attribute children
+     * @config children
      * @type NodeList
      */
     'children': {
@@ -358,7 +358,7 @@ Node.ATTRS = {
 
     /**
      * Whether or not this Node can traverse outside of its subtree.
-     * @attribute restricted
+     * @config restricted
      * @writeOnce
      * @type Boolean
      */
@@ -1621,7 +1621,7 @@ YUI.add('node-screen', function(Y) {
 Y.each([
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
-     * @attribute winWidth
+     * @config winWidth
      * @for Node
      * @type {Int}
      */
@@ -1629,35 +1629,35 @@ Y.each([
 
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
-     * @attribute winHeight
+     * @config winHeight
      * @type {Int}
      */
     'winHeight',
 
     /**
      * Document width 
-     * @attribute winHeight
+     * @config winHeight
      * @type {Int}
      */
     'docWidth',
 
     /**
      * Document height 
-     * @attribute docHeight
+     * @config docHeight
      * @type {Int}
      */
     'docHeight',
 
     /**
      * Amount page has been scroll vertically 
-     * @attribute docScrollX
+     * @config docScrollX
      * @type {Int}
      */
     'docScrollX',
 
     /**
      * Amount page has been scroll horizontally 
-     * @attribute docScrollY
+     * @config docScrollY
      * @type {Int}
      */
     'docScrollY'
@@ -1772,7 +1772,7 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Returns a region object for the node 
- * @attribute region
+ * @config region
  * @for Node
  * @type Node
  */
@@ -1792,7 +1792,7 @@ Y.Node.ATTRS.region = {
     
 /**
  * Returns a region object for the node's viewport 
- * @attribute viewportRegion
+ * @config viewportRegion
  * @type Node
  */
 Y.Node.ATTRS.viewportRegion = {

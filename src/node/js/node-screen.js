@@ -10,7 +10,7 @@
 Y.each([
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
-     * @attribute winWidth
+     * @config winWidth
      * @for Node
      * @type {Int}
      */
@@ -18,35 +18,35 @@ Y.each([
 
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
-     * @attribute winHeight
+     * @config winHeight
      * @type {Int}
      */
     'winHeight',
 
     /**
      * Document width 
-     * @attribute winHeight
+     * @config winHeight
      * @type {Int}
      */
     'docWidth',
 
     /**
      * Document height 
-     * @attribute docHeight
+     * @config docHeight
      * @type {Int}
      */
     'docHeight',
 
     /**
      * Amount page has been scroll vertically 
-     * @attribute docScrollX
+     * @config docScrollX
      * @type {Int}
      */
     'docScrollX',
 
     /**
      * Amount page has been scroll horizontally 
-     * @attribute docScrollY
+     * @config docScrollY
      * @type {Int}
      */
     'docScrollY'
