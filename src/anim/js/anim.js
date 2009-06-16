@@ -15,7 +15,7 @@
         START_TIME = 'startTime',
         ELAPSED_TIME = 'elapsedTime',
         /**
-        * @for anim
+        * @for Anim
         * @event start
         * @description fires when an animation begins.
         * @param {Event} ev The start event.

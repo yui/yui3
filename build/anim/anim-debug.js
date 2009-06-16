@@ -17,7 +17,7 @@ YUI.add('anim-base', function(Y) {
         START_TIME = 'startTime',
         ELAPSED_TIME = 'elapsedTime',
         /**
-        * @for anim
+        * @for Anim
         * @event start
         * @description fires when an animation begins.
         * @param {Event} ev The start event.
@@ -1045,8 +1045,7 @@ YUI.add('anim-node-plugin', function(Y) {
 /**
  *  Binds an Anim instance to a Node instance
  * @module anim
- * @class NodeFX
- * @namespace Plugin
+ * @class Plugin.NodeFX
  * @extends Base
  * @submodule anim-node-plugin
  */
