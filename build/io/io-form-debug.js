@@ -19,13 +19,19 @@ YUI.add('io-form', function(Y) {
         * @return string
         */
         _serialize: function(o) {
-			var id = (typeof o.id === 'string') ? o.id : o.id.getAttribute('id'),
-            	f = Y.config.doc.getElementById(id),
-            	eUC = encodeURIComponent,
+			var eUC = encodeURIComponent,
             	data = [],
             	useDf = o.useDisabled || false,
             	item = 0,
-            	e, n, v, d, i, ilen, j, jlen, o;
+            	e, f, n, v, d, i, ilen, j, jlen, o,
+            	id = (typeof o.id === 'string') ? o.id : o.id.getAttribute('id');
+
+            	if (!id) {
+					id = Y.guid('io:');
+					o.id.setAttribute('id', id);
+				}
+
+            	f = Y.config.doc.getElementById(id);
 
             // Iterate over the form elements collection to construct the
             // label-value pairs.
