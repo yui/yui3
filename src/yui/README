@@ -39,6 +39,7 @@ The YUI Global
     - added onCSS
     - Loader requests are queued globally
     - Accepts jsAttributes and cssAttributes configs for adding attributes to inserted nodes
+    - The force config
 
     UA:
     - Added 'secure' property for SSL detection
