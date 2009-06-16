@@ -1,7 +1,6 @@
 /**
- * The image loader is a framework to dynamically load images
- * according to certain triggers, enabling faster load times
- * and a more responsive UI.
+ * The ImageLoader Utility is a framework to dynamically load images according to certain triggers,
+ * enabling faster load times and a more responsive UI.
  *
  * @module imageloader
  * @requires node
