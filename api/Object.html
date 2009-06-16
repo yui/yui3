@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: yui  YUI~object   (YUI Library)</title>
+	<title>API: yui  Object   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,7 +19,7 @@
         <h3>yui&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_yui.html" title="yui">yui</a>
-                 &gt; YUI~object 
+                 &gt; Object 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,7 +48,7 @@
 
                         
                         
-                            Class <b property="yui:name">YUI~object</b>
+                            Class <b property="yui:name">Object</b>
                         <span class="extends">
                         </span>
 
@@ -71,13 +71,64 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
+                                    <div class="" rel="yui:method" resource="#method_()">
+                                    <h4>
+                                        <a name="method_()">()</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Object
+                                            <strong property="yui:name">()</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Y.Object(o) returns a new object based upon the supplied object.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the supplier object</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the new object</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="private" rel="yui:method" resource="#method__extract">
                                     <h4>
                                         <a name="method__extract">_extract</a></h4>
                                     <div class="detail" >
                                         <code>
                                          private 
-                                        
+                                         static 
                                         
                                         boolean|Array
                                             <strong property="yui:name">_extract</strong>
@@ -122,6 +173,89 @@
                                                         boolean|Array
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the extracted info</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_each">
+                                    <h4>
+                                        <a name="method_each">each</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        YUI
+                                            <strong property="yui:name">each</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                                        , 
+                                                         proto
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executes a function on each item. The function
+receives the value, the key, and the object
+as paramters (in that order).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the object to iterate</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">c</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the execution context</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">proto</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  include proto</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        YUI
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the YUI instance</dd>
                                                 </dl>
 
 
@@ -196,150 +330,16 @@ Returns the source object if an empty path is provided.</dd>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_Object">
+                                    <div class="" rel="yui:method" resource="#method_hasKey">
                                     <h4>
-                                        <a name="method_Object">Object</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        object
-                                            <strong property="yui:name">Object</strong>
-                                           (
-                                                
-                                                        
-                                                         o
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Y.Object(o) returns a new object based upon the supplied object.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">o</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the supplier object</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">the new object</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_Object.each">
-                                    <h4>
-                                        <a name="method_Object.each">Object.each</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        YUI
-                                            <strong property="yui:name">Object.each</strong>
-                                           (
-                                                
-                                                        
-                                                         o
-                                                    
-                                                
-                                                        , 
-                                                         f
-                                                    
-                                                
-                                                        , 
-                                                         c
-                                                    
-                                                
-                                                        , 
-                                                         proto
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Executes a function on each item. The function
-receives the value, the key, and the object
-as paramters (in that order).
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">o</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the object to iterate</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">f</span>
-                                                        &lt;<span property="yui:type">function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the function to execute</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">c</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the execution context</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">proto</span>
-                                                        &lt;<span property="yui:type">boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  include proto</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        YUI
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">the YUI instance</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_Object.hasKey">
-                                    <h4>
-                                        <a name="method_Object.hasKey">Object.hasKey</a></h4>
+                                        <a name="method_hasKey">hasKey</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
                                         boolean
-                                            <strong property="yui:name">Object.hasKey</strong>
+                                            <strong property="yui:name">hasKey</strong>
                                            (
                                                 
                                                         
@@ -391,16 +391,16 @@ as paramters (in that order).
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_Object.hasValue">
+                                    <div class="" rel="yui:method" resource="#method_hasValue">
                                     <h4>
-                                        <a name="method_Object.hasValue">Object.hasValue</a></h4>
+                                        <a name="method_hasValue">hasValue</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
                                         boolean
-                                            <strong property="yui:name">Object.hasValue</strong>
+                                            <strong property="yui:name">hasValue</strong>
                                            (
                                                 
                                                         
@@ -452,16 +452,16 @@ as paramters (in that order).
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_Object.keys">
+                                    <div class="" rel="yui:method" resource="#method_keys">
                                     <h4>
-                                        <a name="method_Object.keys">Object.keys</a></h4>
+                                        <a name="method_keys">keys</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
                                         string[]
-                                            <strong property="yui:name">Object.keys</strong>
+                                            <strong property="yui:name">keys</strong>
                                            (
                                                 
                                                         
@@ -503,16 +503,16 @@ as paramters (in that order).
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class=" deprecated" rel="yui:method" resource="#method_Object.owns">
+                                    <div class=" deprecated" rel="yui:method" resource="#method_owns">
                                     <h4>
-                                        <a name="method_Object.owns">Object.owns</a></h4>
+                                        <a name="method_owns">owns</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
                                         boolean
-                                            <strong property="yui:name">Object.owns</strong>
+                                            <strong property="yui:name">owns</strong>
                                            (
                                                 
                                                         
@@ -565,108 +565,6 @@ in the object, or was inherited from the prototype.
 wrapper for the native implementation.  Use the native implementation
 directly instead.
                                             </div>        
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_Object.size">
-                                    <h4>
-                                        <a name="method_Object.size">Object.size</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        int
-                                            <strong property="yui:name">Object.size</strong>
-                                           (
-                                                
-                                                        
-                                                         o
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns the size of an object
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">o</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> an object</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        int
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">the size</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_Object.values">
-                                    <h4>
-                                        <a name="method_Object.values">Object.values</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        Array
-                                            <strong property="yui:name">Object.values</strong>
-                                           (
-                                                
-                                                        
-                                                         o
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns an array containing the object's values
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">o</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> an object</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Array
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">the values</dd>
-                                                </dl>
-
-
-             
 
                                         </div>
 
@@ -748,6 +646,108 @@ undefined, if the path was invalid.</dd>
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_size">
+                                    <h4>
+                                        <a name="method_size">size</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        int
+                                            <strong property="yui:name">size</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the size of an object
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> an object</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        int
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the size</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_values">
+                                    <h4>
+                                        <a name="method_values">values</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">values</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns an array containing the object's values
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> an object</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the values</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -817,26 +817,32 @@ undefined, if the path was invalid.</dd>
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class=""><a href="Array.html" title="Array">Array</a></li>
+                                <li class=""><a href="config.html" title="config">config</a></li>
                                 <li class=""><a href="Get.html" title="Get">Get</a></li>
                                 <li class=""><a href="Lang.html" title="Lang">Lang</a></li>
                                 <li class=""><a href="Loader.html" title="Loader">Loader</a></li>
+                                <li class="selected"><a href="Object.html" title="Object">Object</a></li>
                                 <li class=""><a href="UA.html" title="UA">UA</a></li>
                                 <li class=""><a href="YUI.html" title="YUI">YUI</a></li>
                                 <li class=""><a href="YUI~array~extras.html" title="YUI~array~extras">YUI~array~extras</a></li>
-                                <li class="selected"><a href="YUI~object.html" title="YUI~object">YUI~object</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="_module.js.html" title="_module.js">_module.js</a></li>
                                 <li class=""><a href="array-extras.js.html" title="array-extras.js">array-extras.js</a></li>
                                 <li class=""><a href="get.js.html" title="get.js">get.js</a></li>
                                 <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
+                                <li class=""><a href="yui-array.js.html" title="yui-array.js">yui-array.js</a></li>
                                 <li class=""><a href="yui-base.js.html" title="yui-base.js">yui-base.js</a></li>
                                 <li class=""><a href="yui-core.js.html" title="yui-core.js">yui-core.js</a></li>
+                                <li class=""><a href="yui-init.js.html" title="yui-init.js">yui-init.js</a></li>
                                 <li class=""><a href="yui-lang.js.html" title="yui-lang.js">yui-lang.js</a></li>
                                 <li class=""><a href="yui-later.js.html" title="yui-later.js">yui-later.js</a></li>
+                                <li class=""><a href="yui-log.js.html" title="yui-log.js">yui-log.js</a></li>
                                 <li class=""><a href="yui-object.js.html" title="yui-object.js">yui-object.js</a></li>
                                 <li class=""><a href="yui-ua.js.html" title="yui-ua.js">yui-ua.js</a></li>
                                 <li class=""><a href="yui.js.html" title="yui.js">yui.js</a></li>
@@ -847,17 +853,17 @@ undefined, if the path was invalid.</dd>
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
+                                <li class=""><a href="#method_()" title="()">()</a></li>
                                 <li class="private"><a href="#method__extract" title="_extract">_extract</a></li>
+                                <li class=""><a href="#method_each" title="each">each</a></li>
                                 <li class=""><a href="#method_getValue" title="getValue">getValue</a></li>
-                                <li class=""><a href="#method_Object" title="Object">Object</a></li>
-                                <li class=""><a href="#method_Object.each" title="Object.each">Object.each</a></li>
-                                <li class=""><a href="#method_Object.hasKey" title="Object.hasKey">Object.hasKey</a></li>
-                                <li class=""><a href="#method_Object.hasValue" title="Object.hasValue">Object.hasValue</a></li>
-                                <li class=""><a href="#method_Object.keys" title="Object.keys">Object.keys</a></li>
-                                <li class=" deprecated"><a href="#method_Object.owns" title="Object.owns">Object.owns</a></li>
-                                <li class=""><a href="#method_Object.size" title="Object.size">Object.size</a></li>
-                                <li class=""><a href="#method_Object.values" title="Object.values">Object.values</a></li>
+                                <li class=""><a href="#method_hasKey" title="hasKey">hasKey</a></li>
+                                <li class=""><a href="#method_hasValue" title="hasValue">hasValue</a></li>
+                                <li class=""><a href="#method_keys" title="keys">keys</a></li>
+                                <li class=" deprecated"><a href="#method_owns" title="owns">owns</a></li>
                                 <li class=""><a href="#method_setValue" title="setValue">setValue</a></li>
+                                <li class=""><a href="#method_size" title="size">size</a></li>
+                                <li class=""><a href="#method_values" title="values">values</a></li>
                         </ul>
                     </div>
 
@@ -872,7 +878,7 @@ undefined, if the path was invalid.</dd>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "YUI~object", "name": "_extract", "url": "YUI~object.html#method__extract", "type": "method"}, {"access": "", "host": "YUI~object", "name": "getValue", "url": "YUI~object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object", "url": "YUI~object.html#method_Object", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.each", "url": "YUI~object.html#method_Object.each", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasKey", "url": "YUI~object.html#method_Object.hasKey", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.hasValue", "url": "YUI~object.html#method_Object.hasValue", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.keys", "url": "YUI~object.html#method_Object.keys", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.owns", "url": "YUI~object.html#method_Object.owns", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.size", "url": "YUI~object.html#method_Object.size", "type": "method"}, {"access": "", "host": "YUI~object", "name": "Object.values", "url": "YUI~object.html#method_Object.values", "type": "method"}, {"access": "", "host": "YUI~object", "name": "setValue", "url": "YUI~object.html#method_setValue", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Object", "name": "()", "url": "Object.html#method_()", "type": "method"}, {"access": "", "host": "Object", "name": "each", "url": "Object.html#method_each", "type": "method"}, {"access": "private", "host": "Object", "name": "_extract", "url": "Object.html#method__extract", "type": "method"}, {"access": "", "host": "Object", "name": "getValue", "url": "Object.html#method_getValue", "type": "method"}, {"access": "", "host": "Object", "name": "hasKey", "url": "Object.html#method_hasKey", "type": "method"}, {"access": "", "host": "Object", "name": "hasValue", "url": "Object.html#method_hasValue", "type": "method"}, {"access": "", "host": "Object", "name": "keys", "url": "Object.html#method_keys", "type": "method"}, {"access": "", "host": "Object", "name": "owns", "url": "Object.html#method_owns", "type": "method"}, {"access": "", "host": "Object", "name": "setValue", "url": "Object.html#method_setValue", "type": "method"}, {"access": "", "host": "Object", "name": "size", "url": "Object.html#method_size", "type": "method"}, {"access": "", "host": "Object", "name": "values", "url": "Object.html#method_values", "type": "method"}];
 </script>
 </body>
 </html>
