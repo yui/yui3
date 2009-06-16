@@ -1,7 +1,3 @@
-/**
- * YUI core
- * @module yui
- */
 (function() {
 
     var _instances = {}, 
@@ -66,95 +62,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      * @constructor
      * @global
      * @uses Event.Target
-     * @param o Optional configuration object.  Options:
-     * <ul>
-     *  <li>------------------------------------------------------------------------</li>
-     *  <li>Global:</li>
-     *  <li>------------------------------------------------------------------------</li>
-     *  <li>debug: Turn debug statements on or off</li>
-     *  <li>useBrowserConsole:
-     *  Log to the browser console if debug is on and the console is available</li>
-     *  <li>logInclude:
-     *  A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.
-     *  
-     *  </li>
-     *  <li>logExclude:
-     *  A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
-     *  <li>injected: set to true if the yui seed file was dynamically loaded in
-     *  order to bootstrap components relying on the window load event and onDOMReady.</li>
-     *  <li>throwFail:
-     *  If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
-     *  <li>win:
-     *  The target window/frame</li>
-     *  <li>core:
-     *  A list of modules that defines the YUI core (overrides the default)</li>
-     *  <li>dateFormat: default date format</li>
-     *  <li>locale: default locale</li>
-     *  <li>------------------------------------------------------------------------</li>
-     *  <li>For event and get:</li>
-     *  <li>------------------------------------------------------------------------</li>
-     *  <li>pollInterval: The default poll interval</li>
-     *  <li>windowResizeDelay: The time between browser events to wait before firing.</li>
-     *  <li>-------------------------------------------------------------------------</li>
-     *  <li>For loader:</li>
-     *  <li>-------------------------------------------------------------------------</li>
-     *  <li>base: The base dir</li>
-     *  <li>secureBase: The secure base dir (not implemented)</li>
-     *  <li>comboBase: The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
-     *  <li>root: The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
-     *  <li>filter:
-     *  
-     * A filter to apply to result urls.  This filter will modify the default
-     * path for all modules.  The default path for the YUI library is the
-     * minified version of the files (e.g., event-min.js).  The filter property
-     * can be a predefined filter or a custom filter.  The valid predefined 
-     * filters are:
-     * <dl>
-     *  <dt>DEBUG</dt>
-     *  <dd>Selects the debug versions of the library (e.g., event-debug.js).
-     *      This option will automatically include the Logger widget</dd>
-     *  <dt>RAW</dt>
-     *  <dd>Selects the non-minified version of the library (e.g., event.js).</dd>
-     * </dl>
-     * You can also define a custom filter, which must be an object literal 
-     * containing a search expression and a replace string:
-     * <pre>
-     *  myFilter: &#123; 
-     *      'searchExp': "-min\\.js", 
-     *      'replaceStr': "-debug.js"
-     *  &#125;
-     * </pre>
-     *
-     *  </li>
-     *  <li>filters: per-component filter specification.  If specified for a given component, this overrides the filter config</li>
-     *  <li>combine:
-     *  Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
-     *  <li>ignore:
-     *  A list of modules that should never be dynamically loaded</li>
-     *  <li>force:
-     *  A list of modules that should always be loaded when required, even if already present on the page</li>
-     *  <li>insertBefore:
-     *  Node or id for a node that should be used as the insertion point for new nodes</li>
-     *  <li>charset:
-     *  charset for dynamic nodes</li>
-     *  <li>timeout:
-     *  number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
-     *  <li>context:
-     *  execution context for all callbacks</li>
-     *  <li>onSuccess:
-     *  callback for the 'success' event</li>
-     *  <li>onFailure:
-     *  callback for the 'failure' event</li>
-     *  <li>onCSS: callback for the 'CSSComplete' event.  When loading YUI components with CSS
-     *  the CSS is loaded first, then the script.  This provides a moment you can tie into to improve
-     *  the presentation of the page while the script is loading.</li>
-     *  <li>onTimeout:
-     *  callback for the 'timeout' event</li>
-     *  <li>onProgress:
-     *  callback executed each time a script or css file is loaded</li>
-     *  <li>modules:
-     *  A list of module definitions.  See Loader.addModule for the supported module metadata</li>
-     * </ul>
+     * @param o Optional configuration object.  This object is stored
+     * in YUI.config.  See config for the list of supported properties.
      */
 
     /*global YUI*/
@@ -702,3 +611,235 @@ YUI.prototype = {
      */
 
 })();
+
+/**
+ * The config object contains all of the configuration options for
+ * the YUI instance.  This object is supplied by the implementer 
+ * when instantiating a YUI instance.  Some properties have default
+ * values if they are not supplied by the implementer.
+ * @class config
+ * @static
+ */
+
+/**
+ * Turn debug statements on or off
+ * @property debug
+ * @type boolean
+ * @default true
+ */
+
+/**
+ * Log to the browser console if debug is on and the browser has a
+ * supported console
+ * @property useBrowserConsole
+ * @type boolean
+ * @default true
+ */
+
+/**
+ * A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.
+ * @property logInclude
+ * @type object
+ */
+
+/**
+ * A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+ * @property logExclude
+ * @type object
+ */
+
+/**
+ * Set to true if the yui seed file was dynamically loaded in 
+ * order to bootstrap components relying on the window load event 
+ * and onDOMReady.
+ * @property injected
+ * @type object
+ */
+
+/**
+ * If throwFail is set, Y.fail will generate or re-throw a JS Error.  Otherwise the failure is logged.
+ * @property throwFail
+ * @type boolean
+ * @default true
+ */
+
+/**
+ * The window/frame that this instance should operate in
+ * @property win
+ * @type Window
+ * @default the window hosting YUI
+ */
+
+/**
+ * The document associated with the 'win' configuration
+ * @property doc
+ * @type Document
+ * @default the document hosting YUI
+ */
+
+/**
+ * A list of modules that defines the YUI core (overrides the default)</li>
+ * @property core
+ * @type string[]
+ */
+
+/**
+ * The default date format
+ * @property dateFormat
+ * @type string
+ */
+
+/**
+ * The default locale
+ * @property dateFormat
+ * @type string
+ */
+
+/**
+ * The default interval when polling in milliseconds.
+ * @property pollInterval
+ * @type int
+ * @default
+ */
+
+/**
+ * The default interval when polling in milliseconds.
+ * @property windowResizeDelay
+ * @type int
+ * @default 40
+ */
+
+/**
+ * Base directory for dynamic loading
+ * @property base
+ * @type string
+ */
+
+/**
+ * The secure base dir (not implemented)
+ * For dynamic loading.
+ * @property secureBase
+ * @type string
+ */
+
+/**
+ * The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?
+ * For dynamic loading.
+ * @property comboBase
+ * @type string
+ */
+
+/**
+ * The root path to prepend to module names for the combo service. Ex: 3.0.0b1/build/
+ * For dynamic loading.
+ * @property root
+ * @type string
+ */
+
+/**
+ * A filter to apply to result urls.  This filter will modify the default
+ * path for all modules.  The default path for the YUI library is the
+ * minified version of the files (e.g., event-min.js).  The filter property
+ * can be a predefined filter or a custom filter.  The valid predefined 
+ * filters are:
+ * <dl>
+ *  <dt>DEBUG</dt>
+ *  <dd>Selects the debug versions of the library (e.g., event-debug.js).
+ *      This option will automatically include the Logger widget</dd>
+ *  <dt>RAW</dt>
+ *  <dd>Selects the non-minified version of the library (e.g., event.js).</dd>
+ * </dl>
+ * You can also define a custom filter, which must be an object literal 
+ * containing a search expression and a replace string:
+ * <pre>
+ *  myFilter: &#123; 
+ *      'searchExp': "-min\\.js", 
+ *      'replaceStr': "-debug.js"
+ *  &#125;
+ * </pre>
+ * For dynamic loading.
+ * @property filter
+ * @type string|object
+ */
+
+/**
+ * Hash of per-component filter specification.  If specified for a given component, 
+ * this overrides the filter config
+ * For dynamic loading.
+ * @property filters
+ * @type object
+ */
+
+/**
+ * Use the YUI combo service to reduce the number of http connections 
+ * required to load your dependencies
+ * For dynamic loading.
+ * @property combine
+ * @type boolean
+ * @default true if 'base' is not supplied, false if it is.
+ */
+
+/**
+ * A list of modules that should never be dynamically loaded
+ * @property ignore
+ * @type string[]
+ */
+
+/**
+ * A list of modules that should always be loaded when required, even if already 
+ * present on the page.
+ * @property force
+ * @type string[]
+ */
+
+/**
+ * Node or id for a node that should be used as the insertion point for new nodes
+ * For dynamic loading.
+ * @property insertBefore
+ * @type string
+ */
+
+/**
+ * charset for dynamic nodes
+ * @property charset
+ * @type string
+ */
+
+/**
+ * Object literal containing attributes to add to dynamically loaded script nodes.
+ * @property jsAttributes
+ * @type string
+ */
+
+/**
+ * Object literal containing attributes to add to dynamically loaded link nodes.
+ * @property cssAttributes
+ * @type string
+ */
+
+/**
+ * Number of milliseconds before a timeout occurs when dynamically 
+ * loading nodes. If not set, there is no timeout.
+ * @property timeout
+ * @type int
+ */
+
+/**
+ * Callback for the 'CSSComplete' event.  When dynamically loading YUI 
+ * components with CSS, this property fires when the CSS is finished
+ * loading but script loading is still ongoing.  This provides an
+ * opportunity to enhance the presentation of a loading page a little
+ * bit before the entire loading process is done.
+ * @property onCSS
+ * @type function
+ */
+
+/**
+ * A list of module definitions to add to the list of YUI components.  
+ * These components can then be dynamically loaded side by side with
+ * YUI via the use() method.See Loader.addModule for the supported
+ * module metadata.
+ * @property modules
+ * @type function
+ */
+ 

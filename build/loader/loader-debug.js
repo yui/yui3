@@ -96,38 +96,12 @@ YUI.add('loader', function(Y) {
 // isn't required in the seed build.  If needed, we may want to 
 // add them back if the event system is detected.
 
-/*
- * Executed when the loader successfully completes an insert operation
- * This can be subscribed to normally, or a listener can be passed
- * as an onSuccess config option.
- * @event success
- */
 
 /*
- * Executed when the loader fails to complete an insert operation.
- * This can be subscribed to normally, or a listener can be passed
- * as an onFailure config option.
- *
- * @event failure
- */
-
-/*
- * Executed when a Get operation times out.
- * This can be subscribed to normally, or a listener can be passed
- * as an onTimeout config option.
- *
- * @event timeout
- */
-
-// http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&2.5.2/build/dom/dom-min.js&2.5.2/build/event/event-min.js&2.5.2/build/autocomplete/autocomplete-min.js"
-
-
-/**
  * Global loader queue
  * @property _loaderQueue
  * @type Queue
  * @private
- * @for YUI.Env
  */
 YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Y.Queue();
 
