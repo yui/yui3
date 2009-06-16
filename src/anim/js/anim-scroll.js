@@ -3,12 +3,11 @@
  * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-scroll
-
- * TODO: deprecate for scrollTop/Left properties?
  */
 
 var NUM = Number;
 
+//TODO: deprecate for scrollTop/Left properties?
 Y.Anim.behaviors.scroll = {
     set: function(anim, att, from, to, elapsed, duration, fn) {
         var
