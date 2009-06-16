@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>DataType Date Formatter Submodule&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>datatype&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_datatype.html" title="datatype">datatype</a>
                  &gt; DataType.Date 
@@ -59,7 +59,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Date subclass for the YUI DataType utility.
+                        DataType.Date provides a set of utility functions to operate against Date objects.
                     </div>
 
                     
@@ -213,6 +213,128 @@ See Y.DataType.Date.Locale for more information.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_parse">
+                                    <h4>
+                                        <a name="method_parse">parse</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Date
+                                            <strong property="yui:name">parse</strong>
+                                           (
+                                                
+                                                        
+                                                         data
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Converts data to type Date.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">data</span>
+                                                        &lt;<span property="yui:type">String | Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Data to convert. Values supported by the Date constructor are supported.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Date
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A Date, or null.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method_xPad">
+                                    <h4>
+                                        <a name="method_xPad">xPad</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">xPad</strong>
+                                           (
+                                                
+                                                        
+                                                         x
+                                                    
+                                                
+                                                        , 
+                                                         pad
+                                                    
+                                                
+                                                        , 
+                                                         r
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Pad a number with leading spaces, zeroes or something else
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">x</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 	The number to be padded</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">pad</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">   The character to pad the number with</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">r</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 	(optional) The base of the pad, eg, 10 implies to two digits, 100 implies to 3 digits.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -285,9 +407,6 @@ See Y.DataType.Date.Locale for more information.
                                 <li class="selected"><a href="DataType.Date.html" title="DataType.Date">DataType.Date</a></li>
                                 <li class=""><a href="DataType.Date.Locale.html" title="DataType.Date.Locale">DataType.Date.Locale</a></li>
                                 <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
-                                <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
-                                <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
-                                <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
                                 <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
                         </ul>
                     </div>
@@ -310,6 +429,8 @@ See Y.DataType.Date.Locale for more information.
                         <h4>Methods</h4>
                         <ul class="content">        
                                 <li class=""><a href="#method_format" title="format">format</a></li>
+                                <li class=""><a href="#method_parse" title="parse">parse</a></li>
+                                <li class="private"><a href="#method_xPad" title="xPad">xPad</a></li>
                         </ul>
                     </div>
 
@@ -324,7 +445,7 @@ See Y.DataType.Date.Locale for more information.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Date", "name": "parse", "url": "DataType.Date.html#method_parse", "type": "method"}, {"access": "private", "host": "DataType.Date", "name": "xPad", "url": "DataType.Date.html#method_xPad", "type": "method"}];
 </script>
 </body>
 </html>

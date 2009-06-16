@@ -3,7 +3,6 @@
  * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-color
- * @for Anim
  */
 
 var NUM = Number;

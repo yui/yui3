@@ -8,6 +8,7 @@ YUI.add('anim-base', function(Y) {
     /**
      * Handles animation _queueing and threading.
      * @class Anim
+     * @for Anim
      * @constructor
      * @extends Base
      */
@@ -16,6 +17,7 @@ YUI.add('anim-base', function(Y) {
         START_TIME = 'startTime',
         ELAPSED_TIME = 'elapsedTime',
         /**
+        * @for Anim
         * @event start
         * @description fires when an animation begins.
         * @param {Event} ev The start event.
@@ -591,7 +593,6 @@ YUI.add('anim-color', function(Y) {
  * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-color
- * @for Anim
  */
 
 var NUM = Number;
@@ -640,7 +641,6 @@ YUI.add('anim-curve', function(Y) {
  * attribute.  A curve is zero or more control points and an end point.
  * @module anim
  * @submodule anim-curve
- * @for Anim
  */
 
 Y.Anim.behaviors.curve = {
@@ -663,6 +663,7 @@ Y.Anim.behaviors.curve = {
  * At least 2 points are required (start and end).
  * First point is start. Last point is end.
  * Additional control points are optional.     
+ * @for Anim
  * @method getBezier
  * @static
  * @param {Array} points An array containing Bezier points
@@ -718,6 +719,7 @@ Y.Easing = {
 
     /**
      * Uniform speed between points.
+     * @for Easing
      * @method easeNone
      * @param {Number} t Time value used to compute current value
      * @param {Number} b Starting value
@@ -1042,7 +1044,8 @@ YUI.add('anim-node-plugin', function(Y) {
 /**
  *  Binds an Anim instance to a Node instance
  * @module anim
- * @namespace plugin
+ * @class Plugin.NodeFX
+ * @extends Base
  * @submodule anim-node-plugin
  */
 
@@ -1069,13 +1072,11 @@ YUI.add('anim-scroll', function(Y) {
  * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-scroll
- * @for Anim
-
- * TODO: deprecate for scrollTop/Left properties?
  */
 
 var NUM = Number;
 
+//TODO: deprecate for scrollTop/Left properties?
 Y.Anim.behaviors.scroll = {
     set: function(anim, att, from, to, elapsed, duration, fn) {
         var
@@ -1109,7 +1110,6 @@ YUI.add('anim-xy', function(Y) {
  * <code>to</code> attributes.
  * @module anim
  * @submodule anim-xy
- * @for Anim
  */
 
 var NUM = Number;
@@ -1131,5 +1131,5 @@ Y.Anim.behaviors.xy = {
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
 
 
-YUI.add('anim', function(Y){}, '@VERSION@' ,{use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy'], skinnable:false});
+YUI.add('anim', function(Y){}, '@VERSION@' ,{skinnable:false, use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy']});
 

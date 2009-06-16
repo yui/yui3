@@ -2991,6 +2991,7 @@ var GLOBAL_ENV = YUI.Env,
             skinnable: true,
             plugins: {
                 'console-filters': {
+                    requires: [PLUGIN],
                     skinnable: true
                 }
             }
@@ -3464,6 +3465,8 @@ Y.Loader = function(o) {
      * @type string[]
      */
     this.force = null;
+
+    this.forceMap = {};
 
     /**
      * Should we allow rollups

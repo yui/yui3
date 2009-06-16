@@ -1,17 +1,16 @@
 /**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
+ * DataType.Number provides a set of utility functions to operate against Number objects.
  *
- * @module datatype
+ * @class DataType.Number
+ * @static
  */
 var LANG = Y.Lang;
 
 /**
  * Format number submodule.
  *
- * @class DataType.Number
+ * @module datatype
  * @submodule datatype-number-format
- * @static
  */
 Y.mix(Y.namespace("DataType.Number"), {
      /**

@@ -5,7 +5,6 @@ YUI.add('anim-curve', function(Y) {
  * attribute.  A curve is zero or more control points and an end point.
  * @module anim
  * @submodule anim-curve
- * @for Anim
  */
 
 Y.Anim.behaviors.curve = {
@@ -28,6 +27,7 @@ Y.Anim.behaviors.curve = {
  * At least 2 points are required (start and end).
  * First point is start. Last point is end.
  * Additional control points are optional.     
+ * @for Anim
  * @method getBezier
  * @static
  * @param {Array} points An array containing Bezier points
