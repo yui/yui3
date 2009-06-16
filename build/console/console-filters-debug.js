@@ -29,12 +29,6 @@ var getCN = Y.ClassNameManager.getClassName,
     DOT = '.',
     EMPTY   = '',
 
-    // IE8 doesn't permit breaking _between_ nowrap elements AND it doesn't
-    // understand the (non spec) wbr tag AND it doesn't create text nodes for
-    // spaces between elements in innerHTML strings.  The en-space entity
-    // suffices, but is less that beautiful in other browsers.
-    SEP = Y.UA.ie > 7 ? '&#8194;' : ' ',
-
     C_BODY       = DOT + Y.Console.CHROME_CLASSES.console_bd_class,
     C_FOOT       = DOT + Y.Console.CHROME_CLASSES.console_ft_class,
 
@@ -97,10 +91,14 @@ Y.mix(ConsoleFilters,{
      * @static
      */
     FILTER_TEMPLATE :
+        // IE8 doesn't permit breaking _between_ nowrap elements AND it doesn't
+        // understand the (non spec) wbr tag AND it doesn't create text nodes
+        // for spaces between elements in innerHTML strings.  The thin-space
+        // entity suffices to create a breakable point.
         '<label class="{filter_label}">'+
             '<input type="checkbox" value="{filter_name}" '+
                 'class="{filter} {filter_class}"> {filter_name}'+
-        '</label>'+SEP,
+        '</label>&#8201;',
 
     /** 
      * Classnames used by the templates when creating nodes.
