@@ -621,14 +621,14 @@
         <span class="k">var</span> <span class="nx">targs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">targets</span><span class="o">,</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
             <span class="nx">t</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">ce</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">evt</span> <span class="o">||</span> <span class="o">(!</span><span class="nx">evt</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&amp;&amp;</span> <span class="nx">targs</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">evt</span> <span class="o">||</span> <span class="o">((!</span><span class="nx">evt</span><span class="o">.</span><span class="nx">stopped</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">targs</span><span class="o">))</span> <span class="o">{</span>
 
             <span class="c">// Y.log(&#39;Bubbling &#39; + evt.type);</span>
 <span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">targs</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">targs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">t</span> <span class="o">=</span> <span class="nx">targs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span> 
-                    <span class="c">// type = evt &amp;&amp; evt.type;</span>
-<span class="c"></span>                    <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span> 
+                    <span class="nx">type</span> <span class="o">=</span> <span class="nx">evt</span> <span class="o">&amp;&amp;</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">type</span><span class="o">;</span>
+                    <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span> 
                         
                     <span class="c">// if this event was not published on the bubble target,</span>
 <span class="c"></span>                    <span class="c">// publish it with sensible default properties</span>
