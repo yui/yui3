@@ -290,7 +290,7 @@ Node.ATTRS = {
     /**
      * Allows for getting and setting the text of an element.
      * Formatting is preserved and special characters are treated literally.
-     * @attribute text
+     * @config text
      * @type String
      */
     text: {
@@ -313,7 +313,7 @@ Node.ATTRS = {
     /**
      * Returns a NodeList instance of all HTMLElement children.
      * @readOnly
-     * @attribute children
+     * @config children
      * @type NodeList
      */
     'children': {
@@ -357,7 +357,7 @@ Node.ATTRS = {
 
     /**
      * Whether or not this Node can traverse outside of its subtree.
-     * @attribute restricted
+     * @config restricted
      * @writeOnce
      * @type Boolean
      */

@@ -8,7 +8,7 @@
 
 /**
  * Returns a region object for the node 
- * @attribute region
+ * @config region
  * @for Node
  * @type Node
  */
@@ -28,7 +28,7 @@ Y.Node.ATTRS.region = {
     
 /**
  * Returns a region object for the node's viewport 
- * @attribute viewportRegion
+ * @config viewportRegion
  * @type Node
  */
 Y.Node.ATTRS.viewportRegion = {

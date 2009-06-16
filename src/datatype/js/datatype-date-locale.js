@@ -1,4 +1,8 @@
 /**
+ * @module datatype
+*/
+
+/**
  * The Date.Locale class is a container for all localised date strings
  * used by Y.DataType.Date. It is used internally, but may be extended
  * to provide new date localisations.
@@ -59,9 +63,9 @@
  * <pre>
  *   mardi, 22 avril == 2008-04-22
  * </pre>
- * @module datatype
  * @requires oop
  * @class DataType.Date.Locale
+ * @static
  */
 var YDateEn = {
 	a: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],

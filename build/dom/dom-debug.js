@@ -67,10 +67,10 @@ Y.DOM = {
         },
 
     /**
-     * Returns the text content of the HTMLElement. 
-     * @method getText         
+     * Sets the text content of the HTMLElement. 
+     * @method setText         
      * @param {HTMLElement} element The html element. 
-     * @return {String} The text content of the element (includes text of any descending elements).
+     * @param {String} content The content to add. 
      */
     setText: (document.documentElement.textContent !== undefined) ?
         function(element, content) {
@@ -84,9 +84,10 @@ Y.DOM = {
         },
 
 // TODO: pull out sugar (rely on _childBy, byAxis, etc)?
-    /**
+    /*
      * Finds the firstChild of the given HTMLElement. 
      * @method firstChild
+     * @deprecated Use _childBy
      * @param {HTMLElement} element The html element. 
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current HTMLElement being tested as its only argument.
@@ -97,13 +98,15 @@ Y.DOM = {
         return Y.DOM._childBy(element, null, fn);
     },
 
+    // @deprecated Use _childBy
     firstChildByTag: function(element, tag, fn) {
         return Y.DOM._childBy(element, tag, fn);
     },
 
-    /**
+    /*
      * Finds the lastChild of the given HTMLElement.
      * @method lastChild
+     * @deprecated Use _childBy
      * @param {HTMLElement} element The html element.
      * @param {String} tag The tag to search for.
      * @param {Function} fn optional An optional boolean test to apply.
@@ -115,6 +118,7 @@ Y.DOM = {
         return Y.DOM._childBy(element, null, fn, true);
     },
 
+    // @deprecated Use _childBy
     lastChildByTag: function(element, tag, fn) {
         return Y.DOM._childBy(element, tag, fn, true);
     },
@@ -122,13 +126,14 @@ Y.DOM = {
     /*
      * Finds all HTMLElement childNodes matching the given tag.
      * @method childrenByTag
+     * @deprecated Use Selector
      * @param {HTMLElement} element The html element.
      * @param {String} tag The tag to search for.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current HTMLElement being tested as its only argument.
      * If no function is given, all children with the given tag are collected.
      * @return {Array} The collection of child elements.
-     * TODO: deprecate?  Webkit children.tags() returns grandchildren
+     * TODO: Webkit children.tags() returns grandchildren
      */
     _childrenByTag: function() {
         if (document[DOCUMENT_ELEMENT].children) {
@@ -174,9 +179,10 @@ Y.DOM = {
         }
     }(),
 
-    /**
+    /*
      * Finds all HTMLElement childNodes.
      * @method children
+     * @deprecated Use Selector
      * @param {HTMLElement} element The html element.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current HTMLElement being tested as its only argument.
@@ -187,9 +193,10 @@ Y.DOM = {
         return Y.DOM._childrenByTag(element, null, fn);
     },
 
-    /**
+    /*
      * Finds the previous sibling of the element.
      * @method previous
+     * @deprecated Use elementByAxis
      * @param {HTMLElement} element The html element.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
@@ -201,9 +208,10 @@ Y.DOM = {
         return Y.DOM.elementByAxis(element, PREVIOUS_SIBLING, fn, all);
     },
 
-    /**
+    /*
      * Finds the next sibling of the element.
      * @method next
+     * @deprecated Use elementByAxis
      * @param {HTMLElement} element The html element.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
@@ -215,9 +223,10 @@ Y.DOM = {
         return Y.DOM.elementByAxis(element, NEXT_SIBLING, fn, all);
     },
 
-    /**
+    /*
      * Finds the ancestor of the element.
      * @method ancestor
+     * @deprecated Use elementByAxis
      * @param {HTMLElement} element The html element.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
@@ -250,9 +259,10 @@ Y.DOM = {
         return null;
     },
 
-    /**
+    /*
      * Finds all elements with the given tag.
      * @method byTag
+     * @deprecated Use Selector
      * @param {String} tag The tag being search for. 
      * @param {HTMLElement} root optional An optional root element to start from.
      * @param {Function} fn optional An optional boolean test to apply.
@@ -275,9 +285,10 @@ Y.DOM = {
         return retNodes;
     },
 
-    /**
+    /*
      * Finds the first element with the given tag.
      * @method firstByTag
+     * @deprecated Use Selector
      * @param {String} tag The tag being search for. 
      * @param {HTMLElement} root optional An optional root element to start from.
      * @param {Function} fn optional An optional boolean test to apply.
@@ -301,7 +312,7 @@ Y.DOM = {
         return ret;
     },
 
-    /**
+    /*
      * Filters a collection of HTMLElements by the given attributes.
      * @method filterElementsBy
      * @param {Array} elements The collection of HTMLElements to filter.
@@ -501,6 +512,7 @@ Y.DOM = {
         return ret;
     },
 
+    // @deprecated
     srcIndex: (document.documentElement.sourceIndex) ?
         function(node) {
             return (node && node.sourceIndex) ? node.sourceIndex : null;
@@ -592,7 +604,7 @@ Y.DOM = {
                 scripts = newNode.getElementsByTagName('script');
             }
             Y.DOM._execScripts(scripts);
-        } else if (content.nodeType || content.indexOf('<script') > -1) { // prevent any scripts from being injected
+        } else if (content.nodeType || (content.indexOf && content.indexOf('<script') > -1)) { // prevent any scripts from being injected
             Y.DOM._stripScripts(newNode);
         }
 
@@ -746,7 +758,7 @@ Y.DOM = {
         return doc[DEFAULT_VIEW] || doc[PARENT_WINDOW] || Y.config.win;
     },
 
-    // TODO: document this
+    // @deprecated, use Selector 
     _childBy: function(element, tag, fn, rev) {
         var ret = null,
             root, axis;

@@ -1,17 +1,16 @@
 /**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
+ * DataType.XML provides a set of utility functions to operate against XML documents.
  *
- * @module datatype
+ * @class DataType.XML
+ * @static
  */
 var LANG = Y.Lang;
 
 /**
  * Format XML submodule.
  *
- * @class DataType.XML
+ * @module datatype
  * @submodule datatype-xml-format
- * @static
  */
 Y.mix(Y.namespace("DataType.XML"), {
     /**
@@ -20,7 +19,6 @@ Y.mix(Y.namespace("DataType.XML"), {
      * @method format
      * @param data {XMLDoc} Data to convert.
      * @return {String} String.
-     * @static
      */
     format: function(data) {
         try {

@@ -779,7 +779,7 @@ YUI.add('io-form', function(Y) {
         * @return string
         */
         _serialize: function(o) {
-			var id = (typeof o.id === 'string') ? o.id : o.id._userCfgs.node.id,
+			var id = (typeof o.id === 'string') ? o.id : o.id.getAttribute('id'),
             	f = Y.config.doc.getElementById(id),
             	eUC = encodeURIComponent,
             	data = [],
