@@ -572,13 +572,13 @@ ET.prototype = {
         var targs = this._yuievt.targets, ret = true,
             t, type, ce, i;
 
-        if (!evt || (!evt.stopped && targs)) {
+        if (!evt || ((!evt.stopped) && targs)) {
 
             // Y.log('Bubbling ' + evt.type);
             for (i in targs) {
                 if (targs.hasOwnProperty(i)) {
                     t = targs[i]; 
-                    // type = evt && evt.type;
+                    type = evt && evt.type;
                     ce = t.getEvent(type); 
                         
                     // if this event was not published on the bubble target,
