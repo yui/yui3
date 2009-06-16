@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: anim  plugin.Anim   (YUI Library)</title>
+	<title>API: anim  Anim   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,7 +19,7 @@
         <h3>anim&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_anim.html" title="anim">anim</a>
-                 &gt; plugin.Anim 
+                 &gt; Anim 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,7 +48,7 @@
 
                         
                         
-                            Class <b property="yui:name">plugin.Anim</b>
+                            Class <b property="yui:name">Anim</b>
                         <span class="extends">
                            - extends <a href="Base.html" title="Base">Base</a>
                         </span>
@@ -67,7 +67,7 @@
                         <h3 id="constructor">Constructor</h3>
                         <div class="content">
                             <div class="detail">
-                                <strong property="yui:name">plugin.Anim</strong>
+                                <strong property="yui:name">Anim</strong>
                                 <code>
                                     (
                                     )
@@ -217,6 +217,71 @@
                                                         void
                                                     </code></dt>
                                                     <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getBezier">
+                                    <h4>
+                                        <a name="method_getBezier">getBezier</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">getBezier</strong>
+                                           (
+                                                
+                                                        
+                                                         points
+                                                    
+                                                
+                                                        , 
+                                                         t
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Get the current position of the animated element based on t.
+Each point is an array of "x" and "y" values (0 = x, 1 = y)
+At least 2 points are required (start and end).
+First point is start. Last point is end.
+Additional control points are optional.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">points</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array containing Bezier points</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">t</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> A number between 0 and 1 which is the basis for determining current position</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">An array containing int x and y member data</dd>
                                                 </dl>
 
 
@@ -1607,8 +1672,9 @@ Fields may be strings, numbers, or functions.
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class="selected"><a href="Anim.html" title="Anim">Anim</a></li>
                                 <li class=""><a href="Easing.html" title="Easing">Easing</a></li>
-                                <li class="selected"><a href="plugin.Anim.html" title="plugin.Anim">plugin.Anim</a></li>
+                                <li class=""><a href="Plugin.NodeFX.html" title="Plugin.NodeFX">Plugin.NodeFX</a></li>
                         </ul>
                     </div>
 
@@ -1640,6 +1706,7 @@ Fields may be strings, numbers, or functions.
                         <h4>Methods</h4>
                         <ul class="content">        
                                 <li class="private"><a href="#method__runFrame" title="_runFrame">_runFrame</a></li>
+                                <li class=""><a href="#method_getBezier" title="getBezier">getBezier</a></li>
                                 <li class=""><a href="#method_pause" title="pause">pause</a></li>
                                 <li class=""><a href="#method_run" title="run">run</a></li>
                                 <li class=""><a href="#method_stop" title="stop">stop</a></li>
@@ -1697,7 +1764,7 @@ Fields may be strings, numbers, or functions.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Easing", "name": "backBoth", "url": "Easing.html#method_backBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "backIn", "url": "Easing.html#method_backIn", "type": "method"}, {"access": "", "host": "Easing", "name": "backOut", "url": "Easing.html#method_backOut", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "behaviors", "url": "plugin.Anim.html#property_behaviors", "type": "property"}, {"access": "", "host": "Easing", "name": "bounceBoth", "url": "Easing.html#method_bounceBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "bounceIn", "url": "Easing.html#method_bounceIn", "type": "method"}, {"access": "", "host": "Easing", "name": "bounceOut", "url": "Easing.html#method_bounceOut", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "DEFAULT_GETTER", "url": "plugin.Anim.html#property_DEFAULT_GETTER", "type": "property"}, {"access": "", "host": "plugin.Anim", "name": "DEFAULT_SETTER", "url": "plugin.Anim.html#property_DEFAULT_SETTER", "type": "property"}, {"access": "", "host": "plugin.Anim", "name": "DEFAULT_UNIT", "url": "plugin.Anim.html#property_DEFAULT_UNIT", "type": "property"}, {"access": "", "host": "plugin.Anim", "name": "direction", "url": "plugin.Anim.html#config_direction", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "directionChange", "url": "plugin.Anim.html#event_directionChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "duration", "url": "plugin.Anim.html#config_duration", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "durationChange", "url": "plugin.Anim.html#event_durationChange", "type": "event"}, {"access": "", "host": "Easing", "name": "easeBoth", "url": "Easing.html#method_easeBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "easeBothStrong", "url": "Easing.html#method_easeBothStrong", "type": "method"}, {"access": "", "host": "Easing", "name": "easeIn", "url": "Easing.html#method_easeIn", "type": "method"}, {"access": "", "host": "Easing", "name": "easeInStrong", "url": "Easing.html#method_easeInStrong", "type": "method"}, {"access": "", "host": "Easing", "name": "easeNone", "url": "Easing.html#method_easeNone", "type": "method"}, {"access": "", "host": "Easing", "name": "easeOut", "url": "Easing.html#method_easeOut", "type": "method"}, {"access": "", "host": "Easing", "name": "easeOutStrong", "url": "Easing.html#method_easeOutStrong", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "easing", "url": "plugin.Anim.html#config_easing", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "easingChange", "url": "plugin.Anim.html#event_easingChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "elapsedTime", "url": "plugin.Anim.html#config_elapsedTime", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "elapsedTimeChange", "url": "plugin.Anim.html#event_elapsedTimeChange", "type": "event"}, {"access": "", "host": "Easing", "name": "elasticBoth", "url": "Easing.html#method_elasticBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "elasticIn", "url": "Easing.html#method_elasticIn", "type": "method"}, {"access": "", "host": "Easing", "name": "elasticOut", "url": "Easing.html#method_elasticOut", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "end", "url": "plugin.Anim.html#event_end", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "from", "url": "plugin.Anim.html#config_from", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "fromChange", "url": "plugin.Anim.html#event_fromChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "iteration", "url": "plugin.Anim.html#event_iteration", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "iterationCount", "url": "plugin.Anim.html#config_iterationCount", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "iterationCountChange", "url": "plugin.Anim.html#event_iterationCountChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "iterations", "url": "plugin.Anim.html#config_iterations", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "iterationsChange", "url": "plugin.Anim.html#event_iterationsChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "node", "url": "plugin.Anim.html#config_node", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "nodeChange", "url": "plugin.Anim.html#event_nodeChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "pause", "url": "plugin.Anim.html#method_pause", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "pause", "url": "plugin.Anim.html#event_pause", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "RE_DEFAULT_UNIT", "url": "plugin.Anim.html#property_RE_DEFAULT_UNIT", "type": "property"}, {"access": "", "host": "plugin.Anim", "name": "resume", "url": "plugin.Anim.html#event_resume", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "reverse", "url": "plugin.Anim.html#config_reverse", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "reverseChange", "url": "plugin.Anim.html#event_reverseChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "run", "url": "plugin.Anim.html#method_run", "type": "method"}, {"access": "private", "host": "plugin.Anim", "name": "_runFrame", "url": "plugin.Anim.html#method__runFrame", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "running", "url": "plugin.Anim.html#config_running", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "runningChange", "url": "plugin.Anim.html#event_runningChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "start", "url": "plugin.Anim.html#event_start", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "startTime", "url": "plugin.Anim.html#config_startTime", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "startTimeChange", "url": "plugin.Anim.html#event_startTimeChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "stop", "url": "plugin.Anim.html#method_stop", "type": "method"}, {"access": "", "host": "plugin.Anim", "name": "to", "url": "plugin.Anim.html#config_to", "type": "config"}, {"access": "", "host": "plugin.Anim", "name": "toChange", "url": "plugin.Anim.html#event_toChange", "type": "event"}, {"access": "", "host": "plugin.Anim", "name": "tween", "url": "plugin.Anim.html#event_tween", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Easing", "name": "backBoth", "url": "Easing.html#method_backBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "backIn", "url": "Easing.html#method_backIn", "type": "method"}, {"access": "", "host": "Easing", "name": "backOut", "url": "Easing.html#method_backOut", "type": "method"}, {"access": "", "host": "Anim", "name": "behaviors", "url": "Anim.html#property_behaviors", "type": "property"}, {"access": "", "host": "Easing", "name": "bounceBoth", "url": "Easing.html#method_bounceBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "bounceIn", "url": "Easing.html#method_bounceIn", "type": "method"}, {"access": "", "host": "Easing", "name": "bounceOut", "url": "Easing.html#method_bounceOut", "type": "method"}, {"access": "", "host": "Anim", "name": "DEFAULT_GETTER", "url": "Anim.html#property_DEFAULT_GETTER", "type": "property"}, {"access": "", "host": "Anim", "name": "DEFAULT_SETTER", "url": "Anim.html#property_DEFAULT_SETTER", "type": "property"}, {"access": "", "host": "Anim", "name": "DEFAULT_UNIT", "url": "Anim.html#property_DEFAULT_UNIT", "type": "property"}, {"access": "", "host": "Anim", "name": "direction", "url": "Anim.html#config_direction", "type": "config"}, {"access": "", "host": "Anim", "name": "directionChange", "url": "Anim.html#event_directionChange", "type": "event"}, {"access": "", "host": "Anim", "name": "duration", "url": "Anim.html#config_duration", "type": "config"}, {"access": "", "host": "Anim", "name": "durationChange", "url": "Anim.html#event_durationChange", "type": "event"}, {"access": "", "host": "Easing", "name": "easeBoth", "url": "Easing.html#method_easeBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "easeBothStrong", "url": "Easing.html#method_easeBothStrong", "type": "method"}, {"access": "", "host": "Easing", "name": "easeIn", "url": "Easing.html#method_easeIn", "type": "method"}, {"access": "", "host": "Easing", "name": "easeInStrong", "url": "Easing.html#method_easeInStrong", "type": "method"}, {"access": "", "host": "Easing", "name": "easeNone", "url": "Easing.html#method_easeNone", "type": "method"}, {"access": "", "host": "Easing", "name": "easeOut", "url": "Easing.html#method_easeOut", "type": "method"}, {"access": "", "host": "Easing", "name": "easeOutStrong", "url": "Easing.html#method_easeOutStrong", "type": "method"}, {"access": "", "host": "Anim", "name": "easing", "url": "Anim.html#config_easing", "type": "config"}, {"access": "", "host": "Anim", "name": "easingChange", "url": "Anim.html#event_easingChange", "type": "event"}, {"access": "", "host": "Anim", "name": "elapsedTime", "url": "Anim.html#config_elapsedTime", "type": "config"}, {"access": "", "host": "Anim", "name": "elapsedTimeChange", "url": "Anim.html#event_elapsedTimeChange", "type": "event"}, {"access": "", "host": "Easing", "name": "elasticBoth", "url": "Easing.html#method_elasticBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "elasticIn", "url": "Easing.html#method_elasticIn", "type": "method"}, {"access": "", "host": "Easing", "name": "elasticOut", "url": "Easing.html#method_elasticOut", "type": "method"}, {"access": "", "host": "Anim", "name": "end", "url": "Anim.html#event_end", "type": "event"}, {"access": "", "host": "Anim", "name": "from", "url": "Anim.html#config_from", "type": "config"}, {"access": "", "host": "Anim", "name": "fromChange", "url": "Anim.html#event_fromChange", "type": "event"}, {"access": "", "host": "Anim", "name": "getBezier", "url": "Anim.html#method_getBezier", "type": "method"}, {"access": "", "host": "Anim", "name": "iteration", "url": "Anim.html#event_iteration", "type": "event"}, {"access": "", "host": "Anim", "name": "iterationCount", "url": "Anim.html#config_iterationCount", "type": "config"}, {"access": "", "host": "Anim", "name": "iterationCountChange", "url": "Anim.html#event_iterationCountChange", "type": "event"}, {"access": "", "host": "Anim", "name": "iterations", "url": "Anim.html#config_iterations", "type": "config"}, {"access": "", "host": "Anim", "name": "iterationsChange", "url": "Anim.html#event_iterationsChange", "type": "event"}, {"access": "", "host": "Anim", "name": "node", "url": "Anim.html#config_node", "type": "config"}, {"access": "", "host": "Anim", "name": "nodeChange", "url": "Anim.html#event_nodeChange", "type": "event"}, {"access": "", "host": "Anim", "name": "pause", "url": "Anim.html#method_pause", "type": "method"}, {"access": "", "host": "Anim", "name": "pause", "url": "Anim.html#event_pause", "type": "event"}, {"access": "", "host": "Anim", "name": "RE_DEFAULT_UNIT", "url": "Anim.html#property_RE_DEFAULT_UNIT", "type": "property"}, {"access": "", "host": "Anim", "name": "resume", "url": "Anim.html#event_resume", "type": "event"}, {"access": "", "host": "Anim", "name": "reverse", "url": "Anim.html#config_reverse", "type": "config"}, {"access": "", "host": "Anim", "name": "reverseChange", "url": "Anim.html#event_reverseChange", "type": "event"}, {"access": "", "host": "Anim", "name": "run", "url": "Anim.html#method_run", "type": "method"}, {"access": "private", "host": "Anim", "name": "_runFrame", "url": "Anim.html#method__runFrame", "type": "method"}, {"access": "", "host": "Anim", "name": "running", "url": "Anim.html#config_running", "type": "config"}, {"access": "", "host": "Anim", "name": "runningChange", "url": "Anim.html#event_runningChange", "type": "event"}, {"access": "", "host": "Anim", "name": "start", "url": "Anim.html#event_start", "type": "event"}, {"access": "", "host": "Anim", "name": "startTime", "url": "Anim.html#config_startTime", "type": "config"}, {"access": "", "host": "Anim", "name": "startTimeChange", "url": "Anim.html#event_startTimeChange", "type": "event"}, {"access": "", "host": "Anim", "name": "stop", "url": "Anim.html#method_stop", "type": "method"}, {"access": "", "host": "Anim", "name": "to", "url": "Anim.html#config_to", "type": "config"}, {"access": "", "host": "Anim", "name": "toChange", "url": "Anim.html#event_toChange", "type": "event"}, {"access": "", "host": "Anim", "name": "tween", "url": "Anim.html#event_tween", "type": "event"}];
 </script>
 </body>
 </html>

@@ -77,7 +77,7 @@
             <span class="k">if</span> <span class="o">(!</span><span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">DOMReady</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">DOMReady</span><span class="o">=</span><span class="kc">true</span><span class="o">;</span>
 
-                <span class="c">// Remove the DOMContentLoaded (FF/Opera)</span>
+                <span class="c">// Remove the DOMContentLoaded (FF/Opera/Safari)</span>
 <span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">D</span><span class="o">.</span><span class="nx">removeEventListener</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">D</span><span class="o">.</span><span class="nx">removeEventListener</span><span class="o">(</span><span class="s2">&quot;DOMContentLoaded&quot;</span><span class="o">,</span> <span class="nx">_ready</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
                 <span class="o">}</span>
@@ -86,10 +86,8 @@
 
         <span class="c">// create custom event</span>
 <span class="c"></span>
-        <span class="c">/////////////////////////////////////////////////////////////</span>
-<span class="c"></span>        <span class="c">// DOMReady</span>
-<span class="c"></span>        <span class="c">// based on work by: Dean Edwards/John Resig/Matthias Miller </span>
-<span class="c"></span>
+<span class="c">/*! DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */</span>
+
         <span class="c">// Internet Explorer: use the readyState of a defered script.</span>
 <span class="c"></span>        <span class="c">// This isolates what appears to be a safe moment to manipulate</span>
 <span class="c"></span>        <span class="c">// the DOM prior to when the document&#39;s readyState suggests</span>
@@ -107,8 +105,8 @@
                 <span class="o">}</span>
             <span class="o">},</span> <span class="nx">POLL_INTERVAL</span><span class="o">);</span> 
 
-        <span class="c">// FireFox and Opera: These browsers provide a event for this</span>
-<span class="c"></span>        <span class="c">// moment.  The latest WebKit releases now support this event.</span>
+        <span class="c">// FireFox, Opera, Safari 3+: These browsers provide a event for this</span>
+<span class="c"></span>        <span class="c">// moment.</span>
 <span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="nx">D</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">(</span><span class="s2">&quot;DOMContentLoaded&quot;</span><span class="o">,</span> <span class="nx">_ready</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
         <span class="o">}</span>

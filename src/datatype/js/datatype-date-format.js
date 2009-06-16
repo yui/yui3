@@ -1,28 +1,30 @@
 /**
- * The Date formatter utility implements strftime formatters for javascript based on the 
+ * The DataType Utility provides type-conversion and string-formatting
+ * convenience methods for various JavaScript object types.
+ *
+ * @module datatype
+ */
+
+/**
+ * DataType.Date provides a set of utility functions to operate against Date objects.
+ *
+ * @class DataType.Date
+ * @static
+ */
+
+/**
+ * Format date submodule implements strftime formatters for javascript based on the
  * Open Group specification defined at
  * http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html
  * This implementation does not include modified conversion specifiers (i.e., Ex and Ox)
  *
- * The following format specifiers are supported:
- *
- * \copydoc formats
- *
- * \par Usage:
- * This library may be used as follows:
- * \code
- *	var d = Y.DataType.Date.format(new Date("2009/04/10", { format: "Today is %A, the %d of %B, %Y" });
- * \endcode
- *
- *
  * @module datatype
- * @submodule datatype-date
- * @requires oop
- * @title DataType Date Formatter Submodule
+ * @submodule datatype-date-format
  */
 
 /**
  * Pad a number with leading spaces, zeroes or something else
+ * @method xPad
  * @param x {Number}	The number to be padded
  * @param pad {String}  The character to pad the number with
  * @param r {Number}	(optional) The base of the pad, eg, 10 implies to two digits, 100 implies to 3 digits.
@@ -41,15 +43,25 @@ var xPad=function (x, pad, r)
 	return x.toString();
 };
 
+/**
+ * Default date format.
+ *
+ * @for config
+ * @property dateFormat
+ * @type String
+ * @value "%Y-%m-%d"
+ */
 Y.config.dateFormat = Y.config.dateFormat || "%Y-%m-%d";
-Y.config.locale = Y.config.locale || "en";
 
 /**
- * Date subclass for the YUI DataType utility.
- * @class DataType.Date
- * @requires base
- * @static
+ * Default locale for the YUI instance.
+ *
+ * @property locale
+ * @type String
+ * @value "en"
  */
+Y.config.locale = Y.config.locale || "en";
+
 var Dt = {
 	formats: {
 		a: function (d, l) { return l.a[d.getDay()]; },
@@ -160,6 +172,7 @@ var Dt = {
 	 /**
 	 * Takes a native JavaScript Date and formats it as a string for display to user.
 	 *
+	 * @for DataType.Date
 	 * @method format
 	 * @param oDate {Date} Date.
 	 * @param oConfig {Object} (Optional) Object literal of configuration values:
@@ -245,7 +258,6 @@ var Dt = {
 	 *  </dd>
 	 * </dl>
 	 * @return {String} Formatted date for display.
-	 * @sa Y.DataType.Date.Locale
 	 */
 	format : function (oDate, oConfig) {
 		oConfig = oConfig || {};

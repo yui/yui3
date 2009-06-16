@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>DataType Date Formatter Submodule&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>datatype&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_datatype.html" title="datatype">datatype</a>
                 
@@ -47,20 +47,14 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The DataType utility provides a set of utility functions to operate on native</span>
-<span class="c"> * JavaScript data types.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datatype</span>
-<span class="c"> */</span>
-<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
+<div class="highlight" ><pre><span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
 
 <span class="c">/**</span>
 <span class="c"> * Parse XML submodule.</span>
 <span class="c"> *</span>
-<span class="c"> * @class DataType.XML</span>
+<span class="c"> * @module datatype</span>
 <span class="c"> * @submodule datatype-xml-parse</span>
-<span class="c"> * @static</span>
+<span class="c"> * @for DataType.XML</span>
 <span class="c"> */</span>
  
 <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;DataType.XML&quot;</span><span class="o">),</span> <span class="o">{</span>
@@ -70,7 +64,6 @@
 <span class="c">     * @method parse</span>
 <span class="c">     * @param data {String} Data to convert.</span>
 <span class="c">     * @return {XMLDoc} XML Document.</span>
-<span class="c">     * @static</span>
 <span class="c">     */</span>
     <span class="nx">parse</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">xmlDoc</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
@@ -164,9 +157,6 @@
                                 <li class=""><a href="DataType.Date.html" title="DataType.Date">DataType.Date</a></li>
                                 <li class=""><a href="DataType.Date.Locale.html" title="DataType.Date.Locale">DataType.Date.Locale</a></li>
                                 <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
-                                <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
-                                <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
-                                <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
                                 <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
                         </ul>
                     </div>
@@ -197,7 +187,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Date", "name": "parse", "url": "DataType.Date.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "private", "host": "DataType.Date", "name": "xPad", "url": "DataType.Date.html#method_xPad", "type": "method"}];
 </script>
 </body>
 </html>

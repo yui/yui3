@@ -6,6 +6,7 @@
     /**
      * Handles animation _queueing and threading.
      * @class Anim
+     * @for Anim
      * @constructor
      * @extends Base
      */
@@ -14,6 +15,7 @@
         START_TIME = 'startTime',
         ELAPSED_TIME = 'elapsedTime',
         /**
+        * @for Anim
         * @event start
         * @description fires when an animation begins.
         * @param {Event} ev The start event.

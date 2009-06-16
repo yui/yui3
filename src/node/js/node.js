@@ -126,7 +126,7 @@ Node._instances = {};
  * Registers plugins to be instantiated at the class level (plugins 
  * which should be plugged into every instance of Node by default).
  *
- * @method plug
+ * @method Node.plug
  * @static
  *
  * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
@@ -142,7 +142,7 @@ Node.plug = function() {
 /**
  * Unregisters any class level plugins which have been registered by the Node
  *
- * @method unplug
+ * @method Node.unplug
  * @static
  *
  * @param {Function | Array} plugin The plugin class, or an array of plugin classes
@@ -156,7 +156,7 @@ Node.unplug = function() {
 
 /**
  * Retrieves the DOM node bound to a Node instance
- * @method getDOMNode
+ * @method Node.getDOMNode
  * @static
  *
  * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
@@ -289,7 +289,7 @@ Node.ATTRS = {
     /**
      * Allows for getting and setting the text of an element.
      * Formatting is preserved and special characters are treated literally.
-     * @attribute text
+     * @config text
      * @type String
      */
     text: {
@@ -312,7 +312,7 @@ Node.ATTRS = {
     /**
      * Returns a NodeList instance of all HTMLElement children.
      * @readOnly
-     * @attribute children
+     * @config children
      * @type NodeList
      */
     'children': {
@@ -356,7 +356,7 @@ Node.ATTRS = {
 
     /**
      * Whether or not this Node can traverse outside of its subtree.
-     * @attribute restricted
+     * @config restricted
      * @writeOnce
      * @type Boolean
      */
@@ -533,7 +533,6 @@ Y.mix(Node.prototype, {
      * @method previous
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
-     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
      * @return {Node} Node instance or null if not found
      */
     previous: function(fn, all) {
@@ -546,7 +545,6 @@ Y.mix(Node.prototype, {
      * @method next
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
-     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
      * @return {Node} Node instance or null if not found
      */
     next: function(node, fn, all) {
@@ -603,6 +601,8 @@ Y.mix(Node.prototype, {
     /**
      * Invokes a method on the Node instance 
      * @method invoke
+     * @param {String} method The name of the method to invoke
+     * @param {Any}  a, b, c, etc. Arguments to invoke the method with. 
      * @return Whatever the underly method returns. 
      * DOM Nodes and Collections return values
      * are converted to Node/NodeList instances.

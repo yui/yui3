@@ -64,7 +64,7 @@ NodeList.NAME = 'NodeList';
 
 /**
  * Retrieves the DOM nodes bound to a NodeList instance
- * @method getDOMNodes
+ * @method NodeList.getDOMNodes
  * @static
  *
  * @param {Y.NodeList} node The NodeList instance
@@ -374,63 +374,64 @@ Y.mix(NodeList.prototype, {
 NodeList.importMethod(Y.Node.prototype, [
     /**
      * Called on each Node instance
-     * @append
-     * @see Node
+     * @for NodeList
+     * @method append
+     * @see Node.append
      */
     'append',
 
     /**
       * Called on each Node instance
-      * @detach
-      * @see Node
+      * @method detach
+      * @see Node.detach
       */
     'detach',
     
     /** Called on each Node instance
-      * @detachAll
-      * @see Node
+      * @method detachAll
+      * @see Node.detachAll
       */
     'detachAll',
 
     /** Called on each Node instance
-      * @insert
-      * @see Node
+      * @method insert
+      * @see NodeInsert
       */
     'insert',
 
     /** Called on each Node instance
-      * @plug
-      * @see Node
+      * @method plug
+      * @see Node.plug
       */
     'plug',
 
     /** Called on each Node instance
-      * @prepend
-      * @see Node
+      * @method prepend
+      * @see Node.prepend
       */
     'prepend',
 
     /** Called on each Node instance
-      * @remove
-      * @see Node
+      * @method remove
+      * @see Node.remove
       */
     'remove',
 
     /** Called on each Node instance
-      * @set
-      * @see Node
+      * @method set
+      * @see Node.set
       */
     'set',
 
     /** Called on each Node instance
-      * @setContent
-      * @see Node
+      * @method setContent
+      * @see Node.setContent
       */
     'setContent',
 
     /** Called on each Node instance
-      * @unplug
-      * @see Node
+      * @method unplug
+      * @see Node.unplug
       */
     'unplug'
 ]);
