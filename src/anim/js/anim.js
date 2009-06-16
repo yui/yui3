@@ -8,6 +8,7 @@
      * @class Anim
      * @constructor
      * @extends Base
+     * @for Anim
      */
 
     var RUNNING = 'running',

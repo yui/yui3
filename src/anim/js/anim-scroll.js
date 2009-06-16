@@ -3,7 +3,6 @@
  * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-scroll
- * @for Anim
 
  * TODO: deprecate for scrollTop/Left properties?
  */

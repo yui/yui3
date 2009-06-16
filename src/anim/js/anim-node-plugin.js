@@ -1,7 +1,7 @@
 /**
  *  Binds an Anim instance to a Node instance
  * @module anim
- * @namespace plugin
+ * @namespace Plugin
  * @submodule anim-node-plugin
  */
 

@@ -10,6 +10,7 @@ YUI.add('anim-base', function(Y) {
      * @class Anim
      * @constructor
      * @extends Base
+     * @for Anim
      */
 
     var RUNNING = 'running',
