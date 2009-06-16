@@ -8,15 +8,16 @@ YUI.add('anim-base', function(Y) {
     /**
      * Handles animation _queueing and threading.
      * @class Anim
+     * @for Anim
      * @constructor
      * @extends Base
-     * @for Anim
      */
 
     var RUNNING = 'running',
         START_TIME = 'startTime',
         ELAPSED_TIME = 'elapsedTime',
         /**
+        * @for anim
         * @event start
         * @description fires when an animation begins.
         * @param {Event} ev The start event.
