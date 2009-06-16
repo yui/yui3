@@ -357,79 +357,6 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_ancestor">
-                                    <h4>
-                                        <a name="method_ancestor">ancestor</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        HTMLElement | null
-                                            <strong property="yui:name">ancestor</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                                        , 
-                                                         all
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Finds the ancestor of the element.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The html element.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional An optional boolean test to apply.
-The optional function is passed the current DOM node being tested as its only argument.
-If no function is given, the parentNode is returned.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">all</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional Whether all node types should be scanned, or just element nodes.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        HTMLElement | null
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The matching DOM node or null if none found.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_byId">
                                     <h4>
                                         <a name="method_byId">byId</a></h4>
@@ -481,142 +408,6 @@ If no function is given, the parentNode is returned.</span>
                                                         HTMLElement | null
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">The HTMLElement with the id, or null if none found.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_byTag">
-                                    <h4>
-                                        <a name="method_byTag">byTag</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Array
-                                            <strong property="yui:name">byTag</strong>
-                                           (
-                                                
-                                                        
-                                                         tag
-                                                    
-                                                
-                                                        , 
-                                                         root
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Finds all elements with the given tag.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">tag</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The tag being search for.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">root</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional An optional root element to start from.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional An optional boolean test to apply.
-The optional function is passed the current HTMLElement being tested as its only argument.
-If no function is given, all elements with the given tag are returned.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Array
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The collection of matching elements.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_children">
-                                    <h4>
-                                        <a name="method_children">children</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Array
-                                            <strong property="yui:name">children</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Finds all HTMLElement childNodes.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The html element.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional An optional boolean test to apply.
-The optional function is passed the current HTMLElement being tested as its only argument.
-If no function is given, all children are collected.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Array
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The collection of child elements.</dd>
                                                 </dl>
 
 
@@ -970,205 +761,6 @@ If no function is given, the first element is returned.</span>
                                                         HTMLElement | null
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">The matching element or null if none found.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_filterElementsBy">
-                                    <h4>
-                                        <a name="method_filterElementsBy">filterElementsBy</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Array
-                                            <strong property="yui:name">filterElementsBy</strong>
-                                           (
-                                                
-                                                        
-                                                         elements
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Filters a collection of HTMLElements by the given attributes.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">elements</span>
-                                                        &lt;<span property="yui:type">Array</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The collection of HTMLElements to filter.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> A boolean test to apply.
-The function is passed the current HTMLElement being tested as its only argument.
-If no function is given, all HTMLElements are kept.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Array
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The filtered collection of HTMLElements.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_firstByTag">
-                                    <h4>
-                                        <a name="method_firstByTag">firstByTag</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        HTMLElement
-                                            <strong property="yui:name">firstByTag</strong>
-                                           (
-                                                
-                                                        
-                                                         tag
-                                                    
-                                                
-                                                        , 
-                                                         root
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Finds the first element with the given tag.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">tag</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The tag being search for.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">root</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional An optional root element to start from.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional An optional boolean test to apply.
-The optional function is passed the current HTMLElement being tested as its only argument.
-If no function is given, the first match is returned.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        HTMLElement
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The matching element.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_firstChild">
-                                    <h4>
-                                        <a name="method_firstChild">firstChild</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        HTMLElement | null
-                                            <strong property="yui:name">firstChild</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Finds the firstChild of the given HTMLElement.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The html element.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional An optional boolean test to apply.
-The optional function is passed the current HTMLElement being tested as its only argument.
-If no function is given, the first found is returned.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        HTMLElement | null
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The first matching child html element.</dd>
                                                 </dl>
 
 
@@ -2021,225 +1613,6 @@ $param {Boolean</span>&gt;
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_lastChild">
-                                    <h4>
-                                        <a name="method_lastChild">lastChild</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        HTMLElement | null
-                                            <strong property="yui:name">lastChild</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         tag
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Finds the lastChild of the given HTMLElement.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The html element.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">tag</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The tag to search for.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional An optional boolean test to apply.
-The optional function is passed the current HTMLElement being tested as its only argument.
-If no function is given, the first found is returned.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        HTMLElement | null
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The first matching child html element.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_next">
-                                    <h4>
-                                        <a name="method_next">next</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        HTMLElement | null
-                                            <strong property="yui:name">next</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                                        , 
-                                                         all
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Finds the next sibling of the element.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The html element.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional An optional boolean test to apply.
-The optional function is passed the current DOM node being tested as its only argument.
-If no function is given, the first sibling is returned.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">all</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional Whether all node types should be scanned, or just element nodes.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        HTMLElement | null
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The matching DOM node or null if none found.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_previous">
-                                    <h4>
-                                        <a name="method_previous">previous</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        HTMLElement | null
-                                            <strong property="yui:name">previous</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         fn
-                                                    
-                                                
-                                                        , 
-                                                         all
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Finds the previous sibling of the element.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The html element.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fn</span>
-                                                        &lt;<span property="yui:type">Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional An optional boolean test to apply.
-The optional function is passed the current DOM node being tested as its only argument.
-If no function is given, the first sibling is returned.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">all</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional Whether all node types should be scanned, or just element nodes.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        HTMLElement | null
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The matching DOM node or null if none found.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_region">
                                     <h4>
                                         <a name="method_region">region</a></h4>
@@ -2608,6 +1981,67 @@ If no oldClassName is present, the newClassName is simply added.
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> An object literal of property:value pairs.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_setText">
+                                    <h4>
+                                        <a name="method_setText">setText</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">setText</strong>
+                                           (
+                                                
+                                                        
+                                                         element
+                                                    
+                                                
+                                                        , 
+                                                         content
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets the text content of the HTMLElement.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">element</span>
+                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The html element.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">content</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The content to add.</span>
                                                         </dd>
                                                 </dl>
 
@@ -3092,10 +2526,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class="private"><a href="#method__getRegExp" title="_getRegExp">_getRegExp</a></li>
                                 <li class="private"><a href="#method__getWin" title="_getWin">_getWin</a></li>
                                 <li class=""><a href="#method_addClass" title="addClass">addClass</a></li>
-                                <li class=""><a href="#method_ancestor" title="ancestor">ancestor</a></li>
                                 <li class=""><a href="#method_byId" title="byId">byId</a></li>
-                                <li class=""><a href="#method_byTag" title="byTag">byTag</a></li>
-                                <li class=""><a href="#method_children" title="children">children</a></li>
                                 <li class=""><a href="#method_contains" title="contains">contains</a></li>
                                 <li class=""><a href="#method_create" title="create">create</a></li>
                                 <li class=""><a href="#method_docHeight" title="docHeight">docHeight</a></li>
@@ -3103,9 +2534,6 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class=""><a href="#method_docScrollY" title="docScrollY">docScrollY</a></li>
                                 <li class=""><a href="#method_docWidth" title="docWidth">docWidth</a></li>
                                 <li class=""><a href="#method_elementByAxis" title="elementByAxis">elementByAxis</a></li>
-                                <li class=""><a href="#method_filterElementsBy" title="filterElementsBy">filterElementsBy</a></li>
-                                <li class=""><a href="#method_firstByTag" title="firstByTag">firstByTag</a></li>
-                                <li class=""><a href="#method_firstChild" title="firstChild">firstChild</a></li>
                                 <li class=""><a href="#method_getAttibute" title="getAttibute">getAttibute</a></li>
                                 <li class=""><a href="#method_getComputedStyle" title="getComputedStyle">getComputedStyle</a></li>
                                 <li class=""><a href="#method_getStyle" title="getStyle">getStyle</a></li>
@@ -3120,15 +2548,13 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class=""><a href="#method_insertBefore" title="insertBefore">insertBefore</a></li>
                                 <li class=""><a href="#method_intersect" title="intersect">intersect</a></li>
                                 <li class=""><a href="#method_inViewportRegion" title="inViewportRegion">inViewportRegion</a></li>
-                                <li class=""><a href="#method_lastChild" title="lastChild">lastChild</a></li>
-                                <li class=""><a href="#method_next" title="next">next</a></li>
-                                <li class=""><a href="#method_previous" title="previous">previous</a></li>
                                 <li class=""><a href="#method_region" title="region">region</a></li>
                                 <li class=""><a href="#method_removeClass" title="removeClass">removeClass</a></li>
                                 <li class=""><a href="#method_replaceClass" title="replaceClass">replaceClass</a></li>
                                 <li class=""><a href="#method_setAttibute" title="setAttibute">setAttibute</a></li>
                                 <li class=""><a href="#method_setStyle" title="setStyle">setStyle</a></li>
                                 <li class=""><a href="#method_setStyles" title="setStyles">setStyles</a></li>
+                                <li class=""><a href="#method_setText" title="setText">setText</a></li>
                                 <li class=""><a href="#method_setX" title="setX">setX</a></li>
                                 <li class=""><a href="#method_setXY" title="setXY">setXY</a></li>
                                 <li class=""><a href="#method_setY" title="setY">setY</a></li>
@@ -3150,7 +2576,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addClass", "url": "DOM.html#method_addClass", "type": "method"}, {"access": "", "host": "DOM", "name": "ancestor", "url": "DOM.html#method_ancestor", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "byTag", "url": "DOM.html#method_byTag", "type": "method"}, {"access": "", "host": "DOM", "name": "children", "url": "DOM.html#method_children", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "filterElementsBy", "url": "DOM.html#method_filterElementsBy", "type": "method"}, {"access": "", "host": "DOM", "name": "firstByTag", "url": "DOM.html#method_firstByTag", "type": "method"}, {"access": "", "host": "DOM", "name": "firstChild", "url": "DOM.html#method_firstChild", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "hasClass", "url": "DOM.html#method_hasClass", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "DOM", "name": "inRegion", "url": "DOM.html#method_inRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "insertAfter", "url": "DOM.html#method_insertAfter", "type": "method"}, {"access": "", "host": "DOM", "name": "insertBefore", "url": "DOM.html#method_insertBefore", "type": "method"}, {"access": "", "host": "DOM", "name": "intersect", "url": "DOM.html#method_intersect", "type": "method"}, {"access": "", "host": "DOM", "name": "inViewportRegion", "url": "DOM.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "lastChild", "url": "DOM.html#method_lastChild", "type": "method"}, {"access": "", "host": "DOM", "name": "next", "url": "DOM.html#method_next", "type": "method"}, {"access": "", "host": "DOM", "name": "previous", "url": "DOM.html#method_previous", "type": "method"}, {"access": "", "host": "DOM", "name": "region", "url": "DOM.html#method_region", "type": "method"}, {"access": "", "host": "DOM", "name": "removeClass", "url": "DOM.html#method_removeClass", "type": "method"}, {"access": "", "host": "DOM", "name": "replaceClass", "url": "DOM.html#method_replaceClass", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "DOM", "name": "toggleClass", "url": "DOM.html#method_toggleClass", "type": "method"}, {"access": "", "host": "DOM", "name": "viewportRegion", "url": "DOM.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addClass", "url": "DOM.html#method_addClass", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "hasClass", "url": "DOM.html#method_hasClass", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "DOM", "name": "inRegion", "url": "DOM.html#method_inRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "insertAfter", "url": "DOM.html#method_insertAfter", "type": "method"}, {"access": "", "host": "DOM", "name": "insertBefore", "url": "DOM.html#method_insertBefore", "type": "method"}, {"access": "", "host": "DOM", "name": "intersect", "url": "DOM.html#method_intersect", "type": "method"}, {"access": "", "host": "DOM", "name": "inViewportRegion", "url": "DOM.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "region", "url": "DOM.html#method_region", "type": "method"}, {"access": "", "host": "DOM", "name": "removeClass", "url": "DOM.html#method_removeClass", "type": "method"}, {"access": "", "host": "DOM", "name": "replaceClass", "url": "DOM.html#method_replaceClass", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "DOM", "name": "toggleClass", "url": "DOM.html#method_toggleClass", "type": "method"}, {"access": "", "host": "DOM", "name": "viewportRegion", "url": "DOM.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
 </script>
 </body>
 </html>

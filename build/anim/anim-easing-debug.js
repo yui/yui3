@@ -26,6 +26,7 @@ Y.Easing = {
 
     /**
      * Uniform speed between points.
+     * @for Easing
      * @method easeNone
      * @param {Number} t Time value used to compute current value
      * @param {Number} b Starting value

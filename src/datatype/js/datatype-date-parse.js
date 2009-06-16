@@ -1,17 +1,11 @@
-/**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
- *
- * @module datatype
- */
 var LANG = Y.Lang;
 
 /**
  * Parse number submodule.
  *
- * @class DataType.Number
- * @submodule datatype-number-format
- * @static
+ * @module datatype
+ * @submodule datatype-date-parse
+ * @for DataType.Date
  */
 Y.mix(Y.namespace("DataType.Date"), {
     /**
@@ -20,7 +14,6 @@ Y.mix(Y.namespace("DataType.Date"), {
      * @method parse
      * @param data {String | Number} Data to convert. Values supported by the Date constructor are supported.
      * @return {Date} A Date, or null.
-     * @static
      */
     parse: function(data) {
         var date = null;

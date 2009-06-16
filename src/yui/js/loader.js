@@ -1031,14 +1031,14 @@ Y.Loader.prototype = {
      * @param mod {string} optional: the name of a module to skin
      * @return {string} the full skin module name
      */
-    formatSkin: Y.cached(function(skin, mod) {
+    formatSkin: function(skin, mod) {
         var s = this.SKIN_PREFIX + skin;
         if (mod) {
             s = s + "-" + mod;
         }
 
         return s;
-    }),
+    },
 
     /*
      * Reverses <code>formatSkin</code>, providing the skin name and
@@ -1515,6 +1515,7 @@ Y.Loader.prototype = {
             }
 
             this.rollups = rollups;
+            this.forceMap = (this.force) ? Y.Array.hash(this.force) : {};
         }
 
         // make as many passes as needed to pick up rollup rollups
@@ -1526,8 +1527,8 @@ Y.Loader.prototype = {
 
                 if (rollups.hasOwnProperty(i)) {
 
-                    // there can be only one
-                    if (!r[i] && !this.loaded[i]) {
+                    // there can be only one, unless forced
+                    if (!r[i] && ((!this.loaded[i]) || this.forceMap[i])) {
                         m = this.getModule(i); 
                         s = m.supersedes || []; 
                         roll = false;
@@ -1542,25 +1543,27 @@ Y.Loader.prototype = {
                         // check the threshold
                         for (j=0;j<s.length;j=j+1) {
 
+
                             // if the superseded module is loaded, we can't load the rollup
-                            // if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
-                            if (this.loaded[s[j]]) {
+                            // unless it has been forced
+                            if (this.loaded[s[j]] && !this.forceMap[s[j]]) {
                                 roll = false;
                                 break;
                             // increment the counter if this module is required.  if we are
                             // beyond the rollup threshold, we will use the rollup module
                             } else if (r[s[j]]) {
                                 c++;
+                                // Y.log("adding to thresh: " + c + ", " + s[j]);
                                 roll = (c >= m.rollup);
                                 if (roll) {
-                                    // Y.log("over thresh " + c + ", " + L.dump(r));
+                                    // Y.log("over thresh " + c + ", " + s[j]);
                                     break;
                                 }
                             }
                         }
 
                         if (roll) {
-                            // Y.log("rollup: " +  i + ", " + L.dump(this, 1));
+                            // Y.log("adding rollup: " +  i);
                             // add the rollup
                             r[i] = true;
                             rolled = true;
@@ -1593,7 +1596,7 @@ Y.Loader.prototype = {
             if (r.hasOwnProperty(i)) {
 
                 // remove if already loaded
-                if (i in this.loaded && !this.ignoreRegistered) { 
+                if (this.loaded[i] && (!this.forceMap[i]) && !this.ignoreRegistered) { 
                     delete r[i];
 
                 // remove anything this module supersedes

@@ -128,7 +128,7 @@ Node._instances = {};
  * Registers plugins to be instantiated at the class level (plugins 
  * which should be plugged into every instance of Node by default).
  *
- * @method plug
+ * @method Node.plug
  * @static
  *
  * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
@@ -144,7 +144,7 @@ Node.plug = function() {
 /**
  * Unregisters any class level plugins which have been registered by the Node
  *
- * @method unplug
+ * @method Node.unplug
  * @static
  *
  * @param {Function | Array} plugin The plugin class, or an array of plugin classes
@@ -158,7 +158,7 @@ Node.unplug = function() {
 
 /**
  * Retrieves the DOM node bound to a Node instance
- * @method getDOMNode
+ * @method Node.getDOMNode
  * @static
  *
  * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
@@ -290,7 +290,7 @@ Node.ATTRS = {
     /**
      * Allows for getting and setting the text of an element.
      * Formatting is preserved and special characters are treated literally.
-     * @attribute text
+     * @config text
      * @type String
      */
     text: {
@@ -313,7 +313,7 @@ Node.ATTRS = {
     /**
      * Returns a NodeList instance of all HTMLElement children.
      * @readOnly
-     * @attribute children
+     * @config children
      * @type NodeList
      */
     'children': {
@@ -357,7 +357,7 @@ Node.ATTRS = {
 
     /**
      * Whether or not this Node can traverse outside of its subtree.
-     * @attribute restricted
+     * @config restricted
      * @writeOnce
      * @type Boolean
      */
@@ -533,7 +533,6 @@ Y.mix(Node.prototype, {
      * @method previous
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
-     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
      * @return {Node} Node instance or null if not found
      */
     previous: function(fn, all) {
@@ -546,7 +545,6 @@ Y.mix(Node.prototype, {
      * @method next
      * @param {String | Function} fn A selector or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
-     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
      * @return {Node} Node instance or null if not found
      */
     next: function(node, fn, all) {
@@ -603,6 +601,8 @@ Y.mix(Node.prototype, {
     /**
      * Invokes a method on the Node instance 
      * @method invoke
+     * @param {String} method The name of the method to invoke
+     * @param {Any}  a, b, c, etc. Arguments to invoke the method with. 
      * @return Whatever the underly method returns. 
      * DOM Nodes and Collections return values
      * are converted to Node/NodeList instances.
@@ -809,7 +809,7 @@ NodeList.NAME = 'NodeList';
 
 /**
  * Retrieves the DOM nodes bound to a NodeList instance
- * @method getDOMNodes
+ * @method NodeList.getDOMNodes
  * @static
  *
  * @param {Y.NodeList} node The NodeList instance
@@ -1117,63 +1117,64 @@ Y.mix(NodeList.prototype, {
 NodeList.importMethod(Y.Node.prototype, [
     /**
      * Called on each Node instance
-     * @append
-     * @see Node
+     * @for NodeList
+     * @method append
+     * @see Node.append
      */
     'append',
 
     /**
       * Called on each Node instance
-      * @detach
-      * @see Node
+      * @method detach
+      * @see Node.detach
       */
     'detach',
     
     /** Called on each Node instance
-      * @detachAll
-      * @see Node
+      * @method detachAll
+      * @see Node.detachAll
       */
     'detachAll',
 
     /** Called on each Node instance
-      * @insert
-      * @see Node
+      * @method insert
+      * @see NodeInsert
       */
     'insert',
 
     /** Called on each Node instance
-      * @plug
-      * @see Node
+      * @method plug
+      * @see Node.plug
       */
     'plug',
 
     /** Called on each Node instance
-      * @prepend
-      * @see Node
+      * @method prepend
+      * @see Node.prepend
       */
     'prepend',
 
     /** Called on each Node instance
-      * @remove
-      * @see Node
+      * @method remove
+      * @see Node.remove
       */
     'remove',
 
     /** Called on each Node instance
-      * @set
-      * @see Node
+      * @method set
+      * @see Node.set
       */
     'set',
 
     /** Called on each Node instance
-      * @setContent
-      * @see Node
+      * @method setContent
+      * @see Node.setContent
       */
     'setContent',
 
     /** Called on each Node instance
-      * @unplug
-      * @see Node
+      * @method unplug
+      * @see Node.unplug
       */
     'unplug'
 ]);
@@ -1195,6 +1196,7 @@ Y.Array.each([
     /**
      * Passes through to DOM method.
      * @method replaceChild
+     * @for Node
      * @param {HTMLElement | Node} node Node to be inserted 
      * @param {HTMLElement | Node} refNode Node to be replaced 
      * @return {Node} The replaced node 
@@ -1319,23 +1321,27 @@ Node.importMethod(Y.DOM, [
     /**
      * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
      * @method contains
-     * @chainable
      * @param {Node | HTMLElement} needle The possible node or descendent
      * @return {Boolean} Whether or not this node is the needle its ancestor
      */
     'contains',
     /**
-     * Normalizes troublesome attributes 
-     * @chainable
+     * Allows setting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
      * @method setAttribute
+     * @for Node
+     * @for NodeList
+     * @chainable
      * @param {string} name The attribute name 
      * @param {string} value The value to set
      */
     'setAttribute',
     /**
-     * Normalizes troublesome attributes 
-     * @chainable
+     * Allows getting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
      * @method getAttribute
+     * @for Node
+     * @for NodeList
      * @param {string} name The attribute name 
      * @return {string} The attribute value 
      */
@@ -1348,6 +1354,26 @@ if (!document.documentElement.hasAttribute) { // IE < 8
     };
 }
 
+/**
+ * Allows setting attributes on DOM nodes, normalizing in some cases.
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method setAttribute
+ * @see Node
+ * @for NodeList
+ * @chainable
+ * @param {string} name The attribute name 
+ * @param {string} value The value to set
+ */
+
+/**
+ * Allows getting attributes on DOM nodes, normalizing in some cases.
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method getAttribute
+ * @see Node
+ * @for NodeList
+ * @param {string} name The attribute name 
+ * @return {string} The attribute value 
+ */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 
 (function() { // IE clones expandos; regenerate UID
@@ -1372,51 +1398,93 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
  */
 
     var methods = [
-        /**
-         * Determines whether the node has the given className.
-         * @method hasClass
-         * @for Node
-         * @param {String} className the class name to search for
-         * @return {Boolean} Whether or not the node has the given class. 
-         */
-        'hasClass',
+    /**
+     * Determines whether each node has the given className.
+     * @method hasClass
+     * @for Node
+     * @param {String} className the class name to search for
+     * @return {Array} An array of booleans for each node bound to the NodeList. 
+     */
+     'hasClass',
 
-        /**
-         * Adds a class name to the node.
-         * @method addClass         
-         * @param {String} className the class name to add to the node's class attribute
-         * @chainable
-         */
-        'addClass',
+    /**
+     * Adds a class name to each node.
+     * @method addClass         
+     * @param {String} className the class name to add to the node's class attribute
+     * @chainable
+     */
+     'addClass',
 
-        /**
-         * Removes a class name from the node.
-         * @method removeClass         
-         * @param {String} className the class name to remove from the node's class attribute
-         * @chainable
-         */
-        'removeClass',
+    /**
+     * Removes a class name from each node.
+     * @method removeClass         
+     * @param {String} className the class name to remove from the node's class attribute
+     * @chainable
+     */
+     'removeClass',
 
-        /**
-         * Replace a class with another class.
-         * If no oldClassName is present, the newClassName is simply added.
-         * @method replaceClass  
-         * @param {String} oldClassName the class name to be replaced
-         * @param {String} newClassName the class name that will be replacing the old class name
-         * @chainable
-         */
-        'replaceClass',
+    /**
+     * Replace a class with another class for each node.
+     * If no oldClassName is present, the newClassName is simply added.
+     * @method replaceClass  
+     * @param {String} oldClassName the class name to be replaced
+     * @param {String} newClassName the class name that will be replacing the old class name
+     * @chainable
+     */
+     'replaceClass',
 
-        /**
-         * If the className exists on the node it is removed, if it doesn't exist it is added.
-         * @method toggleClass  
-         * @param {String} className the class name to be toggled
-         * @chainable
-         */
-        'toggleClass'
+    /**
+     * If the className exists on the node it is removed, if it doesn't exist it is added.
+     * @method toggleClass  
+     * @param {String} className the class name to be toggled
+     * @chainable
+     */
+     'toggleClass'
     ];
 
     Y.Node.importMethod(Y.DOM, methods);
+    /**
+     * Determines whether each node has the given className.
+     * @method hasClass
+     * @see Node.hasClass
+     * @for NodeList
+     * @param {String} className the class name to search for
+     * @return {Array} An array of booleans for each node bound to the NodeList. 
+     */
+
+    /**
+     * Adds a class name to each node.
+     * @method addClass         
+     * @see Node.addClass
+     * @param {String} className the class name to add to the node's class attribute
+     * @chainable
+     */
+
+    /**
+     * Removes a class name from each node.
+     * @method removeClass         
+     * @see Node.removeClass
+     * @param {String} className the class name to remove from the node's class attribute
+     * @chainable
+     */
+
+    /**
+     * Replace a class with another class for each node.
+     * If no oldClassName is present, the newClassName is simply added.
+     * @method replaceClass  
+     * @see Node.replaceClass
+     * @param {String} oldClassName the class name to be replaced
+     * @param {String} newClassName the class name that will be replacing the old class name
+     * @chainable
+     */
+
+    /**
+     * If the className exists on the node it is removed, if it doesn't exist it is added.
+     * @method toggleClass  
+     * @see Node.toggleClass
+     * @param {String} className the class name to be toggled
+     * @chainable
+     */
     Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 /*
@@ -1491,6 +1559,42 @@ var methods = [
     'setStyles'
 ];
 Y.Node.importMethod(Y.DOM, methods);
+/**
+ * Returns an array of values for each node.
+ * @method getStyle
+ * @for NodeList
+ * @see Node.getStyle
+ * @param {String} attr The style attribute to retrieve. 
+ * @return {Array} The current values of the style property for the element.
+ */
+
+/**
+ * Returns an array of the computed value for each node.
+ * @method getComputedStyle
+ * @see Node.getComputedStyle
+ * @param {String} attr The style attribute to retrieve. 
+ * @return {Array} The computed values for each node.
+ */
+'getComputedStyle',
+
+/**
+ * Sets a style property on each node.
+ * @method setStyle
+ * @see Node.setStyle
+ * @param {String} attr The style attribute to set. 
+ * @param {String|Number} val The value. 
+ * @chainable
+ */
+'setStyle',
+
+/**
+ * Sets multiple style properties on each node.
+ * @method setStyles
+ * @see Node.setStyles
+ * @param {Object} hash An object literal of property:value pairs. 
+ * @chainable
+ */
+'setStyles'
 Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 
@@ -1510,7 +1614,7 @@ YUI.add('node-screen', function(Y) {
 Y.each([
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
-     * @attribute winWidth
+     * @config winWidth
      * @for Node
      * @type {Int}
      */
@@ -1518,35 +1622,35 @@ Y.each([
 
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
-     * @attribute winHeight
+     * @config winHeight
      * @type {Int}
      */
     'winHeight',
 
     /**
      * Document width 
-     * @attribute winHeight
+     * @config winHeight
      * @type {Int}
      */
     'docWidth',
 
     /**
      * Document height 
-     * @attribute docHeight
+     * @config docHeight
      * @type {Int}
      */
     'docHeight',
 
     /**
      * Amount page has been scroll vertically 
-     * @attribute docScrollX
+     * @config docScrollX
      * @type {Int}
      */
     'docScrollX',
 
     /**
      * Amount page has been scroll horizontally 
-     * @attribute docScrollY
+     * @config docScrollY
      * @type {Int}
      */
     'docScrollY'
@@ -1604,8 +1708,6 @@ Y.Node.ATTRS.scrollTop = {
 Y.Node.importMethod(Y.DOM, [
 /**
  * Gets the current position of the node in page coordinates. 
- * Nodes must be part of the DOM tree to have page coordinates
- * (display:none or nodes not appended return false).
  * @method getXY
  * @for Node
  * @return {Array} The XY position of the node
@@ -1614,7 +1716,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
- * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
  * @method setXY
  * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
  * @chainable
@@ -1623,8 +1724,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Gets the current position of the node in page coordinates. 
- * Nodes must be part of the DOM tree to have page coordinates
- * (display:none or nodes not appended return false).
  * @method getX
  * @return {Int} The X position of the node
 */
@@ -1632,7 +1731,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
- * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
  * @method setX
  * @param {Int} x X value for new position (coordinates are page-based)
  * @chainable
@@ -1641,8 +1739,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Gets the current position of the node in page coordinates. 
- * Nodes must be part of the DOM tree to have page coordinates
- * (display:none or nodes not appended return false).
  * @method getY
  * @return {Int} The Y position of the node
 */
@@ -1650,7 +1746,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
- * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
  * @method setY
  * @param {Int} y Y value for new position (coordinates are page-based)
  * @chainable
@@ -1668,7 +1763,7 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Returns a region object for the node 
- * @attribute region
+ * @config region
  * @for Node
  * @type Node
  */
@@ -1688,7 +1783,7 @@ Y.Node.ATTRS.region = {
     
 /**
  * Returns a region object for the node's viewport 
- * @attribute viewportRegion
+ * @config viewportRegion
  * @type Node
  */
 Y.Node.ATTRS.viewportRegion = {

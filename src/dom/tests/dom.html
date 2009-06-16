@@ -120,6 +120,7 @@ form {
                     <option value=""></option>
                 </select>
             </form>
+            <div id="test-add">test</div>
         </div>
         <div id="ft">
             <p>In hac habitasse platea dictumst. Sed sit amet ligula vitae justo consequat facilisis. Integer tortor. Integer erat. In hac habitasse platea dictumst. Phasellus convallis quam vitae turpis aliquam lobortis. Aliquam scelerisque condimentum lectus. Proin semper adipiscing leo. Nulla facilisi.</p>
@@ -652,7 +653,6 @@ form {
 
             },
 
-
             test_viewportRegion: function() {
                 var node = Y.DOM.byId('doc'),
                     scrollX = Y.DOM.docScrollX(node),
@@ -680,6 +680,24 @@ form {
                 Assert.areEqual(scrollY + winHeight, region.bottom, 'region.bottom');
                 Assert.areEqual(scrollX + winWidth, region.right, 'region.right');
 
+            },
+
+            test_addHTML: function() {
+                var node = Y.DOM.byId('test-add');
+                Y.DOM.addHTML(node, '<em>new content</em>');
+                Assert.areEqual('EM', node.lastChild.nodeName, "Y.DOM.addHTML(node, '<em>new content</em>')");
+
+                Y.DOM.addHTML(node, '<strong>new content</strong>', node.firstChild);
+                Assert.areEqual('STRONG', node.firstChild.nodeName, "Y.DOM.addHTML(node, '<em>new content</em>', node.firstChild)");
+
+                Y.DOM.addHTML(node, '<span>new content</span>', node.childNodes[1]);
+                Assert.areEqual('SPAN', node.childNodes[1].nodeName, "Y.DOM.addHTML(node, '<em>new content</em>', node.childNodes[1])");
+
+                Y.DOM.addHTML(node, 200);
+                Assert.areEqual(3, node.lastChild.nodeType, "Y.DOM.addHTML(node, 200)");
+
+                Y.DOM.addHTML(node, Y.DOM.create('<p>this is a <em>test</em></p>'));
+                Assert.areEqual('P', node.lastChild.nodeName, "Y.DOM.create('<p>this is a <em>test</em></p>')");
             }
         })); 
         tool.TestRunner.add(suite);
