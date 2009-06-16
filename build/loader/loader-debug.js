@@ -794,6 +794,8 @@ Y.Loader = function(o) {
      */
     this.force = null;
 
+    this.forceMap = {};
+
     /**
      * Should we allow rollups
      * @property allowRollup
