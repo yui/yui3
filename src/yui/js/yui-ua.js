@@ -1,3 +1,9 @@
+
+/*
+ * Provides information about the environment hosting YUI
+ * @module yui
+ * @submodule UA
+ */
 /**
  * YUI user agent detection.
  * Do not fork for a browser if it can be avoided.  Use feature detection when

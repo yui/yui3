@@ -12,10 +12,10 @@ DELIMITER = '__',
  * function was overridden.  This is a workaround for specific functions 
  * we care about on the Object prototype. 
  * @property _iefix
+ * @for YUI
  * @param {Function} r  the object to receive the augmentation
  * @param {Function} s  the object that supplies the properties to augment
  * @private
- * @for YUI
  */
 _iefix = function(r, s) {
     var fn = s.toString;
@@ -32,6 +32,7 @@ _iefix = function(r, s) {
  * single object will create a shallow copy of it.  For a deep
  * copy, use clone.
  * @method merge
+ * @for YUI
  * @param arguments {Object*} the objects to merge
  * @return {object} the new merged object
  */
