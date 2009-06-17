@@ -14,6 +14,10 @@ YUI.add('substitute', function(Y) {
      * @class YUI~substitute
      */
 
+     // @todo template configurability is not implemented yet
+     // @param ldelim {string} optional left delimiter for the replacement token (default: left brace)
+     // @param rdelim {string} optional right delimiter for the replacement token (default: right brace)
+
     /**
      * Does variable substitution on a string. It scans through the string 
      * looking for expressions enclosed in { } braces. If an expression 
@@ -39,10 +43,9 @@ YUI.add('substitute', function(Y) {
      *                     process each match.  It receives the key,
      *                     value, and any extra metadata included with
      *                     the key inside of the braces.
-     * @param ldelim {string} optional left delimiter for the replacement token (default: {)
-     * @param rdelim {string} optional right delimiter for the replacement token (default: })
      * @return {string} the substituted string
      */
+
     substitute = function (s, o, f, ldelim, rdelim) {
         var i, j, k, key, v, meta, saved=[], token, dump;
         ldelim = ldelim || LBRACE;
