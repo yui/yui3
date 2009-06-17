@@ -5,8 +5,6 @@
  * @module event-custom
  */
 
-
-
 /**
  * Return value from all subscribe operations
  * @class EventHandle

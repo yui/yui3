@@ -678,7 +678,7 @@ YUI.prototype = {
 
 /**
  * The default locale
- * @property dateFormat
+ * @property locale
  * @type string
  */
 
@@ -686,7 +686,18 @@ YUI.prototype = {
  * The default interval when polling in milliseconds.
  * @property pollInterval
  * @type int
- * @default
+ * @default 20
+ */
+
+/**
+ * The number of dynamic nodes to insert by default before
+ * automatically removing them.  This applies to script nodes
+ * because remove the node will not make the evaluated script
+ * unavailable.  Dynamic CSS is not auto purged, because removing
+ * a linked style sheet will also remove the style definitions.
+ * @property purgethreshold
+ * @type int
+ * @default 20
  */
 
 /**

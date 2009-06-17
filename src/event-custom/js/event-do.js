@@ -274,7 +274,7 @@ Y.Do.Prevent = function(msg) {
  * Return an Error object when you want to terminate the execution
  * of all subsequent method calls.
  * @class Do.Error
- * @deprecated
+ * @deprecated use Y.Do.Halt or Y.Do.Prevent
  */
 Y.Do.Error = Y.Do.Halt;
 

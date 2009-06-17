@@ -155,11 +155,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     //////////////////////////////////////////////////////
 
-    /**
-     * The keyCode for key events.  Uses charCode if keyCode is not available
-     * @property keyCode
-     * @type int
-     */
     c = e.keyCode || e.charCode || 0;
 
     if (ua.webkit && (c in webkitKeymap)) {

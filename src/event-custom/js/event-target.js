@@ -1,18 +1,22 @@
 (function() {
-/**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
- * events.
- * @module event
- */
 
 /**
+ * EventTarget provides the implementation for any object to
+ * publish, subscribe and fire to custom events, and also
+ * alows other EventTargets to target the object with events
+ * sourced from the other object.
  * EventTarget is designed to be used with Y.augment to wrap 
  * EventCustom in an interface that allows events to be listened to 
  * and fired by name.  This makes it possible for implementing code to
  * subscribe to an event that either has not been created yet, or will
  * not be created at all.
- *
- * @Class EventTarget
+ * @class EventTarget
+ * @param opts a configuration object
+ * @config emitFacade {boolean} if true, all events will emit event 
+ * facade payloads by default (default false)
+ * @config prefix {string} the prefix to apply to non-prefixed event names 
+ * @config chain {boolean} if true, on/after/detach return the host to allow 
+ * chaining, otherwise they return an EventHandle (default false)
  */
 
 var L = Y.Lang,
@@ -25,6 +29,7 @@ var L = Y.Lang,
      * event type is not prefixed, the instance prefix is
      * applied to the supplied type.
      * @method _getType
+     * @private
      */
     _getType = Y.cached(function(type, pre) {
 
@@ -35,7 +40,7 @@ var L = Y.Lang,
         return pre + PREFIX_DELIMITER + type;
     }),
 
-    /**lt
+    /**
      * Returns an array with the detach key (if provided),
      * and the prefixed event name from _getType
      * Y.on('detachcategory, menu:click', fn)
@@ -81,16 +86,6 @@ var L = Y.Lang,
         return [detachcategory, full_t, after, t];
     }),
 
-    /**
-     * An event target can fire events and be targeted by events.
-     * @class EventTarget
-     * @param opts a configuration object
-     * @config emitFacade {boolean} if true, all events will emit event 
-     * facade payloads by default (default false)
-     * @config prefix {string} the prefix to apply to non-prefixed event names 
-     * @config chain {boolean} if true, on/after/detach return the host to allow 
-     * chaining, otherwise they return an EventHandle (default false)
-     */
     ET = function(opts) {
 
         // console.log('EventTarget constructor executed: ' + this._yuid);
@@ -350,7 +345,7 @@ ET.prototype = {
      * Removes all listeners from the specified event.  If the event type
      * is not specified, all listeners from all hosted custom events will
      * be removed.
-     * @method unsubscribeAll
+     * @method detachAll
      * @param type {string}   The type, or name of the event
      */
     detachAll: function(type) {
@@ -685,9 +680,11 @@ YUI.Env.globalEvents = YUI.Env.globalEvents || new ET();
 
 /**
  * Hosts YUI page level events.  This is where events bubble to
- * when the broadcast config is set to 2.
+ * when the broadcast config is set to 2.  This property is
+ * only available if the custom event module is loaded.
  * @property Global
  * @type EventTarget
+ * @for YUI
  */
 Y.Global = YUI.Env.globalEvents;
 
