@@ -164,7 +164,7 @@ if (GLOBAL_ENV.DOMReady) {
 /**
  * Wraps a DOM event, properties requiring browser abstraction are
  * fixed here.  Provids a security layer when required.
- * @class EventFacade
+ * @class DOMEventFacade
  * @param ev {Event} the DOM event
  * @param currentTarget {HTMLElement} the element the listener was attached to
  * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
