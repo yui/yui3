@@ -68,6 +68,119 @@
                     </div>
 
                     <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:method" resource="#method_substitute">
+                                    <h4>
+                                        <a name="method_substitute">substitute</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        string
+                                            <strong property="yui:name">substitute</strong>
+                                           (
+                                                
+                                                        
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         ldelim
+                                                    
+                                                
+                                                        , 
+                                                         rdelim
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Does variable substitution on a string. It scans through the string 
+looking for expressions enclosed in { } braces. If an expression 
+is found, it is used a key on the object.  If there is a space in
+the key, the first word is used for the key and the rest is provided
+to an optional function to be used to programatically determine the
+value (the extra information might be used for this decision). If 
+the value for the key in the object, or what is returned from the
+function has a string value, number value, or object value, it is 
+substituted for the bracket expression and it repeats.  If this
+value is an object, it uses the Object's toString() if this has
+been overridden, otherwise it does a shallow dump of the key/value
+pairs if Y.dump is available (if dump isn't available, toString()
+is used).
+This method is included in the 'substitute' module.  It is not included
+in the YUI module.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">s</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The string that will be modified.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object containing the replacement values</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  An optional function that can be used to
+process each match.  It receives the key,
+value, and any extra metadata included with
+the key inside of the braces.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">ldelim</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  optional left delimiter for the replacement token (default: {)</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">rdelim</span>
+                                                        &lt;<span property="yui:type">string} optional right delimiter for the replacement token (default: </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> )</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the substituted string</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -147,6 +260,12 @@
                     </div>
 
 
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#method_substitute" title="substitute">substitute</a></li>
+                        </ul>
+                    </div>
 
 
 
@@ -159,7 +278,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [];
+    ALL_YUI_PROPS = [{"access": "", "host": "YUI~substitute", "name": "substitute", "url": "YUI~substitute.html#method_substitute", "type": "method"}];
 </script>
 </body>
 </html>
