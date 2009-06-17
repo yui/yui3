@@ -718,6 +718,7 @@ YUI.add('io-base', function(Y) {
    	}
 
    	_io.start = _ioStart;
+	_io.complete = _ioComplete;
    	_io.success = _ioSuccess;
    	_io.failure = _ioFailure;
    	_io.isInProgress = _isInProgress;
