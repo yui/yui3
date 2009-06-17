@@ -1,9 +1,4 @@
 (function() {
-/**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
- * events.
- * @module event
- */
 
 /**
  * Allows for the insertion of methods that are executed before or after

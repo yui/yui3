@@ -12,7 +12,7 @@
  * subscribe to an event that either has not been created yet, or will
  * not be created at all.
  *
- * @Class Event.Target
+ * @Class EventTarget
  */
 
 var L = Y.Lang,
@@ -93,7 +93,7 @@ var L = Y.Lang,
      */
     ET = function(opts) {
 
-        // console.log('Event.Target constructor executed: ' + this._yuid);
+        // console.log('EventTarget constructor executed: ' + this._yuid);
 
         var o = (L.isObject(opts)) ? opts : {};
 
@@ -194,8 +194,8 @@ ET.prototype = {
                     args[2] = Node.getDOMNode(n);
                 }
                 handle = adapt.on.apply(Y, args);
-            // check to see if the target is an Event.Target.  If so,
-            // delegate to it (the Event.Target should handle whether
+            // check to see if the target is an EventTarget.  If so,
+            // delegate to it (the EventTarget should handle whether
             // or not the prefix was included);
             // } else if (o && !(o instanceof YUI) && o.getEvent) {
             //     a = Y.Array(arguments, 0, true);
@@ -472,11 +472,11 @@ ET.prototype = {
     },
 
     /**
-     * Registers another Event.Target as a bubble target.  Bubble order
+     * Registers another EventTarget as a bubble target.  Bubble order
      * is determined by the order registered.  Multiple targets can
      * be specified.
      * @method addTarget
-     * @param o {Event.Target} the target to add
+     * @param o {EventTarget} the target to add
      */
     addTarget: function(o) {
         this._yuievt.targets[Y.stamp(o)] = o;
@@ -486,7 +486,7 @@ ET.prototype = {
     /**
      * Removes a bubble target
      * @method removeTarget
-     * @param o {Event.Target} the target to remove
+     * @param o {EventTarget} the target to remove
      */
     removeTarget: function(o) {
         delete this._yuievt.targets[Y.stamp(o)];

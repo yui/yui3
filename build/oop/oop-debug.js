@@ -56,7 +56,7 @@ YUI.add('oop', function(Y) {
             Y.each(sProto, function(v, k) {
                 replacements[k] = function() {
 
-// Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
+// Y.log('sequestered function "' + k + '" executed.  Initializing EventTarget');
 // overwrite the prototype with all of the sequestered functions,
 // but only if it hasn't been overridden
                     for (i in sequestered) {
