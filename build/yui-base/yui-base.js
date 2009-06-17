@@ -61,7 +61,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      * @class YUI
      * @constructor
      * @global
-     * @uses Event.Target
+     * @uses EventTarget
      * @param o Optional configuration object.  This object is stored
      * in YUI.config.  See config for the list of supported properties.
      */

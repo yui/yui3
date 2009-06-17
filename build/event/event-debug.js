@@ -37,7 +37,7 @@ var GLOBAL_ENV = YUI.Env,
 
         // create custom event
 
-/*!  DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */
+/*! DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */
 
         // Internet Explorer: use the readyState of a defered script.
         // This isolates what appears to be a safe moment to manipulate

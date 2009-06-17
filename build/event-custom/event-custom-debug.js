@@ -12,11 +12,6 @@ Y.Env.evt = {
 };
 
 (function() {
-/**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
- * events.
- * @module event
- */
 
 /**
  * Allows for the insertion of methods that are executed before or after
@@ -426,7 +421,7 @@ Y.EventFacade = function(e, currentTarget) {
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
- * @module event
+ * @module event-custom
  */
 
 
@@ -435,7 +430,7 @@ Y.EventFacade = function(e, currentTarget) {
  * Return value from all subscribe operations
  * @class EventHandle
  * @constructor
- * @param evt {Event.Custom} the custom event
+ * @param evt {CustomEvent} the custom event
  * @param sub {Subscriber} the subscriber
  */
 
@@ -473,7 +468,7 @@ Y.EventHandle = function(evt, sub) {
 
     /**
      * The custom event
-     * @type Event.Custom
+     * @type CustomEvent
      */
     this.evt = evt;
 
@@ -499,13 +494,13 @@ Y.EventHandle.prototype = {
 };
 
 /**
- * The Event.Custom class lets you define events for your application
+ * The CustomEvent class lets you define events for your application
  * that can be subscribed to by one or more independent component.
  *
  * @param {String}  type The type of event, which is passed to the callback
  *                  when the event fires
  * @param o configuration object
- * @class Event.Custom
+ * @class CustomEvent
  * @constructor
  */
 Y.CustomEvent = function(type, o) {
@@ -618,7 +613,7 @@ Y.CustomEvent = function(type, o) {
      * Specifies the host for this custom event.  This is used
      * to enable event bubbling
      * @property host
-     * @type Event.Target
+     * @type EventTarget
      */
     // this.host = null;
 
@@ -1340,7 +1335,7 @@ Y.Subscriber.prototype = {
      * Executes the subscriber.
      * @method notify
      * @param args {Array} Arguments array for the subscriber
-     * @param ce {Event.Custom} The custom event that sent the notification
+     * @param ce {CustomEvent} The custom event that sent the notification
      */
     notify: function(args, ce) {
         var c = this.context,
@@ -1406,7 +1401,7 @@ Y.Subscriber.prototype = {
  * subscribe to an event that either has not been created yet, or will
  * not be created at all.
  *
- * @Class Event.Target
+ * @Class EventTarget
  */
 
 var L = Y.Lang,
@@ -1487,7 +1482,7 @@ var L = Y.Lang,
      */
     ET = function(opts) {
 
-        // console.log('Event.Target constructor executed: ' + this._yuid);
+        // console.log('EventTarget constructor executed: ' + this._yuid);
 
         var o = (L.isObject(opts)) ? opts : {};
 
@@ -1588,8 +1583,8 @@ ET.prototype = {
                     args[2] = Node.getDOMNode(n);
                 }
                 handle = adapt.on.apply(Y, args);
-            // check to see if the target is an Event.Target.  If so,
-            // delegate to it (the Event.Target should handle whether
+            // check to see if the target is an EventTarget.  If so,
+            // delegate to it (the EventTarget should handle whether
             // or not the prefix was included);
             // } else if (o && !(o instanceof YUI) && o.getEvent) {
             //     a = Y.Array(arguments, 0, true);
@@ -1866,11 +1861,11 @@ ET.prototype = {
     },
 
     /**
-     * Registers another Event.Target as a bubble target.  Bubble order
+     * Registers another EventTarget as a bubble target.  Bubble order
      * is determined by the order registered.  Multiple targets can
      * be specified.
      * @method addTarget
-     * @param o {Event.Target} the target to add
+     * @param o {EventTarget} the target to add
      */
     addTarget: function(o) {
         this._yuievt.targets[Y.stamp(o)] = o;
@@ -1880,7 +1875,7 @@ ET.prototype = {
     /**
      * Removes a bubble target
      * @method removeTarget
-     * @param o {Event.Target} the target to remove
+     * @param o {EventTarget} the target to remove
      */
     removeTarget: function(o) {
         delete this._yuievt.targets[Y.stamp(o)];

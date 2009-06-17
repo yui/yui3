@@ -63,7 +63,7 @@ suite.add(new Y.Test.Case({
     name : "single event sequence",
 
     setUp : function () {
-        this.source = new Y.Event.Target;
+        this.source = new Y.EventTarget;
     },
 
     test_seqSimple : function () {
@@ -183,7 +183,7 @@ suite.add(new Y.Test.Case({
     name : "broadcast",
         
     setUp : function () {
-        this.source = new Y.Event.Target;
+        this.source = new Y.EventTarget;
     },
 
     test_broadcast0: function () {
@@ -534,9 +534,9 @@ suite.add(new Y.Test.Case({
     name : "bubble",
 
     setUp : function () {
-        this.source = new Y.Event.Target;
-        this.middleMan1 = new Y.Event.Target;
-        this.middleMan2 = new Y.Event.Target;
+        this.source = new Y.EventTarget;
+        this.middleMan1 = new Y.EventTarget;
+        this.middleMan2 = new Y.EventTarget;
 
         this.source.addTarget(this.middleMan1);
         this.source.addTarget(this.middleMan2);
