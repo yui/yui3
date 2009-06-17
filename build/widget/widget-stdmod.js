@@ -324,7 +324,7 @@ YUI.add('widget-stdmod', function(Y) {
          *
          * @method _afterHeaderChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterHeaderChange : function(e) {
             this._uiSetStdMod(STD_HEADER, e.newVal, e.stdModPosition);
@@ -336,7 +336,7 @@ YUI.add('widget-stdmod', function(Y) {
          *
          * @method _afterBodyChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterBodyChange : function(e) {
             this._uiSetStdMod(STD_BODY, e.newVal, e.stdModPosition);
@@ -348,7 +348,7 @@ YUI.add('widget-stdmod', function(Y) {
          *
          * @method _afterFooterChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterFooterChange : function(e) {
             this._uiSetStdMod(STD_FOOTER, e.newVal, e.stdModPosition);
@@ -360,7 +360,7 @@ YUI.add('widget-stdmod', function(Y) {
          * 
          * @method _afterFillHeightChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterFillHeightChange: function (e) {
             this._uiSetFillHeight(e.newVal);
