@@ -234,7 +234,7 @@
          * 
          * @method _afterXYChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterXYChange : function(e) {
             if (e.src != UI) {

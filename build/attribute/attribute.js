@@ -189,7 +189,7 @@ YUI.add('attribute', function(Y) {
      * of attributes for derived classes, accounting for values passed into the constructor.</p>
      *
      * @class Attribute
-     * @uses Event.Target
+     * @uses EventTarget
      */
     function Attribute() {
 
@@ -273,7 +273,7 @@ YUI.add('attribute', function(Y) {
          *    false from the validator function will prevent the value from being stored.</dd>
          *    
          *    <dt>broadcast &#60;int&#62;</dt>
-         *    <dd>If and how attribute change events for this attribute should be broadcast. See Event.Custom's <a href="Event.Custom.html#property_broadcast">broadcast</a> property for 
+         *    <dd>If and how attribute change events for this attribute should be broadcast. See CustomEvent's <a href="CustomEvent.html#property_broadcast">broadcast</a> property for 
          *    valid values. By default attribute change events are not broadcast.</dd>
          *
          *    <dt>lazyAdd &#60;boolean&#62;</dt>
@@ -659,7 +659,7 @@ YUI.add('attribute', function(Y) {
          *
          * @private
          * @method _defAttrChangeFn
-         * @param {Event.Facade} e The event object for attribute change events.
+         * @param {EventFacade} e The event object for attribute change events.
          */
         _defAttrChangeFn : function(e) {
             if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
