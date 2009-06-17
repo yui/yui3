@@ -1584,7 +1584,7 @@ var Lang = Y.Lang,
  * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
- * @return {Event.Handle} the detach handle
+ * @return {EventHandle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.delegate = {
@@ -1805,7 +1805,7 @@ var isString = Y.Lang.isString,
  * @param el {string|node} The element(s) to assign the listener to.
  * @param spec {string} Optional.  String representing a selector that must 
  * match the target of the event in order for the listener to be called.
- * @return {Event.Handle} the detach handle
+ * @return {EventHandle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.mouseenter = eventConfig;
@@ -1822,7 +1822,7 @@ Y.Env.evt.plugins.mouseenter = eventConfig;
 * @param el {string|node} The element(s) to assign the listener to.
 * @param spec {string} Optional.  String representing a selector that must 
 * match the target of the event in order for the listener to be called.
-* @return {Event.Handle} the detach handle
+* @return {EventHandle} the detach handle
 * @for YUI
  */
 Y.Env.evt.plugins.mouseleave = eventConfig;
