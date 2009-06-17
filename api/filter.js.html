@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>console-filters&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>console-filters&nbsp; <span class="subtitle">3.0.0b1_test1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_console-filters.html" title="console-filters">console-filters</a>
                 
@@ -75,12 +75,6 @@
 
     <span class="nx">DOT</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">,</span>
     <span class="nx">EMPTY</span>   <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
-
-    <span class="c">// IE8 doesn&#39;t permit breaking _between_ nowrap elements AND it doesn&#39;t</span>
-<span class="c"></span>    <span class="c">// understand the (non spec) wbr tag AND it doesn&#39;t create text nodes for</span>
-<span class="c"></span>    <span class="c">// spaces between elements in innerHTML strings.  The en-space entity</span>
-<span class="c"></span>    <span class="c">// suffices, but is less that beautiful in other browsers.</span>
-<span class="c"></span>    <span class="nx">SEP</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&gt;</span> <span class="m">7</span> <span class="o">?</span> <span class="s1">&#39;&amp;#8194;&#39;</span> <span class="o">:</span> <span class="s1">&#39; &#39;</span><span class="o">,</span>
 
     <span class="nx">C_BODY</span>       <span class="o">=</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Console</span><span class="o">.</span><span class="nx">CHROME_CLASSES</span><span class="o">.</span><span class="nx">console_bd_class</span><span class="o">,</span>
     <span class="nx">C_FOOT</span>       <span class="o">=</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Console</span><span class="o">.</span><span class="nx">CHROME_CLASSES</span><span class="o">.</span><span class="nx">console_ft_class</span><span class="o">,</span>
@@ -144,10 +138,14 @@
 <span class="c">     * @static</span>
 <span class="c">     */</span>
     <span class="nx">FILTER_TEMPLATE</span> <span class="o">:</span>
-        <span class="s1">&#39;&lt;label class=&quot;{filter_label}&quot;&gt;&#39;</span><span class="o">+</span>
+        <span class="c">// IE8 doesn&#39;t permit breaking _between_ nowrap elements AND it doesn&#39;t</span>
+<span class="c"></span>        <span class="c">// understand the (non spec) wbr tag AND it doesn&#39;t create text nodes</span>
+<span class="c"></span>        <span class="c">// for spaces between elements in innerHTML strings.  The thin-space</span>
+<span class="c"></span>        <span class="c">// entity suffices to create a breakable point.</span>
+<span class="c"></span>        <span class="s1">&#39;&lt;label class=&quot;{filter_label}&quot;&gt;&#39;</span><span class="o">+</span>
             <span class="s1">&#39;&lt;input type=&quot;checkbox&quot; value=&quot;{filter_name}&quot; &#39;</span><span class="o">+</span>
                 <span class="s1">&#39;class=&quot;{filter} {filter_class}&quot;&gt; {filter_name}&#39;</span><span class="o">+</span>
-        <span class="s1">&#39;&lt;/label&gt;&#39;</span><span class="o">+</span><span class="nx">SEP</span><span class="o">,</span>
+        <span class="s1">&#39;&lt;/label&gt;&amp;#8201;&#39;</span><span class="o">,</span>
 
     <span class="c">/** </span>
 <span class="c">     * Classnames used by the templates when creating nodes.</span>

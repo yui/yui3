@@ -404,7 +404,7 @@ Y.extend(Widget, Y.Base, {
          * 
          * @event widget:contentUpdate
          * @preventable false
-         * @param {Event.Facade} e The Event Facade
+         * @param {EventFacade} e The Event Facade
          */
         this.publish(ContentUpdate, { preventable:false });
 
@@ -490,7 +490,7 @@ Y.extend(Widget, Y.Base, {
              *
              * @event widget:render
              * @preventable _defRenderFn
-             * @param {Event.Facade} e The Event Facade
+             * @param {EventFacade} e The Event Facade
              */
             this.publish(RENDER, {queuable:false, defaultFn: this._defRenderFn});
 
@@ -510,7 +510,7 @@ Y.extend(Widget, Y.Base, {
      *
      * @method _defRenderFn
      * @protected
-     * @param {Event.Facade} e The Event object
+     * @param {EventFacade} e The Event object
      * @param {Node} parentNode The parent node to render to, if passed in to the <code>render</code> method
      */
     _defRenderFn : function(e) {
@@ -1025,7 +1025,7 @@ Y.extend(Widget, Y.Base, {
      *
      * @method _afterVisibleChange
      * @protected
-     * @param {Event.Facade} evt The event facade for the attribute change
+     * @param {EventFacade} evt The event facade for the attribute change
      */
     _afterVisibleChange: function(evt) {
         this._uiSetVisible(evt.newVal);
@@ -1036,7 +1036,7 @@ Y.extend(Widget, Y.Base, {
      * 
      * @method _afterDisabledChange
      * @protected
-     * @param {Event.Facade} evt The event facade for the attribute change
+     * @param {EventFacade} evt The event facade for the attribute change
      */
     _afterDisabledChange: function(evt) {
         this._uiSetDisabled(evt.newVal);
@@ -1047,7 +1047,7 @@ Y.extend(Widget, Y.Base, {
      * 
      * @method _afterHeightChange
      * @protected
-     * @param {Event.Facade} evt The event facade for the attribute change
+     * @param {EventFacade} evt The event facade for the attribute change
      */
     _afterHeightChange: function(evt) {
         this._uiSetHeight(evt.newVal);
@@ -1058,7 +1058,7 @@ Y.extend(Widget, Y.Base, {
      * 
      * @method _afterWidthChange
      * @protected
-     * @param {Event.Facade} evt The event facade for the attribute change
+     * @param {EventFacade} evt The event facade for the attribute change
      */
     _afterWidthChange: function(evt) {
         this._uiSetWidth(evt.newVal);
@@ -1069,7 +1069,7 @@ Y.extend(Widget, Y.Base, {
      * 
      * @method _afterFocusedChange
      * @protected
-     * @param {Event.Facade} evt The event facade for the attribute change
+     * @param {EventFacade} evt The event facade for the attribute change
      */
     _afterFocusedChange: function(evt) {
         this._uiSetFocused(evt.newVal, evt.src);
@@ -1080,7 +1080,7 @@ Y.extend(Widget, Y.Base, {
 	* @description "mousedown" event handler for the owner document of the 
 	* widget's bounding box.
 	* @protected
-    * @param {Event.Facade} evt The event facade for the DOM focus event
+    * @param {EventFacade} evt The event facade for the DOM focus event
 	*/
 	_onDocMouseDown: function (evt) {
 
@@ -1095,7 +1095,7 @@ Y.extend(Widget, Y.Base, {
      * 
      * @method _onFocus
      * @protected
-     * @param {Event.Facade} evt The event facade for the DOM focus event
+     * @param {EventFacade} evt The event facade for the DOM focus event
      */
     _onFocus: function (evt) {
 

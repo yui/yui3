@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event-custom&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>event-custom&nbsp; <span class="subtitle">3.0.0b1_test1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event-custom.html" title="event-custom">event-custom</a>
                  &gt; EventFacade 
@@ -59,8 +59,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Wraps a DOM event, properties requiring browser abstraction are
-fixed here.  Provids a security layer when required.
+                        Wraps and protects a custom event for use when emitFacade is set to true.
                     </div>
 
                     
@@ -68,36 +67,6 @@ fixed here.  Provids a security layer when required.
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="" rel="yui:property" resource="#property_button">
-                                    <h4><a name="property_button" property="yui:name">button</a>
-                                        - <code><span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The button that was pushed.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_charCode">
-                                    <h4><a name="property_charCode" property="yui:name">charCode</a>
-                                        - <code><span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The charCode for key events.  Same as keyCode
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:property" resource="#property_currentTarget">
                                     <h4><a name="property_currentTarget" property="yui:name">currentTarget</a>
                                         - <code><span property="yui:type">Node</span></code>
@@ -128,51 +97,6 @@ fixed here.  Provids a security layer when required.
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_keyCode">
-                                    <h4><a name="property_keyCode" property="yui:name">keyCode</a>
-                                        - <code><span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The keyCode for key events.  Uses charCode if keyCode is not available
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_pageX">
-                                    <h4><a name="property_pageX" property="yui:name">pageX</a>
-                                        - <code><span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The X location of the event on the page (including scroll)
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_pageY">
-                                    <h4><a name="property_pageY" property="yui:name">pageY</a>
-                                        - <code><span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The Y location of the event on the page (including scroll)
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:property" resource="#property_relatedTarget">
                                     <h4><a name="property_relatedTarget" property="yui:name">relatedTarget</a>
                                         - <code><span property="yui:type">Node</span></code>
@@ -194,7 +118,7 @@ fixed here.  Provids a security layer when required.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Node reference for the targeted element
+                                            Node reference for the targeted eventtarget
                                         </div>
                                     </div>
      
@@ -210,36 +134,6 @@ fixed here.  Provids a security layer when required.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             The event type
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:property" resource="#property_webkitKeymap">
-                                    <h4><a name="property_webkitKeymap" property="yui:name">webkitKeymap</a>
-                                        - <code>private <span property="yui:type">object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            webkit key remapping required for Safari < 3.1
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_which">
-                                    <h4><a name="property_which" property="yui:name">which</a>
-                                        - <code><span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The button that was pushed.  Same as button.
                                         </div>
                                     </div>
      
@@ -326,45 +220,6 @@ on the current target will not be executed</span>
                                         
                                         <div class="description" property="yui:description">
                                             Prevents the event's default behavior
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method_resolve">
-                                    <h4>
-                                        <a name="method_resolve">resolve</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">resolve</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns a wrapped node.  Intended to be used on event targets,
-so it will return the node's parent if the target is a text
-node
                                         </div>
 
                                         <div class="description">
@@ -531,7 +386,10 @@ on the current target.
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class=""><a href="CustomEvent.html" title="CustomEvent">CustomEvent</a></li>
                                 <li class="selected"><a href="EventFacade.html" title="EventFacade">EventFacade</a></li>
+                                <li class=""><a href="EventHandle.html" title="EventHandle">EventHandle</a></li>
+                                <li class=""><a href="Subscriber.html" title="Subscriber">Subscriber</a></li>
                         </ul>
                     </div>
 
@@ -547,18 +405,11 @@ on the current target.
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_button" title="button">button</a></li>
-                                <li class=""><a href="#property_charCode" title="charCode">charCode</a></li>
                                 <li class=""><a href="#property_currentTarget" title="currentTarget">currentTarget</a></li>
                                 <li class=""><a href="#property_details" title="details">details</a></li>
-                                <li class=""><a href="#property_keyCode" title="keyCode">keyCode</a></li>
-                                <li class=""><a href="#property_pageX" title="pageX">pageX</a></li>
-                                <li class=""><a href="#property_pageY" title="pageY">pageY</a></li>
                                 <li class=""><a href="#property_relatedTarget" title="relatedTarget">relatedTarget</a></li>
                                 <li class=""><a href="#property_target" title="target">target</a></li>
                                 <li class=""><a href="#property_type" title="type">type</a></li>
-                                <li class="private"><a href="#property_webkitKeymap" title="webkitKeymap">webkitKeymap</a></li>
-                                <li class=""><a href="#property_which" title="which">which</a></li>
                         </ul>
                     </div>
 
@@ -567,7 +418,6 @@ on the current target.
                         <ul class="content">        
                                 <li class=""><a href="#method_halt" title="halt">halt</a></li>
                                 <li class=""><a href="#method_preventDefault" title="preventDefault">preventDefault</a></li>
-                                <li class="private"><a href="#method_resolve" title="resolve">resolve</a></li>
                                 <li class=""><a href="#method_stopImmediatePropagation" title="stopImmediatePropagation">stopImmediatePropagation</a></li>
                                 <li class=""><a href="#method_stopPropagation" title="stopPropagation">stopPropagation</a></li>
                         </ul>
@@ -584,7 +434,7 @@ on the current target.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "EventFacade", "name": "button", "url": "EventFacade.html#property_button", "type": "property"}, {"access": "", "host": "EventFacade", "name": "charCode", "url": "EventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "EventFacade", "name": "currentTarget", "url": "EventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "EventFacade", "name": "details", "url": "EventFacade.html#property_details", "type": "property"}, {"access": "", "host": "EventFacade", "name": "halt", "url": "EventFacade.html#method_halt", "type": "method"}, {"access": "", "host": "EventFacade", "name": "keyCode", "url": "EventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "EventFacade", "name": "pageX", "url": "EventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "EventFacade", "name": "pageY", "url": "EventFacade.html#property_pageY", "type": "property"}, {"access": "", "host": "EventFacade", "name": "preventDefault", "url": "EventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "EventFacade", "name": "relatedTarget", "url": "EventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "EventFacade", "name": "resolve", "url": "EventFacade.html#method_resolve", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopImmediatePropagation", "url": "EventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopPropagation", "url": "EventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "target", "url": "EventFacade.html#property_target", "type": "property"}, {"access": "", "host": "EventFacade", "name": "type", "url": "EventFacade.html#property_type", "type": "property"}, {"access": "private", "host": "EventFacade", "name": "webkitKeymap", "url": "EventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "EventFacade", "name": "which", "url": "EventFacade.html#property_which", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "EventFacade", "name": "currentTarget", "url": "EventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "EventFacade", "name": "details", "url": "EventFacade.html#property_details", "type": "property"}, {"access": "", "host": "EventFacade", "name": "halt", "url": "EventFacade.html#method_halt", "type": "method"}, {"access": "", "host": "EventFacade", "name": "preventDefault", "url": "EventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "EventFacade", "name": "relatedTarget", "url": "EventFacade.html#property_relatedTarget", "type": "property"}, {"access": "", "host": "EventFacade", "name": "stopImmediatePropagation", "url": "EventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopPropagation", "url": "EventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "target", "url": "EventFacade.html#property_target", "type": "property"}, {"access": "", "host": "EventFacade", "name": "type", "url": "EventFacade.html#property_type", "type": "property"}];
 </script>
 </body>
 </html>

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>plugin&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>plugin&nbsp; <span class="subtitle">3.0.0b1_test1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_plugin.html" title="plugin">plugin</a>
                 
@@ -156,7 +156,7 @@
 <span class="c">         * @param sFn {String} The event to listen for, or method to inject logic before.</span>
 <span class="c">         * @param fn {Function} The handler function. For events, the &quot;on&quot; moment listener. For methods, the function to execute before the given method is executed.</span>
 <span class="c">         * @param context {Object} An optional context to call the handler with. The default context is the plugin instance.</span>
-<span class="c">         * @return handle {Event.Handle} The detach handle for the handler.</span>
+<span class="c">         * @return handle {EventHandle} The detach handle for the handler.</span>
 <span class="c">         */</span>
         <span class="nx">doBefore</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">sFn</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">),</span>
@@ -183,7 +183,7 @@
 <span class="c">         * @param sFn {String} The event to listen for, or method to inject logic after.</span>
 <span class="c">         * @param fn {Function} The handler function. For events, the &quot;after&quot; moment listener. For methods, the function to execute after the given method is executed.</span>
 <span class="c">         * @param context {Object} An optional context to call the handler with. The default context is the plugin instance.</span>
-<span class="c">         * @return handle {Event.Handle} The detach handle for the handler.</span>
+<span class="c">         * @return handle {EventHandle} The detach handle for the handler.</span>
 <span class="c">         */</span>
         <span class="nx">doAfter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">sFn</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">),</span>

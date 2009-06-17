@@ -229,7 +229,7 @@
              * 
              * @method _afterAlignChange
              * @protected
-             * @param {Event.Facade} e The event facade for the attribute change
+             * @param {EventFacade} e The event facade for the attribute change
              */
             _afterAlignChange : function(e) {
                 if (e.newVal) {

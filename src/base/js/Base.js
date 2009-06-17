@@ -170,7 +170,7 @@
              *
              * @event init
              * @preventable _defInitFn
-             * @param {Event.Facade} e Event object, with a cfg property which 
+             * @param {EventFacade} e Event object, with a cfg property which 
              * refers to the configuration object passed to the constructor.
              */
             if (!this._silentInit) {
@@ -231,7 +231,7 @@
              * </p>
              * @event destroy
              * @preventable _defDestroyFn
-             * @param {Event.Facade} e Event object
+             * @param {EventFacade} e Event object
              */
             this.publish(DESTROY, {
                 queuable:false,
@@ -245,7 +245,7 @@
          * Default init event handler
          *
          * @method _defInitFn
-         * @param {Event.Facade} e Event object, with a cfg property which 
+         * @param {EventFacade} e Event object, with a cfg property which 
          * refers to the configuration object passed to the constructor.
          * @protected
          */
@@ -264,7 +264,7 @@
          * Default destroy event handler
          *
          * @method _defDestroyFn
-         * @param {Event.Facade} e Event object
+         * @param {EventFacade} e Event object
          * @protected
          */
         _defDestroyFn : function(e) {
