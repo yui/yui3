@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>queue&nbsp; <span class="subtitle">3.0.0b1_test1</span></h3>
+        <h3>queue&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_queue.html" title="queue">queue</a>
                 
@@ -47,7 +47,26 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="k">var</span> <span class="nx">Queue</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Queue</span><span class="o">,</span>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * Adds functionality to preventable events, adds support for scheduling</span>
+<span class="c"> * callbacks to execute asynchronously, as well as iterative callbacks.</span>
+<span class="c"> *</span>
+<span class="c"> * @module queue</span>
+<span class="c"> * @submodule queue-run</span>
+<span class="c"> */</span>
+
+<span class="c">/**</span>
+<span class="c"> * A queue that supports scheduling callbacks to execute asynchronously, </span>
+<span class="c"> * as well as iterative callbacks.</span>
+<span class="c"> * @class AsyncQueue</span>
+<span class="c"> * @extends EventTarget</span>
+<span class="c"> */</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">AsyncQueue</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="nx">_init</span><span class="o">();</span>
+    <span class="k">this</span><span class="o">.</span><span class="nx">add</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+<span class="o">};</span>
+
+<span class="k">var</span> <span class="nx">Queue</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">AsyncQueue</span><span class="o">,</span>
     <span class="nx">EXECUTE</span> <span class="o">=</span> <span class="s1">&#39;execute&#39;</span><span class="o">,</span>
     <span class="nx">SHIFT</span>   <span class="o">=</span> <span class="s1">&#39;shift&#39;</span><span class="o">,</span>
     <span class="nx">PROMOTE</span> <span class="o">=</span> <span class="s1">&#39;promote&#39;</span><span class="o">,</span>
@@ -57,18 +76,9 @@
     <span class="nx">isFunction</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">;</span>
 
 <span class="c">/**</span>
-<span class="c"> * Remaps functionality to preventable events, adds support for scheduling</span>
-<span class="c"> * callbacks to execute asynchronously, as well as iterative callbacks.</span>
-<span class="c"> *</span>
-<span class="c"> * @module queue</span>
-<span class="c"> * @submodule queue-run</span>
-<span class="c"> * @for Queue</span>
-<span class="c"> */</span>
-
-<span class="c">/**</span>
 <span class="c"> * Static default values used to populate callback configuration properties.</span>
 <span class="c"> *</span>
-<span class="c"> * @property Queue.defaults</span>
+<span class="c"> * @property AsyncQueue.defaults</span>
 <span class="c"> * @type {Object}</span>
 <span class="c"> * @static</span>
 <span class="c"> */</span>
@@ -82,9 +92,9 @@
     <span class="o">}</span>
 <span class="o">},</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">queueDefaults</span> <span class="o">||</span> <span class="o">{});</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Queue</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="o">{</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">Queue</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">,</span> <span class="o">{</span>
     <span class="c">/**</span>
-<span class="c">     *  used to indicate the Queue is currently executing a callback.</span>
+<span class="c">     *  used to indicate the queue is currently executing a callback.</span>
 <span class="c">     *</span>
 <span class="c">     * @property _running</span>
 <span class="c">     * @type {Boolean|Object} true for synchronous callback execution, the</span>
@@ -94,7 +104,7 @@
     <span class="nx">_running</span> <span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
 
     <span class="c">/**</span>
-<span class="c">     * Initializes the Queue instance properties and events.  Overrides the</span>
+<span class="c">     * Initializes the AsyncQueue instance properties and events.  Overrides the</span>
 <span class="c">     * base implementation.</span>
 <span class="c">     *</span>
 <span class="c">     * @method _init</span>
@@ -180,7 +190,7 @@
 
     <span class="c">/**</span>
 <span class="c">     * Creates a wrapper function to execute the callback using the aggregated </span>
-<span class="c">     * configuration from static Queue.defaults to the instance defaults to the</span>
+<span class="c">     * configuration from static AsyncQueue.defaults to the instance defaults to the</span>
 <span class="c">     * specified callback settings.</span>
 <span class="c">     *</span>
 <span class="c">     * The wrapper function is decorated with the callback configuration as</span>
@@ -216,12 +226,12 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Sets the Queue in motion.  All queued callbacks will be executed in</span>
+<span class="c">     * Sets the queue in motion.  All queued callbacks will be executed in</span>
 <span class="c">     * order unless pause() or stop() is called or if one of the callbacks is</span>
 <span class="c">     * configured with autoContinue: false.</span>
 <span class="c">     *</span>
 <span class="c">     * @method run</span>
-<span class="c">     * @return {Queue} the Queue instance</span>
+<span class="c">     * @return {AsyncQueue} the AsyncQueue instance</span>
 <span class="c">     */</span>
     <span class="nx">run</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">callback</span><span class="o">,</span>
@@ -287,10 +297,10 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Determines if the Queue is waiting for a callback to complete execution.</span>
+<span class="c">     * Determines if the queue is waiting for a callback to complete execution.</span>
 <span class="c">     *</span>
 <span class="c">     * @method isRunning</span>
-<span class="c">     * @return {Boolean} true if Queue is waiting for a </span>
+<span class="c">     * @return {Boolean} true if queue is waiting for a </span>
 <span class="c">     *                   from any initiated transactions</span>
 <span class="c">     */</span>
     <span class="nx">isRunning</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
@@ -314,7 +324,7 @@
 <span class="c">     *</span>
 <span class="c">     * @method add</span>
 <span class="c">     * @param callback* {Function|Object} 0..n callbacks</span>
-<span class="c">     * @return {Queue} the Queue instance</span>
+<span class="c">     * @return {AsyncQueue} the AsyncQueue instance</span>
 <span class="c">     */</span>
     <span class="nx">add</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;add&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">callbacks</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="kc">true</span><span class="o">)</span> <span class="o">});</span>
@@ -345,12 +355,12 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Pause the execution of the Queue after the execution of the current</span>
+<span class="c">     * Pause the execution of the queue after the execution of the current</span>
 <span class="c">     * callback completes.  If called from code outside of a queued callback,</span>
-<span class="c">     * clears the timeout for the pending callback. Paused Queue can be</span>
+<span class="c">     * clears the timeout for the pending callback. Paused queue can be</span>
 <span class="c">     * restarted with q.run()</span>
 <span class="c">     * @method pause</span>
-<span class="c">     * @return {Queue} the Queue instance</span>
+<span class="c">     * @return {AsyncQueue} the AsyncQueue instance</span>
 <span class="c">     */</span>
     <span class="nx">pause</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">isObject</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_running</span><span class="o">))</span> <span class="o">{</span>
@@ -363,10 +373,10 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Stop and clear the Queue&#39;s queue after the current execution of the</span>
+<span class="c">     * Stop and clear the queue after the current execution of the</span>
 <span class="c">     * current callback completes.</span>
 <span class="c">     * @method stop</span>
-<span class="c">     * @return {Queue} the Queue instance</span>
+<span class="c">     * @return {AsyncQueue} the AsyncQueue instance</span>
 <span class="c">     */</span>
     <span class="nx">stop</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span> 
         <span class="k">this</span><span class="o">.</span><span class="nx">_q</span> <span class="o">=</span> <span class="o">[];</span>
@@ -397,7 +407,7 @@
 
     <span class="c">/**</span>
 <span class="c">     * Retrieve a callback by its id.  Useful to modify the configuration</span>
-<span class="c">     * while the Queue is running.</span>
+<span class="c">     * while the queue is running.</span>
 <span class="c">     *</span>
 <span class="c">     * @method getCallback</span>
 <span class="c">     * @param id {String} the id assigned to the callback</span>
@@ -416,7 +426,7 @@
 <span class="c">     *</span>
 <span class="c">     * @method promote</span>
 <span class="c">     * @param callback {String|Object} the callback object or a callback&#39;s id</span>
-<span class="c">     * @return {Queue} the Queue instance</span>
+<span class="c">     * @return {AsyncQueue} the AsyncQueue instance</span>
 <span class="c">     */</span>
     <span class="nx">promote</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">payload</span> <span class="o">=</span> <span class="o">{</span> <span class="nx">callback</span> <span class="o">:</span> <span class="nx">callback</span> <span class="o">},</span><span class="nx">e</span><span class="o">;</span>
@@ -455,12 +465,12 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Removes the callback from the queue.  If the Queue is active, the</span>
+<span class="c">     * Removes the callback from the queue.  If the queue is active, the</span>
 <span class="c">     * removal is scheduled to occur after the current callback has completed.</span>
 <span class="c">     *</span>
 <span class="c">     * @method remove</span>
 <span class="c">     * @param callback {String|Object} the callback object or a callback&#39;s id</span>
-<span class="c">     * @return {Queue} the Queue instance</span>
+<span class="c">     * @return {AsyncQueue} the AsyncQueue instance</span>
 <span class="c">     */</span>
     <span class="nx">remove</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">payload</span> <span class="o">=</span> <span class="o">{</span> <span class="nx">callback</span> <span class="o">:</span> <span class="nx">callback</span> <span class="o">},</span><span class="nx">e</span><span class="o">;</span>
@@ -510,9 +520,7 @@
 
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
     <span class="o">}</span>
-<span class="o">},</span><span class="kc">true</span><span class="o">);</span>
-
-<span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span><span class="o">(</span><span class="nx">Queue</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">);</span>
+<span class="o">});</span>
 </pre></div>
                     </div>
 			</div>
@@ -570,6 +578,7 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class=""><a href="AsyncQueue.html" title="AsyncQueue">AsyncQueue</a></li>
                                 <li class=""><a href="Queue.html" title="Queue">Queue</a></li>
                         </ul>
                     </div>
@@ -596,7 +605,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "complete", "url": "Queue.html#event_complete", "type": "event"}, {"access": "", "host": "Queue", "name": "_defAddFn", "url": "Queue.html#method__defAddFn", "type": "method"}, {"access": "", "host": "Queue", "name": "defaults", "url": "Queue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_defExecFn", "url": "Queue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_defPromoteFn", "url": "Queue.html#method__defPromoteFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_defRemoveFn", "url": "Queue.html#method__defRemoveFn", "type": "method"}, {"access": "", "host": "Queue", "name": "_defShiftFn", "url": "Queue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_execute", "url": "Queue.html#method__execute", "type": "method"}, {"access": "", "host": "Queue", "name": "getCallback", "url": "Queue.html#method_getCallback", "type": "method"}, {"access": "", "host": "Queue", "name": "indexOf", "url": "Queue.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_initEvents", "url": "Queue.html#method__initEvents", "type": "method"}, {"access": "", "host": "Queue", "name": "isRunning", "url": "Queue.html#method_isRunning", "type": "method"}, {"access": "", "host": "Queue", "name": "next", "url": "Queue.html#method_next", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_prepare", "url": "Queue.html#method__prepare", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_q", "url": "Queue.html#property__q", "type": "property"}, {"access": "", "host": "Queue", "name": "Queue.defaults", "url": "Queue.html#property_Queue.defaults", "type": "property"}, {"access": "", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_running", "url": "Queue.html#property__running", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_schedule", "url": "Queue.html#method__schedule", "type": "method"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "AsyncQueue", "name": "add", "url": "AsyncQueue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "AsyncQueue.defaults", "url": "AsyncQueue.html#property_AsyncQueue.defaults", "type": "property"}, {"access": "", "host": "AsyncQueue", "name": "complete", "url": "AsyncQueue.html#event_complete", "type": "event"}, {"access": "", "host": "AsyncQueue", "name": "_defAddFn", "url": "AsyncQueue.html#method__defAddFn", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "defaults", "url": "AsyncQueue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "AsyncQueue", "name": "_defExecFn", "url": "AsyncQueue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defPromoteFn", "url": "AsyncQueue.html#method__defPromoteFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defRemoveFn", "url": "AsyncQueue.html#method__defRemoveFn", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "_defShiftFn", "url": "AsyncQueue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_execute", "url": "AsyncQueue.html#method__execute", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "getCallback", "url": "AsyncQueue.html#method_getCallback", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "indexOf", "url": "AsyncQueue.html#method_indexOf", "type": "method"}, {"access": "", "host": "Queue", "name": "indexOf", "url": "Queue.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_init", "url": "AsyncQueue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_initEvents", "url": "AsyncQueue.html#method__initEvents", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "isRunning", "url": "AsyncQueue.html#method_isRunning", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "next", "url": "AsyncQueue.html#method_next", "type": "method"}, {"access": "", "host": "Queue", "name": "next", "url": "Queue.html#method_next", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "pause", "url": "AsyncQueue.html#method_pause", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_prepare", "url": "AsyncQueue.html#method__prepare", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "promote", "url": "AsyncQueue.html#method_promote", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_q", "url": "Queue.html#property__q", "type": "property"}, {"access": "", "host": "AsyncQueue", "name": "remove", "url": "AsyncQueue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "run", "url": "AsyncQueue.html#method_run", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_running", "url": "AsyncQueue.html#property__running", "type": "property"}, {"access": "protected", "host": "AsyncQueue", "name": "_schedule", "url": "AsyncQueue.html#method__schedule", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "size", "url": "AsyncQueue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "stop", "url": "AsyncQueue.html#method_stop", "type": "method"}];
 </script>
 </body>
 </html>

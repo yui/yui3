@@ -66,10 +66,10 @@ suite.add(new Y.Test.Case({
     name : "Queue isntantiation",
 
     test_instantiation : function () {
-        var basic         = new Y.Queue(),
-            withCallbacks = new Y.Queue(f,f,f,f);
+        var basic         = new Y.AsyncQueue(),
+            withCallbacks = new Y.AsyncQueue(f,f,f,f);
 
-        Y.Assert.areSame(true, basic instanceof Y.Queue);
+        Y.Assert.areSame(true, basic instanceof Y.AsyncQueue);
 
         Y.Assert.areSame(0, basic.size());
         Y.Assert.areSame(0, basic._q.length);
@@ -112,7 +112,7 @@ suite.add(new Y.Test.Case({
     name : "Test API",
 
     test_chaining : function () {
-        var q = new Y.Queue();
+        var q = new Y.AsyncQueue();
             q.defaults = {
                 timeout : 10
             };
@@ -129,11 +129,11 @@ suite.add(new Y.Test.Case({
     },
 
     test_add : function () {
-        var q = new Y.Queue(f);
+        var q = new Y.AsyncQueue(f);
 
         Y.Assert.areSame(1, q.size());
 
-        q = new Y.Queue().add(f);
+        q = new Y.AsyncQueue().add(f);
         Y.Assert.areSame(1, q.size());
 
         q.add(f,f).add(f,f,f);
@@ -160,7 +160,7 @@ suite.add(new Y.Test.Case({
         }
 
         // Three x calls scheduled.  A fourth added during a callback
-        q = new Y.Queue(x,f,x,addToQueue,f,x).run();
+        q = new Y.AsyncQueue(x,f,x,addToQueue,f,x).run();
 
         Y.Assert.areSame(4,count);
     },
@@ -173,7 +173,7 @@ suite.add(new Y.Test.Case({
 
         var results = '',
             self = this,
-            q = new Y.Queue(
+            q = new Y.AsyncQueue(
                     function () {
                         Y.Assert.areSame(7, this.size());
                         results += 'R';
@@ -242,7 +242,7 @@ suite.add(new Y.Test.Case({
 
         var results = '',
             self = this,
-            q = new Y.Queue(
+            q = new Y.AsyncQueue(
                     function () {
                         results += "R";
                     },
@@ -297,7 +297,7 @@ suite.add(new Y.Test.Case({
     test_pause : function () {
         var results = '',
             self = this,
-            q = new Y.Queue(
+            q = new Y.AsyncQueue(
                 function () { results += 'P'; },
                 {
                     fn: function () {
@@ -350,7 +350,7 @@ suite.add(new Y.Test.Case({
     test_stop : function () {
         var results = "",
             self = this,
-            q = new Y.Queue(
+            q = new Y.AsyncQueue(
                     function () { results += 'S'; },
                     function () { results += 'T'; },
                     function () { results += 'O'; },
@@ -382,7 +382,7 @@ suite.add(new Y.Test.Case({
 
     test_getCallback : function () {
         var c,
-            q = new Y.Queue(
+            q = new Y.AsyncQueue(
                     { id : 'a', test: 1 },
                     { id : 'b', test: 2, fn: function () {
                             this.pause();
@@ -412,7 +412,7 @@ suite.add(new Y.Test.Case({
 
     test_isRunning : function () {
         var self = this,
-            q = new Y.Queue(
+            q = new Y.AsyncQueue(
                     function () {
                         Y.Assert.areSame(true, this.isRunning());
                     },
@@ -450,7 +450,7 @@ suite.add(new Y.Test.Case({
 
     test_fn : function () {
         var results = '',
-            q = new Y.Queue(
+            q = new Y.AsyncQueue(
                     function () { results += 'R'; },
                     {},
                     function () { results += 'N'; });
@@ -473,7 +473,7 @@ suite.add(new Y.Test.Case({
                   }
                 },
 
-            q = new Y.Queue({ test : 'callbacks exec from Queue ctx by default' },
+            q = new Y.AsyncQueue({ test : 'callbacks exec from Queue ctx by default' },
                 function () { Y.Assert.areSame('X', this.test); },
                 {
                     fn: function () {
@@ -497,7 +497,7 @@ suite.add(new Y.Test.Case({
     },
 
     test_args : function () {
-        new Y.Queue(
+        new Y.AsyncQueue(
             function () {
                 Y.Assert.areSame(0,arguments.length);
             },
@@ -519,7 +519,7 @@ suite.add(new Y.Test.Case({
         var results = '',
             self = this;
        
-        new Y.Queue(
+        new Y.AsyncQueue(
             function () { results += 'A'; },
             { fn: function () { results += 'B'; } },
             { fn: function () { results += 'C'; }, iterations: 3 },
@@ -538,7 +538,7 @@ suite.add(new Y.Test.Case({
         var results = '',
             self = this;
        
-        new Y.Queue(
+        new Y.AsyncQueue(
             function () { results += 'A'; },
             {
                 fn: function () {
@@ -577,7 +577,7 @@ suite.add(new Y.Test.Case({
         var results = 0,
             self = this,
                 // default timeout -1 triggers synchronous mode
-            q = new Y.Queue(
+            q = new Y.AsyncQueue(
                 inc, // -1 == sync
                 { fn: inc }, // -1 == sync
                 { fn: inc, timeout: 10, iterations: 4 },
@@ -661,7 +661,7 @@ suite.add(new Y.Test.Case({
 
         var results = { success: 0, failure: 0 },
             self = this,
-            q = new Y.Queue(
+            q = new Y.AsyncQueue(
                 {
                     fn : good,
                     waitForIOResponse: true
@@ -702,7 +702,7 @@ suite.add(new Y.Test.Case({
     test_events : function () {
         var results = [],
             self = this,
-            q = new Y.Queue(
+            q = new Y.AsyncQueue(
                 function () { results.push("E"); this.pause(); },
                 {
                     fn: function () { results.push("E"); },
@@ -846,7 +846,7 @@ suite.add(new Y.Test.Case({
         function inc () { i++; }
 
         var i = 0,
-            q = new Y.Queue(inc,inc,
+            q = new Y.AsyncQueue(inc,inc,
                 {
                     foo: true,
                     fn: inc,
@@ -869,7 +869,7 @@ suite.add(new Y.Test.Case({
 
         Y.Assert.areSame(10,i);
 
-        q = new Y.Queue(inc, inc, inc, inc, inc, inc, inc, inc, inc, inc);
+        q = new Y.AsyncQueue(inc, inc, inc, inc, inc, inc, inc, inc, inc, inc);
         q.on('shift', function (e) {
             if (i % 2) {
                 e.preventDefault();
