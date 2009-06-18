@@ -1,3 +1,6 @@
+**** version 3.0.0 beta 1 ***	
+  * deprecated for YUI 3
+  
 **** version 3.0.0 PR2 ***	
 
   * No code changes.
@@ -5,6 +8,8 @@
   * Updated comments for DL DD.
 
 3.0.0PR1 - Initial release
+
+*** NOTE: This module is deprecated.  YUI CSS will be broken out into a separate project in the future.
 
 Module Name: "cssbase"
 Documentation: http://developer.yahoo.com/yui/3/cssbase
