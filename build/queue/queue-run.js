@@ -1,6 +1,26 @@
 YUI.add('queue-run', function(Y) {
 
-var Queue   = Y.Queue,
+
+/**
+ * Adds functionality to preventable events, adds support for scheduling
+ * callbacks to execute asynchronously, as well as iterative callbacks.
+ *
+ * @module queue
+ * @submodule queue-run
+ */
+
+/**
+ * A queue that supports scheduling callbacks to execute asynchronously, 
+ * as well as iterative callbacks.
+ * @class AsyncQueue
+ * @extends EventTarget
+ */
+Y.AsyncQueue = function() {
+    this._init();
+    this.add.apply(this, arguments);
+};
+
+var Queue   = Y.AsyncQueue,
     EXECUTE = 'execute',
     SHIFT   = 'shift',
     PROMOTE = 'promote',
@@ -10,18 +30,9 @@ var Queue   = Y.Queue,
     isFunction = Y.Lang.isFunction;
 
 /**
- * Remaps functionality to preventable events, adds support for scheduling
- * callbacks to execute asynchronously, as well as iterative callbacks.
- *
- * @module queue
- * @submodule queue-run
- * @for Queue
- */
-
-/**
  * Static default values used to populate callback configuration properties.
  *
- * @property Queue.defaults
+ * @property AsyncQueue.defaults
  * @type {Object}
  * @static
  */
@@ -35,9 +46,9 @@ Queue.defaults = Y.mix({
     }
 }, Y.config.queueDefaults || {});
 
-Y.mix(Queue.prototype, {
+Y.extend(Queue, Y.EventTarget, {
     /**
-     *  used to indicate the Queue is currently executing a callback.
+     *  used to indicate the queue is currently executing a callback.
      *
      * @property _running
      * @type {Boolean|Object} true for synchronous callback execution, the
@@ -47,7 +58,7 @@ Y.mix(Queue.prototype, {
     _running : false,
 
     /**
-     * Initializes the Queue instance properties and events.  Overrides the
+     * Initializes the AsyncQueue instance properties and events.  Overrides the
      * base implementation.
      *
      * @method _init
@@ -133,7 +144,7 @@ Y.mix(Queue.prototype, {
 
     /**
      * Creates a wrapper function to execute the callback using the aggregated 
-     * configuration from static Queue.defaults to the instance defaults to the
+     * configuration from static AsyncQueue.defaults to the instance defaults to the
      * specified callback settings.
      *
      * The wrapper function is decorated with the callback configuration as
@@ -169,12 +180,12 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Sets the Queue in motion.  All queued callbacks will be executed in
+     * Sets the queue in motion.  All queued callbacks will be executed in
      * order unless pause() or stop() is called or if one of the callbacks is
      * configured with autoContinue: false.
      *
      * @method run
-     * @return {Queue} the Queue instance
+     * @return {AsyncQueue} the AsyncQueue instance
      */
     run : function () {
         var callback,
@@ -240,10 +251,10 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Determines if the Queue is waiting for a callback to complete execution.
+     * Determines if the queue is waiting for a callback to complete execution.
      *
      * @method isRunning
-     * @return {Boolean} true if Queue is waiting for a 
+     * @return {Boolean} true if queue is waiting for a 
      *                   from any initiated transactions
      */
     isRunning : function () {
@@ -267,7 +278,7 @@ Y.mix(Queue.prototype, {
      *
      * @method add
      * @param callback* {Function|Object} 0..n callbacks
-     * @return {Queue} the Queue instance
+     * @return {AsyncQueue} the AsyncQueue instance
      */
     add : function () {
         this.fire('add', { callbacks: Y.Array(arguments,0,true) });
@@ -298,12 +309,12 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Pause the execution of the Queue after the execution of the current
+     * Pause the execution of the queue after the execution of the current
      * callback completes.  If called from code outside of a queued callback,
-     * clears the timeout for the pending callback. Paused Queue can be
+     * clears the timeout for the pending callback. Paused queue can be
      * restarted with q.run()
      * @method pause
-     * @return {Queue} the Queue instance
+     * @return {AsyncQueue} the AsyncQueue instance
      */
     pause: function () {
         if (isObject(this._running)) {
@@ -316,10 +327,10 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Stop and clear the Queue's queue after the current execution of the
+     * Stop and clear the queue after the current execution of the
      * current callback completes.
      * @method stop
-     * @return {Queue} the Queue instance
+     * @return {AsyncQueue} the AsyncQueue instance
      */
     stop : function () { 
         this._q = [];
@@ -350,7 +361,7 @@ Y.mix(Queue.prototype, {
 
     /**
      * Retrieve a callback by its id.  Useful to modify the configuration
-     * while the Queue is running.
+     * while the queue is running.
      *
      * @method getCallback
      * @param id {String} the id assigned to the callback
@@ -369,7 +380,7 @@ Y.mix(Queue.prototype, {
      *
      * @method promote
      * @param callback {String|Object} the callback object or a callback's id
-     * @return {Queue} the Queue instance
+     * @return {AsyncQueue} the AsyncQueue instance
      */
     promote : function (callback) {
         var payload = { callback : callback },e;
@@ -408,12 +419,12 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Removes the callback from the queue.  If the Queue is active, the
+     * Removes the callback from the queue.  If the queue is active, the
      * removal is scheduled to occur after the current callback has completed.
      *
      * @method remove
      * @param callback {String|Object} the callback object or a callback's id
-     * @return {Queue} the Queue instance
+     * @return {AsyncQueue} the AsyncQueue instance
      */
     remove : function (callback) {
         var payload = { callback : callback },e;
@@ -463,9 +474,8 @@ Y.mix(Queue.prototype, {
 
         return this._q.length;
     }
-},true);
+});
 
-Y.augment(Queue, Y.EventTarget);
 
 
 }, '@VERSION@' ,{requires:['queue-base','oop','event-custom']});
