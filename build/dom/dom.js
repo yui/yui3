@@ -2073,7 +2073,7 @@ Y.mix(DOM, {
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'dom-style'], skinnable:false});
-YUI.add('selector', function(Y) {
+YUI.add('selector-native', function(Y) {
 
 (function(Y) {
 /**
@@ -2276,6 +2276,11 @@ Y.Selector.test = NativeSelector._test;
 Y.Selector.filter = NativeSelector._filter;
 
 })(Y);
+
+
+}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+YUI.add('selector-css2', function(Y) {
+
 /**
  * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.
  * @module selector
@@ -2708,8 +2713,8 @@ if (!Y.Selector._supportsNative()) {
 }
 
 
-}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+}, '@VERSION@' ,{requires:['dom-base', 'selector-native'], skinnable:false});
 
 
-YUI.add('dom', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dom-base', 'dom-style', 'dom-screen', 'selector']});
+YUI.add('dom', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dom-base', 'dom-style', 'dom-screen', 'selector-native', 'selector-css2']});
 

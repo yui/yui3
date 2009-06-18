@@ -137,7 +137,7 @@ var GLOBAL_ENV = YUI.Env,
     NODE = 'node',
     NODEBASE = 'node-base',
     OOP = 'oop',
-    SELECTOR = 'selector',
+    SELECTORCSS2 = 'selector-css2',
     SUBSTITUTE = 'substitute',
     WIDGET = 'widget',
     WIDGETPOSITION = 'widget-position',
@@ -181,18 +181,23 @@ var GLOBAL_ENV = YUI.Env,
                     requires: [DOMBASE, DOMSTYLE]
                 },
 
-                selector: {
+                'selector-native': {
                     requires: [DOMBASE]
                 },
 
-                'selector-native': {
+                'selector-css2': {
+                    requires: ['selector-native']
+                },
+
+                'selector': {
                     requires: [DOMBASE]
                 }
+
             },
 
             plugins: {
                 'selector-css3': {
-                    requires: [SELECTOR]
+                    requires: [SELECTORCSS2]
                 }
             }
         },
@@ -203,7 +208,7 @@ var GLOBAL_ENV = YUI.Env,
 
             submodules: {
                 'node-base': {
-                    requires: [DOMBASE, BASE, SELECTOR]
+                    requires: [DOMBASE, BASE, SELECTORCSS2]
                 },
 
                 'node-style': {
