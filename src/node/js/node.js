@@ -118,8 +118,6 @@ Node.DOM_EVENTS = {
 // be available through Node.on
 Y.mix(Node.DOM_EVENTS, Y.Env.evt.plugins);
 
-Node.EXEC_SCRIPTS = true;
-
 Node._instances = {};
 
 /**
@@ -677,13 +675,10 @@ Y.mix(Node.prototype, {
      * @method insert
      * @param {String | Y.Node | HTMLElement} content The content to insert 
      * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.
-     * @param {Boolean} execScripts Whether or not to execute any scripts found in
-     * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    insert: function(content, where, execScripts) {
+    insert: function(content, where) {
         if (content) {
-            execScripts = (execScripts && Node.EXEC_SCRIPTS);
             if (typeof where === 'number') { // allow index
                 where = g_nodes[this[UID]].childNodes[where];
             }
@@ -693,7 +688,7 @@ Y.mix(Node.prototype, {
             if (!where || // only allow inserting into this Node's subtree
                 (!g_restrict[this[UID]] || 
                     (typeof where !== 'string' && this.contains(where)))) { 
-                Y.DOM.addHTML(g_nodes[this[UID]], content, where, execScripts);
+                Y.DOM.addHTML(g_nodes[this[UID]], content, where);
             }
         }
         return this;
@@ -703,37 +698,30 @@ Y.mix(Node.prototype, {
      * Inserts the content as the firstChild of the node. 
      * @method prepend
      * @param {String | Y.Node | HTMLElement} content The content to insert 
-     * @param {Boolean} execScripts Whether or not to execute any scripts found in
-     * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    prepend: function(content, execScripts) {
-        return this.insert(content, 0, execScripts);
+    prepend: function(content) {
+        return this.insert(content, 0);
     },
 
     /**
      * Inserts the content as the lastChild of the node. 
      * @method append
      * @param {String | Y.Node | HTMLElement} content The content to insert 
-     * @param {Boolean} execScripts Whether or not to execute any scripts found in
-     * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    append: function(content, execScripts) {
-        return this.insert(content, null, execScripts);
+    append: function(content) {
+        return this.insert(content, null);
     },
 
     /**
      * Replaces the node's current content with the content.
      * @method setContent
      * @param {String | Y.Node | HTMLElement} content The content to insert 
-     * @param {Boolean} execScripts Whether or not to execute any scripts found in
-     * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    setContent: function(content, execScripts) {
-        execScripts = (execScripts && Node.EXEC_SCRIPTS);
-        Y.DOM.addHTML(g_nodes[this[UID]], content, 'replace', execScripts);
+    setContent: function(content) {
+        Y.DOM.addHTML(g_nodes[this[UID]], content, 'replace');
         return this;
     },
 

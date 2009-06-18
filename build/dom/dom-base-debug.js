@@ -552,10 +552,12 @@ Y.DOM = {
 
     _cloneCache: {},
 
-    addHTML: function(node, content, where, execScripts) {
-        content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
-        var scripts,
-            newNode = Y.DOM._cloneCache[content];
+    addHTML: function(node, content, where) {
+        if (typeof content === 'string') {
+            content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
+        }
+
+        var newNode = Y.DOM._cloneCache[content];
             
         if (newNode) {
             newNode = newNode.cloneNode(true);
@@ -595,17 +597,6 @@ Y.DOM = {
             }
         } else {
             node.appendChild(newNode);
-        }
-
-        if (execScripts) {
-            if (newNode.tagName.toUpperCase() === 'SCRIPT' && !Y.UA.gecko) {
-                scripts = [newNode]; // execute the new script
-            } else {
-                scripts = newNode.getElementsByTagName('script');
-            }
-            Y.DOM._execScripts(scripts);
-        } else if (content.nodeType || (content.indexOf && content.indexOf('<script') > -1)) { // prevent any scripts from being injected
-            Y.DOM._stripScripts(newNode);
         }
 
         return newNode;

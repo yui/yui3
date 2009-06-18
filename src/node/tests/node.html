@@ -672,11 +672,6 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
                 Y.DOM.byId('test-insert-html').innerHTML,
                 "Y.get('#test-insert-html').prepend('<em>baz</em>')");
 
-            Y.get('#test-insert-html').prepend('<sc' + 'ript>var test_inject = "script injected";</sc' + 'ript>');
-            Assert.areEqual('script injected', test_inject, "Y.get('#test-insert-html').prepend('<sc' + 'ript>var test_inject = 'script injected';</sc' + 'ript>'");
-
-
-            
             var html = '<strong>baz</strong>';
             Y.get('#test-insert-html').setContent(html);
             Assert.areEqual(html,
