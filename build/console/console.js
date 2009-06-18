@@ -74,11 +74,13 @@ var getCN = Y.ClassNameManager.getClassName,
  * log statements in your code will cause those messages to also appear in the
  * Console.  Use Console to aid in developing your page or application.
  *
- * Entry categories are also referred to as the log level, and entries are
- * filtered against the configured logLevel.
+ * Entry categories &quot;info&quot;, &quot;warn&quot;, and &quot;error&quot;
+ * are also referred to as the log level, and entries are filtered against the
+ * configured logLevel.
  *
  * @class Console
  * @extends Widget
+ * @constructor
  */
 
 function Console() {
@@ -199,10 +201,12 @@ Y.mix(Console, {
      * these {placeholder}s:
      *
      * <ul>
+     *   <li>console_button_class - contributed by Console.CHROME_CLASSES</li>
+     *   <li>console_collapse_class - contributed by Console.CHROME_CLASSES</li>
      *   <li>console_hd_class - contributed by Console.CHROME_CLASSES</li>
      *   <li>console_title_class - contributed by Console.CHROME_CLASSES</li>
-     *   <li>str_title - pulled from attribute strings.title</li>
      *   <li>str_collapse - pulled from attribute strings.collapse</li>
+     *   <li>str_title - pulled from attribute strings.title</li>
      * </ul>
      *
      * @property Console.HEADER_TEMPLATE
@@ -374,7 +378,8 @@ Y.mix(Console, {
 
         /**
          * If a category is not specified in the Y.log(..) statement, this
-         * category will be used. Category is also called &quot;log level&quot;.
+         * category will be used. Categories &quot;info&quot;,
+         * &quot;warn&quot;, and &quot;error&quot; are also called log level.
          *
          * @attribute defaultCategory
          * @type String
@@ -417,11 +422,11 @@ Y.mix(Console, {
          * that configuration is not set.
          *
          * Possible values are &quot;info&quot;, &quot;warn&quot;,
-         * &quot;error&quot; (case insensitive), or the corresponding statics
+         * &quot;error&quot; (case insensitive), or their corresponding statics
          * Console.LOG_LEVEL_INFO and so on.
          *
          * @attribute logLevel
-         * @type String|Number
+         * @type String
          * @default Y.config.logLevel or Console.LOG_LEVEL_INFO
          */
         logLevel : {
@@ -432,8 +437,8 @@ Y.mix(Console, {
         },
 
         /**
-         * Millisecond timeout to maintain before emptying buffer of Console
-         * entries to the UI.
+         * Millisecond timeout between iterations of the print loop, moving
+         * entries from the buffer to the UI.
          *
          * @attribute printTimeout
          * @type Number
@@ -445,13 +450,12 @@ Y.mix(Console, {
         },
 
         /**
-         * Maximum number of entries printed in each printBuffer iteration.
-         * This is used to prevent excessive logging bogging down runtime
-         * performance.
+         * Maximum number of entries printed in each iteration of the print
+         * loop. This is used to prevent excessive logging locking the page UI.
          *
          * @attribute printLimit
          * @type Number
-         * @default 00
+         * @default 50
          */
         printLimit : {
             value : 50,
@@ -537,7 +541,7 @@ Y.mix(Console, {
         /**
         * String with units, or number, representing the height of the Console,
         * inclusive of header and footer. If a number is provided, the default
-        * unit, defined by the Widgets DEF_UNIT, property is used.
+        * unit, defined by Widget's DEF_UNIT, property is used.
         *
         * @attribute height
         * @default "300px"
@@ -549,7 +553,7 @@ Y.mix(Console, {
 
         /**
         * String with units, or number, representing the width of the Console.
-        * If a number is provided, the default unit, defined by the Widgets
+        * If a number is provided, the default unit, defined by Widget's
         * DEF_UNIT, property is used.
         *
         * @attribute width
@@ -576,7 +580,7 @@ Y.extend(Console,Y.Widget,{
     _evtCat : null,
 
     /**
-     * Reference to the Node instance containing the head contents.
+     * Reference to the Node instance containing the header contents.
      *
      * @property _head
      * @type Node
@@ -598,7 +602,7 @@ Y.extend(Console,Y.Widget,{
     /**
      * Reference to the Node instance containing the footer contents.
      *
-     * @property _head
+     * @property _foot
      * @type Node
      * @default null
      * @protected
@@ -606,8 +610,8 @@ Y.extend(Console,Y.Widget,{
     _foot    : null,
 
     /**
-     * Object API returned from <code>Y.later</code>. Holds the timer id
-     * returned by <code>setInterval</code> for scheduling of buffered messages.
+     * Holds the object API returned from <code>Y.later</code> for the print
+     * loop interval.
      *
      * @property _printLoop
      * @type Object
@@ -665,27 +669,28 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Collapses the UI.
+     * Collapses the body and footer.
      *
      * @method collapse
-     * @chainable
      */
     collapse : function () {
         this.set(COLLAPSED, true);
     },
 
     /**
-     * Expands the UI if collapsed.
+     * Expands the body and footer if collapsed.
      *
-     * @method collapse
-     * @chainable
+     * @method expand
      */
     expand : function () {
         this.set(COLLAPSED, false);
     },
 
     /**
-     * Outputs all buffered messages to the console UI.
+     * Outputs buffered messages to the console UI.  This is called from a
+     * scheduled interval until the buffer is empty (referred to as the print
+     * loop).  The number of buffered messages output to the Console in each
+     * iteration will not exceed the configured <code>printLimit</code>.
      * 
      * @method printBuffer
      * @param limit {Number} (optional) max number of buffered entries to write
@@ -760,8 +765,8 @@ Y.extend(Console,Y.Widget,{
             this.get('logEvent'),Y.bind("_onLogEvent",this));
 
         /**
-         * Triggers the processing of an incoming message via the default logic
-         * in _defEntryFn.
+         * Transfers a received message to the print loop buffer.  Default
+         * behavior defined in _defEntryFn.
          *
          * @event entry
          * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
@@ -785,6 +790,12 @@ Y.extend(Console,Y.Widget,{
         this.after('rendered', this._schedulePrint);
     },
 
+    /**
+     * Tears down the instance, flushing event subscriptions and purging the UI.
+     *
+     * @method destructor
+     * @protected
+     */
     destructor : function () {
         var bb = this.get('boundingBox');
 
@@ -939,7 +950,7 @@ Y.extend(Console,Y.Widget,{
      *     <li>totalTime - ms since Console was instantiated or reset</li>
      * </ul>
      *
-     * @mehod _normalizeMessage
+     * @method _normalizeMessage
      * @param e {Event} custom event containing the log message
      * @return Object the message object
      * @protected
@@ -977,7 +988,7 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Sets a timeout for buffered messages to be output to the console.
+     * Sets an interval for buffered messages to be output to the console.
      *
      * @method _schedulePrint
      * @protected
@@ -992,7 +1003,7 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Translates message meta into the markup for a console entry
+     * Translates message meta into the markup for a console entry.
      *
      * @method _createEntryHTML
      * @param m {Object} object literal containing normalized message metadata
@@ -1149,9 +1160,9 @@ Y.extend(Console,Y.Widget,{
 
     /**
      * Event handler for clicking on the Collapse/Expand button. Sets the
-     * &quot;collapsed&quot; attribute accordingly
+     * &quot;collapsed&quot; attribute accordingly.
      *
-     * @method _onClearClick
+     * @method _onCollapseClick
      * @param e {Event} DOM event facade for the click event
      * @protected
      */
@@ -1162,10 +1173,8 @@ Y.extend(Console,Y.Widget,{
 
     /**
      * Setter method for logLevel attribute.  Acceptable values are
-     * &quot;error&quot, &quot;warn&quot, &quot;info&quot (case insensitive),
-     * and Y.Console.LOG_LEVEL_ERROR, Y.Console.LOG_LEVEL_WARN, 
-     * Y.Console.LOG_LEVEL_INFO.  Any other value is treated as
-     * Y.Console.LOG_LEVEL_INFO.
+     * &quot;error&quot, &quot;warn&quot, and &quot;info&quot (case
+     * insensitive).  Other values are treated as &quot;info&quot;.
      *
      * @method _setLogLevel
      * @param v {String} the desired log level
@@ -1238,8 +1247,7 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Updates the UI and schedules or cancels the scheduled buffer printing
-     * operation.
+     * Updates the UI and schedules or cancels the print loop.
      *
      * @method _afterPausedChange
      * @param e {Event} Custom event for the attribute change
