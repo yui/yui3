@@ -67,7 +67,8 @@
 <span class="c"> */</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-    <span class="k">var</span> <span class="nx">o</span><span class="o">={</span>
+    <span class="k">var</span> <span class="nx">nav</span> <span class="o">=</span> <span class="nx">navigator</span><span class="o">,</span>
+        <span class="nx">o</span> <span class="o">=</span> <span class="o">{</span>
 
         <span class="c">/**</span>
 <span class="c">         * Internet Explorer version number or 0.  Example: 6</span>
@@ -152,7 +153,7 @@
 <span class="c">         * @property caja</span>
 <span class="c">         * @type float</span>
 <span class="c">         */</span>
-        <span class="nx">caja</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+        <span class="nx">caja</span><span class="o">:</span> <span class="nx">nav</span><span class="o">.</span><span class="nx">cajaVersion</span><span class="o">,</span>
 
         <span class="c">/**</span>
 <span class="c">         * Set to true if the page appears to be in SSL</span>
@@ -172,7 +173,7 @@
         
     <span class="o">},</span>
 
-    <span class="nx">ua</span> <span class="o">=</span> <span class="nx">navigator</span> <span class="o">&amp;&amp;</span> <span class="nx">navigator</span><span class="o">.</span><span class="nx">userAgent</span><span class="o">,</span> 
+    <span class="nx">ua</span> <span class="o">=</span> <span class="nx">nav</span> <span class="o">&amp;&amp;</span> <span class="nx">nav</span><span class="o">.</span><span class="nx">userAgent</span><span class="o">,</span> 
 
     <span class="nx">loc</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">location</span><span class="o">,</span>
 
@@ -240,11 +241,6 @@
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/Caja\/([^\s]*)/</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">o</span><span class="o">.</span><span class="nx">caja</span><span class="o">=</span><span class="nb">parseFloat</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
         <span class="o">}</span>
     <span class="o">}</span>
     
