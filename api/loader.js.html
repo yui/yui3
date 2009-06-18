@@ -184,7 +184,7 @@
     <span class="nx">NODE</span> <span class="o">=</span> <span class="s1">&#39;node&#39;</span><span class="o">,</span>
     <span class="nx">NODEBASE</span> <span class="o">=</span> <span class="s1">&#39;node-base&#39;</span><span class="o">,</span>
     <span class="nx">OOP</span> <span class="o">=</span> <span class="s1">&#39;oop&#39;</span><span class="o">,</span>
-    <span class="nx">SELECTOR</span> <span class="o">=</span> <span class="s1">&#39;selector&#39;</span><span class="o">,</span>
+    <span class="nx">SELECTORCSS2</span> <span class="o">=</span> <span class="s1">&#39;selector-css2&#39;</span><span class="o">,</span>
     <span class="nx">SUBSTITUTE</span> <span class="o">=</span> <span class="s1">&#39;substitute&#39;</span><span class="o">,</span>
     <span class="nx">WIDGET</span> <span class="o">=</span> <span class="s1">&#39;widget&#39;</span><span class="o">,</span>
     <span class="nx">WIDGETPOSITION</span> <span class="o">=</span> <span class="s1">&#39;widget-position&#39;</span><span class="o">,</span>
@@ -228,18 +228,23 @@
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DOMBASE</span><span class="o">,</span> <span class="nx">DOMSTYLE</span><span class="o">]</span>
                 <span class="o">},</span>
 
-                <span class="nx">selector</span><span class="o">:</span> <span class="o">{</span>
+                <span class="s1">&#39;selector-native&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DOMBASE</span><span class="o">]</span>
                 <span class="o">},</span>
 
-                <span class="s1">&#39;selector-native&#39;</span><span class="o">:</span> <span class="o">{</span>
+                <span class="s1">&#39;selector-css2&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;selector-native&#39;</span><span class="o">]</span>
+                <span class="o">},</span>
+
+                <span class="s1">&#39;selector&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DOMBASE</span><span class="o">]</span>
                 <span class="o">}</span>
+
             <span class="o">},</span>
 
             <span class="nx">plugins</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;selector-css3&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">SELECTOR</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">SELECTORCSS2</span><span class="o">]</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -250,7 +255,7 @@
 
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;node-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DOMBASE</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">,</span> <span class="nx">SELECTOR</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DOMBASE</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">,</span> <span class="nx">SELECTORCSS2</span><span class="o">]</span>
                 <span class="o">},</span>
 
                 <span class="s1">&#39;node-style&#39;</span><span class="o">:</span> <span class="o">{</span>
