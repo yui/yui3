@@ -550,6 +550,13 @@ Y.DOM = {
 
     _cloneCache: {},
 
+    /**
+     * Inserts content in a node at the given location 
+     * @method addHTML
+     * @param {HTMLElement} node The node to insert into
+     * @param {String} content The content to be inserted 
+     * @param {String} where Where to insert the content; default is after lastChild 
+     */
     addHTML: function(node, content, where) {
         if (typeof content === 'string') {
             content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
