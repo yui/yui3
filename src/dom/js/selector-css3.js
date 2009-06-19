@@ -1,3 +1,10 @@
+/**
+ * The selector css3 module provides support for css3 selectors.
+ * @module selector-css3
+ * @title Selector Utility
+ * @requires yahoo, dom
+ */
+
 /*
     an+b = get every _a_th node starting at the _b_th
     0n+b = no repeat ("0" and "n" may both be omitted (together) , e.g. "0n+1" or "1", not "0+1"), return only the _b_th element

@@ -246,7 +246,7 @@ Y.Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     backIn: function (t, b, c, d, s) {
-        if (s == undefined) {
+        if (s === undefined) {
             s = 1.70158;
         }
         if (t === d) {

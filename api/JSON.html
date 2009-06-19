@@ -475,14 +475,18 @@ pair of object literals, allowing pruning or altering values</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Converts an arbitrary value to a JSON string representation.
-Objects with cyclical references will trigger an exception.
-If a whitelist is provided, only matching object keys will be included.
-If a positive integer or non-empty string is passed as the third
+                                            <p>Converts an arbitrary value to a JSON string representation.</p>
+<p>Objects with cyclical references will trigger an exception.</p>
+<p>If a whitelist is provided, only matching object keys will be
+included.  Alternately, a replacer function may be passed as the
+second parameter.  This function is executed on every value in the
+input, and its return value will be used in place of the original value.
+This is useful to serialize specialized objects or class instances.</p>
+<p>If a positive integer or non-empty string is passed as the third
 parameter, the output will be formatted with carriage returns and
 indentation for readability.  If a String is passed (such as "\t") it
 will be used once for each indentation level.  If a number is passed,
-that number of spaces will be used.
+that number of spaces will be used.</p>
                                         </div>
 
                                         <div class="description">
@@ -493,7 +497,7 @@ that number of spaces will be used.
                                                         <code><span property="yui:name">o</span>
                                                         &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  any arbitrary object to convert to JSON string</span>
+                                                        <span property="yui:description">  any arbitrary value to convert to JSON string</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">w</span>
@@ -551,6 +555,10 @@ spaces to format the output.</span>
                         <h4>Modules</h4>
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_anim
+The Animation Utility provides an API for creating advanced transitions between property values..html" title="anim
+The Animation Utility provides an API for creating advanced transitions between property values.">anim
+The Animation Utility provides an API for creating advanced transitions between property values.</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
@@ -580,7 +588,8 @@ spaces to format the output.</span>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-css2.html" title="selector-css2">selector-css2</a></li>
+                                <li class=""><a href="module_selector-css3.html" title="selector-css3">selector-css3</a></li>
                                 <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>

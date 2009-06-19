@@ -2283,7 +2283,7 @@ YUI.add('selector-css2', function(Y) {
 
 /**
  * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.
- * @module selector
+ * @module selector-css2
  * @title Selector Utility
  * @requires yahoo, dom
  */

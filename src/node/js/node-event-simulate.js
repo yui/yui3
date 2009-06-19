@@ -1,5 +1,5 @@
-/*
- * Functionality to simulate events.
+/**
+ * Adds functionality to simulate events.
  * @module node
  * @submodule node-event-simulate
  */
