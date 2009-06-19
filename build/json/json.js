@@ -146,6 +146,7 @@ var Native = Y.config.win.JSON,
 
     /**
      * Parse a JSON string, returning the native JavaScript representation.
+     *
      * @param s {string} JSON string data
      * @param reviver {function} (optional) function(k,v) passed each key value
      *          pair of object literals, allowing pruning or altering values
@@ -153,7 +154,6 @@ var Native = Y.config.win.JSON,
      * @throws SyntaxError
      * @method parse
      * @static
-     * @public
      */
     // JavaScript implementation in lieu of native browser support.  Based on
     // the json2.js library from http://json.org
@@ -186,7 +186,7 @@ if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
     try {
         test = Native.parse('{"x":1}', function (k,v) {return k=='x' ? 2 : v;});
         switch (test.x) {
-            case 1 : // Reviver not supported (currently FF3.1b2)
+            case 1 : // Reviver not supported
                 _parse = function (s,reviver) {
                     return _SIMPLE.test(s) ?
                             eval('(' + s + ')') :
@@ -194,7 +194,7 @@ if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
                 };
                 break;
 
-            case 2 : // Full support (currently IE8)
+            case 2 : // Full support
                 _parse = function (s, reviver) {
                     return Native.parse(s, reviver);
                 };
@@ -295,16 +295,24 @@ Y.mix(Y.namespace('JSON'),{
     },
 
     /**
-     * Converts an arbitrary value to a JSON string representation.
-     * Objects with cyclical references will trigger an exception.
-     * If a whitelist is provided, only matching object keys will be included.
-     * If a positive integer or non-empty string is passed as the third
+     * <p>Converts an arbitrary value to a JSON string representation.</p>
+     *
+     * <p>Objects with cyclical references will trigger an exception.</p>
+     *
+     * <p>If a whitelist is provided, only matching object keys will be
+     * included.  Alternately, a replacer function may be passed as the
+     * second parameter.  This function is executed on every value in the
+     * input, and its return value will be used in place of the original value.
+     * This is useful to serialize specialized objects or class instances.</p>
+     *
+     * <p>If a positive integer or non-empty string is passed as the third
      * parameter, the output will be formatted with carriage returns and
      * indentation for readability.  If a String is passed (such as "\t") it
      * will be used once for each indentation level.  If a number is passed,
-     * that number of spaces will be used.
+     * that number of spaces will be used.</p>
+     *
      * @method stringify
-     * @param o {MIXED} any arbitrary object to convert to JSON string
+     * @param o {MIXED} any arbitrary value to convert to JSON string
      * @param w {Array|Function} (optional) whitelist of acceptable object
      *                  keys to include, or a replacer function to modify the
      *                  raw value before serialization
@@ -312,7 +320,6 @@ Y.mix(Y.namespace('JSON'),{
      *                  spaces to format the output.
      * @return {string} JSON string representation of the input
      * @static
-     * @public
      */
     stringify : function (o,w,ind) {
 
