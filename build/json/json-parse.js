@@ -146,6 +146,7 @@ var Native = Y.config.win.JSON,
 
     /**
      * Parse a JSON string, returning the native JavaScript representation.
+     *
      * @param s {string} JSON string data
      * @param reviver {function} (optional) function(k,v) passed each key value
      *          pair of object literals, allowing pruning or altering values
@@ -153,7 +154,6 @@ var Native = Y.config.win.JSON,
      * @throws SyntaxError
      * @method parse
      * @static
-     * @public
      */
     // JavaScript implementation in lieu of native browser support.  Based on
     // the json2.js library from http://json.org
@@ -186,7 +186,7 @@ if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
     try {
         test = Native.parse('{"x":1}', function (k,v) {return k=='x' ? 2 : v;});
         switch (test.x) {
-            case 1 : // Reviver not supported (currently FF3.1b2)
+            case 1 : // Reviver not supported
                 _parse = function (s,reviver) {
                     return _SIMPLE.test(s) ?
                             eval('(' + s + ')') :
@@ -194,7 +194,7 @@ if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
                 };
                 break;
 
-            case 2 : // Full support (currently IE8)
+            case 2 : // Full support
                 _parse = function (s, reviver) {
                     return Native.parse(s, reviver);
                 };

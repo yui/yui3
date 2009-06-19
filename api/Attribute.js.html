@@ -117,7 +117,7 @@
 <span class="c">     * of attributes for derived classes, accounting for values passed into the constructor.&lt;/p&gt;</span>
 <span class="c">     *</span>
 <span class="c">     * @class Attribute</span>
-<span class="c">     * @uses Event.Target</span>
+<span class="c">     * @uses EventTarget</span>
 <span class="c">     */</span>
     <span class="k">function</span> <span class="nx">Attribute</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
@@ -202,7 +202,7 @@
 <span class="c">         *    false from the validator function will prevent the value from being stored.&lt;/dd&gt;</span>
 <span class="c">         *    </span>
 <span class="c">         *    &lt;dt&gt;broadcast &amp;#60;int&amp;#62;&lt;/dt&gt;</span>
-<span class="c">         *    &lt;dd&gt;If and how attribute change events for this attribute should be broadcast. See Event.Custom&#39;s &lt;a href=&quot;Event.Custom.html#property_broadcast&quot;&gt;broadcast&lt;/a&gt; property for </span>
+<span class="c">         *    &lt;dd&gt;If and how attribute change events for this attribute should be broadcast. See CustomEvent&#39;s &lt;a href=&quot;CustomEvent.html#property_broadcast&quot;&gt;broadcast&lt;/a&gt; property for </span>
 <span class="c">         *    valid values. By default attribute change events are not broadcast.&lt;/dd&gt;</span>
 <span class="c">         *</span>
 <span class="c">         *    &lt;dt&gt;lazyAdd &amp;#60;boolean&amp;#62;&lt;/dt&gt;</span>
@@ -598,7 +598,7 @@
 <span class="c">         *</span>
 <span class="c">         * @private</span>
 <span class="c">         * @method _defAttrChangeFn</span>
-<span class="c">         * @param {Event.Facade} e The event object for attribute change events.</span>
+<span class="c">         * @param {EventFacade} e The event object for attribute change events.</span>
 <span class="c">         */</span>
         <span class="nx">_defAttrChangeFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_setAttrVal</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">e</span><span class="o">.</span><span class="nx">subAttrName</span><span class="o">,</span> <span class="nx">e</span><span class="o">.</span><span class="nx">prevVal</span><span class="o">,</span> <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">))</span> <span class="o">{</span>
@@ -916,6 +916,7 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -940,18 +941,19 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-css2.html" title="selector-css2">selector-css2</a></li>
+                                <li class=""><a href="module_selector-css3.html" title="selector-css3">selector-css3</a></li>
                                 <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 

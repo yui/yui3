@@ -66,7 +66,7 @@ var Lang = Y.Lang,
  * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
- * @return {Event.Handle} the detach handle
+ * @return {EventHandle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.delegate = {

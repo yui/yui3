@@ -37,7 +37,7 @@ var GLOBAL_ENV = YUI.Env,
 
         // create custom event
 
-/*!  DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */
+/*! DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */
 
         // Internet Explorer: use the readyState of a defered script.
         // This isolates what appears to be a safe moment to manipulate
@@ -164,7 +164,7 @@ if (GLOBAL_ENV.DOMReady) {
 /**
  * Wraps a DOM event, properties requiring browser abstraction are
  * fixed here.  Provids a security layer when required.
- * @class EventFacade
+ * @class DOMEventFacade
  * @param ev {Event} the DOM event
  * @param currentTarget {HTMLElement} the element the listener was attached to
  * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
@@ -310,11 +310,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     //////////////////////////////////////////////////////
 
-    /**
-     * The keyCode for key events.  Uses charCode if keyCode is not available
-     * @property keyCode
-     * @type int
-     */
     c = e.keyCode || e.charCode || 0;
 
     if (ua.webkit && (c in webkitKeymap)) {
@@ -1584,7 +1579,7 @@ var Lang = Y.Lang,
  * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
- * @return {Event.Handle} the detach handle
+ * @return {EventHandle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.delegate = {
@@ -1805,7 +1800,7 @@ var isString = Y.Lang.isString,
  * @param el {string|node} The element(s) to assign the listener to.
  * @param spec {string} Optional.  String representing a selector that must 
  * match the target of the event in order for the listener to be called.
- * @return {Event.Handle} the detach handle
+ * @return {EventHandle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.mouseenter = eventConfig;
@@ -1822,7 +1817,7 @@ Y.Env.evt.plugins.mouseenter = eventConfig;
 * @param el {string|node} The element(s) to assign the listener to.
 * @param spec {string} Optional.  String representing a selector that must 
 * match the target of the event in order for the listener to be called.
-* @return {Event.Handle} the detach handle
+* @return {EventHandle} the detach handle
 * @for YUI
  */
 Y.Env.evt.plugins.mouseleave = eventConfig;

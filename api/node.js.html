@@ -167,8 +167,6 @@
 <span class="c">// be available through Node.on</span>
 <span class="c"></span><span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Node</span><span class="o">.</span><span class="nx">DOM_EVENTS</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">);</span>
 
-<span class="nx">Node</span><span class="o">.</span><span class="nx">EXEC_SCRIPTS</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-
 <span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span> <span class="o">=</span> <span class="o">{};</span>
 
 <span class="c">/**</span>
@@ -726,13 +724,10 @@
 <span class="c">     * @method insert</span>
 <span class="c">     * @param {String | Y.Node | HTMLElement} content The content to insert </span>
 <span class="c">     * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.</span>
-<span class="c">     * @param {Boolean} execScripts Whether or not to execute any scripts found in</span>
-<span class="c">     * the content.  If false, all scripts will be stripped out.</span>
 <span class="c">     * @chainable</span>
 <span class="c">     */</span>
-    <span class="nx">insert</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">content</span><span class="o">,</span> <span class="nx">where</span><span class="o">,</span> <span class="nx">execScripts</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">insert</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">content</span><span class="o">,</span> <span class="nx">where</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">content</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">execScripts</span> <span class="o">=</span> <span class="o">(</span><span class="nx">execScripts</span> <span class="o">&amp;&amp;</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">EXEC_SCRIPTS</span><span class="o">);</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">where</span> <span class="o">===</span> <span class="s1">&#39;number&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// allow index</span>
 <span class="c"></span>                <span class="nx">where</span> <span class="o">=</span> <span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]].</span><span class="nx">childNodes</span><span class="o">[</span><span class="nx">where</span><span class="o">];</span>
             <span class="o">}</span>
@@ -742,7 +737,7 @@
             <span class="k">if</span> <span class="o">(!</span><span class="nx">where</span> <span class="o">||</span> <span class="c">// only allow inserting into this Node&#39;s subtree</span>
 <span class="c"></span>                <span class="o">(!</span><span class="nx">g_restrict</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">||</span> 
                     <span class="o">(</span><span class="k">typeof</span> <span class="nx">where</span> <span class="o">!==</span> <span class="s1">&#39;string&#39;</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">where</span><span class="o">))))</span> <span class="o">{</span> 
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">addHTML</span><span class="o">(</span><span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="nx">content</span><span class="o">,</span> <span class="nx">where</span><span class="o">,</span> <span class="nx">execScripts</span><span class="o">);</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">addHTML</span><span class="o">(</span><span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="nx">content</span><span class="o">,</span> <span class="nx">where</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
@@ -752,37 +747,30 @@
 <span class="c">     * Inserts the content as the firstChild of the node. </span>
 <span class="c">     * @method prepend</span>
 <span class="c">     * @param {String | Y.Node | HTMLElement} content The content to insert </span>
-<span class="c">     * @param {Boolean} execScripts Whether or not to execute any scripts found in</span>
-<span class="c">     * the content.  If false, all scripts will be stripped out.</span>
 <span class="c">     * @chainable</span>
 <span class="c">     */</span>
-    <span class="nx">prepend</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">content</span><span class="o">,</span> <span class="nx">execScripts</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">insert</span><span class="o">(</span><span class="nx">content</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">execScripts</span><span class="o">);</span>
+    <span class="nx">prepend</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">content</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">insert</span><span class="o">(</span><span class="nx">content</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
 <span class="c">     * Inserts the content as the lastChild of the node. </span>
 <span class="c">     * @method append</span>
 <span class="c">     * @param {String | Y.Node | HTMLElement} content The content to insert </span>
-<span class="c">     * @param {Boolean} execScripts Whether or not to execute any scripts found in</span>
-<span class="c">     * the content.  If false, all scripts will be stripped out.</span>
 <span class="c">     * @chainable</span>
 <span class="c">     */</span>
-    <span class="nx">append</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">content</span><span class="o">,</span> <span class="nx">execScripts</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">insert</span><span class="o">(</span><span class="nx">content</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">execScripts</span><span class="o">);</span>
+    <span class="nx">append</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">content</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">insert</span><span class="o">(</span><span class="nx">content</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
 <span class="c">     * Replaces the node&#39;s current content with the content.</span>
 <span class="c">     * @method setContent</span>
 <span class="c">     * @param {String | Y.Node | HTMLElement} content The content to insert </span>
-<span class="c">     * @param {Boolean} execScripts Whether or not to execute any scripts found in</span>
-<span class="c">     * the content.  If false, all scripts will be stripped out.</span>
 <span class="c">     * @chainable</span>
 <span class="c">     */</span>
-    <span class="nx">setContent</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">content</span><span class="o">,</span> <span class="nx">execScripts</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">execScripts</span> <span class="o">=</span> <span class="o">(</span><span class="nx">execScripts</span> <span class="o">&amp;&amp;</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">EXEC_SCRIPTS</span><span class="o">);</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">addHTML</span><span class="o">(</span><span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="nx">content</span><span class="o">,</span> <span class="s1">&#39;replace&#39;</span><span class="o">,</span> <span class="nx">execScripts</span><span class="o">);</span>
+    <span class="nx">setContent</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">content</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">addHTML</span><span class="o">(</span><span class="nx">g_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="nx">content</span><span class="o">,</span> <span class="s1">&#39;replace&#39;</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">},</span>
 
@@ -810,6 +798,7 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -834,18 +823,19 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-css2.html" title="selector-css2">selector-css2</a></li>
+                                <li class=""><a href="module_selector-css3.html" title="selector-css3">selector-css3</a></li>
                                 <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 

@@ -81,16 +81,24 @@ Y.mix(Y.namespace('JSON'),{
     },
 
     /**
-     * Converts an arbitrary value to a JSON string representation.
-     * Objects with cyclical references will trigger an exception.
-     * If a whitelist is provided, only matching object keys will be included.
-     * If a positive integer or non-empty string is passed as the third
+     * <p>Converts an arbitrary value to a JSON string representation.</p>
+     *
+     * <p>Objects with cyclical references will trigger an exception.</p>
+     *
+     * <p>If a whitelist is provided, only matching object keys will be
+     * included.  Alternately, a replacer function may be passed as the
+     * second parameter.  This function is executed on every value in the
+     * input, and its return value will be used in place of the original value.
+     * This is useful to serialize specialized objects or class instances.</p>
+     *
+     * <p>If a positive integer or non-empty string is passed as the third
      * parameter, the output will be formatted with carriage returns and
      * indentation for readability.  If a String is passed (such as "\t") it
      * will be used once for each indentation level.  If a number is passed,
-     * that number of spaces will be used.
+     * that number of spaces will be used.</p>
+     *
      * @method stringify
-     * @param o {MIXED} any arbitrary object to convert to JSON string
+     * @param o {MIXED} any arbitrary value to convert to JSON string
      * @param w {Array|Function} (optional) whitelist of acceptable object
      *                  keys to include, or a replacer function to modify the
      *                  raw value before serialization
@@ -98,7 +106,6 @@ Y.mix(Y.namespace('JSON'),{
      *                  spaces to format the output.
      * @return {string} JSON string representation of the input
      * @static
-     * @public
      */
     stringify : function (o,w,ind) {
 

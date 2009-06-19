@@ -251,7 +251,7 @@
                     }
                 ];
 
-                var q = new Y.Queue();
+                var q = new Y.AsyncQueue();
                 for (var i = 0; i < fns.length; i++){
                     q.add({
                         timeout:stepDelay,

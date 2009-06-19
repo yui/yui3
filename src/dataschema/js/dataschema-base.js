@@ -1,9 +1,12 @@
 /**
- * The DataSchema utility provides a common configurable interface for widgets to
- * apply a given schema to a variety of data.
+ * Provides the base DataSchema implementation, which can be extended to 
+ * create DataSchemas for specific data formats, such XML, JSON, Text and 
+ * Arrays
  *
  * @module dataschema
+ * @submodule dataschema-base
  */
+
 var LANG = Y.Lang,
 /**
  * Base class for the YUI DataSchema utility.

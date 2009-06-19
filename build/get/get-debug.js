@@ -492,10 +492,12 @@ Y.Get = function() {
 
         /**
          * The number of request required before an automatic purge.
+         * Can be configured via the 'purgethreshold' config
          * property PURGE_THRESH
          * @static
          * @type int
          * @default 20
+         * @private
          */
         PURGE_THRESH: 20,
 

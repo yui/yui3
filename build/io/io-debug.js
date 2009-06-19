@@ -731,6 +731,7 @@ YUI.add('io-base', function(Y) {
    	}
 
    	_io.start = _ioStart;
+	_io.complete = _ioComplete;
    	_io.success = _ioSuccess;
    	_io.failure = _ioFailure;
    	_io.isInProgress = _isInProgress;
@@ -792,13 +793,19 @@ YUI.add('io-form', function(Y) {
         * @return string
         */
         _serialize: function(o) {
-			var id = (typeof o.id === 'string') ? o.id : o.id.getAttribute('id'),
-            	f = Y.config.doc.getElementById(id),
-            	eUC = encodeURIComponent,
+			var eUC = encodeURIComponent,
             	data = [],
             	useDf = o.useDisabled || false,
             	item = 0,
-            	e, n, v, d, i, ilen, j, jlen, o;
+            	e, f, n, v, d, i, ilen, j, jlen, o,
+            	id = (typeof o.id === 'string') ? o.id : o.id.getAttribute('id');
+
+            	if (!id) {
+					id = Y.guid('io:');
+					o.id.setAttribute('id', id);
+				}
+
+            	f = Y.config.doc.getElementById(id);
 
             // Iterate over the form elements collection to construct the
             // label-value pairs.

@@ -107,7 +107,7 @@
          * @param sFn {String} The event to listen for, or method to inject logic before.
          * @param fn {Function} The handler function. For events, the "on" moment listener. For methods, the function to execute before the given method is executed.
          * @param context {Object} An optional context to call the handler with. The default context is the plugin instance.
-         * @return handle {Event.Handle} The detach handle for the handler.
+         * @return handle {EventHandle} The detach handle for the handler.
          */
         doBefore: function(sFn, fn, context) {
             var host = this.get("host"),
@@ -134,7 +134,7 @@
          * @param sFn {String} The event to listen for, or method to inject logic after.
          * @param fn {Function} The handler function. For events, the "after" moment listener. For methods, the function to execute after the given method is executed.
          * @param context {Object} An optional context to call the handler with. The default context is the plugin instance.
-         * @return handle {Event.Handle} The detach handle for the handler.
+         * @return handle {EventHandle} The detach handle for the handler.
          */
         doAfter: function(sFn, fn, context) {
             var host = this.get("host"),

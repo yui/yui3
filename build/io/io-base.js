@@ -1,8 +1,9 @@
 YUI.add('io-base', function(Y) {
 
    /**
-   	* HTTP communications module.
+   	* Base IO functionality. Provides basic XHR transport support.
    	* @module io
+   	* @submodule io-base
    	*/
 
    /**
@@ -718,6 +719,7 @@ YUI.add('io-base', function(Y) {
    	}
 
    	_io.start = _ioStart;
+	_io.complete = _ioComplete;
    	_io.success = _ioSuccess;
    	_io.failure = _ioFailure;
    	_io.isInProgress = _isInProgress;

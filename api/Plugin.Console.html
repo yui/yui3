@@ -66,10 +66,27 @@ debug versions of YUI modules will include logging statements to offer some
 insight into the steps executed during that module's operation.  Including
 log statements in your code will cause those messages to also appear in the
 Console.  Use Console to aid in developing your page or application.
-Entry categories are also referred to as the log level, and entries are
-filtered against the configured logLevel.
+Entry categories &quot;info&quot;, &quot;warn&quot;, and &quot;error&quot;
+are also referred to as the log level, and entries are filtered against the
+configured logLevel.
                     </div>
 
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong property="yui:name">Plugin.Console</strong>
+                                <code>
+                                    (
+                                    )
+                                </code>
+                                <div class="description">
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div rel="yui:properties" resource="#properties">
                         <div class="section field details">
@@ -109,13 +126,31 @@ during destroy.
 
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:property" resource="#property__foot">
+                                    <h4><a name="property__foot" property="yui:name">_foot</a>
+                                        - <code>protected <span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Reference to the Node instance containing the footer contents.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: null
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:property" resource="#property__head">
                                     <h4><a name="property__head" property="yui:name">_head</a>
                                         - <code>protected <span property="yui:type">Node</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Reference to the Node instance containing the head contents.
+                                            Reference to the Node instance containing the header contents.
                                         </div>
                                     </div>
      
@@ -133,8 +168,8 @@ during destroy.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Object API returned from <code>Y.later</code>. Holds the timer id
-returned by <code>setInterval</code> for scheduling of buffered messages.
+                                            Holds the object API returned from <code>Y.later</code> for the print
+loop interval.
                                         </div>
                                     </div>
      
@@ -315,10 +350,12 @@ many of the {placeholder}s from Console.CHROME_CLASSES as well as:
 section of the Console when it is rendered.  The template includes
 these {placeholder}s:
 <ul>
+<li>console_button_class - contributed by Console.CHROME_CLASSES</li>
+<li>console_collapse_class - contributed by Console.CHROME_CLASSES</li>
 <li>console_hd_class - contributed by Console.CHROME_CLASSES</li>
 <li>console_title_class - contributed by Console.CHROME_CLASSES</li>
-<li>str_title - pulled from attribute strings.title</li>
 <li>str_collapse - pulled from attribute strings.collapse</li>
+<li>str_title - pulled from attribute strings.title</li>
 </ul>
                                         </div>
                                     </div>
@@ -576,8 +613,7 @@ consoleLimit attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Updates the UI and schedules or cancels the scheduled buffer printing
-operation.
+                                            Updates the UI and schedules or cancels the print loop.
                                         </div>
 
                                         <div class="description">
@@ -768,7 +804,7 @@ attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Translates message meta into the markup for a console entry
+                                            Translates message meta into the markup for a console entry.
                                         </div>
 
                                         <div class="description">
@@ -1227,6 +1263,58 @@ to be buffered for printing.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onCollapseClick">
+                                    <h4>
+                                        <a name="method__onCollapseClick">_onCollapseClick</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onCollapseClick</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Event handler for clicking on the Collapse/Expand button. Sets the
+&quot;collapsed&quot; attribute accordingly.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  DOM event facade for the click event</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__onLogEvent">
                                     <h4>
                                         <a name="method__onLogEvent">_onLogEvent</a></h4>
@@ -1366,7 +1454,7 @@ attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Sets a timeout for buffered messages to be output to the console.
+                                            Sets an interval for buffered messages to be output to the console.
                                         </div>
 
                                         <div class="description">
@@ -1409,10 +1497,8 @@ attribute.
                                         
                                         <div class="description" property="yui:description">
                                             Setter method for logLevel attribute.  Acceptable values are
-&quot;error&quot, &quot;warn&quot, &quot;info&quot (case insensitive),
-and Y.Console.LOG_LEVEL_ERROR, Y.Console.LOG_LEVEL_WARN, 
-Y.Console.LOG_LEVEL_INFO.  Any other value is treated as
-Y.Console.LOG_LEVEL_INFO.
+&quot;error&quot, &quot;warn&quot, and &quot;info&quot (case
+insensitive).  Other values are treated as &quot;info&quot;.
                                         </div>
 
                                         <div class="description">
@@ -1771,7 +1857,7 @@ Overrides Widget.prototype._uiSetHeight.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Collapses the UI.
+                                            Collapses the body and footer.
                                         </div>
 
                                         <div class="description">
@@ -1785,9 +1871,80 @@ Overrides Widget.prototype._uiSetHeight.
                                                     <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
-                                            <div class="chainable">
-                                                <strong>Chainable:</strong> This method is chainable.
-                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method_destructor">
+                                    <h4>
+                                        <a name="method_destructor">destructor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">destructor</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Tears down the instance, flushing event subscriptions and purging the UI.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_expand">
+                                    <h4>
+                                        <a name="method_expand">expand</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">expand</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Expands the body and footer if collapsed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
 
              
 
@@ -1905,7 +2062,10 @@ internal events, and subscribe to the configured logEvent.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Outputs all buffered messages to the console UI.
+                                            Outputs buffered messages to the console UI.  This is called from a
+scheduled interval until the buffer is empty (referred to as the print
+loop).  The number of buffered messages output to the Console in each
+iteration will not exceed the configured <code>printLimit</code>.
                                         </div>
 
                                         <div class="description">
@@ -2097,30 +2257,57 @@ internal events, and subscribe to the configured logEvent.
                         </div>
 
                         <div rel="yui:inheritance">                    
-                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
-                                <h4>Methods inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="EventTarget.html">
+                                <h4>Methods inherited from <a href="EventTarget.html" property="yui:name" title="EventTarget">EventTarget</a>:</h4>
                                 <div class="content" rel="yui:methods">
                                     <code>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__destroyPlugins">                                        
-                                            <a class="private" href="Plugin.Host.html#method__destroyPlugins" property="yui:name" title="_destroyPlugins">_destroyPlugins</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__getType">                                        
+                                            <a class="private" href="EventTarget.html#method__getType" property="yui:name" title="_getType">_getType</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__initPlugins">                                        
-                                            <a class="private" href="Plugin.Host.html#method__initPlugins" property="yui:name" title="_initPlugins">_initPlugins</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__parseType">                                        
+                                            <a class="private" href="EventTarget.html#method__parseType" property="yui:name" title="_parseType">_parseType</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__plug">                                        
-                                            <a class="private" href="Plugin.Host.html#method__plug" property="yui:name" title="_plug">_plug</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_addTarget">                                        
+                                            <a class="" href="EventTarget.html#method_addTarget" property="yui:name" title="addTarget">addTarget</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__unplug">                                        
-                                            <a class="private" href="Plugin.Host.html#method__unplug" property="yui:name" title="_unplug">_unplug</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_after">                                        
+                                            <a class="" href="EventTarget.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method_hasPlugin">                                        
-                                            <a class="" href="Plugin.Host.html#method_hasPlugin" property="yui:name" title="hasPlugin">hasPlugin</a><span class="">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_before">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_before" property="yui:name" title="before">before</a><span class=" deprecated">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method_plug">                                        
-                                            <a class="" href="Plugin.Host.html#method_plug" property="yui:name" title="plug">plug</a><span class="">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_bubble">                                        
+                                            <a class="" href="EventTarget.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method_unplug">                                        
-                                            <a class="" href="Plugin.Host.html#method_unplug" property="yui:name" title="unplug">unplug</a>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detach">                                        
+                                            <a class="" href="EventTarget.html#method_detach" property="yui:name" title="detach">detach</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detachAll">                                        
+                                            <a class="" href="EventTarget.html#method_detachAll" property="yui:name" title="detachAll">detachAll</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_fire">                                        
+                                            <a class="" href="EventTarget.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getEvent">                                        
+                                            <a class="" href="EventTarget.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_on">                                        
+                                            <a class="" href="EventTarget.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_publish">                                        
+                                            <a class="" href="EventTarget.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_removeTarget">                                        
+                                            <a class="" href="EventTarget.html#method_removeTarget" property="yui:name" title="removeTarget">removeTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_subscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribeAll">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
                                             </span>
                                     </code>
                                 </div>
@@ -2380,15 +2567,30 @@ internal events, and subscribe to the configured logEvent.
                                     </code>
                                 </div>
                             </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="Event.Target.html">
-                                <h4>Methods inherited from <a href="Event.Target.html" property="yui:name" title="Event.Target">Event.Target</a>:</h4>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
+                                <h4>Methods inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
                                 <div class="content" rel="yui:methods">
                                     <code>
-                                            <span rel="yui:method" resource="Event.Target.html#method__getType">                                        
-                                            <a class="" href="Event.Target.html#method__getType" property="yui:name" title="_getType">_getType</a><span class="">,</span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__destroyPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__destroyPlugins" property="yui:name" title="_destroyPlugins">_destroyPlugins</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Event.Target.html#method__parseType">                                        
-                                            <a class="private" href="Event.Target.html#method__parseType" property="yui:name" title="_parseType">_parseType</a>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__initPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__initPlugins" property="yui:name" title="_initPlugins">_initPlugins</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__plug">                                        
+                                            <a class="private" href="Plugin.Host.html#method__plug" property="yui:name" title="_plug">_plug</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__unplug">                                        
+                                            <a class="private" href="Plugin.Host.html#method__unplug" property="yui:name" title="_unplug">_unplug</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_hasPlugin">                                        
+                                            <a class="" href="Plugin.Host.html#method_hasPlugin" property="yui:name" title="hasPlugin">hasPlugin</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_plug">                                        
+                                            <a class="" href="Plugin.Host.html#method_plug" property="yui:name" title="plug">plug</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_unplug">                                        
+                                            <a class="" href="Plugin.Host.html#method_unplug" property="yui:name" title="unplug">unplug</a>
                                             </span>
                                     </code>
                                 </div>
@@ -2597,8 +2799,8 @@ internal events, and subscribe to the configured logEvent.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Triggers the processing of an incoming message via the default logic
-in _defEntryFn.
+                                            Transfers a received message to the print loop buffer.  Default
+behavior defined in _defEntryFn.
                                         </div>
 
                                         <div class="description">
@@ -3416,7 +3618,8 @@ DOM tree and impacting page performance.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             If a category is not specified in the Y.log(..) statement, this
-category will be used. Category is also called &quot;log level&quot;.
+category will be used. Categories &quot;info&quot;,
+&quot;warn&quot;, and &quot;error&quot; are also called log level.
                                         </div>
                                     </div>
  
@@ -3470,7 +3673,7 @@ source will be used.
                                         <div class="description" property="yui:description">
                                             String with units, or number, representing the height of the Console,
 inclusive of header and footer. If a number is provided, the default
-unit, defined by the Widgets DEF_UNIT, property is used.
+unit, defined by Widget's DEF_UNIT, property is used.
                                         </div>
                                     </div>
  
@@ -3518,7 +3721,7 @@ time between log messages.
                                     </div>        
                                     <div class="" rel="yui:attribute" resource="#config_logLevel">
                                     <h4><a name="config_logLevel">logLevel</a>
-                                        <code>- <span property="yui:type">String|Number</span></code>
+                                        <code>- <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -3527,7 +3730,7 @@ logLevel value for all Console instances defaults from the
 Y.config.logLevel YUI configuration, or Console.LOG_LEVEL_INFO if
 that configuration is not set.
 Possible values are &quot;info&quot;, &quot;warn&quot;,
-&quot;error&quot; (case insensitive), or the corresponding statics
+&quot;error&quot; (case insensitive), or their corresponding statics
 Console.LOG_LEVEL_INFO and so on.
                                         </div>
                                     </div>
@@ -3599,15 +3802,14 @@ When paused, messages will accumulate in the buffer.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Maximum number of entries printed in each printBuffer iteration.
-This is used to prevent excessive logging bogging down runtime
-performance.
+                                            Maximum number of entries printed in each iteration of the print
+loop. This is used to prevent excessive logging locking the page UI.
                                         </div>
                                     </div>
  
      
                                     <div class="default">
-                                        Default Value: 00
+                                        Default Value: 50
                                     </div>        
 
                                     <hr />
@@ -3618,8 +3820,8 @@ performance.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Millisecond timeout to maintain before emptying buffer of Console
-entries to the UI.
+                                            Millisecond timeout between iterations of the print loop, moving
+entries from the buffer to the UI.
                                         </div>
                                     </div>
  
@@ -3697,7 +3899,7 @@ Default collection contains the following name:value pairs:
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             String with units, or number, representing the width of the Console.
-If a number is provided, the default unit, defined by the Widgets
+If a number is provided, the default unit, defined by Widget's
 DEF_UNIT, property is used.
                                         </div>
                                     </div>
@@ -3788,6 +3990,7 @@ DEF_UNIT, property is used.
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class="selected"><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -3812,18 +4015,19 @@ DEF_UNIT, property is used.
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
+                                <li class=""><a href="module_selector-css2.html" title="selector-css2">selector-css2</a></li>
+                                <li class=""><a href="module_selector-css3.html" title="selector-css3">selector-css3</a></li>
                                 <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -3840,6 +4044,7 @@ DEF_UNIT, property is used.
                         <ul class="content">        
                                 <li class="protected"><a href="#property__body" title="_body">_body</a></li>
                                 <li class="protected"><a href="#property__evtCat" title="_evtCat">_evtCat</a></li>
+                                <li class="protected"><a href="#property__foot" title="_foot">_foot</a></li>
                                 <li class="protected"><a href="#property__head" title="_head">_head</a></li>
                                 <li class="protected"><a href="#property__printLoop" title="_printLoop">_printLoop</a></li>
                                 <li class=""><a href="#property_buffer" title="buffer">buffer</a></li>
@@ -3877,6 +4082,7 @@ DEF_UNIT, property is used.
                                 <li class="protected"><a href="#method__isInLogLevel" title="_isInLogLevel">_isInLogLevel</a></li>
                                 <li class="protected"><a href="#method__normalizeMessage" title="_normalizeMessage">_normalizeMessage</a></li>
                                 <li class="protected"><a href="#method__onClearClick" title="_onClearClick">_onClearClick</a></li>
+                                <li class="protected"><a href="#method__onCollapseClick" title="_onCollapseClick">_onCollapseClick</a></li>
                                 <li class="protected"><a href="#method__onLogEvent" title="_onLogEvent">_onLogEvent</a></li>
                                 <li class="protected"><a href="#method__onPauseClick" title="_onPauseClick">_onPauseClick</a></li>
                                 <li class="protected"><a href="#method__schedulePrint" title="_schedulePrint">_schedulePrint</a></li>
@@ -3889,6 +4095,8 @@ DEF_UNIT, property is used.
                                 <li class="protected"><a href="#method_bindUI" title="bindUI">bindUI</a></li>
                                 <li class=""><a href="#method_clearConsole" title="clearConsole">clearConsole</a></li>
                                 <li class=""><a href="#method_collapse" title="collapse">collapse</a></li>
+                                <li class="protected"><a href="#method_destructor" title="destructor">destructor</a></li>
+                                <li class=""><a href="#method_expand" title="expand">expand</a></li>
                                 <li class="protected"><a href="#method_initializer" title="initializer">initializer</a></li>
                                 <li class=""><a href="#method_log" title="log">log</a></li>
                                 <li class=""><a href="#method_printBuffer" title="printBuffer">printBuffer</a></li>
@@ -3958,7 +4166,7 @@ DEF_UNIT, property is used.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.Console", "name": "_afterCollapsedChange", "url": "Plugin.Console.html#method__afterCollapsedChange", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_afterConsoleLimitChange", "url": "Plugin.Console.html#method__afterConsoleLimitChange", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_afterPausedChange", "url": "Plugin.Console.html#method__afterPausedChange", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_afterStringsChange", "url": "Plugin.Console.html#method__afterStringsChange", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_afterVisibleChange", "url": "Plugin.Console.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "bindUI", "url": "Plugin.Console.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_body", "url": "Plugin.Console.html#property__body", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "buffer", "url": "Plugin.Console.html#property_buffer", "type": "property"}, {"access": "protected", "host": "Plugin.Console", "name": "_cancelPrintLoop", "url": "Plugin.Console.html#method__cancelPrintLoop", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "clearConsole", "url": "Plugin.Console.html#method_clearConsole", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "collapse", "url": "Plugin.Console.html#method_collapse", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "collapsed", "url": "Plugin.Console.html#config_collapsed", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "collapsedChange", "url": "Plugin.Console.html#event_collapsedChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "Console.ATTRS", "url": "Plugin.Console.html#property_Console.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.BODY_TEMPLATE", "url": "Plugin.Console.html#property_Console.BODY_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.CHROME_CLASSES", "url": "Plugin.Console.html#property_Console.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.ENTRY_CLASSES", "url": "Plugin.Console.html#property_Console.ENTRY_CLASSES", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.ENTRY_TEMPLATE", "url": "Plugin.Console.html#property_Console.ENTRY_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.FOOTER_TEMPLATE", "url": "Plugin.Console.html#property_Console.FOOTER_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.HEADER_TEMPLATE", "url": "Plugin.Console.html#property_Console.HEADER_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "consoleLimit", "url": "Plugin.Console.html#config_consoleLimit", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "consoleLimitChange", "url": "Plugin.Console.html#event_consoleLimitChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "Console.LOG_LEVEL_ERROR", "url": "Plugin.Console.html#property_Console.LOG_LEVEL_ERROR", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.LOG_LEVEL_INFO", "url": "Plugin.Console.html#property_Console.LOG_LEVEL_INFO", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.LOG_LEVEL_WARN", "url": "Plugin.Console.html#property_Console.LOG_LEVEL_WARN", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.NAME", "url": "Plugin.Console.html#property_Console.NAME", "type": "property"}, {"access": "protected", "host": "Plugin.Console", "name": "_createEntryHTML", "url": "Plugin.Console.html#method__createEntryHTML", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "defaultCategory", "url": "Plugin.Console.html#config_defaultCategory", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "defaultCategoryChange", "url": "Plugin.Console.html#event_defaultCategoryChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "defaultSource", "url": "Plugin.Console.html#config_defaultSource", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "defaultSourceChange", "url": "Plugin.Console.html#event_defaultSourceChange", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "_defEntryFn", "url": "Plugin.Console.html#method__defEntryFn", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_defResetFn", "url": "Plugin.Console.html#method__defResetFn", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_encodeHTML", "url": "Plugin.Console.html#method__encodeHTML", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "entry", "url": "Plugin.Console.html#event_entry", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "entryTemplate", "url": "Plugin.Console.html#config_entryTemplate", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "entryTemplateChange", "url": "Plugin.Console.html#event_entryTemplateChange", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "_evtCat", "url": "Plugin.Console.html#property__evtCat", "type": "property"}, {"access": "protected", "host": "Plugin.Console", "name": "_head", "url": "Plugin.Console.html#property__head", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "height", "url": "Plugin.Console.html#config_height", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "heightChange", "url": "Plugin.Console.html#event_heightChange", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "_htmlEscapeMessage", "url": "Plugin.Console.html#method__htmlEscapeMessage", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_initBody", "url": "Plugin.Console.html#method__initBody", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_initFoot", "url": "Plugin.Console.html#method__initFoot", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_initHead", "url": "Plugin.Console.html#method__initHead", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "initializer", "url": "Plugin.Console.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_isInLogLevel", "url": "Plugin.Console.html#method__isInLogLevel", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "lastTime", "url": "Plugin.Console.html#config_lastTime", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "lastTimeChange", "url": "Plugin.Console.html#event_lastTimeChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "log", "url": "Plugin.Console.html#method_log", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "logEvent", "url": "Plugin.Console.html#config_logEvent", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "logEventChange", "url": "Plugin.Console.html#event_logEventChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "logLevel", "url": "Plugin.Console.html#config_logLevel", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "logLevelChange", "url": "Plugin.Console.html#event_logLevelChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "logSource", "url": "Plugin.Console.html#config_logSource", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "logSourceChange", "url": "Plugin.Console.html#event_logSourceChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "newestOnTop", "url": "Plugin.Console.html#config_newestOnTop", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "newestOnTopChange", "url": "Plugin.Console.html#event_newestOnTopChange", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "_normalizeMessage", "url": "Plugin.Console.html#method__normalizeMessage", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_onClearClick", "url": "Plugin.Console.html#method__onClearClick", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_onLogEvent", "url": "Plugin.Console.html#method__onLogEvent", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_onPauseClick", "url": "Plugin.Console.html#method__onPauseClick", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "paused", "url": "Plugin.Console.html#config_paused", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "pausedChange", "url": "Plugin.Console.html#event_pausedChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "printBuffer", "url": "Plugin.Console.html#method_printBuffer", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "printLimit", "url": "Plugin.Console.html#config_printLimit", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "printLimitChange", "url": "Plugin.Console.html#event_printLimitChange", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "_printLoop", "url": "Plugin.Console.html#property__printLoop", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "printTimeout", "url": "Plugin.Console.html#config_printTimeout", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "printTimeoutChange", "url": "Plugin.Console.html#event_printTimeoutChange", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "renderUI", "url": "Plugin.Console.html#method_renderUI", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "reset", "url": "Plugin.Console.html#method_reset", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "reset", "url": "Plugin.Console.html#event_reset", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "_schedulePrint", "url": "Plugin.Console.html#method__schedulePrint", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "scrollIntoView", "url": "Plugin.Console.html#config_scrollIntoView", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "scrollIntoViewChange", "url": "Plugin.Console.html#event_scrollIntoViewChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "scrollToLatest", "url": "Plugin.Console.html#method_scrollToLatest", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_setLogLevel", "url": "Plugin.Console.html#method__setLogLevel", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "startTime", "url": "Plugin.Console.html#config_startTime", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "startTimeChange", "url": "Plugin.Console.html#event_startTimeChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "strings", "url": "Plugin.Console.html#config_strings", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "stringsChange", "url": "Plugin.Console.html#event_stringsChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "syncUI", "url": "Plugin.Console.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_trimOldEntries", "url": "Plugin.Console.html#method__trimOldEntries", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_uiSetHeight", "url": "Plugin.Console.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_uiUpdateCollapsed", "url": "Plugin.Console.html#method__uiUpdateCollapsed", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_uiUpdateFromHideShow", "url": "Plugin.Console.html#method__uiUpdateFromHideShow", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_uiUpdatePaused", "url": "Plugin.Console.html#method__uiUpdatePaused", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "width", "url": "Plugin.Console.html#config_width", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "widthChange", "url": "Plugin.Console.html#event_widthChange", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.Console", "name": "_afterCollapsedChange", "url": "Plugin.Console.html#method__afterCollapsedChange", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_afterConsoleLimitChange", "url": "Plugin.Console.html#method__afterConsoleLimitChange", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_afterPausedChange", "url": "Plugin.Console.html#method__afterPausedChange", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_afterStringsChange", "url": "Plugin.Console.html#method__afterStringsChange", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_afterVisibleChange", "url": "Plugin.Console.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "bindUI", "url": "Plugin.Console.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_body", "url": "Plugin.Console.html#property__body", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "buffer", "url": "Plugin.Console.html#property_buffer", "type": "property"}, {"access": "protected", "host": "Plugin.Console", "name": "_cancelPrintLoop", "url": "Plugin.Console.html#method__cancelPrintLoop", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "clearConsole", "url": "Plugin.Console.html#method_clearConsole", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "collapse", "url": "Plugin.Console.html#method_collapse", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "collapsed", "url": "Plugin.Console.html#config_collapsed", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "collapsedChange", "url": "Plugin.Console.html#event_collapsedChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "Console.ATTRS", "url": "Plugin.Console.html#property_Console.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.BODY_TEMPLATE", "url": "Plugin.Console.html#property_Console.BODY_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.CHROME_CLASSES", "url": "Plugin.Console.html#property_Console.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.ENTRY_CLASSES", "url": "Plugin.Console.html#property_Console.ENTRY_CLASSES", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.ENTRY_TEMPLATE", "url": "Plugin.Console.html#property_Console.ENTRY_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.FOOTER_TEMPLATE", "url": "Plugin.Console.html#property_Console.FOOTER_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.HEADER_TEMPLATE", "url": "Plugin.Console.html#property_Console.HEADER_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "consoleLimit", "url": "Plugin.Console.html#config_consoleLimit", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "consoleLimitChange", "url": "Plugin.Console.html#event_consoleLimitChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "Console.LOG_LEVEL_ERROR", "url": "Plugin.Console.html#property_Console.LOG_LEVEL_ERROR", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.LOG_LEVEL_INFO", "url": "Plugin.Console.html#property_Console.LOG_LEVEL_INFO", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.LOG_LEVEL_WARN", "url": "Plugin.Console.html#property_Console.LOG_LEVEL_WARN", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "Console.NAME", "url": "Plugin.Console.html#property_Console.NAME", "type": "property"}, {"access": "protected", "host": "Plugin.Console", "name": "_createEntryHTML", "url": "Plugin.Console.html#method__createEntryHTML", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "defaultCategory", "url": "Plugin.Console.html#config_defaultCategory", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "defaultCategoryChange", "url": "Plugin.Console.html#event_defaultCategoryChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "defaultSource", "url": "Plugin.Console.html#config_defaultSource", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "defaultSourceChange", "url": "Plugin.Console.html#event_defaultSourceChange", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "_defEntryFn", "url": "Plugin.Console.html#method__defEntryFn", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_defResetFn", "url": "Plugin.Console.html#method__defResetFn", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "destructor", "url": "Plugin.Console.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_encodeHTML", "url": "Plugin.Console.html#method__encodeHTML", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "entry", "url": "Plugin.Console.html#event_entry", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "entryTemplate", "url": "Plugin.Console.html#config_entryTemplate", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "entryTemplateChange", "url": "Plugin.Console.html#event_entryTemplateChange", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "_evtCat", "url": "Plugin.Console.html#property__evtCat", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "expand", "url": "Plugin.Console.html#method_expand", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_foot", "url": "Plugin.Console.html#property__foot", "type": "property"}, {"access": "protected", "host": "Plugin.Console", "name": "_head", "url": "Plugin.Console.html#property__head", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "height", "url": "Plugin.Console.html#config_height", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "heightChange", "url": "Plugin.Console.html#event_heightChange", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "_htmlEscapeMessage", "url": "Plugin.Console.html#method__htmlEscapeMessage", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_initBody", "url": "Plugin.Console.html#method__initBody", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_initFoot", "url": "Plugin.Console.html#method__initFoot", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_initHead", "url": "Plugin.Console.html#method__initHead", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "initializer", "url": "Plugin.Console.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_isInLogLevel", "url": "Plugin.Console.html#method__isInLogLevel", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "lastTime", "url": "Plugin.Console.html#config_lastTime", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "lastTimeChange", "url": "Plugin.Console.html#event_lastTimeChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "log", "url": "Plugin.Console.html#method_log", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "logEvent", "url": "Plugin.Console.html#config_logEvent", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "logEventChange", "url": "Plugin.Console.html#event_logEventChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "logLevel", "url": "Plugin.Console.html#config_logLevel", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "logLevelChange", "url": "Plugin.Console.html#event_logLevelChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "logSource", "url": "Plugin.Console.html#config_logSource", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "logSourceChange", "url": "Plugin.Console.html#event_logSourceChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "newestOnTop", "url": "Plugin.Console.html#config_newestOnTop", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "newestOnTopChange", "url": "Plugin.Console.html#event_newestOnTopChange", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "_normalizeMessage", "url": "Plugin.Console.html#method__normalizeMessage", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_onClearClick", "url": "Plugin.Console.html#method__onClearClick", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_onCollapseClick", "url": "Plugin.Console.html#method__onCollapseClick", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_onLogEvent", "url": "Plugin.Console.html#method__onLogEvent", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_onPauseClick", "url": "Plugin.Console.html#method__onPauseClick", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "paused", "url": "Plugin.Console.html#config_paused", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "pausedChange", "url": "Plugin.Console.html#event_pausedChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "printBuffer", "url": "Plugin.Console.html#method_printBuffer", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "printLimit", "url": "Plugin.Console.html#config_printLimit", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "printLimitChange", "url": "Plugin.Console.html#event_printLimitChange", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "_printLoop", "url": "Plugin.Console.html#property__printLoop", "type": "property"}, {"access": "", "host": "Plugin.Console", "name": "printTimeout", "url": "Plugin.Console.html#config_printTimeout", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "printTimeoutChange", "url": "Plugin.Console.html#event_printTimeoutChange", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "renderUI", "url": "Plugin.Console.html#method_renderUI", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "reset", "url": "Plugin.Console.html#method_reset", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "reset", "url": "Plugin.Console.html#event_reset", "type": "event"}, {"access": "protected", "host": "Plugin.Console", "name": "_schedulePrint", "url": "Plugin.Console.html#method__schedulePrint", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "scrollIntoView", "url": "Plugin.Console.html#config_scrollIntoView", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "scrollIntoViewChange", "url": "Plugin.Console.html#event_scrollIntoViewChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "scrollToLatest", "url": "Plugin.Console.html#method_scrollToLatest", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_setLogLevel", "url": "Plugin.Console.html#method__setLogLevel", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "startTime", "url": "Plugin.Console.html#config_startTime", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "startTimeChange", "url": "Plugin.Console.html#event_startTimeChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "strings", "url": "Plugin.Console.html#config_strings", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "stringsChange", "url": "Plugin.Console.html#event_stringsChange", "type": "event"}, {"access": "", "host": "Plugin.Console", "name": "syncUI", "url": "Plugin.Console.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_trimOldEntries", "url": "Plugin.Console.html#method__trimOldEntries", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_uiSetHeight", "url": "Plugin.Console.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_uiUpdateCollapsed", "url": "Plugin.Console.html#method__uiUpdateCollapsed", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_uiUpdateFromHideShow", "url": "Plugin.Console.html#method__uiUpdateFromHideShow", "type": "method"}, {"access": "protected", "host": "Plugin.Console", "name": "_uiUpdatePaused", "url": "Plugin.Console.html#method__uiUpdatePaused", "type": "method"}, {"access": "", "host": "Plugin.Console", "name": "width", "url": "Plugin.Console.html#config_width", "type": "config"}, {"access": "", "host": "Plugin.Console", "name": "widthChange", "url": "Plugin.Console.html#event_widthChange", "type": "event"}];
 </script>
 </body>
 </html>

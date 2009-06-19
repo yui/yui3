@@ -1,12 +1,13 @@
 YUI.add('queue-base', function(Y) {
 
 /**
- * A simple FIFO queue of function references.
+ * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and
+ * removed using next().
  *
  * @module queue
  * @submodule queue-base
  * @class Queue
- * @param callback* {Function} 0..n callback functions to seed the queue
+ * @param item* {MIXED} 0..n items to seed the queue
  */
 function Queue() {
     this._init();
@@ -22,7 +23,7 @@ Queue.prototype = {
      */
     _init : function () {
         /**
-         * The collection of enqueued functions
+         * The collection of enqueued items
          *
          * @property _q
          * @type {Array}
@@ -32,20 +33,20 @@ Queue.prototype = {
     },
 
     /**
-     * Get the next callback in the queue.
+     * Get the next item in the queue.
      *
      * @method next
-     * @return {Function} the next callback in the queue
+     * @return {MIXED} the next item in the queue
      */
     next : function () {
         return this._q.shift();
     },
 
     /**
-     * Add 0..n callbacks to the end of the queue
+     * Add 0..n items to the end of the queue
      *
      * @method add
-     * @param callback* {Function} 0..n callback functions
+     * @param item* {MIXED} 0..n items
      */
     add : function () {
         Y.Array.each(Y.Array(arguments,0,true),function (fn) {
@@ -56,7 +57,7 @@ Queue.prototype = {
     },
 
     /**
-     * Returns the current number of queued callbacks
+     * Returns the current number of queued items
      *
      * @method size
      * @return {Number}

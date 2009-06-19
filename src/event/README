@@ -3,7 +3,7 @@ YUI Event Utility
 
 3.0.0beta1
     - DOM event, custom event, and simulate event moved to separate modules.
-    - Added an event for DOM event delegation.  It only fires it the target or its descendants
+    - Added an event for DOM event delegation.  It only fires if the target or its descendants
       match a supplied selector.
         Y.on('delegate', fn, el, 'click', 'selector' ...
       The event facade sets the following properties:
@@ -40,9 +40,9 @@ YUI Event Utility
     - subscriber failures are not routed through Y.fail in order to
       improve the debug experience.
     - New facades created every fire()
-    - before method re-added to Event.Target, which delegates to Do.before or
+    - before method re-added to EventTarget, which delegates to Do.before or
       subscribe.
-    - Event.Target.after will delegate to Do.after if type is a function
+    - EventTarget.after will delegate to Do.after if type is a function
     - Added keylistener: Y.on('key', fn, element, 'down:13,65+ctrl+shift')
     - event:ready event deprecated in favor of domready.
 
