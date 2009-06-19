@@ -9,6 +9,13 @@ YUI.add('dataschema-array', function(Y) {
 var LANG = Y.Lang,
 
 /**
+ * Provides a DataSchema implementation which can be used to work with data stored in arrays
+ *
+ * @module dataschema
+ * @submodule dataschema-array
+ */
+
+/**
  * Array subclass for the YUI DataSchema utility.
  * @class DataSchema.Array
  * @extends DataSchema.Base

@@ -1,10 +1,16 @@
 YUI.add('anim-base', function(Y) {
 
 /**
- * The Animation Utility provides an API for creating advanced transitions between property values.
- * @module anim
- * @submodule anim-base
- */
+* The Animation Utility provides an API for creating advanced transitions.
+* @module anim
+*/
+
+/**
+* Provides the base Anim class, for animating numeric properties.
+*
+* @module anim
+* @submodule anim-base
+*/
 
     /**
      * A class for constructing animation instances.
@@ -585,6 +591,7 @@ YUI.add('anim-base', function(Y) {
     };
 
     Y.extend(Y.Anim, Y.Base, proto);
+
 
 
 }, '@VERSION@' ,{requires:['base', 'node']});

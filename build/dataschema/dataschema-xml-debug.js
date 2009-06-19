@@ -1,10 +1,10 @@
 YUI.add('dataschema-xml', function(Y) {
 
 /**
- * The DataSchema utility provides a common configurable interface for widgets to
- * apply a given schema to a variety of data.
+ * Provides a DataSchema implementation which can be used to work with XML data
  *
  * @module dataschema
+ * @submodule dataschema-xml
  */
 var LANG = Y.Lang,
 

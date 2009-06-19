@@ -1,11 +1,14 @@
 YUI.add('dataschema-base', function(Y) {
 
 /**
- * The DataSchema utility provides a common configurable interface for widgets to
- * apply a given schema to a variety of data.
+ * Provides the base DataSchema implementation, which can be extended to 
+ * create DataSchemas for specific data formats, such XML, JSON, Text and 
+ * Arrays
  *
  * @module dataschema
+ * @submodule dataschema-base
  */
+
 var LANG = Y.Lang,
 /**
  * Base class for the YUI DataSchema utility.
@@ -59,12 +62,11 @@ Y.namespace("Parsers");
 YUI.add('dataschema-json', function(Y) {
 
 /**
- * The DataSchema utility provides a common configurable interface for widgets to
- * apply a given schema to a variety of data.
+ * Provides a DataSchema implementation which can be used to work with JSON data
  *
  * @module dataschema
+ * @submodule dataschema-json
  */
-var LANG = Y.Lang,
 
 /**
  * JSON subclass for the YUI DataSchema utility.
@@ -72,6 +74,8 @@ var LANG = Y.Lang,
  * @extends DataSchema.Base
  * @static
  */
+var LANG = Y.Lang,
+
 SchemaJSON = {
 
     /////////////////////////////////////////////////////////////////////////////
@@ -350,10 +354,10 @@ Y.DataSchema.JSON = Y.mix(SchemaJSON, Y.DataSchema.Base);
 YUI.add('dataschema-xml', function(Y) {
 
 /**
- * The DataSchema utility provides a common configurable interface for widgets to
- * apply a given schema to a variety of data.
+ * Provides a DataSchema implementation which can be used to work with XML data
  *
  * @module dataschema
+ * @submodule dataschema-xml
  */
 var LANG = Y.Lang,
 
@@ -517,6 +521,13 @@ YUI.add('dataschema-array', function(Y) {
 var LANG = Y.Lang,
 
 /**
+ * Provides a DataSchema implementation which can be used to work with data stored in arrays
+ *
+ * @module dataschema
+ * @submodule dataschema-array
+ */
+
+/**
  * Array subclass for the YUI DataSchema utility.
  * @class DataSchema.Array
  * @extends DataSchema.Base
@@ -612,12 +623,11 @@ Y.DataSchema.Array = Y.mix(SchemaArray, Y.DataSchema.Base);
 YUI.add('dataschema-text', function(Y) {
 
 /**
- * The DataSchema utility provides a common configurable interface for widgets to
- * apply a given schema to a variety of data.
+ * Provides a DataSchema implementation which can be used to work with Text data
  *
  * @module dataschema
+ * @submodule dataschema-text
  */
-var LANG = Y.Lang,
 
 /**
  * Text subclass for the YUI DataSchema utility.
@@ -625,6 +635,9 @@ var LANG = Y.Lang,
  * @extends DataSchema.Base
  * @static
  */
+
+var LANG = Y.Lang,
+
 SchemaText = {
 
     /////////////////////////////////////////////////////////////////////////////

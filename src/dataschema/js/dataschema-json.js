@@ -1,10 +1,9 @@
 /**
- * The DataSchema utility provides a common configurable interface for widgets to
- * apply a given schema to a variety of data.
+ * Provides a DataSchema implementation which can be used to work with JSON data
  *
  * @module dataschema
+ * @submodule dataschema-json
  */
-var LANG = Y.Lang,
 
 /**
  * JSON subclass for the YUI DataSchema utility.
@@ -12,6 +11,8 @@ var LANG = Y.Lang,
  * @extends DataSchema.Base
  * @static
  */
+var LANG = Y.Lang,
+
 SchemaJSON = {
 
     /////////////////////////////////////////////////////////////////////////////
