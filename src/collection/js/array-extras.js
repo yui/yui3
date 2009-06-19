@@ -1,8 +1,7 @@
 /**
  * Collection utilities beyond what is provided in the YUI core
- * @module yui
+ * @module collection
  */
-
 
 var L = Y.Lang, Native = Array.prototype, A = Y.Array;
 

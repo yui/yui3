@@ -48,10 +48,9 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Adds the ability to filter log entries on their category/logLevel or their</span>
-<span class="c"> * source (global, event, attribute, etc).</span>
-<span class="c"> * Checkboxes are added to the Console footer to control the visibility of each</span>
-<span class="c"> * category and source.  </span>
+<span class="c"> * Adds the ability to filter Console entries by their category and source.</span>
+<span class="c"> * Checkboxes are added to the Console footer to control the visibility of</span>
+<span class="c"> * messages assigned to each category and source.  </span>
 <span class="c"> *</span>
 <span class="c"> * @module console-filters</span>
 <span class="c"> * @namespace Plugin</span>
@@ -138,10 +137,10 @@
 <span class="c">     * @static</span>
 <span class="c">     */</span>
     <span class="nx">FILTER_TEMPLATE</span> <span class="o">:</span>
-        <span class="c">// IE8 doesn&#39;t permit breaking _between_ nowrap elements AND it doesn&#39;t</span>
-<span class="c"></span>        <span class="c">// understand the (non spec) wbr tag AND it doesn&#39;t create text nodes</span>
-<span class="c"></span>        <span class="c">// for spaces between elements in innerHTML strings.  The thin-space</span>
-<span class="c"></span>        <span class="c">// entity suffices to create a breakable point.</span>
+        <span class="c">// IE8 and FF3 don&#39;t permit breaking _between_ nowrap elements.  IE8</span>
+<span class="c"></span>        <span class="c">// doesn&#39;t understand (non spec) wbr tag, nor does it create text nodes</span>
+<span class="c"></span>        <span class="c">// for spaces in innerHTML strings.  The thin-space entity suffices to</span>
+<span class="c"></span>        <span class="c">// create a breakable point.</span>
 <span class="c"></span>        <span class="s1">&#39;&lt;label class=&quot;{filter_label}&quot;&gt;&#39;</span><span class="o">+</span>
             <span class="s1">&#39;&lt;input type=&quot;checkbox&quot; value=&quot;{filter_name}&quot; &#39;</span><span class="o">+</span>
                 <span class="s1">&#39;class=&quot;{filter} {filter_class}&quot;&gt; {filter_name}&#39;</span><span class="o">+</span>
@@ -497,7 +496,7 @@
         <span class="k">if</span> <span class="o">(</span><span class="nx">body</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">host</span><span class="o">.</span><span class="nx">_cancelPrintLoop</span><span class="o">();</span>
 
-            <span class="c">// Capture from bottom up.  Entry order reversed.</span>
+            <span class="c">// Evaluate all entries from latest to oldest</span>
 <span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">entries</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> <span class="nx">remaining</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">e</span> <span class="o">=</span> <span class="nx">entries</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">cats</span><span class="o">[</span><span class="nx">e</span><span class="o">.</span><span class="nx">category</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">srcs</span><span class="o">[</span><span class="nx">e</span><span class="o">.</span><span class="nx">source</span><span class="o">])</span> <span class="o">{</span>
@@ -548,7 +547,7 @@
     <span class="c">/**</span>
 <span class="c">     * Passes checkbox clicks on to the category attribute.</span>
 <span class="c">     *</span>
-<span class="c">     * @metho _onCategoryCheckboxClick</span>
+<span class="c">     * @method _onCategoryCheckboxClick</span>
 <span class="c">     * @param e {Event} the DOM event</span>
 <span class="c">     */</span>
     <span class="nx">_onCategoryCheckboxClick</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
@@ -629,7 +628,7 @@
 
     <span class="c">/**</span>
 <span class="c">     * Shows any number of sources in the UI.  Convenience method for</span>
-<span class="c">     * myConsole.filter.set(&#39;category.foo&#39;, true); set(&#39;category.bar&#39;, true);</span>
+<span class="c">     * myConsole.filter.set(&#39;source.foo&#39;, true); set(&#39;source.bar&#39;, true);</span>
 <span class="c">     * and so on.</span>
 <span class="c">     *</span>
 <span class="c">     * @method showSource</span>
@@ -707,6 +706,7 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class="selected"><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -736,13 +736,13 @@
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
