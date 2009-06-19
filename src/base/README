@@ -39,7 +39,7 @@
 	 
       });
 
-* Developers can now over-ride the default clone behavior we use to
+* Developers can now override the default clone behavior we use to
   isolate default ATTRS config values, using cloneDefaultValue, e.g.:
 
   ATTRS = {

@@ -22,10 +22,10 @@
 * "after" listeners are only notified if attribute value really
   changes (preVal !== newVal).
 
-* Extending classes can now overwrite ATTRS configuration propreties 
+* Extending classes can now overwrite ATTRS configuration properties 
   from super classes, including writeOnce and readOnly attributes.
 
-  The ATTRS configurations are merged across the class heirarchy,
+  The ATTRS configurations are merged across the class hierarchy,
   before they are used to initialize the attributes.
 
 * addAttr now prevents re-adding attributes which are already 

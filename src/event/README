@@ -3,7 +3,7 @@ YUI Event Utility
 
 3.0.0beta1
     - DOM event, custom event, and simulate event moved to separate modules.
-    - Added an event for DOM event delegation.  It only fires it the target or its descendants
+    - Added an event for DOM event delegation.  It only fires if the target or its descendants
       match a supplied selector.
         Y.on('delegate', fn, el, 'click', 'selector' ...
       The event facade sets the following properties:
