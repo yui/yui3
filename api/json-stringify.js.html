@@ -130,16 +130,24 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Converts an arbitrary value to a JSON string representation.</span>
-<span class="c">     * Objects with cyclical references will trigger an exception.</span>
-<span class="c">     * If a whitelist is provided, only matching object keys will be included.</span>
-<span class="c">     * If a positive integer or non-empty string is passed as the third</span>
+<span class="c">     * &lt;p&gt;Converts an arbitrary value to a JSON string representation.&lt;/p&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * &lt;p&gt;Objects with cyclical references will trigger an exception.&lt;/p&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * &lt;p&gt;If a whitelist is provided, only matching object keys will be</span>
+<span class="c">     * included.  Alternately, a replacer function may be passed as the</span>
+<span class="c">     * second parameter.  This function is executed on every value in the</span>
+<span class="c">     * input, and its return value will be used in place of the original value.</span>
+<span class="c">     * This is useful to serialize specialized objects or class instances.&lt;/p&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * &lt;p&gt;If a positive integer or non-empty string is passed as the third</span>
 <span class="c">     * parameter, the output will be formatted with carriage returns and</span>
 <span class="c">     * indentation for readability.  If a String is passed (such as &quot;\t&quot;) it</span>
 <span class="c">     * will be used once for each indentation level.  If a number is passed,</span>
-<span class="c">     * that number of spaces will be used.</span>
+<span class="c">     * that number of spaces will be used.&lt;/p&gt;</span>
+<span class="c">     *</span>
 <span class="c">     * @method stringify</span>
-<span class="c">     * @param o {MIXED} any arbitrary object to convert to JSON string</span>
+<span class="c">     * @param o {MIXED} any arbitrary value to convert to JSON string</span>
 <span class="c">     * @param w {Array|Function} (optional) whitelist of acceptable object</span>
 <span class="c">     *                  keys to include, or a replacer function to modify the</span>
 <span class="c">     *                  raw value before serialization</span>
@@ -147,7 +155,6 @@
 <span class="c">     *                  spaces to format the output.</span>
 <span class="c">     * @return {string} JSON string representation of the input</span>
 <span class="c">     * @static</span>
-<span class="c">     * @public</span>
 <span class="c">     */</span>
     <span class="nx">stringify</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span><span class="nx">w</span><span class="o">,</span><span class="nx">ind</span><span class="o">)</span> <span class="o">{</span>
 

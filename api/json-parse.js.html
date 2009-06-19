@@ -193,6 +193,7 @@
 
     <span class="c">/**</span>
 <span class="c">     * Parse a JSON string, returning the native JavaScript representation.</span>
+<span class="c">     *</span>
 <span class="c">     * @param s {string} JSON string data</span>
 <span class="c">     * @param reviver {function} (optional) function(k,v) passed each key value</span>
 <span class="c">     *          pair of object literals, allowing pruning or altering values</span>
@@ -200,7 +201,6 @@
 <span class="c">     * @throws SyntaxError</span>
 <span class="c">     * @method parse</span>
 <span class="c">     * @static</span>
-<span class="c">     * @public</span>
 <span class="c">     */</span>
     <span class="c">// JavaScript implementation in lieu of native browser support.  Based on</span>
 <span class="c"></span>    <span class="c">// the json2.js library from http://json.org</span>
@@ -233,7 +233,7 @@
     <span class="k">try</span> <span class="o">{</span>
         <span class="nx">test</span> <span class="o">=</span> <span class="nx">Native</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span><span class="s1">&#39;{&quot;x&quot;:1}&#39;</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">k</span><span class="o">,</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span><span class="k">return</span> <span class="nx">k</span><span class="o">==</span><span class="s1">&#39;x&#39;</span> <span class="o">?</span> <span class="m">2</span> <span class="o">:</span> <span class="nx">v</span><span class="o">;});</span>
         <span class="nx">switch</span> <span class="o">(</span><span class="nx">test</span><span class="o">.</span><span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">case</span> <span class="m">1</span> <span class="o">:</span> <span class="c">// Reviver not supported (currently FF3.1b2)</span>
+            <span class="nx">case</span> <span class="m">1</span> <span class="o">:</span> <span class="c">// Reviver not supported</span>
 <span class="c"></span>                <span class="nx">_parse</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span><span class="nx">reviver</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">return</span> <span class="nx">_SIMPLE</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">s</span><span class="o">)</span> <span class="o">?</span>
                             <span class="nb">eval</span><span class="o">(</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="o">)</span> <span class="o">:</span>
@@ -241,7 +241,7 @@
                 <span class="o">};</span>
                 <span class="k">break</span><span class="o">;</span>
 
-            <span class="nx">case</span> <span class="m">2</span> <span class="o">:</span> <span class="c">// Full support (currently IE8)</span>
+            <span class="nx">case</span> <span class="m">2</span> <span class="o">:</span> <span class="c">// Full support</span>
 <span class="c"></span>                <span class="nx">_parse</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">reviver</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">return</span> <span class="nx">Native</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">reviver</span><span class="o">);</span>
                 <span class="o">};</span>
