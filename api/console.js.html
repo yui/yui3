@@ -121,11 +121,13 @@
 <span class="c"> * log statements in your code will cause those messages to also appear in the</span>
 <span class="c"> * Console.  Use Console to aid in developing your page or application.</span>
 <span class="c"> *</span>
-<span class="c"> * Entry categories are also referred to as the log level, and entries are</span>
-<span class="c"> * filtered against the configured logLevel.</span>
+<span class="c"> * Entry categories &amp;quot;info&amp;quot;, &amp;quot;warn&amp;quot;, and &amp;quot;error&amp;quot;</span>
+<span class="c"> * are also referred to as the log level, and entries are filtered against the</span>
+<span class="c"> * configured logLevel.</span>
 <span class="c"> *</span>
 <span class="c"> * @class Console</span>
 <span class="c"> * @extends Widget</span>
+<span class="c"> * @constructor</span>
 <span class="c"> */</span>
 
 <span class="k">function</span> <span class="nx">Console</span><span class="o">()</span> <span class="o">{</span>
@@ -246,10 +248,12 @@
 <span class="c">     * these {placeholder}s:</span>
 <span class="c">     *</span>
 <span class="c">     * &lt;ul&gt;</span>
+<span class="c">     *   &lt;li&gt;console_button_class - contributed by Console.CHROME_CLASSES&lt;/li&gt;</span>
+<span class="c">     *   &lt;li&gt;console_collapse_class - contributed by Console.CHROME_CLASSES&lt;/li&gt;</span>
 <span class="c">     *   &lt;li&gt;console_hd_class - contributed by Console.CHROME_CLASSES&lt;/li&gt;</span>
 <span class="c">     *   &lt;li&gt;console_title_class - contributed by Console.CHROME_CLASSES&lt;/li&gt;</span>
-<span class="c">     *   &lt;li&gt;str_title - pulled from attribute strings.title&lt;/li&gt;</span>
 <span class="c">     *   &lt;li&gt;str_collapse - pulled from attribute strings.collapse&lt;/li&gt;</span>
+<span class="c">     *   &lt;li&gt;str_title - pulled from attribute strings.title&lt;/li&gt;</span>
 <span class="c">     * &lt;/ul&gt;</span>
 <span class="c">     *</span>
 <span class="c">     * @property Console.HEADER_TEMPLATE</span>
@@ -421,7 +425,8 @@
 
         <span class="c">/**</span>
 <span class="c">         * If a category is not specified in the Y.log(..) statement, this</span>
-<span class="c">         * category will be used. Category is also called &amp;quot;log level&amp;quot;.</span>
+<span class="c">         * category will be used. Categories &amp;quot;info&amp;quot;,</span>
+<span class="c">         * &amp;quot;warn&amp;quot;, and &amp;quot;error&amp;quot; are also called log level.</span>
 <span class="c">         *</span>
 <span class="c">         * @attribute defaultCategory</span>
 <span class="c">         * @type String</span>
@@ -464,11 +469,11 @@
 <span class="c">         * that configuration is not set.</span>
 <span class="c">         *</span>
 <span class="c">         * Possible values are &amp;quot;info&amp;quot;, &amp;quot;warn&amp;quot;,</span>
-<span class="c">         * &amp;quot;error&amp;quot; (case insensitive), or the corresponding statics</span>
+<span class="c">         * &amp;quot;error&amp;quot; (case insensitive), or their corresponding statics</span>
 <span class="c">         * Console.LOG_LEVEL_INFO and so on.</span>
 <span class="c">         *</span>
 <span class="c">         * @attribute logLevel</span>
-<span class="c">         * @type String|Number</span>
+<span class="c">         * @type String</span>
 <span class="c">         * @default Y.config.logLevel or Console.LOG_LEVEL_INFO</span>
 <span class="c">         */</span>
         <span class="nx">logLevel</span> <span class="o">:</span> <span class="o">{</span>
@@ -479,8 +484,8 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Millisecond timeout to maintain before emptying buffer of Console</span>
-<span class="c">         * entries to the UI.</span>
+<span class="c">         * Millisecond timeout between iterations of the print loop, moving</span>
+<span class="c">         * entries from the buffer to the UI.</span>
 <span class="c">         *</span>
 <span class="c">         * @attribute printTimeout</span>
 <span class="c">         * @type Number</span>
@@ -492,13 +497,12 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Maximum number of entries printed in each printBuffer iteration.</span>
-<span class="c">         * This is used to prevent excessive logging bogging down runtime</span>
-<span class="c">         * performance.</span>
+<span class="c">         * Maximum number of entries printed in each iteration of the print</span>
+<span class="c">         * loop. This is used to prevent excessive logging locking the page UI.</span>
 <span class="c">         *</span>
 <span class="c">         * @attribute printLimit</span>
 <span class="c">         * @type Number</span>
-<span class="c">         * @default 00</span>
+<span class="c">         * @default 50</span>
 <span class="c">         */</span>
         <span class="nx">printLimit</span> <span class="o">:</span> <span class="o">{</span>
             <span class="nx">value</span> <span class="o">:</span> <span class="m">50</span><span class="o">,</span>
@@ -584,7 +588,7 @@
         <span class="c">/**</span>
 <span class="c">        * String with units, or number, representing the height of the Console,</span>
 <span class="c">        * inclusive of header and footer. If a number is provided, the default</span>
-<span class="c">        * unit, defined by the Widgets DEF_UNIT, property is used.</span>
+<span class="c">        * unit, defined by Widget&#39;s DEF_UNIT, property is used.</span>
 <span class="c">        *</span>
 <span class="c">        * @attribute height</span>
 <span class="c">        * @default &quot;300px&quot;</span>
@@ -596,7 +600,7 @@
 
         <span class="c">/**</span>
 <span class="c">        * String with units, or number, representing the width of the Console.</span>
-<span class="c">        * If a number is provided, the default unit, defined by the Widgets</span>
+<span class="c">        * If a number is provided, the default unit, defined by Widget&#39;s</span>
 <span class="c">        * DEF_UNIT, property is used.</span>
 <span class="c">        *</span>
 <span class="c">        * @attribute width</span>
@@ -623,7 +627,7 @@
     <span class="nx">_evtCat</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
 
     <span class="c">/**</span>
-<span class="c">     * Reference to the Node instance containing the head contents.</span>
+<span class="c">     * Reference to the Node instance containing the header contents.</span>
 <span class="c">     *</span>
 <span class="c">     * @property _head</span>
 <span class="c">     * @type Node</span>
@@ -645,7 +649,7 @@
     <span class="c">/**</span>
 <span class="c">     * Reference to the Node instance containing the footer contents.</span>
 <span class="c">     *</span>
-<span class="c">     * @property _head</span>
+<span class="c">     * @property _foot</span>
 <span class="c">     * @type Node</span>
 <span class="c">     * @default null</span>
 <span class="c">     * @protected</span>
@@ -653,8 +657,8 @@
     <span class="nx">_foot</span>    <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
 
     <span class="c">/**</span>
-<span class="c">     * Object API returned from &lt;code&gt;Y.later&lt;/code&gt;. Holds the timer id</span>
-<span class="c">     * returned by &lt;code&gt;setInterval&lt;/code&gt; for scheduling of buffered messages.</span>
+<span class="c">     * Holds the object API returned from &lt;code&gt;Y.later&lt;/code&gt; for the print</span>
+<span class="c">     * loop interval.</span>
 <span class="c">     *</span>
 <span class="c">     * @property _printLoop</span>
 <span class="c">     * @type Object</span>
@@ -712,27 +716,28 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Collapses the UI.</span>
+<span class="c">     * Collapses the body and footer.</span>
 <span class="c">     *</span>
 <span class="c">     * @method collapse</span>
-<span class="c">     * @chainable</span>
 <span class="c">     */</span>
     <span class="nx">collapse</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">COLLAPSED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Expands the UI if collapsed.</span>
+<span class="c">     * Expands the body and footer if collapsed.</span>
 <span class="c">     *</span>
-<span class="c">     * @method collapse</span>
-<span class="c">     * @chainable</span>
+<span class="c">     * @method expand</span>
 <span class="c">     */</span>
     <span class="nx">expand</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">COLLAPSED</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Outputs all buffered messages to the console UI.</span>
+<span class="c">     * Outputs buffered messages to the console UI.  This is called from a</span>
+<span class="c">     * scheduled interval until the buffer is empty (referred to as the print</span>
+<span class="c">     * loop).  The number of buffered messages output to the Console in each</span>
+<span class="c">     * iteration will not exceed the configured &lt;code&gt;printLimit&lt;/code&gt;.</span>
 <span class="c">     * </span>
 <span class="c">     * @method printBuffer</span>
 <span class="c">     * @param limit {Number} (optional) max number of buffered entries to write</span>
@@ -807,8 +812,8 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;logEvent&#39;</span><span class="o">),</span><span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_onLogEvent&quot;</span><span class="o">,</span><span class="k">this</span><span class="o">));</span>
 
         <span class="c">/**</span>
-<span class="c">         * Triggers the processing of an incoming message via the default logic</span>
-<span class="c">         * in _defEntryFn.</span>
+<span class="c">         * Transfers a received message to the print loop buffer.  Default</span>
+<span class="c">         * behavior defined in _defEntryFn.</span>
 <span class="c">         *</span>
 <span class="c">         * @event entry</span>
 <span class="c">         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:</span>
@@ -832,6 +837,12 @@
         <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;rendered&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_schedulePrint</span><span class="o">);</span>
     <span class="o">},</span>
 
+    <span class="c">/**</span>
+<span class="c">     * Tears down the instance, flushing event subscriptions and purging the UI.</span>
+<span class="c">     *</span>
+<span class="c">     * @method destructor</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
     <span class="nx">destructor</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="o">);</span>
 
@@ -986,7 +997,7 @@
 <span class="c">     *     &lt;li&gt;totalTime - ms since Console was instantiated or reset&lt;/li&gt;</span>
 <span class="c">     * &lt;/ul&gt;</span>
 <span class="c">     *</span>
-<span class="c">     * @mehod _normalizeMessage</span>
+<span class="c">     * @method _normalizeMessage</span>
 <span class="c">     * @param e {Event} custom event containing the log message</span>
 <span class="c">     * @return Object the message object</span>
 <span class="c">     * @protected</span>
@@ -1024,7 +1035,7 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Sets a timeout for buffered messages to be output to the console.</span>
+<span class="c">     * Sets an interval for buffered messages to be output to the console.</span>
 <span class="c">     *</span>
 <span class="c">     * @method _schedulePrint</span>
 <span class="c">     * @protected</span>
@@ -1039,7 +1050,7 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Translates message meta into the markup for a console entry</span>
+<span class="c">     * Translates message meta into the markup for a console entry.</span>
 <span class="c">     *</span>
 <span class="c">     * @method _createEntryHTML</span>
 <span class="c">     * @param m {Object} object literal containing normalized message metadata</span>
@@ -1196,9 +1207,9 @@
 
     <span class="c">/**</span>
 <span class="c">     * Event handler for clicking on the Collapse/Expand button. Sets the</span>
-<span class="c">     * &amp;quot;collapsed&amp;quot; attribute accordingly</span>
+<span class="c">     * &amp;quot;collapsed&amp;quot; attribute accordingly.</span>
 <span class="c">     *</span>
-<span class="c">     * @method _onClearClick</span>
+<span class="c">     * @method _onCollapseClick</span>
 <span class="c">     * @param e {Event} DOM event facade for the click event</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
@@ -1209,10 +1220,8 @@
 
     <span class="c">/**</span>
 <span class="c">     * Setter method for logLevel attribute.  Acceptable values are</span>
-<span class="c">     * &amp;quot;error&amp;quot, &amp;quot;warn&amp;quot, &amp;quot;info&amp;quot (case insensitive),</span>
-<span class="c">     * and Y.Console.LOG_LEVEL_ERROR, Y.Console.LOG_LEVEL_WARN, </span>
-<span class="c">     * Y.Console.LOG_LEVEL_INFO.  Any other value is treated as</span>
-<span class="c">     * Y.Console.LOG_LEVEL_INFO.</span>
+<span class="c">     * &amp;quot;error&amp;quot, &amp;quot;warn&amp;quot, and &amp;quot;info&amp;quot (case</span>
+<span class="c">     * insensitive).  Other values are treated as &amp;quot;info&amp;quot;.</span>
 <span class="c">     *</span>
 <span class="c">     * @method _setLogLevel</span>
 <span class="c">     * @param v {String} the desired log level</span>
@@ -1285,8 +1294,7 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Updates the UI and schedules or cancels the scheduled buffer printing</span>
-<span class="c">     * operation.</span>
+<span class="c">     * Updates the UI and schedules or cancels the print loop.</span>
 <span class="c">     *</span>
 <span class="c">     * @method _afterPausedChange</span>
 <span class="c">     * @param e {Event} Custom event for the attribute change</span>
@@ -1469,6 +1477,7 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class="selected"><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -1498,13 +1507,13 @@
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 

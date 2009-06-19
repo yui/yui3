@@ -1,3 +1,5 @@
+*** NOTE: This module is deprecated. This functionality will be provided in a future release. 
+
 **** version 3.0.0 beta 1 ***	
   * deprecated for YUI 3
   
@@ -11,8 +13,6 @@
       1458071 and Sourceforget ticket 1786723
 
 3.0.0PR1 - Initial release
-
-*** NOTE: This module is deprecated.  YUI CSS will be broken out into a separate project in the future.
 
 Module Name: "cssgrids"
 Documentation: http://developer.yahoo.com/yui/3/cssgrids
@@ -36,4 +36,6 @@ over 1000 page layout combinations. Other features include:
       longer, the footer stays below the longest.
     * Accommodates IAB's Ad Unit Guidelines for common 
       ad dimensions.
+
+*** NOTE: This module is deprecated. This functionality will be provided in a future release. 
 

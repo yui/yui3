@@ -1,8 +1,7 @@
 /**
- * Adds the ability to filter log entries on their category/logLevel or their
- * source (global, event, attribute, etc).
- * Checkboxes are added to the Console footer to control the visibility of each
- * category and source.  
+ * Adds the ability to filter Console entries by their category and source.
+ * Checkboxes are added to the Console footer to control the visibility of
+ * messages assigned to each category and source.  
  *
  * @module console-filters
  * @namespace Plugin
@@ -89,10 +88,10 @@ Y.mix(ConsoleFilters,{
      * @static
      */
     FILTER_TEMPLATE :
-        // IE8 doesn't permit breaking _between_ nowrap elements AND it doesn't
-        // understand the (non spec) wbr tag AND it doesn't create text nodes
-        // for spaces between elements in innerHTML strings.  The thin-space
-        // entity suffices to create a breakable point.
+        // IE8 and FF3 don't permit breaking _between_ nowrap elements.  IE8
+        // doesn't understand (non spec) wbr tag, nor does it create text nodes
+        // for spaces in innerHTML strings.  The thin-space entity suffices to
+        // create a breakable point.
         '<label class="{filter_label}">'+
             '<input type="checkbox" value="{filter_name}" '+
                 'class="{filter} {filter_class}"> {filter_name}'+
@@ -448,7 +447,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
         if (body) {
             host._cancelPrintLoop();
 
-            // Capture from bottom up.  Entry order reversed.
+            // Evaluate all entries from latest to oldest
             for (i = entries.length - 1; i >= 0 && remaining >= 0; --i) {
                 e = entries[i];
                 if (cats[e.category] && srcs[e.source]) {
@@ -499,7 +498,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
     /**
      * Passes checkbox clicks on to the category attribute.
      *
-     * @metho _onCategoryCheckboxClick
+     * @method _onCategoryCheckboxClick
      * @param e {Event} the DOM event
      */
     _onCategoryCheckboxClick : function (e) {
@@ -580,7 +579,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
 
     /**
      * Shows any number of sources in the UI.  Convenience method for
-     * myConsole.filter.set('category.foo', true); set('category.bar', true);
+     * myConsole.filter.set('source.foo', true); set('source.bar', true);
      * and so on.
      *
      * @method showSource
