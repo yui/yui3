@@ -1,13 +1,13 @@
 YUI.add('anim-base', function(Y) {
 
 /**
- * Y.Animation Utility.
- * @module anim
  * The Animation Utility provides an API for creating advanced transitions between property values.
+ * @module anim
+ * @submodule anim-base
  */
 
     /**
-     * Handles animation _queueing and threading.
+     * A class for constructing animation instances.
      * @class Anim
      * @for Anim
      * @constructor
