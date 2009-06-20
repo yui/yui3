@@ -53,7 +53,8 @@ var SLIDER = 'slider',
 
 /**
  * Create a slider to represent an integer value between a given minimum and
- * maximum.
+ * maximum.  Sliders may be aligned vertically or horizontally, based on the
+ * <code>axis</code> configuration.
  *
  * @class Slider
  * @extends Widget
@@ -82,6 +83,7 @@ Y.mix(Slider, {
      *
      * @property Slider.AXIS_KEYS
      * @type Object
+     * @protected
      * @static
      */
     AXIS_KEYS : {
@@ -108,7 +110,8 @@ Y.mix(Slider, {
      * structure.
      *
      * @property Slider.HTML_PARSER
-     * @Type Object
+     * @type Object
+     * @protected
      * @static
      */
     HTML_PARSER : {
@@ -122,7 +125,8 @@ Y.mix(Slider, {
      * the Widget.
      *
      * @property Slider.ATTRS
-     * @Type Object
+     * @type Object
+     * @protected
      * @static
      */
     ATTRS : {
@@ -148,8 +152,8 @@ Y.mix(Slider, {
         },
 
         /**
-         * Integer value associated with the left or top terminus of the
-         * Slider's rail, depending on the configured axis.
+         * Value associated with the left or top most position of the thumb on
+         * the rail.
          *
          * @attribute min
          * @type Number
@@ -163,8 +167,8 @@ Y.mix(Slider, {
         },
 
         /**
-         * Integer value associated with the right or bottom terminus of the
-         * Slider's rail, depending on the configured axis.
+         * Value associated with the right or bottom most position of the thumb
+         * on the rail.
          *
          * @attribute max
          * @type Number
@@ -215,15 +219,15 @@ Y.mix(Slider, {
         },
 
         /**
-         * The Node representing the Slider's thumb, usually visualized as a
+         * <p>The Node representing the Slider's thumb, usually visualized as a
          * pointer using a contained image Node (see thumbImage).  The current
          * value of the Slider is calculated from the centerpoint of this
          * Node in relation to the rail Node.  If provided, the thumbImage
-         * Node is contained within this Node.
+         * Node is contained within this Node.</p>
          *
-         * If no thumbImage is provided and the Node passed as the thumb is an
-         * <code>img</code> element, the assigned Node will be allocated to the
-         * thumbImage and the thumb container defaulted.
+         * <p>If no thumbImage is provided and the Node passed as the thumb is
+         * an <code>img</code> element, the assigned Node will be allocated to
+         * the thumbImage and the thumb container defaulted.</p>
          *
          * @attribute thumb
          * @type Node
@@ -240,18 +244,18 @@ Y.mix(Slider, {
         },
 
         /**
-         * The Node representing the image element to use for the Slider's
-         * thumb.
+         * <p>The Node representing the image element to use for the Slider's
+         * thumb.</p>
          *
-         * Alternately, an image URL can be passed and an <code>img</code>
-         * Node will be generated accordingly.
+         * <p>Alternately, an image URL can be passed and an <code>img</code>
+         * Node will be generated accordingly.</p>
          *
-         * If no thumbImage is provided and the Node passed as the thumb is an
-         * <code>img</code> element, the assigned Node will be allocated to the
-         * thumbImage and the thumb container defaulted.
+         * <p>If no thumbImage is provided and the Node passed as the thumb is
+         * an <code>img</code> element, the assigned Node will be allocated to
+         * the thumbImage and the thumb container defaulted.</p>
          *
-         * If thumbImage is provided but its URL resolves to a 404, a default
-         * style will be applied to maintain basic functionality.
+         * <p>If thumbImage is provided but its URL resolves to a 404, a default
+         * style will be applied to maintain basic functionality.</p>
          *
          * @attribute thumbImage
          * @type Node|String
@@ -268,12 +272,12 @@ Y.mix(Slider, {
         },
 
         /**
-         * The width or height of the rail element representing the physical
+         * <p>The width or height of the rail element representing the physical
          * space along which the thumb can move.  CSS size values (e.g. '30em')
-         * accepted but converted to pixels during render.
+         * accepted but converted to pixels during render.</p>
          *
-         * Alternately, but not recommended, this attribute can be left
-         * unassigned in favor of specifying height or width.
+         * <p>Alternately, but not recommended, this attribute can be left
+         * unassigned in favor of specifying height or width.</p>
          *
          * @attribute railSize
          * @type String
@@ -300,8 +304,8 @@ Y.mix(Slider, {
         },
 
         /**
-         * Like CSS padding, the distance in pixels from the inner top left
-         * corner of the rail node within which the thumb can travel.  Negative
+         * Like CSS padding, the distance in pixels from the inner top or left
+         * edge of the rail node within which the thumb can travel.  Negative
          * values allow the edge of the thumb to escape the rail node
          * boundaries.
          *
@@ -315,9 +319,9 @@ Y.mix(Slider, {
         },
 
         /**
-         * Like CSS padding, the distance in pixels from the inner bottom right
-         * corner of the rail node within which the thumb can travel.  Negative
-         * values allow the edge of the thumb to escape the rail node
+         * Like CSS padding, the distance in pixels from the inner bottom or
+         * right edge of the rail node within which the thumb can travel.
+         * Negative values allow the edge of the thumb to escape the rail node
          * boundaries.
          *
          * @attribute maxGutter
@@ -409,8 +413,8 @@ Y.extend(Slider, Y.Widget, {
     _disabled : false,
 
     /**
-     * Construction logic executed durint Slider instantiation. Subscribe to
-     * after events for min, max, and railSize.  Publish custom events
+     * Construction logic executed durint Slider instantiation. Subscribes to
+     * after events for min, max, and railSize.  Publishes custom events
      * including slideStart and slideEnd.
      *
      * @method initializer
@@ -453,7 +457,7 @@ Y.extend(Slider, Y.Widget, {
         /**
          * Communicates a request to synchronize the Slider UI with the
          * attribute state.  Links the sync request with the default sync
-         * logic in the default function _defSyncFn.
+         * logic in _defSyncFn.
          *
          * @event sync
          * @param event {Event.Facade} Event Facade object
@@ -462,11 +466,10 @@ Y.extend(Slider, Y.Widget, {
         this.publish(SYNC, { defaultFn: this._defSyncFn });
 
         /**
-         * Signals a value change via API, requiring the thumb position to be
-         * updated.  Triggers the thumb placement logic in the default function
-         * _defSetThumbPosition.
+         * Signals a request to reposition the thumb in response to API methods.
+         * Triggers the thumb placement logic in _defPositionThumbFn.
          *
-         * @event valueSet
+         * @event positionThumb
          * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
          *  <dl>
          *      <dt>changeEv</dt>
@@ -478,7 +481,7 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Create the DOM structure for the Slider.  Calls _initRail and _initThumb.
+     * Create the DOM structure for the Slider.
      *
      * @method renderUI
      * @protected
@@ -489,7 +492,8 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Creates the rail element if not provided or discovered via HTML_PARSER.
+     * Creates the rail element if not provided and not discovered via
+     * HTML_PARSER.
      *
      * @method _initRail
      * @protected
@@ -513,13 +517,13 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Creates the thumb element (not image) if not provided or discovered via
-     * HTML_PARSER.  If thumb is present and an <code>img</code> element
-     * <em>and</em> no thumbImage provided, reassigns the thumb element to the
-     * thumbImage and defaults the thumb element as a div.
+     * <p>Creates the thumb element (not image) if not provided and not
+     * discovered via HTML_PARSER.  If the thumb is an <code>img</code> element
+     * but no thumbImage configured or discovered, reassigns the thumb element
+     * to the thumbImage and defaults the thumb element as a div.</p>
      *
-     * Makes sure the thumb is a child of the rail element and calls
-     * _initThumbImage if thumbImage is provided.
+     * <p>Makes sure the thumb is a child of the rail element and calls
+     * _initThumbImage if thumbImage is provided.</p>
      *
      * @method _initThumb
      * @protected
@@ -574,16 +578,15 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Calls _bindThumbDD to create the Y.DD instance used to handle the thumb
-     * movement and binds Slider interaction to the configured value model.
+     * Creates the Y.DD instance used to handle the thumb movement and binds
+     * Slider interaction to the configured value model.
      *
      * @method bindUI
      * @protected
      */
     bindUI : function () {
         /**
-         * Communicates user interaction with the thumb.  Triggers the logic
-         * to update the value via the default function _defUpdateValueFromDD.
+         * Bridges user interaction with the thumb to the value attribute.
          *
          * @event thumbDrag
          * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
@@ -639,8 +642,8 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Moves the thumb to the mousedown position and hands control over to DD
-     * if the Slider is not disabled and railEnabled is true.
+     * If the Slider is not disabled and railEnabled is true, moves the thumb
+     * to the mousedown position and hands control over to DD.
      *
      * @method _handleRailMouseDown
      * @param e {Event} Mousedown event facade
@@ -741,8 +744,7 @@ Y.extend(Slider, Y.Widget, {
 
     /**
      * Event handler assigned to the thumbImage's load and error event if it
-     * was not loaded prior to instantiation.  Calls _ready method and restores
-     * the Slider's disabled attribute.
+     * was not loaded prior to instantiation.  Restores the disabled value.
      *
      * @method _imageLoaded
      * @param img {Node} The thumbImage Node
@@ -766,8 +768,9 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Fires the internal sync event, which barring preventDefault should
-     * execute _defSyncFn.
+     * Applies a class to the content box if the thumbImage failed to resolve,
+     * the fires the internal sync event triggering a sync between UI and
+     * state.
      *
      * @method _ready
      * @param img {Node} the thumbImage Node
@@ -820,8 +823,8 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Captures the thumbs pixel height or width, depending on the Slider's
-     * axis, for use in positioning calculations.
+     * Captures the thumb's pixel height or width (depending on the Slider's
+     * axis) for use in positioning calculations.
      *
      * @method _uiSetThumbSize
      * @protected
@@ -847,9 +850,8 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Sets the _thumbOffset property for use in establishing the point in the
-     * thumb that should align to the rail position representing the calculated
-     * value.
+     * Establishes the point in the thumb that should align to the rail
+     * position representing the calculated value.
      *
      * @method _setThumbOffset
      * @protected
@@ -925,7 +927,8 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Store the current XY position of the rail Node on the page.  For use in calculating thumb position from value.
+     * Store the current XY position of the rail Node on the page.  For use in
+     * calculating thumb position from value.
      *
      * @method _setRailOffsetXY
      * @protected
@@ -954,6 +957,7 @@ Y.extend(Slider, Y.Widget, {
     /**
      * Resets the cached region inside the DD constrain instance to support
      * repositioning the Slider after instantiation. Workaround for ticket 
+     * #2527964
      *
      * @method _resetDDCacheRegion
      * @protected
@@ -1016,10 +1020,10 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Validator applied to the min attribute. Only numbers are allowed.
+     * Validator applied to the min attribute.
      *
      * @method _validateNewMin
-     * @param v {String} proposed value for the min attribute
+     * @param v {MIXED} proposed value for the min attribute
      * @return Boolean
      * @protected
      */
@@ -1028,10 +1032,10 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Validator applied to the max attribute. Only numbers are allowed.
+     * Validator applied to the max attribute.
      *
      * @method _validateNewMax
-     * @param v {String} proposed value for the max attribute
+     * @param v {MIXED} proposed value for the max attribute
      * @return Boolean
      * @protected
      */
@@ -1040,11 +1044,10 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Validator applied to the value attribute. Only numbers between the min
-     * and max are allowed.
+     * Validator applied to the value attribute.
      *
      * @method _validateNewValue
-     * @param v {String} proposed value for the value attribute
+     * @param v {MIXED} proposed value for the value attribute
      * @return Boolean
      * @protected
      */
@@ -1057,11 +1060,11 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Validator applied to the rail attribute. Only allows values through
-     * before the Slider is rendered.
+     * Validator applied to the rail attribute. Rejects all values after the
+     * Slider has been rendered.
      *
      * @method _validateNewRail
-     * @param v {String} proposed value for the rail attribute
+     * @param v {MIXED} proposed value for the rail attribute
      * @return Boolean
      * @protected
      */
@@ -1070,11 +1073,11 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Validator applied to the thumb attribute. Only allows values through
-     * before the Slider is rendered.
+     * Validator applied to the thumb attribute.  Rejects all values after the
+     * Slider has been rendered.
      *
      * @method _validateNewThumb
-     * @param v {String} proposed value for the thumb attribute
+     * @param v {MIXED} proposed value for the thumb attribute
      * @return Boolean
      * @protected
      */
@@ -1083,11 +1086,11 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Validator applied to the thumbImage attribute. Only allows values through
-     * before the Slider is rendered.
+     * Validator applied to the thumbImage attribute.  Rejects all values after
+     * the Slider has been rendered.
      *
      * @method _validateNewThumbImage
-     * @param v {String} proposed value for the thumbImage attribute
+     * @param v {MIXED} proposed value for the thumbImage attribute
      * @return Boolean
      * @protected
      */
@@ -1096,8 +1099,8 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Validator applied to the railSize attribute. Only css size values (e.g.
-     * '200px' are allowed.
+     * Validator applied to the railSize attribute. Only strings of css size
+     * values (e.g. '200px') are allowed.
      *
      * @method _validateNewRailSize
      * @param v {String} proposed value for the railSize attribute
@@ -1110,7 +1113,7 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Setter applied to the input when updating the railSize attribute.
+     * Setter applied to the input when updating the axis attribute.
      *
      * @method _setAxisFn
      * @param v {String} proposed value for the axis attribute
@@ -1122,7 +1125,8 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Setter applied to the input when updating the value attribute.
+     * Setter applied to the input when updating the value attribute. This is
+     * just a placeholder for extension.
      *
      * @method _setValueFn
      * @param v {Number} proposed new value for the Slider
@@ -1177,7 +1181,6 @@ Y.extend(Slider, Y.Widget, {
                 Y.Node.create('<img src="'+v+'" alt="Slider thumb">') :
                 null;
     },
-
 
 
     /**
@@ -1287,16 +1290,16 @@ Y.extend(Slider, Y.Widget, {
      *
      * @method _isDisplayNone
      * @param el {Node} ancestor node as the function walks up the parent axis
-     * @protected
      * @return {Boolean} true if the node is styled with display: none
+     * @protected
      */
     _isDisplayNone : function (node) {
         return node.getComputedStyle('display') === 'none';
     },
 
     /**
-     * Fires the internal valueSet event in response to a change in the value
-     * attribute.
+     * Fires the internal positionThumb event in response to a change in the
+     * value attribute.
      *
      * @method _afterValueChange
      * @param e {Event} valueChange custom event
@@ -1325,7 +1328,7 @@ Y.extend(Slider, Y.Widget, {
 
     /**
      * Replaces the thumb Node in response to a change in the thumb attribute.
-     * This only has effect before the Slider is rendered.
+     * This only has effect after the Slider is rendered.
      *
      * @method _afterThumbChange
      * @param e {Event} thumbChange custom event
@@ -1352,7 +1355,7 @@ Y.extend(Slider, Y.Widget, {
     /**
      * Sets or replaces the thumb's contained <code>img</code> Node with the
      * new Node in response to a change in the thumbImage attribute.  This only
-     * has effect before the Slider is rendered.
+     * has effect after the Slider is rendered.
      *
      * @method _afterThumbImageChange
      * @param e {Event} thumbImageChange custom event
@@ -1371,8 +1374,7 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Calls syncUI to update the Slider UI in response to change in the min
-     * attribute.
+     * Updates the Slider UI in response to change in the min attribute.
      *
      * @method _afterMinChange
      * @param e {Event} minChange custom event
@@ -1383,8 +1385,7 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Calls syncUI to update the Slider UI in response to change in the max
-     * attribute.
+     * Updates the Slider UI in response to change in the max attribute.
      *
      * @method _afterMaxChange
      * @param e {Event} maxChange custom event
@@ -1395,8 +1396,7 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Calls syncUI to update the Slider UI in response to change in the
-     * railSize attribute.
+     * Updates the Slider UI in response to change in the railSize attribute.
      *
      * @method _afterRailSizeChange
      * @param e {Event} railSizeChange custom event
