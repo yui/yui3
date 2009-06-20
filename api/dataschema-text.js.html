@@ -48,14 +48,14 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Provides a DataSchema implementation which can be used to work with Text data</span>
+<span class="c"> * Provides a DataSchema implementation which can be used to work with delimited text data.</span>
 <span class="c"> *</span>
 <span class="c"> * @module dataschema</span>
 <span class="c"> * @submodule dataschema-text</span>
 <span class="c"> */</span>
 
 <span class="c">/**</span>
-<span class="c"> * Text subclass for the YUI DataSchema utility.</span>
+<span class="c"> * Text subclass for the DataSchema Utility.</span>
 <span class="c"> * @class DataSchema.Text</span>
 <span class="c"> * @extends DataSchema.Base</span>
 <span class="c"> * @static</span>
@@ -63,92 +63,92 @@
 
 <span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
 
-<span class="nx">SchemaText</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">SchemaText</span> <span class="o">=</span> <span class="o">{</span>
 
-    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSchema.Text static methods</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">/**</span>
-<span class="c">     * Applies a given schema to given delimited text data.</span>
-<span class="c">     *</span>
-<span class="c">     * @method apply</span>
-<span class="c">     * @param schema {Object} Schema to apply.</span>
-<span class="c">     * @param data {Object} Text data.</span>
-<span class="c">     * @return {Object} Schema-parsed data.</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">apply</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">data_in</span> <span class="o">=</span> <span class="nx">data</span><span class="o">,</span>
-            <span class="nx">data_out</span> <span class="o">=</span> <span class="o">{</span><span class="nx">results</span><span class="o">:[],</span><span class="nx">meta</span><span class="o">:{}};</span>
-            
-        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">data_in</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultDelimiter</span><span class="o">))</span> <span class="o">{</span>
-            <span class="c">// Parse results data</span>
-<span class="c"></span>            <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaText</span><span class="o">.</span><span class="nx">_parseResults</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">data_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Text data could not be schema-parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">),</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-text&quot;</span><span class="o">);</span>
-            <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;Text schema parse failure&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span>        <span class="c">//</span>
+<span class="c"></span>        <span class="c">// DataSchema.Text static methods</span>
+<span class="c"></span>        <span class="c">//</span>
+<span class="c"></span>        <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span>        <span class="c">/**</span>
+<span class="c">         * Applies a given schema to given delimited text data.</span>
+<span class="c">         *</span>
+<span class="c">         * @method apply</span>
+<span class="c">         * @param schema {Object} Schema to apply.</span>
+<span class="c">         * @param data {Object} Text data.</span>
+<span class="c">         * @return {Object} Schema-parsed data.</span>
+<span class="c">         * @static</span>
+<span class="c">         */</span>
+        <span class="nx">apply</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">data_in</span> <span class="o">=</span> <span class="nx">data</span><span class="o">,</span>
+                <span class="nx">data_out</span> <span class="o">=</span> <span class="o">{</span><span class="nx">results</span><span class="o">:[],</span><span class="nx">meta</span><span class="o">:{}};</span>
 
-        <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Schema-parsed list of results from full data</span>
-<span class="c">     *</span>
-<span class="c">     * @method _parseResults</span>
-<span class="c">     * @param schema {Array} Schema to parse against.</span>
-<span class="c">     * @param text_in {String} Text to parse.</span>
-<span class="c">     * @param data_out {Object} In-progress parsed data to update.</span>
-<span class="c">     * @return {Object} Parsed data object.</span>
-<span class="c">     * @static</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_parseResults</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">text_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">resultDelim</span> <span class="o">=</span> <span class="nx">schema</span><span class="o">.</span><span class="nx">resultDelimiter</span><span class="o">,</span>
-            <span class="nx">results</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">results_in</span><span class="o">,</span> <span class="nx">fields_in</span><span class="o">,</span> <span class="nx">result</span><span class="o">,</span> <span class="nx">item</span><span class="o">,</span> <span class="nx">fields</span><span class="o">,</span> <span class="nx">field</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">value</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span>
-            
-        <span class="c">// Delete final delimiter at end of string if there</span>
-<span class="c"></span>        <span class="nx">tmpLength</span> <span class="o">=</span> <span class="nx">text_in</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="nx">resultDelim</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
-        <span class="k">if</span><span class="o">(</span><span class="nx">text_in</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="nx">tmpLength</span><span class="o">)</span> <span class="o">==</span> <span class="nx">resultDelim</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">text_in</span> <span class="o">=</span> <span class="nx">text_in</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">tmpLength</span><span class="o">);</span>
-        <span class="o">}</span>
-        
-        <span class="c">// Split into results</span>
-<span class="c"></span>        <span class="nx">results_in</span> <span class="o">=</span> <span class="nx">text_in</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultDelimiter</span><span class="o">);</span>
-
-        <span class="k">for</span><span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">results_in</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span><span class="o">&gt;-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span><span class="o">--)</span> <span class="o">{</span>
-            <span class="nx">result</span> <span class="o">=</span> <span class="o">{};</span>
-            <span class="nx">item</span> <span class="o">=</span> <span class="nx">results_in</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-            
-            <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">fieldDelimiter</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">fields_in</span> <span class="o">=</span> <span class="nx">item</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">fieldDelimiter</span><span class="o">);</span>
-
-                <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultFields</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">fields</span> <span class="o">=</span> <span class="nx">schema</span><span class="o">.</span><span class="nx">resultFields</span><span class="o">;</span>
-                    <span class="k">for</span><span class="o">(</span><span class="nx">j</span><span class="o">=</span><span class="nx">fields</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">j</span><span class="o">&gt;-</span><span class="m">1</span><span class="o">;</span> <span class="nx">j</span><span class="o">--)</span> <span class="o">{</span>
-                        <span class="nx">field</span> <span class="o">=</span> <span class="nx">fields</span><span class="o">[</span><span class="nx">j</span><span class="o">];</span>
-                        <span class="nx">key</span> <span class="o">=</span> <span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">field</span><span class="o">.</span><span class="nx">key</span><span class="o">))</span> <span class="o">?</span> <span class="nx">field</span><span class="o">.</span><span class="nx">key</span> <span class="o">:</span> <span class="nx">field</span><span class="o">;</span>
-                        <span class="nx">value</span> <span class="o">=</span> <span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">fields_in</span><span class="o">[</span><span class="nx">key</span><span class="o">]))</span> <span class="o">?</span> <span class="nx">fields_in</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">:</span> <span class="nx">fields_in</span><span class="o">[</span><span class="nx">j</span><span class="o">];</span>
-                        <span class="nx">result</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSchema</span><span class="o">.</span><span class="nx">Base</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span><span class="nx">value</span><span class="o">,</span> <span class="nx">field</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-
+            <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">data_in</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultDelimiter</span><span class="o">))</span> <span class="o">{</span>
+                <span class="c">// Parse results data</span>
+<span class="c"></span>                <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaText</span><span class="o">.</span><span class="nx">_parseResults</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">data_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">);</span>
             <span class="o">}</span>
             <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">result</span> <span class="o">=</span> <span class="nx">item</span><span class="o">;</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Text data could not be schema-parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">),</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-text&quot;</span><span class="o">);</span>
+                <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;Text schema parse failure&quot;</span><span class="o">);</span>
             <span class="o">}</span>
-            
-            <span class="nx">results</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">result</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="nx">data_out</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="nx">results</span><span class="o">;</span>
 
-        <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+            <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Schema-parsed list of results from full data</span>
+<span class="c">         *</span>
+<span class="c">         * @method _parseResults</span>
+<span class="c">         * @param schema {Array} Schema to parse against.</span>
+<span class="c">         * @param text_in {String} Text to parse.</span>
+<span class="c">         * @param data_out {Object} In-progress parsed data to update.</span>
+<span class="c">         * @return {Object} Parsed data object.</span>
+<span class="c">         * @static</span>
+<span class="c">         * @protected</span>
+<span class="c">         */</span>
+        <span class="nx">_parseResults</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">text_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">resultDelim</span> <span class="o">=</span> <span class="nx">schema</span><span class="o">.</span><span class="nx">resultDelimiter</span><span class="o">,</span>
+                <span class="nx">results</span> <span class="o">=</span> <span class="o">[],</span>
+                <span class="nx">results_in</span><span class="o">,</span> <span class="nx">fields_in</span><span class="o">,</span> <span class="nx">result</span><span class="o">,</span> <span class="nx">item</span><span class="o">,</span> <span class="nx">fields</span><span class="o">,</span> <span class="nx">field</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">value</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span>
+
+            <span class="c">// Delete final delimiter at end of string if there</span>
+<span class="c"></span>            <span class="nx">tmpLength</span> <span class="o">=</span> <span class="nx">text_in</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="nx">resultDelim</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
+            <span class="k">if</span><span class="o">(</span><span class="nx">text_in</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="nx">tmpLength</span><span class="o">)</span> <span class="o">==</span> <span class="nx">resultDelim</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">text_in</span> <span class="o">=</span> <span class="nx">text_in</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">tmpLength</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="c">// Split into results</span>
+<span class="c"></span>            <span class="nx">results_in</span> <span class="o">=</span> <span class="nx">text_in</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultDelimiter</span><span class="o">);</span>
+
+            <span class="k">for</span><span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">results_in</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span><span class="o">&gt;-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span><span class="o">--)</span> <span class="o">{</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="o">{};</span>
+                <span class="nx">item</span> <span class="o">=</span> <span class="nx">results_in</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+
+                <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">fieldDelimiter</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">fields_in</span> <span class="o">=</span> <span class="nx">item</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">fieldDelimiter</span><span class="o">);</span>
+
+                    <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultFields</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">fields</span> <span class="o">=</span> <span class="nx">schema</span><span class="o">.</span><span class="nx">resultFields</span><span class="o">;</span>
+                        <span class="k">for</span><span class="o">(</span><span class="nx">j</span><span class="o">=</span><span class="nx">fields</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">j</span><span class="o">&gt;-</span><span class="m">1</span><span class="o">;</span> <span class="nx">j</span><span class="o">--)</span> <span class="o">{</span>
+                            <span class="nx">field</span> <span class="o">=</span> <span class="nx">fields</span><span class="o">[</span><span class="nx">j</span><span class="o">];</span>
+                            <span class="nx">key</span> <span class="o">=</span> <span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">field</span><span class="o">.</span><span class="nx">key</span><span class="o">))</span> <span class="o">?</span> <span class="nx">field</span><span class="o">.</span><span class="nx">key</span> <span class="o">:</span> <span class="nx">field</span><span class="o">;</span>
+                            <span class="nx">value</span> <span class="o">=</span> <span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">fields_in</span><span class="o">[</span><span class="nx">key</span><span class="o">]))</span> <span class="o">?</span> <span class="nx">fields_in</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">:</span> <span class="nx">fields_in</span><span class="o">[</span><span class="nx">j</span><span class="o">];</span>
+                            <span class="nx">result</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSchema</span><span class="o">.</span><span class="nx">Base</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span><span class="nx">value</span><span class="o">,</span> <span class="nx">field</span><span class="o">);</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+
+                <span class="o">}</span>
+                <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">result</span> <span class="o">=</span> <span class="nx">item</span><span class="o">;</span>
+                <span class="o">}</span>
+
+                <span class="nx">results</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">result</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="nx">data_out</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="nx">results</span><span class="o">;</span>
+
+            <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSchema</span><span class="o">.</span><span class="nx">Text</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">SchemaText</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSchema</span><span class="o">.</span><span class="nx">Base</span><span class="o">);</span>
 </pre></div>

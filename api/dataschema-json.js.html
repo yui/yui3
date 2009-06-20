@@ -48,288 +48,288 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Provides a DataSchema implementation which can be used to work with JSON data</span>
+<span class="c"> * Provides a DataSchema implementation which can be used to work with JSON data.</span>
 <span class="c"> *</span>
 <span class="c"> * @module dataschema</span>
 <span class="c"> * @submodule dataschema-json</span>
 <span class="c"> */</span>
 
 <span class="c">/**</span>
-<span class="c"> * JSON subclass for the YUI DataSchema utility.</span>
+<span class="c"> * JSON subclass for the DataSchema Utility.</span>
 <span class="c"> * @class DataSchema.JSON</span>
 <span class="c"> * @extends DataSchema.Base</span>
 <span class="c"> * @static</span>
 <span class="c"> */</span>
 <span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
 
-<span class="nx">SchemaJSON</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">SchemaJSON</span> <span class="o">=</span> <span class="o">{</span>
 
-    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSchema.JSON static methods</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">/**</span>
-<span class="c">     * Utility function converts JSON locator strings into walkable paths</span>
-<span class="c">     *</span>
-<span class="c">     * @method DataSchema.JSON.getPath</span>
-<span class="c">     * @param locator {String} JSON value locator.</span>
-<span class="c">     * @return {String[]} Walkable path to data value.</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">getPath</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">locator</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">keys</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-            
-        <span class="k">if</span> <span class="o">(</span><span class="nx">locator</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// Strip the [&quot;string keys&quot;] and [1] array indexes</span>
-<span class="c"></span>            <span class="nx">locator</span> <span class="o">=</span> <span class="nx">locator</span><span class="o">.</span>
-                <span class="nx">replace</span><span class="o">(</span><span class="sr">/\[([&#39;&quot;])(.*?)\1\]/g</span><span class="o">,</span>
-                <span class="k">function</span> <span class="o">(</span><span class="nx">x</span><span class="o">,</span><span class="nx">$1</span><span class="o">,</span><span class="nx">$2</span><span class="o">)</span> <span class="o">{</span><span class="nx">keys</span><span class="o">[</span><span class="nx">i</span><span class="o">]=</span><span class="nx">$2</span><span class="o">;</span><span class="k">return</span> <span class="s1">&#39;.@&#39;</span><span class="o">+(</span><span class="nx">i</span><span class="o">++);}).</span>
-                <span class="nx">replace</span><span class="o">(</span><span class="sr">/\[(\d+)\]/g</span><span class="o">,</span>
-                <span class="k">function</span> <span class="o">(</span><span class="nx">x</span><span class="o">,</span><span class="nx">$1</span><span class="o">)</span> <span class="o">{</span><span class="nx">keys</span><span class="o">[</span><span class="nx">i</span><span class="o">]=</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">$1</span><span class="o">,</span><span class="m">10</span><span class="o">)|</span><span class="m">0</span><span class="o">;</span><span class="k">return</span> <span class="s1">&#39;.@&#39;</span><span class="o">+(</span><span class="nx">i</span><span class="o">++);}).</span>
-                <span class="nx">replace</span><span class="o">(</span><span class="sr">/^\./</span><span class="o">,</span><span class="s1">&#39;&#39;</span><span class="o">);</span> <span class="c">// remove leading dot</span>
+        <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span>        <span class="c">//</span>
+<span class="c"></span>        <span class="c">// DataSchema.JSON static methods</span>
+<span class="c"></span>        <span class="c">//</span>
+<span class="c"></span>        <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span>        <span class="c">/**</span>
+<span class="c">         * Utility function converts JSON locator strings into walkable paths</span>
+<span class="c">         *</span>
+<span class="c">         * @method DataSchema.JSON.getPath</span>
+<span class="c">         * @param locator {String} JSON value locator.</span>
+<span class="c">         * @return {String[]} Walkable path to data value.</span>
+<span class="c">         * @static</span>
+<span class="c">         */</span>
+        <span class="nx">getPath</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">locator</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
+                <span class="nx">keys</span> <span class="o">=</span> <span class="o">[],</span>
+                <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">locator</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// Strip the [&quot;string keys&quot;] and [1] array indexes</span>
+<span class="c"></span>                <span class="nx">locator</span> <span class="o">=</span> <span class="nx">locator</span><span class="o">.</span>
+                    <span class="nx">replace</span><span class="o">(</span><span class="sr">/\[([&#39;&quot;])(.*?)\1\]/g</span><span class="o">,</span>
+                    <span class="k">function</span> <span class="o">(</span><span class="nx">x</span><span class="o">,</span><span class="nx">$1</span><span class="o">,</span><span class="nx">$2</span><span class="o">)</span> <span class="o">{</span><span class="nx">keys</span><span class="o">[</span><span class="nx">i</span><span class="o">]=</span><span class="nx">$2</span><span class="o">;</span><span class="k">return</span> <span class="s1">&#39;.@&#39;</span><span class="o">+(</span><span class="nx">i</span><span class="o">++);}).</span>
+                    <span class="nx">replace</span><span class="o">(</span><span class="sr">/\[(\d+)\]/g</span><span class="o">,</span>
+                    <span class="k">function</span> <span class="o">(</span><span class="nx">x</span><span class="o">,</span><span class="nx">$1</span><span class="o">)</span> <span class="o">{</span><span class="nx">keys</span><span class="o">[</span><span class="nx">i</span><span class="o">]=</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">$1</span><span class="o">,</span><span class="m">10</span><span class="o">)|</span><span class="m">0</span><span class="o">;</span><span class="k">return</span> <span class="s1">&#39;.@&#39;</span><span class="o">+(</span><span class="nx">i</span><span class="o">++);}).</span>
+                    <span class="nx">replace</span><span class="o">(</span><span class="sr">/^\./</span><span class="o">,</span><span class="s1">&#39;&#39;</span><span class="o">);</span> <span class="c">// remove leading dot</span>
 <span class="c"></span>
-            <span class="c">// Validate against problematic characters.</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="sr">/[^\w\.\$@]/</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">locator</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">path</span> <span class="o">=</span> <span class="nx">locator</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;.&#39;</span><span class="o">);</span>
-                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">path</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">charAt</span><span class="o">(</span><span class="m">0</span><span class="o">)</span> <span class="o">===</span> <span class="s1">&#39;@&#39;</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">keys</span><span class="o">[</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">substr</span><span class="o">(</span><span class="m">1</span><span class="o">),</span><span class="m">10</span><span class="o">)];</span>
+                <span class="c">// Validate against problematic characters.</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(!</span><span class="sr">/[^\w\.\$@]/</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">locator</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">path</span> <span class="o">=</span> <span class="nx">locator</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;.&#39;</span><span class="o">);</span>
+                    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">path</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">charAt</span><span class="o">(</span><span class="m">0</span><span class="o">)</span> <span class="o">===</span> <span class="s1">&#39;@&#39;</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">keys</span><span class="o">[</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">substr</span><span class="o">(</span><span class="m">1</span><span class="o">),</span><span class="m">10</span><span class="o">)];</span>
+                        <span class="o">}</span>
                     <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-            <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Invalid locator: &quot;</span> <span class="o">+</span> <span class="nx">locator</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">path</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Utility function to walk a path and return the value located there.</span>
-<span class="c">     *</span>
-<span class="c">     * @method DataSchema.JSON.getLocationValue</span>
-<span class="c">     * @param path {String[]} Locator path.</span>
-<span class="c">     * @param data {String} Data to traverse.</span>
-<span class="c">     * @return {Object} Data value at location.</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">getLocationValue</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span>
-            <span class="nx">len</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(;</span><span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="o">;</span><span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="k">if</span><span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">data</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]]))</span> <span class="o">{</span>
-                <span class="nx">data</span> <span class="o">=</span> <span class="nx">data</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
-            <span class="o">}</span>
-            <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">data</span> <span class="o">=</span> <span class="kc">undefined</span><span class="o">;</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">data</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Applies a given schema to given JSON data.</span>
-<span class="c">     *</span>
-<span class="c">     * @method apply</span>
-<span class="c">     * @param schema {Object} Schema to apply.</span>
-<span class="c">     * @param data {Object} JSON data.</span>
-<span class="c">     * @return {Object} Schema-parsed data.</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">apply</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">data_in</span> <span class="o">=</span> <span class="nx">data</span><span class="o">,</span>
-            <span class="nx">data_out</span> <span class="o">=</span> <span class="o">{</span><span class="nx">results</span><span class="o">:[],</span><span class="nx">meta</span><span class="o">:{}};</span>
-            
-        <span class="c">// Convert incoming JSON strings</span>
-<span class="c"></span>        <span class="k">if</span><span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">data</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">try</span> <span class="o">{</span>
-                <span class="nx">data_in</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span><span class="nx">data</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="nx">e</span><span class="o">;</span>
-                <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">data_in</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">schema</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// Parse results data</span>
-<span class="c"></span>            <span class="k">if</span><span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultListLocator</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">_parseResults</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">data_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="c">// Parse meta data</span>
-<span class="c"></span>            <span class="k">if</span><span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">metaFields</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">_parseMeta</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">metaFields</span><span class="o">,</span> <span class="nx">data_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;JSON data could not be schema-parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">),</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
-            <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON schema parse failure&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Schema-parsed list of results from full data</span>
-<span class="c">     *</span>
-<span class="c">     * @method _parseResults</span>
-<span class="c">     * @param schema {Object} Schema to parse against.</span>
-<span class="c">     * @param json_in {Object} JSON to parse.</span>
-<span class="c">     * @param data_out {Object} In-progress parsed data to update.</span>
-<span class="c">     * @return {Object} Parsed data object.</span>
-<span class="c">     * @static</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_parseResults</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">json_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">path</span><span class="o">,</span>
-            <span class="nx">error</span><span class="o">;</span>
-
-        <span class="k">if</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultListLocator</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">path</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getPath</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultListLocator</span><span class="o">);</span>
-            <span class="k">if</span><span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">results</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getLocationValue</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">json_in</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">results</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">data_out</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="o">[];</span>
-                    <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON results retrieval failure&quot;</span><span class="o">);</span>
                 <span class="o">}</span>
                 <span class="k">else</span> <span class="o">{</span>
-                    <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultFields</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">results</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">_getFieldValues</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultFields</span><span class="o">,</span> <span class="nx">results</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">);</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Invalid locator: &quot;</span> <span class="o">+</span> <span class="nx">locator</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">path</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Utility function to walk a path and return the value located there.</span>
+<span class="c">         *</span>
+<span class="c">         * @method DataSchema.JSON.getLocationValue</span>
+<span class="c">         * @param path {String[]} Locator path.</span>
+<span class="c">         * @param data {String} Data to traverse.</span>
+<span class="c">         * @return {Object} Data value at location.</span>
+<span class="c">         * @static</span>
+<span class="c">         */</span>
+        <span class="nx">getLocationValue</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span>
+                <span class="nx">len</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
+            <span class="k">for</span> <span class="o">(;</span><span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="o">;</span><span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="k">if</span><span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">data</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]]))</span> <span class="o">{</span>
+                    <span class="nx">data</span> <span class="o">=</span> <span class="nx">data</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
+                <span class="o">}</span>
+                <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">data</span> <span class="o">=</span> <span class="kc">undefined</span><span class="o">;</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">data</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Applies a given schema to given JSON data.</span>
+<span class="c">         *</span>
+<span class="c">         * @method apply</span>
+<span class="c">         * @param schema {Object} Schema to apply.</span>
+<span class="c">         * @param data {Object} JSON data.</span>
+<span class="c">         * @return {Object} Schema-parsed data.</span>
+<span class="c">         * @static</span>
+<span class="c">         */</span>
+        <span class="nx">apply</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">data_in</span> <span class="o">=</span> <span class="nx">data</span><span class="o">,</span>
+                <span class="nx">data_out</span> <span class="o">=</span> <span class="o">{</span><span class="nx">results</span><span class="o">:[],</span><span class="nx">meta</span><span class="o">:{}};</span>
+
+            <span class="c">// Convert incoming JSON strings</span>
+<span class="c"></span>            <span class="k">if</span><span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">data</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">try</span> <span class="o">{</span>
+                    <span class="nx">data_in</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span><span class="nx">data</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="nx">e</span><span class="o">;</span>
+                    <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">data_in</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">schema</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// Parse results data</span>
+<span class="c"></span>                <span class="k">if</span><span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultListLocator</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">_parseResults</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">data_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">);</span>
+                <span class="o">}</span>
+
+                <span class="c">// Parse meta data</span>
+<span class="c"></span>                <span class="k">if</span><span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">metaFields</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">_parseMeta</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">metaFields</span><span class="o">,</span> <span class="nx">data_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;JSON data could not be schema-parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">),</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
+                <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON schema parse failure&quot;</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Schema-parsed list of results from full data</span>
+<span class="c">         *</span>
+<span class="c">         * @method _parseResults</span>
+<span class="c">         * @param schema {Object} Schema to parse against.</span>
+<span class="c">         * @param json_in {Object} JSON to parse.</span>
+<span class="c">         * @param data_out {Object} In-progress parsed data to update.</span>
+<span class="c">         * @return {Object} Parsed data object.</span>
+<span class="c">         * @static</span>
+<span class="c">         * @protected</span>
+<span class="c">         */</span>
+        <span class="nx">_parseResults</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">json_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="o">[],</span>
+                <span class="nx">path</span><span class="o">,</span>
+                <span class="nx">error</span><span class="o">;</span>
+
+            <span class="k">if</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultListLocator</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">path</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getPath</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultListLocator</span><span class="o">);</span>
+                <span class="k">if</span><span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">results</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getLocationValue</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">json_in</span><span class="o">);</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">results</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">data_out</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="o">[];</span>
+                        <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON results retrieval failure&quot;</span><span class="o">);</span>
                     <span class="o">}</span>
                     <span class="k">else</span> <span class="o">{</span>
-                        <span class="nx">data_out</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="o">[];</span>
-                        <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON Schema fields retrieval failure&quot;</span><span class="o">);</span>
+                        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultFields</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">results</span><span class="o">))</span> <span class="o">{</span>
+                            <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">_getFieldValues</span><span class="o">(</span><span class="nx">schema</span><span class="o">.</span><span class="nx">resultFields</span><span class="o">,</span> <span class="nx">results</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">);</span>
+                        <span class="o">}</span>
+                        <span class="k">else</span> <span class="o">{</span>
+                            <span class="nx">data_out</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="o">[];</span>
+                            <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON Schema fields retrieval failure&quot;</span><span class="o">);</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+                <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON Schema results locator failure&quot;</span><span class="o">);</span>
+                <span class="o">}</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">error</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;JSON data could not be parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">json_in</span><span class="o">),</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
+                    <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="nx">error</span><span class="o">;</span>
+                <span class="o">}</span>
+
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Get field data values out of list of full results</span>
+<span class="c">         *</span>
+<span class="c">         * @method _getFieldValues</span>
+<span class="c">         * @param fields {Array} Fields to find.</span>
+<span class="c">         * @param array_in {Array} Results to parse.</span>
+<span class="c">         * @param data_out {Object} In-progress parsed data to update.</span>
+<span class="c">         * @return {Object} Parsed data object.</span>
+<span class="c">         * @static</span>
+<span class="c">         * @protected</span>
+<span class="c">         */</span>
+        <span class="nx">_getFieldValues</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fields</span><span class="o">,</span> <span class="nx">array_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="o">[],</span>
+                <span class="nx">len</span> <span class="o">=</span> <span class="nx">fields</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span>
+                <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span>
+                <span class="nx">field</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">parser</span><span class="o">,</span>
+                <span class="nx">simplePaths</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">complexPaths</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">fieldParsers</span> <span class="o">=</span> <span class="o">[],</span>
+                <span class="nx">result</span><span class="o">,</span> <span class="nx">record</span><span class="o">;</span>
+
+            <span class="c">// First collect hashes of simple paths, complex paths, and parsers</span>
+<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="nx">field</span> <span class="o">=</span> <span class="nx">fields</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span> <span class="c">// A field can be a simple string or a hash</span>
+<span class="c"></span>                <span class="nx">key</span> <span class="o">=</span> <span class="nx">field</span><span class="o">.</span><span class="nx">key</span> <span class="o">||</span> <span class="nx">field</span><span class="o">;</span> <span class="c">// Find the key</span>
+<span class="c"></span>
+                <span class="c">// Validate and store locators for later</span>
+<span class="c"></span>                <span class="nx">path</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getPath</span><span class="o">(</span><span class="nx">key</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">path</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">simplePaths</span><span class="o">[</span><span class="nx">simplePaths</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span><span class="nx">key</span><span class="o">:</span><span class="nx">key</span><span class="o">,</span> <span class="nx">path</span><span class="o">:</span><span class="nx">path</span><span class="o">[</span><span class="m">0</span><span class="o">]};</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="nx">complexPaths</span><span class="o">[</span><span class="nx">complexPaths</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span><span class="nx">key</span><span class="o">:</span><span class="nx">key</span><span class="o">,</span> <span class="nx">path</span><span class="o">:</span><span class="nx">path</span><span class="o">};</span>
+                    <span class="o">}</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Invalid key syntax: &quot;</span> <span class="o">+</span> <span class="nx">key</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
+                <span class="o">}</span>
+
+                <span class="c">// Validate and store parsers for later</span>
+<span class="c"></span>                <span class="c">//TODO: use Y.DataSchema.parse?</span>
+<span class="c"></span>                <span class="nx">parser</span> <span class="o">=</span> <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">field</span><span class="o">.</span><span class="nx">parser</span><span class="o">))</span> <span class="o">?</span> <span class="nx">field</span><span class="o">.</span><span class="nx">parser</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Parsers</span><span class="o">[</span><span class="nx">field</span><span class="o">.</span><span class="nx">parser</span><span class="o">+</span><span class="s1">&#39;&#39;</span><span class="o">];</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">parser</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">fieldParsers</span><span class="o">[</span><span class="nx">fieldParsers</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span><span class="nx">key</span><span class="o">:</span><span class="nx">key</span><span class="o">,</span> <span class="nx">parser</span><span class="o">:</span><span class="nx">parser</span><span class="o">};</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="c">// Traverse list of array_in, creating records of simple fields,</span>
+<span class="c"></span>            <span class="c">// complex fields, and applying parsers as necessary</span>
+<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">array_in</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span><span class="o">&gt;=</span><span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">record</span> <span class="o">=</span> <span class="o">{};</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="nx">array_in</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                <span class="k">if</span><span class="o">(</span><span class="nx">result</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c">// Cycle through simpleLocators</span>
+<span class="c"></span>                    <span class="k">for</span> <span class="o">(</span><span class="nx">j</span><span class="o">=</span><span class="nx">simplePaths</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">j</span><span class="o">&gt;=</span><span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="c">// Bug 1777850: The result might be an array instead of object</span>
+<span class="c"></span>                        <span class="nx">record</span><span class="o">[</span><span class="nx">simplePaths</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSchema</span><span class="o">.</span><span class="nx">Base</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span>
+                                <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">result</span><span class="o">[</span><span class="nx">simplePaths</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">path</span><span class="o">])</span> <span class="o">?</span>
+                                <span class="nx">result</span><span class="o">[</span><span class="nx">j</span><span class="o">]</span> <span class="o">:</span> <span class="nx">result</span><span class="o">[</span><span class="nx">simplePaths</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">path</span><span class="o">]),</span> <span class="nx">simplePaths</span><span class="o">[</span><span class="nx">j</span><span class="o">]);</span>
+                    <span class="o">}</span>
+
+                    <span class="c">// Cycle through complexLocators</span>
+<span class="c"></span>                    <span class="k">for</span> <span class="o">(</span><span class="nx">j</span><span class="o">=</span><span class="nx">complexPaths</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">j</span><span class="o">&gt;=</span><span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">record</span><span class="o">[</span><span class="nx">complexPaths</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSchema</span><span class="o">.</span><span class="nx">Base</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span>
+                            <span class="o">(</span><span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getLocationValue</span><span class="o">(</span><span class="nx">complexPaths</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">path</span><span class="o">,</span> <span class="nx">result</span><span class="o">)),</span> <span class="nx">complexPaths</span><span class="o">[</span><span class="nx">j</span><span class="o">]</span> <span class="o">);</span>
+                    <span class="o">}</span>
+
+                    <span class="c">// Cycle through fieldParsers</span>
+<span class="c"></span>                    <span class="k">for</span> <span class="o">(</span><span class="nx">j</span><span class="o">=</span><span class="nx">fieldParsers</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">j</span><span class="o">&gt;=</span><span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">key</span> <span class="o">=</span> <span class="nx">fieldParsers</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">key</span><span class="o">;</span>
+                        <span class="nx">record</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">fieldParsers</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">parser</span><span class="o">(</span><span class="nx">record</span><span class="o">[</span><span class="nx">key</span><span class="o">]);</span>
+                        <span class="c">// Safety net</span>
+<span class="c"></span>                        <span class="k">if</span> <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">record</span><span class="o">[</span><span class="nx">key</span><span class="o">]))</span> <span class="o">{</span>
+                            <span class="nx">record</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                    <span class="nx">results</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">record</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="nx">data_out</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="nx">results</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Parses results data according to schema</span>
+<span class="c">         *</span>
+<span class="c">         * @method _parseMeta</span>
+<span class="c">         * @param metaFields {Object} Metafields definitions.</span>
+<span class="c">         * @param json_in {Object} JSON to parse.</span>
+<span class="c">         * @param data_out {Object} In-progress parsed data to update.</span>
+<span class="c">         * @return {Object} Schema-parsed meta data.</span>
+<span class="c">         * @static</span>
+<span class="c">         * @protected</span>
+<span class="c">         */</span>
+        <span class="nx">_parseMeta</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">metaFields</span><span class="o">,</span> <span class="nx">json_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">metaFields</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">path</span><span class="o">;</span>
+                <span class="k">for</span><span class="o">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">metaFields</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">metaFields</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">key</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">path</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getPath</span><span class="o">(</span><span class="nx">metaFields</span><span class="o">[</span><span class="nx">key</span><span class="o">]);</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">path</span> <span class="o">&amp;&amp;</span> <span class="nx">json_in</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">data_out</span><span class="o">.</span><span class="nx">meta</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getLocationValue</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">json_in</span><span class="o">);</span>
+                        <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
             <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON Schema results locator failure&quot;</span><span class="o">);</span>
+                <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON meta data retrieval failure&quot;</span><span class="o">);</span>
             <span class="o">}</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">error</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;JSON data could not be parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">json_in</span><span class="o">),</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
-                <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="nx">error</span><span class="o">;</span>
-            <span class="o">}</span>
-            
+            <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
         <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Get field data values out of list of full results</span>
-<span class="c">     *</span>
-<span class="c">     * @method _getFieldValues</span>
-<span class="c">     * @param fields {Array} Fields to find.</span>
-<span class="c">     * @param array_in {Array} Results to parse.</span>
-<span class="c">     * @param data_out {Object} In-progress parsed data to update.</span>
-<span class="c">     * @return {Object} Parsed data object.</span>
-<span class="c">     * @static</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_getFieldValues</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fields</span><span class="o">,</span> <span class="nx">array_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">len</span> <span class="o">=</span> <span class="nx">fields</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span>
-            <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span>
-            <span class="nx">field</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">parser</span><span class="o">,</span>
-            <span class="nx">simplePaths</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">complexPaths</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">fieldParsers</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">result</span><span class="o">,</span> <span class="nx">record</span><span class="o">;</span>
-
-        <span class="c">// First collect hashes of simple paths, complex paths, and parsers</span>
-<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="nx">field</span> <span class="o">=</span> <span class="nx">fields</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span> <span class="c">// A field can be a simple string or a hash</span>
-<span class="c"></span>            <span class="nx">key</span> <span class="o">=</span> <span class="nx">field</span><span class="o">.</span><span class="nx">key</span> <span class="o">||</span> <span class="nx">field</span><span class="o">;</span> <span class="c">// Find the key</span>
-<span class="c"></span>
-            <span class="c">// Validate and store locators for later</span>
-<span class="c"></span>            <span class="nx">path</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getPath</span><span class="o">(</span><span class="nx">key</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">path</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">simplePaths</span><span class="o">[</span><span class="nx">simplePaths</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span><span class="nx">key</span><span class="o">:</span><span class="nx">key</span><span class="o">,</span> <span class="nx">path</span><span class="o">:</span><span class="nx">path</span><span class="o">[</span><span class="m">0</span><span class="o">]};</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">complexPaths</span><span class="o">[</span><span class="nx">complexPaths</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span><span class="nx">key</span><span class="o">:</span><span class="nx">key</span><span class="o">,</span> <span class="nx">path</span><span class="o">:</span><span class="nx">path</span><span class="o">};</span>
-                <span class="o">}</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Invalid key syntax: &quot;</span> <span class="o">+</span> <span class="nx">key</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="c">// Validate and store parsers for later</span>
-<span class="c"></span>            <span class="c">//TODO: use Y.DataSchema.parse?</span>
-<span class="c"></span>            <span class="nx">parser</span> <span class="o">=</span> <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">field</span><span class="o">.</span><span class="nx">parser</span><span class="o">))</span> <span class="o">?</span> <span class="nx">field</span><span class="o">.</span><span class="nx">parser</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Parsers</span><span class="o">[</span><span class="nx">field</span><span class="o">.</span><span class="nx">parser</span><span class="o">+</span><span class="s1">&#39;&#39;</span><span class="o">];</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">parser</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">fieldParsers</span><span class="o">[</span><span class="nx">fieldParsers</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span><span class="nx">key</span><span class="o">:</span><span class="nx">key</span><span class="o">,</span> <span class="nx">parser</span><span class="o">:</span><span class="nx">parser</span><span class="o">};</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="c">// Traverse list of array_in, creating records of simple fields,</span>
-<span class="c"></span>        <span class="c">// complex fields, and applying parsers as necessary</span>
-<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">array_in</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span><span class="o">&gt;=</span><span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">record</span> <span class="o">=</span> <span class="o">{};</span>
-            <span class="nx">result</span> <span class="o">=</span> <span class="nx">array_in</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-            <span class="k">if</span><span class="o">(</span><span class="nx">result</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// Cycle through simpleLocators</span>
-<span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="nx">j</span><span class="o">=</span><span class="nx">simplePaths</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">j</span><span class="o">&gt;=</span><span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c">// Bug 1777850: The result might be an array instead of object</span>
-<span class="c"></span>                    <span class="nx">record</span><span class="o">[</span><span class="nx">simplePaths</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSchema</span><span class="o">.</span><span class="nx">Base</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span>
-                            <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">result</span><span class="o">[</span><span class="nx">simplePaths</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">path</span><span class="o">])</span> <span class="o">?</span>
-                            <span class="nx">result</span><span class="o">[</span><span class="nx">j</span><span class="o">]</span> <span class="o">:</span> <span class="nx">result</span><span class="o">[</span><span class="nx">simplePaths</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">path</span><span class="o">]),</span> <span class="nx">simplePaths</span><span class="o">[</span><span class="nx">j</span><span class="o">]);</span>
-                <span class="o">}</span>
-
-                <span class="c">// Cycle through complexLocators</span>
-<span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="nx">j</span><span class="o">=</span><span class="nx">complexPaths</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">j</span><span class="o">&gt;=</span><span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">record</span><span class="o">[</span><span class="nx">complexPaths</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSchema</span><span class="o">.</span><span class="nx">Base</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span>
-                        <span class="o">(</span><span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getLocationValue</span><span class="o">(</span><span class="nx">complexPaths</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">path</span><span class="o">,</span> <span class="nx">result</span><span class="o">)),</span> <span class="nx">complexPaths</span><span class="o">[</span><span class="nx">j</span><span class="o">]</span> <span class="o">);</span>
-                <span class="o">}</span>
-
-                <span class="c">// Cycle through fieldParsers</span>
-<span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="nx">j</span><span class="o">=</span><span class="nx">fieldParsers</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">j</span><span class="o">&gt;=</span><span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">key</span> <span class="o">=</span> <span class="nx">fieldParsers</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">key</span><span class="o">;</span>
-                    <span class="nx">record</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">fieldParsers</span><span class="o">[</span><span class="nx">j</span><span class="o">].</span><span class="nx">parser</span><span class="o">(</span><span class="nx">record</span><span class="o">[</span><span class="nx">key</span><span class="o">]);</span>
-                    <span class="c">// Safety net</span>
-<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">record</span><span class="o">[</span><span class="nx">key</span><span class="o">]))</span> <span class="o">{</span>
-                        <span class="nx">record</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-                <span class="nx">results</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">record</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="nx">data_out</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="nx">results</span><span class="o">;</span>
-        <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Parses results data according to schema</span>
-<span class="c">     *</span>
-<span class="c">     * @method _parseMeta</span>
-<span class="c">     * @param metaFields {Object} Metafields definitions.</span>
-<span class="c">     * @param json_in {Object} JSON to parse.</span>
-<span class="c">     * @param data_out {Object} In-progress parsed data to update.</span>
-<span class="c">     * @return {Object} Schema-parsed meta data.</span>
-<span class="c">     * @static</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_parseMeta</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">metaFields</span><span class="o">,</span> <span class="nx">json_in</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">metaFields</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">path</span><span class="o">;</span>
-            <span class="k">for</span><span class="o">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">metaFields</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">metaFields</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">key</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">path</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getPath</span><span class="o">(</span><span class="nx">metaFields</span><span class="o">[</span><span class="nx">key</span><span class="o">]);</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">path</span> <span class="o">&amp;&amp;</span> <span class="nx">json_in</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">data_out</span><span class="o">.</span><span class="nx">meta</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="o">.</span><span class="nx">getLocationValue</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">json_in</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">data_out</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;JSON meta data retrieval failure&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">data_out</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+    <span class="o">};</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSchema</span><span class="o">.</span><span class="nx">JSON</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">SchemaJSON</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSchema</span><span class="o">.</span><span class="nx">Base</span><span class="o">);</span>
 </pre></div>

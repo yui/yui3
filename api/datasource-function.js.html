@@ -48,18 +48,20 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The DataSource utility provides a common configurable interface for widgets to</span>
-<span class="c"> * access a variety of data, from JavaScript arrays to online database servers.</span>
+<span class="c"> * Provides a DataSource implementation which can be used to retrieve data from a custom function.</span>
 <span class="c"> *</span>
 <span class="c"> * @module datasource</span>
+<span class="c"> * @submodule datasource-function</span>
 <span class="c"> */</span>
-<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+
 <span class="c">/**</span>
-<span class="c"> * Function subclass for the YUI DataSource utility.</span>
+<span class="c"> * Function subclass for the DataSource Utility.</span>
 <span class="c"> * @class DataSource.Function</span>
 <span class="c"> * @extends DataSource.Local</span>
 <span class="c"> * @constructor</span>
 <span class="c"> */</span>    
+<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+
     <span class="nx">DSFn</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">DSFn</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">};</span>

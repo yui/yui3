@@ -48,9 +48,16 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * The DataSchema utility provides a common configurable interface for widgets to</span>
+<span class="c"> * apply a given schema to a variety of data.</span>
+<span class="c"> *</span>
+<span class="c"> * @module dataschema</span>
+<span class="c"> */</span>
+
+<span class="c">/**</span>
 <span class="c"> * Provides the base DataSchema implementation, which can be extended to </span>
-<span class="c"> * create DataSchemas for specific data formats, such XML, JSON, Text and </span>
-<span class="c"> * Arrays</span>
+<span class="c"> * create DataSchemas for specific data formats, such XML, JSON, text and</span>
+<span class="c"> * arrays.</span>
 <span class="c"> *</span>
 <span class="c"> * @module dataschema</span>
 <span class="c"> * @submodule dataschema-base</span>
@@ -58,7 +65,7 @@
 
 <span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
 <span class="c">/**</span>
-<span class="c"> * Base class for the YUI DataSchema utility.</span>
+<span class="c"> * Base class for the YUI DataSchema Utility.</span>
 <span class="c"> * @class DataSchema.Base</span>
 <span class="c"> * @static</span>
 <span class="c"> */</span>
