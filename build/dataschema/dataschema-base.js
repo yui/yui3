@@ -1,9 +1,16 @@
 YUI.add('dataschema-base', function(Y) {
 
 /**
+ * The DataSchema utility provides a common configurable interface for widgets to
+ * apply a given schema to a variety of data.
+ *
+ * @module dataschema
+ */
+
+/**
  * Provides the base DataSchema implementation, which can be extended to 
- * create DataSchemas for specific data formats, such XML, JSON, Text and 
- * Arrays
+ * create DataSchemas for specific data formats, such XML, JSON, text and
+ * arrays.
  *
  * @module dataschema
  * @submodule dataschema-base
@@ -11,7 +18,7 @@ YUI.add('dataschema-base', function(Y) {
 
 var LANG = Y.Lang,
 /**
- * Base class for the YUI DataSchema utility.
+ * Base class for the YUI DataSchema Utility.
  * @class DataSchema.Base
  * @static
  */

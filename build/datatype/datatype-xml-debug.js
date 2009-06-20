@@ -1,7 +1,5 @@
 YUI.add('datatype-xml-parse', function(Y) {
 
-var LANG = Y.Lang;
-
 /**
  * Parse XML submodule.
  *
@@ -9,7 +7,9 @@ var LANG = Y.Lang;
  * @submodule datatype-xml-parse
  * @for DataType.XML
  */
- 
+
+var LANG = Y.Lang;
+
 Y.mix(Y.namespace("DataType.XML"), {
     /**
      * Converts data to type XMLDocument.
@@ -59,6 +59,20 @@ Y.namespace("Parsers").xml = Y.DataType.XML.parse;
 YUI.add('datatype-xml-format', function(Y) {
 
 /**
+ * Format XML submodule.
+ *
+ * @module datatype
+ * @submodule datatype-xml-format
+ */
+
+/**
+ * XML submodule.
+ *
+ * @module datatype
+ * @submodule datatype-xml
+ */
+
+/**
  * DataType.XML provides a set of utility functions to operate against XML documents.
  *
  * @class DataType.XML
@@ -66,12 +80,6 @@ YUI.add('datatype-xml-format', function(Y) {
  */
 var LANG = Y.Lang;
 
-/**
- * Format XML submodule.
- *
- * @module datatype
- * @submodule datatype-xml-format
- */
 Y.mix(Y.namespace("DataType.XML"), {
     /**
      * Converts data to type XMLDocument.

@@ -6,10 +6,10 @@
  */
 
 /**
- * DataType.Date provides a set of utility functions to operate against Date objects.
+ * Date submodule.
  *
- * @class DataType.Date
- * @static
+ * @module datatype
+ * @submodule datatype-date
  */
 
 /**
@@ -20,6 +20,13 @@
  *
  * @module datatype
  * @submodule datatype-date-format
+ */
+
+/**
+ * DataType.Date provides a set of utility functions to operate against Date objects.
+ *
+ * @class DataType.Date
+ * @static
  */
 
 /**

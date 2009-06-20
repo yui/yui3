@@ -1,12 +1,11 @@
 YUI.add('datatype-number-format', function(Y) {
 
 /**
- * DataType.Number provides a set of utility functions to operate against Number objects.
+ * Number submodule.
  *
- * @class DataType.Number
- * @static
+ * @module datatype
+ * @submodule datatype-number
  */
-var LANG = Y.Lang;
 
 /**
  * Format number submodule.
@@ -14,6 +13,15 @@ var LANG = Y.Lang;
  * @module datatype
  * @submodule datatype-number-format
  */
+ 
+/**
+ * DataType.Number provides a set of utility functions to operate against Number objects.
+ *
+ * @class DataType.Number
+ * @static
+ */
+var LANG = Y.Lang;
+
 Y.mix(Y.namespace("DataType.Number"), {
      /**
      * Takes a Number and formats to string for display to user.
