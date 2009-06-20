@@ -1,5 +1,3 @@
-var LANG = Y.Lang;
-
 /**
  * Parse number submodule.
  *
@@ -7,6 +5,8 @@ var LANG = Y.Lang;
  * @submodule datatype-date-parse
  * @for DataType.Date
  */
+var LANG = Y.Lang;
+
 Y.mix(Y.namespace("DataType.Date"), {
     /**
      * Converts data to type Date.

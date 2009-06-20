@@ -6,9 +6,19 @@ YUI.add('dataschema-base', function(Y) {
  *
  * @module dataschema
  */
+
+/**
+ * Provides the base DataSchema implementation, which can be extended to 
+ * create DataSchemas for specific data formats, such XML, JSON, text and
+ * arrays.
+ *
+ * @module dataschema
+ * @submodule dataschema-base
+ */
+
 var LANG = Y.Lang,
 /**
- * Base class for the YUI DataSchema utility.
+ * Base class for the YUI DataSchema Utility.
  * @class DataSchema.Base
  * @static
  */

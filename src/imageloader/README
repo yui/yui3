@@ -5,8 +5,10 @@ Development Master
 Release 3.0.0 beta 1
  - 3.0 conversion
  - New features:
-   - Fold groups indicated by a distance from the fold, and images are loaded in cascading fashion as each reaches that distance
-	     Scroll and resize triggers are set automatically for these groups
-	 - Custom triggers can belong to the global Y instance or to any local event target
-	 - Bg, Src, and Png images are all registered with groups via the same "registerImage" method, and differentiated by attribute parameters
+   - Fold groups indicated by a distance from the fold, and images are
+     loaded in cascading fashion as each reaches that distance
+     Scroll and resize triggers are set automatically for these groups
+   - Custom triggers can belong to the global Y instance or to any local event target
+   - Bg, Src, and Png images are all registered with groups via the same "registerImage"
+     method, and differentiated by attribute parameters
 

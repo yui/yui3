@@ -1,13 +1,19 @@
 YUI.add('anim-base', function(Y) {
 
 /**
- * Y.Animation Utility.
- * @module anim
- * The Animation Utility provides an API for creating advanced transitions between property values.
- */
+* The Animation Utility provides an API for creating advanced transitions.
+* @module anim
+*/
+
+/**
+* Provides the base Anim class, for animating numeric properties.
+*
+* @module anim
+* @submodule anim-base
+*/
 
     /**
-     * Handles animation _queueing and threading.
+     * A class for constructing animation instances.
      * @class Anim
      * @for Anim
      * @constructor
@@ -587,7 +593,9 @@ YUI.add('anim-base', function(Y) {
     Y.extend(Y.Anim, Y.Base, proto);
 
 
+
 }, '@VERSION@' ,{requires:['base', 'node']});
+
 YUI.add('anim-color', function(Y) {
 
 /**
@@ -635,7 +643,9 @@ Y.each(['backgroundColor',
 );
 
 
+
 }, '@VERSION@' ,{requires:['anim-base', 'node-style']});
+
 YUI.add('anim-curve', function(Y) {
 
 /**
@@ -692,7 +702,9 @@ Y.Anim.getBezier = function(points, t) {
 };
 
 
+
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
+
 YUI.add('anim-easing', function(Y) {
 
 /*
@@ -1040,7 +1052,9 @@ Y.Easing = {
 };
 
 
+
 }, '@VERSION@' ,{requires:['anim-base']});
+
 YUI.add('anim-node-plugin', function(Y) {
 
 /**
@@ -1066,7 +1080,9 @@ Y.namespace('Plugin');
 Y.Plugin.NodeFX = NodeFX;
 
 
+
 }, '@VERSION@' ,{requires:['anim-base', 'node-base']});
+
 YUI.add('anim-scroll', function(Y) {
 
 /**
@@ -1104,7 +1120,9 @@ Y.Anim.behaviors.scroll = {
 
 
 
+
 }, '@VERSION@' ,{requires:['anim-base', 'node-base']});
+
 YUI.add('anim-xy', function(Y) {
 
 /**
@@ -1130,7 +1148,9 @@ Y.Anim.behaviors.xy = {
 
 
 
+
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
+
 
 
 YUI.add('anim', function(Y){}, '@VERSION@' ,{skinnable:false, use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy']});

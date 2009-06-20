@@ -1,12 +1,12 @@
 /**
- * The DataSource utility provides a common configurable interface for widgets to
- * access a variety of data, from JavaScript arrays to online database servers.
+ * Provides a DataSource implementation which can be used to retrieve data via the Get Utility.
  *
  * @module datasource
+ * @submodule datasource-get
  */
-    
+
 /**
- * Get Utility subclass for the YUI DataSource utility.
+ * Get Utility subclass for the DataSource Utility.
  * @class DataSource.Get
  * @extends DataSource.Local
  * @constructor

@@ -1,18 +1,20 @@
 YUI.add('datasource-function', function(Y) {
 
 /**
- * The DataSource utility provides a common configurable interface for widgets to
- * access a variety of data, from JavaScript arrays to online database servers.
+ * Provides a DataSource implementation which can be used to retrieve data from a custom function.
  *
  * @module datasource
+ * @submodule datasource-function
  */
-var LANG = Y.Lang,
+
 /**
- * Function subclass for the YUI DataSource utility.
+ * Function subclass for the DataSource Utility.
  * @class DataSource.Function
  * @extends DataSource.Local
  * @constructor
  */    
+var LANG = Y.Lang,
+
     DSFn = function() {
         DSFn.superclass.constructor.apply(this, arguments);
     };

@@ -4,18 +4,18 @@
  * @module datasource
  * @submodule datasource-polling
  */
-    var LANG = Y.Lang,
     
-    /**
-     * Adds polling to the YUI DataSource utility.
-     * @class Pollable
-     * @extends DataSource.Local
-     */    
+/**
+ * Adds polling to the DataSource Utility.
+ * @class Pollable
+ * @extends DataSource.Local
+ */    
+var LANG = Y.Lang,
+
     Pollable = function() {
         this._intervals = {};
     };
 
-    
 Pollable.prototype = {
 
     /**

@@ -1,5 +1,3 @@
-var LANG = Y.Lang;
-
 /**
  * Parse XML submodule.
  *
@@ -7,7 +5,9 @@ var LANG = Y.Lang;
  * @submodule datatype-xml-parse
  * @for DataType.XML
  */
- 
+
+var LANG = Y.Lang;
+
 Y.mix(Y.namespace("DataType.XML"), {
     /**
      * Converts data to type XMLDocument.
