@@ -1,6 +1,6 @@
 /**
- * The StyleSheet component is a utility for managing css rules at the
- * stylesheet level
+ * The StyleSheet component is a module for creating and modifying CSS
+ * stylesheets.
  *
  * @module stylesheet
  */
@@ -18,17 +18,15 @@ var d      = Y.config.doc,
     FLOAT   = 'float',
     EMPTY   = '';
 
-/*
- * Normalizes the removal of an assigned style for opacity.  IE uses the filter property.
- */
+// Normalizes the removal of an assigned style for opacity.  IE uses the filter
+// property.
 _unsetOpacity = (OPACITY in workerStyle) ?
     function (style) { style.opacity = EMPTY; } :
     function (style) { style.filter = EMPTY; };
         
-/*
- * Normalizes the removal of an assigned style for a given property.  Expands
- * shortcut properties if necessary and handles the various names for the float property.
- */
+// Normalizes the removal of an assigned style for a given property.  Expands
+// shortcut properties if necessary and handles the various names for the float
+// property.
 workerStyle.border = "1px solid red";
 workerStyle.border = EMPTY; // IE doesn't unset child properties
 _unsetProperty = workerStyle.borderLeft ?
@@ -246,7 +244,7 @@ function StyleSheet(seed, name) {
         disable : function () { sheet.disabled = true; return this; },
 
         /**
-         * Returns boolean indicating whether the StyleSheet is enabled
+         * Returns false if the StyleSheet is disabled.  Otherwise true.
          *
          * @method isEnabled
          * @return {Boolean} is it enabled?
@@ -322,7 +320,7 @@ function StyleSheet(seed, name) {
          * remaining in the rule after unsetting, the rule is removed.</p>
          *
          * <p>The style property or properties in the second parameter must be the
-         * <p>JavaScript style property names. E.g. fontSize rather than font-size.</p>
+         * JavaScript style property names. E.g. fontSize rather than font-size.</p>
          *
          * <p>The float style property will be unset by any of &quot;float&quot;,
          * &quot;styleFloat&quot;, or &quot;cssFloat&quot;.</p>
