@@ -944,13 +944,13 @@ Y.extend(Slider, Y.Widget, {
 
     /**
      * Resets the cached region inside the DD constrain instance to support
-     * repositioning the Slider after instantiation. Workaround for ticket 
-     * #2527964
+     * repositioning the Slider after instantiation.
      *
      * @method _resetDDCacheRegion
      * @protected
      */
     _resetDDCacheRegion : function () {
+        // Workaround for ticket #2527964
         this._dd.con._cacheRegion();
     },
 
