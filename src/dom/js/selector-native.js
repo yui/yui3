@@ -1,11 +1,15 @@
 (function(Y) {
 /**
  * The selector-native module provides support for native querySelector
- * @module selector-native
+ * @module dom
+ * @submodule selector-native
+ * @for Selector
  */
 
 /**
- * Provides a wrapper for native querySelectorAll 
+ * Provides support for using CSS selectors to query the DOM 
+ * @class Selector 
+ * @static
  * @for Selector
  */
 

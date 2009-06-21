@@ -1,8 +1,8 @@
 /**
  * The selector css3 module provides support for css3 selectors.
- * @module selector-css3
- * @title Selector Utility
- * @requires yahoo, dom
+ * @module dom
+ * @submodule selector-css3
+ * @for Selector
  */
 
 /*

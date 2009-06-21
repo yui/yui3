@@ -1,11 +1,4 @@
 (function(Y) {
-/**
- * Add style management functionality to DOM.
- * @module dom
- * @submodule dom-style
- * @for DOM
- */
-
 var CLIENT_TOP = 'clientTop',
     CLIENT_LEFT = 'clientLeft',
     HAS_LAYOUT = 'hasLayout',
