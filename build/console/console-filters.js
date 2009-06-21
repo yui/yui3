@@ -1,9 +1,9 @@
 YUI.add('console-filters', function(Y) {
 
 /**
- * Adds the ability to filter Console entries by their category and source.
- * Checkboxes are added to the Console footer to control the visibility of
- * messages assigned to each category and source.  
+ * <p>Provides Plugin.ConsoleFilters plugin class.</p>
+ *
+ * <p>This plugin adds the ability to control which Console entries display by filtering on category and source. Two groups of checkboxes are added to the Console footer, one for categories and the other for sources.  Only those messages that match a checked category or source are displayed.</p>
  *
  * @module console-filters
  * @namespace Plugin
@@ -45,7 +45,6 @@ Y.mix(ConsoleFilters,{
      *
      * @property ConsoleFilters.NAME
      * @type String
-     * @readOnly
      * @static
      * @default 'consoleFilters'
      */
@@ -56,7 +55,6 @@ Y.mix(ConsoleFilters,{
      *
      * @property ConsoleFilters.NS
      * @type String
-     * @readOnly
      * @static
      * @default 'filter'
      */
@@ -212,6 +210,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * methods.
      *
      * @method initializer
+     * @protected
      */
     initializer : function () {
         this._entries = [];
@@ -235,6 +234,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * Removes the plugin UI and unwires events.
      *
      * @method destructor
+     * @protected
      */
     destructor : function () {
         //TODO: grab last {consoleLimit} entries and update the console with
@@ -253,6 +253,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * Adds the category and source filter sections to the Console footer.
      *
      * @method renderUI
+     * @protected
      */
     renderUI : function () {
         var foot = this.get(HOST).get('contentBox').query(C_FOOT),
@@ -278,6 +279,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * maintain the UI state.
      *
      * @method bindUI
+     * @protected
      */
     bindUI : function () {
         this._categories.on('click', Y.bind(this._onCategoryCheckboxClick, this));
@@ -502,6 +504,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      *
      * @method _onCategoryCheckboxClick
      * @param e {Event} the DOM event
+     * @protected
      */
     _onCategoryCheckboxClick : function (e) {
         var t = e.target, cat;
@@ -519,6 +522,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      *
      * @method _onSourceCheckboxClick
      * @param e {Event} the DOM event
+     * @protected
      */
     _onSourceCheckboxClick : function (e) {
         var t = e.target, src;
@@ -585,7 +589,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * and so on.
      *
      * @method showSource
-     * @param cat* {String} 1..n sources to allow to display in the UI
+     * @param src* {String} 1..n sources to allow to display in the UI
      */
     showSource : function (src, multiple) {
         if (isString(multiple)) {
@@ -603,6 +607,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @method _createCheckbox
      * @param container {Node} the parentNode of the new checkbox and label
      * @param name {String} the identifier of the filter
+     * @protected
      */
     _createCheckbox : function (container, name) {
         var info = Y.merge(ConsoleFilters.CHROME_CLASSES, {
@@ -622,7 +627,8 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @method _validateCategory
      * @param cat {String} the new category:visibility map
      * @param v {String} the subattribute path updated
-     * return Boolean
+     * @return Boolean
+     * @protected
      */
     _validateCategory : function (cat, v) {
         return Y.Lang.isObject(v,true) && cat.split(/\./).length < 3;
@@ -635,7 +641,8 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @method _validateSource
      * @param cat {String} the new source:visibility map
      * @param v {String} the subattribute path updated
-     * return Boolean
+     * @return Boolean
+     * @protected
      */
     _validateSource : function (src, v) {
         return Y.Lang.isObject(v,true) && src.split(/\./).length < 3;

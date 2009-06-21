@@ -1,7 +1,20 @@
 /**
- * A user interface for viewing log messages.
+ * Console creates a visualization for messages logged through calls to a YUI
+ * instance's <code>Y.log( message, category, source )</code> method.  The
+ * debug versions of YUI modules will include logging statements to offer some
+ * insight into the steps executed during that module's operation.  Including
+ * log statements in your code will cause those messages to also appear in the
+ * Console.  Use Console to aid in developing your page or application.
+ *
+ * Entry categories &quot;info&quot;, &quot;warn&quot;, and &quot;error&quot;
+ * are also referred to as the log level, and entries are filtered against the
+ * configured logLevel.
  *
  * @module console
+ * @class Console
+ * @extends Widget
+ * @param conf {Object} Configuration object (see Configuration attributes)
+ * @constructor
  */
 
 var getCN = Y.ClassNameManager.getClassName,
@@ -63,23 +76,6 @@ var getCN = Y.ClassNameManager.getClassName,
     merge      = Y.merge,
     substitute = Y.substitute;
     
-
-/**
- * Console creates a visualization for messages logged through calls to a YUI
- * instance's <code>Y.log( message, category, source )</code> method.  The
- * debug versions of YUI modules will include logging statements to offer some
- * insight into the steps executed during that module's operation.  Including
- * log statements in your code will cause those messages to also appear in the
- * Console.  Use Console to aid in developing your page or application.
- *
- * Entry categories &quot;info&quot;, &quot;warn&quot;, and &quot;error&quot;
- * are also referred to as the log level, and entries are filtered against the
- * configured logLevel.
- *
- * @class Console
- * @extends Widget
- * @constructor
- */
 
 function Console() {
     Console.superclass.constructor.apply(this,arguments);
@@ -624,6 +620,7 @@ Y.extend(Console,Y.Widget,{
      * @property buffer
      * @type Array
      * @default null
+     * @protected
      */
     buffer   : null,
 
@@ -631,7 +628,7 @@ Y.extend(Console,Y.Widget,{
      * Wrapper for <code>Y.log</code>.
      *
      * @method log
-     * @param {Any*} * (all arguments passed through to <code>Y.log</code>)
+     * @param arg* {MIXED} (all arguments passed through to <code>Y.log</code>)
      */
     log : function () {
         return Y.log.apply(Y,arguments);
@@ -685,10 +682,11 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Outputs buffered messages to the console UI.  This is called from a
-     * scheduled interval until the buffer is empty (referred to as the print
-     * loop).  The number of buffered messages output to the Console in each
-     * iteration will not exceed the configured <code>printLimit</code>.
+     * Outputs buffered messages to the console UI.  This is typically called
+     * from a scheduled interval until the buffer is empty (referred to as the
+     * print loop).  The number of buffered messages output to the Console is
+     * limited to the number provided as an argument.  If no limit is passed,
+     * all buffered messages are rendered.
      * 
      * @method printBuffer
      * @param limit {Number} (optional) max number of buffered entries to write
