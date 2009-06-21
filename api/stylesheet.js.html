@@ -48,8 +48,8 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The StyleSheet component is a utility for managing css rules at the</span>
-<span class="c"> * stylesheet level</span>
+<span class="c"> * The StyleSheet component is a module for creating and modifying CSS</span>
+<span class="c"> * stylesheets.</span>
 <span class="c"> *</span>
 <span class="c"> * @module stylesheet</span>
 <span class="c"> */</span>
@@ -67,18 +67,16 @@
     <span class="nx">FLOAT</span>   <span class="o">=</span> <span class="s1">&#39;float&#39;</span><span class="o">,</span>
     <span class="nx">EMPTY</span>   <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
 
-<span class="c">/*</span>
-<span class="c"> * Normalizes the removal of an assigned style for opacity.  IE uses the filter property.</span>
-<span class="c"> */</span>
-<span class="nx">_unsetOpacity</span> <span class="o">=</span> <span class="o">(</span><span class="nx">OPACITY</span> <span class="k">in</span> <span class="nx">workerStyle</span><span class="o">)</span> <span class="o">?</span>
+<span class="c">// Normalizes the removal of an assigned style for opacity.  IE uses the filter</span>
+<span class="c">// property.</span>
+<span class="c"></span><span class="nx">_unsetOpacity</span> <span class="o">=</span> <span class="o">(</span><span class="nx">OPACITY</span> <span class="k">in</span> <span class="nx">workerStyle</span><span class="o">)</span> <span class="o">?</span>
     <span class="k">function</span> <span class="o">(</span><span class="nx">style</span><span class="o">)</span> <span class="o">{</span> <span class="nx">style</span><span class="o">.</span><span class="nx">opacity</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="o">;</span> <span class="o">}</span> <span class="o">:</span>
     <span class="k">function</span> <span class="o">(</span><span class="nx">style</span><span class="o">)</span> <span class="o">{</span> <span class="nx">style</span><span class="o">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="o">;</span> <span class="o">};</span>
         
-<span class="c">/*</span>
-<span class="c"> * Normalizes the removal of an assigned style for a given property.  Expands</span>
-<span class="c"> * shortcut properties if necessary and handles the various names for the float property.</span>
-<span class="c"> */</span>
-<span class="nx">workerStyle</span><span class="o">.</span><span class="nx">border</span> <span class="o">=</span> <span class="s2">&quot;1px solid red&quot;</span><span class="o">;</span>
+<span class="c">// Normalizes the removal of an assigned style for a given property.  Expands</span>
+<span class="c">// shortcut properties if necessary and handles the various names for the float</span>
+<span class="c">// property.</span>
+<span class="c"></span><span class="nx">workerStyle</span><span class="o">.</span><span class="nx">border</span> <span class="o">=</span> <span class="s2">&quot;1px solid red&quot;</span><span class="o">;</span>
 <span class="nx">workerStyle</span><span class="o">.</span><span class="nx">border</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="o">;</span> <span class="c">// IE doesn&#39;t unset child properties</span>
 <span class="c"></span><span class="nx">_unsetProperty</span> <span class="o">=</span> <span class="nx">workerStyle</span><span class="o">.</span><span class="nx">borderLeft</span> <span class="o">?</span>
     <span class="k">function</span> <span class="o">(</span><span class="nx">style</span><span class="o">,</span><span class="nx">prop</span><span class="o">)</span> <span class="o">{</span>
@@ -295,7 +293,7 @@
         <span class="nx">disable</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span> <span class="nx">sheet</span><span class="o">.</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="k">return</span> <span class="k">this</span><span class="o">;</span> <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Returns boolean indicating whether the StyleSheet is enabled</span>
+<span class="c">         * Returns false if the StyleSheet is disabled.  Otherwise true.</span>
 <span class="c">         *</span>
 <span class="c">         * @method isEnabled</span>
 <span class="c">         * @return {Boolean} is it enabled?</span>
@@ -371,7 +369,7 @@
 <span class="c">         * remaining in the rule after unsetting, the rule is removed.&lt;/p&gt;</span>
 <span class="c">         *</span>
 <span class="c">         * &lt;p&gt;The style property or properties in the second parameter must be the</span>
-<span class="c">         * &lt;p&gt;JavaScript style property names. E.g. fontSize rather than font-size.&lt;/p&gt;</span>
+<span class="c">         * JavaScript style property names. E.g. fontSize rather than font-size.&lt;/p&gt;</span>
 <span class="c">         *</span>
 <span class="c">         * &lt;p&gt;The float style property will be unset by any of &amp;quot;float&amp;quot;,</span>
 <span class="c">         * &amp;quot;styleFloat&amp;quot;, or &amp;quot;cssFloat&amp;quot;.&lt;/p&gt;</span>
