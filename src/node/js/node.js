@@ -14,6 +14,7 @@
  *
  * @class Node
  * @constructor
+ * @for Node
  */
 
 // "globals"

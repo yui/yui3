@@ -3,7 +3,6 @@
  * Extended Node interface for managing node styles.
  * @module node
  * @submodule node-style
- * @for Node
  */
 
 var methods = [

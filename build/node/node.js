@@ -16,6 +16,7 @@ YUI.add('node-base', function(Y) {
  *
  * @class Node
  * @constructor
+ * @for Node
  */
 
 // "globals"
@@ -732,9 +733,9 @@ Y.mix(Node.prototype, {
 Y.Node = Node;
 Y.get = Y.Node.get;
 /**
- * The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
+ * The NodeList module provides support for managing collections of Nodes.
  * @module node
- * @submodule node-list
+ * @submodule nodelist
  */    
 
 /**
@@ -1378,13 +1379,6 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
     }
 })();
 (function(Y) {
-/**
- * Extended Node interface for managing classNames.
- * @module node
- * @submodule node
- * @for Node
- */
-
     var methods = [
     /**
      * Determines whether each node has the given className.
@@ -1475,7 +1469,7 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
      */
     Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
-/*
+/**
  * Functionality to make the node a delegated event container
  * @module node
  * @submodule node-event-delegate
@@ -1508,7 +1502,6 @@ YUI.add('node-style', function(Y) {
  * Extended Node interface for managing node styles.
  * @module node
  * @submodule node-style
- * @for Node
  */
 
 var methods = [
@@ -1595,7 +1588,6 @@ YUI.add('node-screen', function(Y) {
  * Adds support for positioning elements and normalizes window size and scroll detection. 
  * @module node
  * @submodule node-screen
- * @for Node
  */
 
 // these are all "safe" returns, no wrapping required
@@ -1742,14 +1734,6 @@ Y.Node.importMethod(Y.DOM, [
 ]);
 
 /**
- * Extended Node interface for managing regions and screen positioning.
- * Adds support for positioning elements and normalizes window size and scroll detection. 
- * @module node
- * @submodule node-screen
- * @for Node
- */
-
-/**
  * Returns a region object for the node 
  * @config region
  * @for Node
@@ -1821,7 +1805,6 @@ YUI.add('node-aria', function(Y) {
 
 /**
  * Aria support for Node
- *
  * @module node
  * @submodule node-aria
  */

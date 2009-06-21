@@ -1,11 +1,4 @@
 (function(Y) {
-/**
- * Extended Node interface for managing classNames.
- * @module node
- * @submodule node
- * @for Node
- */
-
     var methods = [
     /**
      * Determines whether each node has the given className.
