@@ -1005,14 +1005,14 @@
 
     <span class="c">/**</span>
 <span class="c">     * Resets the cached region inside the DD constrain instance to support</span>
-<span class="c">     * repositioning the Slider after instantiation. Workaround for ticket </span>
-<span class="c">     * #2527964</span>
+<span class="c">     * repositioning the Slider after instantiation.</span>
 <span class="c">     *</span>
 <span class="c">     * @method _resetDDCacheRegion</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_resetDDCacheRegion</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">con</span><span class="o">.</span><span class="nx">_cacheRegion</span><span class="o">();</span>
+        <span class="c">// Workaround for ticket #2527964</span>
+<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">_dd</span><span class="o">.</span><span class="nx">con</span><span class="o">.</span><span class="nx">_cacheRegion</span><span class="o">();</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>

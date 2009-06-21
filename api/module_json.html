@@ -50,15 +50,20 @@
 
                     </h3>
                     <div class="description summary">
-                        The JSON Utility provides methods to serialize JavaScript objects into
-JSON strings and parse JavaScript objects from strings containing JSON data.
-Three modules are available for inclusion:
-<ol>
-<li>1. <code>json-parse</code> for parsing JSON strings into native JavaScript data</li>
-<li>2. <code>json-stringify</code> for stringification of JavaScript objects into JSON strings</li>
-<li>3. <code>json</code> for both parsing and stringification</li>
-</ol>
-Both <code>json-parse</code> and <code>json-stringify</code> create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).
+                        <p>The JSON module adds support for serializing JavaScript objects into
+JSON strings and parsing JavaScript objects from strings in JSON format.</p>
+<p>The JSON namespace is added to your YUI instance including static methods
+Y.JSON.parse(..) and Y.JSON.stringify(..).</p>
+<p>The functionality and method signatures follow the ECMAScript 5
+specification.  In browsers with native JSON support, the native
+implementation is used.</p>
+<p>The <code>json</code> module is a rollup of <code>json-parse</code> and
+<code>json-stringify</code>.</p>
+<p>As their names suggest, <code>json-parse</code> adds support for parsing
+JSON data (Y.JSON.parse) and <code>json-stringify</code> for serializing
+JavaScript data into JSON strings (Y.JSON.stringify).  You may choose to
+include either of the submodules individually if you don't need the
+complementary functionality, or include the rollup for both.</p>
                     </div>
 
 
@@ -68,7 +73,7 @@ Both <code>json-parse</code> and <code>json-stringify</code> create functions in
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "The JSON Utility provides methods to serialize JavaScript objects into\nJSON strings and parse JavaScript objects from strings containing JSON data.\nThree modules are available for inclusion:\n<ol>\n<li>1. <code>json-parse<\/code> for parsing JSON strings into native JavaScript data<\/li>\n<li>2. <code>json-stringify<\/code> for stringification of JavaScript objects into JSON strings<\/li>\n<li>3. <code>json<\/code> for both parsing and stringification<\/li>\n<\/ol>\nBoth <code>json-parse<\/code> and <code>json-stringify<\/code> create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).", "guessedname": "JSON", "name": "JSON"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>The JSON module adds support for serializing JavaScript objects into\nJSON strings and parsing JavaScript objects from strings in JSON format.<\/p>\n<p>The JSON namespace is added to your YUI instance including static methods\nY.JSON.parse(..) and Y.JSON.stringify(..).<\/p>\n<p>The functionality and method signatures follow the ECMAScript 5\nspecification.  In browsers with native JSON support, the native\nimplementation is used.<\/p>\n<p>The <code>json<\/code> module is a rollup of <code>json-parse<\/code> and\n<code>json-stringify<\/code>.<\/p>\n<p>As their names suggest, <code>json-parse<\/code> adds support for parsing\nJSON data (Y.JSON.parse) and <code>json-stringify<\/code> for serializing\nJavaScript data into JSON strings (Y.JSON.stringify).  You may choose to\ninclude either of the submodules individually if you don't need the\ncomplementary functionality, or include the rollup for both.<\/p>", "guessedname": "JSON", "name": "JSON"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
@@ -83,7 +88,7 @@ Both <code>json-parse</code> and <code>json-stringify</code> create functions in
                                             <dt><code><a href="JSON.html" title="json-stringify">json-stringify</a></code></dt>
                                             <dd>Provides Y.JSON.stringify method for converting objects to JSON strings.</dd>
                                             <dt><code><a href="JSON.html" title="json-parse">json-parse</a></code></dt>
-                                            <dd>Provides Y.JSON.parse method to take JSON strings and return native
+                                            <dd>Provides Y.JSON.parse method to accept JSON strings and return native
 JavaScript objects.</dd>
                                         </dl>
                                     </div>
@@ -172,7 +177,7 @@ JavaScript objects.</dd>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "protected", "host": "JSON", "name": "_SIMPLE", "url": "JSON.html#property__SIMPLE", "type": "property"}, {"access": "private", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "protected", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "private", "host": "JSON", "name": "Native", "url": "JSON.html#property_Native", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_SIMPLE", "url": "JSON.html#property__SIMPLE", "type": "property"}, {"access": "protected", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
 </script>
 </body>
 </html>

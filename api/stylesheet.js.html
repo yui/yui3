@@ -148,7 +148,7 @@
 <span class="c"> * @constructor</span>
 <span class="c"> * @param seed {String|HTMLElement|Node} a style or link node, its id, or a</span>
 <span class="c"> *              name or guid of a StyleSheet, or a string of css text</span>
-<span class="c"> * @param name {String} OPTIONAL name to register instance for future static</span>
+<span class="c"> * @param name {String} (optional) name to register instance for future static</span>
 <span class="c"> *              access</span>
 <span class="c"> */</span>
 <span class="k">function</span> <span class="nx">StyleSheet</span><span class="o">(</span><span class="nx">seed</span><span class="o">,</span> <span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
@@ -277,7 +277,7 @@
 <span class="c">         * Enable all the rules in the sheet</span>
 <span class="c">         *</span>
 <span class="c">         * @method enable</span>
-<span class="c">         * @return {StyleSheet} the instance</span>
+<span class="c">         * @return {StyleSheet}</span>
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
         <span class="nx">enable</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span> <span class="nx">sheet</span><span class="o">.</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span> <span class="k">return</span> <span class="k">this</span><span class="o">;</span> <span class="o">},</span>
@@ -287,7 +287,7 @@
 <span class="c">         * StyleSheet is disabled.</span>
 <span class="c">         *</span>
 <span class="c">         * @method disable</span>
-<span class="c">         * @return {StyleSheet} the instance</span>
+<span class="c">         * @return {StyleSheet}</span>
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
         <span class="nx">disable</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span> <span class="nx">sheet</span><span class="o">.</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="k">return</span> <span class="k">this</span><span class="o">;</span> <span class="o">},</span>
@@ -296,7 +296,7 @@
 <span class="c">         * Returns false if the StyleSheet is disabled.  Otherwise true.</span>
 <span class="c">         *</span>
 <span class="c">         * @method isEnabled</span>
-<span class="c">         * @return {Boolean} is it enabled?</span>
+<span class="c">         * @return {Boolean}</span>
 <span class="c">         */</span>
         <span class="nx">isEnabled</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="o">!</span><span class="nx">sheet</span><span class="o">.</span><span class="nx">disabled</span><span class="o">;</span> <span class="o">},</span>
 
@@ -315,7 +315,7 @@
 <span class="c">         * @method set</span>
 <span class="c">         * @param sel {String} the selector string to apply the changes to</span>
 <span class="c">         * @param css {Object} Object literal of style properties and new values</span>
-<span class="c">         * @return {StyleSheet} the StyleSheet instance</span>
+<span class="c">         * @return {StyleSheet}</span>
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
         <span class="nx">set</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">sel</span><span class="o">,</span><span class="nx">css</span><span class="o">)</span> <span class="o">{</span>
@@ -377,7 +377,7 @@
 <span class="c">         * @method unset</span>
 <span class="c">         * @param sel {String} the selector string to apply the changes to</span>
 <span class="c">         * @param css {String|Array} style property name or Array of names</span>
-<span class="c">         * @return {StyleSheet} the StyleSheet instance</span>
+<span class="c">         * @return {StyleSheet}</span>
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
         <span class="nx">unset</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">sel</span><span class="o">,</span><span class="nx">css</span><span class="o">)</span> <span class="o">{</span>
@@ -501,7 +501,7 @@
 <span class="c">     *</span>
 <span class="c">     * @method StyleSheet.toCssText</span>
 <span class="c">     * @param css {Object} object literal of style properties and values</span>
-<span class="c">     * @param cssText {String} OPTIONAL starting cssText value</span>
+<span class="c">     * @param cssText {String} (optional) starting cssText value</span>
 <span class="c">     * @return {String} the resulting cssText string</span>
 <span class="c">     * @static</span>
 <span class="c">     */</span>
