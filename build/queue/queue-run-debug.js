@@ -3,33 +3,35 @@ YUI.add('queue-run', function(Y) {
 /**
  * <p>Adds a new class AsyncQueue that is restricted to function callbacks, but
  * includes a host of additional features, including events, callback
- * iterations, and a run() method that can execute enqueued callbacks in order,
+ * iterations, and a run() method that can execute queued callbacks in order,
  * even across configured timeouts.</p>
- *
- * <p>Callbacks can be function refs or objects in the following form:</p>
- * <pre>{
- *      fn: callbackFn,     // The callback function.
- *      context: obj,       // The execution context for the callbackFn.
- *      args: [x,y,z],      // Arguments to pass to callbackFn.
- *      timeout: 15,        // Millisecond delay before executing callbackFn.
- *                          // (Applies to each iterative execution of callback)
- *      iterations: 5,      // Number of times to repeat the callback.
- *      until: doUntilX     // Repeat the callback until this function returns
- *                          // true.  This setting trumps iterations.
- *      autoContinue: true, // Set to false to prevent the AsyncQueue from
- *                          // executing the next callback in the Queue after
- *                          // the callback completes.
- *      id: "MyName"        // Name that can be used to get, promote, get the
- *                          // indexOf, or delete this callback.
- * }</pre>
  *
  * @module queue
  * @submodule queue-run
  */
 
 /**
- * A specialized queue class that supports scheduling callbacks to execute
- * sequentially, iteratively, even asynchronously.
+ * <p>A specialized queue class that supports scheduling callbacks to execute
+ * sequentially, iteratively, even asynchronously.</p>
+ *
+ * <p>Callbacks can be function refs or objects with the following keys.  Only
+ * the <code>fn</code> key is required.</p>
+ *
+ * <ul>
+ * <li><code>fn</code> -- The callback function</li>
+ * <li><code>context</code> -- The execution context for the callbackFn.</li>
+ * <li><code>args</code> -- Arguments to pass to callbackFn.</li>
+ * <li><code>timeout</code> -- Millisecond delay before executing callbackFn.
+ *                     (Applies to each iterative execution of callback)</li>
+ * <li><code>iterations</code> -- Number of times to repeat the callback.
+ * <li><code>until</code> -- Repeat the callback until this function returns
+ *                         true.  This setting trumps iterations.</li>
+ * <li><code>autoContinue</code> -- Set to false to prevent the AsyncQueue from
+ *                        executing the next callback in the Queue after
+ *                        the callback completes.</li>
+ * <li><code>id</code> -- Name that can be used to get, promote, get the
+ *                        indexOf, or delete this callback.</li>
+ * </ul>
  *
  * @class AsyncQueue
  * @extends EventTarget
@@ -51,7 +53,15 @@ var Queue   = Y.AsyncQueue,
     isFunction = Y.Lang.isFunction;
 
 /**
- * Static default values used to populate callback configuration properties.
+ * <p>Static default values used to populate callback configuration properties.
+ * Preconfigured defaults include:</p>
+ *
+ * <ul>
+ *  <li><code>autoContinue</code>: <code>true</code></li>
+ *  <li><code>iterations</code>: 1</li>
+ *  <li><code>timeout</code>: -1 (synchronous operation)</li>
+ *  <li><code>until</code>: (function to run until iterations &lt;= 0)</li>
+ * </ul>
  *
  * @property AsyncQueue.defaults
  * @type {Object}
@@ -69,7 +79,7 @@ Queue.defaults = Y.mix({
 
 Y.extend(Queue, Y.EventTarget, {
     /**
-     *  Used to indicate the queue is currently executing a callback.
+     * Used to indicate the queue is currently executing a callback.
      *
      * @property _running
      * @type {Boolean|Object} true for synchronous callback execution, the
@@ -157,6 +167,7 @@ Y.extend(Queue, Y.EventTarget, {
      *
      * @method _defShiftFn
      * @param e {Event} The event object
+     * @protected
      */
     _defShiftFn : function (e) {
         if (this.indexOf(e.callback) === 0) {
