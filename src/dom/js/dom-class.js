@@ -1,12 +1,3 @@
-/** 
- * The DOM utility provides a cross-browser abtraction layer
- * normalizing DOM tasks, and adds extra helper functionality
- * for other common tasks. 
- * @module dom
- * @submodule dom-base
- * @for DOM
- */
-
 Y.mix(Y.DOM, {
     /**
      * Determines whether a DOM element has the given className.

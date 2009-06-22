@@ -1,12 +1,4 @@
 /**
- * Extended Node interface for managing regions and screen positioning.
- * Adds support for positioning elements and normalizes window size and scroll detection. 
- * @module node
- * @submodule node-screen
- * @for Node
- */
-
-/**
  * Returns a region object for the node 
  * @config region
  * @for Node

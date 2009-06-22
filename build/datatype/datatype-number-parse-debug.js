@@ -1,7 +1,5 @@
 YUI.add('datatype-number-parse', function(Y) {
 
-var LANG = Y.Lang;
-
 /**
  * Parse number submodule.
  *
@@ -9,6 +7,9 @@ var LANG = Y.Lang;
  * @submodule datatype-number-parse
  * @for DataType.Number
  */
+
+var LANG = Y.Lang;
+
 Y.mix(Y.namespace("DataType.Number"), {
     /**
      * Converts data to type Number.

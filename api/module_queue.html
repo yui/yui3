@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>queue&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>queue&nbsp; <span class="subtitle">3.0.0b1_test2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_queue.html" title="queue">queue</a>
                 
@@ -52,24 +52,8 @@
                     <div class="description summary">
                         <p>Adds a new class AsyncQueue that is restricted to function callbacks, but
 includes a host of additional features, including events, callback
-iterations, and a run() method that can execute enqueued callbacks in order,
+iterations, and a run() method that can execute queued callbacks in order,
 even across configured timeouts.</p>
-<p>Callbacks can be function refs or objects in the following form:</p>
-<pre>{
-fn: callbackFn,     // The callback function.
-context: obj,       // The execution context for the callbackFn.
-args: [x,y,z],      // Arguments to pass to callbackFn.
-timeout: 15,        // Millisecond delay before executing callbackFn.
-// (Applies to each iterative execution of callback)
-iterations: 5,      // Number of times to repeat the callback.
-until: doUntilX     // Repeat the callback until this function returns
-// true.  This setting trumps iterations.
-autoContinue: true, // Set to false to prevent the AsyncQueue from
-// executing the next callback in the Queue after
-// the callback completes.
-id: "MyName"        // Name that can be used to get, promote, get the
-// indexOf, or delete this callback.
-}</pre>
                     </div>
 
 
@@ -79,7 +63,7 @@ id: "MyName"        // Name that can be used to get, promote, get the
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"EventTarget": "EventTarget"}, "events": {}, "configs": {}, "properties": {}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": true, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}]}}, "description": "A specialized queue class that supports scheduling callbacks to execute\nsequentially, iteratively, even asynchronously.", "guessedname": "AsyncQueue", "name": "AsyncQueue"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "A simple FIFO queue.  Items are added to the Queue with add(1..n items) and\nremoved using next().", "guessedname": "Queue", "name": "Queue"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"EventTarget": "EventTarget"}, "events": {}, "configs": {}, "properties": {}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": true, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}]}}, "description": "<p>A specialized queue class that supports scheduling callbacks to execute\nsequentially, iteratively, even asynchronously.<\/p>\n<p>Callbacks can be function refs or objects with the following keys.  Only\nthe <code>fn<\/code> key is required.<\/p>\n<ul>\n<li><code>fn<\/code> -- The callback function<\/li>\n<li><code>context<\/code> -- The execution context for the callbackFn.<\/li>\n<li><code>args<\/code> -- Arguments to pass to callbackFn.<\/li>\n<li><code>timeout<\/code> -- Millisecond delay before executing callbackFn.\n(Applies to each iterative execution of callback)<\/li>\n<li><code>iterations<\/code> -- Number of times to repeat the callback.\n<li><code>until<\/code> -- Repeat the callback until this function returns\ntrue.  This setting trumps iterations.<\/li>\n<li><code>autoContinue<\/code> -- Set to false to prevent the AsyncQueue from\nexecuting the next callback in the Queue after\nthe callback completes.<\/li>\n<li><code>id<\/code> -- Name that can be used to get, promote, get the\nindexOf, or delete this callback.<\/li>\n<\/ul>", "guessedname": "AsyncQueue", "name": "AsyncQueue"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "A simple FIFO queue.  Items are added to the Queue with add(1..n items) and\nremoved using next().", "guessedname": "Queue", "name": "Queue"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
@@ -95,24 +79,8 @@ id: "MyName"        // Name that can be used to get, promote, get the
                                             <dt><code><a href="AsyncQueue.html" title="queue-run">queue-run</a></code></dt>
                                             <dd><p>Adds a new class AsyncQueue that is restricted to function callbacks, but
 includes a host of additional features, including events, callback
-iterations, and a run() method that can execute enqueued callbacks in order,
-even across configured timeouts.</p>
-<p>Callbacks can be function refs or objects in the following form:</p>
-<pre>{
-fn: callbackFn,     // The callback function.
-context: obj,       // The execution context for the callbackFn.
-args: [x,y,z],      // Arguments to pass to callbackFn.
-timeout: 15,        // Millisecond delay before executing callbackFn.
-// (Applies to each iterative execution of callback)
-iterations: 5,      // Number of times to repeat the callback.
-until: doUntilX     // Repeat the callback until this function returns
-// true.  This setting trumps iterations.
-autoContinue: true, // Set to false to prevent the AsyncQueue from
-// executing the next callback in the Queue after
-// the callback completes.
-id: "MyName"        // Name that can be used to get, promote, get the
-// indexOf, or delete this callback.
-}</pre></dd>
+iterations, and a run() method that can execute queued callbacks in order,
+even across configured timeouts.</p></dd>
                                             <dt><code><a href="Queue.html" title="queue-promote">queue-promote</a></code></dt>
                                             <dd>Adds methods promote, remove, and indexOf to Queue instances.</dd>
                                             <dt><code><a href="Queue.html" title="queue-base">queue-base</a></code></dt>
@@ -139,7 +107,6 @@ removed using next().</dd>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
-                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
@@ -162,9 +129,6 @@ removed using next().</dd>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class="selected"><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector-css2.html" title="selector-css2">selector-css2</a></li>
-                                <li class=""><a href="module_selector-css3.html" title="selector-css3">selector-css3</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -208,7 +172,7 @@ removed using next().</dd>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "AsyncQueue", "name": "add", "url": "AsyncQueue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "AsyncQueue.defaults", "url": "AsyncQueue.html#property_AsyncQueue.defaults", "type": "property"}, {"access": "", "host": "AsyncQueue", "name": "complete", "url": "AsyncQueue.html#event_complete", "type": "event"}, {"access": "protected", "host": "AsyncQueue", "name": "_defAddFn", "url": "AsyncQueue.html#method__defAddFn", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "defaults", "url": "AsyncQueue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "AsyncQueue", "name": "_defExecFn", "url": "AsyncQueue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defPromoteFn", "url": "AsyncQueue.html#method__defPromoteFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defRemoveFn", "url": "AsyncQueue.html#method__defRemoveFn", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "_defShiftFn", "url": "AsyncQueue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_execute", "url": "AsyncQueue.html#method__execute", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "getCallback", "url": "AsyncQueue.html#method_getCallback", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "indexOf", "url": "AsyncQueue.html#method_indexOf", "type": "method"}, {"access": "", "host": "Queue", "name": "indexOf", "url": "Queue.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_init", "url": "AsyncQueue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_initEvents", "url": "AsyncQueue.html#method__initEvents", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "isRunning", "url": "AsyncQueue.html#method_isRunning", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "next", "url": "AsyncQueue.html#method_next", "type": "method"}, {"access": "", "host": "Queue", "name": "next", "url": "Queue.html#method_next", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "pause", "url": "AsyncQueue.html#method_pause", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_prepare", "url": "AsyncQueue.html#method__prepare", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "promote", "url": "AsyncQueue.html#method_promote", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_q", "url": "Queue.html#property__q", "type": "property"}, {"access": "", "host": "AsyncQueue", "name": "remove", "url": "AsyncQueue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "run", "url": "AsyncQueue.html#method_run", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_running", "url": "AsyncQueue.html#property__running", "type": "property"}, {"access": "protected", "host": "AsyncQueue", "name": "_schedule", "url": "AsyncQueue.html#method__schedule", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "size", "url": "AsyncQueue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "stop", "url": "AsyncQueue.html#method_stop", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "AsyncQueue", "name": "add", "url": "AsyncQueue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "AsyncQueue.defaults", "url": "AsyncQueue.html#property_AsyncQueue.defaults", "type": "property"}, {"access": "", "host": "AsyncQueue", "name": "complete", "url": "AsyncQueue.html#event_complete", "type": "event"}, {"access": "protected", "host": "AsyncQueue", "name": "_defAddFn", "url": "AsyncQueue.html#method__defAddFn", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "defaults", "url": "AsyncQueue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "AsyncQueue", "name": "_defExecFn", "url": "AsyncQueue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defPromoteFn", "url": "AsyncQueue.html#method__defPromoteFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defRemoveFn", "url": "AsyncQueue.html#method__defRemoveFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defShiftFn", "url": "AsyncQueue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_execute", "url": "AsyncQueue.html#method__execute", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "getCallback", "url": "AsyncQueue.html#method_getCallback", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "indexOf", "url": "AsyncQueue.html#method_indexOf", "type": "method"}, {"access": "", "host": "Queue", "name": "indexOf", "url": "Queue.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_init", "url": "AsyncQueue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_initEvents", "url": "AsyncQueue.html#method__initEvents", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "isRunning", "url": "AsyncQueue.html#method_isRunning", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "next", "url": "AsyncQueue.html#method_next", "type": "method"}, {"access": "", "host": "Queue", "name": "next", "url": "Queue.html#method_next", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "pause", "url": "AsyncQueue.html#method_pause", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_prepare", "url": "AsyncQueue.html#method__prepare", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "promote", "url": "AsyncQueue.html#method_promote", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_q", "url": "Queue.html#property__q", "type": "property"}, {"access": "", "host": "AsyncQueue", "name": "remove", "url": "AsyncQueue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "run", "url": "AsyncQueue.html#method_run", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_running", "url": "AsyncQueue.html#property__running", "type": "property"}, {"access": "protected", "host": "AsyncQueue", "name": "_schedule", "url": "AsyncQueue.html#method__schedule", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "size", "url": "AsyncQueue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "stop", "url": "AsyncQueue.html#method_stop", "type": "method"}];
 </script>
 </body>
 </html>

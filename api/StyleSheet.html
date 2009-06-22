@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>stylesheet&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>stylesheet&nbsp; <span class="subtitle">3.0.0b1_test2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_stylesheet.html" title="stylesheet">stylesheet</a>
                  &gt; StyleSheet 
@@ -115,7 +115,7 @@ name or guid of a StyleSheet, or a string of css text</span>
                                                     <code><span property="yui:name">name</span>
                                                     &lt;<span property="yui:type">String</span>&gt;
                                                     </code>
-                                                    <span property="yui:description">  OPTIONAL name to register instance for future static
+                                                    <span property="yui:description">  (optional) name to register instance for future static
 access</span>
                                                 </dd>
                                         </dl>
@@ -161,7 +161,7 @@ StyleSheet is disabled.
                                                     <code property="yui:return">
                                                         StyleSheet
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">the instance</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
                                             <div class="chainable">
@@ -201,7 +201,7 @@ StyleSheet is disabled.
                                                     <code property="yui:return">
                                                         StyleSheet
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">the instance</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
                                             <div class="chainable">
@@ -323,7 +323,7 @@ cssText will be returned.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns boolean indicating whether the StyleSheet is enabled
+                                            Returns false if the StyleSheet is disabled.  Otherwise true.
                                         </div>
 
                                         <div class="description">
@@ -334,7 +334,7 @@ cssText will be returned.
                                                     <code property="yui:return">
                                                         Boolean
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">is it enabled?</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -402,7 +402,7 @@ names of style properties.  E.g. fontSize rather than font-size.</p>
                                                     <code property="yui:return">
                                                         StyleSheet
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">the StyleSheet instance</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
                                             <div class="chainable">
@@ -581,7 +581,7 @@ extracted from the eventual target's current el.style.cssText.</p>
                                                         <code><span property="yui:name">cssText</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  OPTIONAL starting cssText value</span>
+                                                        <span property="yui:description">  (optional) starting cssText value</span>
                                                         </dd>
                                                 </dl>
 
@@ -631,7 +631,7 @@ their effect from the style cascade.</p>
 selectors and applied accordingly.  If there are no properties
 remaining in the rule after unsetting, the rule is removed.</p>
 <p>The style property or properties in the second parameter must be the
-<p>JavaScript style property names. E.g. fontSize rather than font-size.</p>
+JavaScript style property names. E.g. fontSize rather than font-size.</p>
 <p>The float style property will be unset by any of &quot;float&quot;,
 &quot;styleFloat&quot;, or &quot;cssFloat&quot;.</p>
                                         </div>
@@ -659,7 +659,7 @@ remaining in the rule after unsetting, the rule is removed.</p>
                                                     <code property="yui:return">
                                                         StyleSheet
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">the StyleSheet instance</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
                                             <div class="chainable">
@@ -702,7 +702,6 @@ remaining in the rule after unsetting, the rule is removed.</p>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
-                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
@@ -725,9 +724,6 @@ remaining in the rule after unsetting, the rule is removed.</p>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector-css2.html" title="selector-css2">selector-css2</a></li>
-                                <li class=""><a href="module_selector-css3.html" title="selector-css3">selector-css3</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class="selected"><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

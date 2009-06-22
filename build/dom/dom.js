@@ -921,15 +921,6 @@ Y.DOM = {
 })(Y);
 
 })(Y);
-/** 
- * The DOM utility provides a cross-browser abtraction layer
- * normalizing DOM tasks, and adds extra helper functionality
- * for other common tasks. 
- * @module dom
- * @submodule dom-base
- * @for DOM
- */
-
 Y.mix(Y.DOM, {
     /**
      * Determines whether a DOM element has the given className.
@@ -1158,13 +1149,6 @@ if (Y.UA.webkit) {
 }
 })(Y);
 (function(Y) {
-/**
- * Add style management functionality to DOM.
- * @module dom
- * @submodule dom-style
- * @for DOM
- */
-
 var TO_STRING = 'toString',
     PARSE_INT = parseInt,
     RE = RegExp;
@@ -1236,13 +1220,6 @@ Y.Color = {
 })(Y);
 
 (function(Y) {
-/**
- * Add style management functionality to DOM.
- * @module dom
- * @submodule dom-style
- * @for DOM
- */
-
 var CLIENT_TOP = 'clientTop',
     CLIENT_LEFT = 'clientLeft',
     HAS_LAYOUT = 'hasLayout',
@@ -1542,7 +1519,7 @@ Y.mix(Y.DOM, {
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
      * @method winHeight
-
+     * @return {Number} The current height of the viewport.
      */
     winHeight: function(node) {
         var h = Y.DOM._getWinSize(node).height;
@@ -1552,7 +1529,7 @@ Y.mix(Y.DOM, {
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
      * @method winWidth
-
+     * @return {Number} The current width of the viewport.
      */
     winWidth: function(node) {
         var w = Y.DOM._getWinSize(node).width;
@@ -1562,7 +1539,7 @@ Y.mix(Y.DOM, {
     /**
      * Document height 
      * @method docHeight
-
+     * @return {Number} The current height of the document.
      */
     docHeight:  function(node) {
         var h = Y.DOM._getDocSize(node).height;
@@ -1572,6 +1549,7 @@ Y.mix(Y.DOM, {
     /**
      * Document width 
      * @method docWidth
+     * @return {Number} The current width of the document.
      */
     docWidth:  function(node) {
         var w = Y.DOM._getDocSize(node).width;
@@ -1579,8 +1557,9 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Amount page has been scroll vertically 
+     * Amount page has been scroll horizontally 
      * @method docScrollX
+     * @return {Number} The current amount the screen is scrolled horizontally.
      */
     docScrollX: function(node) {
         var doc = Y.DOM._getDoc(node);
@@ -1588,8 +1567,9 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Amount page has been scroll horizontally 
+     * Amount page has been scroll vertically 
      * @method docScrollY
+     * @return {Number} The current amount the screen is scrolled vertically.
      */
     docScrollY:  function(node) {
         var doc = Y.DOM._getDoc(node);
@@ -1604,7 +1584,7 @@ Y.mix(Y.DOM, {
      * @param element The target element
      * @return {Array} The XY position of the element
 
-     TODO: test inDocument/display
+     TODO: test inDocument/display?
      */
     getXY: function() {
         if (document[DOCUMENT_ELEMENT][GET_BOUNDING_CLIENT_RECT]) {
@@ -1895,13 +1875,6 @@ Y.mix(Y.DOM, {
 });
 })(Y);
 (function(Y) {
-/**
- * Adds position and region management functionality to DOM.
- * @module dom
- * @submodule dom-screen
- * @for DOM
- */
-
 var TOP = 'top',
     RIGHT = 'right',
     BOTTOM = 'bottom',
@@ -2078,11 +2051,15 @@ YUI.add('selector-native', function(Y) {
 (function(Y) {
 /**
  * The selector-native module provides support for native querySelector
- * @module selector-native
+ * @module dom
+ * @submodule selector-native
+ * @for Selector
  */
 
 /**
- * Provides a wrapper for native querySelectorAll 
+ * Provides support for using CSS selectors to query the DOM 
+ * @class Selector 
+ * @static
  * @for Selector
  */
 
@@ -2283,15 +2260,13 @@ YUI.add('selector-css2', function(Y) {
 
 /**
  * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.
- * @module selector-css2
- * @title Selector Utility
- * @requires yahoo, dom
+ * @module dom
+ * @submodule selector-css2
+ * @for Selector
  */
 
 /**
  * Provides helper methods for collecting and filtering DOM elements.
- * @class Selector
- * @static
  */
 
 var PARENT_NODE = 'parentNode',

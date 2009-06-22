@@ -3,7 +3,6 @@
  * Adds support for positioning elements and normalizes window size and scroll detection. 
  * @module node
  * @submodule node-screen
- * @for Node
  */
 
 // these are all "safe" returns, no wrapping required

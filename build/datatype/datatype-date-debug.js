@@ -1,7 +1,5 @@
 YUI.add('datatype-date-parse', function(Y) {
 
-var LANG = Y.Lang;
-
 /**
  * Parse number submodule.
  *
@@ -9,6 +7,8 @@ var LANG = Y.Lang;
  * @submodule datatype-date-parse
  * @for DataType.Date
  */
+var LANG = Y.Lang;
+
 Y.mix(Y.namespace("DataType.Date"), {
     /**
      * Converts data to type Date.
@@ -56,10 +56,10 @@ YUI.add('datatype-date-format', function(Y) {
  */
 
 /**
- * DataType.Date provides a set of utility functions to operate against Date objects.
+ * Date submodule.
  *
- * @class DataType.Date
- * @static
+ * @module datatype
+ * @submodule datatype-date
  */
 
 /**
@@ -70,6 +70,13 @@ YUI.add('datatype-date-format', function(Y) {
  *
  * @module datatype
  * @submodule datatype-date-format
+ */
+
+/**
+ * DataType.Date provides a set of utility functions to operate against Date objects.
+ *
+ * @class DataType.Date
+ * @static
  */
 
 /**

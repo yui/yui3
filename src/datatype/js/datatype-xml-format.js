@@ -1,4 +1,18 @@
 /**
+ * Format XML submodule.
+ *
+ * @module datatype
+ * @submodule datatype-xml-format
+ */
+
+/**
+ * XML submodule.
+ *
+ * @module datatype
+ * @submodule datatype-xml
+ */
+
+/**
  * DataType.XML provides a set of utility functions to operate against XML documents.
  *
  * @class DataType.XML
@@ -6,12 +20,6 @@
  */
 var LANG = Y.Lang;
 
-/**
- * Format XML submodule.
- *
- * @module datatype
- * @submodule datatype-xml-format
- */
 Y.mix(Y.namespace("DataType.XML"), {
     /**
      * Converts data to type XMLDocument.

@@ -2,6 +2,7 @@ YUI.add('json-stringify', function(Y) {
 
 /**
  * Provides Y.JSON.stringify method for converting objects to JSON strings.
+ *
  * @module json
  * @submodule json-stringify
  * @for JSON
@@ -37,18 +38,20 @@ Y.mix(Y.namespace('JSON'),{
     /**
      * Regex used to capture characters that need escaping before enclosing
      * their containing string in quotes.
+     *
      * @property _SPECIAL_CHARS
      * @type {RegExp}
-     * @private
+     * @protected
      */
     _SPECIAL_CHARS : /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 
     /**
      * Character substitution map for common escapes and special characters.
+     *
      * @property _CHARS
      * @type {Object}
      * @static
-     * @private
+     * @protected
      */
     _CHARS : {
         '\b': '\\b',
@@ -64,6 +67,7 @@ Y.mix(Y.namespace('JSON'),{
      * Serializes a Date instance as a UTC date string.  Used internally by
      * stringify.  Override this method if you need Dates serialized in a
      * different format.
+     *
      * @method dateToString
      * @param d {Date} The Date to serialize
      * @return {String} stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ

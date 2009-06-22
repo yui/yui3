@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>json&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>json&nbsp; <span class="subtitle">3.0.0b1_test2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_json.html" title="json">json</a>
                 
@@ -49,6 +49,7 @@
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
 <span class="c"> * Provides Y.JSON.stringify method for converting objects to JSON strings.</span>
+<span class="c"> *</span>
 <span class="c"> * @module json</span>
 <span class="c"> * @submodule json-stringify</span>
 <span class="c"> * @for JSON</span>
@@ -84,18 +85,20 @@
     <span class="c">/**</span>
 <span class="c">     * Regex used to capture characters that need escaping before enclosing</span>
 <span class="c">     * their containing string in quotes.</span>
+<span class="c">     *</span>
 <span class="c">     * @property _SPECIAL_CHARS</span>
 <span class="c">     * @type {RegExp}</span>
-<span class="c">     * @private</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_SPECIAL_CHARS</span> <span class="o">:</span> <span class="sr">/[\\\&quot;\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g</span><span class="o">,</span>
 
     <span class="c">/**</span>
 <span class="c">     * Character substitution map for common escapes and special characters.</span>
+<span class="c">     *</span>
 <span class="c">     * @property _CHARS</span>
 <span class="c">     * @type {Object}</span>
 <span class="c">     * @static</span>
-<span class="c">     * @private</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_CHARS</span> <span class="o">:</span> <span class="o">{</span>
         <span class="s1">&#39;\b&#39;</span><span class="o">:</span> <span class="s1">&#39;\\b&#39;</span><span class="o">,</span>
@@ -111,6 +114,7 @@
 <span class="c">     * Serializes a Date instance as a UTC date string.  Used internally by</span>
 <span class="c">     * stringify.  Override this method if you need Dates serialized in a</span>
 <span class="c">     * different format.</span>
+<span class="c">     *</span>
 <span class="c">     * @method dateToString</span>
 <span class="c">     * @param d {Date} The Date to serialize</span>
 <span class="c">     * @return {String} stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ</span>
@@ -297,7 +301,6 @@
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
-                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
@@ -320,9 +323,6 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector-css2.html" title="selector-css2">selector-css2</a></li>
-                                <li class=""><a href="module_selector-css3.html" title="selector-css3">selector-css3</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -364,7 +364,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "protected", "host": "JSON", "name": "_SIMPLE", "url": "JSON.html#property__SIMPLE", "type": "property"}, {"access": "private", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "protected", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "private", "host": "JSON", "name": "Native", "url": "JSON.html#property_Native", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_SIMPLE", "url": "JSON.html#property__SIMPLE", "type": "property"}, {"access": "protected", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
 </script>
 </body>
 </html>

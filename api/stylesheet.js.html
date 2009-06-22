@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>stylesheet&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>stylesheet&nbsp; <span class="subtitle">3.0.0b1_test2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_stylesheet.html" title="stylesheet">stylesheet</a>
                 
@@ -48,8 +48,8 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The StyleSheet component is a utility for managing css rules at the</span>
-<span class="c"> * stylesheet level</span>
+<span class="c"> * The StyleSheet component is a module for creating and modifying CSS</span>
+<span class="c"> * stylesheets.</span>
 <span class="c"> *</span>
 <span class="c"> * @module stylesheet</span>
 <span class="c"> */</span>
@@ -67,18 +67,16 @@
     <span class="nx">FLOAT</span>   <span class="o">=</span> <span class="s1">&#39;float&#39;</span><span class="o">,</span>
     <span class="nx">EMPTY</span>   <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
 
-<span class="c">/*</span>
-<span class="c"> * Normalizes the removal of an assigned style for opacity.  IE uses the filter property.</span>
-<span class="c"> */</span>
-<span class="nx">_unsetOpacity</span> <span class="o">=</span> <span class="o">(</span><span class="nx">OPACITY</span> <span class="k">in</span> <span class="nx">workerStyle</span><span class="o">)</span> <span class="o">?</span>
+<span class="c">// Normalizes the removal of an assigned style for opacity.  IE uses the filter</span>
+<span class="c">// property.</span>
+<span class="c"></span><span class="nx">_unsetOpacity</span> <span class="o">=</span> <span class="o">(</span><span class="nx">OPACITY</span> <span class="k">in</span> <span class="nx">workerStyle</span><span class="o">)</span> <span class="o">?</span>
     <span class="k">function</span> <span class="o">(</span><span class="nx">style</span><span class="o">)</span> <span class="o">{</span> <span class="nx">style</span><span class="o">.</span><span class="nx">opacity</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="o">;</span> <span class="o">}</span> <span class="o">:</span>
     <span class="k">function</span> <span class="o">(</span><span class="nx">style</span><span class="o">)</span> <span class="o">{</span> <span class="nx">style</span><span class="o">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="o">;</span> <span class="o">};</span>
         
-<span class="c">/*</span>
-<span class="c"> * Normalizes the removal of an assigned style for a given property.  Expands</span>
-<span class="c"> * shortcut properties if necessary and handles the various names for the float property.</span>
-<span class="c"> */</span>
-<span class="nx">workerStyle</span><span class="o">.</span><span class="nx">border</span> <span class="o">=</span> <span class="s2">&quot;1px solid red&quot;</span><span class="o">;</span>
+<span class="c">// Normalizes the removal of an assigned style for a given property.  Expands</span>
+<span class="c">// shortcut properties if necessary and handles the various names for the float</span>
+<span class="c">// property.</span>
+<span class="c"></span><span class="nx">workerStyle</span><span class="o">.</span><span class="nx">border</span> <span class="o">=</span> <span class="s2">&quot;1px solid red&quot;</span><span class="o">;</span>
 <span class="nx">workerStyle</span><span class="o">.</span><span class="nx">border</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="o">;</span> <span class="c">// IE doesn&#39;t unset child properties</span>
 <span class="c"></span><span class="nx">_unsetProperty</span> <span class="o">=</span> <span class="nx">workerStyle</span><span class="o">.</span><span class="nx">borderLeft</span> <span class="o">?</span>
     <span class="k">function</span> <span class="o">(</span><span class="nx">style</span><span class="o">,</span><span class="nx">prop</span><span class="o">)</span> <span class="o">{</span>
@@ -150,7 +148,7 @@
 <span class="c"> * @constructor</span>
 <span class="c"> * @param seed {String|HTMLElement|Node} a style or link node, its id, or a</span>
 <span class="c"> *              name or guid of a StyleSheet, or a string of css text</span>
-<span class="c"> * @param name {String} OPTIONAL name to register instance for future static</span>
+<span class="c"> * @param name {String} (optional) name to register instance for future static</span>
 <span class="c"> *              access</span>
 <span class="c"> */</span>
 <span class="k">function</span> <span class="nx">StyleSheet</span><span class="o">(</span><span class="nx">seed</span><span class="o">,</span> <span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
@@ -279,7 +277,7 @@
 <span class="c">         * Enable all the rules in the sheet</span>
 <span class="c">         *</span>
 <span class="c">         * @method enable</span>
-<span class="c">         * @return {StyleSheet} the instance</span>
+<span class="c">         * @return {StyleSheet}</span>
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
         <span class="nx">enable</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span> <span class="nx">sheet</span><span class="o">.</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span> <span class="k">return</span> <span class="k">this</span><span class="o">;</span> <span class="o">},</span>
@@ -289,16 +287,16 @@
 <span class="c">         * StyleSheet is disabled.</span>
 <span class="c">         *</span>
 <span class="c">         * @method disable</span>
-<span class="c">         * @return {StyleSheet} the instance</span>
+<span class="c">         * @return {StyleSheet}</span>
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
         <span class="nx">disable</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span> <span class="nx">sheet</span><span class="o">.</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="k">return</span> <span class="k">this</span><span class="o">;</span> <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Returns boolean indicating whether the StyleSheet is enabled</span>
+<span class="c">         * Returns false if the StyleSheet is disabled.  Otherwise true.</span>
 <span class="c">         *</span>
 <span class="c">         * @method isEnabled</span>
-<span class="c">         * @return {Boolean} is it enabled?</span>
+<span class="c">         * @return {Boolean}</span>
 <span class="c">         */</span>
         <span class="nx">isEnabled</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="o">!</span><span class="nx">sheet</span><span class="o">.</span><span class="nx">disabled</span><span class="o">;</span> <span class="o">},</span>
 
@@ -317,7 +315,7 @@
 <span class="c">         * @method set</span>
 <span class="c">         * @param sel {String} the selector string to apply the changes to</span>
 <span class="c">         * @param css {Object} Object literal of style properties and new values</span>
-<span class="c">         * @return {StyleSheet} the StyleSheet instance</span>
+<span class="c">         * @return {StyleSheet}</span>
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
         <span class="nx">set</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">sel</span><span class="o">,</span><span class="nx">css</span><span class="o">)</span> <span class="o">{</span>
@@ -371,7 +369,7 @@
 <span class="c">         * remaining in the rule after unsetting, the rule is removed.&lt;/p&gt;</span>
 <span class="c">         *</span>
 <span class="c">         * &lt;p&gt;The style property or properties in the second parameter must be the</span>
-<span class="c">         * &lt;p&gt;JavaScript style property names. E.g. fontSize rather than font-size.&lt;/p&gt;</span>
+<span class="c">         * JavaScript style property names. E.g. fontSize rather than font-size.&lt;/p&gt;</span>
 <span class="c">         *</span>
 <span class="c">         * &lt;p&gt;The float style property will be unset by any of &amp;quot;float&amp;quot;,</span>
 <span class="c">         * &amp;quot;styleFloat&amp;quot;, or &amp;quot;cssFloat&amp;quot;.&lt;/p&gt;</span>
@@ -379,7 +377,7 @@
 <span class="c">         * @method unset</span>
 <span class="c">         * @param sel {String} the selector string to apply the changes to</span>
 <span class="c">         * @param css {String|Array} style property name or Array of names</span>
-<span class="c">         * @return {StyleSheet} the StyleSheet instance</span>
+<span class="c">         * @return {StyleSheet}</span>
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
         <span class="nx">unset</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">sel</span><span class="o">,</span><span class="nx">css</span><span class="o">)</span> <span class="o">{</span>
@@ -503,7 +501,7 @@
 <span class="c">     *</span>
 <span class="c">     * @method StyleSheet.toCssText</span>
 <span class="c">     * @param css {Object} object literal of style properties and values</span>
-<span class="c">     * @param cssText {String} OPTIONAL starting cssText value</span>
+<span class="c">     * @param cssText {String} (optional) starting cssText value</span>
 <span class="c">     * @return {String} the resulting cssText string</span>
 <span class="c">     * @static</span>
 <span class="c">     */</span>
@@ -689,7 +687,6 @@
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
-                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
@@ -712,9 +709,6 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector-css2.html" title="selector-css2">selector-css2</a></li>
-                                <li class=""><a href="module_selector-css3.html" title="selector-css3">selector-css3</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class="selected"><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

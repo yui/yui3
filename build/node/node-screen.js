@@ -5,7 +5,6 @@ YUI.add('node-screen', function(Y) {
  * Adds support for positioning elements and normalizes window size and scroll detection. 
  * @module node
  * @submodule node-screen
- * @for Node
  */
 
 // these are all "safe" returns, no wrapping required
@@ -150,14 +149,6 @@ Y.Node.importMethod(Y.DOM, [
  */
     'setY'
 ]);
-
-/**
- * Extended Node interface for managing regions and screen positioning.
- * Adds support for positioning elements and normalizes window size and scroll detection. 
- * @module node
- * @submodule node-screen
- * @for Node
- */
 
 /**
  * Returns a region object for the node 
