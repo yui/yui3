@@ -334,7 +334,7 @@ YUI.add('datasource-io', function(Y) {
  * Provides a DataSource implementation which can be used to retrieve data via the IO Utility.
  *
  * @module datasource
- * @submodule dataschema-io
+ * @submodule datasource-io
  */
 
 /**
