@@ -1,3 +1,9 @@
+
+/*
+ * Provides information about the environment hosting YUI
+ * @module yui
+ * @submodule UA
+ */
 /**
  * YUI user agent detection.
  * Do not fork for a browser if it can be avoided.  Use feature detection when
@@ -13,7 +19,8 @@
  */
 Y.UA = function() {
 
-    var o={
+    var nav = navigator,
+        o = {
 
         /**
          * Internet Explorer version number or 0.  Example: 6
@@ -98,7 +105,7 @@ Y.UA = function() {
          * @property caja
          * @type float
          */
-        caja: 0,
+        caja: nav.cajaVersion,
 
         /**
          * Set to true if the page appears to be in SSL
@@ -118,7 +125,7 @@ Y.UA = function() {
         
     },
 
-    ua = navigator && navigator.userAgent, 
+    ua = nav && nav.userAgent, 
 
     loc = Y.config.win.location,
 
@@ -186,11 +193,6 @@ Y.UA = function() {
                     }
                 }
             }
-        }
-
-        m=ua.match(/Caja\/([^\s]*)/);
-        if (m&&m[1]) {
-            o.caja=parseFloat(m[1]);
         }
     }
     

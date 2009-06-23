@@ -28,7 +28,7 @@ var GLOBAL_ENV = YUI.Env,
             if (!GLOBAL_ENV.DOMReady) {
                 GLOBAL_ENV.DOMReady=true;
 
-                // Remove the DOMContentLoaded (FF/Opera)
+                // Remove the DOMContentLoaded (FF/Opera/Safari)
                 if (D.removeEventListener) {
                     D.removeEventListener("DOMContentLoaded", _ready, false);
                 }
@@ -37,9 +37,7 @@ var GLOBAL_ENV = YUI.Env,
 
         // create custom event
 
-        /////////////////////////////////////////////////////////////
-        // DOMReady
-        // based on work by: Dean Edwards/John Resig/Matthias Miller 
+/*! DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */
 
         // Internet Explorer: use the readyState of a defered script.
         // This isolates what appears to be a safe moment to manipulate
@@ -58,8 +56,8 @@ var GLOBAL_ENV = YUI.Env,
                 }
             }, POLL_INTERVAL); 
 
-        // FireFox and Opera: These browsers provide a event for this
-        // moment.  The latest WebKit releases now support this event.
+        // FireFox, Opera, Safari 3+: These browsers provide a event for this
+        // moment.
         } else {
             D.addEventListener("DOMContentLoaded", _ready, false);
         }
@@ -166,7 +164,7 @@ if (GLOBAL_ENV.DOMReady) {
 /**
  * Wraps a DOM event, properties requiring browser abstraction are
  * fixed here.  Provids a security layer when required.
- * @class EventFacade
+ * @class DOMEventFacade
  * @param ev {Event} the DOM event
  * @param currentTarget {HTMLElement} the element the listener was attached to
  * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
@@ -312,11 +310,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     //////////////////////////////////////////////////////
 
-    /**
-     * The keyCode for key events.  Uses charCode if keyCode is not available
-     * @property keyCode
-     * @type int
-     */
     c = e.keyCode || e.charCode || 0;
 
     if (ua.webkit && (c in webkitKeymap)) {
@@ -399,7 +392,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         } else {
             e.cancelBubble = true;
         }
-        wrapper.stopPropagation();
+        if (wrapper) {
+            wrapper.stopPropagation();
+        }
     };
 
     /**
@@ -416,7 +411,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             this.stopPropagation();
         }
 
-        wrapper.stopImmediatePropagation();
+        if (wrapper) {
+            wrapper.stopImmediatePropagation();
+        }
     };
 
     /**
@@ -430,7 +427,9 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
             e.returnValue = false;
         }
 
-        wrapper.preventDefault();
+        if (wrapper) {
+            wrapper.preventDefault();
+        }
     };
 
     /**
@@ -757,7 +756,11 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 cewrapper = Y.publish(key, {
                     //silent: true,
                     // host: this,
-                    bubbles: false
+                    bubbles: false,
+                    contextFn: function() {
+                        cewrapper.nodeRef = cewrapper.nodeRef || Y.get(cewrapper.el);
+                        return cewrapper.nodeRef;
+                    }
                 });
             
                 // for later removeListener calls
@@ -889,7 +892,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             }
 
             // switched from obj to trimmedArgs[2] to deal with appened compat param
-            context = trimmedArgs[2] || ((compat) ? el : Y.get(el));
+            // context = trimmedArgs[2] || ((compat) ? el : Y.get(el));
+            context = trimmedArgs[2];
             
             // set the context as the second arg to subscribe
             trimmedArgs[1] = context;
@@ -1509,75 +1513,58 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 };
 (function() {
 
-var Event = Y.Event,
-	
+var Lang = Y.Lang,
 	delegates = {},
-	
 	resolveTextNode = function(n) {
-
 	    try {
 	        if (n && 3 == n.nodeType) {
 	            return n.parentNode;
 	        }
 	    } catch(e) { }
-
 	    return n;
-
 	},
-
     _worker = function(delegateKey, e, el) {
-
         var target = resolveTextNode((e.target || e.srcElement)), 
             tests  = delegates[delegateKey],
             spec, 
 			ename,
 			elements,
 			nElements,
-			element,
-			ce,
+			matched,
 			ev,
 			i;
 
         for (spec in tests) {
-
             if (tests.hasOwnProperty(spec)) {
-
                 ename  = tests[spec];
-				elements = Y.Selector.query(("#" + el.id + " ") + spec);
+				elements = Y.Selector.query(spec, el);
 				nElements = elements.length;
-
 				if (nElements > 0) {
-
 					i = elements.length - 1;
-
 					do {
+						matched = elements[i];
+	                    if (matched === target || Y.DOM.contains(matched, target)) {
 
-						element = elements[i];
+                            if (!ev) {
+                                ev = new Y.DOMEventFacade(e, el);
+	                            ev.container = ev.currentTarget;
+                            }
 
-	                    if (element === target || Y.DOM.contains(element, target)) {
-
-							ce = Event._createWrapper(element, e.type, false, false, true);
-
-							ev = new Y.DOMEventFacade(e, element, ce);
-
-	                        ev.target = Y.Node.get(element);
-	
+	                        ev.currentTarget = Y.Node.get(matched);
 	                        Y.fire(ename, ev);
-
-	  						break;
-
 	                    }
-
 					}
 					while (i--);
-					
 				}
-
             }
-
         }
-
     },
+
+	attach = function (type, key, element) {
+		Y.Event._attach([type, function (e) {
+            _worker(key, (e || window.event), element);
+		}, element], { facade: false });
+	},
 
     _sanitize = Y.cached(function(str) {
         return str.replace(/[|,:]/g, '~');
@@ -1592,7 +1579,7 @@ var Event = Y.Event,
  * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
- * @return {Event.Handle} the detach handle
+ * @return {EventHandle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.delegate = {
@@ -1605,7 +1592,7 @@ Y.Env.evt.plugins.delegate = {
         }
 
         // identifier to target the container
-        var guid = (Y.Lang.isString(el) ? el : Y.stamp(el)), 
+        var guid = (Lang.isString(el) ? el : Y.stamp(el)), 
                 
             // the custom event for the delegation spec
             ename = 'delegate:' + guid + delegateType + _sanitize(spec),
@@ -1620,24 +1607,25 @@ Y.Env.evt.plugins.delegate = {
 
         if (!(delegateKey in delegates)) {
 
-			element = Y.Node.getDOMNode(Y.Node.get(el));
+			if (Lang.isString(el)) {	//	Selector
+				element = Y.Selector.query(el);				
+			}
+			else {	// Node instance
+				element = Y.Node.getDOMNode(el);
+			}
 
-			//	Need to make sure that the element has an id so that we 
-			//	can create a selector whose scope is limited to the element
+			if (Lang.isArray(element)) {
 
-			if (!element.id) {
-				element.id = Y.guid();
+				Y.Array.each(element, function (v) {
+					attach(delegateType, delegateKey, v);
+				});
+
+			}
+			else {
+				attach(delegateType, delegateKey, element);
 			}
 
             delegates[delegateKey] = {};
-
-
-			Y.Event._attach([delegateType, function (e) {
-
-                _worker(delegateKey, (e || window.event), element);
-
-			}, element], { facade: false });
-
         }
 
         delegates[delegateKey][spec] = ename;
@@ -1649,7 +1637,6 @@ Y.Env.evt.plugins.delegate = {
             
         // subscribe to the custom event for the delegation spec
         return Y.on.apply(Y, a);
-
     }
 };
 
@@ -1696,7 +1683,7 @@ Y.Env.evt.plugins.windowresize = {
 
         // check for single window listener and add if needed
         if (!detachHandle) {
-            detachHandle = Y.on('resize', handler);
+            detachHandle = Y.Event._attach(['resize', handler]);
         }
 
         var a = Y.Array(arguments, 0, true);
@@ -1713,7 +1700,8 @@ var isString = Y.Lang.isString,
 
 		if (!node.compareTo(relatedTarget) && !node.contains(relatedTarget)) {
 
-			e.target = node;
+			e.container = e.currentTarget;
+			e.currentTarget = node;
 
 			Y.fire(eventName, e);
 			
@@ -1812,7 +1800,7 @@ var isString = Y.Lang.isString,
  * @param el {string|node} The element(s) to assign the listener to.
  * @param spec {string} Optional.  String representing a selector that must 
  * match the target of the event in order for the listener to be called.
- * @return {Event.Handle} the detach handle
+ * @return {EventHandle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.mouseenter = eventConfig;
@@ -1829,7 +1817,7 @@ Y.Env.evt.plugins.mouseenter = eventConfig;
 * @param el {string|node} The element(s) to assign the listener to.
 * @param spec {string} Optional.  String representing a selector that must 
 * match the target of the event in order for the listener to be called.
-* @return {Event.Handle} the detach handle
+* @return {EventHandle} the detach handle
 * @for YUI
  */
 Y.Env.evt.plugins.mouseleave = eventConfig;

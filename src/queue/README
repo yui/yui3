@@ -1,41 +1,19 @@
 Queue
-    The Queue module allows you create a chain of function callbacks executed in order via setTimeout.  Also supports timeout chained iterations for each item in the Queue.
+    The Queue module in its simplest form is just that: a simple queuing mechanism.  Items added to the Queue are removed via next().  With all additional functionality included, it allows you to create a chain of function callbacks executed in order via setTimeout.  It also supports timeout chained iterations for each item in the Queue.
+
+    There are three submodules available for Queue:
+    * queue-base - a simple queue with add(..) and next()
+    * queue-promote - adds promote(c) and delete(c) to queue-base
+    * queue-run - Adds a new fully featured queue class AsyncQueue with autorun
+                  asynchronous callback execution, timeout chaining, event
+                  broadcasting
+
+    See the user guide and API docs for more detail.
 
 3.0.0 beta1
-Queue overhaul.  Breaking into submodules queue-base, queue-promote, and queue-run.
-queue-base
-    * tiny
-    * basic synchronous queuing
-    * Constructor takes 0..n callbacks
-    * supported callbacks are functions only
-    * API includes add, next, and size
+    * Overhaul.  Broken into queue-base, queue-promote, and queue-run.
 
-queue-promote
-    * adds to queue-base API methods promote, remove, and indexOf
-
-queue-run
-    * emits events add, remove, promote, execute, shift, and complete, all but
-      complete are preventable
-    * callbacks can be functions or config objects
-    * supported config object properties include:
-        - fn: the function to execute
-        - context: the callback context (default is the Queue instance)
-        - args: args to pass into the callback
-        - iterations: fixed number of times to execute the fn
-        - until: (alt to iterations) true/false function to trigger looping
-        - timeout: ms timeout to schedule each execution of the fn. Negative
-          numbers trigger synchronous execution.  Default -1.
-        - autoContinue: whether to run the next callback in the queue after the
-          current one completes (in run mode)
-        - name: string used to retrieve, promote, or remove a callback
-    * cascading defaults support (in increasing priority):
-        - static Y.Queue.defaults object to set defaults for all callbacks in
-          all instances for this YUI instance
-        - instance.defaults object to set instance level defaults
-    * default operation is now synchronous.  Set { timeout : 10 } in class or
-      instance defaults to return to async default behavior.
-    * iterations now handled by default until function
-    * API includes run, pause, stop, isRunning, and getCallback
+    See the user guide and API docs for more detail.
 
 3.0.0pr2
     No changes

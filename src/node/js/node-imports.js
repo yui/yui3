@@ -1,9 +1,8 @@
-var UID = '_yuid';
-
 Y.Array.each([
     /**
      * Passes through to DOM method.
      * @method replaceChild
+     * @for Node
      * @param {HTMLElement | Node} node Node to be inserted 
      * @param {HTMLElement | Node} refNode Node to be replaced 
      * @return {Node} The replaced node 
@@ -128,23 +127,27 @@ Node.importMethod(Y.DOM, [
     /**
      * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
      * @method contains
-     * @chainable
      * @param {Node | HTMLElement} needle The possible node or descendent
      * @return {Boolean} Whether or not this node is the needle its ancestor
      */
     'contains',
     /**
-     * Normalizes troublesome attributes 
-     * @chainable
+     * Allows setting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
      * @method setAttribute
+     * @for Node
+     * @for NodeList
+     * @chainable
      * @param {string} name The attribute name 
      * @param {string} value The value to set
      */
     'setAttribute',
     /**
-     * Normalizes troublesome attributes 
-     * @chainable
+     * Allows getting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
      * @method getAttribute
+     * @for Node
+     * @for NodeList
      * @param {string} name The attribute name 
      * @return {string} The attribute value 
      */
@@ -157,10 +160,32 @@ if (!document.documentElement.hasAttribute) { // IE < 8
     };
 }
 
+/**
+ * Allows setting attributes on DOM nodes, normalizing in some cases.
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method setAttribute
+ * @see Node
+ * @for NodeList
+ * @chainable
+ * @param {string} name The attribute name 
+ * @param {string} value The value to set
+ */
+
+/**
+ * Allows getting attributes on DOM nodes, normalizing in some cases.
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method getAttribute
+ * @see Node
+ * @for NodeList
+ * @param {string} name The attribute name 
+ * @return {string} The attribute value 
+ */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 
 (function() { // IE clones expandos; regenerate UID
-    var node = document.createElement('div');
+    var node = document.createElement('div'),
+        UID = '_yuid';
+
     Y.stamp(node);
     if (node[UID] === node.cloneNode(true)[UID]) {
         Y.Node.prototype.cloneNode = function(deep) {

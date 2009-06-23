@@ -1,7 +1,7 @@
     /**
      * YUI JavaScript Testing Framework
      *
-     * @module yuitest
+     * @module test
      */
 
     

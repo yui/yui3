@@ -322,7 +322,7 @@
          *
          * @method _afterHeaderChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterHeaderChange : function(e) {
             this._uiSetStdMod(STD_HEADER, e.newVal, e.stdModPosition);
@@ -334,7 +334,7 @@
          *
          * @method _afterBodyChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterBodyChange : function(e) {
             this._uiSetStdMod(STD_BODY, e.newVal, e.stdModPosition);
@@ -346,7 +346,7 @@
          *
          * @method _afterFooterChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterFooterChange : function(e) {
             this._uiSetStdMod(STD_FOOTER, e.newVal, e.stdModPosition);
@@ -358,7 +358,7 @@
          * 
          * @method _afterFillHeightChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterFillHeightChange: function (e) {
             this._uiSetFillHeight(e.newVal);
@@ -546,7 +546,7 @@
          * @private
          * 
          * @param {Node} node The section Node to be updated.
-         * @param {Node} child The new content Node to be added to section Node provided.
+         * @param {Node|NodeList} children The new content Node, or NodeList to be added to section Node provided.
          * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
          * If not provided, the content will replace existing content in the Node.
          */
@@ -555,9 +555,14 @@
                 i, s;
 
             if (where == BEFORE) {
-                if (node.get(FIRST_CHILD)) {
-                    for (i = node.size() - 1; i >=0; --i) {
-                        node.insertBefore(children.item(i), node.get(FIRST_CHILD));
+                var n = node.get(FIRST_CHILD);
+                if (n) {
+                    if (children instanceof Y.NodeList) {
+                        for (i = children.size() - 1; i >=0; --i) {
+                            node.insertBefore(children.item(i), n);
+                        }
+                    } else {
+                        node.insertBefore(children, n);
                     }
                     append = false;
                 }
@@ -565,8 +570,12 @@
                 node.set(INNER_HTML, EMPTY);
             }
             if (append) {
-                for (i = 0, s = children.size(); i < s; ++i) {
-                    node.appendChild(children.item(i));
+                if (children instanceof Y.NodeList) {
+                    for (i = 0, s = children.size(); i < s; ++i) {
+                        node.appendChild(children.item(i));
+                    }
+                } else {
+                    node.appendChild(children);
                 }
             }
         },

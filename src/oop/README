@@ -1,7 +1,7 @@
 YUI OOP Utilities
     Provides inheritance and object modification utilities
 
-3.0.0b1
+3.0.0beta1
 
   * bind() now adds the arguments supplied to bind before the
     arguments supplied when the function is executed.  Added
@@ -10,8 +10,9 @@ YUI OOP Utilities
     to the function when executed).
 
   * bind() supports a string representing a function on the
-    context object in order to allow subclassing of bound
-    methods.
+    context object in order to allow overriding methods on
+    superclasses that are bound to a function displaced by
+    aop.
 
   * Fixed array handling in clone
 

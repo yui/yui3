@@ -22,6 +22,8 @@
         logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
+        Y.log(typeof NaN);
+
         var button = Y.get('#btnRun'),
             Assert = Y.Assert;
 
@@ -153,6 +155,7 @@
             Assert.isFalse(Y.Lang.isDate(undefined), "undefined should be false");
             Assert.isFalse(Y.Lang.isDate(parseInt("adsf", 10)), "NaN should be false");
             Assert.isFalse(Y.Lang.isDate(1/0), "undefined numbers and infinity should be false");
+            Assert.isFalse(Y.Lang.isDate(NaN), "NaN should be false");
             Assert.isTrue(Y.Lang.isDate(new Date()), "date should be true");
             Assert.isFalse(Y.Lang.isDate(""), "Empty string should be false");
             Assert.isFalse(Y.Lang.isDate(false), "false should be false");

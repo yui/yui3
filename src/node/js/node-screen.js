@@ -3,51 +3,49 @@
  * Adds support for positioning elements and normalizes window size and scroll detection. 
  * @module node
  * @submodule node-screen
- * @for Node
  */
-
-var NODE_TYPE = 'nodeType';
 
 // these are all "safe" returns, no wrapping required
 Y.each([
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
-     * @property winWidth
+     * @config winWidth
+     * @for Node
      * @type {Int}
      */
     'winWidth',
 
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
-     * @property winHeight
+     * @config winHeight
      * @type {Int}
      */
     'winHeight',
 
     /**
      * Document width 
-     * @property winHeight
+     * @config winHeight
      * @type {Int}
      */
     'docWidth',
 
     /**
      * Document height 
-     * @property docHeight
+     * @config docHeight
      * @type {Int}
      */
     'docHeight',
 
     /**
      * Amount page has been scroll vertically 
-     * @property docScrollX
+     * @config docScrollX
      * @type {Int}
      */
     'docScrollX',
 
     /**
      * Amount page has been scroll horizontally 
-     * @property docScrollY
+     * @config docScrollY
      * @type {Int}
      */
     'docScrollY'
@@ -75,7 +73,7 @@ Y.Node.ATTRS.scrollLeft = {
         if (node) {
             if ('scrollLeft' in node) {
                 node.scrollLeft = val;
-            } else if (node.document || node[NODE_TYPE] === 9) {
+            } else if (node.document || node.nodeType === 9) {
                 Y.DOM._getWin(node).scrollTo(val, Y.DOM.docScrollY(node)); // scroll window if win or doc
             }
         } else {
@@ -95,7 +93,7 @@ Y.Node.ATTRS.scrollTop = {
         if (node) {
             if ('scrollTop' in node) {
                 node.scrollTop = val;
-            } else if (node.document || node[NODE_TYPE] === 9) {
+            } else if (node.document || node.nodeType === 9) {
                 Y.DOM._getWin(node).scrollTo(Y.DOM.docScrollX(node), val); // scroll window if win or doc
             }
         } else {
@@ -107,16 +105,14 @@ Y.Node.ATTRS.scrollTop = {
 Y.Node.importMethod(Y.DOM, [
 /**
  * Gets the current position of the node in page coordinates. 
- * Nodes must be part of the DOM tree to have page coordinates
- * (display:none or nodes not appended return false).
  * @method getXY
+ * @for Node
  * @return {Array} The XY position of the node
 */
     'getXY',
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
- * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
  * @method setXY
  * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
  * @chainable
@@ -125,8 +121,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Gets the current position of the node in page coordinates. 
- * Nodes must be part of the DOM tree to have page coordinates
- * (display:none or nodes not appended return false).
  * @method getX
  * @return {Int} The X position of the node
 */
@@ -134,7 +128,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
- * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
  * @method setX
  * @param {Int} x X value for new position (coordinates are page-based)
  * @chainable
@@ -143,8 +136,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Gets the current position of the node in page coordinates. 
- * Nodes must be part of the DOM tree to have page coordinates
- * (display:none or nodes not appended return false).
  * @method getY
  * @return {Int} The Y position of the node
 */
@@ -152,7 +143,6 @@ Y.Node.importMethod(Y.DOM, [
 
 /**
  * Set the position of the node in page coordinates, regardless of how the node is positioned.
- * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
  * @method setY
  * @param {Int} y Y value for new position (coordinates are page-based)
  * @chainable

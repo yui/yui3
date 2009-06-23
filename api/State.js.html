@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>attribute&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>attribute&nbsp; <span class="subtitle">3.0.0b1_test2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_attribute.html" title="attribute">attribute</a>
                 
@@ -48,16 +48,13 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * Managed Attribute Provider</span>
-<span class="c">     * @module attribute</span>
-<span class="c">     */</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Maintain state for a collection of items.  Individual properties </span>
-<span class="c">     * are stored in hash tables.  This is instead of having state objects </span>
-<span class="c">     * for each item in the collection.  For large collections, especially </span>
-<span class="c">     * changing ones, this approach may perform better.</span>
-<span class="c">     * </span>
+<span class="c">     * The State class maintains state for a collection of named items, with </span>
+<span class="c">     * a varying number of properties defined.</span>
+<span class="c">     *</span>
+<span class="c">     * It avoids the need to create a separate class for the item, and separate instances </span>
+<span class="c">     * of these classes for each item, by storing the state in a 2 level hash table, </span>
+<span class="c">     * improving performance when the number of items is likely to be large.</span>
+<span class="c">     *</span>
 <span class="c">     * @constructor</span>
 <span class="c">     * @class State</span>
 <span class="c">     */</span>
@@ -72,12 +69,12 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">State</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
 
         <span class="c">/**</span>
-<span class="c">         * Add an item with the property and value provided</span>
+<span class="c">         * Adds a property to an item.</span>
 <span class="c">         *</span>
 <span class="c">         * @method add</span>
-<span class="c">         * @param name {string} identifier for this attribute</span>
-<span class="c">         * @param key {string} property identifier</span>
-<span class="c">         * @param val {Any} property value</span>
+<span class="c">         * @param name {String} The name of the item.</span>
+<span class="c">         * @param key {String} The name of the property.</span>
+<span class="c">         * @param val {Any} The value of the property.</span>
 <span class="c">         */</span>
         <span class="nx">add</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">;</span>
@@ -86,11 +83,11 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Add an item with all of the properties in the supplied object.</span>
-<span class="c">         * </span>
+<span class="c">         * Adds multiple properties to an item.</span>
+<span class="c">         *</span>
 <span class="c">         * @method addAll</span>
-<span class="c">         * @param name {string} identifier for this attribute</span>
-<span class="c">         * @param o hash of attributes</span>
+<span class="c">         * @param name {String} The name of the item.</span>
+<span class="c">         * @param o {Object} A hash of property/value pairs.</span>
 <span class="c">         */</span>
         <span class="nx">addAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">key</span><span class="o">;</span>
@@ -102,11 +99,11 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Remove the given key for a specific item</span>
+<span class="c">         * Removes a property from an item.</span>
 <span class="c">         *</span>
 <span class="c">         * @method remove</span>
-<span class="c">         * @param name {string} name of attribute</span>
-<span class="c">         * @param o {string} The key to delete.</span>
+<span class="c">         * @param name {String} The name of the item.</span>
+<span class="c">         * @param key {String} The property to remove.</span>
 <span class="c">         */</span>
         <span class="nx">remove</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">;</span>
@@ -116,11 +113,11 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Remove entire item, or optionally specified fields</span>
-<span class="c">         * </span>
+<span class="c">         * Removes multiple properties from an item, or remove the item completely.</span>
+<span class="c">         *</span>
 <span class="c">         * @method removeAll</span>
-<span class="c">         * @param name {string} name of attribute</span>
-<span class="c">         * @param o {object|array} Collection of keys to delete. If not provided, entire item is removed.</span>
+<span class="c">         * @param name {String} The name of the item.</span>
+<span class="c">         * @param o {Object|Array} Collection of properties to delete. If not provided, the entire item is removed.</span>
 <span class="c">         */</span>
         <span class="nx">removeAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">;</span>
@@ -135,12 +132,12 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * For a given item, returns the value of the attribute requested, or undefined if not found.</span>
+<span class="c">         * For a given item, returns the value of the property requested, or undefined if not found.</span>
 <span class="c">         *</span>
 <span class="c">         * @method get</span>
-<span class="c">         * @param name {string} name of attribute</span>
-<span class="c">         * @param key {string} optional The attribute value to retrieve.</span>
-<span class="c">         * @return The value of the supplied key.</span>
+<span class="c">         * @param name {String} The name of the item</span>
+<span class="c">         * @param key {String} Optional. The property value to retrieve.</span>
+<span class="c">         * @return {Any} The value of the supplied property.</span>
 <span class="c">         */</span>
         <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">;</span>
@@ -148,12 +145,12 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * For a given item, returns a disposable object with all attribute </span>
-<span class="c">         * name/value pairs.</span>
+<span class="c">         * For the given item, returns a disposable object with all of the</span>
+<span class="c">         * item&#39;s property/value pairs.</span>
 <span class="c">         *</span>
 <span class="c">         * @method getAll</span>
-<span class="c">         * @param name {string} name of attribute</span>
-<span class="c">         * @return An object withall data.</span>
+<span class="c">         * @param name {String} The name of the item</span>
+<span class="c">         * @return {Object} An object with property/value pairs for the item.</span>
 <span class="c">         */</span>
         <span class="nx">getAll</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span> <span class="nx">o</span><span class="o">;</span>
@@ -183,8 +180,8 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
-                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
@@ -207,18 +204,16 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -251,7 +246,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "State", "name": "addAll", "url": "State.html#method_addAll", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addAttrs", "url": "Attribute.html#method__addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addLazyAttr", "url": "Attribute.html#method__addLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "private", "host": "Attribute", "name": "Attribute._ATTR_CFG", "url": "Attribute.html#property_Attribute._ATTR_CFG", "type": "property"}, {"access": "", "host": "Attribute", "name": "Attribute.INVALID_VALUE", "url": "Attribute.html#property_Attribute.INVALID_VALUE", "type": "property"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "getAll", "url": "State.html#method_getAll", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_isLazyAttr", "url": "Attribute.html#method__isLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "modifyAttr", "url": "Attribute.html#method_modifyAttr", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "State", "name": "removeAll", "url": "State.html#method_removeAll", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_splitAttrVals", "url": "Attribute.html#method__splitAttrVals", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "State", "name": "addAll", "url": "State.html#method_addAll", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addAttrs", "url": "Attribute.html#method__addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addLazyAttr", "url": "Attribute.html#method__addLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "Attribute._ATTR_CFG", "url": "Attribute.html#property_Attribute._ATTR_CFG", "type": "property"}, {"access": "", "host": "Attribute", "name": "Attribute.INVALID_VALUE", "url": "Attribute.html#property_Attribute.INVALID_VALUE", "type": "property"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "getAll", "url": "State.html#method_getAll", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_isLazyAttr", "url": "Attribute.html#method__isLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "modifyAttr", "url": "Attribute.html#method_modifyAttr", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "State", "name": "removeAll", "url": "State.html#method_removeAll", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrVals", "url": "Attribute.html#method__splitAttrVals", "type": "method"}];
 </script>
 </body>
 </html>

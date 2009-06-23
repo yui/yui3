@@ -11,7 +11,7 @@ YUI.add('get', function(Y) {
 
 var ua         = Y.UA, 
     L          = Y.Lang,
-    PREFIX     = Y.guid(),
+    // PREFIX     = Y.guid(),
     TYPE_JS    = "text/javascript",
     TYPE_CSS   = "text/css",
     STYLESHEET = "stylesheet";
@@ -38,14 +38,6 @@ Y.Get = function() {
      */
         qidx=0, 
         
-    /**
-     * node index used to generate unique node ids
-     * @property nidx
-     * @type int
-     * @private
-     */
-        nidx=0, 
-
     /**
      * interal property used to prevent multiple simultaneous purge 
      * processes
@@ -89,7 +81,7 @@ Y.Get = function() {
      */
     _linkNode = function(url, win, attributes) {
         var o = {
-            id:   PREFIX + (nidx++),
+            id:   Y.guid(),
             type: TYPE_CSS,
             rel:  STYLESHEET,
             href: url
@@ -111,7 +103,7 @@ Y.Get = function() {
      */
     _scriptNode = function(url, win, attributes) {
         var o = {
-            id:   PREFIX + (nidx++),
+            id:   Y.guid(),
             type: TYPE_JS,
             src:  url
         };
@@ -488,10 +480,12 @@ Y.Get = function() {
 
         /**
          * The number of request required before an automatic purge.
+         * Can be configured via the 'purgethreshold' config
          * property PURGE_THRESH
          * @static
          * @type int
          * @default 20
+         * @private
          */
         PURGE_THRESH: 20,
 

@@ -1,20 +1,15 @@
 YUI.add('datatype-number-parse', function(Y) {
 
 /**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
- *
- * @module datatype
- */
-var LANG = Y.Lang;
-
-/**
  * Parse number submodule.
  *
- * @class DataType.Number
- * @submodule datatype-number-format
- * @static
+ * @module datatype
+ * @submodule datatype-number-parse
+ * @for DataType.Number
  */
+
+var LANG = Y.Lang;
+
 Y.mix(Y.namespace("DataType.Number"), {
     /**
      * Converts data to type Number.
@@ -23,7 +18,6 @@ Y.mix(Y.namespace("DataType.Number"), {
      * @param data {String | Number | Boolean} Data to convert. The following
      * values return as null: null, undefined, NaN, "".
      * @return {Number} A number, or null.
-     * @static
      */
     parse: function(data) {
         var number = (data === null) ? data : +data;
@@ -46,20 +40,27 @@ Y.namespace("Parsers").number = Y.DataType.Number.parse;
 YUI.add('datatype-number-format', function(Y) {
 
 /**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
+ * Number submodule.
  *
  * @module datatype
+ * @submodule datatype-number
  */
-var LANG = Y.Lang;
 
 /**
  * Format number submodule.
  *
- * @class DataType.Number
+ * @module datatype
  * @submodule datatype-number-format
+ */
+ 
+/**
+ * DataType.Number provides a set of utility functions to operate against Number objects.
+ *
+ * @class DataType.Number
  * @static
  */
+var LANG = Y.Lang;
+
 Y.mix(Y.namespace("DataType.Number"), {
      /**
      * Takes a Number and formats to string for display to user.
@@ -147,33 +148,89 @@ Y.mix(Y.namespace("DataType.Number"), {
 YUI.add('datatype-number', function(Y){}, '@VERSION@' ,{use:['datatype-number-parse', 'datatype-number-format']});
 
 
-YUI.add('datatype-date', function(Y) {
+YUI.add('datatype-date-parse', function(Y) {
 
 /**
- * The Date formatter utility implements strftime formatters for javascript based on the 
+ * Parse number submodule.
+ *
+ * @module datatype
+ * @submodule datatype-date-parse
+ * @for DataType.Date
+ */
+var LANG = Y.Lang;
+
+Y.mix(Y.namespace("DataType.Date"), {
+    /**
+     * Converts data to type Date.
+     *
+     * @method parse
+     * @param data {String | Number} Data to convert. Values supported by the Date constructor are supported.
+     * @return {Date} A Date, or null.
+     */
+    parse: function(data) {
+        var date = null;
+
+        //Convert to date
+        if(!(LANG.isDate(data))) {
+            date = new Date(data);
+        }
+        else {
+            return date;
+        }
+
+        // Validate
+        if(LANG.isDate(date) && (date != "Invalid Date") && !isNaN(date)) { // Workaround for bug 2527965
+            return date;
+        }
+        else {
+            return null;
+        }
+    }
+});
+
+// Add Parsers shortcut
+Y.namespace("Parsers").date = Y.DataType.Date.parse;
+
+
+
+}, '@VERSION@' );
+
+YUI.add('datatype-date-format', function(Y) {
+
+/**
+ * The DataType Utility provides type-conversion and string-formatting
+ * convenience methods for various JavaScript object types.
+ *
+ * @module datatype
+ */
+
+/**
+ * Date submodule.
+ *
+ * @module datatype
+ * @submodule datatype-date
+ */
+
+/**
+ * Format date submodule implements strftime formatters for javascript based on the
  * Open Group specification defined at
  * http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html
  * This implementation does not include modified conversion specifiers (i.e., Ex and Ox)
  *
- * The following format specifiers are supported:
- *
- * \copydoc formats
- *
- * \par Usage:
- * This library may be used as follows:
- * \code
- *	var d = Y.DataType.Date.format(new Date("2009/04/10", { format: "Today is %A, the %d of %B, %Y" });
- * \endcode
- *
- *
  * @module datatype
- * @submodule datatype-date
- * @requires oop
- * @title DataType Date Formatter Submodule
+ * @submodule datatype-date-format
+ */
+
+/**
+ * DataType.Date provides a set of utility functions to operate against Date objects.
+ *
+ * @class DataType.Date
+ * @static
  */
 
 /**
  * Pad a number with leading spaces, zeroes or something else
+ * @method xPad
  * @param x {Number}	The number to be padded
  * @param pad {String}  The character to pad the number with
  * @param r {Number}	(optional) The base of the pad, eg, 10 implies to two digits, 100 implies to 3 digits.
@@ -192,15 +249,25 @@ var xPad=function (x, pad, r)
 	return x.toString();
 };
 
+/**
+ * Default date format.
+ *
+ * @for config
+ * @property dateFormat
+ * @type String
+ * @value "%Y-%m-%d"
+ */
 Y.config.dateFormat = Y.config.dateFormat || "%Y-%m-%d";
-Y.config.locale = Y.config.locale || "en";
 
 /**
- * Date subclass for the YUI DataType utility.
- * @class DataType.Date
- * @requires base
- * @static
+ * Default locale for the YUI instance.
+ *
+ * @property locale
+ * @type String
+ * @value "en"
  */
+Y.config.locale = Y.config.locale || "en";
+
 var Dt = {
 	formats: {
 		a: function (d, l) { return l.a[d.getDay()]; },
@@ -311,6 +378,7 @@ var Dt = {
 	 /**
 	 * Takes a native JavaScript Date and formats it as a string for display to user.
 	 *
+	 * @for DataType.Date
 	 * @method format
 	 * @param oDate {Date} Date.
 	 * @param oConfig {Object} (Optional) Object literal of configuration values:
@@ -396,7 +464,6 @@ var Dt = {
 	 *  </dd>
 	 * </dl>
 	 * @return {String} Formatted date for display.
-	 * @sa Y.DataType.Date.Locale
 	 */
 	format : function (oDate, oConfig) {
 		oConfig = oConfig || {};
@@ -406,23 +473,24 @@ var Dt = {
 		}
 
 		var format = oConfig.format || Y.config.dateFormat,
-			sLocale = oConfig.locale || Y.config.locale;
+			sLocale = oConfig.locale || Y.config.locale,
+			LOCALE = Y.DataType.Date.Locale;
 
 		sLocale = sLocale.replace(/_/g, "-");
 		
 		// Make sure we have a definition for the requested locale, or default to en.
-		if(!Dt.Locale[sLocale]) {
+		if(!LOCALE[sLocale]) {
 			var tmpLocale = sLocale.replace(/-[a-zA-Z]+$/, "");
-			if(tmpLocale in Dt.Locale) {
+			if(tmpLocale in LOCALE) {
 				sLocale = tmpLocale;
-			} else if(Y.config.locale in Dt.Locale) {
+			} else if(Y.config.locale in LOCALE) {
 				sLocale = Y.config.locale;
 			} else {
 				sLocale = "en";
 			}
 		}
 
-		var aLocale = Dt.Locale[sLocale];
+		var aLocale = LOCALE[sLocale];
 
 		var replace_aggs = function (m0, m1) {
 			var f = Dt.aggregates[m1];
@@ -459,7 +527,11 @@ var Dt = {
 	}
 };
 
-Y.namespace("DataType").Date=Dt;
+Y.mix(Y.namespace("DataType.Date"), Dt);
+
+/**
+ * @module datatype
+*/
 
 /**
  * The Date.Locale class is a container for all localised date strings
@@ -522,9 +594,9 @@ Y.namespace("DataType").Date=Dt;
  * <pre>
  *   mardi, 22 avril == 2008-04-22
  * </pre>
- * @module datatype
  * @requires oop
  * @class DataType.Date.Locale
+ * @static
  */
 var YDateEn = {
 	a: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
@@ -560,24 +632,23 @@ Y.DataType.Date.Locale["en-AU"] = Y.merge(YDateEn);
 
 }, '@VERSION@' );
 
-YUI.add('datatype-xml-parse', function(Y) {
 
-/**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
- *
- * @module datatype
- */
-var LANG = Y.Lang;
+
+YUI.add('datatype-date', function(Y){}, '@VERSION@' ,{use:['datatype-date-parse', 'datatype-date-format']});
+
+
+YUI.add('datatype-xml-parse', function(Y) {
 
 /**
  * Parse XML submodule.
  *
- * @class DataType.XML
+ * @module datatype
  * @submodule datatype-xml-parse
- * @static
+ * @for DataType.XML
  */
- 
+
+var LANG = Y.Lang;
+
 Y.mix(Y.namespace("DataType.XML"), {
     /**
      * Converts data to type XMLDocument.
@@ -585,7 +656,6 @@ Y.mix(Y.namespace("DataType.XML"), {
      * @method parse
      * @param data {String} Data to convert.
      * @return {XMLDoc} XML Document.
-     * @static
      */
     parse: function(data) {
         var xmlDoc = null;
@@ -626,20 +696,27 @@ Y.namespace("Parsers").xml = Y.DataType.XML.parse;
 YUI.add('datatype-xml-format', function(Y) {
 
 /**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
+ * Format XML submodule.
  *
  * @module datatype
+ * @submodule datatype-xml-format
+ */
+
+/**
+ * XML submodule.
+ *
+ * @module datatype
+ * @submodule datatype-xml
+ */
+
+/**
+ * DataType.XML provides a set of utility functions to operate against XML documents.
+ *
+ * @class DataType.XML
+ * @static
  */
 var LANG = Y.Lang;
 
-/**
- * Format XML submodule.
- *
- * @class DataType.XML
- * @submodule datatype-xml-format
- * @static
- */
 Y.mix(Y.namespace("DataType.XML"), {
     /**
      * Converts data to type XMLDocument.
@@ -647,7 +724,6 @@ Y.mix(Y.namespace("DataType.XML"), {
      * @method format
      * @param data {XMLDoc} Data to convert.
      * @return {String} String.
-     * @static
      */
     format: function(data) {
         try {

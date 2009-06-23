@@ -4,14 +4,24 @@
  *
  * @module datasource
  */
-var LANG = Y.Lang,
     
 /**
- * Base class for the YUI DataSource utility.
+ * Provides the base Source implementation, which can be extended to
+ * create DataSources for specific data protocols, such integrated with the IO
+ * Utility or the Get Utility, or custom functions.
+ *
+ * @module datasource
+ * @submodule datasource-local
+ */
+
+/**
+ * Base class for the DataSource Utility.
  * @class DataSource.Local
  * @extends Base
  * @constructor
  */    
+var LANG = Y.Lang,
+
 DSLocal = function() {
     DSLocal.superclass.constructor.apply(this, arguments);
 };
@@ -151,7 +161,7 @@ Y.extend(DSLocal, Y.Base, {
          * </dd>
          * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
-         * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+         * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
          *     <dl>
          *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
          *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
@@ -179,7 +189,7 @@ Y.extend(DSLocal, Y.Base, {
          * </dd>
          * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
          * <dt>data (Object)</dt> <dd>Raw data.</dd>
-         * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+         * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
          *     <dl>
          *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
          *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
@@ -274,7 +284,7 @@ Y.extend(DSLocal, Y.Base, {
      * </dd>
      * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
-     * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+     * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
      *     <dl>
      *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
      *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>

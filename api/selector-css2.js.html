@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dom&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>dom&nbsp; <span class="subtitle">3.0.0b1_test2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dom.html" title="dom">dom</a>
                 
@@ -49,15 +49,13 @@
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
 <span class="c"> * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.</span>
-<span class="c"> * @module selector</span>
-<span class="c"> * @title Selector Utility</span>
-<span class="c"> * @requires yahoo, dom</span>
+<span class="c"> * @module dom</span>
+<span class="c"> * @submodule selector-css2</span>
+<span class="c"> * @for Selector</span>
 <span class="c"> */</span>
 
 <span class="c">/**</span>
 <span class="c"> * Provides helper methods for collecting and filtering DOM elements.</span>
-<span class="c"> * @class Selector</span>
-<span class="c"> * @static</span>
 <span class="c"> */</span>
 
 <span class="k">var</span> <span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s1">&#39;parentNode&#39;</span><span class="o">,</span>
@@ -67,7 +65,6 @@
     <span class="nx">PSEUDOS</span> <span class="o">=</span> <span class="s1">&#39;pseudos&#39;</span><span class="o">,</span>
     <span class="nx">PREVIOUS</span> <span class="o">=</span> <span class="s1">&#39;previous&#39;</span><span class="o">,</span>
     <span class="nx">PREVIOUS_SIBLING</span> <span class="o">=</span> <span class="s1">&#39;previousSibling&#39;</span><span class="o">,</span>
-    <span class="nx">LENGTH</span> <span class="o">=</span> <span class="s1">&#39;length&#39;</span><span class="o">,</span>
 
     <span class="nx">_childCache</span> <span class="o">=</span> <span class="o">[],</span> <span class="c">// cache to cleanup expando node.children</span>
 <span class="c"></span>
@@ -76,11 +73,12 @@
     <span class="nx">SelectorCSS2</span> <span class="o">=</span> <span class="o">{</span>
         <span class="nx">SORT_RESULTS</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
         <span class="nx">_children</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">children</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">children</span><span class="o">,</span>
+                <span class="nx">i</span><span class="o">,</span> <span class="nx">n</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">])</span> <span class="o">{</span> <span class="c">// only HTMLElements have children</span>
 <span class="c"></span>                <span class="nx">ret</span> <span class="o">=</span> <span class="o">[];</span>
-                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">n</span><span class="o">;</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">childNodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">n</span><span class="o">;</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">childNodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">n</span><span class="o">.</span><span class="nx">tagName</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">ret</span><span class="o">[</span><span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">n</span><span class="o">;</span>
                     <span class="o">}</span>
@@ -146,7 +144,7 @@
                     <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_query</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">root</span><span class="o">,</span> <span class="nx">firstOnly</span><span class="o">);</span>
                 <span class="o">}</span>
 
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;query: &#39;</span> <span class="o">+</span> <span class="nx">selector</span> <span class="o">+</span> <span class="s1">&#39; returning: &#39;</span> <span class="o">+</span> <span class="nx">ret</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">],</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Selector&#39;</span><span class="o">);</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;query: &#39;</span> <span class="o">+</span> <span class="nx">selector</span> <span class="o">+</span> <span class="s1">&#39; returning: &#39;</span> <span class="o">+</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Selector&#39;</span><span class="o">);</span>
                 <span class="nx">Selector</span><span class="o">.</span><span class="nx">_cleanup</span><span class="o">();</span>
                 <span class="k">return</span> <span class="o">(</span><span class="nx">firstOnly</span><span class="o">)</span> <span class="o">?</span> <span class="o">(</span><span class="nx">ret</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">||</span> <span class="kc">null</span><span class="o">)</span> <span class="o">:</span> <span class="nx">ret</span><span class="o">;</span>
             <span class="o">}</span>
@@ -167,10 +165,11 @@
                 <span class="nx">groups</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;,&#39;</span><span class="o">),</span> <span class="c">// TODO: handle comma in attribute/pseudo</span>
 <span class="c"></span>                <span class="nx">nodes</span> <span class="o">=</span> <span class="o">[],</span>
                 <span class="nx">tokens</span><span class="o">,</span>
-                <span class="nx">token</span><span class="o">;</span>
+                <span class="nx">token</span><span class="o">,</span>
+                <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">groups</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">]</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">groups</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">];</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">groups</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">groups</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="nx">arguments</span><span class="o">.</span><span class="nx">callee</span><span class="o">(</span><span class="nx">groups</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span>
                             <span class="nx">root</span><span class="o">,</span> <span class="nx">firstOnly</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span> 
                 <span class="o">}</span>
@@ -204,11 +203,11 @@
                     <span class="o">}</span>
 
                     <span class="c">// TODO: no prefilter for off-dom id</span>
-<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">nodes</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">token</span><span class="o">.</span><span class="nx">prefilter</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="nx">token</span><span class="o">.</span><span class="nx">prefilter</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">token</span><span class="o">.</span><span class="nx">prefilter</span><span class="o">(</span><span class="nx">root</span><span class="o">,</span> <span class="nx">token</span><span class="o">);</span>
                     <span class="o">}</span>
 
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">])</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">firstOnly</span><span class="o">)</span> <span class="o">{</span>
                             <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">some</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_testToken</span><span class="o">,</span> <span class="nx">token</span><span class="o">);</span>
                         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
@@ -223,14 +222,15 @@
         <span class="o">},</span>
 
         <span class="nx">_testToken</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">nodes</span><span class="o">,</span> <span class="nx">token</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">token</span> <span class="o">||</span> <span class="k">this</span><span class="o">,</span>
-                <span class="nx">tag</span> <span class="o">=</span> <span class="nx">token</span><span class="o">.</span><span class="nx">tag</span><span class="o">,</span>
+            <span class="nx">token</span> <span class="o">=</span> <span class="nx">token</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">tag</span> <span class="o">=</span> <span class="nx">token</span><span class="o">.</span><span class="nx">tag</span><span class="o">,</span>
                 <span class="nx">previous</span> <span class="o">=</span> <span class="nx">token</span><span class="o">[</span><span class="nx">PREVIOUS</span><span class="o">],</span>
                 <span class="nx">result</span> <span class="o">=</span> <span class="nx">token</span><span class="o">.</span><span class="nx">result</span><span class="o">,</span>
                 <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span>
                 <span class="nx">nextTest</span> <span class="o">=</span> <span class="nx">previous</span> <span class="o">&amp;&amp;</span> <span class="nx">previous</span><span class="o">[</span><span class="nx">COMBINATOR</span><span class="o">]</span> <span class="o">?</span>
                         <span class="nx">Selector</span><span class="o">.</span><span class="nx">combinators</span><span class="o">[</span><span class="nx">previous</span><span class="o">[</span><span class="nx">COMBINATOR</span><span class="o">]]</span> <span class="o">:</span>
                         <span class="kc">null</span><span class="o">,</span>
+                <span class="nx">test</span><span class="o">,</span>
                 <span class="nx">attr</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="c">//node[TAG_NAME] &amp;&amp; // tagName limits to HTMLElements</span>
@@ -397,8 +397,9 @@
 <span class="c"></span>                <span class="nx">tokens</span> <span class="o">=</span> <span class="o">[],</span>    <span class="c">// array of tokens</span>
 <span class="c"></span>                <span class="nx">found</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>  <span class="c">// whether or not any matches were found this pass</span>
 <span class="c"></span>                <span class="nx">test</span><span class="o">,</span>
-                <span class="nx">match</span><span class="o">;</span>          <span class="c">// the regex match</span>
-<span class="c"></span>
+                <span class="nx">match</span><span class="o">,</span>         <span class="c">// the regex match</span>
+<span class="c"></span>                <span class="nx">i</span><span class="o">,</span> <span class="nx">parser</span><span class="o">;</span>
+
             <span class="c">/*</span>
 <span class="c">                Search for selector patterns, store, and strip them from the selector string</span>
 <span class="c">                until no patterns match (invalid selector) or we run out of chars.</span>
@@ -410,7 +411,7 @@
             <span class="nx">outer</span><span class="o">:</span>
             <span class="k">do</span> <span class="o">{</span>
                 <span class="nx">found</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span> <span class="c">// reset after full pass</span>
-<span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">parser</span><span class="o">;</span> <span class="nx">parser</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_parsers</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span>
+<span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">parser</span><span class="o">;</span> <span class="nx">parser</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_parsers</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="nx">match</span> <span class="o">=</span> <span class="nx">parser</span><span class="o">.</span><span class="nx">re</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">selector</span><span class="o">))</span> <span class="o">)</span> <span class="o">{</span> <span class="c">// note assignment</span>
 <span class="c"></span>                        <span class="nx">test</span> <span class="o">=</span> <span class="nx">parser</span><span class="o">.</span><span class="nx">fn</span><span class="o">(</span><span class="nx">token</span><span class="o">,</span> <span class="nx">match</span><span class="o">);</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">test</span><span class="o">)</span> <span class="o">{</span>
@@ -424,7 +425,7 @@
 
                             <span class="nx">found</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                             <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">match</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="s1">&#39;&#39;</span><span class="o">);</span> <span class="c">// strip current match from selector</span>
-<span class="c"></span>                            <span class="k">if</span> <span class="o">(!</span><span class="nx">selector</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">]</span> <span class="o">||</span> <span class="nx">parser</span><span class="o">.</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">COMBINATOR</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>                            <span class="k">if</span> <span class="o">(!</span><span class="nx">selector</span><span class="o">.</span><span class="nx">length</span> <span class="o">||</span> <span class="nx">parser</span><span class="o">.</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">COMBINATOR</span><span class="o">)</span> <span class="o">{</span>
                                 <span class="nx">token</span><span class="o">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span><span class="o">;</span>
                                 <span class="nx">tokens</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">token</span><span class="o">);</span>
                                 <span class="nx">token</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_getToken</span><span class="o">(</span><span class="nx">token</span><span class="o">);</span>
@@ -440,28 +441,29 @@
             <span class="k">if</span> <span class="o">(!</span><span class="nx">found</span> <span class="o">||</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span> <span class="c">// not fully parsed</span>
 <span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;query: &#39;</span> <span class="o">+</span> <span class="nx">query</span> <span class="o">+</span> <span class="s1">&#39; contains unsupported token in: &#39;</span> <span class="o">+</span> <span class="nx">selector</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;Selector&#39;</span><span class="o">);</span>
                 <span class="nx">tokens</span> <span class="o">=</span> <span class="o">[];</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">tokens</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">])</span> <span class="o">{</span>
-                <span class="nx">tokens</span><span class="o">[</span><span class="nx">tokens</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">]</span> <span class="o">-</span> <span class="m">1</span><span class="o">].</span><span class="nx">last</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">tokens</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">tokens</span><span class="o">[</span><span class="nx">tokens</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">].</span><span class="nx">last</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
             <span class="o">}</span>
             <span class="k">return</span> <span class="nx">tokens</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="nx">_replaceShorthand</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">shorthand</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">shorthand</span><span class="o">,</span>
-                <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_re</span><span class="o">.</span><span class="nx">attr</span><span class="o">);</span> <span class="c">// pull attributes to avoid false pos on &quot;.&quot; and &quot;#&quot;</span>
-<span class="c"></span>
+                <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_re</span><span class="o">.</span><span class="nx">attr</span><span class="o">),</span> <span class="c">// pull attributes to avoid false pos on &quot;.&quot; and &quot;#&quot;</span>
+<span class="c"></span>                <span class="nx">re</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
+
             <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_re</span><span class="o">.</span><span class="nx">attr</span><span class="o">,</span> <span class="s1">&#39;REPLACED_ATTRIBUTE&#39;</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">re</span> <span class="k">in</span> <span class="nx">shorthand</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">re</span> <span class="k">in</span> <span class="nx">shorthand</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">shorthand</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">re</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getRegExp</span><span class="o">(</span><span class="nx">re</span><span class="o">,</span> <span class="s1">&#39;gi&#39;</span><span class="o">),</span> <span class="nx">shorthand</span><span class="o">[</span><span class="nx">re</span><span class="o">]);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">attrs</span><span class="o">[</span><span class="nx">LENGTH</span><span class="o">];</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">attrs</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="s1">&#39;REPLACED_ATTRIBUTE&#39;</span><span class="o">,</span> <span class="nx">attrs</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
@@ -490,8 +492,8 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
-                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
@@ -514,18 +516,16 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -533,12 +533,14 @@
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="DOM.html" title="DOM">DOM</a></li>
+                                <li class=""><a href="Selector.html" title="Selector">Selector</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="color.js.html" title="color.js">color.js</a></li>
                                 <li class=""><a href="dom-class.js.html" title="dom-class.js">dom-class.js</a></li>
                                 <li class=""><a href="dom-ie-style.js.html" title="dom-ie-style.js">dom-ie-style.js</a></li>
                                 <li class=""><a href="dom-region.js.html" title="dom-region.js">dom-region.js</a></li>
@@ -564,7 +566,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addClass", "url": "DOM.html#method_addClass", "type": "method"}, {"access": "", "host": "DOM", "name": "ancestor", "url": "DOM.html#method_ancestor", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "byTag", "url": "DOM.html#method_byTag", "type": "method"}, {"access": "", "host": "DOM", "name": "children", "url": "DOM.html#method_children", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "filterElementsBy", "url": "DOM.html#method_filterElementsBy", "type": "method"}, {"access": "", "host": "DOM", "name": "firstByTag", "url": "DOM.html#method_firstByTag", "type": "method"}, {"access": "", "host": "DOM", "name": "firstChild", "url": "DOM.html#method_firstChild", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "hasClass", "url": "DOM.html#method_hasClass", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "DOM", "name": "inRegion", "url": "DOM.html#method_inRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "insertAfter", "url": "DOM.html#method_insertAfter", "type": "method"}, {"access": "", "host": "DOM", "name": "insertBefore", "url": "DOM.html#method_insertBefore", "type": "method"}, {"access": "", "host": "DOM", "name": "intersect", "url": "DOM.html#method_intersect", "type": "method"}, {"access": "", "host": "DOM", "name": "inViewportRegion", "url": "DOM.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "lastChild", "url": "DOM.html#method_lastChild", "type": "method"}, {"access": "", "host": "DOM", "name": "next", "url": "DOM.html#method_next", "type": "method"}, {"access": "", "host": "DOM", "name": "previous", "url": "DOM.html#method_previous", "type": "method"}, {"access": "", "host": "DOM", "name": "region", "url": "DOM.html#method_region", "type": "method"}, {"access": "", "host": "DOM", "name": "removeClass", "url": "DOM.html#method_removeClass", "type": "method"}, {"access": "", "host": "DOM", "name": "replaceClass", "url": "DOM.html#method_replaceClass", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "DOM", "name": "toggleClass", "url": "DOM.html#method_toggleClass", "type": "method"}, {"access": "", "host": "DOM", "name": "viewportRegion", "url": "DOM.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addClass", "url": "DOM.html#method_addClass", "type": "method"}, {"access": "", "host": "DOM", "name": "addHTML", "url": "DOM.html#method_addHTML", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "hasClass", "url": "DOM.html#method_hasClass", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "Selector", "name": "inRegion", "url": "Selector.html#method_inRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "insertAfter", "url": "DOM.html#method_insertAfter", "type": "method"}, {"access": "", "host": "DOM", "name": "insertBefore", "url": "DOM.html#method_insertBefore", "type": "method"}, {"access": "", "host": "Selector", "name": "intersect", "url": "Selector.html#method_intersect", "type": "method"}, {"access": "", "host": "Selector", "name": "inViewportRegion", "url": "Selector.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "PARENT_NODE", "url": "Selector.html#property_PARENT_NODE", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "Selector", "name": "region", "url": "Selector.html#method_region", "type": "method"}, {"access": "", "host": "DOM", "name": "removeClass", "url": "DOM.html#method_removeClass", "type": "method"}, {"access": "", "host": "DOM", "name": "replaceClass", "url": "DOM.html#method_replaceClass", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "DOM", "name": "toggleClass", "url": "DOM.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "Selector", "name": "viewportRegion", "url": "Selector.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
 </script>
 </body>
 </html>

@@ -1,74 +1,57 @@
 (function() {
 
-var Event = Y.Event,
-	
+var Lang = Y.Lang,
 	delegates = {},
-	
 	resolveTextNode = function(n) {
-
 	    try {
 	        if (n && 3 == n.nodeType) {
 	            return n.parentNode;
 	        }
 	    } catch(e) { }
-
 	    return n;
-
 	},
-
     _worker = function(delegateKey, e, el) {
-
         var target = resolveTextNode((e.target || e.srcElement)), 
             tests  = delegates[delegateKey],
             spec, 
 			ename,
 			elements,
 			nElements,
-			element,
-			ce,
+			matched,
 			ev,
 			i;
 
         for (spec in tests) {
-
             if (tests.hasOwnProperty(spec)) {
-
                 ename  = tests[spec];
-				elements = Y.Selector.query(("#" + el.id + " ") + spec);
+				elements = Y.Selector.query(spec, el);
 				nElements = elements.length;
-
 				if (nElements > 0) {
-
 					i = elements.length - 1;
-
 					do {
+						matched = elements[i];
+	                    if (matched === target || Y.DOM.contains(matched, target)) {
 
-						element = elements[i];
+                            if (!ev) {
+                                ev = new Y.DOMEventFacade(e, el);
+	                            ev.container = ev.currentTarget;
+                            }
 
-	                    if (element === target || Y.DOM.contains(element, target)) {
-
-							ce = Event._createWrapper(element, e.type, false, false, true);
-
-							ev = new Y.DOMEventFacade(e, element, ce);
-
-	                        ev.target = Y.Node.get(element);
-	
+	                        ev.currentTarget = Y.Node.get(matched);
 	                        Y.fire(ename, ev);
-
-	  						break;
-
 	                    }
-
 					}
 					while (i--);
-					
 				}
-
             }
-
         }
-
     },
+
+	attach = function (type, key, element) {
+		Y.Event._attach([type, function (e) {
+            _worker(key, (e || window.event), element);
+		}, element], { facade: false });
+	},
 
     _sanitize = Y.cached(function(str) {
         return str.replace(/[|,:]/g, '~');
@@ -83,7 +66,7 @@ var Event = Y.Event,
  * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
- * @return {Event.Handle} the detach handle
+ * @return {EventHandle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.delegate = {
@@ -96,7 +79,7 @@ Y.Env.evt.plugins.delegate = {
         }
 
         // identifier to target the container
-        var guid = (Y.Lang.isString(el) ? el : Y.stamp(el)), 
+        var guid = (Lang.isString(el) ? el : Y.stamp(el)), 
                 
             // the custom event for the delegation spec
             ename = 'delegate:' + guid + delegateType + _sanitize(spec),
@@ -111,24 +94,25 @@ Y.Env.evt.plugins.delegate = {
 
         if (!(delegateKey in delegates)) {
 
-			element = Y.Node.getDOMNode(Y.Node.get(el));
+			if (Lang.isString(el)) {	//	Selector
+				element = Y.Selector.query(el);				
+			}
+			else {	// Node instance
+				element = Y.Node.getDOMNode(el);
+			}
 
-			//	Need to make sure that the element has an id so that we 
-			//	can create a selector whose scope is limited to the element
+			if (Lang.isArray(element)) {
 
-			if (!element.id) {
-				element.id = Y.guid();
+				Y.Array.each(element, function (v) {
+					attach(delegateType, delegateKey, v);
+				});
+
+			}
+			else {
+				attach(delegateType, delegateKey, element);
 			}
 
             delegates[delegateKey] = {};
-
-
-			Y.Event._attach([delegateType, function (e) {
-
-                _worker(delegateKey, (e || window.event), element);
-
-			}, element], { facade: false });
-
         }
 
         delegates[delegateKey][spec] = ename;
@@ -140,7 +124,6 @@ Y.Env.evt.plugins.delegate = {
             
         // subscribe to the custom event for the delegation spec
         return Y.on.apply(Y, a);
-
     }
 };
 

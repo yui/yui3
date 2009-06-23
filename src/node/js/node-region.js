@@ -1,14 +1,7 @@
 /**
- * Extended Node interface for managing regions and screen positioning.
- * Adds support for positioning elements and normalizes window size and scroll detection. 
- * @module node
- * @submodule node-screen
- * @for Node
- */
-
-/**
  * Returns a region object for the node 
- * @property region
+ * @config region
+ * @for Node
  * @type Node
  */
 Y.Node.ATTRS.region = {
@@ -27,7 +20,7 @@ Y.Node.ATTRS.region = {
     
 /**
  * Returns a region object for the node's viewport 
- * @property viewportRegion
+ * @config viewportRegion
  * @type Node
  */
 Y.Node.ATTRS.viewportRegion = {
@@ -42,6 +35,7 @@ Y.Node.importMethod(Y.DOM, 'inViewportRegion');
 /**
  * Compares the intersection of the node with another node or region 
  * @method intersect         
+ * @for Node
  * @param {Node|Object} node2 The node or region to compare with.
  * @param {Object} altRegion An alternate region to use (rather than this node's). 
  * @return {Object} An object representing the intersection of the regions. 

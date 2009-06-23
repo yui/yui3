@@ -188,7 +188,7 @@
                 var fired1 = false,
                     fired2 = false;
 
-                Y.on('handle, test:event', function() {
+                Y.on('handle|test:event', function() {
                     fired1 = true;
                 });
 
@@ -197,12 +197,12 @@
                 Y.Assert.isTrue(fired1);
                 Y.Assert.isFalse(fired2);
 
-                Y.detach('handle, test:event');
+                Y.detach('handle|test:event');
 
                 fired1 = false;
                 fired2 = false;
 
-                Y.on('handle, test:event', function() {
+                Y.on('handle|test:event', function() {
                     fired2 = true;
                 });
 
@@ -211,34 +211,36 @@
                 Y.Assert.isFalse(fired1);
                 Y.Assert.isTrue(fired2);
 
-                Y.detach('handle,test:event');
+                Y.detach('handle|test:event');
                 fired1 = false;
                 fired2 = false;
 
-                Y.after('handle, test:event', function() {
+                Y.after('handle|test:event', function(arg1) {
+                    Y.Assert.areEqual('orange', arg1);
                     Y.Assert.isTrue(fired1);
                     fired2 = true;
                 });
 
                 // comma or pipe
-                Y.on('handle|test:event', function() {
+                Y.on('handle|test:event', function(arg1) {
+                    Y.Assert.areEqual('orange', arg1);
                     Y.Assert.isFalse(fired2);
                     fired1 = true;
                 });
 
                 // testing on and after order
-                Y.fire('test:event');
+                Y.fire('test:event', 'orange');
 
                 fired1 = false;
                 fired2 = false;
 
                 // spaces after the comma or lack thereof should have
                 // no effect on the addition or removal of listeners
-                Y.detach('handle,test:event');
+                Y.detach('handle|test:event');
 
                 // added both an on listener and an after listener,
                 // then detached both
-                Y.fire('test:event');
+                Y.fire('test:event', 'orange');
                 Y.Assert.isFalse(fired1);
                 Y.Assert.isFalse(fired2);
 

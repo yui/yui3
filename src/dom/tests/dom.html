@@ -120,6 +120,7 @@ form {
                     <option value=""></option>
                 </select>
             </form>
+            <div id="test-add">test</div>
         </div>
         <div id="ft">
             <p>In hac habitasse platea dictumst. Sed sit amet ligula vitae justo consequat facilisis. Integer tortor. Integer erat. In hac habitasse platea dictumst. Phasellus convallis quam vitae turpis aliquam lobortis. Aliquam scelerisque condimentum lectus. Proin semper adipiscing leo. Nulla facilisi.</p>
@@ -167,6 +168,23 @@ form {
                 Assert.areEqual('', Y.DOM.getText(tmp), 'getText(tmp)');
                 Assert.areEqual('', Y.DOM.getText(null), 'getText(null)');
                 Assert.areEqual('', Y.DOM.getText(), 'getText()');
+            },
+
+            test_setText: function() {
+                var node = document.createElement('div'),
+                    content = 'testing text content';
+
+                document.body.appendChild(node);
+                Y.DOM.setText(node, content);
+                Assert.areEqual(content, Y.DOM.getText(node, content), 'setText("' + content + '")');
+
+                content = '<div>testing text content</div>';
+                Y.DOM.setText(node, content);
+                Assert.areEqual(content, Y.DOM.getText(node, content), 'setText("' + content + '")');
+
+                content = '   testing     text      content    ';
+                Y.DOM.setText(node, content);
+                Assert.areEqual(content, Y.DOM.getText(node, content), 'setText("' + content + '")');
             },
 
             test_firstChild: function() {
@@ -404,15 +422,6 @@ form {
                 Assert.areEqual('THEAD', el.tagName, html);
 
 
-                html = ' <div>foo</div>';
-                el = Y.DOM.create(html);
-                Assert.isTrue(el.tagName === 'DIV', " + html + ");
-
-                html = '<option selected>foo</option>';
-                el = Y.DOM.create(html);
-                document.getElementById('test-select').appendChild(el);
-                Assert.isTrue(el.selected, 'el.selected');
-
                 html = '<li><a href=""></a></li>';
                 el = Y.DOM.create(html);
                 Assert.areEqual('A', el.firstChild.tagName, html);
@@ -421,6 +430,11 @@ form {
                 el = Y.DOM.create(html);
                 document.getElementById('test-select').appendChild(el);
                 Assert.isFalse(el.selected, 'el.selected');
+
+                // trim leading space
+                html = ' <div>foo</div>';
+                el = Y.DOM.create(html);
+                Assert.isTrue(el.tagName === 'DIV', html);
 
                 html = '<thead><tr><td><table><thead></thead><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead>';
                 el = Y.DOM.create(html);
@@ -433,6 +447,7 @@ form {
                 var el = Y.DOM.create(html);
                 Assert.areEqual(3, el.childNodes.length, html);
                 Assert.areEqual('tmp-bar', el.childNodes[1].id, html);
+                Assert.areEqual('foo', el.childNodes[0].innerHTML, html);
 
                 html = '<option>foo</option><option id="tmp-bar">bar</option><option>baz</option>';
                 el = Y.DOM.create(html);
@@ -451,6 +466,7 @@ form {
                 html = '<thead><tr><td><table><tbody><tr><td>fresh</td></tr></tbody></table></td></tr></thead><tbody></tbody>';
                 el = Y.DOM.create(html);
                 Assert.areEqual(2, el.childNodes.length, html);
+
             },
 
             test_ancestor: function() {
@@ -637,7 +653,6 @@ form {
 
             },
 
-
             test_viewportRegion: function() {
                 var node = Y.DOM.byId('doc'),
                     scrollX = Y.DOM.docScrollX(node),
@@ -665,6 +680,24 @@ form {
                 Assert.areEqual(scrollY + winHeight, region.bottom, 'region.bottom');
                 Assert.areEqual(scrollX + winWidth, region.right, 'region.right');
 
+            },
+
+            test_addHTML: function() {
+                var node = Y.DOM.byId('test-add');
+                Y.DOM.addHTML(node, '<em>new content</em>');
+                Assert.areEqual('EM', node.lastChild.nodeName, "Y.DOM.addHTML(node, '<em>new content</em>')");
+
+                Y.DOM.addHTML(node, '<strong>new content</strong>', node.firstChild);
+                Assert.areEqual('STRONG', node.firstChild.nodeName, "Y.DOM.addHTML(node, '<em>new content</em>', node.firstChild)");
+
+                Y.DOM.addHTML(node, '<span>new content</span>', node.childNodes[1]);
+                Assert.areEqual('SPAN', node.childNodes[1].nodeName, "Y.DOM.addHTML(node, '<em>new content</em>', node.childNodes[1])");
+
+                Y.DOM.addHTML(node, 200);
+                Assert.areEqual(3, node.lastChild.nodeType, "Y.DOM.addHTML(node, 200)");
+
+                Y.DOM.addHTML(node, Y.DOM.create('<p>this is a <em>test</em></p>'));
+                Assert.areEqual('P', node.lastChild.nodeName, "Y.DOM.create('<p>this is a <em>test</em></p>')");
             }
         })); 
         tool.TestRunner.add(suite);

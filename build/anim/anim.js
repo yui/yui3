@@ -1,13 +1,21 @@
 YUI.add('anim-base', function(Y) {
 
 /**
- * Y.Animation Utility.
- * @module anim
- */
+* The Animation Utility provides an API for creating advanced transitions.
+* @module anim
+*/
+
+/**
+* Provides the base Anim class, for animating numeric properties.
+*
+* @module anim
+* @submodule anim-base
+*/
 
     /**
-     * Handles animation _queueing and threading.
+     * A class for constructing animation instances.
      * @class Anim
+     * @for Anim
      * @constructor
      * @extends Base
      */
@@ -16,6 +24,7 @@ YUI.add('anim-base', function(Y) {
         START_TIME = 'startTime',
         ELAPSED_TIME = 'elapsedTime',
         /**
+        * @for Anim
         * @event start
         * @description fires when an animation begins.
         * @param {Event} ev The start event.
@@ -583,7 +592,9 @@ YUI.add('anim-base', function(Y) {
     Y.extend(Y.Anim, Y.Base, proto);
 
 
+
 }, '@VERSION@' ,{requires:['base', 'node']});
+
 YUI.add('anim-color', function(Y) {
 
 /**
@@ -591,7 +602,6 @@ YUI.add('anim-color', function(Y) {
  * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-color
- * @for Anim
  */
 
 var NUM = Number;
@@ -632,7 +642,9 @@ Y.each(['backgroundColor',
 );
 
 
+
 }, '@VERSION@' ,{requires:['anim-base', 'node-style']});
+
 YUI.add('anim-curve', function(Y) {
 
 /**
@@ -640,7 +652,6 @@ YUI.add('anim-curve', function(Y) {
  * attribute.  A curve is zero or more control points and an end point.
  * @module anim
  * @submodule anim-curve
- * @for Anim
  */
 
 Y.Anim.behaviors.curve = {
@@ -663,6 +674,7 @@ Y.Anim.behaviors.curve = {
  * At least 2 points are required (start and end).
  * First point is start. Last point is end.
  * Additional control points are optional.     
+ * @for Anim
  * @method getBezier
  * @static
  * @param {Array} points An array containing Bezier points
@@ -689,7 +701,9 @@ Y.Anim.getBezier = function(points, t) {
 };
 
 
+
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
+
 YUI.add('anim-easing', function(Y) {
 
 /*
@@ -718,6 +732,7 @@ Y.Easing = {
 
     /**
      * Uniform speed between points.
+     * @for Easing
      * @method easeNone
      * @param {Number} t Time value used to compute current value
      * @param {Number} b Starting value
@@ -937,7 +952,7 @@ Y.Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     backIn: function (t, b, c, d, s) {
-        if (s == undefined) {
+        if (s === undefined) {
             s = 1.70158;
         }
         if (t === d) {
@@ -1036,13 +1051,16 @@ Y.Easing = {
 };
 
 
+
 }, '@VERSION@' ,{requires:['anim-base']});
+
 YUI.add('anim-node-plugin', function(Y) {
 
 /**
  *  Binds an Anim instance to a Node instance
  * @module anim
- * @namespace plugin
+ * @class Plugin.NodeFX
+ * @extends Base
  * @submodule anim-node-plugin
  */
 
@@ -1061,7 +1079,9 @@ Y.namespace('Plugin');
 Y.Plugin.NodeFX = NodeFX;
 
 
+
 }, '@VERSION@' ,{requires:['anim-base', 'node-base']});
+
 YUI.add('anim-scroll', function(Y) {
 
 /**
@@ -1069,13 +1089,11 @@ YUI.add('anim-scroll', function(Y) {
  * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-scroll
- * @for Anim
-
- * TODO: deprecate for scrollTop/Left properties?
  */
 
 var NUM = Number;
 
+//TODO: deprecate for scrollTop/Left properties?
 Y.Anim.behaviors.scroll = {
     set: function(anim, att, from, to, elapsed, duration, fn) {
         var
@@ -1101,7 +1119,9 @@ Y.Anim.behaviors.scroll = {
 
 
 
+
 }, '@VERSION@' ,{requires:['anim-base', 'node-base']});
+
 YUI.add('anim-xy', function(Y) {
 
 /**
@@ -1109,7 +1129,6 @@ YUI.add('anim-xy', function(Y) {
  * <code>to</code> attributes.
  * @module anim
  * @submodule anim-xy
- * @for Anim
  */
 
 var NUM = Number;
@@ -1128,8 +1147,10 @@ Y.Anim.behaviors.xy = {
 
 
 
+
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
 
 
-YUI.add('anim', function(Y){}, '@VERSION@' ,{use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy'], skinnable:false});
+
+YUI.add('anim', function(Y){}, '@VERSION@' ,{skinnable:false, use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy']});
 

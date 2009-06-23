@@ -8,9 +8,9 @@ YUI.add('datasource-textschema', function(Y) {
  */
 
 /**
- * Adds schema-parsing to the YUI DataSource utility.
+ * Adds schema-parsing to the DataSource Utility.
  * @class DataSourceTextSchema
- * @extends Plugin
+ * @extends Plugin.Base
  */    
 var DataSourceTextSchema = function() {
     DataSourceTextSchema.superclass.constructor.apply(this, arguments);
@@ -83,7 +83,7 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = ((this.get("host") instanceof Y.DataSource.XHR) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+        var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
             response = Y.DataSchema.Text.apply(this.get("schema"), data);
             
         // Default

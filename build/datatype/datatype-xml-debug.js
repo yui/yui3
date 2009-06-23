@@ -1,21 +1,15 @@
 YUI.add('datatype-xml-parse', function(Y) {
 
 /**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
- *
- * @module datatype
- */
-var LANG = Y.Lang;
-
-/**
  * Parse XML submodule.
  *
- * @class DataType.XML
+ * @module datatype
  * @submodule datatype-xml-parse
- * @static
+ * @for DataType.XML
  */
- 
+
+var LANG = Y.Lang;
+
 Y.mix(Y.namespace("DataType.XML"), {
     /**
      * Converts data to type XMLDocument.
@@ -23,7 +17,6 @@ Y.mix(Y.namespace("DataType.XML"), {
      * @method parse
      * @param data {String} Data to convert.
      * @return {XMLDoc} XML Document.
-     * @static
      */
     parse: function(data) {
         var xmlDoc = null;
@@ -66,20 +59,27 @@ Y.namespace("Parsers").xml = Y.DataType.XML.parse;
 YUI.add('datatype-xml-format', function(Y) {
 
 /**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
+ * Format XML submodule.
  *
  * @module datatype
+ * @submodule datatype-xml-format
+ */
+
+/**
+ * XML submodule.
+ *
+ * @module datatype
+ * @submodule datatype-xml
+ */
+
+/**
+ * DataType.XML provides a set of utility functions to operate against XML documents.
+ *
+ * @class DataType.XML
+ * @static
  */
 var LANG = Y.Lang;
 
-/**
- * Format XML submodule.
- *
- * @class DataType.XML
- * @submodule datatype-xml-format
- * @static
- */
 Y.mix(Y.namespace("DataType.XML"), {
     /**
      * Converts data to type XMLDocument.
@@ -87,7 +87,6 @@ Y.mix(Y.namespace("DataType.XML"), {
      * @method format
      * @param data {XMLDoc} Data to convert.
      * @return {String} String.
-     * @static
      */
     format: function(data) {
         try {

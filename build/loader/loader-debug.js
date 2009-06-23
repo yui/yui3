@@ -96,38 +96,12 @@ YUI.add('loader', function(Y) {
 // isn't required in the seed build.  If needed, we may want to 
 // add them back if the event system is detected.
 
-/*
- * Executed when the loader successfully completes an insert operation
- * This can be subscribed to normally, or a listener can be passed
- * as an onSuccess config option.
- * @event success
- */
 
 /*
- * Executed when the loader fails to complete an insert operation.
- * This can be subscribed to normally, or a listener can be passed
- * as an onFailure config option.
- *
- * @event failure
- */
-
-/*
- * Executed when a Get operation times out.
- * This can be subscribed to normally, or a listener can be passed
- * as an onTimeout config option.
- *
- * @event timeout
- */
-
-// http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&2.5.2/build/dom/dom-min.js&2.5.2/build/event/event-min.js&2.5.2/build/autocomplete/autocomplete-min.js"
-
-
-/**
  * Global loader queue
  * @property _loaderQueue
  * @type Queue
  * @private
- * @for YUI.Env
  */
 YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Y.Queue();
 
@@ -163,7 +137,7 @@ var GLOBAL_ENV = YUI.Env,
     NODE = 'node',
     NODEBASE = 'node-base',
     OOP = 'oop',
-    SELECTOR = 'selector',
+    SELECTORCSS2 = 'selector-css2',
     SUBSTITUTE = 'substitute',
     WIDGET = 'widget',
     WIDGETPOSITION = 'widget-position',
@@ -207,18 +181,23 @@ var GLOBAL_ENV = YUI.Env,
                     requires: [DOMBASE, DOMSTYLE]
                 },
 
-                selector: {
+                'selector-native': {
                     requires: [DOMBASE]
                 },
 
-                'selector-native': {
+                'selector-css2': {
+                    requires: ['selector-native']
+                },
+
+                'selector': {
                     requires: [DOMBASE]
                 }
+
             },
 
             plugins: {
                 'selector-css3': {
-                    requires: [SELECTOR]
+                    requires: [SELECTORCSS2]
                 }
             }
         },
@@ -229,7 +208,7 @@ var GLOBAL_ENV = YUI.Env,
 
             submodules: {
                 'node-base': {
-                    requires: [DOMBASE, BASE, SELECTOR]
+                    requires: [DOMBASE, BASE, SELECTORCSS2]
                 },
 
                 'node-style': {
@@ -317,7 +296,13 @@ var GLOBAL_ENV = YUI.Env,
 
         console: {
             requires: [WIDGET, SUBSTITUTE],
-            skinnable: true
+            skinnable: true,
+            plugins: {
+                'console-filters': {
+                    requires: [PLUGIN],
+                    skinnable: true
+                }
+            }
         },
         
         cookie: { 
@@ -333,7 +318,7 @@ var GLOBAL_ENV = YUI.Env,
                     requires: [DATASCHEMABASE]
                 },
                 'dataschema-json': {
-                    requires: [DATASCHEMABASE]
+                    requires: [DATASCHEMABASE, 'json']
                 },
                 'dataschema-text': {
                     requires: [DATASCHEMABASE]
@@ -364,13 +349,13 @@ var GLOBAL_ENV = YUI.Env,
                 'datasource-polling': {
                     requires: [DATASOURCELOCAL]
                 },
-                'datasource-scriptnode': {
+                'datasource-get': {
                     requires: [DATASOURCELOCAL, GET]
                 },
                 'datasource-textschema': {
                     requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-text']
                 },
-                'datasource-xhr': {
+                'datasource-io': {
                     requires: [DATASOURCELOCAL, IOBASE]
                 },
                 'datasource-xmlschema': {
@@ -789,6 +774,8 @@ Y.Loader = function(o) {
      */
     this.force = null;
 
+    this.forceMap = {};
+
     /**
      * Should we allow rollups
      * @property allowRollup
@@ -1037,7 +1024,7 @@ Y.Loader.prototype = {
         return s;
     },
 
-    /**
+    /*
      * Reverses <code>formatSkin</code>, providing the skin name and
      * module name if the string matches the pattern for skins.
      * @method parseSkin
@@ -1045,16 +1032,18 @@ Y.Loader.prototype = {
      * @return {skin: string, module: string} the parsed skin name 
      * and module name, or null if the supplied string does not match
      * the skin pattern
+     * 
+     * This isn't being used at the moment
+     *
      */
-    parseSkin: function(mod) {
-        
-        if (mod.indexOf(this.SKIN_PREFIX) === 0) {
-            var a = mod.split("-");
-            return {skin: a[1], module: a[2]};
-        } 
-
-        return null;
-    },
+    // parseSkin: function(mod) {
+    //     
+    //     if (mod.indexOf(this.SKIN_PREFIX) === 0) {
+    //         var a = mod.split("-");
+    //         return {skin: a[1], module: a[2]};
+    //     } 
+    //     return null;
+    // },
 
     /**
      * Adds the skin def to the module info
@@ -1510,6 +1499,7 @@ Y.Loader.prototype = {
             }
 
             this.rollups = rollups;
+            this.forceMap = (this.force) ? Y.Array.hash(this.force) : {};
         }
 
         // make as many passes as needed to pick up rollup rollups
@@ -1521,8 +1511,8 @@ Y.Loader.prototype = {
 
                 if (rollups.hasOwnProperty(i)) {
 
-                    // there can be only one
-                    if (!r[i] && !this.loaded[i]) {
+                    // there can be only one, unless forced
+                    if (!r[i] && ((!this.loaded[i]) || this.forceMap[i])) {
                         m = this.getModule(i); 
                         s = m.supersedes || []; 
                         roll = false;
@@ -1537,25 +1527,27 @@ Y.Loader.prototype = {
                         // check the threshold
                         for (j=0;j<s.length;j=j+1) {
 
+
                             // if the superseded module is loaded, we can't load the rollup
-                            // if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
-                            if (this.loaded[s[j]]) {
+                            // unless it has been forced
+                            if (this.loaded[s[j]] && !this.forceMap[s[j]]) {
                                 roll = false;
                                 break;
                             // increment the counter if this module is required.  if we are
                             // beyond the rollup threshold, we will use the rollup module
                             } else if (r[s[j]]) {
                                 c++;
+                                // Y.log("adding to thresh: " + c + ", " + s[j]);
                                 roll = (c >= m.rollup);
                                 if (roll) {
-                                    // Y.log("over thresh " + c + ", " + L.dump(r));
+                                    // Y.log("over thresh " + c + ", " + s[j]);
                                     break;
                                 }
                             }
                         }
 
                         if (roll) {
-                            // Y.log("rollup: " +  i + ", " + L.dump(this, 1));
+                            // Y.log("adding rollup: " +  i);
                             // add the rollup
                             r[i] = true;
                             rolled = true;
@@ -1588,7 +1580,7 @@ Y.Loader.prototype = {
             if (r.hasOwnProperty(i)) {
 
                 // remove if already loaded
-                if (i in this.loaded && !this.ignoreRegistered) { 
+                if (this.loaded[i] && (!this.forceMap[i]) && !this.ignoreRegistered) { 
                     delete r[i];
 
                 // remove anything this module supersedes

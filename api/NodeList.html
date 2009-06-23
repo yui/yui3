@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>node&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>node&nbsp; <span class="subtitle">3.0.0b1_test2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_node.html" title="node">node</a>
                  &gt; NodeList 
@@ -61,9 +61,7 @@
                     <div class="summary description" property="yui:description">
                         The NodeList class provides a wrapper for manipulating DOM NodeLists.
 NodeList properties can be accessed via the set/get methods.
-Use Y.get() to retrieve NodeList instances.
-<strong>NOTE:</strong> NodeList properties are accessed using
-the <code>set</code> and <code>get</code> methods.
+Use Y.all() to retrieve NodeList instances.
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
@@ -91,27 +89,27 @@ the <code>set</code> and <code>get</code> methods.
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="" rel="yui:method" resource="#method_appendChild">
+                                    <div class="" rel="yui:method" resource="#method_addClass">
                                     <h4>
-                                        <a name="method_appendChild">appendChild</a></h4>
+                                        <a name="method_addClass">addClass</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        Node
-                                            <strong property="yui:name">appendChild</strong>
+                                        void
+                                            <strong property="yui:name">addClass</strong>
                                            (
                                                 
                                                         
-                                                         node
+                                                         className
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes through to DOM method.
+                                            Adds a class name to each node.
                                         </div>
 
                                         <div class="description">
@@ -119,49 +117,12 @@ the <code>set</code> and <code>get</code> methods.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">node</span>
-                                                        &lt;<span property="yui:type">HTMLElement | Node</span>&gt;
+                                                        <code><span property="yui:name">className</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Node to be appended</span>
+                                                        <span property="yui:description"> the class name to add to the node's class attribute</span>
                                                         </dd>
                                                 </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Node
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">The appended node</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_blur">
-                                    <h4>
-                                        <a name="method_blur">blur</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">blur</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Passes through to DOM method.
-                                        </div>
-
-                                        <div class="description">
-
 
                                                 <dl>
                                                     <dt>Returns:
@@ -182,27 +143,37 @@ the <code>set</code> and <code>get</code> methods.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_cloneNode">
+                                    <div class="" rel="yui:method" resource="#method_after">
                                     <h4>
-                                        <a name="method_cloneNode">cloneNode</a></h4>
+                                        <a name="method_after">after</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        Node
-                                            <strong property="yui:name">cloneNode</strong>
+                                        Object
+                                            <strong property="yui:name">after</strong>
                                            (
                                                 
                                                         
-                                                         node
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes through to DOM method.
+                                            Applies an event listens to each Node bound to the NodeList. 
+The handler is called only after all on() handlers are called
+and the event is not prevented.
                                         </div>
 
                                         <div class="description">
@@ -210,19 +181,32 @@ the <code>set</code> and <code>get</code> methods.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">node</span>
-                                                        &lt;<span property="yui:type">HTMLElement | Node</span>&gt;
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Node to be cloned</span>
+                                                        <span property="yui:description"> The event being listened for</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The handler to call when the event fires</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The context to call the handler with.
+Default is the NodeList instance.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Node
+                                                        Object
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">The clone</dd>
+                                                    <dd property="yui:returnInfo">Returns an event handle that can later be use to detach().</dd>
                                                 </dl>
 
 
@@ -233,52 +217,109 @@ the <code>set</code> and <code>get</code> methods.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_contains">
+                                    <div class="" rel="yui:method" resource="#method_append">
                                     <h4>
-                                        <a name="method_contains">contains</a></h4>
+                                        <a name="method_append">append</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        Boolean
-                                            <strong property="yui:name">contains</strong>
+                                        void
+                                            <strong property="yui:name">append</strong>
                                            (
-                                                
-                                                        
-                                                         needle
-                                                    
-                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
+                                            Called on each Node instance
                                         </div>
 
                                         <div class="description">
 
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">needle</span>
-                                                        &lt;<span property="yui:type">Node | HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The possible node or descendent</span>
-                                                        </dd>
-                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Boolean
+                                                        void
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Whether or not this node is the needle its ancestor</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
-                                            <div class="chainable">
-                                                <strong>Chainable:</strong> This method is chainable.
-                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_detach">
+                                    <h4>
+                                        <a name="method_detach">detach</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">detach</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Called on each Node instance
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_detachAll">
+                                    <h4>
+                                        <a name="method_detachAll">detachAll</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">detachAll</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Called on each Node instance
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
 
              
 
@@ -353,6 +394,44 @@ Default context is the current Node instance</span>
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_even">
+                                    <h4>
+                                        <a name="method_even">even</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        NodeList
+                                            <strong property="yui:name">even</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates a new NodeList containing all nodes at even indices
+(zero-based index), including zero.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        NodeList
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">NodeList containing the updated collection</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_filter">
                                     <h4>
                                         <a name="method_filter">filter</a></h4>
@@ -404,46 +483,6 @@ Default context is the current Node instance</span>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_focus">
-                                    <h4>
-                                        <a name="method_focus">focus</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">focus</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Passes through to DOM method.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-                                            <div class="chainable">
-                                                <strong>Chainable:</strong> This method is chainable.
-                                            </div>        
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_getAttribute">
                                     <h4>
                                         <a name="method_getAttribute">getAttribute</a></h4>
@@ -464,7 +503,8 @@ Default context is the current Node instance</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Normalizes troublesome attributes
+                                            Allows getting attributes on DOM nodes, normalizing in some cases.
+This passes through to the DOM node, allowing for custom attributes.
                                         </div>
 
                                         <div class="description">
@@ -487,9 +527,6 @@ Default context is the current Node instance</span>
                                                     <dd property="yui:returnInfo">The attribute value</dd>
                                                 </dl>
 
-                                            <div class="chainable">
-                                                <strong>Chainable:</strong> This method is chainable.
-                                            </div>        
 
              
 
@@ -498,27 +535,27 @@ Default context is the current Node instance</span>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_getDOMNodes">
+                                    <div class="" rel="yui:method" resource="#method_getComputedStyle">
                                     <h4>
-                                        <a name="method_getDOMNodes">getDOMNodes</a></h4>
+                                        <a name="method_getComputedStyle">getComputedStyle</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
-                                         static 
+                                        
                                         
                                         Array
-                                            <strong property="yui:name">getDOMNodes</strong>
+                                            <strong property="yui:name">getComputedStyle</strong>
                                            (
                                                 
                                                         
-                                                         node
+                                                         attr
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Retrieves the DOM nodes bound to a NodeList instance
+                                            Returns an array of the computed value for each node.
                                         </div>
 
                                         <div class="description">
@@ -526,10 +563,10 @@ Default context is the current Node instance</span>
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">node</span>
-                                                        &lt;<span property="yui:type">Y.NodeList</span>&gt;
+                                                        <code><span property="yui:name">attr</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The NodeList instance</span>
+                                                        <span property="yui:description"> The style attribute to retrieve.</span>
                                                         </dd>
                                                 </dl>
 
@@ -538,7 +575,7 @@ Default context is the current Node instance</span>
                                                     <code property="yui:return">
                                                         Array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">The array of DOM nodes bound to the NodeList</dd>
+                                                    <dd property="yui:returnInfo">The computed values for each node.</dd>
                                                 </dl>
 
 
@@ -549,27 +586,27 @@ Default context is the current Node instance</span>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_getElementsByTagName">
+                                    <div class="" rel="yui:method" resource="#method_getStyle">
                                     <h4>
-                                        <a name="method_getElementsByTagName">getElementsByTagName</a></h4>
+                                        <a name="method_getStyle">getStyle</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        NodeList
-                                            <strong property="yui:name">getElementsByTagName</strong>
+                                        Array
+                                            <strong property="yui:name">getStyle</strong>
                                            (
                                                 
                                                         
-                                                         tagName
+                                                         attr
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes through to DOM method.
+                                            Returns an array of values for each node.
                                         </div>
 
                                         <div class="description">
@@ -577,19 +614,19 @@ Default context is the current Node instance</span>
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">tagName</span>
+                                                        <code><span property="yui:name">attr</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The tagName to collect</span>
+                                                        <span property="yui:description"> The style attribute to retrieve.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        NodeList
+                                                        Array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">A NodeList representing the HTMLCollection</dd>
+                                                    <dd property="yui:returnInfo">The current values of the style property for the element.</dd>
                                                 </dl>
 
 
@@ -600,27 +637,27 @@ Default context is the current Node instance</span>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_hasAttribute">
+                                    <div class="" rel="yui:method" resource="#method_hasClass">
                                     <h4>
-                                        <a name="method_hasAttribute">hasAttribute</a></h4>
+                                        <a name="method_hasClass">hasClass</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        Boolean
-                                            <strong property="yui:name">hasAttribute</strong>
+                                        Array
+                                            <strong property="yui:name">hasClass</strong>
                                            (
                                                 
                                                         
-                                                         attribute
+                                                         className
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes through to DOM method.
+                                            Determines whether each node has the given className.
                                         </div>
 
                                         <div class="description">
@@ -628,56 +665,19 @@ Default context is the current Node instance</span>
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">attribute</span>
+                                                        <code><span property="yui:name">className</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The attribute to test for</span>
+                                                        <span property="yui:description"> the class name to search for</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Boolean
+                                                        Array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Whether or not the attribute is present</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_hasChildNodes">
-                                    <h4>
-                                        <a name="method_hasChildNodes">hasChildNodes</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Boolean
-                                            <strong property="yui:name">hasChildNodes</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Passes through to DOM method.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Whether or not the node has any childNodes</dd>
+                                                    <dd property="yui:returnInfo">An array of booleans for each node bound to the NodeList.</dd>
                                                 </dl>
 
 
@@ -740,57 +740,33 @@ or -1 if the node isn't found.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_insertBefore">
+                                    <div class="" rel="yui:method" resource="#method_insert">
                                     <h4>
-                                        <a name="method_insertBefore">insertBefore</a></h4>
+                                        <a name="method_insert">insert</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        Node
-                                            <strong property="yui:name">insertBefore</strong>
+                                        void
+                                            <strong property="yui:name">insert</strong>
                                            (
-                                                
-                                                        
-                                                         newNode
-                                                    
-                                                
-                                                        , 
-                                                         refNode
-                                                    
-                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes through to DOM method.
+                                            Called on each Node instance
                                         </div>
 
                                         <div class="description">
 
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">newNode</span>
-                                                        &lt;<span property="yui:type">HTMLElement | Node</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Node to be appended</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">refNode</span>
-                                                        &lt;<span property="yui:type">HTMLElement | Node</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Node to be inserted before</span>
-                                                        </dd>
-                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Node
+                                                        void
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">The inserted node</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -852,70 +828,16 @@ or -1 if the node isn't found.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_removeAttribute">
+                                    <div class="" rel="yui:method" resource="#method_NodeList.getDOMNodes">
                                     <h4>
-                                        <a name="method_removeAttribute">removeAttribute</a></h4>
+                                        <a name="method_NodeList.getDOMNodes">NodeList.getDOMNodes</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
+                                         static 
                                         
-                                        
-                                        void
-                                            <strong property="yui:name">removeAttribute</strong>
-                                           (
-                                                
-                                                        
-                                                         attribute
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Passes through to DOM method.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">attribute</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The attribute to be removed</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-                                            <div class="chainable">
-                                                <strong>Chainable:</strong> This method is chainable.
-                                            </div>        
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_removeChild">
-                                    <h4>
-                                        <a name="method_removeChild">removeChild</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Node
-                                            <strong property="yui:name">removeChild</strong>
+                                        Array
+                                            <strong property="yui:name">NodeList.getDOMNodes</strong>
                                            (
                                                 
                                                         
@@ -926,7 +848,7 @@ or -1 if the node isn't found.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes through to DOM method.
+                                            Retrieves the DOM nodes bound to a NodeList instance
                                         </div>
 
                                         <div class="description">
@@ -935,18 +857,18 @@ or -1 if the node isn't found.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">node</span>
-                                                        &lt;<span property="yui:type">HTMLElement | Node</span>&gt;
+                                                        &lt;<span property="yui:type">Y.NodeList</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Node to be removed</span>
+                                                        <span property="yui:description"> The NodeList instance</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Node
+                                                        Array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">The removed node</dd>
+                                                    <dd property="yui:returnInfo">The array of DOM nodes bound to the NodeList</dd>
                                                 </dl>
 
 
@@ -957,31 +879,73 @@ or -1 if the node isn't found.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_replaceChild">
+                                    <div class="" rel="yui:method" resource="#method_odd">
                                     <h4>
-                                        <a name="method_replaceChild">replaceChild</a></h4>
+                                        <a name="method_odd">odd</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        Node
-                                            <strong property="yui:name">replaceChild</strong>
+                                        NodeList
+                                            <strong property="yui:name">odd</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates a new NodeList containing all nodes at odd indices
+(zero-based index).
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        NodeList
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">NodeList containing the updated collection</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_on">
+                                    <h4>
+                                        <a name="method_on">on</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">on</strong>
                                            (
                                                 
                                                         
-                                                         node
+                                                         type
                                                     
                                                 
                                                         , 
-                                                         refNode
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes through to DOM method.
+                                            Applies an event listens to each Node bound to the NodeList.
                                         </div>
 
                                         <div class="description">
@@ -989,25 +953,32 @@ or -1 if the node isn't found.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">node</span>
-                                                        &lt;<span property="yui:type">HTMLElement | Node</span>&gt;
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Node to be inserted</span>
+                                                        <span property="yui:description"> The event being listened for</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">refNode</span>
-                                                        &lt;<span property="yui:type">HTMLElement | Node</span>&gt;
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Node to be replaced</span>
+                                                        <span property="yui:description"> The handler to call when the event fires</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The context to call the handler with.
+Default is the NodeList instance.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Node
+                                                        Object
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">The replaced node</dd>
+                                                    <dd property="yui:returnInfo">Returns an event handle that can later be use to detach().</dd>
                                                 </dl>
 
 
@@ -1018,27 +989,151 @@ or -1 if the node isn't found.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_reset">
+                                    <div class="" rel="yui:method" resource="#method_plug">
                                     <h4>
-                                        <a name="method_reset">reset</a></h4>
+                                        <a name="method_plug">plug</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong property="yui:name">reset</strong>
+                                            <strong property="yui:name">plug</strong>
                                            (
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes through to DOM method.
-Only valid on FORM elements
+                                            Called on each Node instance
                                         </div>
 
                                         <div class="description">
 
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_prepend">
+                                    <h4>
+                                        <a name="method_prepend">prepend</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">prepend</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Called on each Node instance
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_remove">
+                                    <h4>
+                                        <a name="method_remove">remove</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">remove</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Called on each Node instance
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_removeClass">
+                                    <h4>
+                                        <a name="method_removeClass">removeClass</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">removeClass</strong>
+                                           (
+                                                
+                                                        
+                                                         className
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Removes a class name from each node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">className</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the class name to remove from the node's class attribute</span>
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
@@ -1059,26 +1154,51 @@ Only valid on FORM elements
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_scrollIntoView">
+                                    <div class="" rel="yui:method" resource="#method_replaceClass">
                                     <h4>
-                                        <a name="method_scrollIntoView">scrollIntoView</a></h4>
+                                        <a name="method_replaceClass">replaceClass</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong property="yui:name">scrollIntoView</strong>
+                                            <strong property="yui:name">replaceClass</strong>
                                            (
+                                                
+                                                        
+                                                         oldClassName
+                                                    
+                                                
+                                                        , 
+                                                         newClassName
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes through to DOM method.
+                                            Replace a class with another class for each node.
+If no oldClassName is present, the newClassName is simply added.
                                         </div>
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">oldClassName</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the class name to be replaced</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">newClassName</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the class name that will be replacing the old class name</span>
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
@@ -1099,22 +1219,22 @@ Only valid on FORM elements
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_select">
+                                    <div class="" rel="yui:method" resource="#method_set">
                                     <h4>
-                                        <a name="method_select">select</a></h4>
+                                        <a name="method_set">set</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong property="yui:name">select</strong>
+                                            <strong property="yui:name">set</strong>
                                            (
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes through to DOM method.
+                                            Called on each Node instance
                                         </div>
 
                                         <div class="description">
@@ -1128,9 +1248,6 @@ Only valid on FORM elements
                                                     <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
-                                            <div class="chainable">
-                                                <strong>Chainable:</strong> This method is chainable.
-                                            </div>        
 
              
 
@@ -1163,7 +1280,8 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Normalizes troublesome attributes
+                                            Allows setting attributes on DOM nodes, normalizing in some cases.
+This passes through to the DOM node, allowing for custom attributes.
                                         </div>
 
                                         <div class="description">
@@ -1181,6 +1299,161 @@ Only valid on FORM elements
                                                         &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> The value to set</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_setContent">
+                                    <h4>
+                                        <a name="method_setContent">setContent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">setContent</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Called on each Node instance
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_setStyle">
+                                    <h4>
+                                        <a name="method_setStyle">setStyle</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">setStyle</strong>
+                                           (
+                                                
+                                                        
+                                                         attr
+                                                    
+                                                
+                                                        , 
+                                                         val
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets a style property on each node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attr</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The style attribute to set.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">String|Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_setStyles">
+                                    <h4>
+                                        <a name="method_setStyles">setStyles</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">setStyles</strong>
+                                           (
+                                                
+                                                        
+                                                         hash
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets multiple style properties on each node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">hash</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object literal of property:value pairs.</span>
                                                         </dd>
                                                 </dl>
 
@@ -1303,23 +1576,76 @@ Default context is the current Node instance</span>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_submit">
+                                    <div class="" rel="yui:method" resource="#method_toggleClass">
                                     <h4>
-                                        <a name="method_submit">submit</a></h4>
+                                        <a name="method_toggleClass">toggleClass</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong property="yui:name">submit</strong>
+                                            <strong property="yui:name">toggleClass</strong>
+                                           (
+                                                
+                                                        
+                                                         className
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            If the className exists on the node it is removed, if it doesn't exist it is added.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">className</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the class name to be toggled</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_unplug">
+                                    <h4>
+                                        <a name="method_unplug">unplug</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">unplug</strong>
                                            (
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes through to DOM method.
-Only valid on FORM elements
+                                            Called on each Node instance
                                         </div>
 
                                         <div class="description">
@@ -1333,9 +1659,6 @@ Only valid on FORM elements
                                                     <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
-                                            <div class="chainable">
-                                                <strong>Chainable:</strong> This method is chainable.
-                                            </div>        
 
              
 
@@ -1371,8 +1694,8 @@ Only valid on FORM elements
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
-                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
@@ -1395,18 +1718,16 @@ Only valid on FORM elements
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -1438,31 +1759,38 @@ Only valid on FORM elements
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class=""><a href="#method_appendChild" title="appendChild">appendChild</a></li>
-                                <li class=""><a href="#method_blur" title="blur">blur</a></li>
-                                <li class=""><a href="#method_cloneNode" title="cloneNode">cloneNode</a></li>
-                                <li class=""><a href="#method_contains" title="contains">contains</a></li>
+                                <li class=""><a href="#method_addClass" title="addClass">addClass</a></li>
+                                <li class=""><a href="#method_after" title="after">after</a></li>
+                                <li class=""><a href="#method_append" title="append">append</a></li>
+                                <li class=""><a href="#method_detach" title="detach">detach</a></li>
+                                <li class=""><a href="#method_detachAll" title="detachAll">detachAll</a></li>
                                 <li class=""><a href="#method_each" title="each">each</a></li>
+                                <li class=""><a href="#method_even" title="even">even</a></li>
                                 <li class=""><a href="#method_filter" title="filter">filter</a></li>
-                                <li class=""><a href="#method_focus" title="focus">focus</a></li>
                                 <li class=""><a href="#method_getAttribute" title="getAttribute">getAttribute</a></li>
-                                <li class=""><a href="#method_getDOMNodes" title="getDOMNodes">getDOMNodes</a></li>
-                                <li class=""><a href="#method_getElementsByTagName" title="getElementsByTagName">getElementsByTagName</a></li>
-                                <li class=""><a href="#method_hasAttribute" title="hasAttribute">hasAttribute</a></li>
-                                <li class=""><a href="#method_hasChildNodes" title="hasChildNodes">hasChildNodes</a></li>
+                                <li class=""><a href="#method_getComputedStyle" title="getComputedStyle">getComputedStyle</a></li>
+                                <li class=""><a href="#method_getStyle" title="getStyle">getStyle</a></li>
+                                <li class=""><a href="#method_hasClass" title="hasClass">hasClass</a></li>
                                 <li class=""><a href="#method_indexOf" title="indexOf">indexOf</a></li>
-                                <li class=""><a href="#method_insertBefore" title="insertBefore">insertBefore</a></li>
+                                <li class=""><a href="#method_insert" title="insert">insert</a></li>
                                 <li class=""><a href="#method_item" title="item">item</a></li>
-                                <li class=""><a href="#method_removeAttribute" title="removeAttribute">removeAttribute</a></li>
-                                <li class=""><a href="#method_removeChild" title="removeChild">removeChild</a></li>
-                                <li class=""><a href="#method_replaceChild" title="replaceChild">replaceChild</a></li>
-                                <li class=""><a href="#method_reset" title="reset">reset</a></li>
-                                <li class=""><a href="#method_scrollIntoView" title="scrollIntoView">scrollIntoView</a></li>
-                                <li class=""><a href="#method_select" title="select">select</a></li>
+                                <li class=""><a href="#method_NodeList.getDOMNodes" title="NodeList.getDOMNodes">NodeList.getDOMNodes</a></li>
+                                <li class=""><a href="#method_odd" title="odd">odd</a></li>
+                                <li class=""><a href="#method_on" title="on">on</a></li>
+                                <li class=""><a href="#method_plug" title="plug">plug</a></li>
+                                <li class=""><a href="#method_prepend" title="prepend">prepend</a></li>
+                                <li class=""><a href="#method_remove" title="remove">remove</a></li>
+                                <li class=""><a href="#method_removeClass" title="removeClass">removeClass</a></li>
+                                <li class=""><a href="#method_replaceClass" title="replaceClass">replaceClass</a></li>
+                                <li class=""><a href="#method_set" title="set">set</a></li>
                                 <li class=""><a href="#method_setAttribute" title="setAttribute">setAttribute</a></li>
+                                <li class=""><a href="#method_setContent" title="setContent">setContent</a></li>
+                                <li class=""><a href="#method_setStyle" title="setStyle">setStyle</a></li>
+                                <li class=""><a href="#method_setStyles" title="setStyles">setStyles</a></li>
                                 <li class=""><a href="#method_size" title="size">size</a></li>
                                 <li class=""><a href="#method_some" title="some">some</a></li>
-                                <li class=""><a href="#method_submit" title="submit">submit</a></li>
+                                <li class=""><a href="#method_toggleClass" title="toggleClass">toggleClass</a></li>
+                                <li class=""><a href="#method_unplug" title="unplug">unplug</a></li>
                         </ul>
                     </div>
 
@@ -1477,7 +1805,7 @@ Only valid on FORM elements
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "NodeList", "name": "appendChild", "url": "NodeList.html#method_appendChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "blur", "url": "NodeList.html#method_blur", "type": "method"}, {"access": "", "host": "NodeList", "name": "cloneNode", "url": "NodeList.html#method_cloneNode", "type": "method"}, {"access": "", "host": "NodeList", "name": "contains", "url": "NodeList.html#method_contains", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "focus", "url": "NodeList.html#method_focus", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getDOMNodes", "url": "NodeList.html#method_getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "getElementsByTagName", "url": "NodeList.html#method_getElementsByTagName", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasAttribute", "url": "NodeList.html#method_hasAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasChildNodes", "url": "NodeList.html#method_hasChildNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "NodeList", "name": "insertBefore", "url": "NodeList.html#method_insertBefore", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeAttribute", "url": "NodeList.html#method_removeAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeChild", "url": "NodeList.html#method_removeChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceChild", "url": "NodeList.html#method_replaceChild", "type": "method"}, {"access": "", "host": "NodeList", "name": "reset", "url": "NodeList.html#method_reset", "type": "method"}, {"access": "", "host": "NodeList", "name": "scrollIntoView", "url": "NodeList.html#method_scrollIntoView", "type": "method"}, {"access": "", "host": "NodeList", "name": "select", "url": "NodeList.html#method_select", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "NodeList", "name": "submit", "url": "NodeList.html#method_submit", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "NodeList", "name": "addClass", "url": "NodeList.html#method_addClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "after", "url": "NodeList.html#method_after", "type": "method"}, {"access": "", "host": "NodeList", "name": "append", "url": "NodeList.html#method_append", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "detachAll", "url": "NodeList.html#method_detachAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "even", "url": "NodeList.html#method_even", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getComputedStyle", "url": "NodeList.html#method_getComputedStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "getStyle", "url": "NodeList.html#method_getStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasClass", "url": "NodeList.html#method_hasClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "NodeList", "name": "insert", "url": "NodeList.html#method_insert", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "NodeList.getDOMNodes", "url": "NodeList.html#method_NodeList.getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "odd", "url": "NodeList.html#method_odd", "type": "method"}, {"access": "", "host": "NodeList", "name": "on", "url": "NodeList.html#method_on", "type": "method"}, {"access": "", "host": "NodeList", "name": "plug", "url": "NodeList.html#method_plug", "type": "method"}, {"access": "", "host": "NodeList", "name": "prepend", "url": "NodeList.html#method_prepend", "type": "method"}, {"access": "", "host": "NodeList", "name": "remove", "url": "NodeList.html#method_remove", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeClass", "url": "NodeList.html#method_removeClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceClass", "url": "NodeList.html#method_replaceClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "set", "url": "NodeList.html#method_set", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "setContent", "url": "NodeList.html#method_setContent", "type": "method"}, {"access": "", "host": "NodeList", "name": "setStyle", "url": "NodeList.html#method_setStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "setStyles", "url": "NodeList.html#method_setStyles", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "NodeList", "name": "toggleClass", "url": "NodeList.html#method_toggleClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "unplug", "url": "NodeList.html#method_unplug", "type": "method"}];
 </script>
 </body>
 </html>

@@ -540,13 +540,13 @@ if (Y.Event) {
         //console.log('Compat CustomEvent constructor executed: ' + this._yuid);
         if (!this._yuievt) {
             var sub = this.subscribe;
-            Y.Event.Target.apply(this, arguments);
+            Y.EventTarget.apply(this, arguments);
             this.subscribe = sub;
             this.__yuiepinit = function() {};
         }
     };
 
-    Y.extend(EP, Y.Event.Target, {
+    Y.extend(EP, Y.EventTarget, {
 
         createEvent: function(type, o) {
             o = o || {};
@@ -563,7 +563,7 @@ if (Y.Event) {
                 // a[1] = obj;
             }
 
-            Y.Event.Target.prototype.subscribe.apply(this, a);
+            Y.EventTarget.prototype.subscribe.apply(this, a);
         },
 
         fireEvent: function(type) {

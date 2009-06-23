@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>json&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>json&nbsp; <span class="subtitle">3.0.0b1_test2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_json.html" title="json">json</a>
                  &gt; JSON 
@@ -59,15 +59,20 @@
   
 
                     <div class="summary description" property="yui:description">
-                        The JSON Utility provides methods to serialize JavaScript objects into
-JSON strings and parse JavaScript objects from strings containing JSON data.
-Three modules are available for inclusion:
-<ol>
-<li>1. <code>json-parse</code> for parsing JSON strings into native JavaScript data</li>
-<li>2. <code>json-stringify</code> for stringification of JavaScript objects into JSON strings</li>
-<li>3. <code>json</code> for both parsing and stringification</li>
-</ol>
-Both <code>json-parse</code> and <code>json-stringify</code> create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).
+                        <p>The JSON module adds support for serializing JavaScript objects into
+JSON strings and parsing JavaScript objects from strings in JSON format.</p>
+<p>The JSON namespace is added to your YUI instance including static methods
+Y.JSON.parse(..) and Y.JSON.stringify(..).</p>
+<p>The functionality and method signatures follow the ECMAScript 5
+specification.  In browsers with native JSON support, the native
+implementation is used.</p>
+<p>The <code>json</code> module is a rollup of <code>json-parse</code> and
+<code>json-stringify</code>.</p>
+<p>As their names suggest, <code>json-parse</code> adds support for parsing
+JSON data (Y.JSON.parse) and <code>json-stringify</code> for serializing
+JavaScript data into JSON strings (Y.JSON.stringify).  You may choose to
+include either of the submodules individually if you don't need the
+complementary functionality, or include the rollup for both.</p>
                     </div>
 
                     
@@ -81,8 +86,9 @@ Both <code>json-parse</code> and <code>json-stringify</code> create functions in
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Third step in the validation.  Regex used to remove all open square
-brackets following a colon, comma, or at the beginning of the string.
+                                            Third step in the safety evaluation.  Regex used to remove all open
+square brackets following a colon, comma, or at the beginning of the
+string.
                                         </div>
                                     </div>
      
@@ -91,9 +97,9 @@ brackets following a colon, comma, or at the beginning of the string.
 
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:property" resource="#property__CHARS">
+                                    <div class="protected" rel="yui:property" resource="#property__CHARS">
                                     <h4><a name="property__CHARS" property="yui:name">_CHARS</a>
-                                        - <code>private static <span property="yui:type">{Object}</span></code>
+                                        - <code>protected static <span property="yui:type">{Object}</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -112,7 +118,7 @@ brackets following a colon, comma, or at the beginning of the string.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            First step in the validation.  Regex used to replace all escape
+                                            First step in the safety evaluation.  Regex used to replace all escape
 sequences (i.e. "\\", etc) with '@' characters (a non-JSON character).
                                         </div>
                                     </div>
@@ -128,8 +134,8 @@ sequences (i.e. "\\", etc) with '@' characters (a non-JSON character).
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Final step in the validation.  Regex used to test the string left after
-all previous replacements for invalid characters.
+                                            Final step in the safety evaluation.  Regex used to test the string left
+after all previous replacements for invalid characters.
                                         </div>
                                     </div>
      
@@ -138,15 +144,16 @@ all previous replacements for invalid characters.
 
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:property" resource="#property__SIMPLE">
+                                    <div class="private" rel="yui:property" resource="#property__SIMPLE">
                                     <h4><a name="property__SIMPLE" property="yui:name">_SIMPLE</a>
-                                        - <code>protected <span property="yui:type">{RegExp}</span></code>
+                                        - <code>private <span property="yui:type">{RegExp}</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Test for JSON string of simple data string, number, boolean, or null.
 E.g. '"some string"', "true", "false", "null", or numbers "-123e+7"
-Currently FireFox 3.1b2 JSON.parse requires object/array wrapped data
+This was needed for some WIP native implementations (FF3.1b2) but may be
+unnecessary now.
                                         </div>
                                     </div>
      
@@ -155,9 +162,9 @@ Currently FireFox 3.1b2 JSON.parse requires object/array wrapped data
 
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:property" resource="#property__SPECIAL_CHARS">
+                                    <div class="protected" rel="yui:property" resource="#property__SPECIAL_CHARS">
                                     <h4><a name="property__SPECIAL_CHARS" property="yui:name">_SPECIAL_CHARS</a>
-                                        - <code>private <span property="yui:type">{RegExp}</span></code>
+                                        - <code>protected <span property="yui:type">{RegExp}</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -196,8 +203,23 @@ found.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Second step in the validation.  Regex used to replace all simple
+                                            Second step in the safety evaluation.  Regex used to replace all simple
 values with ']' characters.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property_Native">
+                                    <h4><a name="property_Native" property="yui:name">Native</a>
+                                        - <code>private <span property="yui:type">{Object}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Alias to native browser implementation of the JSON object if available.
                                         </div>
                                     </div>
      
@@ -475,14 +497,18 @@ pair of object literals, allowing pruning or altering values</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Converts an arbitrary value to a JSON string representation.
-Cyclical object or array references are replaced with null.
-If a whitelist is provided, only matching object keys will be included.
-If a positive integer or non-empty string is passed as the third
+                                            <p>Converts an arbitrary value to a JSON string representation.</p>
+<p>Objects with cyclical references will trigger an exception.</p>
+<p>If a whitelist is provided, only matching object keys will be
+included.  Alternately, a replacer function may be passed as the
+second parameter.  This function is executed on every value in the
+input, and its return value will be used in place of the original value.
+This is useful to serialize specialized objects or class instances.</p>
+<p>If a positive integer or non-empty string is passed as the third
 parameter, the output will be formatted with carriage returns and
 indentation for readability.  If a String is passed (such as "\t") it
 will be used once for each indentation level.  If a number is passed,
-that number of spaces will be used.
+that number of spaces will be used.</p>
                                         </div>
 
                                         <div class="description">
@@ -493,7 +519,7 @@ that number of spaces will be used.
                                                         <code><span property="yui:name">o</span>
                                                         &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  any arbitrary object to convert to JSON string</span>
+                                                        <span property="yui:description">  any arbitrary value to convert to JSON string</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">w</span>
@@ -555,8 +581,8 @@ spaces to format the output.</span>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
-                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
@@ -579,18 +605,16 @@ spaces to format the output.</span>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -613,13 +637,14 @@ spaces to format the output.</span>
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class="private"><a href="#property__BRACKETS" title="_BRACKETS">_BRACKETS</a></li>
-                                <li class="private"><a href="#property__CHARS" title="_CHARS">_CHARS</a></li>
+                                <li class="protected"><a href="#property__CHARS" title="_CHARS">_CHARS</a></li>
                                 <li class="private"><a href="#property__ESCAPES" title="_ESCAPES">_ESCAPES</a></li>
                                 <li class="private"><a href="#property__INVALID" title="_INVALID">_INVALID</a></li>
-                                <li class="protected"><a href="#property__SIMPLE" title="_SIMPLE">_SIMPLE</a></li>
-                                <li class="private"><a href="#property__SPECIAL_CHARS" title="_SPECIAL_CHARS">_SPECIAL_CHARS</a></li>
+                                <li class="private"><a href="#property__SIMPLE" title="_SIMPLE">_SIMPLE</a></li>
+                                <li class="protected"><a href="#property__SPECIAL_CHARS" title="_SPECIAL_CHARS">_SPECIAL_CHARS</a></li>
                                 <li class="private"><a href="#property__UNICODE_EXCEPTIONS" title="_UNICODE_EXCEPTIONS">_UNICODE_EXCEPTIONS</a></li>
                                 <li class="private"><a href="#property__VALUES" title="_VALUES">_VALUES</a></li>
+                                <li class="private"><a href="#property_Native" title="Native">Native</a></li>
                         </ul>
                     </div>
 
@@ -645,7 +670,7 @@ spaces to format the output.</span>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "protected", "host": "JSON", "name": "_SIMPLE", "url": "JSON.html#property__SIMPLE", "type": "property"}, {"access": "private", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "protected", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "private", "host": "JSON", "name": "Native", "url": "JSON.html#property_Native", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_SIMPLE", "url": "JSON.html#property__SIMPLE", "type": "property"}, {"access": "protected", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
 </script>
 </body>
 </html>

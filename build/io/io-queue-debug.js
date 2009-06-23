@@ -18,7 +18,7 @@ YUI.add('io-queue', function(Y) {
 	var _q = new Y.Queue(),
 
    /**
-	* @description
+	* @description Reference to "io:complete" event handler.
 	*
 	* @property _e
 	* @private
@@ -59,7 +59,7 @@ YUI.add('io-queue', function(Y) {
 
 		Y.log('Object queued.  Transaction id is' + o.id, 'info', 'io');
 		return o;
-	};
+	}
 
    /**
 	* @description Method Process the first transaction from the
@@ -76,7 +76,7 @@ YUI.add('io-queue', function(Y) {
 		_activeId = o.id;
 		_qState = 0;
 		Y.io(o.uri, o.cfg, o.id);
-	};
+	}
 
    /**
 	* @description Method for promoting a transaction to the top of the queue.
@@ -88,14 +88,14 @@ YUI.add('io-queue', function(Y) {
 	*/
 	function _unshift(o) {
 		_q.promote(o);
-	};
+	}
 
 	function _next(id) {
 		_qState = 1;
 		if (_activeId === id && _q.size() > 0) {
 			_shift();
 		}
-	};
+	}
 
    /**
 	* @description Method for removing a specific, pending transaction from
@@ -108,7 +108,7 @@ YUI.add('io-queue', function(Y) {
 	*/
 	function _remove(o) {
 		_q.remove(o);
-	};
+	}
 
 	function _start() {
 		_qState = 1;

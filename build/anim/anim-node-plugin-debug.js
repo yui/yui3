@@ -3,7 +3,8 @@ YUI.add('anim-node-plugin', function(Y) {
 /**
  *  Binds an Anim instance to a Node instance
  * @module anim
- * @namespace plugin
+ * @class Plugin.NodeFX
+ * @extends Base
  * @submodule anim-node-plugin
  */
 
@@ -20,6 +21,7 @@ Y.extend(NodeFX, Y.Anim);
 
 Y.namespace('Plugin');
 Y.Plugin.NodeFX = NodeFX;
+
 
 
 }, '@VERSION@' ,{requires:['anim-base', 'node-base']});

@@ -54,7 +54,7 @@
             Y.each(sProto, function(v, k) {
                 replacements[k] = function() {
 
-// Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
+// Y.log('sequestered function "' + k + '" executed.  Initializing EventTarget');
 // overwrite the prototype with all of the sequestered functions,
 // but only if it hasn't been overridden
                     for (i in sequestered) {
@@ -266,10 +266,11 @@
      * @return {function} the wrapped function
      */
     Y.bind = function(f, c) {
-        var a = Y.Array(arguments, 2, true);
+        var xargs = arguments.length > 2 ? Y.Array(arguments, 2, true) : null;
         return function () {
-            var fn = L.isString(f) ? c[f] : f;
-            return fn.apply(c || fn, a.concat(Y.Array(arguments, 0, true)));
+            var fn = L.isString(f) ? c[f] : f, 
+                args = (xargs) ? xargs.concat(Y.Array(arguments, 0, true)) : arguments;
+            return fn.apply(c || fn, args);
         };
     };
     
@@ -288,10 +289,11 @@
      * @return {function} the wrapped function
      */
     Y.rbind = function(f, c) {
-        var a = Y.Array(arguments, 2, true);
+        var xargs = arguments.length > 2 ? Y.Array(arguments, 2, true) : null;
         return function () {
-            var fn = L.isString(f) ? c[f] : f;
-            return fn.apply(c || fn, Y.Array(arguments, 0, true).concat(a));
+            var fn = L.isString(f) ? c[f] : f, 
+                args = (xargs) ? Y.Array(arguments, 0, true).concat(xargs) : arguments;
+            return fn.apply(c || fn, args);
         };
     };
 

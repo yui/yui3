@@ -1,7 +1,6 @@
-/*
- * Functionality to simulate events.
+/**
+ * Adds functionality to simulate events.
  * @module node
- * @for Node
  * @submodule node-event-simulate
  */
 
@@ -10,6 +9,7 @@
      * @param {String} type The type of event to simulate (i.e., "click").
      * @param {Object} options (Optional) Extra options to copy onto the event object.
      * @return {void}
+     * @for Node
      * @method simulate
      * @static
      */     

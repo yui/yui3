@@ -5,7 +5,6 @@ YUI.add('anim-color', function(Y) {
  * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-color
- * @for Anim
  */
 
 var NUM = Number;
@@ -44,6 +43,7 @@ Y.each(['backgroundColor',
             Y.Anim.behaviors[v] = Y.Anim.behaviors.color;
         }
 );
+
 
 
 }, '@VERSION@' ,{requires:['anim-base', 'node-style']});

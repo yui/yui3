@@ -1,20 +1,15 @@
 YUI.add('datatype-number-parse', function(Y) {
 
 /**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
- *
- * @module datatype
- */
-var LANG = Y.Lang;
-
-/**
  * Parse number submodule.
  *
- * @class DataType.Number
- * @submodule datatype-number-format
- * @static
+ * @module datatype
+ * @submodule datatype-number-parse
+ * @for DataType.Number
  */
+
+var LANG = Y.Lang;
+
 Y.mix(Y.namespace("DataType.Number"), {
     /**
      * Converts data to type Number.
@@ -23,7 +18,6 @@ Y.mix(Y.namespace("DataType.Number"), {
      * @param data {String | Number | Boolean} Data to convert. The following
      * values return as null: null, undefined, NaN, "".
      * @return {Number} A number, or null.
-     * @static
      */
     parse: function(data) {
         var number = (data === null) ? data : +data;
@@ -47,20 +41,27 @@ Y.namespace("Parsers").number = Y.DataType.Number.parse;
 YUI.add('datatype-number-format', function(Y) {
 
 /**
- * The DataType utility provides a set of utility functions to operate on native
- * JavaScript data types.
+ * Number submodule.
  *
  * @module datatype
+ * @submodule datatype-number
  */
-var LANG = Y.Lang;
 
 /**
  * Format number submodule.
  *
- * @class DataType.Number
+ * @module datatype
  * @submodule datatype-number-format
+ */
+ 
+/**
+ * DataType.Number provides a set of utility functions to operate against Number objects.
+ *
+ * @class DataType.Number
  * @static
  */
+var LANG = Y.Lang;
+
 Y.mix(Y.namespace("DataType.Number"), {
      /**
      * Takes a Number and formats to string for display to user.

@@ -49,6 +49,7 @@ YUI.add('dd-drop', function(Y) {
         
 
     Drop = function() {
+        this._lazyAddAttrs = false;
         Drop.superclass.constructor.apply(this, arguments);
 
 

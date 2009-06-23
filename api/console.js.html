@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: console-filters   console.js  (YUI Library)</title>
+	<title>API: console   console.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>console-filters&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>console&nbsp; <span class="subtitle">3.0.0b1_test2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_console-filters.html" title="console-filters">console-filters</a>
+            &gt; <a href="./module_console.html" title="console">console</a>
                 
                  &gt; console.js (source view) 
         <form onsubmit="return false">
@@ -48,9 +48,22 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * A user interface for viewing log messages.</span>
+<span class="c"> * Console creates a visualization for messages logged through calls to a YUI</span>
+<span class="c"> * instance&#39;s &lt;code&gt;Y.log( message, category, source )&lt;/code&gt; method.  The</span>
+<span class="c"> * debug versions of YUI modules will include logging statements to offer some</span>
+<span class="c"> * insight into the steps executed during that module&#39;s operation.  Including</span>
+<span class="c"> * log statements in your code will cause those messages to also appear in the</span>
+<span class="c"> * Console.  Use Console to aid in developing your page or application.</span>
+<span class="c"> *</span>
+<span class="c"> * Entry categories &amp;quot;info&amp;quot;, &amp;quot;warn&amp;quot;, and &amp;quot;error&amp;quot;</span>
+<span class="c"> * are also referred to as the log level, and entries are filtered against the</span>
+<span class="c"> * configured logLevel.</span>
 <span class="c"> *</span>
 <span class="c"> * @module console</span>
+<span class="c"> * @class Console</span>
+<span class="c"> * @extends Widget</span>
+<span class="c"> * @param conf {Object} Configuration object (see Configuration attributes)</span>
+<span class="c"> * @constructor</span>
 <span class="c"> */</span>
 
 <span class="k">var</span> <span class="nx">getCN</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">ClassNameManager</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">,</span>
@@ -112,21 +125,6 @@
     <span class="nx">merge</span>      <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">,</span>
     <span class="nx">substitute</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">substitute</span><span class="o">;</span>
     
-
-<span class="c">/**</span>
-<span class="c"> * Console creates a visualization for messages logged through calls to a YUI</span>
-<span class="c"> * instance&#39;s &lt;code&gt;Y.log( message, category, source )&lt;/code&gt; method.  The</span>
-<span class="c"> * debug versions of YUI modules will include logging statements to offer some</span>
-<span class="c"> * insight into the steps executed during that module&#39;s operation.  Including</span>
-<span class="c"> * log statements in your code will cause those messages to also appear in the</span>
-<span class="c"> * Console.  Use Console to aid in developing your page or application.</span>
-<span class="c"> *</span>
-<span class="c"> * Entry categories are also referred to as the log level, and entries are</span>
-<span class="c"> * filtered against the configured logLevel.</span>
-<span class="c"> *</span>
-<span class="c"> * @class Console</span>
-<span class="c"> * @extends Widget</span>
-<span class="c"> */</span>
 
 <span class="k">function</span> <span class="nx">Console</span><span class="o">()</span> <span class="o">{</span>
     <span class="nx">Console</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span><span class="nx">arguments</span><span class="o">);</span>
@@ -246,10 +244,12 @@
 <span class="c">     * these {placeholder}s:</span>
 <span class="c">     *</span>
 <span class="c">     * &lt;ul&gt;</span>
+<span class="c">     *   &lt;li&gt;console_button_class - contributed by Console.CHROME_CLASSES&lt;/li&gt;</span>
+<span class="c">     *   &lt;li&gt;console_collapse_class - contributed by Console.CHROME_CLASSES&lt;/li&gt;</span>
 <span class="c">     *   &lt;li&gt;console_hd_class - contributed by Console.CHROME_CLASSES&lt;/li&gt;</span>
 <span class="c">     *   &lt;li&gt;console_title_class - contributed by Console.CHROME_CLASSES&lt;/li&gt;</span>
-<span class="c">     *   &lt;li&gt;str_title - pulled from attribute strings.title&lt;/li&gt;</span>
 <span class="c">     *   &lt;li&gt;str_collapse - pulled from attribute strings.collapse&lt;/li&gt;</span>
+<span class="c">     *   &lt;li&gt;str_title - pulled from attribute strings.title&lt;/li&gt;</span>
 <span class="c">     * &lt;/ul&gt;</span>
 <span class="c">     *</span>
 <span class="c">     * @property Console.HEADER_TEMPLATE</span>
@@ -259,11 +259,9 @@
     <span class="nx">HEADER_TEMPLATE</span> <span class="o">:</span>
         <span class="s1">&#39;&lt;div class=&quot;{console_hd_class}&quot;&gt;&#39;</span><span class="o">+</span>
             <span class="s1">&#39;&lt;h4 class=&quot;{console_title_class}&quot;&gt;{str_title}&lt;/h4&gt;&#39;</span><span class="o">+</span>
-            <span class="s1">&#39;&lt;div class=&quot;{console_controls_class}&quot;&gt;&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;button type=&quot;button&quot; class=&quot;&#39;</span><span class="o">+</span>
-                    <span class="s1">&#39;{console_button_class} {console_collapse_class}&quot;&gt;{str_collapse}&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;/button&gt;&#39;</span><span class="o">+</span>
-            <span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="o">+</span>
+            <span class="s1">&#39;&lt;button type=&quot;button&quot; class=&quot;&#39;</span><span class="o">+</span>
+                <span class="s1">&#39;{console_button_class} {console_collapse_class}&quot;&gt;{str_collapse}&#39;</span><span class="o">+</span>
+            <span class="s1">&#39;&lt;/button&gt;&#39;</span><span class="o">+</span>
         <span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="o">,</span>
 
     <span class="c">/**</span>
@@ -296,9 +294,9 @@
     <span class="nx">FOOTER_TEMPLATE</span> <span class="o">:</span>
         <span class="s1">&#39;&lt;div class=&quot;{console_ft_class}&quot;&gt;&#39;</span><span class="o">+</span>
             <span class="s1">&#39;&lt;div class=&quot;{console_controls_class}&quot;&gt;&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;input type=&quot;checkbox&quot; class=&quot;{console_checkbox_class} &#39;</span><span class="o">+</span>
-                        <span class="s1">&#39;{console_pause_class}&quot; value=&quot;1&quot; id=&quot;{id_guid}&quot;&gt; &#39;</span><span class="o">+</span>
                 <span class="s1">&#39;&lt;label for=&quot;{id_guid}&quot; class=&quot;{console_pause_label_class}&quot;&gt;&#39;</span><span class="o">+</span>
+                    <span class="s1">&#39;&lt;input type=&quot;checkbox&quot; class=&quot;{console_checkbox_class} &#39;</span><span class="o">+</span>
+                        <span class="s1">&#39;{console_pause_class}&quot; value=&quot;1&quot; id=&quot;{id_guid}&quot;&gt; &#39;</span><span class="o">+</span>
                     <span class="s1">&#39;{str_pause}&lt;/label&gt;&#39;</span> <span class="o">+</span>
                 <span class="s1">&#39;&lt;button type=&quot;button&quot; class=&quot;&#39;</span><span class="o">+</span>
                     <span class="s1">&#39;{console_button_class} {console_clear_class}&quot;&gt;{str_clear}&#39;</span><span class="o">+</span>
@@ -329,21 +327,19 @@
 <span class="c">     * @static</span>
 <span class="c">     */</span>
     <span class="nx">ENTRY_TEMPLATE</span> <span class="o">:</span>
-        <span class="s1">&#39;&lt;pre class=&quot;{entry_class} {cat_class} {src_class}&quot;&gt;&#39;</span><span class="o">+</span>
-            <span class="s1">&#39;&lt;div class=&quot;{entry_meta_class}&quot;&gt;&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;p&gt;&#39;</span><span class="o">+</span>
-                    <span class="s1">&#39;&lt;span class=&quot;{entry_cat_class}&quot;&gt;&#39;</span><span class="o">+</span>
-                        <span class="s1">&#39;{label}&lt;/span&gt;&#39;</span><span class="o">+</span>
-                    <span class="s1">&#39;&lt;span class=&quot;{entry_time_class}&quot;&gt;&#39;</span><span class="o">+</span>
-                        <span class="s1">&#39; {totalTime}ms (+{elapsedTime}) {localTime}:&#39;</span><span class="o">+</span>
-                    <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;/p&gt;&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;p class=&quot;{entry_src_class}&quot;&gt;&#39;</span><span class="o">+</span>
+        <span class="s1">&#39;&lt;div class=&quot;{entry_class} {cat_class} {src_class}&quot;&gt;&#39;</span><span class="o">+</span>
+            <span class="s1">&#39;&lt;p class=&quot;{entry_meta_class}&quot;&gt;&#39;</span><span class="o">+</span>
+                <span class="s1">&#39;&lt;span class=&quot;{entry_src_class}&quot;&gt;&#39;</span><span class="o">+</span>
                     <span class="s1">&#39;{sourceAndDetail}&#39;</span><span class="o">+</span>
-                <span class="s1">&#39;&lt;/p&gt;&#39;</span><span class="o">+</span>
-            <span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="o">+</span>
-            <span class="s1">&#39;&lt;p class=&quot;{entry_content_class}&quot;&gt;{message}&lt;/p&gt;&#39;</span><span class="o">+</span>
-        <span class="s1">&#39;&lt;/pre&gt;&#39;</span><span class="o">,</span>
+                <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="o">+</span>
+                <span class="s1">&#39;&lt;span class=&quot;{entry_cat_class}&quot;&gt;&#39;</span><span class="o">+</span>
+                    <span class="s1">&#39;{label}&lt;/span&gt;&#39;</span><span class="o">+</span>
+                <span class="s1">&#39;&lt;span class=&quot;{entry_time_class}&quot;&gt;&#39;</span><span class="o">+</span>
+                    <span class="s1">&#39; {totalTime}ms (+{elapsedTime}) {localTime}&#39;</span><span class="o">+</span>
+                <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="o">+</span>
+            <span class="s1">&#39;&lt;/p&gt;&#39;</span><span class="o">+</span>
+            <span class="s1">&#39;&lt;pre class=&quot;{entry_content_class}&quot;&gt;{message}&lt;/pre&gt;&#39;</span><span class="o">+</span>
+        <span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="o">,</span>
 
     <span class="c">/**</span>
 <span class="c">     * Static property used to define the default attribute configuration of</span>
@@ -425,7 +421,8 @@
 
         <span class="c">/**</span>
 <span class="c">         * If a category is not specified in the Y.log(..) statement, this</span>
-<span class="c">         * category will be used. Category is also called &amp;quot;log level&amp;quot;.</span>
+<span class="c">         * category will be used. Categories &amp;quot;info&amp;quot;,</span>
+<span class="c">         * &amp;quot;warn&amp;quot;, and &amp;quot;error&amp;quot; are also called log level.</span>
 <span class="c">         *</span>
 <span class="c">         * @attribute defaultCategory</span>
 <span class="c">         * @type String</span>
@@ -468,11 +465,11 @@
 <span class="c">         * that configuration is not set.</span>
 <span class="c">         *</span>
 <span class="c">         * Possible values are &amp;quot;info&amp;quot;, &amp;quot;warn&amp;quot;,</span>
-<span class="c">         * &amp;quot;error&amp;quot; (case insensitive), or the corresponding statics</span>
+<span class="c">         * &amp;quot;error&amp;quot; (case insensitive), or their corresponding statics</span>
 <span class="c">         * Console.LOG_LEVEL_INFO and so on.</span>
 <span class="c">         *</span>
 <span class="c">         * @attribute logLevel</span>
-<span class="c">         * @type String|Number</span>
+<span class="c">         * @type String</span>
 <span class="c">         * @default Y.config.logLevel or Console.LOG_LEVEL_INFO</span>
 <span class="c">         */</span>
         <span class="nx">logLevel</span> <span class="o">:</span> <span class="o">{</span>
@@ -483,8 +480,8 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Millisecond timeout to maintain before emptying buffer of Console</span>
-<span class="c">         * entries to the UI.</span>
+<span class="c">         * Millisecond timeout between iterations of the print loop, moving</span>
+<span class="c">         * entries from the buffer to the UI.</span>
 <span class="c">         *</span>
 <span class="c">         * @attribute printTimeout</span>
 <span class="c">         * @type Number</span>
@@ -496,13 +493,12 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Maximum number of entries printed in each printBuffer iteration.</span>
-<span class="c">         * This is used to prevent excessive logging bogging down runtime</span>
-<span class="c">         * performance.</span>
+<span class="c">         * Maximum number of entries printed in each iteration of the print</span>
+<span class="c">         * loop. This is used to prevent excessive logging locking the page UI.</span>
 <span class="c">         *</span>
 <span class="c">         * @attribute printLimit</span>
 <span class="c">         * @type Number</span>
-<span class="c">         * @default 00</span>
+<span class="c">         * @default 50</span>
 <span class="c">         */</span>
         <span class="nx">printLimit</span> <span class="o">:</span> <span class="o">{</span>
             <span class="nx">value</span> <span class="o">:</span> <span class="m">50</span><span class="o">,</span>
@@ -588,7 +584,7 @@
         <span class="c">/**</span>
 <span class="c">        * String with units, or number, representing the height of the Console,</span>
 <span class="c">        * inclusive of header and footer. If a number is provided, the default</span>
-<span class="c">        * unit, defined by the Widgets DEF_UNIT, property is used.</span>
+<span class="c">        * unit, defined by Widget&#39;s DEF_UNIT, property is used.</span>
 <span class="c">        *</span>
 <span class="c">        * @attribute height</span>
 <span class="c">        * @default &quot;300px&quot;</span>
@@ -600,7 +596,7 @@
 
         <span class="c">/**</span>
 <span class="c">        * String with units, or number, representing the width of the Console.</span>
-<span class="c">        * If a number is provided, the default unit, defined by the Widgets</span>
+<span class="c">        * If a number is provided, the default unit, defined by Widget&#39;s</span>
 <span class="c">        * DEF_UNIT, property is used.</span>
 <span class="c">        *</span>
 <span class="c">        * @attribute width</span>
@@ -627,7 +623,7 @@
     <span class="nx">_evtCat</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
 
     <span class="c">/**</span>
-<span class="c">     * Reference to the Node instance containing the head contents.</span>
+<span class="c">     * Reference to the Node instance containing the header contents.</span>
 <span class="c">     *</span>
 <span class="c">     * @property _head</span>
 <span class="c">     * @type Node</span>
@@ -649,7 +645,7 @@
     <span class="c">/**</span>
 <span class="c">     * Reference to the Node instance containing the footer contents.</span>
 <span class="c">     *</span>
-<span class="c">     * @property _head</span>
+<span class="c">     * @property _foot</span>
 <span class="c">     * @type Node</span>
 <span class="c">     * @default null</span>
 <span class="c">     * @protected</span>
@@ -657,8 +653,8 @@
     <span class="nx">_foot</span>    <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
 
     <span class="c">/**</span>
-<span class="c">     * Object API returned from &lt;code&gt;Y.later&lt;/code&gt;. Holds the timer id</span>
-<span class="c">     * returned by &lt;code&gt;setInterval&lt;/code&gt; for scheduling of buffered messages.</span>
+<span class="c">     * Holds the object API returned from &lt;code&gt;Y.later&lt;/code&gt; for the print</span>
+<span class="c">     * loop interval.</span>
 <span class="c">     *</span>
 <span class="c">     * @property _printLoop</span>
 <span class="c">     * @type Object</span>
@@ -673,6 +669,7 @@
 <span class="c">     * @property buffer</span>
 <span class="c">     * @type Array</span>
 <span class="c">     * @default null</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">buffer</span>   <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
 
@@ -680,7 +677,7 @@
 <span class="c">     * Wrapper for &lt;code&gt;Y.log&lt;/code&gt;.</span>
 <span class="c">     *</span>
 <span class="c">     * @method log</span>
-<span class="c">     * @param {Any*} * (all arguments passed through to &lt;code&gt;Y.log&lt;/code&gt;)</span>
+<span class="c">     * @param arg* {MIXED} (all arguments passed through to &lt;code&gt;Y.log&lt;/code&gt;)</span>
 <span class="c">     */</span>
     <span class="nx">log</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span><span class="nx">arguments</span><span class="o">);</span>
@@ -716,54 +713,67 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Collapses the UI.</span>
+<span class="c">     * Collapses the body and footer.</span>
 <span class="c">     *</span>
 <span class="c">     * @method collapse</span>
-<span class="c">     * @chainable</span>
 <span class="c">     */</span>
     <span class="nx">collapse</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">COLLAPSED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Expands the UI if collapsed.</span>
+<span class="c">     * Expands the body and footer if collapsed.</span>
 <span class="c">     *</span>
-<span class="c">     * @method collapse</span>
-<span class="c">     * @chainable</span>
+<span class="c">     * @method expand</span>
 <span class="c">     */</span>
     <span class="nx">expand</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">COLLAPSED</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Outputs all buffered messages to the console UI.</span>
+<span class="c">     * Outputs buffered messages to the console UI.  This is typically called</span>
+<span class="c">     * from a scheduled interval until the buffer is empty (referred to as the</span>
+<span class="c">     * print loop).  The number of buffered messages output to the Console is</span>
+<span class="c">     * limited to the number provided as an argument.  If no limit is passed,</span>
+<span class="c">     * all buffered messages are rendered.</span>
 <span class="c">     * </span>
 <span class="c">     * @method printBuffer</span>
 <span class="c">     * @param limit {Number} (optional) max number of buffered entries to write</span>
 <span class="c">     * @chainable</span>
 <span class="c">     */</span>
     <span class="nx">printBuffer</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">limit</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">buffer</span><span class="o">,</span>
-            <span class="nx">debug</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span><span class="o">,</span>
+        <span class="k">var</span> <span class="nx">messages</span>    <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">buffer</span><span class="o">,</span>
+            <span class="nx">debug</span>       <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span><span class="o">,</span>
+            <span class="nx">entries</span>     <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">consoleLimit</span><span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;consoleLimit&#39;</span><span class="o">),</span>
+            <span class="nx">newestOnTop</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;newestOnTop&#39;</span><span class="o">),</span>
+            <span class="nx">anchor</span>      <span class="o">=</span> <span class="nx">newestOnTop</span> <span class="o">?</span> <span class="k">this</span><span class="o">.</span><span class="nx">_body</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;firstChild&#39;</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
             <span class="nx">i</span><span class="o">;</span>
 
-        <span class="nx">limit</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">min</span><span class="o">(</span><span class="nx">messages</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="o">(</span><span class="nx">limit</span> <span class="o">||</span> <span class="nx">messages</span><span class="o">.</span><span class="nx">length</span><span class="o">));</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">messages</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">consoleLimit</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">messages</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">messages</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">consoleLimit</span><span class="o">);</span>
+        <span class="o">}</span>
 
+        <span class="nx">limit</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">min</span><span class="o">(</span><span class="nx">messages</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="o">(</span><span class="nx">limit</span> <span class="o">||</span> <span class="nx">messages</span><span class="o">.</span><span class="nx">length</span><span class="o">));</span>
+        
         <span class="c">// turn off logging system</span>
 <span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PAUSED</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;rendered&#39;</span><span class="o">))</span> <span class="o">{</span>
 
-            <span class="c">// TODO: use doc frag</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_body</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;diplay&#39;</span><span class="o">,</span><span class="s1">&#39;none&#39;</span><span class="o">);</span>
             <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">limit</span> <span class="o">&amp;&amp;</span> <span class="nx">messages</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">printLogEntry</span><span class="o">(</span><span class="nx">messages</span><span class="o">.</span><span class="nx">shift</span><span class="o">());</span>
+                <span class="nx">entries</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_createEntryHTML</span><span class="o">(</span><span class="nx">messages</span><span class="o">.</span><span class="nx">shift</span><span class="o">());</span>
             <span class="o">}</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_body</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;diplay&#39;</span><span class="o">,</span><span class="s1">&#39;&#39;</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">messages</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_cancelPrintLoop</span><span class="o">();</span>
             <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">newestOnTop</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">entries</span><span class="o">.</span><span class="nx">reverse</span><span class="o">();</span>
+            <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_body</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">create</span><span class="o">(</span><span class="nx">entries</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">)),</span> <span class="nx">anchor</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;scrollIntoView&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">scrollToLatest</span><span class="o">();</span>
@@ -779,24 +789,6 @@
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Prints the provided message to the console UI.</span>
-<span class="c">     *</span>
-<span class="c">     * Inserts the Node into the console body at the top or bottom depending on</span>
-<span class="c">     * the configuration value of newestOnTop.</span>
-<span class="c">     *</span>
-<span class="c">     * @method printLogEntry</span>
-<span class="c">     * @param m {Object} Normalized message object</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-    <span class="nx">printLogEntry</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">sib</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;newestOnTop&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span><span class="o">.</span><span class="nx">_body</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;firstChild&#39;</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-
-        <span class="k">this</span><span class="o">.</span><span class="nx">_body</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_createEntry</span><span class="o">(</span><span class="nx">m</span><span class="o">),</span> <span class="nx">sib</span><span class="o">);</span>
-
-        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
-    <span class="o">},</span>
-
     
     <span class="c">/**</span>
 <span class="c">     * Constructor code.  Set up the buffer and entry template, publish</span>
@@ -808,7 +800,7 @@
     <span class="nx">initializer</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_evtCat</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="o">;</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">buffer</span>    <span class="o">=</span> <span class="o">[];</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="o">[];</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ENTRY_TEMPLATE</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ENTRY_TEMPLATE</span><span class="o">,</span><span class="nx">Console</span><span class="o">.</span><span class="nx">ENTRY_TEMPLATE</span><span class="o">);</span>
@@ -818,8 +810,8 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;logEvent&#39;</span><span class="o">),</span><span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_onLogEvent&quot;</span><span class="o">,</span><span class="k">this</span><span class="o">));</span>
 
         <span class="c">/**</span>
-<span class="c">         * Triggers the processing of an incoming message via the default logic</span>
-<span class="c">         * in _defEntryFn.</span>
+<span class="c">         * Transfers a received message to the print loop buffer.  Default</span>
+<span class="c">         * behavior defined in _defEntryFn.</span>
 <span class="c">         *</span>
 <span class="c">         * @event entry</span>
 <span class="c">         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:</span>
@@ -843,6 +835,12 @@
         <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;rendered&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_schedulePrint</span><span class="o">);</span>
     <span class="o">},</span>
 
+    <span class="c">/**</span>
+<span class="c">     * Tears down the instance, flushing event subscriptions and purging the UI.</span>
+<span class="c">     *</span>
+<span class="c">     * @method destructor</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
     <span class="nx">destructor</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="o">);</span>
 
@@ -997,28 +995,28 @@
 <span class="c">     *     &lt;li&gt;totalTime - ms since Console was instantiated or reset&lt;/li&gt;</span>
 <span class="c">     * &lt;/ul&gt;</span>
 <span class="c">     *</span>
-<span class="c">     * @mehod _normalizeMessage</span>
-<span class="c">     * @param msg {String} the log message</span>
-<span class="c">     * @param cat {String} OPTIONAL the category or logLevel of the message</span>
-<span class="c">     * @param src {String} OPTIONAL the source widget or util of the message</span>
+<span class="c">     * @method _normalizeMessage</span>
+<span class="c">     * @param e {Event} custom event containing the log message</span>
 <span class="c">     * @return Object the message object</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_normalizeMessage</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">cat</span><span class="o">,</span> <span class="nx">src</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">src</span><span class="o">,</span>
+        <span class="k">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">msg</span><span class="o">,</span>
+            <span class="nx">cat</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">cat</span><span class="o">,</span>
+            <span class="nx">src</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">src</span><span class="o">,</span>
 
-        <span class="nx">m</span> <span class="o">=</span> <span class="o">{</span>
-            <span class="nx">time</span>            <span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(),</span>
-            <span class="nx">message</span>         <span class="o">:</span> <span class="nx">msg</span><span class="o">,</span>
-            <span class="nx">category</span>        <span class="o">:</span> <span class="nx">cat</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;defaultCategory&#39;</span><span class="o">),</span>
-            <span class="nx">sourceAndDetail</span> <span class="o">:</span> <span class="nx">src</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;defaultSource&#39;</span><span class="o">),</span>
-            <span class="nx">source</span>          <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="k">label</span>           <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">localTime</span>       <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">elapsedTime</span>     <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">totalTime</span>       <span class="o">:</span> <span class="kc">null</span>
-        <span class="o">};</span>
+            <span class="nx">m</span> <span class="o">=</span> <span class="o">{</span>
+                <span class="nx">time</span>            <span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(),</span>
+                <span class="nx">message</span>         <span class="o">:</span> <span class="nx">msg</span><span class="o">,</span>
+                <span class="nx">category</span>        <span class="o">:</span> <span class="nx">cat</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;defaultCategory&#39;</span><span class="o">),</span>
+                <span class="nx">sourceAndDetail</span> <span class="o">:</span> <span class="nx">src</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;defaultSource&#39;</span><span class="o">),</span>
+                <span class="nx">source</span>          <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+                <span class="k">label</span>           <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+                <span class="nx">localTime</span>       <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+                <span class="nx">elapsedTime</span>     <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+                <span class="nx">totalTime</span>       <span class="o">:</span> <span class="kc">null</span>
+            <span class="o">};</span>
 
         <span class="c">// Extract m.source &quot;Foo&quot; from m.sourceAndDetail &quot;Foo bar baz&quot;</span>
 <span class="c"></span>        <span class="nx">m</span><span class="o">.</span><span class="nx">source</span>          <span class="o">=</span> <span class="nx">RE_INLINE_SOURCE</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">sourceAndDetail</span><span class="o">)</span> <span class="o">?</span>
@@ -1035,13 +1033,13 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Sets a timeout for buffered messages to be output to the console.</span>
+<span class="c">     * Sets an interval for buffered messages to be output to the console.</span>
 <span class="c">     *</span>
 <span class="c">     * @method _schedulePrint</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_schedulePrint</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PAUSED</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_printLoop</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;rendered&#39;</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_printLoop</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PAUSED</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;rendered&#39;</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_printLoop</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span>
                                 <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;printTimeout&#39;</span><span class="o">),</span>
                                 <span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">printBuffer</span><span class="o">,</span>
@@ -1050,14 +1048,14 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Creates an entry node from the message meta provided.</span>
+<span class="c">     * Translates message meta into the markup for a console entry.</span>
 <span class="c">     *</span>
-<span class="c">     * @method _createEntry</span>
+<span class="c">     * @method _createEntryHTML</span>
 <span class="c">     * @param m {Object} object literal containing normalized message metadata</span>
-<span class="c">     * @return Node</span>
+<span class="c">     * @return String</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
-    <span class="nx">_createEntry</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_createEntryHTML</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">m</span> <span class="o">=</span> <span class="nx">merge</span><span class="o">(</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_htmlEscapeMessage</span><span class="o">(</span><span class="nx">m</span><span class="o">),</span>
                 <span class="nx">Console</span><span class="o">.</span><span class="nx">ENTRY_CLASSES</span><span class="o">,</span>
@@ -1066,7 +1064,10 @@
                     <span class="nx">src_class</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">ENTRY</span><span class="o">,</span><span class="nx">m</span><span class="o">.</span><span class="nx">source</span><span class="o">)</span>
                 <span class="o">});</span>
 
-        <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="nx">substitute</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;entryTemplate&#39;</span><span class="o">),</span><span class="nx">m</span><span class="o">));</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;entryTemplate&#39;</span><span class="o">).</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/\{(\w+)\}/g</span><span class="o">,</span>
+            <span class="k">function</span> <span class="o">(</span><span class="nx">_</span><span class="o">,</span><span class="nx">token</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">token</span> <span class="k">in</span> <span class="nx">m</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">token</span><span class="o">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
+            <span class="o">});</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -1204,9 +1205,9 @@
 
     <span class="c">/**</span>
 <span class="c">     * Event handler for clicking on the Collapse/Expand button. Sets the</span>
-<span class="c">     * &amp;quot;collapsed&amp;quot; attribute accordingly</span>
+<span class="c">     * &amp;quot;collapsed&amp;quot; attribute accordingly.</span>
 <span class="c">     *</span>
-<span class="c">     * @method _onClearClick</span>
+<span class="c">     * @method _onCollapseClick</span>
 <span class="c">     * @param e {Event} DOM event facade for the click event</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
@@ -1217,10 +1218,8 @@
 
     <span class="c">/**</span>
 <span class="c">     * Setter method for logLevel attribute.  Acceptable values are</span>
-<span class="c">     * &amp;quot;error&amp;quot, &amp;quot;warn&amp;quot, &amp;quot;info&amp;quot (case insensitive),</span>
-<span class="c">     * and Y.Console.LOG_LEVEL_ERROR, Y.Console.LOG_LEVEL_WARN, </span>
-<span class="c">     * Y.Console.LOG_LEVEL_INFO.  Any other value is treated as</span>
-<span class="c">     * Y.Console.LOG_LEVEL_INFO.</span>
+<span class="c">     * &amp;quot;error&amp;quot, &amp;quot;warn&amp;quot, and &amp;quot;info&amp;quot (case</span>
+<span class="c">     * insensitive).  Other values are treated as &amp;quot;info&amp;quot;.</span>
 <span class="c">     *</span>
 <span class="c">     * @method _setLogLevel</span>
 <span class="c">     * @param v {String} the desired log level</span>
@@ -1293,8 +1292,7 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Updates the UI and schedules or cancels the scheduled buffer printing</span>
-<span class="c">     * operation.</span>
+<span class="c">     * Updates the UI and schedules or cancels the print loop.</span>
 <span class="c">     *</span>
 <span class="c">     * @method _afterPausedChange</span>
 <span class="c">     * @param e {Event} Custom event for the attribute change</span>
@@ -1424,7 +1422,7 @@
             <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ENTRY</span><span class="o">,</span> <span class="o">{</span>
-                <span class="nx">message</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_normalizeMessage</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span>
+                <span class="nx">message</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_normalizeMessage</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span>
             <span class="o">});</span>
 
             <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">debug</span><span class="o">;</span>
@@ -1477,8 +1475,8 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
-                                <li class=""><a href="module_console.html" title="console">console</a></li>
-                                <li class="selected"><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class="selected"><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
@@ -1501,25 +1499,23 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Plugin.ConsoleFilters.html" title="Plugin.ConsoleFilters">Plugin.ConsoleFilters</a></li>
+                                <li class=""><a href="Console.html" title="Console">Console</a></li>
                         </ul>
                     </div>
 
@@ -1527,7 +1523,6 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class="selected"><a href="console.js.html" title="console.js">console.js</a></li>
-                                <li class=""><a href="filter.js.html" title="filter.js">filter.js</a></li>
                         </ul>
                     </div>
 
@@ -1544,7 +1539,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterCategoryChange", "url": "Plugin.ConsoleFilters.html#method__afterCategoryChange", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterClearConsole", "url": "Plugin.ConsoleFilters.html#method__afterClearConsole", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterSourceChange", "url": "Plugin.ConsoleFilters.html#method__afterSourceChange", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "bindUI", "url": "Plugin.ConsoleFilters.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_categories", "url": "Plugin.ConsoleFilters.html#property__categories", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "category", "url": "Plugin.ConsoleFilters.html#config_category", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "categoryChange", "url": "Plugin.ConsoleFilters.html#event_categoryChange", "type": "event"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.CATEGORIES_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.CATEGORIES_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.CHROME_CLASSES", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.FILTER_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.FILTER_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.NAME", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.NAME", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.NS", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.NS", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.SOURCES_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.SOURCES_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "_createCheckbox", "url": "Plugin.ConsoleFilters.html#method__createCheckbox", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "defaultVisibility", "url": "Plugin.ConsoleFilters.html#config_defaultVisibility", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "defaultVisibilityChange", "url": "Plugin.ConsoleFilters.html#event_defaultVisibilityChange", "type": "event"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "destructor", "url": "Plugin.ConsoleFilters.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_entries", "url": "Plugin.ConsoleFilters.html#property__entries", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_filterBuffer", "url": "Plugin.ConsoleFilters.html#method__filterBuffer", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "hideCategory", "url": "Plugin.ConsoleFilters.html#method_hideCategory", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "hideSource", "url": "Plugin.ConsoleFilters.html#method_hideSource", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "initializer", "url": "Plugin.ConsoleFilters.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "_onCategoryCheckboxClick", "url": "Plugin.ConsoleFilters.html#method__onCategoryCheckboxClick", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_onEntry", "url": "Plugin.ConsoleFilters.html#method__onEntry", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "_onSourceCheckboxClick", "url": "Plugin.ConsoleFilters.html#method__onSourceCheckboxClick", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "refreshConsole", "url": "Plugin.ConsoleFilters.html#method_refreshConsole", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "renderUI", "url": "Plugin.ConsoleFilters.html#method_renderUI", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "showCategory", "url": "Plugin.ConsoleFilters.html#method_showCategory", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "showSource", "url": "Plugin.ConsoleFilters.html#method_showSource", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "source", "url": "Plugin.ConsoleFilters.html#config_source", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "sourceChange", "url": "Plugin.ConsoleFilters.html#event_sourceChange", "type": "event"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_sources", "url": "Plugin.ConsoleFilters.html#property__sources", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "syncUI", "url": "Plugin.ConsoleFilters.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_uiSetCheckbox", "url": "Plugin.ConsoleFilters.html#method__uiSetCheckbox", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "_validateCategory", "url": "Plugin.ConsoleFilters.html#method__validateCategory", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "_validateSource", "url": "Plugin.ConsoleFilters.html#method__validateSource", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "Console", "name": "_afterCollapsedChange", "url": "Console.html#method__afterCollapsedChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterConsoleLimitChange", "url": "Console.html#method__afterConsoleLimitChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterPausedChange", "url": "Console.html#method__afterPausedChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterStringsChange", "url": "Console.html#method__afterStringsChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterVisibleChange", "url": "Console.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "bindUI", "url": "Console.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Console", "name": "_body", "url": "Console.html#property__body", "type": "property"}, {"access": "protected", "host": "Console", "name": "buffer", "url": "Console.html#property_buffer", "type": "property"}, {"access": "protected", "host": "Console", "name": "_cancelPrintLoop", "url": "Console.html#method__cancelPrintLoop", "type": "method"}, {"access": "", "host": "Console", "name": "clearConsole", "url": "Console.html#method_clearConsole", "type": "method"}, {"access": "", "host": "Console", "name": "collapse", "url": "Console.html#method_collapse", "type": "method"}, {"access": "", "host": "Console", "name": "collapsed", "url": "Console.html#config_collapsed", "type": "config"}, {"access": "", "host": "Console", "name": "collapsedChange", "url": "Console.html#event_collapsedChange", "type": "event"}, {"access": "", "host": "Console", "name": "Console.ATTRS", "url": "Console.html#property_Console.ATTRS", "type": "property"}, {"access": "", "host": "Console", "name": "Console.BODY_TEMPLATE", "url": "Console.html#property_Console.BODY_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.CHROME_CLASSES", "url": "Console.html#property_Console.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Console", "name": "Console.ENTRY_CLASSES", "url": "Console.html#property_Console.ENTRY_CLASSES", "type": "property"}, {"access": "", "host": "Console", "name": "Console.ENTRY_TEMPLATE", "url": "Console.html#property_Console.ENTRY_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.FOOTER_TEMPLATE", "url": "Console.html#property_Console.FOOTER_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.HEADER_TEMPLATE", "url": "Console.html#property_Console.HEADER_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "consoleLimit", "url": "Console.html#config_consoleLimit", "type": "config"}, {"access": "", "host": "Console", "name": "consoleLimitChange", "url": "Console.html#event_consoleLimitChange", "type": "event"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_ERROR", "url": "Console.html#property_Console.LOG_LEVEL_ERROR", "type": "property"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_INFO", "url": "Console.html#property_Console.LOG_LEVEL_INFO", "type": "property"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_WARN", "url": "Console.html#property_Console.LOG_LEVEL_WARN", "type": "property"}, {"access": "", "host": "Console", "name": "Console.NAME", "url": "Console.html#property_Console.NAME", "type": "property"}, {"access": "protected", "host": "Console", "name": "_createEntryHTML", "url": "Console.html#method__createEntryHTML", "type": "method"}, {"access": "", "host": "Console", "name": "defaultCategory", "url": "Console.html#config_defaultCategory", "type": "config"}, {"access": "", "host": "Console", "name": "defaultCategoryChange", "url": "Console.html#event_defaultCategoryChange", "type": "event"}, {"access": "", "host": "Console", "name": "defaultSource", "url": "Console.html#config_defaultSource", "type": "config"}, {"access": "", "host": "Console", "name": "defaultSourceChange", "url": "Console.html#event_defaultSourceChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_defEntryFn", "url": "Console.html#method__defEntryFn", "type": "method"}, {"access": "protected", "host": "Console", "name": "_defResetFn", "url": "Console.html#method__defResetFn", "type": "method"}, {"access": "protected", "host": "Console", "name": "destructor", "url": "Console.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Console", "name": "_encodeHTML", "url": "Console.html#method__encodeHTML", "type": "method"}, {"access": "", "host": "Console", "name": "entry", "url": "Console.html#event_entry", "type": "event"}, {"access": "", "host": "Console", "name": "entryTemplate", "url": "Console.html#config_entryTemplate", "type": "config"}, {"access": "", "host": "Console", "name": "entryTemplateChange", "url": "Console.html#event_entryTemplateChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_evtCat", "url": "Console.html#property__evtCat", "type": "property"}, {"access": "", "host": "Console", "name": "expand", "url": "Console.html#method_expand", "type": "method"}, {"access": "protected", "host": "Console", "name": "_foot", "url": "Console.html#property__foot", "type": "property"}, {"access": "protected", "host": "Console", "name": "_head", "url": "Console.html#property__head", "type": "property"}, {"access": "", "host": "Console", "name": "height", "url": "Console.html#config_height", "type": "config"}, {"access": "", "host": "Console", "name": "heightChange", "url": "Console.html#event_heightChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_htmlEscapeMessage", "url": "Console.html#method__htmlEscapeMessage", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initBody", "url": "Console.html#method__initBody", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initFoot", "url": "Console.html#method__initFoot", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initHead", "url": "Console.html#method__initHead", "type": "method"}, {"access": "protected", "host": "Console", "name": "initializer", "url": "Console.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Console", "name": "_isInLogLevel", "url": "Console.html#method__isInLogLevel", "type": "method"}, {"access": "", "host": "Console", "name": "lastTime", "url": "Console.html#config_lastTime", "type": "config"}, {"access": "", "host": "Console", "name": "lastTimeChange", "url": "Console.html#event_lastTimeChange", "type": "event"}, {"access": "", "host": "Console", "name": "log", "url": "Console.html#method_log", "type": "method"}, {"access": "", "host": "Console", "name": "logEvent", "url": "Console.html#config_logEvent", "type": "config"}, {"access": "", "host": "Console", "name": "logEventChange", "url": "Console.html#event_logEventChange", "type": "event"}, {"access": "", "host": "Console", "name": "logLevel", "url": "Console.html#config_logLevel", "type": "config"}, {"access": "", "host": "Console", "name": "logLevelChange", "url": "Console.html#event_logLevelChange", "type": "event"}, {"access": "", "host": "Console", "name": "logSource", "url": "Console.html#config_logSource", "type": "config"}, {"access": "", "host": "Console", "name": "logSourceChange", "url": "Console.html#event_logSourceChange", "type": "event"}, {"access": "", "host": "Console", "name": "newestOnTop", "url": "Console.html#config_newestOnTop", "type": "config"}, {"access": "", "host": "Console", "name": "newestOnTopChange", "url": "Console.html#event_newestOnTopChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_normalizeMessage", "url": "Console.html#method__normalizeMessage", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onClearClick", "url": "Console.html#method__onClearClick", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onCollapseClick", "url": "Console.html#method__onCollapseClick", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onLogEvent", "url": "Console.html#method__onLogEvent", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onPauseClick", "url": "Console.html#method__onPauseClick", "type": "method"}, {"access": "", "host": "Console", "name": "paused", "url": "Console.html#config_paused", "type": "config"}, {"access": "", "host": "Console", "name": "pausedChange", "url": "Console.html#event_pausedChange", "type": "event"}, {"access": "", "host": "Console", "name": "printBuffer", "url": "Console.html#method_printBuffer", "type": "method"}, {"access": "", "host": "Console", "name": "printLimit", "url": "Console.html#config_printLimit", "type": "config"}, {"access": "", "host": "Console", "name": "printLimitChange", "url": "Console.html#event_printLimitChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_printLoop", "url": "Console.html#property__printLoop", "type": "property"}, {"access": "", "host": "Console", "name": "printTimeout", "url": "Console.html#config_printTimeout", "type": "config"}, {"access": "", "host": "Console", "name": "printTimeoutChange", "url": "Console.html#event_printTimeoutChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "renderUI", "url": "Console.html#method_renderUI", "type": "method"}, {"access": "", "host": "Console", "name": "reset", "url": "Console.html#method_reset", "type": "method"}, {"access": "", "host": "Console", "name": "reset", "url": "Console.html#event_reset", "type": "event"}, {"access": "protected", "host": "Console", "name": "_schedulePrint", "url": "Console.html#method__schedulePrint", "type": "method"}, {"access": "", "host": "Console", "name": "scrollIntoView", "url": "Console.html#config_scrollIntoView", "type": "config"}, {"access": "", "host": "Console", "name": "scrollIntoViewChange", "url": "Console.html#event_scrollIntoViewChange", "type": "event"}, {"access": "", "host": "Console", "name": "scrollToLatest", "url": "Console.html#method_scrollToLatest", "type": "method"}, {"access": "protected", "host": "Console", "name": "_setLogLevel", "url": "Console.html#method__setLogLevel", "type": "method"}, {"access": "", "host": "Console", "name": "startTime", "url": "Console.html#config_startTime", "type": "config"}, {"access": "", "host": "Console", "name": "startTimeChange", "url": "Console.html#event_startTimeChange", "type": "event"}, {"access": "", "host": "Console", "name": "strings", "url": "Console.html#config_strings", "type": "config"}, {"access": "", "host": "Console", "name": "stringsChange", "url": "Console.html#event_stringsChange", "type": "event"}, {"access": "", "host": "Console", "name": "syncUI", "url": "Console.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Console", "name": "_trimOldEntries", "url": "Console.html#method__trimOldEntries", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiSetHeight", "url": "Console.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdateCollapsed", "url": "Console.html#method__uiUpdateCollapsed", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdateFromHideShow", "url": "Console.html#method__uiUpdateFromHideShow", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdatePaused", "url": "Console.html#method__uiUpdatePaused", "type": "method"}, {"access": "", "host": "Console", "name": "width", "url": "Console.html#config_width", "type": "config"}, {"access": "", "host": "Console", "name": "widthChange", "url": "Console.html#event_widthChange", "type": "event"}];
 </script>
 </body>
 </html>

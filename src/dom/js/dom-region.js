@@ -1,33 +1,25 @@
-/**
- * Adds position and region management functionality to DOM.
- * @module dom
- * @submodule dom-screen
- * @for DOM
- */
-
-var OFFSET_WIDTH = 'offsetWidth',
-    OFFSET_HEIGHT = 'offsetHeight',
-    TOP = 'top',
+(function(Y) {
+var TOP = 'top',
     RIGHT = 'right',
     BOTTOM = 'bottom',
     LEFT = 'left',
-    TAG_NAME = 'tagName';
 
-var getOffsets = function(r1, r2) {
-    var t = Math.max(r1[TOP], r2[TOP]),
-        r = Math.min(r1[RIGHT], r2[RIGHT]),
-        b = Math.min(r1[BOTTOM], r2[BOTTOM]),
-        l = Math.max(r1[LEFT], r2[LEFT]),
-        ret = {};
-    
-    ret[TOP] = t;
-    ret[RIGHT] = r;
-    ret[BOTTOM] = b;
-    ret[LEFT] = l;
-    return ret;
-};
+    getOffsets = function(r1, r2) {
+        var t = Math.max(r1[TOP], r2[TOP]),
+            r = Math.min(r1[RIGHT], r2[RIGHT]),
+            b = Math.min(r1[BOTTOM], r2[BOTTOM]),
+            l = Math.max(r1[LEFT], r2[LEFT]),
+            ret = {};
+        
+        ret[TOP] = t;
+        ret[RIGHT] = r;
+        ret[BOTTOM] = b;
+        ret[LEFT] = l;
+        return ret;
+    },
 
-var DOM = DOM || Y.DOM;
+    DOM = Y.DOM;
+
 Y.mix(DOM, {
     /**
      * Returns an Object literal containing the following about this element: (top, right, bottom, left)
@@ -42,8 +34,8 @@ Y.mix(DOM, {
         if (node && xy) {
             ret = DOM._getRegion(
                 xy[1], // top
-                xy[0] + node[OFFSET_WIDTH], // right
-                xy[1] + node[OFFSET_HEIGHT], // bottom
+                xy[0] + node.offsetWidth, // right
+                xy[1] + node.offsetHeight, // bottom
                 xy[0] // left
             );
         }
@@ -60,10 +52,11 @@ Y.mix(DOM, {
      @return {Object} Object literal containing the following intersection data: (top, right, bottom, left, area, yoff, xoff, inRegion)
      */
     intersect: function(node, node2, altRegion) {
-        var r = altRegion || DOM.region(node), region = {};
+        var r = altRegion || DOM.region(node), region = {},
+            n = node2,
+            off;
 
-        var n = node2;
-        if (n[TAG_NAME]) {
+        if (n.tagName) {
             region = DOM.region(n);
         } else if (Y.Lang.isObject(node2)) {
             region = node2;
@@ -71,7 +64,7 @@ Y.mix(DOM, {
             return false;
         }
         
-        var off = getOffsets(region, r);
+        off = getOffsets(region, r);
         return {
             top: off[TOP],
             right: off[RIGHT],
@@ -94,10 +87,11 @@ Y.mix(DOM, {
      */
     inRegion: function(node, node2, all, altRegion) {
         var region = {},
-            r = altRegion || DOM.region(node);
+            r = altRegion || DOM.region(node),
+            n = node2,
+            off;
 
-        var n = node2;
-        if (n[TAG_NAME]) {
+        if (n.tagName) {
             region = DOM.region(n);
         } else if (Y.Lang.isObject(node2)) {
             region = node2;
@@ -112,7 +106,7 @@ Y.mix(DOM, {
                 r[TOP]    >= region[TOP]    && 
                 r[BOTTOM] <= region[BOTTOM]  );
         } else {
-            var off = getOffsets(region, r);
+            off = getOffsets(region, r);
             if (off[BOTTOM] >= off[TOP] && off[RIGHT] >= off[LEFT]) {
                 return true;
             } else {
@@ -156,20 +150,20 @@ Y.mix(DOM, {
     viewportRegion: function(node) {
         node = node || Y.config.doc.documentElement;
         var ret = false,
-            scrollX, scrollY;
+            scrollX,
+            scrollY;
 
         if (node) {
             scrollX = DOM.docScrollX(node);
             scrollY = DOM.docScrollY(node);
 
-            ret = DOM._getRegion(
-                scrollY, // top
+            ret = DOM._getRegion(scrollY, // top
                 DOM.winWidth(node) + scrollX, // right
                 scrollY + DOM.winHeight(node), // bottom
-                scrollX // left
-            );
+                scrollX); // left
         }
 
         return ret;
     }
 });
+})(Y);

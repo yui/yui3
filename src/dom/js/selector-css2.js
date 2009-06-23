@@ -1,14 +1,12 @@
 /**
  * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.
- * @module selector
- * @title Selector Utility
- * @requires yahoo, dom
+ * @module dom
+ * @submodule selector-css2
+ * @for Selector
  */
 
 /**
  * Provides helper methods for collecting and filtering DOM elements.
- * @class Selector
- * @static
  */
 
 var PARENT_NODE = 'parentNode',
@@ -18,7 +16,6 @@ var PARENT_NODE = 'parentNode',
     PSEUDOS = 'pseudos',
     PREVIOUS = 'previous',
     PREVIOUS_SIBLING = 'previousSibling',
-    LENGTH = 'length',
 
     _childCache = [], // cache to cleanup expando node.children
 
@@ -27,11 +24,12 @@ var PARENT_NODE = 'parentNode',
     SelectorCSS2 = {
         SORT_RESULTS: true,
         _children: function(node) {
-            var ret = node.children;
+            var ret = node.children,
+                i, n;
 
             if (!ret && node[TAG_NAME]) { // only HTMLElements have children
                 ret = [];
-                for (var i = 0, n; n = node.childNodes[i++];) {
+                for (i = 0, n; n = node.childNodes[i++];) {
                     if (n.tagName) {
                         ret[ret.length] = n;
                     }
@@ -97,7 +95,7 @@ var PARENT_NODE = 'parentNode',
                     ret = Selector._query(selector, root, firstOnly);
                 }
 
-                Y.log('query: ' + selector + ' returning: ' + ret[LENGTH], 'info', 'Selector');
+                Y.log('query: ' + selector + ' returning: ' + ret.length, 'info', 'Selector');
                 Selector._cleanup();
                 return (firstOnly) ? (ret[0] || null) : ret;
             }
@@ -118,10 +116,11 @@ var PARENT_NODE = 'parentNode',
                 groups = selector.split(','), // TODO: handle comma in attribute/pseudo
                 nodes = [],
                 tokens,
-                token;
+                token,
+                i, len;
 
-            if (groups[LENGTH] > 1) {
-                for (var i = 0, len = groups[LENGTH]; i < len; ++i) {
+            if (groups.length > 1) {
+                for (i = 0, len = groups.length; i < len; ++i) {
                     ret = ret.concat(arguments.callee(groups[i],
                             root, firstOnly, true)); 
                 }
@@ -155,11 +154,11 @@ var PARENT_NODE = 'parentNode',
                     }
 
                     // TODO: no prefilter for off-dom id
-                    if (root && !nodes[LENGTH] && token.prefilter) {
+                    if (root && !nodes.length && token.prefilter) {
                         nodes = token.prefilter(root, token);
                     }
 
-                    if (nodes[LENGTH]) {
+                    if (nodes.length) {
                         if (firstOnly) {
                             Y.Array.some(nodes, Selector._testToken, token);
                         } else {
@@ -174,14 +173,15 @@ var PARENT_NODE = 'parentNode',
         },
 
         _testToken: function(node, index, nodes, token) {
-            var token = token || this,
-                tag = token.tag,
+            token = token || this;
+            var tag = token.tag,
                 previous = token[PREVIOUS],
                 result = token.result,
                 i = 0,
                 nextTest = previous && previous[COMBINATOR] ?
                         Selector.combinators[previous[COMBINATOR]] :
                         null,
+                test,
                 attr;
 
             if (//node[TAG_NAME] && // tagName limits to HTMLElements
@@ -348,7 +348,8 @@ var PARENT_NODE = 'parentNode',
                 tokens = [],    // array of tokens
                 found = false,  // whether or not any matches were found this pass
                 test,
-                match;          // the regex match
+                match,         // the regex match
+                i, parser;
 
             /*
                 Search for selector patterns, store, and strip them from the selector string
@@ -361,7 +362,7 @@ var PARENT_NODE = 'parentNode',
             outer:
             do {
                 found = false; // reset after full pass
-                for (var i = 0, parser; parser = Selector._parsers[i++];) {
+                for (i = 0, parser; parser = Selector._parsers[i++];) {
                     if ( (match = parser.re.exec(selector)) ) { // note assignment
                         test = parser.fn(token, match);
                         if (test) {
@@ -375,7 +376,7 @@ var PARENT_NODE = 'parentNode',
 
                             found = true;
                             selector = selector.replace(match[0], ''); // strip current match from selector
-                            if (!selector[LENGTH] || parser.name === COMBINATOR) {
+                            if (!selector.length || parser.name === COMBINATOR) {
                                 token.root = root;
                                 tokens.push(token);
                                 token = Selector._getToken(token);
@@ -391,28 +392,29 @@ var PARENT_NODE = 'parentNode',
             if (!found || selector.length) { // not fully parsed
                 Y.log('query: ' + query + ' contains unsupported token in: ' + selector, 'warn', 'Selector');
                 tokens = [];
-            } else if (tokens[LENGTH]) {
-                tokens[tokens[LENGTH] - 1].last = true;
+            } else if (tokens.length) {
+                tokens[tokens.length - 1].last = true;
             }
             return tokens;
         },
 
         _replaceShorthand: function(selector) {
             var shorthand = Selector.shorthand,
-                attrs = selector.match(Selector._re.attr); // pull attributes to avoid false pos on "." and "#"
+                attrs = selector.match(Selector._re.attr), // pull attributes to avoid false pos on "." and "#"
+                re, i, len;
 
             if (attrs) {
                 selector = selector.replace(Selector._re.attr, 'REPLACED_ATTRIBUTE');
             }
 
-            for (var re in shorthand) {
+            for (re in shorthand) {
                 if (shorthand.hasOwnProperty(re)) {
                     selector = selector.replace(Selector._getRegExp(re, 'gi'), shorthand[re]);
                 }
             }
 
             if (attrs) {
-                for (var i = 0, len = attrs[LENGTH]; i < len; ++i) {
+                for (i = 0, len = attrs.length; i < len; ++i) {
                     selector = selector.replace('REPLACED_ATTRIBUTE', attrs[i]);
                 }
             }

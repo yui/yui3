@@ -1,10 +1,4 @@
-/**
- * Add style management functionality to DOM.
- * @module dom
- * @submodule dom-style
- * @for DOM
- */
-
+(function(Y) {
 var TO_STRING = 'toString',
     PARSE_INT = parseInt,
     RE = RegExp;
@@ -73,4 +67,5 @@ Y.Color = {
         return val.toLowerCase();
     }
 };
+})(Y);
 

@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head><title>Test Page</title></head>
+<body class="yui-skin-sam">
+
+	<!-- Bootstrap Script //-->
+	<script type="text/javascript" src="../../../yui3/build/yui/yui-debug.js"></script>
+	<!-- Initialization process //-->
+	<script type="text/javascript">
+		YUI_config = {
+		    base:'../../../../yui3/build/',
+		    filter: 'debug'
+		};
+	</script>
+	<script type="text/javascript">	
+		YUI(YUI_config).use('dd', function (Y) {
+			
+			alert ('First block is ready');
+			
+		});
+	</script>
+	<script type="text/javascript">	
+		YUI(YUI_config).use('node', function (Y) {
+			
+		    alert ('Second block is ready...');
+			
+		});
+	</script>
+
+</body>
+</html>

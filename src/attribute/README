@@ -1,7 +1,8 @@
 3.0.0 beta 1
 
 * Removed Attribute.CLONE support in the interests of simplicity.
-  Was not being used. Can add support if real demand for it exists. 
+  Was not being used. Can re-evaluate support if real world demand 
+  for it exists. 
 
 * Changed "set" and "get" configuration properties for setter and 
   getter methods to "setter" and "getter" respectively.
@@ -13,23 +14,22 @@
   functionality into one method if performance optimization 
   is required.
 
-* "validator" is now invoked before "setter". Didn't make sense
-  to validate values which were already massaged by the setter.
+* "validator" is now invoked before "setter".
 
 * Renamed xxxAtt and xxxAtts methods to xxxAttr, xxxAttrs for
   consistency.
-  
-* After listeners are only notified if attribute value really
-  changed (using ===).
 
-* Extending classes can now overwrite ATTRS configuration propreties 
+* "after" listeners are only notified if attribute value really
+  changes (preVal !== newVal).
+
+* Extending classes can now overwrite ATTRS configuration properties 
   from super classes, including writeOnce and readOnly attributes.
-  
-  The ATTRS configurations are merged across the class heirarchy,
+
+  The ATTRS configurations are merged across the class hierarchy,
   before they are used to initialize the attributes.
 
 * addAttr now prevents re-adding attributes which are already 
-  configured inorder to maintain consistent state.
+  configured in order to maintain consistent state.
 
 * Event prefix wrapper functions (on, after etc.) removed - 
   Event.Target now accepts an event prefix configuration value
@@ -38,9 +38,9 @@
 
 * Attribute change events are no longer fired for initial set.
 
-* Split up State add/get/remove into add/addAll, get/getAll, remove/removeAll
-  to avoid having to create object literals for critical path [ add/get single
-  key values ].
+* Split up State add/get/remove into add/addAll, get/getAll, 
+  remove/removeAll to avoid having to create object literals for 
+  critical path [ add/get single key values ].
 
 * Attribute getter, setter, validator now also receive attribute name 
   as the 2nd arg (val, name).
@@ -48,21 +48,21 @@
 * If Attributes initialized through addAttrs have a user provided value 
   which is not valid, the initial attribute value will revert to the 
   default value in the attribute configuration, if it exists.
-  
-* reset() no longer resets readOnly or writeOnce attributes. Only publically
-  settable values are reset.
 
-* Added modifyAttr method, to allow component developer to modify configuration
-  of an attribute which has already been added. The set of attribute configuration
-  properties which can be modified after is has been added are limited to getter,
-  readOnly, writeOnce and broadcast.
+* reset() no longer resets readOnly or writeOnce attributes. Only 
+  publically settable values are reset.
 
-* Added support for lazy attribute configuration. Base uses this feature to 
-  lazily intialize all Attributes on the first call to get/set, for 
+* Added modifyAttr method, to allow component developer to modify 
+  configuration of an attribute which has already been added. The set of 
+  attribute configuration properties which can be modified after it 
+  has been added are limited to getter, readOnly, writeOnce and broadcast.
+
+* Added support for lazy attribute configuration. Base uses this feature 
+  to lazily intialize all Attributes on the first call to get/set, for 
   performance optimization. 
-  
-  lazyAdd:true/false can be used to over-ride this behavior for a particular
-  attribute. 
+
+  lazyAdd:true/false can be used to over-ride this behavior for a 
+  particular attribute. 
 
 3.0.0PR2
 

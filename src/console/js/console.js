@@ -1,7 +1,20 @@
 /**
- * A user interface for viewing log messages.
+ * Console creates a visualization for messages logged through calls to a YUI
+ * instance's <code>Y.log( message, category, source )</code> method.  The
+ * debug versions of YUI modules will include logging statements to offer some
+ * insight into the steps executed during that module's operation.  Including
+ * log statements in your code will cause those messages to also appear in the
+ * Console.  Use Console to aid in developing your page or application.
+ *
+ * Entry categories &quot;info&quot;, &quot;warn&quot;, and &quot;error&quot;
+ * are also referred to as the log level, and entries are filtered against the
+ * configured logLevel.
  *
  * @module console
+ * @class Console
+ * @extends Widget
+ * @param conf {Object} Configuration object (see Configuration attributes)
+ * @constructor
  */
 
 var getCN = Y.ClassNameManager.getClassName,
@@ -63,21 +76,6 @@ var getCN = Y.ClassNameManager.getClassName,
     merge      = Y.merge,
     substitute = Y.substitute;
     
-
-/**
- * Console creates a visualization for messages logged through calls to a YUI
- * instance's <code>Y.log( message, category, source )</code> method.  The
- * debug versions of YUI modules will include logging statements to offer some
- * insight into the steps executed during that module's operation.  Including
- * log statements in your code will cause those messages to also appear in the
- * Console.  Use Console to aid in developing your page or application.
- *
- * Entry categories are also referred to as the log level, and entries are
- * filtered against the configured logLevel.
- *
- * @class Console
- * @extends Widget
- */
 
 function Console() {
     Console.superclass.constructor.apply(this,arguments);
@@ -197,10 +195,12 @@ Y.mix(Console, {
      * these {placeholder}s:
      *
      * <ul>
+     *   <li>console_button_class - contributed by Console.CHROME_CLASSES</li>
+     *   <li>console_collapse_class - contributed by Console.CHROME_CLASSES</li>
      *   <li>console_hd_class - contributed by Console.CHROME_CLASSES</li>
      *   <li>console_title_class - contributed by Console.CHROME_CLASSES</li>
-     *   <li>str_title - pulled from attribute strings.title</li>
      *   <li>str_collapse - pulled from attribute strings.collapse</li>
+     *   <li>str_title - pulled from attribute strings.title</li>
      * </ul>
      *
      * @property Console.HEADER_TEMPLATE
@@ -210,11 +210,9 @@ Y.mix(Console, {
     HEADER_TEMPLATE :
         '<div class="{console_hd_class}">'+
             '<h4 class="{console_title_class}">{str_title}</h4>'+
-            '<div class="{console_controls_class}">'+
-                '<button type="button" class="'+
-                    '{console_button_class} {console_collapse_class}">{str_collapse}'+
-                '</button>'+
-            '</div>'+
+            '<button type="button" class="'+
+                '{console_button_class} {console_collapse_class}">{str_collapse}'+
+            '</button>'+
         '</div>',
 
     /**
@@ -247,9 +245,9 @@ Y.mix(Console, {
     FOOTER_TEMPLATE :
         '<div class="{console_ft_class}">'+
             '<div class="{console_controls_class}">'+
-                '<input type="checkbox" class="{console_checkbox_class} '+
-                        '{console_pause_class}" value="1" id="{id_guid}"> '+
                 '<label for="{id_guid}" class="{console_pause_label_class}">'+
+                    '<input type="checkbox" class="{console_checkbox_class} '+
+                        '{console_pause_class}" value="1" id="{id_guid}"> '+
                     '{str_pause}</label>' +
                 '<button type="button" class="'+
                     '{console_button_class} {console_clear_class}">{str_clear}'+
@@ -280,21 +278,19 @@ Y.mix(Console, {
      * @static
      */
     ENTRY_TEMPLATE :
-        '<pre class="{entry_class} {cat_class} {src_class}">'+
-            '<div class="{entry_meta_class}">'+
-                '<p>'+
-                    '<span class="{entry_cat_class}">'+
-                        '{label}</span>'+
-                    '<span class="{entry_time_class}">'+
-                        ' {totalTime}ms (+{elapsedTime}) {localTime}:'+
-                    '</span>'+
-                '</p>'+
-                '<p class="{entry_src_class}">'+
+        '<div class="{entry_class} {cat_class} {src_class}">'+
+            '<p class="{entry_meta_class}">'+
+                '<span class="{entry_src_class}">'+
                     '{sourceAndDetail}'+
-                '</p>'+
-            '</div>'+
-            '<p class="{entry_content_class}">{message}</p>'+
-        '</pre>',
+                '</span>'+
+                '<span class="{entry_cat_class}">'+
+                    '{label}</span>'+
+                '<span class="{entry_time_class}">'+
+                    ' {totalTime}ms (+{elapsedTime}) {localTime}'+
+                '</span>'+
+            '</p>'+
+            '<pre class="{entry_content_class}">{message}</pre>'+
+        '</div>',
 
     /**
      * Static property used to define the default attribute configuration of
@@ -376,7 +372,8 @@ Y.mix(Console, {
 
         /**
          * If a category is not specified in the Y.log(..) statement, this
-         * category will be used. Category is also called &quot;log level&quot;.
+         * category will be used. Categories &quot;info&quot;,
+         * &quot;warn&quot;, and &quot;error&quot; are also called log level.
          *
          * @attribute defaultCategory
          * @type String
@@ -419,11 +416,11 @@ Y.mix(Console, {
          * that configuration is not set.
          *
          * Possible values are &quot;info&quot;, &quot;warn&quot;,
-         * &quot;error&quot; (case insensitive), or the corresponding statics
+         * &quot;error&quot; (case insensitive), or their corresponding statics
          * Console.LOG_LEVEL_INFO and so on.
          *
          * @attribute logLevel
-         * @type String|Number
+         * @type String
          * @default Y.config.logLevel or Console.LOG_LEVEL_INFO
          */
         logLevel : {
@@ -434,8 +431,8 @@ Y.mix(Console, {
         },
 
         /**
-         * Millisecond timeout to maintain before emptying buffer of Console
-         * entries to the UI.
+         * Millisecond timeout between iterations of the print loop, moving
+         * entries from the buffer to the UI.
          *
          * @attribute printTimeout
          * @type Number
@@ -447,13 +444,12 @@ Y.mix(Console, {
         },
 
         /**
-         * Maximum number of entries printed in each printBuffer iteration.
-         * This is used to prevent excessive logging bogging down runtime
-         * performance.
+         * Maximum number of entries printed in each iteration of the print
+         * loop. This is used to prevent excessive logging locking the page UI.
          *
          * @attribute printLimit
          * @type Number
-         * @default 00
+         * @default 50
          */
         printLimit : {
             value : 50,
@@ -539,7 +535,7 @@ Y.mix(Console, {
         /**
         * String with units, or number, representing the height of the Console,
         * inclusive of header and footer. If a number is provided, the default
-        * unit, defined by the Widgets DEF_UNIT, property is used.
+        * unit, defined by Widget's DEF_UNIT, property is used.
         *
         * @attribute height
         * @default "300px"
@@ -551,7 +547,7 @@ Y.mix(Console, {
 
         /**
         * String with units, or number, representing the width of the Console.
-        * If a number is provided, the default unit, defined by the Widgets
+        * If a number is provided, the default unit, defined by Widget's
         * DEF_UNIT, property is used.
         *
         * @attribute width
@@ -578,7 +574,7 @@ Y.extend(Console,Y.Widget,{
     _evtCat : null,
 
     /**
-     * Reference to the Node instance containing the head contents.
+     * Reference to the Node instance containing the header contents.
      *
      * @property _head
      * @type Node
@@ -600,7 +596,7 @@ Y.extend(Console,Y.Widget,{
     /**
      * Reference to the Node instance containing the footer contents.
      *
-     * @property _head
+     * @property _foot
      * @type Node
      * @default null
      * @protected
@@ -608,8 +604,8 @@ Y.extend(Console,Y.Widget,{
     _foot    : null,
 
     /**
-     * Object API returned from <code>Y.later</code>. Holds the timer id
-     * returned by <code>setInterval</code> for scheduling of buffered messages.
+     * Holds the object API returned from <code>Y.later</code> for the print
+     * loop interval.
      *
      * @property _printLoop
      * @type Object
@@ -624,6 +620,7 @@ Y.extend(Console,Y.Widget,{
      * @property buffer
      * @type Array
      * @default null
+     * @protected
      */
     buffer   : null,
 
@@ -631,7 +628,7 @@ Y.extend(Console,Y.Widget,{
      * Wrapper for <code>Y.log</code>.
      *
      * @method log
-     * @param {Any*} * (all arguments passed through to <code>Y.log</code>)
+     * @param arg* {MIXED} (all arguments passed through to <code>Y.log</code>)
      */
     log : function () {
         return Y.log.apply(Y,arguments);
@@ -667,54 +664,67 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Collapses the UI.
+     * Collapses the body and footer.
      *
      * @method collapse
-     * @chainable
      */
     collapse : function () {
         this.set(COLLAPSED, true);
     },
 
     /**
-     * Expands the UI if collapsed.
+     * Expands the body and footer if collapsed.
      *
-     * @method collapse
-     * @chainable
+     * @method expand
      */
     expand : function () {
         this.set(COLLAPSED, false);
     },
 
     /**
-     * Outputs all buffered messages to the console UI.
+     * Outputs buffered messages to the console UI.  This is typically called
+     * from a scheduled interval until the buffer is empty (referred to as the
+     * print loop).  The number of buffered messages output to the Console is
+     * limited to the number provided as an argument.  If no limit is passed,
+     * all buffered messages are rendered.
      * 
      * @method printBuffer
      * @param limit {Number} (optional) max number of buffered entries to write
      * @chainable
      */
     printBuffer: function (limit) {
-        var messages = this.buffer,
-            debug = Y.config.debug,
+        var messages    = this.buffer,
+            debug       = Y.config.debug,
+            entries     = [],
+            consoleLimit= this.get('consoleLimit'),
+            newestOnTop = this.get('newestOnTop'),
+            anchor      = newestOnTop ? this._body.get('firstChild') : null,
             i;
 
-        limit = Math.min(messages.length, (limit || messages.length));
+        if (messages.length > consoleLimit) {
+            messages.splice(0, messages.length - consoleLimit);
+        }
 
+        limit = Math.min(messages.length, (limit || messages.length));
+        
         // turn off logging system
         Y.config.debug = false;
 
         if (!this.get(PAUSED) && this.get('rendered')) {
 
-            // TODO: use doc frag
-            this._body.setStyle('diplay','none');
             for (i = 0; i < limit && messages.length; ++i) {
-                this.printLogEntry(messages.shift());
+                entries[i] = this._createEntryHTML(messages.shift());
             }
-            this._body.setStyle('diplay','');
 
             if (!messages.length) {
                 this._cancelPrintLoop();
             }
+
+            if (newestOnTop) {
+                entries.reverse();
+            }
+
+            this._body.insertBefore(create(entries.join('')), anchor);
 
             if (this.get('scrollIntoView')) {
                 this.scrollToLatest();
@@ -730,24 +740,6 @@ Y.extend(Console,Y.Widget,{
         return this;
     },
 
-    /**
-     * Prints the provided message to the console UI.
-     *
-     * Inserts the Node into the console body at the top or bottom depending on
-     * the configuration value of newestOnTop.
-     *
-     * @method printLogEntry
-     * @param m {Object} Normalized message object
-     * @chainable
-     */
-    printLogEntry : function (m) {
-        var sib = this.get('newestOnTop') ? this._body.get('firstChild') : null;
-
-        this._body.insertBefore(this._createEntry(m), sib);
-
-        return this;
-    },
-
     
     /**
      * Constructor code.  Set up the buffer and entry template, publish
@@ -759,7 +751,7 @@ Y.extend(Console,Y.Widget,{
     initializer : function () {
         this._evtCat = Y.stamp(this) + '|';
 
-        this.buffer    = [];
+        this.buffer = [];
 
         if (!this.get(ENTRY_TEMPLATE)) {
             this.set(ENTRY_TEMPLATE,Console.ENTRY_TEMPLATE);
@@ -769,8 +761,8 @@ Y.extend(Console,Y.Widget,{
             this.get('logEvent'),Y.bind("_onLogEvent",this));
 
         /**
-         * Triggers the processing of an incoming message via the default logic
-         * in _defEntryFn.
+         * Transfers a received message to the print loop buffer.  Default
+         * behavior defined in _defEntryFn.
          *
          * @event entry
          * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
@@ -794,6 +786,12 @@ Y.extend(Console,Y.Widget,{
         this.after('rendered', this._schedulePrint);
     },
 
+    /**
+     * Tears down the instance, flushing event subscriptions and purging the UI.
+     *
+     * @method destructor
+     * @protected
+     */
     destructor : function () {
         var bb = this.get('boundingBox');
 
@@ -948,28 +946,28 @@ Y.extend(Console,Y.Widget,{
      *     <li>totalTime - ms since Console was instantiated or reset</li>
      * </ul>
      *
-     * @mehod _normalizeMessage
-     * @param msg {String} the log message
-     * @param cat {String} OPTIONAL the category or logLevel of the message
-     * @param src {String} OPTIONAL the source widget or util of the message
+     * @method _normalizeMessage
+     * @param e {Event} custom event containing the log message
      * @return Object the message object
      * @protected
      */
     _normalizeMessage : function (e) {
 
-        var msg = e.msg, cat = e.cat, src = e.src,
+        var msg = e.msg,
+            cat = e.cat,
+            src = e.src,
 
-        m = {
-            time            : new Date(),
-            message         : msg,
-            category        : cat || this.get('defaultCategory'),
-            sourceAndDetail : src || this.get('defaultSource'),
-            source          : null,
-            label           : null,
-            localTime       : null,
-            elapsedTime     : null,
-            totalTime       : null
-        };
+            m = {
+                time            : new Date(),
+                message         : msg,
+                category        : cat || this.get('defaultCategory'),
+                sourceAndDetail : src || this.get('defaultSource'),
+                source          : null,
+                label           : null,
+                localTime       : null,
+                elapsedTime     : null,
+                totalTime       : null
+            };
 
         // Extract m.source "Foo" from m.sourceAndDetail "Foo bar baz"
         m.source          = RE_INLINE_SOURCE.test(m.sourceAndDetail) ?
@@ -986,13 +984,13 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Sets a timeout for buffered messages to be output to the console.
+     * Sets an interval for buffered messages to be output to the console.
      *
      * @method _schedulePrint
      * @protected
      */
     _schedulePrint : function () {
-        if (!this.get(PAUSED) && !this._printLoop && this.get('rendered')) {
+        if (!this._printLoop && !this.get(PAUSED) && this.get('rendered')) {
             this._printLoop = Y.later(
                                 this.get('printTimeout'),
                                 this, this.printBuffer,
@@ -1001,14 +999,14 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Creates an entry node from the message meta provided.
+     * Translates message meta into the markup for a console entry.
      *
-     * @method _createEntry
+     * @method _createEntryHTML
      * @param m {Object} object literal containing normalized message metadata
-     * @return Node
+     * @return String
      * @protected
      */
-    _createEntry : function (m) {
+    _createEntryHTML : function (m) {
         m = merge(
                 this._htmlEscapeMessage(m),
                 Console.ENTRY_CLASSES,
@@ -1017,7 +1015,10 @@ Y.extend(Console,Y.Widget,{
                     src_class : this.getClassName(ENTRY,m.source)
                 });
 
-        return create(substitute(this.get('entryTemplate'),m));
+        return this.get('entryTemplate').replace(/\{(\w+)\}/g,
+            function (_,token) {
+                return token in m ? m[token] : '';
+            });
     },
 
     /**
@@ -1155,9 +1156,9 @@ Y.extend(Console,Y.Widget,{
 
     /**
      * Event handler for clicking on the Collapse/Expand button. Sets the
-     * &quot;collapsed&quot; attribute accordingly
+     * &quot;collapsed&quot; attribute accordingly.
      *
-     * @method _onClearClick
+     * @method _onCollapseClick
      * @param e {Event} DOM event facade for the click event
      * @protected
      */
@@ -1168,10 +1169,8 @@ Y.extend(Console,Y.Widget,{
 
     /**
      * Setter method for logLevel attribute.  Acceptable values are
-     * &quot;error&quot, &quot;warn&quot, &quot;info&quot (case insensitive),
-     * and Y.Console.LOG_LEVEL_ERROR, Y.Console.LOG_LEVEL_WARN, 
-     * Y.Console.LOG_LEVEL_INFO.  Any other value is treated as
-     * Y.Console.LOG_LEVEL_INFO.
+     * &quot;error&quot, &quot;warn&quot, and &quot;info&quot (case
+     * insensitive).  Other values are treated as &quot;info&quot;.
      *
      * @method _setLogLevel
      * @param v {String} the desired log level
@@ -1244,8 +1243,7 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Updates the UI and schedules or cancels the scheduled buffer printing
-     * operation.
+     * Updates the UI and schedules or cancels the print loop.
      *
      * @method _afterPausedChange
      * @param e {Event} Custom event for the attribute change
@@ -1375,7 +1373,7 @@ Y.extend(Console,Y.Widget,{
             Y.config.debug = false;
 
             this.fire(ENTRY, {
-                message : this._normalizeMessage.call(this, e)
+                message : this._normalizeMessage(e)
             });
 
             Y.config.debug = debug;

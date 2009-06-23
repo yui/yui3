@@ -1,15 +1,18 @@
-(function() {
-/**
- * YUI core
+
+/*
+ * Provides information about the environment hosting YUI
  * @module yui
+ * @submodule Array
  */
 
+(function() {
 
 var L = Y.Lang, Native = Array.prototype,
 
 /**
- * Adds the following array utilities to the YUI instance
- * @class YUI~array
+ * Adds the following array utilities to the YUI instance.  Additional
+ * array helpers can be found in the collection component.
+ * @class Array
  */
 
 /** 
@@ -24,7 +27,7 @@ var L = Y.Lang, Native = Array.prototype,
  *   such as forms and selects.  Passing true as the third param will
  *   force a conversion.
  *
- * @method Array
+ * @method ()
  * @static
  *   @param o the item to arrayify
  *   @param i {int} if an array or array-like, this is the start index
@@ -32,7 +35,7 @@ var L = Y.Lang, Native = Array.prototype,
  *   can be used to avoid multiple array.test calls.
  *   @return {Array} the resulting array
  */
-A = function(o, startIdx, al) {
+YArray = function(o, startIdx, al) {
     var t = (al) ? 2 : Y.Array.test(o), i, l, a;
 
     // switch (t) {
@@ -61,14 +64,14 @@ A = function(o, startIdx, al) {
 
 };
 
-Y.Array = A;
+Y.Array = YArray;
 
 /** 
  * Evaluates the input to determine if it is an array, array-like, or 
  * something else.  This is used to handle the arguments collection 
  * available within functions, and HTMLElement collections
  *
- * @method Array.test
+ * @method test
  * @static
  *
  * @todo current implementation (intenionally) will not implicitly 
@@ -79,7 +82,7 @@ Y.Array = A;
  * 1: A real array. 
  * 2: array-like collection.
  */
-A.test = function(o) {
+YArray.test = function(o) {
     var r = 0;
     if (L.isObject(o)) {
         if (L.isArray(o)) {
@@ -100,14 +103,14 @@ A.test = function(o) {
 
 /**
  * Executes the supplied function on each item in the array.
- * @method Array.each
+ * @method each
  * @param a {Array} the array to iterate
  * @param f {Function} the function to execute on each item
  * @param o Optional context object
  * @static
  * @return {YUI} the YUI instance
  */
-A.each = (Native.forEach) ?
+YArray.each = (Native.forEach) ?
     function (a, f, o) { 
         Native.forEach.call(a || [], f, o || Y);
         return Y;
@@ -124,13 +127,13 @@ A.each = (Native.forEach) ?
  * Returns an object using the first array as keys, and
  * the second as values.  If the second array is not
  * provided the value is set to true for each.
- * @method Array.hash
+ * @method hash
  * @static
  * @param k {Array} keyset
  * @param v {Array} optional valueset
  * @return {object} the hash
  */
-A.hash = function(k, v) {
+YArray.hash = function(k, v) {
     var o = {}, l = k.length, vl = v && v.length, i;
     for (i=0; i<l; i=i+1) {
         o[k[i]] = (vl && vl > i) ? v[i] : true;
@@ -143,13 +146,13 @@ A.hash = function(k, v) {
  * Returns the index of the first item in the array
  * that contains the specified value, -1 if the
  * value isn't found.
- * @method Array.indexOf
+ * @method indexOf
  * @static
  * @param a {Array} the array to search
  * @param val the value to search for
  * @return {int} the index of the item that contains the value or -1
  */
-A.indexOf = (Native.indexOf) ?
+YArray.indexOf = (Native.indexOf) ?
     function(a, val) {
         return a.indexOf(val);
     } :
@@ -168,7 +171,7 @@ A.indexOf = (Native.indexOf) ?
  * Y.ArrayAssert.itemsAreEqual([1, 2, 3], [3, 1, 2].sort(Y.Array.numericSort));
  * @method numericSort
  */
-A.numericSort = function(a, b) { 
+YArray.numericSort = function(a, b) { 
     return (a - b); 
 };
 
@@ -177,7 +180,7 @@ A.numericSort = function(a, b) {
  * Returning true from the processing function will stop the 
  * processing of the remaining
  * items.
- * @method Array.some
+ * @method some
  * @param a {Array} the array to iterate
  * @param f {Function} the function to execute on each item
  * @param o Optional context object
@@ -185,7 +188,7 @@ A.numericSort = function(a, b) {
  * @return {boolean} true if the function returns true on
  * any of the items in the array
  */
- A.some = (Native.some) ?
+ YArray.some = (Native.some) ?
     function (a, f, o) { 
         return Native.some.call(a, f, o);
     } :

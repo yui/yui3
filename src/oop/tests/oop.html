@@ -50,7 +50,7 @@
                     this.on('testStringFn', Y.bind('base', this));
                 };
 
-                Y.extend(Base, Y.Event.Target, {
+                Y.extend(Base, Y.EventTarget, {
                     base: function() {
                         Y.log('base function');
                         firedbase = true;

@@ -1,10 +1,9 @@
 YUI.add('console-filters', function(Y) {
 
 /**
- * Adds the ability to filter log entries on their category/logLevel or their
- * source (global, event, attribute, etc).
- * Checkboxes are added to the Console footer to control the visibility of each
- * category and source.  
+ * <p>Provides Plugin.ConsoleFilters plugin class.</p>
+ *
+ * <p>This plugin adds the ability to control which Console entries display by filtering on category and source. Two groups of checkboxes are added to the Console footer, one for categories and the other for sources.  Only those messages that match a checked category or source are displayed.</p>
  *
  * @module console-filters
  * @namespace Plugin
@@ -24,16 +23,17 @@ var getCN = Y.ClassNameManager.getClassName,
     HOST     = 'host',
     PARENT_NODE = 'parentNode',
     CHECKED  = 'checked',
+    DEF_VISIBILITY = 'defaultVisibility',
 
     DOT = '.',
-    DISPLAY = 'display',
     EMPTY   = '',
-    NONE    = 'none',
 
     C_BODY       = DOT + Y.Console.CHROME_CLASSES.console_bd_class,
     C_FOOT       = DOT + Y.Console.CHROME_CLASSES.console_ft_class,
 
-    SEL_CHECK    = 'input[type=checkbox].';
+    SEL_CHECK    = 'input[type=checkbox].',
+    
+    isString = Y.Lang.isString;
 
 function ConsoleFilters() {
     ConsoleFilters.superclass.constructor.apply(this,arguments);
@@ -45,7 +45,6 @@ Y.mix(ConsoleFilters,{
      *
      * @property ConsoleFilters.NAME
      * @type String
-     * @readOnly
      * @static
      * @default 'consoleFilters'
      */
@@ -56,7 +55,6 @@ Y.mix(ConsoleFilters,{
      *
      * @property ConsoleFilters.NS
      * @type String
-     * @readOnly
      * @static
      * @default 'filter'
      */
@@ -70,7 +68,7 @@ Y.mix(ConsoleFilters,{
      * @static
      */
     CATEGORIES_TEMPLATE :
-        '<div class="{controls} {categories}"></div>',
+        '<div class="{categories}"></div>',
 
     /**
      * Markup template used to create the container for the source filters.
@@ -80,20 +78,24 @@ Y.mix(ConsoleFilters,{
      * @static
      */
     SOURCES_TEMPLATE :
-        '<div class="{controls} {sources}"></div>',
+        '<div class="{sources}"></div>',
 
     /**
-     * Markup template used to create the category and source filters.
+     * Markup template used to create the category and source filter checkboxes.
      *
      * @property ConsoleFilters.FILTER_TEMPLATE
      * @type String
      * @static
      */
     FILTER_TEMPLATE :
-        '<wbr><label class="{filter_label}">'+
+        // IE8 and FF3 don't permit breaking _between_ nowrap elements.  IE8
+        // doesn't understand (non spec) wbr tag, nor does it create text nodes
+        // for spaces in innerHTML strings.  The thin-space entity suffices to
+        // create a breakable point.
+        '<label class="{filter_label}">'+
             '<input type="checkbox" value="{filter_name}" '+
                 'class="{filter} {filter_class}"> {filter_name}'+
-        '</label>',
+        '</label>&#8201;',
 
     /** 
      * Classnames used by the templates when creating nodes.
@@ -104,7 +106,6 @@ Y.mix(ConsoleFilters,{
      * @protected
      */
     CHROME_CLASSES : {
-        controls     : Y.Console.CHROME_CLASSES.console_controls_class,
         categories   : getCN(CONSOLE,FILTERS,'categories'),
         sources      : getCN(CONSOLE,FILTERS,'sources'),
         category     : getCN(CONSOLE,FILTER,CATEGORY),
@@ -205,9 +206,11 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
     _sources : null,
 
     /**
-     * Initialize this plugin.
+     * Initialize entries collection and attach listeners to host events and
+     * methods.
      *
      * @method initializer
+     * @protected
      */
     initializer : function () {
         this._entries = [];
@@ -231,6 +234,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * Removes the plugin UI and unwires events.
      *
      * @method destructor
+     * @protected
      */
     destructor : function () {
         //TODO: grab last {consoleLimit} entries and update the console with
@@ -249,6 +253,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * Adds the category and source filter sections to the Console footer.
      *
      * @method renderUI
+     * @protected
      */
     renderUI : function () {
         var foot = this.get(HOST).get('contentBox').query(C_FOOT),
@@ -274,6 +279,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * maintain the UI state.
      *
      * @method bindUI
+     * @protected
      */
     bindUI : function () {
         this._categories.on('click', Y.bind(this._onCategoryCheckboxClick, this));
@@ -321,13 +327,13 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
             visible;
 
         if (cat_filter === undefined) {
-            visible = this.get('defaultVisibility');
+            visible = this.get(DEF_VISIBILITY);
             this.set(cat, visible);
             cat_filter = visible;
         }
 
         if (src_filter === undefined) {
-            visible = this.get('defaultVisibility');
+            visible = this.get(DEF_VISIBILITY);
             this.set(src, visible);
             src_filter = visible;
         }
@@ -369,7 +375,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
         }
 
         if (cat && !e.fromUI) {
-            this._uiSetCheckbox(CATEGORY, cat, after);
+            this._uiSetCheckbox(CATEGORY, cat, after[cat]);
         }
     },
 
@@ -395,7 +401,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
         }
 
         if (src && !e.fromUI) {
-            this._uiSetCheckbox(SOURCE, src, after);
+            this._uiSetCheckbox(SOURCE, src, after[src]);
         }
     },
 
@@ -433,42 +439,31 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @method refreshConsole
      */
     refreshConsole : function () {
-        var debug = Y.config.debug,
-            entries = this._entries,
-            print   = [],
-            p_i     = 0,
-            host, body, limit, cats, srcs, i, e;
-
-        Y.config.debug = false;
-
-        host  = this.get(HOST);
-        body  = host.get('contentBox').query(C_BODY);
-        limit = host.get('consoleLimit');
-        cats  = this.get(CATEGORY);
-        srcs  = this.get(SOURCE);
+        var entries   = this._entries,
+            host      = this.get(HOST),
+            body      = host.get('contentBox').query(C_BODY),
+            remaining = host.get('consoleLimit'),
+            cats      = this.get(CATEGORY),
+            srcs      = this.get(SOURCE),
+            buffer    = [],
+            i,e;
 
         if (body) {
-            // Capture from bottom up.  Entry order reversed.
-            for (i = entries.length - 1; i >= 0 && p_i < limit; --i) {
+            host._cancelPrintLoop();
+
+            // Evaluate all entries from latest to oldest
+            for (i = entries.length - 1; i >= 0 && remaining >= 0; --i) {
                 e = entries[i];
                 if (cats[e.category] && srcs[e.source]) {
-                    print[p_i++] = e;
+                    buffer.unshift(e);
+                    --remaining;
                 }
             }
 
-            body.setStyle(DISPLAY,NONE);
-
             body.set('innerHTML',EMPTY);
-
-            // Print in reverse order from reverse ordered array (top down)
-            for (i = print.length - 1; i >= 0; --i) {
-                host.printLogEntry(print[i]);
-            }
-
-            body.setStyle(DISPLAY,EMPTY);
+            host.buffer = buffer;
+            host.printBuffer();
         }
-
-        Y.config.debug = debug;
     },
 
     /**
@@ -507,8 +502,9 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
     /**
      * Passes checkbox clicks on to the category attribute.
      *
-     * @metho _onCategoryCheckboxClick
+     * @method _onCategoryCheckboxClick
      * @param e {Event} the DOM event
+     * @protected
      */
     _onCategoryCheckboxClick : function (e) {
         var t = e.target, cat;
@@ -524,8 +520,9 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
     /**
      * Passes checkbox clicks on to the source attribute.
      *
-     * @metho _onSourceCheckboxClick
+     * @method _onSourceCheckboxClick
      * @param e {Event} the DOM event
+     * @protected
      */
     _onSourceCheckboxClick : function (e) {
         var t = e.target, src;
@@ -547,7 +544,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @param cat* {String} 1..n categories to filter out of the UI
      */
     hideCategory : function (cat, multiple) {
-        if (multiple) {
+        if (isString(multiple)) {
             Y.Array.each(arguments, arguments.callee, this);
         } else {
             this.set(CATEGORY_DOT + cat, false);
@@ -563,7 +560,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @param cat* {String} 1..n categories to allow to display in the UI
      */
     showCategory : function (cat, multiple) {
-        if (multiple) {
+        if (isString(multiple)) {
             Y.Array.each(arguments, arguments.callee, this);
         } else {
             this.set(CATEGORY_DOT + cat, true);
@@ -579,26 +576,26 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @param src* {String} 1..n sources to filter out of the UI
      */
     hideSource : function (src, multiple) {
-        if (multiple) {
+        if (isString(multiple)) {
             Y.Array.each(arguments, arguments.callee, this);
         } else {
-            this.set(CATEGORY_DOT + src, false);
+            this.set(SOURCE_DOT + src, false);
         }
     },
 
     /**
      * Shows any number of sources in the UI.  Convenience method for
-     * myConsole.filter.set('category.foo', true); set('category.bar', true);
+     * myConsole.filter.set('source.foo', true); set('source.bar', true);
      * and so on.
      *
      * @method showSource
-     * @param cat* {String} 1..n sources to allow to display in the UI
+     * @param src* {String} 1..n sources to allow to display in the UI
      */
     showSource : function (src, multiple) {
-        if (multiple) {
+        if (isString(multiple)) {
             Y.Array.each(arguments, arguments.callee, this);
         } else {
-            this.set(CATEGORY_DOT + src, true);
+            this.set(SOURCE_DOT + src, true);
         }
     },
 
@@ -610,6 +607,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @method _createCheckbox
      * @param container {Node} the parentNode of the new checkbox and label
      * @param name {String} the identifier of the filter
+     * @protected
      */
     _createCheckbox : function (container, name) {
         var info = Y.merge(ConsoleFilters.CHROME_CLASSES, {
@@ -629,7 +627,8 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @method _validateCategory
      * @param cat {String} the new category:visibility map
      * @param v {String} the subattribute path updated
-     * return Boolean
+     * @return Boolean
+     * @protected
      */
     _validateCategory : function (cat, v) {
         return Y.Lang.isObject(v,true) && cat.split(/\./).length < 3;
@@ -642,7 +641,8 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @method _validateSource
      * @param cat {String} the new source:visibility map
      * @param v {String} the subattribute path updated
-     * return Boolean
+     * @return Boolean
+     * @protected
      */
     _validateSource : function (src, v) {
         return Y.Lang.isObject(v,true) && src.split(/\./).length < 3;
@@ -653,4 +653,4 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
 Y.namespace('Plugin').ConsoleFilters = ConsoleFilters;
 
 
-}, '@VERSION@' ,{requires:['substitute','node','plugin']});
+}, '@VERSION@' ,{requires:['console','plugin']});

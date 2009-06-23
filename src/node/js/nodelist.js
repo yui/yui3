@@ -1,20 +1,17 @@
-    /**
-     * The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
-     * @module node
-     * @submodule node-list
-     */    
+/**
+ * The NodeList module provides support for managing collections of Nodes.
+ * @module node
+ * @submodule nodelist
+ */    
 
-    /**
-     * The NodeList class provides a wrapper for manipulating DOM NodeLists.
-     * NodeList properties can be accessed via the set/get methods.
-     * Use Y.get() to retrieve NodeList instances.
-     *
-     * <strong>NOTE:</strong> NodeList properties are accessed using
-     * the <code>set</code> and <code>get</code> methods.
-     *
-     * @class NodeList
-     * @constructor
-     */
+/**
+ * The NodeList class provides a wrapper for manipulating DOM NodeLists.
+ * NodeList properties can be accessed via the set/get methods.
+ * Use Y.all() to retrieve NodeList instances.
+ *
+ * @class NodeList
+ * @constructor
+ */
 
 Y.Array._diff = function(a, b) {
     var removed = [],
@@ -44,36 +41,30 @@ Y.Array.diff = function(a, b) {
     }; 
 };
 
-// "globals"
-var g_nodelists = {},
-    g_slice = Array.prototype.slice,
+var NodeList = function(config) {
+    var doc = config.doc || Y.config.doc,
+        nodes = config.nodes || [];
 
-    UID = '_yuid',
+    if (typeof nodes === 'string') {
+        this._query = nodes;
+        nodes = Y.Selector.query(nodes, doc);
+    }
 
-    NodeList = function(config) {
-        var doc = config.doc || Y.config.doc,
-            nodes = config.nodes || [];
+    Y.stamp(this);
+    NodeList._instances[this[UID]] = this;
+    g_nodelists[this[UID]] = nodes;
 
-        if (typeof nodes === 'string') {
-            this._query = nodes;
-            nodes = Y.Selector.query(nodes, doc);
-        }
-
-        Y.stamp(this);
-        NodeList._instances[this[UID]] = this;
-        g_nodelists[this[UID]] = nodes;
-
-        if (config.restricted) {
-            g_restrict = this[UID];
-        }
-    };
+    if (config.restricted) {
+        g_restrict = this[UID];
+    }
+};
 // end "globals"
 
 NodeList.NAME = 'NodeList';
 
 /**
  * Retrieves the DOM nodes bound to a NodeList instance
- * @method getDOMNodes
+ * @method NodeList.getDOMNodes
  * @static
  *
  * @param {Y.NodeList} node The NodeList instance
@@ -101,8 +92,9 @@ NodeList.addMethod = function(name, fn, context) {
             var ret = [],
                 args = arguments;
 
-            NodeList.each(this, function(node) {
-                var instance = Y.Node._instances[node[UID]],
+            Y.Array.each(g_nodelists[this[UID]], function(node) {
+                var UID = '_yuid',
+                    instance = Y.Node._instances[node[UID]],
                     ctx,
                     result;
 
@@ -176,7 +168,7 @@ Y.mix(NodeList.prototype, {
     },
 
     batch: function(fn, context) {
-        var nodelist = this;
+        var nodelist = this,
             tmp = NodeList._getTempNode();
 
         Y.Array.each(g_nodelists[this[UID]], function(node, index) {
@@ -228,7 +220,39 @@ Y.mix(NodeList.prototype, {
      * @see Selector
      */
     filter: function(selector) {
-        return Node.scrubVal(Y.Selector.filter(g_nodelists[this[UID]], selector), this);
+        return Y.all(Y.Selector.filter(g_nodelists[this[UID]], selector));
+    },
+
+    modulus: function(n, r) {
+        r = r || 0;
+        var nodes = [];
+        NodeList.each(this, function(node, i) {
+            if (i % n === r) {
+                nodes.push(node);
+            }
+        });
+
+        return Y.all(nodes);
+    },
+
+    /**
+     * Creates a new NodeList containing all nodes at odd indices
+     * (zero-based index).
+     * @method odd
+     * @return {NodeList} NodeList containing the updated collection 
+     */
+    odd: function() {
+        return this.modulus(2, 1);
+    },
+
+    /**
+     * Creates a new NodeList containing all nodes at even indices
+     * (zero-based index), including zero. 
+     * @method even
+     * @return {NodeList} NodeList containing the updated collection 
+     */
+    even: function() {
+        return this.modulus(2);
     },
 
     destructor: function() {
@@ -256,6 +280,42 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
+     * Applies an event listens to each Node bound to the NodeList. 
+     * @method on
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance. 
+     * @return {Object} Returns an event handle that can later be use to detach(). 
+     * @see Event.on
+     */
+    on: function(type, fn, context) {
+        context = context || this;
+        this.batch(function(node) {
+            node.on.call(node, type, fn, context);
+        });
+    },
+
+    /**
+     * Applies an event listens to each Node bound to the NodeList. 
+     * The handler is called only after all on() handlers are called
+     * and the event is not prevented.
+     * @method after
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance. 
+     * @return {Object} Returns an event handle that can later be use to detach(). 
+     * @see Event.on
+     */
+    after: function(type, fn, context) {
+        context = context || this;
+        this.batch(function(node) {
+            node.after.call(node, type, fn, context);
+        });
+    },
+
+    /**
      * Returns the current number of items in the NodeList.
      * @method size
      * @return {Int} The number of items in the NodeList. 
@@ -264,6 +324,10 @@ Y.mix(NodeList.prototype, {
         return g_nodelists[this[UID]].length;
     },
 
+    /** Called on each Node instance
+      * @get
+      * @see Node
+      */
     // one-off because we cant import from Node due to undefined return values
     get: function(name) {
         var ret = [],
@@ -308,18 +372,67 @@ Y.mix(NodeList.prototype, {
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [
-    'after',
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method append
+     * @see Node.append
+     */
     'append',
-    'create',
+
+    /**
+      * Called on each Node instance
+      * @method detach
+      * @see Node.detach
+      */
     'detach',
+    
+    /** Called on each Node instance
+      * @method detachAll
+      * @see Node.detachAll
+      */
     'detachAll',
+
+    /** Called on each Node instance
+      * @method insert
+      * @see NodeInsert
+      */
     'insert',
-    'on',
+
+    /** Called on each Node instance
+      * @method plug
+      * @see Node.plug
+      */
     'plug',
+
+    /** Called on each Node instance
+      * @method prepend
+      * @see Node.prepend
+      */
     'prepend',
+
+    /** Called on each Node instance
+      * @method remove
+      * @see Node.remove
+      */
     'remove',
+
+    /** Called on each Node instance
+      * @method set
+      * @see Node.set
+      */
     'set',
+
+    /** Called on each Node instance
+      * @method setContent
+      * @see Node.setContent
+      */
     'setContent',
+
+    /** Called on each Node instance
+      * @method unplug
+      * @see Node.unplug
+      */
     'unplug'
 ]);
 
