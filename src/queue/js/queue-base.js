@@ -1,4 +1,17 @@
 /**
+ * <p>The Queue module adds a common data structure for FIFO operations. In its
+ * simplest form, it is little more than an array wrapper. Additional
+ * submodules introduce more functionality such as promotion and removal of
+ * queued items.</p>
+ *
+ * <p>An AsyncQueue class is provided in the queue-run submodule.  This class
+ * affords a mechanism to do complex sequential and iterative callback
+ * execution across configured timeouts.
+ *
+ * @module queue
+ */
+
+/**
  * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and
  * removed using next().
  *
