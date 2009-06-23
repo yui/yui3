@@ -20,7 +20,6 @@ ul.yui-treenode-children {
 .yui-treenode-toggle-first-leaf,.yui-treenode-toggle-middle-leaf {
     background: url(treeview-sprite.gif) 0 -5600px no-repeat; 
 	cursor:pointer ;
-	
 }
 
 /* first or middle sibling, collapsable */
@@ -28,31 +27,33 @@ ul.yui-treenode-children {
     cursor:pointer ;
     background: url(treeview-sprite.gif) 0 -4000px no-repeat; 
 }
-
-/* first or middle sibling, collapsable, hover */
-.yui-treenode-toggle-tmh,.yui-treenode-toggle-tmhh {
-    cursor:pointer ;
+.yui-treenode-toggle-first-minus:hover,.yui-treenode-toggle-middle-minus:hover {
     background: url(treeview-sprite.gif) 0 -4800px no-repeat; 
 }
+
 
 /* first or middle sibling, expandable */
 .yui-treenode-toggle-first-plus,.yui-treenode-toggle-middle-plus {
     cursor:pointer ;
     background: url(treeview-sprite.gif) 0 -6400px no-repeat; 
 }
-.yui-treenode-toggle-first-plus ul.yui-treenode-children,
+/* first or middle sibling, expandable, hover */
+.yui-treenode-toggle-first-plus:hover,.yui-treenode-toggle-middle-plus:hover {
+    background: url(treeview-sprite.gif) 0 -7200px no-repeat; 
+}
+
+.yui-treenode-toggle-first-plus     ul.yui-treenode-children,
 .yui-treenode-toggle-middle-plus   ul.yui-treenode-children ,
-.yui-treenode-toggle-last-plus     ul.yui-treenode-children  {
+.yui-treenode-toggle-last-plus       ul.yui-treenode-children  {
 	display:none;
 }
 
 div.yui-treenode-label {
 	display:inline;
 }
-/* first or middle sibling, expandable, hover * /
-.yui-treenode-toggle-tph ,.yui-treenode-toggle-tphh {
-    cursor:pointer ;
-    background: url(treeview-sprite.gif) 0 -7200px no-repeat; 
+
+.yui-treenode-focused {
+	background-color:cyan;
 }
 
 /* last sibling, no children */
@@ -67,9 +68,8 @@ div.yui-treenode-label {
     background: url(treeview-sprite.gif) 0 0px no-repeat; 
 }
 
-/* Last sibling, collapsable, hover * /
-.yui-treenode-toggle-lmh,.yui-treenode-toggle-lmhh {
-    cursor:pointer ;
+/* Last sibling, collapsable, hover */
+.yui-treenode-toggle-last-minus:hover {
     background: url(treeview-sprite.gif) 0 -800px no-repeat; 
 }
 
@@ -79,11 +79,9 @@ div.yui-treenode-label {
     background: url(treeview-sprite.gif) 0 -2400px no-repeat; 
 }
 
-/* Last sibling, expandable, hover * /
-.yui-treenode-toggle-lph,.yui-treenode-toggle-lphh { 
-    cursor:pointer ;
+/* Last sibling, expandable, hover */
+.yui-treenode-toggle-last-plus:hover { 
     background: url(treeview-sprite.gif) 0 -3200px no-repeat; 
-	cursor:pointer ;
 }
 
 /* Loading icon * /

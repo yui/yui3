@@ -12,6 +12,7 @@ var TREENODE = 'treenode',
 	BOUNDING_BOX = 'boundingBox',
 	RENDERED	 = 'rendered',
 	EXPANDED 	= 'expanded',
+	FOCUSED	= 'focused',
 	
 	// NOT_HIGHLIGHTED =      0,
 	// HIGHLIGHTED =          1,
@@ -27,6 +28,8 @@ var TREENODE = 'treenode',
 	NEXT 		= 'nextSibling',
 	ROOT		= 'root',
 	CONTENT		= 'content',
+	CURRENT_FOCUS = 'currentFocus',
+	CHANGE		= 'Change',
 	
 
 	getCN     = Y.ClassNameManager.getClassName,
@@ -39,22 +42,23 @@ var TREENODE = 'treenode',
 	MIDDLE =	'middle',
 	LAST =		'last',
 	LABEL = 	'label',
-	MAGNET = 	'magnet',
+	//MAGNET = 	'magnet',
 	CHILDREN = 	'children',
 	
 	C_LABEL = 		getCN(TREENODE, LABEL),
-	C_MAGNET = 		getCN(TREENODE, MAGNET),
+	//C_MAGNET = 		getCN(TREENODE, MAGNET),
 	C_CHILDREN =	getCN(TREENODE, CHILDREN),
 	C_CONTENT =		getCN(TREENODE, CONTENT),
 	
 	NODE_MARKUP = 		'<div class ="' + C_LABEL + '"></div>',
-	MAGNET_MARKUP = 	'<a class ="' + C_MAGNET + '" href ="#">&nbsp;</a>',
+	//MAGNET_MARKUP = 	'<a class ="' + C_MAGNET + '" href ="#">&#160;</a>',
 	CHILDREN_MARKUP = 	'<ul class ="' + C_CHILDREN + '"></ul>',
 	
-	CLICK_EVENT = 'click',
-	TOGGLE_EVENT = 'toggle',
-	EXPAND_EVENT = 'expand',
-	COLLAPSE_EVENT = 'collapse',
+	CLICK_EVENT = 		'click',
+	TOGGLE_EVENT = 		'toggle',
+	EXPAND_EVENT = 		'expand',
+	COLLAPSE_EVENT = 	'collapse',
+	FOCUS_EVENT  =		'focus',
 	
 	
 	
@@ -128,22 +132,22 @@ Y.mix(TreeNode,{
 		multiExpand: {
 			value:true
 		},
-		nextSibling: {
+		next: {
 			value: null,
 			validator: function(node) { 
-				return this._nextSiblingValidator(node); 
+				return this._genericNodeValidator(node,NEXT);
 			}
 		},
-		previousSibling: {
+		previous: {
 			value: null,
 			validator: function(node) { 
-				return this._previousSiblingValidator(node); 
+				return this._genericNodeValidator(node,PREVIOUS);
 			}
 		},
 		parent: {
 			value:null,
 			validator: function(node) { 
-				return this._parentValidator(node); 
+				return this._genericNodeValidator(node,PARENT);
 			}
 		},
 		root: {
@@ -178,7 +182,11 @@ Y.mix(TreeNode,{
 				needsParent:'When looking for the root of [{me}] found no parent above [{brokenRoot}]'
 				
 			}
+		},
+		tabIndex: {
+			value: -1
 		}
+		
 	},
 	HTML_PARSER: {
 		content: function(contentBox) {
@@ -212,6 +220,7 @@ Y.extend(TreeNode,Y.Widget,{
 
 	_children: null,
 	_childContainerEl: null,
+	_labelContainerEl: null,
 	_dontPropagate: false,
 	_lastToggleClass: '',
 	
@@ -242,11 +251,13 @@ Y.extend(TreeNode,Y.Widget,{
 		config = config || {};
 
 		
-		this.on('parentChange',  this._onParentChange);
-		this.on('nextSiblingChange',   this._onNextSiblingChange);
-		this.on('previousSiblingChange',  this._onPreviousSiblingChange);	
+		this.on(PARENT + CHANGE,  this._onParentChange);
+		this.on(NEXT + CHANGE,   this._onNextSiblingChange);
+		this.on(PREVIOUS + CHANGE,  this._onPreviousSiblingChange);	
 		
-		this.on('contentChange',    this._onContentChange);	
+		this.on(CONTENT + CHANGE,    this._onContentChange);	
+		
+		this.after(FOCUSED + CHANGE, this._afterNodeFocusedChange);
 
 		this.publish(CLICK_EVENT,{defaultFn:this._defClickFn});
 		this.publish(TOGGLE_EVENT,{defaultFn:this._defToggleFn});
@@ -300,9 +311,6 @@ Y.extend(TreeNode,Y.Widget,{
 			
         Q.add({fn:this._renderUIContainer,context:this,name:'renderUIContainer'});
         Q.add({fn:this._renderUIChildren,context:this,name:'renderUIChildren'});
-		if (!this.get(PARENT)) {
-			Q.run();
-		}
 	},
 	_findRoot : function () {
 		var self = this;
@@ -320,7 +328,7 @@ Y.extend(TreeNode,Y.Widget,{
 			node._set(ROOT,root);
 			return root;
 		};
-		this._set(ROOT,findParent(this));
+		findParent(this);
 	},
 		
 	_renderUIContainer: function () {
@@ -362,13 +370,15 @@ Y.extend(TreeNode,Y.Widget,{
 				
 		
 		var container = Y.Node.create(NODE_MARKUP);
+		container.set('tabIndex',0);
+		this._labelContainerEl = container;
 		cb.appendChild(container);
 		this.set('container',container);
 		var newContent = this.get('content');
 		if (newContent instanceof Y.Node) {
 			container.appendChild(newContent);
 		}
-		cb.appendChild(Y.Node.create(MAGNET_MARKUP));
+		//cb.appendChild(Y.Node.create(MAGNET_MARKUP));
 		//console.log('despues',this.get(BOUNDING_BOX).get('innerHTML'));
 		
 		_nodes[this.get(BOUNDING_BOX).get('id')] = this;
@@ -414,16 +424,6 @@ Y.extend(TreeNode,Y.Widget,{
 		var prevVal = this.get(who);
 		//console.log('node validator',who,this,node,prevVal,(node === null && prevVal !== null) || (node instanceof TreeNode && node !== prevVal));
 		return (node === null && prevVal !== null) || (node instanceof TreeNode && node !== prevVal);
-	},
-	
-	_parentValidator: function (node) {
-		return this._genericNodeValidator(node,PARENT);
-	},
-	_nextSiblingValidator: function (node) {
-		return this._genericNodeValidator(node,NEXT);
-	},
-	_previousSiblingValidator: function (node) {
-		return this._genericNodeValidator(node,PREVIOUS);
 	},
 	
 	_contentSetter: function(value) {
@@ -628,7 +628,7 @@ Y.extend(TreeNode,Y.Widget,{
 		} else if (Y.Lang.isUndefined(next)) {
 			node.set(PARENT,this);
 		} else {
-			Y.error('Argument next in method insertNode should be an integer, a TreeNode reference or undefined ' + next);
+			Y.error(Y.substitute(this.getString('positionArgumentInvalid'), {child:node,position:next,me:this }));
 			return false;
 		}
 		return node;
@@ -642,6 +642,7 @@ Y.extend(TreeNode,Y.Widget,{
 		if (ev.node !== this) { return; }
 		console.log('_defClickFn 2',this,arguments);
 		this.toggle();
+		//this.focus();
 	},
 	toggle : function() {
 		console.log('toggle',this,arguments);
@@ -661,6 +662,7 @@ Y.extend(TreeNode,Y.Widget,{
 	},
 	expand: function()  {
 		console.log('expand',this,arguments);
+		if (this.get(EXPANDED)) {return;}
 		this.fire(EXPAND_EVENT,{node:this});
 	},
 	_defExpandFn: function (ev) {
@@ -671,6 +673,7 @@ Y.extend(TreeNode,Y.Widget,{
 	},
 	collapse: function() {
 		console.log('collapse',this,arguments);
+		if (!this.get(EXPANDED)) {return; }
 		this.fire(COLLAPSE_EVENT,{node:this});
 	},
 	_defCollapseFn: function(ev) {
@@ -678,6 +681,12 @@ Y.extend(TreeNode,Y.Widget,{
 		console.log('_defCollapseFn',this,arguments);
 		this.set(EXPANDED,false);
 		this.syncUI();
+	},
+	_afterNodeFocusedChange: function (ev){
+		console.log('_afterFocusedChange',ev,this);
+		if (ev.target != this) { return; }
+		console.log('_afterFocusedChange 1',ev,this);
+		this.get(ROOT).set(CURRENT_FOCUS,this,{node:this});
 	}
 });
 
@@ -690,6 +699,28 @@ Y.TreeNode = TreeNode;
  */
 
 var TREEVIEW = 'treeview'	;
+
+var KEY = {
+    BACK_SPACE   : 8,
+    DELETE       : 46,
+    DOWN         : 40,
+    END          : 35,
+    ENTER        : 13,
+    ESCAPE       : 27,
+    HOME         : 36,
+    LEFT         : 37,
+    PAGE_DOWN    : 34,
+    PAGE_UP      : 33, 
+    RIGHT        : 39,
+    SHIFT        : 16,
+    SPACE        : 32,
+    TAB          : 9,
+    UP           : 38,
+	PLUS         : 43,
+	MINUS        : 45
+};
+
+
 	
 /**
  * Create a hierarchical tree
@@ -724,6 +755,13 @@ Y.mix(TreeView,{
      * @static
      */
     ATTRS : {
+		currentFocus: {
+			value:null,
+			validator: function(node) { 
+				return this._genericNodeValidator(node,CURRENT_FOCUS);
+			}
+		}
+
 	},
 	HTML_PARSER: {
 	}
@@ -745,36 +783,79 @@ Y.extend(TreeView,Y.TreeNode,{
 		this.set(ROOT,this);
 		TreeView.superclass.initializer.apply(this,arguments);
 		
+		this.after(CURRENT_FOCUS + CHANGE, this._afterCurrentFocusChange);
+		
 	},
-	_renderUIContainer: null,
-	_renderUIChildren: function () {
-
+	renderUI : function () {
 		var cb   = this.get(CONTENT_BOX);
 		cb.addClass(C_CHILDREN);
 		this._childContainerEl = cb;
 		for (var i = 0;i < this._children.length; i++) {
-			Q.add({fn:this._children[i].render,context:this._children[i],args:[cb],name:'render'});
-		}
-	
+			this._children[i].render(cb);
+		}	
+		Q.run();
 	},
 	bindUI: function () {
-		Y.on('click',Y.bind(this._onClick,this),this.get(BOUNDING_BOX));
+		var bb = this.get(BOUNDING_BOX);
+		Y.on('click',Y.bind(this._onClick,this),bb);
+		Y.on('key',this._onKey,bb,'press:' + [KEY.UP,KEY.DOWN,KEY.LEFT,KEY.RIGHT,KEY.ENTER,KEY.PLUS,KEY.MINUS,KEY.HOME,KEY.END].join(','),this);
+		Y.on('key',this._onShiftedKey,bb,'press:' + [KEY.PLUS,KEY.MINUS].join(',') + '+shift',this);
 	},
 	_onClick: function (ev) {
 		var target = ev.target;
 		var node = this.getNodeByElement(target);
-		console.log('_noClick',this,arguments,node);
+		console.log('_onClick',this,arguments,node);
 		if (node) {
-			if (target.hasClass(C_LABEL) || target.hasClass(C_MAGNET)) {
+			if (target.hasClass(C_LABEL) /*|| target.hasClass(C_MAGNET) */ ) {
 				node.fire(CLICK_EVENT,{node:node});
 			} else if (target.hasClass(C_CONTENT)) {
 				node.toggle();
 			}
 		}
 	},
+	_onKey: function (ev) {
+		console.log('_onKey',ev.keyCode,this);
+		switch(ev.keyCode) {
+			case KEY.UP:
+				break;
+			case KEY.DOWN:
+				break;
+			case KEY.LEFT:
+				break;
+			case KEY.RIGHT:
+				break;
+			case KEY.ENTER:
+				break;
+			case KEY.PLUS:
+				break;
+			case KEY.MINUS:
+				break;
+			case KEY.HOME:
+				break;
+			case KEY.END:
+				break;
+		}
+	},
+	_onShiftedKey: function (ev) {
+		console.log('_onShiftedKey',ev.keyCode);
+		switch(ev.keyCode) {
+			case KEY.PLUS:
+				break;
+			case KEY.MINUS:
+				break;
+		}
+	},
+	
 	getNodeByElement : function (el) {
 		var node = el.ancestor('.' + getCN(TREENODE));
 		return node && _nodes[node.get('id')];
+	},
+	
+	_afterCurrentFocusChange: function (ev) {
+		console.log('_afterCurrentFocusChange',ev);
+		if (ev.node !== ev.newVal) {return; }
+		(ev.prevVal && ev.prevVal.blur());
+		(ev.newVal  && Y.Lang.isUndefined(ev.node) && ev.newVal.focus());
 	}
 });
 

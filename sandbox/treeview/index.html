@@ -233,7 +233,7 @@ YUI({combine:false,filter:'raw', base:"../../build/", debug:true, useBrowserCons
 		Y.Test.Runner.add(testCase);
 		
 
-switch (3) {
+switch (4) {
 	case 1:
 		Y.Test.Runner.run();
 		break;
@@ -257,8 +257,20 @@ switch (3) {
 			console.log('treenode:click',ev);
 			ev.preventDefault();
 		});
+		console.group('focus');
+		tv._children.length && tv._children[0].focus();
+		console.groupEnd();
 		break;
-			
+	case 4:
+		tv = new Y.TreeView({content:"primero"});
+		var t1 = new Y.TreeNode({parent:tv,content:'child 1'});
+		var t2 = new Y.TreeNode({parent:t1,content:'child 2'});
+		tv.render('#bd');
+		console.group('focus');
+		//t2.focus();
+		console.groupEnd();
+		break;
+
 //		tv.destroy();
 }
 		
