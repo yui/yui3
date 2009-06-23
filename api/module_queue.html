@@ -50,10 +50,13 @@
 
                     </h3>
                     <div class="description summary">
-                        <p>Adds a new class AsyncQueue that is restricted to function callbacks, but
-includes a host of additional features, including events, callback
-iterations, and a run() method that can execute queued callbacks in order,
-even across configured timeouts.</p>
+                        <p>The Queue module adds a common data structure for FIFO operations. In its
+simplest form, it is little more than an array wrapper. Additional
+submodules introduce more functionality such as promotion and removal of
+queued items.</p>
+<p>An AsyncQueue class is provided in the queue-run submodule.  This class
+affords a mechanism to do complex sequential and iterative callback
+execution across configured timeouts.
                     </div>
 
 

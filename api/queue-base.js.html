@@ -48,6 +48,19 @@
                             #doc3 .classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * &lt;p&gt;The Queue module adds a common data structure for FIFO operations. In its</span>
+<span class="c"> * simplest form, it is little more than an array wrapper. Additional</span>
+<span class="c"> * submodules introduce more functionality such as promotion and removal of</span>
+<span class="c"> * queued items.&lt;/p&gt;</span>
+<span class="c"> *</span>
+<span class="c"> * &lt;p&gt;An AsyncQueue class is provided in the queue-run submodule.  This class</span>
+<span class="c"> * affords a mechanism to do complex sequential and iterative callback</span>
+<span class="c"> * execution across configured timeouts.</span>
+<span class="c"> *</span>
+<span class="c"> * @module queue</span>
+<span class="c"> */</span>
+
+<span class="c">/**</span>
 <span class="c"> * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and</span>
 <span class="c"> * removed using next().</span>
 <span class="c"> *</span>
