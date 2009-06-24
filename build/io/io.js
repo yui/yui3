@@ -1024,8 +1024,8 @@ YUI.add('io-upload-iframe', function(Y) {
 		var i = Y.Node.create('<iframe id="ioupload' + o.id + '" name="ioupload' + o.id + '" />'),
 			cfg = {
 				position: 'absolute',
-				top: '-1000',
-				left: '-1000'
+				top: '-1000px',
+				left: '-1000px'
 			};
 
 		i.setStyles(cfg);
