@@ -1096,7 +1096,7 @@ Y.extend(Console,Y.Widget,{
                 for (;i < l; ++i) {
                     e = entries.item(i);
                     if (e) {
-                        e.get('parentNode').removeChild(e);
+                        e.remove();
                     }
                 }
 
