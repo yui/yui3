@@ -78,7 +78,7 @@ var getCN = Y.ClassNameManager.getClassName,
                     '{sourceAndDetail}'+
                 '</span>'+
                 '<span class="{entry_cat_class}">'+
-                    '{label}</span>'+
+                    '{category}</span>'+
                 '<span class="{entry_time_class}">'+
                     ' {totalTime}ms (+{elapsedTime}) {localTime}'+
                 '</span>'+
@@ -278,7 +278,6 @@ Y.mix(Console, {
      * <ul>
      *   <li>cat_class</li>
      *   <li>src_class</li>
-     *   <li>label</li>
      *   <li>totalTime</li>
      *   <li>elapsedTime</li>
      *   <li>localTime</li>
@@ -975,7 +974,6 @@ Y.extend(Console,Y.Widget,{
      *     <li>category - logLevel or custom category for the message</li>
      *     <li>source - when provided, the widget or util calling Y.log</li>
      *     <li>sourceAndDetail - same as source but can include instance info</li>
-     *     <li>label - logLevel/category label for the entry</li>
      *     <li>localTime - readable version of time</li>
      *     <li>elapsedTime - ms since last entry</li>
      *     <li>totalTime - ms since Console was instantiated or reset</li>
@@ -998,7 +996,6 @@ Y.extend(Console,Y.Widget,{
                 category        : cat || this.get('defaultCategory'),
                 sourceAndDetail : src || this.get('defaultSource'),
                 source          : null,
-                label           : null,
                 localTime       : null,
                 elapsedTime     : null,
                 totalTime       : null
@@ -1007,7 +1004,6 @@ Y.extend(Console,Y.Widget,{
         // Extract m.source "Foo" from m.sourceAndDetail "Foo bar baz"
         m.source          = RE_INLINE_SOURCE.test(m.sourceAndDetail) ?
                                 RegExp.$1 : m.sourceAndDetail;
-        m.label           = m.category;
         m.localTime       = m.time.toLocaleTimeString ? 
                             m.time.toLocaleTimeString() : (m.time + '');
         m.elapsedTime     = m.time - this.get(LAST_TIME);
@@ -1081,7 +1077,6 @@ Y.extend(Console,Y.Widget,{
     _htmlEscapeMessage : function (m) {
         m = Y.clone(m);
         m.message         = this._encodeHTML(m.message);
-        m.label           = this._encodeHTML(m.label);
         m.source          = this._encodeHTML(m.source);
         m.sourceAndDetail = this._encodeHTML(m.sourceAndDetail);
         m.category        = this._encodeHTML(m.category);
