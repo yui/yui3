@@ -1346,20 +1346,18 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _uiUpdateCollapsed : function (v) {
-        var cb     = this.get(CONTENT_BOX),
-            button = cb.queryAll('button.'+C_COLLAPSE),
+        var bb     = this.get('boundingBox'),
+            button = bb.queryAll('button.'+C_COLLAPSE),
             method = v ? 'addClass' : 'removeClass',
             str    = this.get('strings.'+(v ? 'expand' : 'collapse'));
 
-        cb[method](C_COLLAPSED);
+        bb[method](C_COLLAPSED);
 
         if (button) {
             button.set('innerHTML',str);
         }
 
-        if (!v) {
-            this._uiSetHeight(this.get(HEIGHT));
-        }
+        this._uiSetHeight(v ? this._head.get('offsetHeight'): this.get(HEIGHT));
     },
 
     /**
