@@ -8,9 +8,9 @@ YUI.add('datasource-local', function(Y) {
  */
     
 /**
- * Provides the base Source implementation, which can be extended to
- * create DataSources for specific data protocols, such integrated with the IO
- * Utility or the Get Utility, or custom functions.
+ * Provides the base DataSource implementation, which can be extended to
+ * create DataSources for specific data protocols, such as the IO Utility, the
+ * Get Utility, or custom functions.
  *
  * @module datasource
  * @submodule datasource-local
