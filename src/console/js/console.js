@@ -631,9 +631,12 @@ Y.extend(Console,Y.Widget,{
      *
      * @method log
      * @param arg* {MIXED} (all arguments passed through to <code>Y.log</code>)
+     * @chainable
      */
     log : function () {
-        return Y.log.apply(Y,arguments);
+        Y.log.apply(Y,arguments);
+
+        return this;
     },
 
     /**
@@ -669,18 +672,24 @@ Y.extend(Console,Y.Widget,{
      * Collapses the body and footer.
      *
      * @method collapse
+     * @chainable
      */
     collapse : function () {
         this.set(COLLAPSED, true);
+
+        return this;
     },
 
     /**
      * Expands the body and footer if collapsed.
      *
      * @method expand
+     * @chainable
      */
     expand : function () {
         this.set(COLLAPSED, false);
+
+        return this;
     },
 
     /**
