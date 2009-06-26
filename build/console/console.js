@@ -31,7 +31,6 @@ var getCN = Y.ClassNameManager.getClassName,
     CONTENT_BOX    = 'contentBox',
     DISABLED       = 'disabled',
     ENTRY          = 'entry',
-    ENTRY_TEMPLATE = 'entryTemplate',
     ERROR          = 'error',
     HEIGHT         = 'height',
     INFO           = 'info',
@@ -559,7 +558,37 @@ Y.mix(Console, {
         */
         width: {
             value: "300px"
-        }
+        },
+
+        /**
+         * Pass through to the YUI instance useBrowserConsole configuration.
+         * By default this is set to false, which will disable logging to the
+         * browser console when a Console instance is created.  If the
+         * logSource is not a YUI instance, this has no effect.
+         * 
+         * @attribute useBrowserConsole
+         * @type {Boolean}
+         * @default false
+         */
+         useBrowserConsole : {
+            lazyAdd: false,
+            value: false,
+            getter : function () {
+                var logSource = this.get('logSource');
+                return logSource instanceof YUI ?
+                    logSource.config.useBrowserConsole : null;
+            },
+            setter : function (v) {
+                var logSource = this.get('logSource');
+                if (logSource instanceof YUI) {
+                    v = !!v;
+                    logSource.config.useBrowserConsole = !!v;
+                    return v;
+                } else {
+                    return Y.Attribute.INVALID_VALUE;
+                }
+            }
+         }
     }
 
 });
