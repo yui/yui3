@@ -78,7 +78,7 @@
 <span class="c">         * @param {Object} User configuration object</span>
 <span class="c">         */</span>
         <span class="k">function</span> <span class="nx">PositionExt</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">hasImpl</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">WidgetPosition</span><span class="o">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_posNode</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_posNode</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;WidgetPosition needs to be added to the Widget, before WidgetPositionExt is added&quot;</span><span class="o">);</span> 
             <span class="o">}</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_syncUIPosExtras</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">SYNCUI</span><span class="o">);</span>

@@ -167,7 +167,7 @@ a:visited { color: #003399;}
 body.show_deprecated .deprecated,
 body.show_private .private,
 body.show_protected .protected {
-    display: inherit;
+    display: block;
 }
 
 #splash_classList ul {
