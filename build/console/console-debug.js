@@ -18,6 +18,9 @@ YUI.add('console', function(Y) {
  * @param conf {Object} Configuration object (see Configuration attributes)
  * @constructor
  */
+function Console() {
+    Console.superclass.constructor.apply(this,arguments);
+}
 
 var getCN = Y.ClassNameManager.getClassName,
     CHECKED        = 'checked',
@@ -93,10 +96,6 @@ var getCN = Y.ClassNameManager.getClassName,
     merge      = Y.merge,
     substitute = Y.substitute;
     
-
-function Console() {
-    Console.superclass.constructor.apply(this,arguments);
-}
 
 Y.mix(Console, {
 
