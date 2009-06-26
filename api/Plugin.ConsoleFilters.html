@@ -221,6 +221,57 @@ filters are changed.
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
+                                    <div class="protected" rel="yui:method" resource="#method__afterCacheLimitChange">
+                                    <h4>
+                                        <a name="method__afterCacheLimitChange">_afterCacheLimitChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterCacheLimitChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Trims the cache of entries to the appropriate new length.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the attribute change event object</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__afterCategoryChange">
                                     <h4>
                                         <a name="method__afterCategoryChange">_afterCategoryChange</a></h4>
@@ -1249,6 +1300,50 @@ and so on.
                         <div class="section method details">
                             <h3 id="events">Events</h3>
                             <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_cacheLimitChange">
+                                    <h4>
+                                        <a name="event_cacheLimitChange">cacheLimitChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">cacheLimitChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'cacheLimit' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:event" resource="#event_categoryChange">
                                     <h4>
                                         <a name="event_categoryChange">categoryChange</a></h4>
@@ -1391,6 +1486,25 @@ and so on.
                         <div class="section field details">
                             <h3 id="configattributes">Configuration Attributes</h3>
                             <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_cacheLimit">
+                                    <h4><a name="config_cacheLimit">cacheLimit</a>
+                                        <code>- <span property="yui:type">{Number}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Maximum number of entries to store in the message cache.  Use this to
+limit the memory footprint in environments with heavy log usage.
+By default, there is no limit (Number.POSITIVE_INFINITY).
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: Number.POSITIVE_INFINITY
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
                                     <div class="" rel="yui:attribute" resource="#config_category">
                                     <h4><a name="config_category">category</a>
                                         <code>- <span property="yui:type">Object</span></code>
@@ -1539,6 +1653,7 @@ log entries originating from Y.Slider.</p>
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
+                                <li class="protected"><a href="#method__afterCacheLimitChange" title="_afterCacheLimitChange">_afterCacheLimitChange</a></li>
                                 <li class="protected"><a href="#method__afterCategoryChange" title="_afterCategoryChange">_afterCategoryChange</a></li>
                                 <li class="protected"><a href="#method__afterClearConsole" title="_afterClearConsole">_afterClearConsole</a></li>
                                 <li class="protected"><a href="#method__afterSourceChange" title="_afterSourceChange">_afterSourceChange</a></li>
@@ -1566,6 +1681,7 @@ log entries originating from Y.Slider.</p>
                     <div id="eventsList" class="module">
                         <h4>Events</h4>
                         <ul class="content">        
+                                <li class=""><a href="#event_cacheLimitChange" title="cacheLimitChange">cacheLimitChange</a></li>
                                 <li class=""><a href="#event_categoryChange" title="categoryChange">categoryChange</a></li>
                                 <li class=""><a href="#event_defaultVisibilityChange" title="defaultVisibilityChange">defaultVisibilityChange</a></li>
                                 <li class=""><a href="#event_sourceChange" title="sourceChange">sourceChange</a></li>
@@ -1575,6 +1691,7 @@ log entries originating from Y.Slider.</p>
                     <div id="configList" class="module">
                         <h4>Configuration Attributes</h4>
                         <ul class="content">        
+                                <li class=""><a href="#config_cacheLimit" title="cacheLimit">cacheLimit</a></li>
                                 <li class=""><a href="#config_category" title="category">category</a></li>
                                 <li class=""><a href="#config_defaultVisibility" title="defaultVisibility">defaultVisibility</a></li>
                                 <li class=""><a href="#config_source" title="source">source</a></li>
@@ -1590,7 +1707,7 @@ log entries originating from Y.Slider.</p>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterCategoryChange", "url": "Plugin.ConsoleFilters.html#method__afterCategoryChange", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterClearConsole", "url": "Plugin.ConsoleFilters.html#method__afterClearConsole", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterSourceChange", "url": "Plugin.ConsoleFilters.html#method__afterSourceChange", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "bindUI", "url": "Plugin.ConsoleFilters.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_categories", "url": "Plugin.ConsoleFilters.html#property__categories", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "category", "url": "Plugin.ConsoleFilters.html#config_category", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "categoryChange", "url": "Plugin.ConsoleFilters.html#event_categoryChange", "type": "event"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.CATEGORIES_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.CATEGORIES_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.CHROME_CLASSES", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.FILTER_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.FILTER_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.NAME", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.NAME", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.NS", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.NS", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.SOURCES_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.SOURCES_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_createCheckbox", "url": "Plugin.ConsoleFilters.html#method__createCheckbox", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "defaultVisibility", "url": "Plugin.ConsoleFilters.html#config_defaultVisibility", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "defaultVisibilityChange", "url": "Plugin.ConsoleFilters.html#event_defaultVisibilityChange", "type": "event"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "destructor", "url": "Plugin.ConsoleFilters.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_entries", "url": "Plugin.ConsoleFilters.html#property__entries", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_filterBuffer", "url": "Plugin.ConsoleFilters.html#method__filterBuffer", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "hideCategory", "url": "Plugin.ConsoleFilters.html#method_hideCategory", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "hideSource", "url": "Plugin.ConsoleFilters.html#method_hideSource", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "initializer", "url": "Plugin.ConsoleFilters.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_onCategoryCheckboxClick", "url": "Plugin.ConsoleFilters.html#method__onCategoryCheckboxClick", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_onEntry", "url": "Plugin.ConsoleFilters.html#method__onEntry", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_onSourceCheckboxClick", "url": "Plugin.ConsoleFilters.html#method__onSourceCheckboxClick", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "refreshConsole", "url": "Plugin.ConsoleFilters.html#method_refreshConsole", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "renderUI", "url": "Plugin.ConsoleFilters.html#method_renderUI", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "showCategory", "url": "Plugin.ConsoleFilters.html#method_showCategory", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "showSource", "url": "Plugin.ConsoleFilters.html#method_showSource", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "source", "url": "Plugin.ConsoleFilters.html#config_source", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "sourceChange", "url": "Plugin.ConsoleFilters.html#event_sourceChange", "type": "event"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_sources", "url": "Plugin.ConsoleFilters.html#property__sources", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "syncUI", "url": "Plugin.ConsoleFilters.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_uiSetCheckbox", "url": "Plugin.ConsoleFilters.html#method__uiSetCheckbox", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_validateCategory", "url": "Plugin.ConsoleFilters.html#method__validateCategory", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_validateSource", "url": "Plugin.ConsoleFilters.html#method__validateSource", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterCacheLimitChange", "url": "Plugin.ConsoleFilters.html#method__afterCacheLimitChange", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterCategoryChange", "url": "Plugin.ConsoleFilters.html#method__afterCategoryChange", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterClearConsole", "url": "Plugin.ConsoleFilters.html#method__afterClearConsole", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterSourceChange", "url": "Plugin.ConsoleFilters.html#method__afterSourceChange", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "bindUI", "url": "Plugin.ConsoleFilters.html#method_bindUI", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "cacheLimit", "url": "Plugin.ConsoleFilters.html#config_cacheLimit", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "cacheLimitChange", "url": "Plugin.ConsoleFilters.html#event_cacheLimitChange", "type": "event"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_categories", "url": "Plugin.ConsoleFilters.html#property__categories", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "category", "url": "Plugin.ConsoleFilters.html#config_category", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "categoryChange", "url": "Plugin.ConsoleFilters.html#event_categoryChange", "type": "event"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.CATEGORIES_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.CATEGORIES_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.CHROME_CLASSES", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.FILTER_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.FILTER_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.NAME", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.NAME", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.NS", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.NS", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.SOURCES_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.SOURCES_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_createCheckbox", "url": "Plugin.ConsoleFilters.html#method__createCheckbox", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "defaultVisibility", "url": "Plugin.ConsoleFilters.html#config_defaultVisibility", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "defaultVisibilityChange", "url": "Plugin.ConsoleFilters.html#event_defaultVisibilityChange", "type": "event"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "destructor", "url": "Plugin.ConsoleFilters.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_entries", "url": "Plugin.ConsoleFilters.html#property__entries", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_filterBuffer", "url": "Plugin.ConsoleFilters.html#method__filterBuffer", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "hideCategory", "url": "Plugin.ConsoleFilters.html#method_hideCategory", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "hideSource", "url": "Plugin.ConsoleFilters.html#method_hideSource", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "initializer", "url": "Plugin.ConsoleFilters.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_onCategoryCheckboxClick", "url": "Plugin.ConsoleFilters.html#method__onCategoryCheckboxClick", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_onEntry", "url": "Plugin.ConsoleFilters.html#method__onEntry", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_onSourceCheckboxClick", "url": "Plugin.ConsoleFilters.html#method__onSourceCheckboxClick", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "refreshConsole", "url": "Plugin.ConsoleFilters.html#method_refreshConsole", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "renderUI", "url": "Plugin.ConsoleFilters.html#method_renderUI", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "showCategory", "url": "Plugin.ConsoleFilters.html#method_showCategory", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "showSource", "url": "Plugin.ConsoleFilters.html#method_showSource", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "source", "url": "Plugin.ConsoleFilters.html#config_source", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "sourceChange", "url": "Plugin.ConsoleFilters.html#event_sourceChange", "type": "event"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_sources", "url": "Plugin.ConsoleFilters.html#property__sources", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "syncUI", "url": "Plugin.ConsoleFilters.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_uiSetCheckbox", "url": "Plugin.ConsoleFilters.html#method__uiSetCheckbox", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_validateCategory", "url": "Plugin.ConsoleFilters.html#method__validateCategory", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_validateSource", "url": "Plugin.ConsoleFilters.html#method__validateSource", "type": "method"}];
 </script>
 </body>
 </html>
