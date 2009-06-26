@@ -71,6 +71,21 @@ var getCN = Y.ClassNameManager.getClassName,
     ESC_GT  = '&#62;',
     ESC_LT  = '&#60;',
     
+    ENTRY_TEMPLATE_STR =
+        '<div class="{entry_class} {cat_class} {src_class}">'+
+            '<p class="{entry_meta_class}">'+
+                '<span class="{entry_src_class}">'+
+                    '{sourceAndDetail}'+
+                '</span>'+
+                '<span class="{entry_cat_class}">'+
+                    '{label}</span>'+
+                '<span class="{entry_time_class}">'+
+                    ' {totalTime}ms (+{elapsedTime}) {localTime}'+
+                '</span>'+
+            '</p>'+
+            '<pre class="{entry_content_class}">{message}</pre>'+
+        '</div>',
+
     L = Y.Lang,
     create     = Y.Node.create,
     isNumber   = L.isNumber,
@@ -279,20 +294,7 @@ Y.mix(Console, {
      * @type String
      * @static
      */
-    ENTRY_TEMPLATE :
-        '<div class="{entry_class} {cat_class} {src_class}">'+
-            '<p class="{entry_meta_class}">'+
-                '<span class="{entry_src_class}">'+
-                    '{sourceAndDetail}'+
-                '</span>'+
-                '<span class="{entry_cat_class}">'+
-                    '{label}</span>'+
-                '<span class="{entry_time_class}">'+
-                    ' {totalTime}ms (+{elapsedTime}) {localTime}'+
-                '</span>'+
-            '</p>'+
-            '<pre class="{entry_content_class}">{message}</pre>'+
-        '</div>',
+    ENTRY_TEMPLATE : ENTRY_TEMPLATE_STR,
 
     /**
      * Static property used to define the default attribute configuration of
@@ -404,10 +406,10 @@ Y.mix(Console, {
          *
          * @attribute entryTemplate
          * @type String
-         * @default (see Console.ENTRY_TEMPLATE)
+         * @default Console.ENTRY_TEMPLATE
          */
         entryTemplate : {
-            value : '',
+            value : ENTRY_TEMPLATE_STR,
             validator : isString
         },
 
@@ -754,10 +756,6 @@ Y.extend(Console,Y.Widget,{
         this._evtCat = Y.stamp(this) + '|';
 
         this.buffer = [];
-
-        if (!this.get(ENTRY_TEMPLATE)) {
-            this.set(ENTRY_TEMPLATE,Console.ENTRY_TEMPLATE);
-        }
 
         this.get('logSource').on(this._evtCat +
             this.get('logEvent'),Y.bind("_onLogEvent",this));
