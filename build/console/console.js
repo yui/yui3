@@ -1249,28 +1249,18 @@ Y.extend(Console,Y.Widget,{
         var prop   = e.subAttrName ? e.subAttrName.split(DOT)[1] : null,
             cb     = this.get(CONTENT_BOX),
             before = e.prevVal,
-            after  = e.newVal,
-            el;
+            after  = e.newVal;
 
         if ((!prop || prop === TITLE) && before.title !== after.title) {
-            el = cb.query(DOT+C_CONSOLE_TITLE);
-            if (el) {
-                el.set(INNER_HTML,after.title);
-            }
+            cb.queryAll(DOT+C_CONSOLE_TITLE).set(INNER_HTML, after.title);
         }
 
         if ((!prop || prop === PAUSE) && before.pause !== after.pause) {
-            el = cb.query(DOT+C_PAUSE_LABEL);
-            if (el) {
-                el.set(INNER_HTML,after.pause);
-            }
+            cb.queryAll(DOT+C_PAUSE_LABEL).set(INNER_HTML, after.pause);
         }
 
         if ((!prop || prop === CLEAR) && before.clear !== after.clear) {
-            el = cb.query(DOT+C_CLEAR);
-            if (el) {
-                el.set('value',after.clear);
-            }
+            cb.queryAll(DOT+C_CLEAR).set('value',after.clear);
         }
     },
 
