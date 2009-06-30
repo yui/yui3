@@ -94,16 +94,26 @@
 <span class="c"></span>        <span class="c">// it is safe to do so.</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">navigator</span><span class="o">.</span><span class="nx">userAgent</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/MSIE/</span><span class="o">))</span> <span class="o">{</span>
 
-            <span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">_dri</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="k">try</span> <span class="o">{</span>
-                    <span class="c">// throws an error if doc is not ready</span>
-<span class="c"></span>                    <span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">doScroll</span><span class="o">(</span><span class="s1">&#39;left&#39;</span><span class="o">);</span>
-                    <span class="nx">clearInterval</span><span class="o">(</span><span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">_dri</span><span class="o">);</span>
-                    <span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">_dri</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                    <span class="nx">_ready</span><span class="o">();</span>
-                <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">ex</span><span class="o">)</span> <span class="o">{</span> 
-                <span class="o">}</span>
-            <span class="o">},</span> <span class="nx">POLL_INTERVAL</span><span class="o">);</span> 
+            <span class="k">if</span> <span class="o">(</span><span class="nb">window</span> <span class="o">!==</span> <span class="nb">window</span><span class="o">.</span><span class="nx">top</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nb">document</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nb">document</span><span class="o">.</span><span class="nx">readyState</span> <span class="o">==</span> <span class="s1">&#39;complete&#39;</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nb">document</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                        <span class="nx">_ready</span><span class="o">();</span>
+                    <span class="o">}</span>
+                <span class="o">};</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+
+                <span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">_dri</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                    <span class="k">try</span> <span class="o">{</span>
+                        <span class="c">// throws an error if doc is not ready</span>
+<span class="c"></span>                        <span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">doScroll</span><span class="o">(</span><span class="s1">&#39;left&#39;</span><span class="o">);</span>
+                        <span class="nx">clearInterval</span><span class="o">(</span><span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">_dri</span><span class="o">);</span>
+                        <span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">_dri</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                        <span class="nx">_ready</span><span class="o">();</span>
+                    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">ex</span><span class="o">)</span> <span class="o">{</span> 
+                    <span class="o">}</span>
+                <span class="o">},</span> <span class="nx">POLL_INTERVAL</span><span class="o">);</span> 
+            <span class="o">}</span>
 
         <span class="c">// FireFox, Opera, Safari 3+: These browsers provide a event for this</span>
 <span class="c"></span>        <span class="c">// moment.</span>
