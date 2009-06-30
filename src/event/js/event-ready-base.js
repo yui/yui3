@@ -45,16 +45,26 @@ var GLOBAL_ENV = YUI.Env,
         // it is safe to do so.
         if (navigator.userAgent.match(/MSIE/)) {
 
-            GLOBAL_ENV._dri = setInterval(function() {
-                try {
-                    // throws an error if doc is not ready
-                    document.documentElement.doScroll('left');
-                    clearInterval(GLOBAL_ENV._dri);
-                    GLOBAL_ENV._dri = null;
-                    _ready();
-                } catch (ex) { 
-                }
-            }, POLL_INTERVAL); 
+            if (window !== window.top) {
+                document.onreadystatechange = function() {
+                    if (document.readyState == 'complete') {
+                        document.onreadystatechange = null;
+                        _ready();
+                    }
+                };
+            } else {
+
+                GLOBAL_ENV._dri = setInterval(function() {
+                    try {
+                        // throws an error if doc is not ready
+                        document.documentElement.doScroll('left');
+                        clearInterval(GLOBAL_ENV._dri);
+                        GLOBAL_ENV._dri = null;
+                        _ready();
+                    } catch (ex) { 
+                    }
+                }, POLL_INTERVAL); 
+            }
 
         // FireFox, Opera, Safari 3+: These browsers provide a event for this
         // moment.
