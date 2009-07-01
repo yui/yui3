@@ -1837,5 +1837,5 @@ Y.Node.prototype._addAriaAttr = function(name) {
 }, '@VERSION@' ,{requires:['node-base']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-aria']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-aria'], skinnable:false, requires:['dom']});
 

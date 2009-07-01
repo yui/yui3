@@ -31,7 +31,7 @@ YUI.add('widget-position-ext', function(Y) {
          * @param {Object} User configuration object
          */
         function PositionExt(config) {
-            if (!this.hasImpl(Y.WidgetPosition) || !this._posNode) {
+            if (!this._posNode) {
                 Y.error("WidgetPosition needs to be added to the Widget, before WidgetPositionExt is added"); 
             }
             Y.after(this._syncUIPosExtras, this, SYNCUI);
