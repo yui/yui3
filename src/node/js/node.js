@@ -248,7 +248,9 @@ Node.importMethod = function(host, name, altName) {
  * its subtree only.
  */
 Node.get = function(node, doc, restrict) {
-    var instance = null;
+    var instance = null,
+        cachedNode,
+        uid;
 
     if (typeof node === 'string') {
         if (node.indexOf('doc') === 0) { // doc OR document
@@ -261,10 +263,12 @@ Node.get = function(node, doc, restrict) {
     }
 
     if (node) {
-        instance = Node._instances[node[UID]]; // reuse exising instances
-        if (!instance) {
+        uid = node._yuid;
+        cacheNode = g_nodes[uid];
+        instance = Node._instances[uid]; // reuse exising instances
+        if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
             instance = new Node(node, restrict);
-        } else if (restrict) {
+        } else if (restrict) { // enforce restriction on existing // TODO: want this?
             g_restrict[instance[UID]] = true;
             instance._set('restricted', true);
         }

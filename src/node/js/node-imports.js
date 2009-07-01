@@ -181,17 +181,3 @@ if (!document.documentElement.hasAttribute) { // IE < 8
  * @return {string} The attribute value 
  */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
-
-(function() { // IE clones expandos; regenerate UID
-    var node = document.createElement('div'),
-        UID = '_yuid';
-
-    Y.stamp(node);
-    if (node[UID] === node.cloneNode(true)[UID]) {
-        Y.Node.prototype.cloneNode = function(deep) {
-            var node = Y.Node.getDOMNode(this).cloneNode(deep);
-            node[UID] = Y.guid();
-            return Y.get(node);
-        };
-    }
-})();

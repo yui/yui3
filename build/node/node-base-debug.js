@@ -250,7 +250,9 @@ Node.importMethod = function(host, name, altName) {
  * its subtree only.
  */
 Node.get = function(node, doc, restrict) {
-    var instance = null;
+    var instance = null,
+        cachedNode,
+        uid;
 
     if (typeof node === 'string') {
         if (node.indexOf('doc') === 0) { // doc OR document
@@ -263,10 +265,12 @@ Node.get = function(node, doc, restrict) {
     }
 
     if (node) {
-        instance = Node._instances[node[UID]]; // reuse exising instances
-        if (!instance) {
+        uid = node._yuid;
+        cacheNode = g_nodes[uid];
+        instance = Node._instances[uid]; // reuse exising instances
+        if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
             instance = new Node(node, restrict);
-        } else if (restrict) {
+        } else if (restrict) { // enforce restriction on existing // TODO: want this?
             g_restrict[instance[UID]] = true;
             instance._set('restricted', true);
         }
@@ -1371,20 +1375,6 @@ if (!document.documentElement.hasAttribute) { // IE < 8
  * @return {string} The attribute value 
  */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
-
-(function() { // IE clones expandos; regenerate UID
-    var node = document.createElement('div'),
-        UID = '_yuid';
-
-    Y.stamp(node);
-    if (node[UID] === node.cloneNode(true)[UID]) {
-        Y.Node.prototype.cloneNode = function(deep) {
-            var node = Y.Node.getDOMNode(this).cloneNode(deep);
-            node[UID] = Y.guid();
-            return Y.get(node);
-        };
-    }
-})();
 (function(Y) {
     var methods = [
     /**
