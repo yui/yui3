@@ -1,6 +1,9 @@
 YUI Event Utility
     DOM event utilities
 
+3.0.0GA
+    - Added onreadystatechange fork in domready to handle the event in IE when YUI is hosted in an iframe.
+
 3.0.0beta1
     - DOM event, custom event, and simulate event moved to separate modules.
     - Added an event for DOM event delegation.  It only fires if the target or its descendants

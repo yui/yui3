@@ -128,22 +128,6 @@ sequences (i.e. "\\", etc) with '@' characters (a non-JSON character).
 
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:property" resource="#property__INVALID">
-                                    <h4><a name="property__INVALID" property="yui:name">_INVALID</a>
-                                        - <code>private <span property="yui:type">{RegExp}</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Final step in the safety evaluation.  Regex used to test the string left
-after all previous replacements for invalid characters.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
                                     <div class="private" rel="yui:property" resource="#property__SIMPLE">
                                     <h4><a name="property__SIMPLE" property="yui:name">_SIMPLE</a>
                                         - <code>private <span property="yui:type">{RegExp}</span></code>
@@ -189,6 +173,22 @@ during eval--either by deleting them or treating them as line
 endings--with escape sequences.
 IMPORTANT NOTE: This regex will be used to modify the input if a match is
 found.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__UNSAFE">
+                                    <h4><a name="property__UNSAFE" property="yui:name">_UNSAFE</a>
+                                        - <code>private <span property="yui:type">{RegExp}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Final step in the safety evaluation.  Regex used to test the string left
+after all previous replacements for invalid characters.
                                         </div>
                                     </div>
      
@@ -640,10 +640,10 @@ spaces to format the output.</span>
                                 <li class="private"><a href="#property__BRACKETS" title="_BRACKETS">_BRACKETS</a></li>
                                 <li class="protected"><a href="#property__CHARS" title="_CHARS">_CHARS</a></li>
                                 <li class="private"><a href="#property__ESCAPES" title="_ESCAPES">_ESCAPES</a></li>
-                                <li class="private"><a href="#property__INVALID" title="_INVALID">_INVALID</a></li>
                                 <li class="private"><a href="#property__SIMPLE" title="_SIMPLE">_SIMPLE</a></li>
                                 <li class="protected"><a href="#property__SPECIAL_CHARS" title="_SPECIAL_CHARS">_SPECIAL_CHARS</a></li>
                                 <li class="private"><a href="#property__UNICODE_EXCEPTIONS" title="_UNICODE_EXCEPTIONS">_UNICODE_EXCEPTIONS</a></li>
+                                <li class="private"><a href="#property__UNSAFE" title="_UNSAFE">_UNSAFE</a></li>
                                 <li class="private"><a href="#property__VALUES" title="_VALUES">_VALUES</a></li>
                                 <li class="private"><a href="#property_Native" title="Native">Native</a></li>
                         </ul>
@@ -671,7 +671,7 @@ spaces to format the output.</span>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "protected", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "private", "host": "JSON", "name": "Native", "url": "JSON.html#property_Native", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_SIMPLE", "url": "JSON.html#property__SIMPLE", "type": "property"}, {"access": "protected", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "protected", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "Native", "url": "JSON.html#property_Native", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_SIMPLE", "url": "JSON.html#property__SIMPLE", "type": "property"}, {"access": "protected", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_UNSAFE", "url": "JSON.html#property__UNSAFE", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
 </script>
 </body>
 </html>
