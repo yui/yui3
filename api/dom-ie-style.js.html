@@ -47,7 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+                        <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 <span class="k">var</span> <span class="nx">CLIENT_TOP</span> <span class="o">=</span> <span class="s1">&#39;clientTop&#39;</span><span class="o">,</span>
     <span class="nx">CLIENT_LEFT</span> <span class="o">=</span> <span class="s1">&#39;clientLeft&#39;</span><span class="o">,</span>
     <span class="nx">HAS_LAYOUT</span> <span class="o">=</span> <span class="s1">&#39;hasLayout&#39;</span><span class="o">,</span>
@@ -269,7 +269,8 @@
 <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span> <span class="c">// IE throws error on invalid style set; trap common cases</span>
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">.</span><span class="nx">height</span> <span class="o">=</span> <span class="o">{</span>
         <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">style</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="m">10</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">floatVal</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nb">isNaN</span><span class="o">(</span><span class="nx">floatVal</span><span class="o">)</span> <span class="o">||</span> <span class="nx">floatVal</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">style</span><span class="o">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;invalid style value for height: &#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dom-style&#39;</span><span class="o">);</span>
@@ -279,7 +280,8 @@
 
     <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">.</span><span class="nx">width</span> <span class="o">=</span> <span class="o">{</span>
         <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">style</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="m">10</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">floatVal</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nb">isNaN</span><span class="o">(</span><span class="nx">floatVal</span><span class="o">)</span> <span class="o">||</span> <span class="nx">floatVal</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">style</span><span class="o">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;invalid style value for width: &#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dom-style&#39;</span><span class="o">);</span>
@@ -315,6 +317,7 @@
 
 <span class="o">})(</span><span class="nx">Y</span><span class="o">);</span>
 </pre></div>
+
                     </div>
 			</div>
 		</div>
