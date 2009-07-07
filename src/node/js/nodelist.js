@@ -280,7 +280,7 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
-     * Applies an event listens to each Node bound to the NodeList. 
+     * Applies an event listener to each Node bound to the NodeList. 
      * @method on
      * @param {String} type The event being listened for
      * @param {Function} fn The handler to call when the event fires
@@ -297,7 +297,7 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
-     * Applies an event listens to each Node bound to the NodeList. 
+     * Applies an event listener to each Node bound to the NodeList. 
      * The handler is called only after all on() handlers are called
      * and the event is not prevented.
      * @method after

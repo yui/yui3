@@ -32,9 +32,6 @@ var g_nodes = {},
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
-    SuperConstr = Y.Base,
-    SuperConstrProto = Y.Base.prototype,
-
     Node = function(node, restricted) {
         var config = null;
         this[UID] = Y.stamp(node);
@@ -46,15 +43,11 @@ var g_nodes = {},
         Node._instances[this[UID]] = this;
 
         if (restricted) {
-            config = {
-                restricted: restricted
-            };
             g_restrict[this[UID]] = true; 
         }
 
-        this._lazyAttrInit = true;
-        this._silentInit = true;
-        SuperConstr.call(this, config);
+        this.addAttrs(Node.ATTRS);
+        this._initPlugins();
     },
 
     // used with previous/next/ancestor tests
@@ -75,6 +68,8 @@ var g_nodes = {},
 // end "globals"
 
 Node.NAME = 'Node';
+
+Node.re_aria = /^(?:role$|aria-)/;
 
 Node.DOM_EVENTS = {
     abort: true,
@@ -136,7 +131,7 @@ Node._instances = {};
 Node.plug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
-    Y.Base.plug.apply(Y.Base, args);
+    Y.Plugin.Host.plug.apply(Y.Base, args);
     return Node;
 };
 
@@ -151,7 +146,7 @@ Node.plug = function() {
 Node.unplug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
-    Y.Base.unplug.apply(Y.Base, args);
+    Y.Plugin.Host.unplug.apply(Y.Base, args);
     return Node;
 };
 
@@ -267,7 +262,6 @@ Node.get = function(node, doc, restrict) {
             instance = new Node(node, restrict);
         } else if (restrict) {
             g_restrict[instance[UID]] = true;
-            instance._set('restricted', true);
         }
     }
     // TODO: restrict on subsequent call?
@@ -321,7 +315,7 @@ Node.ATTRS = {
                 children = node.children,
                 childNodes, i, len;
 
-            if (children === undefined) {
+            if (!children) {
                 childNodes = node.childNodes;
                 children = [];
 
@@ -353,17 +347,6 @@ Node.ATTRS = {
         }
     },
 */
-
-    /**
-     * Whether or not this Node can traverse outside of its subtree.
-     * @config restricted
-     * @writeOnce
-     * @type Boolean
-     */
-    restricted: {
-        writeOnce: true,
-        value: false
-    }
 };
 
 // call with instance context
@@ -396,9 +379,18 @@ Node.DEFAULT_GETTER = function(name) {
     return val ? Y.Node.scrubVal(val, this) : val;
 };
 
-Y.extend(Node, Y.Base);
+Node.getters = {
+
+};
+
+Y.augment(Node, Y.Event.Target);
+Y.augment(Node, Y.Plugin.Host);
 
 Y.mix(Node.prototype, {
+    _getClasses: function() {
+        return [Node];
+    },
+
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to a node',
@@ -420,49 +412,40 @@ Y.mix(Node.prototype, {
         return str || errorMsg;
     },
 
-    _addDOMAttr: function(attr) {
-        var domNode = g_nodes[this[UID]];
-
-        if (domNode && domNode[attr] !== undefined) {
-            this.addAttr(attr, {
-                getter: function() {
-                    return Node.DEFAULT_GETTER.call(this, attr);
-                },
-
-                setter: function(val) {
-                    return Node.DEFAULT_SETTER.call(this, attr, val);
-                }
-            });
-        } else {
-        }
+    addAttrs: function(hash) {
+        this._attrs = this._attrs || {};
+        Y.each(hash, function(config, attr) {
+            this._attrs[attr] = config;
+        }, this);
     },
 
     get: function(attr) {
-        if (!this.attrAdded(attr)) { // use DEFAULT_GETTER for unconfigured attrs
-            if (Node.re_aria && Node.re_aria.test(attr)) { // except for aria
-                this._addAriaAttr(attr);
-            } else {
-                return Node.DEFAULT_GETTER.apply(this, arguments);
-            }
+        var attrConfig = this._attrs[attr],
+            val;
+
+        if (attrConfig && attrConfig.getter) {
+            val = attrConfig.getter.call(this);
+        } else if (Node.re_aria.test(attr)) {
+            val = Y.Node.getDOMNode(this).getAttribute(attr, 2); 
+        } else {
+            val = Node.DEFAULT_GETTER.apply(this, arguments);
         }
 
-        return SuperConstrProto.get.apply(this, arguments);
+        return val;
     },
 
     set: function(attr, val) {
-        if (!this.attrAdded(attr)) { // use DEFAULT_SETTER for unconfigured attrs
-            // except for aria
-            if (Node.re_aria && Node.re_aria.test(attr)) {
-                this._addAriaAttr(attr);
-            //  or chained properties or if no change listeners
-            } else if (attr.indexOf(DOT) < 0 && this._yuievt.events['Node:' + attr + 'Change']) {
-                this._addDOMAttr(attr);
-            } else {
-                Node.DEFAULT_SETTER.call(this, attr, val);
-                return this; // NOTE: return
-            }
+        var attrConfig = this._attrs[attr],
+            val;
+
+        if (attrConfig && attrConfig.setter) {
+            attrConfig.setter.call(this, val);
+        } else if (Node.re_aria.test(attr)) {
+            Y.Node.getDOMNode(this).setAttribute(attr, val);
+        } else {
+            Node.DEFAULT_SETTER.apply(this, arguments);
         }
-        SuperConstrProto.set.apply(this, arguments);
+
         return this;
     },
 
@@ -1012,7 +995,7 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
-     * Applies an event listens to each Node bound to the NodeList. 
+     * Applies an event listener to each Node bound to the NodeList. 
      * @method on
      * @param {String} type The event being listened for
      * @param {Function} fn The handler to call when the event fires
@@ -1029,7 +1012,7 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
-     * Applies an event listens to each Node bound to the NodeList. 
+     * Applies an event listener to each Node bound to the NodeList. 
      * The handler is called only after all on() handlers are called
      * and the event is not prevented.
      * @method after
@@ -1492,6 +1475,32 @@ Y.Node.prototype.delegate = function(type, fn, selector, context) {
     return Y.on.apply(Y, a);
 };
 
+var onMutation = function(e) {
+    var node = Y.Node._instances[e.relatedNode._yuid],
+        type,
+        evt,
+        field;
+        
+console.log(e, node);
+    // only process if someone is listening
+    if (node && node._yuievt && node._yuievt.events[type]) {
+        type = e.type.substring(3);
+        evt = {};
+        for (field in e) {
+            if (e[field].nodeType) {
+                evt[field] = Y.get(e[field]);
+            } else {
+                evt[field] = e[field];
+            }
+        }
+        evt.type = type;
+        node.fire(type, evt);
+    }
+};
+
+Y.config.doc.addEventListener('DOMAttrModified', onMutation, 0);
+Y.config.doc.addEventListener('DOMNodeInserted', onMutation, 0);
+Y.config.doc.addEventListener('DOMNodeRemoved', onMutation, 0);
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'base', 'selector']});
@@ -1801,32 +1810,7 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 
 
 }, '@VERSION@' ,{requires:['dom-screen']});
-YUI.add('node-aria', function(Y) {
-
-/**
- * Aria support for Node
- * @module node
- * @submodule node-aria
- */
-
-Y.Node.re_aria = /^(?:role$|aria-)/;
-
-Y.Node.prototype._addAriaAttr = function(name) {
-    this.addAttr(name, {
-        getter: function() {
-            return Y.Node.getDOMNode(this).getAttribute(name, 2); 
-        },
-
-        setter: function(val) {
-            Y.Node.getDOMNode(this).setAttribute(name, val);
-            return val; 
-        }
-    });
-};
 
 
-}, '@VERSION@' ,{requires:['node-base']});
-
-
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-aria'], skinnable:false, requires:['dom']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen'], skinnable:false, requires:['dom']});
 
