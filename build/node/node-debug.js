@@ -1234,7 +1234,8 @@ Y.Array.each([
     /**
      * Passes through to DOM method.
      * @method cloneNode
-     * @param {HTMLElement | Node} node Node to be cloned 
+     * @param {Boolean} deep Whether or not to perform a deep clone, which includes
+     * subtree and attributes
      * @return {Node} The clone 
      */
     'cloneNode',
