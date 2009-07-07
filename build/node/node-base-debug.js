@@ -520,7 +520,7 @@ Y.mix(Node.prototype, {
    /**
      * Returns the nearest ancestor that passes the test applied by supplied boolean method.
      * @method ancestor
-     * @param {String | Function} fn A selector or boolean method for testing elements.
+     * @param {String | Function} fn A selector string or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
      * @return {Node} The matching Node instance or null if not found
      */
