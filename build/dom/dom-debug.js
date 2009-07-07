@@ -434,7 +434,10 @@ Y.DOM = {
      * @param {HTMLDocument} doc An optional document context 
      */
     create: function(html, doc) {
-        html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
+        if (typeof html === 'string') {
+            html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
+        }
+
         if (!doc && Y.DOM._cloneCache[html]) {
             return Y.DOM._cloneCache[html].cloneNode(true); // NOTE: return
         }
@@ -1445,7 +1448,8 @@ try {
 } catch(e) { // IE throws error on invalid style set; trap common cases
     Y.DOM.CUSTOM_STYLES.height = {
         set: function(node, val, style) {
-            if (parseInt(val, 10) >= 0) {
+            var floatVal = parseFloat(val);
+            if (isNaN(floatVal) || floatVal >= 0) {
                 style.height = val;
             } else {
                 Y.log('invalid style value for height: ' + val, 'warn', 'dom-style');
@@ -1455,7 +1459,8 @@ try {
 
     Y.DOM.CUSTOM_STYLES.width = {
         set: function(node, val, style) {
-            if (parseInt(val, 10) >= 0) {
+            var floatVal = parseFloat(val);
+            if (isNaN(floatVal) || floatVal >= 0) {
                 style.width = val;
             } else {
                 Y.log('invalid style value for width: ' + val, 'warn', 'dom-style');
@@ -2706,7 +2711,7 @@ if (!Y.Selector._supportsNative()) {
 }
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'selector-native'], skinnable:false});
+}, '@VERSION@' ,{requires:['selector-native'], skinnable:false});
 
 
 YUI.add('dom', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dom-base', 'dom-style', 'dom-screen', 'selector-native', 'selector-css2']});
