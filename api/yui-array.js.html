@@ -202,7 +202,7 @@
 <span class="c"> */</span>
 <span class="nx">YArray</span><span class="o">.</span><span class="nx">indexOf</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Native</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">)</span> <span class="o">?</span>
     <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">a</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">Native</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
     <span class="o">}</span> <span class="o">:</span>
     <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
