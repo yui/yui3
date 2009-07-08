@@ -204,7 +204,7 @@
 <span class="c"></span>    <span class="c">// return this[&#39;cached_&#39; + source.name] = function</span>
 <span class="c"></span>    <span class="c">// var a = function(){}; a.name = &#39;foo&#39;; return a;</span>
 <span class="c"></span>
-    <span class="k">return</span> <span class="k">function</span> <span class="nx">cached</span><span class="o">(</span><span class="nx">arg1</span><span class="o">,</span> <span class="nx">arg2</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">function</span><span class="o">(</span><span class="nx">arg1</span><span class="o">,</span> <span class="nx">arg2</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="c">// (?)()   51  5.76%   0.571ms 1.01ms  0.02ms  0.001ms 0.041ms</span>
 <span class="c"></span>        <span class="c">// A() 76  6.58%   0.652ms 0.652ms 0.009ms 0.005ms 0.03ms</span>
