@@ -501,7 +501,7 @@ Y.DOM = {
      * @return {String} The current value of the attribute. 
      */
     getAttribute: function(el, attr, ieAttr) {
-        ieAttr = ieAttr || 2; // default to interpolated, case-insensitive value
+        ieAttr = (ieAttr !== undefined) ? ieAttr : 2;
         var ret = '';
         if (el && el.getAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
