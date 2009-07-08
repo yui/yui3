@@ -22,7 +22,6 @@ YUI.add('node-base', function(Y) {
 // "globals"
 var g_nodes = {},
     g_nodelists = {},
-    g_restrict = {},
     g_slice = Array.prototype.slice,
 
     DOT = '.',
@@ -35,22 +34,23 @@ var g_nodes = {},
     SuperConstr = Y.Base,
     SuperConstrProto = Y.Base.prototype,
 
-    Node = function(node, restricted) {
-        var config = null;
-        this[UID] = Y.stamp(node);
-        if (!this[UID]) { // stamp failed; likely IE non-HTMLElement
-            this[UID] = Y.guid(); 
+    Node = function(node) {
+        var config = null,
+            uid = node[UID];
+
+        if (uid && g_nodes[uid] && g_nodes[uid] !== node) {
+            node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
 
-        g_nodes[this[UID]] = node;
-        Node._instances[this[UID]] = this;
-
-        if (restricted) {
-            config = {
-                restricted: restricted
-            };
-            g_restrict[this[UID]] = true; 
+        uid = Y.stamp(node);
+        if (!uid) { // stamp failed; likely IE non-HTMLElement
+            uid = Y.guid();
         }
+
+        this[UID] = uid;
+
+        g_nodes[uid] = node;
+        Node._instances[uid] = this;
 
         this._lazyAttrInit = true;
         this._silentInit = true;
@@ -179,12 +179,8 @@ Node.scrubVal = function(val, node, depth) {
     if (node && val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y.DOM.isWindow(val)) {// node || window
-                if (g_restrict[node[UID]] && !node.contains(val)) {
-                    val = null; // not allowed to go outside of root node
-                } else {
-                    val = Node.get(val);
-                }
-            } else if (val.item || // dom collection or Node instance // TODO: check each node for restrict? block ancestor?
+                val = Node.get(val);
+            } else if (val.item || // dom collection or Node instance
                     (val[0] && val[0][NODE_TYPE])) { // array of DOM Nodes
                 val = Y.all(val);
             } else {
@@ -245,36 +241,35 @@ Node.importMethod = function(host, name, altName) {
  * @static
  * @param {String | HTMLElement} node a node or Selector 
  * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
- * @param {Boolean} restrict Whether or not the Node instance should be restricted to accessing
- * its subtree only.
  */
-Node.get = function(node, doc, restrict) {
+Node.get = function(node, doc) {
     var instance = null,
         cachedNode,
         uid;
 
-    if (typeof node === 'string') {
-        if (node.indexOf('doc') === 0) { // doc OR document
-            node = Y.config.doc;
-        } else if (node.indexOf('win') === 0) { // doc OR document
-            node = Y.config.win;
-        } else {
-            node = Y.Selector.query(node, doc, true);
-        }
-    }
-
     if (node) {
+        if (typeof node === 'string') {
+            if (node.indexOf('doc') === 0) { // doc OR document
+                node = Y.config.doc;
+            } else if (node.indexOf('win') === 0) { // doc OR document
+                node = Y.config.win;
+            } else {
+                node = Y.Selector.query(node, doc, true);
+            }
+            if (!node) {
+                return null;
+            }
+        } else if (node instanceof Node) {
+            return node; // NOTE: return
+        }
+
         uid = node._yuid;
-        cacheNode = g_nodes[uid];
+        cachedNode = g_nodes[uid];
         instance = Node._instances[uid]; // reuse exising instances
         if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
-            instance = new Node(node, restrict);
-        } else if (restrict) { // enforce restriction on existing // TODO: want this?
-            g_restrict[instance[UID]] = true;
-            instance._set('restricted', true);
+            instance = new Node(node);
         }
     }
-    // TODO: restrict on subsequent call?
     return instance;
 };
 
@@ -348,25 +343,6 @@ Node.ATTRS = {
             Y.DOM.setValue(g_nodes[this[UID]], val);
             return val;
         }
-    },
-
-/*
-    style: {
-        getter: function(attr) {
-            return Y.DOM.getStyle(g_nodes[this[UID]].style, attr);
-        }
-    },
-*/
-
-    /**
-     * Whether or not this Node can traverse outside of its subtree.
-     * @config restricted
-     * @writeOnce
-     * @type Boolean
-     */
-    restricted: {
-        writeOnce: true,
-        value: false
     }
 };
 
@@ -632,7 +608,6 @@ Y.mix(Node.prototype, {
         //var uid = this[UID];
 
         //delete g_nodes[uid];
-        //delete g_restrict[uid];
         //delete Node._instances[uid];
     },
 
@@ -687,11 +662,7 @@ Y.mix(Node.prototype, {
             if (typeof content !== 'string') { // pass the DOM node
                 content = Y.Node.getDOMNode(content);
             }
-            if (!where || // only allow inserting into this Node's subtree
-                (!g_restrict[this[UID]] || 
-                    (typeof where !== 'string' && this.contains(where)))) { 
-                Y.DOM.addHTML(g_nodes[this[UID]], content, where);
-            }
+            Y.DOM.addHTML(g_nodes[this[UID]], content, where);
         }
         return this;
     },
