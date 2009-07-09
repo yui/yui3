@@ -4582,11 +4582,11 @@ Y.Loader.prototype = {
     _sort: function() {
         // create an indexed list
         var s=Y.Object.keys(this.required), info=this.moduleInfo, loaded=this.loaded,
-            p, l, a, b, j, k, moved,
+            p, l, a, b, j, k, moved, done = {},
 
         // returns true if b is not loaded, and is required
         // directly or by means of modules it supersedes.
-            requires = function(aa, bb) {
+            requires = Y.cached(function(aa, bb) {
 
                 var mm = info[aa], ii, rr, after, other, ss;
 
@@ -4624,7 +4624,7 @@ Y.Loader.prototype = {
                 }
 
                 return false;
-            };
+            });
 
         // pointer to the first unsorted item
         p = 0; 
@@ -4645,7 +4645,8 @@ Y.Loader.prototype = {
                 // check everything below current item and move if we
                 // find a requirement for the current item
                 for (k=j+1; k<l; k=k+1) {
-                    if (requires(a, s[k])) {
+                    var key = a + s[k];
+                    if (requires(a, s[k]) && !(done[key])) {
 
                         // extract the dependency so we can move it up
                         b = s.splice(k, 1);
@@ -4654,7 +4655,13 @@ Y.Loader.prototype = {
                         // requires it
                         s.splice(j, 0, b[0]);
 
+                        // only swap two dependencies once to short circut
+                        // circular dependencies
+                        done[key] = true;
+
+                        // keep working 
                         moved = true;
+
                         break;
                     }
                 }
