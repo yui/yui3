@@ -430,4 +430,4 @@ if (!Y.Selector._supportsNative()) {
 }
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'selector-native'], skinnable:false});
+}, '@VERSION@' ,{requires:['selector-native'], skinnable:false});

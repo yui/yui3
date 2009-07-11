@@ -180,7 +180,6 @@ onload = function() {
                 ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('first', null, Y.DOM.byId(demo)), $('#demo .first'), '#demo .first');
                 ArrayAssert.itemsAreEqual(document.getElementsByTagName('div'), $('div'), 'div');
                 ArrayAssert.itemsAreEqual(document.body.getElementsByTagName('div'), $('body div'), 'body div');
-                ArrayAssert.itemsAreEqual([demoFirstChild, Y.DOM.next(demoFirstChild)], $('#demo > p:not(.last)'), '#demo > p:not(.last)');
                 ArrayAssert.itemsAreEqual([Y.Dom.get('class-bar')], $('.Bar'), '.Bar');
                 //ArrayAssert.itemsAreEqual([], $(null), 'null input');
                 ArrayAssert.itemsAreEqual([], $('#fake-id-not-in-doc'), 'id false positive');
@@ -195,6 +194,7 @@ onload = function() {
                 Assert.areEqual(Y.DOM.byId('test-rel-div'), $("div[rel^='foo2']", null, true), "($('[rel^=\'foo2\']), null, true)");
                 Assert.areEqual(Y.DOM.byId('foo-bar'), $("input[name='foo.bar']", null, true), "input[name='foo.bar'], null, true)");
 
+                ArrayAssert.itemsAreEqual([demoFirstChild, Y.DOM.next(demoFirstChild)], $('#demo > p:not(.last)'), '#demo > p:not(.last)');
             }
 
         });
@@ -209,7 +209,6 @@ onload = function() {
                 Assert.isFalse(Selector.test(Y.Dom.getFirstChild('demo'), ':first-child.last'), 'first-child class false pos');
                 Assert.isTrue(Selector.test(Y.Dom.getFirstChild('demo'), ':first-child.first'), 'first-child class');
                 Assert.isFalse(Selector.test(Y.Dom.getFirstChild('demo'), ':only-child'), 'only-child');
-                Assert.isFalse(Selector.test(Y.Dom.get('demo'), ':not(.foo)'), 'not(.foo)');
                 Assert.isTrue(Selector.test(Y.Dom.get('demo'), ':not(p)'), 'not(p)');
                 Assert.isTrue(Selector.test(demoFirstChild, ':not(.last)'), 'not(.last)');
                 Assert.isTrue(Selector.test(Y.Dom.getFirstChild('demo'), ':first-of-type'), 'first-of-type');
@@ -217,6 +216,7 @@ onload = function() {
                 Assert.isFalse(Selector.test(Y.Dom.getFirstChild('demo'), ':only-of-type'), 'only-of-type false pos');
                 Assert.isFalse(Selector.test(Y.Dom.get('demo2'), ':empty'), 'empty false pos');
                 Assert.isTrue(Selector.test(Y.Dom.get('empty'), ':empty'), 'empty');
+                Assert.isFalse(Selector.test(Y.Dom.get('demo'), ':not(.foo)'), 'not(.foo)');
 
                 /* non-standard
                 Assert.isTrue(Selector.test(Y.Dom.get('demo2'), ':contains(demo2)'), 'contains(demo2)');

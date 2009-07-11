@@ -770,9 +770,7 @@ YUI.add('io-base', function(Y) {
 	Y.io.http = _io;
 
 
-
 }, '@VERSION@' );
-
 YUI.add('io-form', function(Y) {
 
    /**
@@ -865,9 +863,7 @@ YUI.add('io-form', function(Y) {
     }, true);
 
 
-
 }, '@VERSION@' ,{requires:['io-base']});
-
 YUI.add('io-xdr', function(Y) {
 
    /**
@@ -985,9 +981,7 @@ YUI.add('io-xdr', function(Y) {
 	});
 
 
-
 }, '@VERSION@' ,{requires:['io-base']});
-
 YUI.add('io-upload-iframe', function(Y) {
 
    /**
@@ -1171,9 +1165,7 @@ YUI.add('io-upload-iframe', function(Y) {
 	});
 
 
-
 }, '@VERSION@' ,{requires:['io-base']});
-
 YUI.add('io-queue', function(Y) {
 
    /**
@@ -1390,9 +1382,7 @@ YUI.add('io-queue', function(Y) {
     }, true);
 
 
-
 }, '@VERSION@' ,{requires:['io-base']});
-
 
 
 YUI.add('io', function(Y){}, '@VERSION@' ,{use:['io-base', 'io-form', 'io-xdr', 'io-upload-iframe', 'io-queue']});

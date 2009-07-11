@@ -47,7 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                        <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 <span class="c">/**</span>
 <span class="c"> * Loader dynamically loads script and css files.  It includes the dependency</span>
 <span class="c"> * info for the version of the library in use, and will automatically pull in</span>
@@ -1743,11 +1743,11 @@
     <span class="nx">_sort</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="c">// create an indexed list</span>
 <span class="c"></span>        <span class="k">var</span> <span class="nx">s</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">keys</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">required</span><span class="o">),</span> <span class="nx">info</span><span class="o">=</span><span class="k">this</span><span class="o">.</span><span class="nx">moduleInfo</span><span class="o">,</span> <span class="nx">loaded</span><span class="o">=</span><span class="k">this</span><span class="o">.</span><span class="nx">loaded</span><span class="o">,</span>
-            <span class="nx">p</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">moved</span><span class="o">,</span>
+            <span class="nx">p</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">moved</span><span class="o">,</span> <span class="nx">done</span> <span class="o">=</span> <span class="o">{},</span>
 
         <span class="c">// returns true if b is not loaded, and is required</span>
 <span class="c"></span>        <span class="c">// directly or by means of modules it supersedes.</span>
-<span class="c"></span>            <span class="nx">requires</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">aa</span><span class="o">,</span> <span class="nx">bb</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>            <span class="nx">requires</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">aa</span><span class="o">,</span> <span class="nx">bb</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="k">var</span> <span class="nx">mm</span> <span class="o">=</span> <span class="nx">info</span><span class="o">[</span><span class="nx">aa</span><span class="o">],</span> <span class="nx">ii</span><span class="o">,</span> <span class="nx">rr</span><span class="o">,</span> <span class="nx">after</span><span class="o">,</span> <span class="nx">other</span><span class="o">,</span> <span class="nx">ss</span><span class="o">;</span>
 
@@ -1785,7 +1785,7 @@
                 <span class="o">}</span>
 
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-            <span class="o">};</span>
+            <span class="o">});</span>
 
         <span class="c">// pointer to the first unsorted item</span>
 <span class="c"></span>        <span class="nx">p</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> 
@@ -1806,7 +1806,8 @@
                 <span class="c">// check everything below current item and move if we</span>
 <span class="c"></span>                <span class="c">// find a requirement for the current item</span>
 <span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="nx">k</span><span class="o">=</span><span class="nx">j</span><span class="o">+</span><span class="m">1</span><span class="o">;</span> <span class="nx">k</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">k</span><span class="o">=</span><span class="nx">k</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">requires</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">s</span><span class="o">[</span><span class="nx">k</span><span class="o">]))</span> <span class="o">{</span>
+                    <span class="k">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">s</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">requires</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">s</span><span class="o">[</span><span class="nx">k</span><span class="o">])</span> <span class="o">&amp;&amp;</span> <span class="o">!(</span><span class="nx">done</span><span class="o">[</span><span class="nx">key</span><span class="o">]))</span> <span class="o">{</span>
 
                         <span class="c">// extract the dependency so we can move it up</span>
 <span class="c"></span>                        <span class="nx">b</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">k</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
@@ -1815,7 +1816,13 @@
 <span class="c"></span>                        <span class="c">// requires it</span>
 <span class="c"></span>                        <span class="nx">s</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">j</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">b</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
 
-                        <span class="nx">moved</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                        <span class="c">// only swap two dependencies once to short circut</span>
+<span class="c"></span>                        <span class="c">// circular dependencies</span>
+<span class="c"></span>                        <span class="nx">done</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+                        <span class="c">// keep working </span>
+<span class="c"></span>                        <span class="nx">moved</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
                         <span class="k">break</span><span class="o">;</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
@@ -2178,6 +2185,7 @@
 
 <span class="o">})();</span>
 </pre></div>
+
                     </div>
 			</div>
 		</div>
