@@ -231,7 +231,7 @@
    		/* End Configuration Properties */
 
    		o.c.onreadystatechange = function() { _readyState(o, c); };
-   		try { _open(o.c, m, uri); } catch (e0) {}
+   		try { _open(o.c, m, uri); } catch(e0) {}
    		_setHeaders(o.c, (c.headers || {}));
 
    		// Do not pass null, in the absence of data, as this
