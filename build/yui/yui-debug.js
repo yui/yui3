@@ -1341,7 +1341,7 @@ YArray.hash = function(k, v) {
  */
 YArray.indexOf = (Native.indexOf) ?
     function(a, val) {
-        return a.indexOf(val);
+        return Native.indexOf.call(a, val);
     } :
     function(a, val) {
         for (var i=0; i<a.length; i=i+1) {
@@ -1547,7 +1547,7 @@ Y.cached = function(source, cache){
     // return this['cached_' + source.name] = function
     // var a = function(){}; a.name = 'foo'; return a;
 
-    return function cached(arg1, arg2) {
+    return function(arg1, arg2) {
 
         // (?)()   51  5.76%   0.571ms 1.01ms  0.02ms  0.001ms 0.041ms
         // A() 76  6.58%   0.652ms 0.652ms 0.009ms 0.005ms 0.03ms
@@ -1807,6 +1807,7 @@ O.setValue = function(o, path, val) {
 Y.UA = function() {
 
     var nav = navigator,
+
         o = {
 
         /**
@@ -1815,7 +1816,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        ie:0,
+        ie: 0,
 
         /**
          * Opera version number or 0.  Example: 9.2
@@ -1823,7 +1824,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        opera:0,
+        opera: 0,
 
         /**
          * Gecko engine revision number.  Will evaluate to 1 if Gecko 
@@ -1839,7 +1840,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        gecko:0,
+        gecko: 0,
 
         /**
          * AppleWebKit version.  KHTML browsers that are not WebKit browsers 
@@ -1866,7 +1867,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        webkit:0,
+        webkit: 0,
 
         /**
          * The mobile property will be set to a string containing any relevant
@@ -2079,12 +2080,26 @@ Y.UA = function() {
 YUI.add('queue-base', function(Y) {
 
 /**
- * A simple FIFO queue of function references.
+ * <p>The Queue module adds a common data structure for FIFO operations. In its
+ * simplest form, it is little more than an array wrapper. Additional
+ * submodules introduce more functionality such as promotion and removal of
+ * queued items.</p>
+ *
+ * <p>An AsyncQueue class is provided in the queue-run submodule.  This class
+ * affords a mechanism to do complex sequential and iterative callback
+ * execution across configured timeouts.
+ *
+ * @module queue
+ */
+
+/**
+ * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and
+ * removed using next().
  *
  * @module queue
  * @submodule queue-base
  * @class Queue
- * @param callback* {Function} 0..n callback functions to seed the queue
+ * @param item* {MIXED} 0..n items to seed the queue
  */
 function Queue() {
     this._init();
@@ -2100,7 +2115,7 @@ Queue.prototype = {
      */
     _init : function () {
         /**
-         * The collection of enqueued functions
+         * The collection of enqueued items
          *
          * @property _q
          * @type {Array}
@@ -2110,20 +2125,20 @@ Queue.prototype = {
     },
 
     /**
-     * Get the next callback in the queue.
+     * Get the next item in the queue.
      *
      * @method next
-     * @return {Function} the next callback in the queue
+     * @return {MIXED} the next item in the queue
      */
     next : function () {
         return this._q.shift();
     },
 
     /**
-     * Add 0..n callbacks to the end of the queue
+     * Add 0..n items to the end of the queue
      *
      * @method add
-     * @param callback* {Function} 0..n callback functions
+     * @param item* {MIXED} 0..n items
      */
     add : function () {
         Y.Array.each(Y.Array(arguments,0,true),function (fn) {
@@ -2134,7 +2149,7 @@ Queue.prototype = {
     },
 
     /**
-     * Returns the current number of queued callbacks
+     * Returns the current number of queued items
      *
      * @method size
      * @return {Number}
@@ -4567,11 +4582,11 @@ Y.Loader.prototype = {
     _sort: function() {
         // create an indexed list
         var s=Y.Object.keys(this.required), info=this.moduleInfo, loaded=this.loaded,
-            p, l, a, b, j, k, moved,
+            p, l, a, b, j, k, moved, done = {},
 
         // returns true if b is not loaded, and is required
         // directly or by means of modules it supersedes.
-            requires = function(aa, bb) {
+            requires = Y.cached(function(aa, bb) {
 
                 var mm = info[aa], ii, rr, after, other, ss;
 
@@ -4609,7 +4624,7 @@ Y.Loader.prototype = {
                 }
 
                 return false;
-            };
+            });
 
         // pointer to the first unsorted item
         p = 0; 
@@ -4630,7 +4645,8 @@ Y.Loader.prototype = {
                 // check everything below current item and move if we
                 // find a requirement for the current item
                 for (k=j+1; k<l; k=k+1) {
-                    if (requires(a, s[k])) {
+                    var key = a + s[k];
+                    if (requires(a, s[k]) && !(done[key])) {
 
                         // extract the dependency so we can move it up
                         b = s.splice(k, 1);
@@ -4639,7 +4655,13 @@ Y.Loader.prototype = {
                         // requires it
                         s.splice(j, 0, b[0]);
 
+                        // only swap two dependencies once to short circut
+                        // circular dependencies
+                        done[key] = true;
+
+                        // keep working 
                         moved = true;
+
                         break;
                     }
                 }

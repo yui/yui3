@@ -95,11 +95,11 @@ var Native = Y.config.win.JSON,
      * Final step in the safety evaluation.  Regex used to test the string left
      * after all previous replacements for invalid characters.
      *
-     * @property _INVALID
+     * @property _UNSAFE
      * @type {RegExp}
      * @private
      */
-    _INVALID = /[^\],:{}\s]/,
+    _UNSAFE = /[^\],:{}\s]/,
     
     /**
      * Test for JSON string of simple data string, number, boolean, or null.
@@ -181,7 +181,7 @@ var Native = Y.config.win.JSON,
             s = s.replace(_UNICODE_EXCEPTIONS, _escapeException);
             
             // Test for any remaining invalid characters
-            if (!_INVALID.test(s.replace(_ESCAPES,'@').
+            if (!_UNSAFE.test(s.replace(_ESCAPES,'@').
                                  replace(_VALUES,']').
                                  replace(_BRACKETS,''))) {
 
@@ -222,4 +222,4 @@ if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
     catch (e) {} // defer to JS implementation
 }
 
-Y.mix(Y.namespace('JSON'),{ parse : _parse });
+Y.namespace('JSON').parse = _parse;

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>widget-position-ext&nbsp; <span class="subtitle">3.0.0b1_test2</span></h3>
+        <h3>widget-position-ext&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a>
                 
@@ -47,7 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">/**</span>
+                        <div class="highlight" ><pre><span class="c">/**</span>
 <span class="c"> * Provides extended/advanced XY positioning support for Widgets, through an extension.</span>
 <span class="c"> *</span>
 <span class="c"> * It builds on top of the widget-position module, to provide alignmentment and centering support.</span>
@@ -78,7 +78,7 @@
 <span class="c">         * @param {Object} User configuration object</span>
 <span class="c">         */</span>
         <span class="k">function</span> <span class="nx">PositionExt</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">hasImpl</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">WidgetPosition</span><span class="o">)</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_posNode</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_posNode</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;WidgetPosition needs to be added to the Widget, before WidgetPositionExt is added&quot;</span><span class="o">);</span> 
             <span class="o">}</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_syncUIPosExtras</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">SYNCUI</span><span class="o">);</span>
@@ -444,6 +444,7 @@
 
         <span class="nx">Y</span><span class="o">.</span><span class="nx">WidgetPositionExt</span> <span class="o">=</span> <span class="nx">PositionExt</span><span class="o">;</span>
 </pre></div>
+
                     </div>
 			</div>
 		</div>
@@ -460,6 +461,7 @@
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>

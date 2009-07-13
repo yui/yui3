@@ -155,7 +155,7 @@ Y.cached = function(source, cache){
     // return this['cached_' + source.name] = function
     // var a = function(){}; a.name = 'foo'; return a;
 
-    return function cached(arg1, arg2) {
+    return function(arg1, arg2) {
 
         // (?)()   51  5.76%   0.571ms 1.01ms  0.02ms  0.001ms 0.041ms
         // A() 76  6.58%   0.652ms 0.652ms 0.009ms 0.005ms 0.03ms

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>queue&nbsp; <span class="subtitle">3.0.0b1_test2</span></h3>
+        <h3>queue&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_queue.html" title="queue">queue</a>
                 
@@ -50,10 +50,13 @@
 
                     </h3>
                     <div class="description summary">
-                        <p>Adds a new class AsyncQueue that is restricted to function callbacks, but
-includes a host of additional features, including events, callback
-iterations, and a run() method that can execute queued callbacks in order,
-even across configured timeouts.</p>
+                        <p>The Queue module adds a common data structure for FIFO operations. In its
+simplest form, it is little more than an array wrapper. Additional
+submodules introduce more functionality such as promotion and removal of
+queued items.</p>
+<p>An AsyncQueue class is provided in the queue-run submodule.  This class
+affords a mechanism to do complex sequential and iterative callback
+execution across configured timeouts.
                     </div>
 
 
@@ -63,7 +66,7 @@ even across configured timeouts.</p>
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"EventTarget": "EventTarget"}, "events": {}, "configs": {}, "properties": {}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": true, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}]}}, "description": "<p>A specialized queue class that supports scheduling callbacks to execute\nsequentially, iteratively, even asynchronously.<\/p>\n<p>Callbacks can be function refs or objects with the following keys.  Only\nthe <code>fn<\/code> key is required.<\/p>\n<ul>\n<li><code>fn<\/code> -- The callback function<\/li>\n<li><code>context<\/code> -- The execution context for the callbackFn.<\/li>\n<li><code>args<\/code> -- Arguments to pass to callbackFn.<\/li>\n<li><code>timeout<\/code> -- Millisecond delay before executing callbackFn.\n(Applies to each iterative execution of callback)<\/li>\n<li><code>iterations<\/code> -- Number of times to repeat the callback.\n<li><code>until<\/code> -- Repeat the callback until this function returns\ntrue.  This setting trumps iterations.<\/li>\n<li><code>autoContinue<\/code> -- Set to false to prevent the AsyncQueue from\nexecuting the next callback in the Queue after\nthe callback completes.<\/li>\n<li><code>id<\/code> -- Name that can be used to get, promote, get the\nindexOf, or delete this callback.<\/li>\n<\/ul>", "guessedname": "AsyncQueue", "name": "AsyncQueue"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "A simple FIFO queue.  Items are added to the Queue with add(1..n items) and\nremoved using next().", "guessedname": "Queue", "name": "Queue"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"EventTarget": "EventTarget"}, "events": {}, "configs": {}, "properties": {}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": true, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}]}}, "description": "<p>A specialized queue class that supports scheduling callbacks to execute\nsequentially, iteratively, even asynchronously.</p>\n<p>Callbacks can be function refs or objects with the following keys.  Only\nthe <code>fn</code> key is required.</p>\n<ul>\n<li><code>fn</code> -- The callback function</li>\n<li><code>context</code> -- The execution context for the callbackFn.</li>\n<li><code>args</code> -- Arguments to pass to callbackFn.</li>\n<li><code>timeout</code> -- Millisecond delay before executing callbackFn.\n(Applies to each iterative execution of callback)</li>\n<li><code>iterations</code> -- Number of times to repeat the callback.\n<li><code>until</code> -- Repeat the callback until this function returns\ntrue.  This setting trumps iterations.</li>\n<li><code>autoContinue</code> -- Set to false to prevent the AsyncQueue from\nexecuting the next callback in the Queue after\nthe callback completes.</li>\n<li><code>id</code> -- Name that can be used to get, promote, get the\nindexOf, or delete this callback.</li>\n</ul>", "guessedname": "AsyncQueue", "name": "AsyncQueue"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "A simple FIFO queue.  Items are added to the Queue with add(1..n items) and\nremoved using next().", "guessedname": "Queue", "name": "Queue"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
@@ -76,14 +79,14 @@ even across configured timeouts.</p>
                                     <div class="submodules">
                                         <h4>Submodules:</h4> 
                                         <dl>
-                                            <dt><code><a href="AsyncQueue.html" title="queue-run">queue-run</a></code></dt>
+                                            <dt><code>queue-run</code></dt>
                                             <dd><p>Adds a new class AsyncQueue that is restricted to function callbacks, but
 includes a host of additional features, including events, callback
 iterations, and a run() method that can execute queued callbacks in order,
 even across configured timeouts.</p></dd>
-                                            <dt><code><a href="Queue.html" title="queue-promote">queue-promote</a></code></dt>
+                                            <dt><code>queue-promote</code></dt>
                                             <dd>Adds methods promote, remove, and indexOf to Queue instances.</dd>
-                                            <dt><code><a href="Queue.html" title="queue-base">queue-base</a></code></dt>
+                                            <dt><code>queue-base</code></dt>
                                             <dd>A simple FIFO queue.  Items are added to the Queue with add(1..n items) and
 removed using next().</dd>
                                         </dl>
@@ -107,6 +110,7 @@ removed using next().</dd>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>

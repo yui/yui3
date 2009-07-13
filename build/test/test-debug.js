@@ -3,7 +3,7 @@ YUI.add('test', function(Y) {
     /**
      * YUI JavaScript Testing Framework
      *
-     * @module yuitest
+     * @module test
      */
 
     
@@ -738,7 +738,10 @@ YUI.add('test', function(Y) {
             _resumeTest : function (segment) {
             
                 //get relevant information
-                var node = this._cur;
+                var node = this._cur;                
+                
+                //we know there's no more waiting now
+                this._waiting = false;
                 
                 //if there's no node, it probably means a wait() was called after resume()
                 if (!node){
@@ -875,9 +878,6 @@ YUI.add('test', function(Y) {
                     node.parent.results.passed++;
                 }
                 node.parent.results.total++;
-                
-                //we know there's no more waiting now
-                this._waiting = false;
     
                 //set timeout not supported in all environments
                 if (typeof setTimeout != "undefined"){
@@ -2611,7 +2611,12 @@ YUI.add('test', function(Y) {
             
                 //method should fail if called when not expected
                 mock[name] = function(){
-                    Y.Assert.fail("Method " + name + "() should not have been called.");
+                    try {
+                        Y.Assert.fail("Method " + name + "() should not have been called.");
+                    } catch (ex){
+                        //route through TestRunner for proper handling
+                        Y.Test.Runner._handleError(ex);
+                    }                    
                 };
             }
         } else if (expectation.property){
@@ -2629,13 +2634,18 @@ YUI.add('test', function(Y) {
      * @static
      */ 
     Y.Mock.verify = function(mock /*:Object*/){    
-        Y.Object.each(mock.__expectations, function(expectation){
-            if (expectation.method) {
-                Y.Assert.areEqual(expectation.callCount, expectation.actualCallCount, "Method " + expectation.method + "() wasn't called the expected number of times.");
-            } else if (expectation.property){
-                Y.Assert.areEqual(expectation.value, mock[expectation.property], "Property " + expectation.property + " wasn't set to the correct value."); 
-            }
-        });    
+        try {
+            Y.Object.each(mock.__expectations, function(expectation){
+                if (expectation.method) {
+                    Y.Assert.areEqual(expectation.callCount, expectation.actualCallCount, "Method " + expectation.method + "() wasn't called the expected number of times.");
+                } else if (expectation.property){
+                    Y.Assert.areEqual(expectation.value, mock[expectation.property], "Property " + expectation.property + " wasn't set to the correct value."); 
+                }
+            });
+        } catch (ex){
+            //route through TestRunner for proper handling
+            Y.Test.Runner._handleError(ex);
+        }
     };
 
     Y.Mock.Value = function(method, originalArgs, message){

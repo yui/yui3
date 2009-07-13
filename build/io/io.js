@@ -757,9 +757,7 @@ YUI.add('io-base', function(Y) {
 	Y.io.http = _io;
 
 
-
 }, '@VERSION@' );
-
 YUI.add('io-form', function(Y) {
 
    /**
@@ -851,9 +849,7 @@ YUI.add('io-form', function(Y) {
     }, true);
 
 
-
 }, '@VERSION@' ,{requires:['io-base']});
-
 YUI.add('io-xdr', function(Y) {
 
    /**
@@ -971,9 +967,7 @@ YUI.add('io-xdr', function(Y) {
 	});
 
 
-
 }, '@VERSION@' ,{requires:['io-base']});
-
 YUI.add('io-upload-iframe', function(Y) {
 
    /**
@@ -1024,8 +1018,8 @@ YUI.add('io-upload-iframe', function(Y) {
 		var i = Y.Node.create('<iframe id="ioupload' + o.id + '" name="ioupload' + o.id + '" />'),
 			cfg = {
 				position: 'absolute',
-				top: '-1000',
-				left: '-1000'
+				top: '-1000px',
+				left: '-1000px'
 			};
 
 		i.setStyles(cfg);
@@ -1155,9 +1149,7 @@ YUI.add('io-upload-iframe', function(Y) {
 	});
 
 
-
 }, '@VERSION@' ,{requires:['io-base']});
-
 YUI.add('io-queue', function(Y) {
 
    /**
@@ -1371,9 +1363,7 @@ YUI.add('io-queue', function(Y) {
     }, true);
 
 
-
 }, '@VERSION@' ,{requires:['io-base']});
-
 
 
 YUI.add('io', function(Y){}, '@VERSION@' ,{use:['io-base', 'io-form', 'io-xdr', 'io-upload-iframe', 'io-queue']});

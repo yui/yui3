@@ -83,12 +83,12 @@ Y.mix(Slider, {
      * &quot;left&quot; vs. &quot;top&quot; for placing the thumb according to
      * its representative value).
      *
-     * @property Slider.AXIS_KEYS
+     * @property Slider._AXIS_KEYS
      * @type Object
      * @protected
      * @static
      */
-    AXIS_KEYS : {
+    _AXIS_KEYS : {
         x : {
             dim           : WIDTH,
             offAxisDim    : HEIGHT,
@@ -195,9 +195,6 @@ Y.mix(Slider, {
             value : 0,
             validator : function (v) {
                 return this._validateNewValue(v);
-            },
-            setter : function (v) {
-                return this._setValueFn(v);
             }
         },
 
@@ -341,7 +338,7 @@ Y.extend(Slider, Y.Widget, {
 
     /**
      * Collection of object property names from the appropriate hash set in
-     * Slider.AXIS_KEYS.
+     * Slider._AXIS_KEYS.
      *
      * @property _key
      * @type Object
@@ -423,7 +420,7 @@ Y.extend(Slider, Y.Widget, {
      * @protected
      */
     initializer : function () {
-        this._key = Slider.AXIS_KEYS[this.get('axis')];
+        this._key = Slider._AXIS_KEYS[this.get('axis')];
 
         this.after('minChange',      this._afterMinChange);
         this.after('maxChange',      this._afterMaxChange);
@@ -596,9 +593,9 @@ Y.extend(Slider, Y.Widget, {
          *      <dt>ddEvent</dt>
          *          <dd><code>drag:drag</code> event from the managed DD.Drag instance</dd>
          *  </dl>
-         * @preventable _defUpdateValueFromDD
+         * @preventable _defThumbDragFn
          */
-        this.publish(THUMB_DRAG, {defaultFn: this._defUpdateValueFromDD});
+        this.publish(THUMB_DRAG, {defaultFn: this._defThumbDragFn});
 
         this._bindThumbDD();
 
@@ -1112,17 +1109,6 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Setter applied to the input when updating the value attribute. This is
-     * just a placeholder for extension.
-     *
-     * @method _setValueFn
-     * @param v {Number} proposed new value for the Slider
-     * @return {Number} rounded value or configured min if non-number input
-     * @protected
-     */
-    _setValueFn : function (v) { return v; },
-
-    /**
      * Setter applied to the input when updating the rail attribute.  Input can
      * be a Node, raw HTMLElement, or a selector string to locate it.
      *
@@ -1199,16 +1185,16 @@ Y.extend(Slider, Y.Widget, {
      * interaction.  Calculates the value using stored offsets, the _factor
      * multiplier and the min value.
      *
-     * @method _defUpdateValueFromDD
+     * @method _defThumbDragFn
      * @param e {Event} the internal thumbDrag event
      * @protected
      */
-    _defUpdateValueFromDD : function (e) {
+    _defThumbDragFn : function (e) {
         var before = this.get(VALUE),
             val    = e.ddEvent[this._key.eventPageAxis] - this._offsetXY;
 
 
-        val = round(this.get(MIN) + (val * this._factor));
+        val = this._convertOffsetToValue(val);
 
         if (before !== val) {
             this.set(VALUE, val, { ddEvent: e.ddEvent });
@@ -1297,7 +1283,7 @@ Y.extend(Slider, Y.Widget, {
     },
 
     /**
-     * Converts a value to an integer offset for the thumb position on the rail.
+     * Converts a value to a pixel offset for the thumb position on the rail.
      *
      * @method _convertValueToOffset
      * @param v {Number} value between the Slider's min and max
@@ -1305,6 +1291,17 @@ Y.extend(Slider, Y.Widget, {
      */
     _convertValueToOffset : function (v) {
         return round((v - this.get(MIN)) / this._factor) + this._offsetXY;
+    },
+
+    /**
+     * Converts a pixel offset of the thumb on the rail to a value.
+     *
+     * @method _convertOffsetToValue
+     * @param v {Number} pixel offset of the thumb on the rail
+     * @protected
+     */
+    _convertOffsetToValue : function (v) {
+        return round(this.get(MIN) + (v * this._factor));
     },
 
     /**

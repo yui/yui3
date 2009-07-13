@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>slider&nbsp; <span class="subtitle">3.0.0b1_test2</span></h3>
+        <h3>slider&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_slider.html" title="slider">slider</a>
                  &gt; Slider 
@@ -138,7 +138,7 @@ the Slider's value.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Collection of object property names from the appropriate hash set in
-Slider.AXIS_KEYS.
+Slider._AXIS_KEYS.
                                         </div>
                                     </div>
      
@@ -216,14 +216,15 @@ coordinates for the thumb.
 
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:property" resource="#property_Slider.ATTRS">
-                                    <h4><a name="property_Slider.ATTRS" property="yui:name">Slider.ATTRS</a>
+                                    <div class="protected" rel="yui:property" resource="#property_Slider._AXIS_KEYS">
+                                    <h4><a name="property_Slider._AXIS_KEYS" property="yui:name">Slider._AXIS_KEYS</a>
                                         - <code>protected static <span property="yui:type">Object</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Static property used to define the default attribute configuration of
-the Widget.
+                                            Object property names used for respective X and Y axis Sliders (e.g.
+&quot;left&quot; vs. &quot;top&quot; for placing the thumb according to
+its representative value).
                                         </div>
                                     </div>
      
@@ -232,15 +233,14 @@ the Widget.
 
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:property" resource="#property_Slider.AXIS_KEYS">
-                                    <h4><a name="property_Slider.AXIS_KEYS" property="yui:name">Slider.AXIS_KEYS</a>
+                                    <div class="protected" rel="yui:property" resource="#property_Slider.ATTRS">
+                                    <h4><a name="property_Slider.ATTRS" property="yui:name">Slider.ATTRS</a>
                                         - <code>protected static <span property="yui:type">Object</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Object property names used for respective X and Y axis Sliders (e.g.
-&quot;left&quot; vs. &quot;top&quot; for placing the thumb according to
-its representative value).
+                                            Static property used to define the default attribute configuration of
+the Widget.
                                         </div>
                                     </div>
      
@@ -740,6 +740,57 @@ value attribute.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__convertOffsetToValue">
+                                    <h4>
+                                        <a name="method__convertOffsetToValue">_convertOffsetToValue</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_convertOffsetToValue</strong>
+                                           (
+                                                
+                                                        
+                                                         v
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Converts a pixel offset of the thumb on the rail to a value.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">v</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  pixel offset of the thumb on the rail</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__convertValueToOffset">
                                     <h4>
                                         <a name="method__convertValueToOffset">_convertValueToOffset</a></h4>
@@ -760,7 +811,7 @@ value attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Converts a value to an integer offset for the thumb position on the rail.
+                                            Converts a value to a pixel offset for the thumb position on the rail.
                                         </div>
 
                                         <div class="description">
@@ -895,16 +946,16 @@ match the current attribute values.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:method" resource="#method__defUpdateValueFromDD">
+                                    <div class="protected" rel="yui:method" resource="#method__defThumbDragFn">
                                     <h4>
-                                        <a name="method__defUpdateValueFromDD">_defUpdateValueFromDD</a></h4>
+                                        <a name="method__defThumbDragFn">_defThumbDragFn</a></h4>
                                     <div class="detail" >
                                         <code>
                                          protected 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_defUpdateValueFromDD</strong>
+                                            <strong property="yui:name">_defThumbDragFn</strong>
                                            (
                                                 
                                                         
@@ -2067,58 +2118,6 @@ position representing the calculated value.
                                                         void
                                                     </code></dt>
                                                     <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__setValueFn">
-                                    <h4>
-                                        <a name="method__setValueFn">_setValueFn</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        Number
-                                            <strong property="yui:name">_setValueFn</strong>
-                                           (
-                                                
-                                                        
-                                                         v
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Setter applied to the input when updating the value attribute. This is
-just a placeholder for extension.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">v</span>
-                                                        &lt;<span property="yui:type">Number</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  proposed new value for the Slider</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Number
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">rounded value or configured min if non-number input</dd>
                                                 </dl>
 
 
@@ -3900,7 +3899,7 @@ logic in _defSyncFn.
                                                 </dl>
 
                                             <div class="preventable">
-                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defUpdateValueFromDD.
+                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defThumbDragFn.
                                             </div>        
 
                                         </div>
@@ -4378,6 +4377,7 @@ position for the thumb along the Slider's rail.
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
@@ -4437,8 +4437,8 @@ position for the thumb along the Slider's rail.
                                 <li class="protected"><a href="#property__stall" title="_stall">_stall</a></li>
                                 <li class="protected"><a href="#property__thumbOffset" title="_thumbOffset">_thumbOffset</a></li>
                                 <li class="protected"><a href="#property__thumbSize" title="_thumbSize">_thumbSize</a></li>
+                                <li class="protected"><a href="#property_Slider._AXIS_KEYS" title="Slider._AXIS_KEYS">Slider._AXIS_KEYS</a></li>
                                 <li class="protected"><a href="#property_Slider.ATTRS" title="Slider.ATTRS">Slider.ATTRS</a></li>
-                                <li class="protected"><a href="#property_Slider.AXIS_KEYS" title="Slider.AXIS_KEYS">Slider.AXIS_KEYS</a></li>
                                 <li class="protected"><a href="#property_Slider.HTML_PARSER" title="Slider.HTML_PARSER">Slider.HTML_PARSER</a></li>
                                 <li class=""><a href="#property_Slider.NAME" title="Slider.NAME">Slider.NAME</a></li>
                         </ul>
@@ -4455,10 +4455,11 @@ position for the thumb along the Slider's rail.
                                 <li class="protected"><a href="#method__afterThumbImageChange" title="_afterThumbImageChange">_afterThumbImageChange</a></li>
                                 <li class="protected"><a href="#method__afterValueChange" title="_afterValueChange">_afterValueChange</a></li>
                                 <li class="protected"><a href="#method__bindThumbDD" title="_bindThumbDD">_bindThumbDD</a></li>
+                                <li class="protected"><a href="#method__convertOffsetToValue" title="_convertOffsetToValue">_convertOffsetToValue</a></li>
                                 <li class="protected"><a href="#method__convertValueToOffset" title="_convertValueToOffset">_convertValueToOffset</a></li>
                                 <li class="protected"><a href="#method__defPositionThumbFn" title="_defPositionThumbFn">_defPositionThumbFn</a></li>
                                 <li class="protected"><a href="#method__defSyncFn" title="_defSyncFn">_defSyncFn</a></li>
-                                <li class="protected"><a href="#method__defUpdateValueFromDD" title="_defUpdateValueFromDD">_defUpdateValueFromDD</a></li>
+                                <li class="protected"><a href="#method__defThumbDragFn" title="_defThumbDragFn">_defThumbDragFn</a></li>
                                 <li class="protected"><a href="#method__handleRailMouseDown" title="_handleRailMouseDown">_handleRailMouseDown</a></li>
                                 <li class="protected"><a href="#method__imageLoaded" title="_imageLoaded">_imageLoaded</a></li>
                                 <li class="protected"><a href="#method__initRail" title="_initRail">_initRail</a></li>
@@ -4483,7 +4484,6 @@ position for the thumb along the Slider's rail.
                                 <li class="protected"><a href="#method__setThumbFn" title="_setThumbFn">_setThumbFn</a></li>
                                 <li class="protected"><a href="#method__setThumbImageFn" title="_setThumbImageFn">_setThumbImageFn</a></li>
                                 <li class="protected"><a href="#method__setThumbOffset" title="_setThumbOffset">_setThumbOffset</a></li>
-                                <li class="protected"><a href="#method__setValueFn" title="_setValueFn">_setValueFn</a></li>
                                 <li class="protected"><a href="#method__stallDisabledChange" title="_stallDisabledChange">_stallDisabledChange</a></li>
                                 <li class="protected"><a href="#method__uiPositionThumb" title="_uiPositionThumb">_uiPositionThumb</a></li>
                                 <li class="protected"><a href="#method__uiSetRailSize" title="_uiSetRailSize">_uiSetRailSize</a></li>
@@ -4553,7 +4553,7 @@ position for the thumb along the Slider's rail.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "Slider", "name": "_afterDisabledChange", "url": "Slider.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMaxChange", "url": "Slider.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMinChange", "url": "Slider.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterRailSizeChange", "url": "Slider.html#method__afterRailSizeChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbChange", "url": "Slider.html#method__afterThumbChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbImageChange", "url": "Slider.html#method__afterThumbImageChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterValueChange", "url": "Slider.html#method__afterValueChange", "type": "method"}, {"access": "", "host": "Slider", "name": "axis", "url": "Slider.html#config_axis", "type": "config"}, {"access": "", "host": "Slider", "name": "axisChange", "url": "Slider.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_bindThumbDD", "url": "Slider.html#method__bindThumbDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "bindUI", "url": "Slider.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_convertValueToOffset", "url": "Slider.html#method__convertValueToOffset", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defPositionThumbFn", "url": "Slider.html#method__defPositionThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defSyncFn", "url": "Slider.html#method__defSyncFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defUpdateValueFromDD", "url": "Slider.html#method__defUpdateValueFromDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_disabled", "url": "Slider.html#property__disabled", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_factor", "url": "Slider.html#property__factor", "type": "property"}, {"access": "", "host": "Slider", "name": "getValue", "url": "Slider.html#method_getValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_handleRailMouseDown", "url": "Slider.html#method__handleRailMouseDown", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_imageLoaded", "url": "Slider.html#method__imageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "initializer", "url": "Slider.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRail", "url": "Slider.html#method__initRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRailDD", "url": "Slider.html#method__initRailDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumb", "url": "Slider.html#method__initThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumbImage", "url": "Slider.html#method__initThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isDisplayNone", "url": "Slider.html#method__isDisplayNone", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoaded", "url": "Slider.html#method__isImageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoading", "url": "Slider.html#method__isImageLoading", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_key", "url": "Slider.html#property__key", "type": "property"}, {"access": "", "host": "Slider", "name": "max", "url": "Slider.html#config_max", "type": "config"}, {"access": "", "host": "Slider", "name": "maxChange", "url": "Slider.html#event_maxChange", "type": "event"}, {"access": "", "host": "Slider", "name": "maxGutter", "url": "Slider.html#config_maxGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "maxGutterChange", "url": "Slider.html#event_maxGutterChange", "type": "event"}, {"access": "", "host": "Slider", "name": "min", "url": "Slider.html#config_min", "type": "config"}, {"access": "", "host": "Slider", "name": "minChange", "url": "Slider.html#event_minChange", "type": "event"}, {"access": "", "host": "Slider", "name": "minGutter", "url": "Slider.html#config_minGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "minGutterChange", "url": "Slider.html#event_minGutterChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_onDDDrag", "url": "Slider.html#method__onDDDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDEndDrag", "url": "Slider.html#method__onDDEndDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDStartDrag", "url": "Slider.html#method__onDDStartDrag", "type": "method"}, {"access": "", "host": "Slider", "name": "positionThumb", "url": "Slider.html#event_positionThumb", "type": "event"}, {"access": "", "host": "Slider", "name": "rail", "url": "Slider.html#config_rail", "type": "config"}, {"access": "", "host": "Slider", "name": "railChange", "url": "Slider.html#event_railChange", "type": "event"}, {"access": "", "host": "Slider", "name": "railEnabled", "url": "Slider.html#config_railEnabled", "type": "config"}, {"access": "", "host": "Slider", "name": "railEnabledChange", "url": "Slider.html#event_railEnabledChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_railSize", "url": "Slider.html#property__railSize", "type": "property"}, {"access": "", "host": "Slider", "name": "railSize", "url": "Slider.html#config_railSize", "type": "config"}, {"access": "", "host": "Slider", "name": "railSizeChange", "url": "Slider.html#event_railSizeChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_ready", "url": "Slider.html#method__ready", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_refresh", "url": "Slider.html#method__refresh", "type": "method"}, {"access": "protected", "host": "Slider", "name": "renderUI", "url": "Slider.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_resetDDCacheRegion", "url": "Slider.html#method__resetDDCacheRegion", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_scheduleSync", "url": "Slider.html#method__scheduleSync", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setAxisFn", "url": "Slider.html#method__setAxisFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setDDGutter", "url": "Slider.html#method__setDDGutter", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setFactor", "url": "Slider.html#method__setFactor", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailFn", "url": "Slider.html#method__setRailFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailOffsetXY", "url": "Slider.html#method__setRailOffsetXY", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbFn", "url": "Slider.html#method__setThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbImageFn", "url": "Slider.html#method__setThumbImageFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbOffset", "url": "Slider.html#method__setThumbOffset", "type": "method"}, {"access": "", "host": "Slider", "name": "setValue", "url": "Slider.html#method_setValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setValueFn", "url": "Slider.html#method__setValueFn", "type": "method"}, {"access": "", "host": "Slider", "name": "slideEnd", "url": "Slider.html#event_slideEnd", "type": "event"}, {"access": "protected", "host": "Slider", "name": "Slider.ATTRS", "url": "Slider.html#property_Slider.ATTRS", "type": "property"}, {"access": "protected", "host": "Slider", "name": "Slider.AXIS_KEYS", "url": "Slider.html#property_Slider.AXIS_KEYS", "type": "property"}, {"access": "protected", "host": "Slider", "name": "Slider.HTML_PARSER", "url": "Slider.html#property_Slider.HTML_PARSER", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.NAME", "url": "Slider.html#property_Slider.NAME", "type": "property"}, {"access": "", "host": "Slider", "name": "slideStart", "url": "Slider.html#event_slideStart", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_stall", "url": "Slider.html#property__stall", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_stallDisabledChange", "url": "Slider.html#method__stallDisabledChange", "type": "method"}, {"access": "", "host": "Slider", "name": "sync", "url": "Slider.html#event_sync", "type": "event"}, {"access": "", "host": "Slider", "name": "syncUI", "url": "Slider.html#method_syncUI", "type": "method"}, {"access": "", "host": "Slider", "name": "thumb", "url": "Slider.html#config_thumb", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbChange", "url": "Slider.html#event_thumbChange", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbDrag", "url": "Slider.html#event_thumbDrag", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbImage", "url": "Slider.html#config_thumbImage", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbImageChange", "url": "Slider.html#event_thumbImageChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_thumbOffset", "url": "Slider.html#property__thumbOffset", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_thumbSize", "url": "Slider.html#property__thumbSize", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_uiPositionThumb", "url": "Slider.html#method__uiPositionThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetRailSize", "url": "Slider.html#method__uiSetRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetThumbSize", "url": "Slider.html#method__uiSetThumbSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewAxis", "url": "Slider.html#method__validateNewAxis", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMax", "url": "Slider.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMin", "url": "Slider.html#method__validateNewMin", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRail", "url": "Slider.html#method__validateNewRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRailSize", "url": "Slider.html#method__validateNewRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumb", "url": "Slider.html#method__validateNewThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumbImage", "url": "Slider.html#method__validateNewThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewValue", "url": "Slider.html#method__validateNewValue", "type": "method"}, {"access": "", "host": "Slider", "name": "value", "url": "Slider.html#config_value", "type": "config"}, {"access": "", "host": "Slider", "name": "valueChange", "url": "Slider.html#event_valueChange", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "Slider", "name": "_afterDisabledChange", "url": "Slider.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMaxChange", "url": "Slider.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMinChange", "url": "Slider.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterRailSizeChange", "url": "Slider.html#method__afterRailSizeChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbChange", "url": "Slider.html#method__afterThumbChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbImageChange", "url": "Slider.html#method__afterThumbImageChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterValueChange", "url": "Slider.html#method__afterValueChange", "type": "method"}, {"access": "", "host": "Slider", "name": "axis", "url": "Slider.html#config_axis", "type": "config"}, {"access": "", "host": "Slider", "name": "axisChange", "url": "Slider.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_bindThumbDD", "url": "Slider.html#method__bindThumbDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "bindUI", "url": "Slider.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_convertOffsetToValue", "url": "Slider.html#method__convertOffsetToValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_convertValueToOffset", "url": "Slider.html#method__convertValueToOffset", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defPositionThumbFn", "url": "Slider.html#method__defPositionThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defSyncFn", "url": "Slider.html#method__defSyncFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defThumbDragFn", "url": "Slider.html#method__defThumbDragFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_disabled", "url": "Slider.html#property__disabled", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_factor", "url": "Slider.html#property__factor", "type": "property"}, {"access": "", "host": "Slider", "name": "getValue", "url": "Slider.html#method_getValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_handleRailMouseDown", "url": "Slider.html#method__handleRailMouseDown", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_imageLoaded", "url": "Slider.html#method__imageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "initializer", "url": "Slider.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRail", "url": "Slider.html#method__initRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRailDD", "url": "Slider.html#method__initRailDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumb", "url": "Slider.html#method__initThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumbImage", "url": "Slider.html#method__initThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isDisplayNone", "url": "Slider.html#method__isDisplayNone", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoaded", "url": "Slider.html#method__isImageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoading", "url": "Slider.html#method__isImageLoading", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_key", "url": "Slider.html#property__key", "type": "property"}, {"access": "", "host": "Slider", "name": "max", "url": "Slider.html#config_max", "type": "config"}, {"access": "", "host": "Slider", "name": "maxChange", "url": "Slider.html#event_maxChange", "type": "event"}, {"access": "", "host": "Slider", "name": "maxGutter", "url": "Slider.html#config_maxGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "maxGutterChange", "url": "Slider.html#event_maxGutterChange", "type": "event"}, {"access": "", "host": "Slider", "name": "min", "url": "Slider.html#config_min", "type": "config"}, {"access": "", "host": "Slider", "name": "minChange", "url": "Slider.html#event_minChange", "type": "event"}, {"access": "", "host": "Slider", "name": "minGutter", "url": "Slider.html#config_minGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "minGutterChange", "url": "Slider.html#event_minGutterChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_onDDDrag", "url": "Slider.html#method__onDDDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDEndDrag", "url": "Slider.html#method__onDDEndDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDStartDrag", "url": "Slider.html#method__onDDStartDrag", "type": "method"}, {"access": "", "host": "Slider", "name": "positionThumb", "url": "Slider.html#event_positionThumb", "type": "event"}, {"access": "", "host": "Slider", "name": "rail", "url": "Slider.html#config_rail", "type": "config"}, {"access": "", "host": "Slider", "name": "railChange", "url": "Slider.html#event_railChange", "type": "event"}, {"access": "", "host": "Slider", "name": "railEnabled", "url": "Slider.html#config_railEnabled", "type": "config"}, {"access": "", "host": "Slider", "name": "railEnabledChange", "url": "Slider.html#event_railEnabledChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_railSize", "url": "Slider.html#property__railSize", "type": "property"}, {"access": "", "host": "Slider", "name": "railSize", "url": "Slider.html#config_railSize", "type": "config"}, {"access": "", "host": "Slider", "name": "railSizeChange", "url": "Slider.html#event_railSizeChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_ready", "url": "Slider.html#method__ready", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_refresh", "url": "Slider.html#method__refresh", "type": "method"}, {"access": "protected", "host": "Slider", "name": "renderUI", "url": "Slider.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_resetDDCacheRegion", "url": "Slider.html#method__resetDDCacheRegion", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_scheduleSync", "url": "Slider.html#method__scheduleSync", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setAxisFn", "url": "Slider.html#method__setAxisFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setDDGutter", "url": "Slider.html#method__setDDGutter", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setFactor", "url": "Slider.html#method__setFactor", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailFn", "url": "Slider.html#method__setRailFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailOffsetXY", "url": "Slider.html#method__setRailOffsetXY", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbFn", "url": "Slider.html#method__setThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbImageFn", "url": "Slider.html#method__setThumbImageFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbOffset", "url": "Slider.html#method__setThumbOffset", "type": "method"}, {"access": "", "host": "Slider", "name": "setValue", "url": "Slider.html#method_setValue", "type": "method"}, {"access": "", "host": "Slider", "name": "slideEnd", "url": "Slider.html#event_slideEnd", "type": "event"}, {"access": "protected", "host": "Slider", "name": "Slider.ATTRS", "url": "Slider.html#property_Slider.ATTRS", "type": "property"}, {"access": "protected", "host": "Slider", "name": "Slider._AXIS_KEYS", "url": "Slider.html#property_Slider._AXIS_KEYS", "type": "property"}, {"access": "protected", "host": "Slider", "name": "Slider.HTML_PARSER", "url": "Slider.html#property_Slider.HTML_PARSER", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.NAME", "url": "Slider.html#property_Slider.NAME", "type": "property"}, {"access": "", "host": "Slider", "name": "slideStart", "url": "Slider.html#event_slideStart", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_stall", "url": "Slider.html#property__stall", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_stallDisabledChange", "url": "Slider.html#method__stallDisabledChange", "type": "method"}, {"access": "", "host": "Slider", "name": "sync", "url": "Slider.html#event_sync", "type": "event"}, {"access": "", "host": "Slider", "name": "syncUI", "url": "Slider.html#method_syncUI", "type": "method"}, {"access": "", "host": "Slider", "name": "thumb", "url": "Slider.html#config_thumb", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbChange", "url": "Slider.html#event_thumbChange", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbDrag", "url": "Slider.html#event_thumbDrag", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbImage", "url": "Slider.html#config_thumbImage", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbImageChange", "url": "Slider.html#event_thumbImageChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_thumbOffset", "url": "Slider.html#property__thumbOffset", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_thumbSize", "url": "Slider.html#property__thumbSize", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_uiPositionThumb", "url": "Slider.html#method__uiPositionThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetRailSize", "url": "Slider.html#method__uiSetRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetThumbSize", "url": "Slider.html#method__uiSetThumbSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewAxis", "url": "Slider.html#method__validateNewAxis", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMax", "url": "Slider.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMin", "url": "Slider.html#method__validateNewMin", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRail", "url": "Slider.html#method__validateNewRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRailSize", "url": "Slider.html#method__validateNewRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumb", "url": "Slider.html#method__validateNewThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumbImage", "url": "Slider.html#method__validateNewThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewValue", "url": "Slider.html#method__validateNewValue", "type": "method"}, {"access": "", "host": "Slider", "name": "value", "url": "Slider.html#config_value", "type": "config"}, {"access": "", "host": "Slider", "name": "valueChange", "url": "Slider.html#event_valueChange", "type": "event"}];
 </script>
 </body>
 </html>

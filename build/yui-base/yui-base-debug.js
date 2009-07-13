@@ -1341,7 +1341,7 @@ YArray.hash = function(k, v) {
  */
 YArray.indexOf = (Native.indexOf) ?
     function(a, val) {
-        return a.indexOf(val);
+        return Native.indexOf.call(a, val);
     } :
     function(a, val) {
         for (var i=0; i<a.length; i=i+1) {
@@ -1547,7 +1547,7 @@ Y.cached = function(source, cache){
     // return this['cached_' + source.name] = function
     // var a = function(){}; a.name = 'foo'; return a;
 
-    return function cached(arg1, arg2) {
+    return function(arg1, arg2) {
 
         // (?)()   51  5.76%   0.571ms 1.01ms  0.02ms  0.001ms 0.041ms
         // A() 76  6.58%   0.652ms 0.652ms 0.009ms 0.005ms 0.03ms
@@ -1807,6 +1807,7 @@ O.setValue = function(o, path, val) {
 Y.UA = function() {
 
     var nav = navigator,
+
         o = {
 
         /**
@@ -1815,7 +1816,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        ie:0,
+        ie: 0,
 
         /**
          * Opera version number or 0.  Example: 9.2
@@ -1823,7 +1824,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        opera:0,
+        opera: 0,
 
         /**
          * Gecko engine revision number.  Will evaluate to 1 if Gecko 
@@ -1839,7 +1840,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        gecko:0,
+        gecko: 0,
 
         /**
          * AppleWebKit version.  KHTML browsers that are not WebKit browsers 
@@ -1866,7 +1867,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        webkit:0,
+        webkit: 0,
 
         /**
          * The mobile property will be set to a string containing any relevant
