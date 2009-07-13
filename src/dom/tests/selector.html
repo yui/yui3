@@ -195,6 +195,8 @@ onload = function() {
                 Assert.areEqual(Y.DOM.byId('foo-bar'), $("input[name='foo.bar']", null, true), "input[name='foo.bar'], null, true)");
 
                 ArrayAssert.itemsAreEqual([demoFirstChild, Y.DOM.next(demoFirstChild)], $('#demo > p:not(.last)'), '#demo > p:not(.last)');
+                Assert.areEqual(Y.DOM.byId('foo-bar'), $("[id^='foo-']", null, true), "[id^='foo-'], null, true");
+
             }
 
         });

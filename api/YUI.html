@@ -404,6 +404,10 @@ Ex: 'Object.keys'</span>
                                                          cache
                                                     
                                                 
+                                                        , 
+                                                         refetch
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -428,6 +432,13 @@ argument values.
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> an optional cache seed</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">refetch</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> if supplied, this value is tested against the cached
+value.  If the values are equal, the wrapped function is executed again.</span>
                                                         </dd>
                                                 </dl>
 
