@@ -26,13 +26,16 @@ YUI.add('io-xdr', function(Y) {
 	* @return void
 	*/
 	function _swf(uri, yid) {
-		var XDR_SWF = '<object id="yuiIoSwf" type="application/x-shockwave-flash" data="' +
-		              uri + '" width="0" height="0">' +
-		     		  '<param name="movie" value="' + uri + '">' +
-		     		  '<param name="FlashVars" value="yid=' + yid + '">' +
-                      '<param name="allowScriptAccess" value="sameDomain">' +
-		    	      '</object>';
-		Y.get('body').appendChild(Y.Node.create(XDR_SWF));
+		var o = '<object id="yuiIoSwf" type="application/x-shockwave-flash" data="' +
+		          uri + '" width="0" height="0">' +
+		     	  '<param name="movie" value="' + uri + '">' +
+		     	  '<param name="FlashVars" value="yid=' + yid + '">' +
+                  '<param name="allowScriptAccess" value="sameDomain">' +
+		    	  '</object>',
+		    c = document.createElement('div');
+
+		document.body.appendChild(c);
+		c.innerHTML = o;
 	}
 
     Y.mix(Y.io, {
