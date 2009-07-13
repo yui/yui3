@@ -50,7 +50,9 @@
                         <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
 <span class="k">var</span> <span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+
 	<span class="nx">delegates</span> <span class="o">=</span> <span class="o">{},</span>
+
 	<span class="nx">resolveTextNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
 	    <span class="k">try</span> <span class="o">{</span>
 	        <span class="k">if</span> <span class="o">(</span><span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="m">3</span> <span class="o">==</span> <span class="nx">n</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span>
@@ -59,6 +61,7 @@
 	    <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span> <span class="o">}</span>
 	    <span class="k">return</span> <span class="nx">n</span><span class="o">;</span>
 	<span class="o">},</span>
+
     <span class="nx">_worker</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">delegateKey</span><span class="o">,</span> <span class="nx">e</span><span class="o">,</span> <span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">resolveTextNode</span><span class="o">((</span><span class="nx">e</span><span class="o">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">srcElement</span><span class="o">)),</span> 
             <span class="nx">tests</span>  <span class="o">=</span> <span class="nx">delegates</span><span class="o">[</span><span class="nx">delegateKey</span><span class="o">],</span>
