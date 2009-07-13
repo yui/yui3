@@ -154,7 +154,7 @@ YArray.hash = function(k, v) {
  */
 YArray.indexOf = (Native.indexOf) ?
     function(a, val) {
-        return a.indexOf(val);
+        return Native.indexOf.call(a, val);
     } :
     function(a, val) {
         for (var i=0; i<a.length; i=i+1) {

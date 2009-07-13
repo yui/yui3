@@ -432,7 +432,10 @@ Y.DOM = {
      * @param {HTMLDocument} doc An optional document context 
      */
     create: function(html, doc) {
-        html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
+        if (typeof html === 'string') {
+            html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
+        }
+
         if (!doc && Y.DOM._cloneCache[html]) {
             return Y.DOM._cloneCache[html].cloneNode(true); // NOTE: return
         }
@@ -482,10 +485,10 @@ Y.DOM = {
      * @param {String} attr The attribute to set.
      * @param {String} val The value of the attribute.
      */
-    setAttribute: function(el, attr, val) {
+    setAttribute: function(el, attr, val, ieAttr) {
         if (el && el.setAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-            el.setAttribute(attr, val);
+            el.setAttribute(attr, val, ieAttr);
         }
     },
 
@@ -497,11 +500,12 @@ Y.DOM = {
      * @param {String} attr The attribute to get.
      * @return {String} The current value of the attribute. 
      */
-    getAttribute: function(el, attr) {
+    getAttribute: function(el, attr, ieAttr) {
+        ieAttr = (ieAttr !== undefined) ? ieAttr : 2;
         var ret = '';
         if (el && el.getAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-            ret = el.getAttribute(attr, 2);
+            ret = el.getAttribute(attr, ieAttr);
 
             if (ret === null) {
                 ret = ''; // per DOM spec
@@ -1440,7 +1444,8 @@ try {
 } catch(e) { // IE throws error on invalid style set; trap common cases
     Y.DOM.CUSTOM_STYLES.height = {
         set: function(node, val, style) {
-            if (parseInt(val, 10) >= 0) {
+            var floatVal = parseFloat(val);
+            if (isNaN(floatVal) || floatVal >= 0) {
                 style.height = val;
             } else {
             }
@@ -1449,7 +1454,8 @@ try {
 
     Y.DOM.CUSTOM_STYLES.width = {
         set: function(node, val, style) {
-            if (parseInt(val, 10) >= 0) {
+            var floatVal = parseFloat(val);
+            if (isNaN(floatVal) || floatVal >= 0) {
                 style.width = val;
             } else {
             }
@@ -2688,7 +2694,7 @@ if (!Y.Selector._supportsNative()) {
 }
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'selector-native'], skinnable:false});
+}, '@VERSION@' ,{requires:['selector-native'], skinnable:false});
 
 
 YUI.add('dom', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dom-base', 'dom-style', 'dom-screen', 'selector-native', 'selector-css2']});

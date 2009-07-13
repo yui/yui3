@@ -20,6 +20,7 @@
 Y.UA = function() {
 
     var nav = navigator,
+
         o = {
 
         /**
@@ -28,7 +29,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        ie:0,
+        ie: 0,
 
         /**
          * Opera version number or 0.  Example: 9.2
@@ -36,7 +37,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        opera:0,
+        opera: 0,
 
         /**
          * Gecko engine revision number.  Will evaluate to 1 if Gecko 
@@ -52,7 +53,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        gecko:0,
+        gecko: 0,
 
         /**
          * AppleWebKit version.  KHTML browsers that are not WebKit browsers 
@@ -79,7 +80,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        webkit:0,
+        webkit: 0,
 
         /**
          * The mobile property will be set to a string containing any relevant
