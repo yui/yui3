@@ -70,7 +70,7 @@
     <span class="k">var</span> <span class="nx">numberfy</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
             <span class="k">return</span> <span class="nb">parseFloat</span><span class="o">(</span><span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/\./g</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="o">(</span><span class="nx">c</span><span class="o">++</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span> <span class="o">:</span> <span class="s1">&#39;.&#39;</span><span class="o">;</span>
+                <span class="k">return</span> <span class="o">(</span><span class="nx">c</span><span class="o">++</span> <span class="o">==</span> <span class="m">1</span><span class="o">)</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span> <span class="o">:</span> <span class="s1">&#39;.&#39;</span><span class="o">;</span>
             <span class="o">}));</span>
         <span class="o">},</span>
     
@@ -193,9 +193,9 @@
 
     <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">if</span> <span class="o">((</span><span class="sr">/windows|win32/</span><span class="o">).</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">((</span><span class="sr">/windows|win32/i</span><span class="o">).</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
             <span class="nx">o</span><span class="o">.</span><span class="nx">os</span> <span class="o">=</span> <span class="s1">&#39;windows&#39;</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">((</span><span class="sr">/macintosh/</span><span class="o">).</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">((</span><span class="sr">/macintosh/i</span><span class="o">).</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
             <span class="nx">o</span><span class="o">.</span><span class="nx">os</span> <span class="o">=</span> <span class="s1">&#39;macintosh&#39;</span><span class="o">;</span>
         <span class="o">}</span>
 
