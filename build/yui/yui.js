@@ -1777,7 +1777,7 @@ Y.UA = function() {
     var numberfy = function(s) {
             var c = 0;
             return parseFloat(s.replace(/\./g, function() {
-                return (c++ > 0) ? '' : '.';
+                return (c++ == 1) ? '' : '.';
             }));
         },
     
@@ -1900,9 +1900,9 @@ Y.UA = function() {
 
     if (ua) {
 
-        if ((/windows|win32/).test(ua)) {
+        if ((/windows|win32/i).test(ua)) {
             o.os = 'windows';
-        } else if ((/macintosh/).test(ua)) {
+        } else if ((/macintosh/i).test(ua)) {
             o.os = 'macintosh';
         }
 
