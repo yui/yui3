@@ -1524,7 +1524,9 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 (function() {
 
 var Lang = Y.Lang,
+
 	delegates = {},
+
 	resolveTextNode = function(n) {
 	    try {
 	        if (n && 3 == n.nodeType) {
@@ -1533,6 +1535,7 @@ var Lang = Y.Lang,
 	    } catch(e) { }
 	    return n;
 	},
+
     _worker = function(delegateKey, e, el) {
         var target = resolveTextNode((e.target || e.srcElement)), 
             tests  = delegates[delegateKey],
