@@ -203,14 +203,14 @@
      * @method clone
      * @param o what to clone
      * @param safe {boolean} if true, objects will not have prototype
-     * items from the source.  If false, it does.  In this case, the
-     * original is initally protected, but the clone is not completely immune
+     * items from the source.  If false, they will.  In this case, the
+     * original is initially protected, but the clone is not completely immune
      * from changes to the source object prototype.  Also, cloned prototype
      * items that are deleted from the clone will result in the value
-     * of the source prototype to be exposed.  If operating on a non-safe
+     * of the source prototype being exposed.  If operating on a non-safe
      * clone, items should be nulled out rather than deleted.
      * @TODO review
-     * @param f optional function to apply to each item in a collection
+     * @param f optional function to apply to each item in a collection;
      *          it will be executed prior to applying the value to
      *          the new object.  Return false to prevent the copy.
      * @param c optional execution context for f
