@@ -194,9 +194,9 @@
     };
 
     /**
-     * Deep obj/array copy.  Functions will are cloned with Y.bind.
+     * Deep obj/array copy.  Functions are cloned with Y.bind.
      * Array-like objects are treated as arrays.
-     * primitives are returned untouched.  Optionally a
+     * Primitives are returned untouched.  Optionally, a
      * function can be provided to handle other data types,
      * filter keys, validate values, etc.
      *
