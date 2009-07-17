@@ -82,6 +82,13 @@
 <span class="c"> *</span>
 <span class="c"> * @for YUI</span>
 <span class="c"> * @event focus</span>
+<span class="c"> * @param type {string} &#39;focus&#39;</span>
+<span class="c"> * @param fn {string} the function to execute</span>
+<span class="c"> * @param o {string} the element(s) to bind</span>
+<span class="c"> * @param context optional context object</span>
+<span class="c"> * @param args 0..n additional arguments that should be provided </span>
+<span class="c"> * to the listener.</span>
+<span class="c"> * @return {Event.Handle} the detach handle</span>
 <span class="c"> */</span>
 <span class="nx">adapt</span><span class="o">.</span><span class="nx">focus</span> <span class="o">=</span> <span class="o">{</span>
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
@@ -104,6 +111,13 @@
 <span class="c"> *</span>
 <span class="c"> * @for YUI</span>
 <span class="c"> * @event blur</span>
+<span class="c"> * @param type {string} &#39;focus&#39;</span>
+<span class="c"> * @param fn {string} the function to execute</span>
+<span class="c"> * @param o {string} the element(s) to bind</span>
+<span class="c"> * @param context optional context object</span>
+<span class="c"> * @param args 0..n additional arguments that should be provided </span>
+<span class="c"> * to the listener.</span>
+<span class="c"> * @return {Event.Handle} the detach handle</span>
 <span class="c"> */</span>
 <span class="nx">adapt</span><span class="o">.</span><span class="nx">blur</span> <span class="o">=</span> <span class="o">{</span>
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
@@ -113,7 +127,6 @@
         <span class="o">}</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">CAPTURE_CONFIG</span><span class="o">);</span>
     <span class="o">}</span>
-
 <span class="o">};</span>
 
 <span class="o">})();</span>
