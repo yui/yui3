@@ -585,7 +585,10 @@
             <span class="nx">_resumeTest</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">segment</span><span class="o">)</span> <span class="o">{</span>
             
                 <span class="c">//get relevant information</span>
-<span class="c"></span>                <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_cur</span><span class="o">;</span>
+<span class="c"></span>                <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_cur</span><span class="o">;</span>                
+                
+                <span class="c">//we know there&#39;s no more waiting now</span>
+<span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">_waiting</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
                 
                 <span class="c">//if there&#39;s no node, it probably means a wait() was called after resume()</span>
 <span class="c"></span>                <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">){</span>
@@ -722,9 +725,6 @@
                     <span class="nx">node</span><span class="o">.</span><span class="nx">parent</span><span class="o">.</span><span class="nx">results</span><span class="o">.</span><span class="nx">passed</span><span class="o">++;</span>
                 <span class="o">}</span>
                 <span class="nx">node</span><span class="o">.</span><span class="nx">parent</span><span class="o">.</span><span class="nx">results</span><span class="o">.</span><span class="nx">total</span><span class="o">++;</span>
-                
-                <span class="c">//we know there&#39;s no more waiting now</span>
-<span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">_waiting</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
     
                 <span class="c">//set timeout not supported in all environments</span>
 <span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">setTimeout</span> <span class="o">!=</span> <span class="s2">&quot;undefined&quot;</span><span class="o">){</span>

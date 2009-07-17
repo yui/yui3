@@ -404,6 +404,10 @@ Ex: 'Object.keys'</span>
                                                          cache
                                                     
                                                 
+                                                        , 
+                                                         refetch
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -428,6 +432,13 @@ argument values.
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> an optional cache seed</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">refetch</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> if supplied, this value is tested against the cached
+value.  If the values are equal, the wrapped function is executed again.</span>
                                                         </dd>
                                                 </dl>
 
@@ -1375,6 +1386,27 @@ is detected in the DOM.
                                             <strong property="yui:name">blur</strong>
 
                                             (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -1391,6 +1423,45 @@ at the time of registration in order for it to work in Opera.
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">type</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  'focus'</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">fn</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  the function to execute</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">o</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  the element(s) to bind</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">context</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> optional context object</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">args</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> 0..n additional arguments that should be provided 
+to the listener.</span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
 
                                         </div>
@@ -1621,6 +1692,27 @@ signature is:</p>
                                             <strong property="yui:name">focus</strong>
 
                                             (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -1637,6 +1729,45 @@ order for it to work in Opera.
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">type</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  'focus'</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">fn</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  the function to execute</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">o</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  the element(s) to bind</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">context</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> optional context object</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">args</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> 0..n additional arguments that should be provided 
+to the listener.</span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
 
                                         </div>

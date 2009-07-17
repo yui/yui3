@@ -364,9 +364,9 @@ function is executed with.</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Deep obj/array copy.  Functions will are cloned with Y.bind.
+                                            Deep obj/array copy.  Functions are cloned with Y.bind.
 Array-like objects are treated as arrays.
-primitives are returned untouched.  Optionally a
+Primitives are returned untouched.  Optionally, a
 function can be provided to handle other data types,
 filter keys, validate values, etc.
                                         </div>
@@ -386,18 +386,18 @@ filter keys, validate values, etc.
                                                         &lt;<span property="yui:type">boolean</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  if true, objects will not have prototype
-items from the source.  If false, it does.  In this case, the
-original is initally protected, but the clone is not completely immune
+items from the source.  If false, they will.  In this case, the
+original is initially protected, but the clone is not completely immune
 from changes to the source object prototype.  Also, cloned prototype
 items that are deleted from the clone will result in the value
-of the source prototype to be exposed.  If operating on a non-safe
+of the source prototype being exposed.  If operating on a non-safe
 clone, items should be nulled out rather than deleted.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">f</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> optional function to apply to each item in a collection
+                                                        <span property="yui:description"> optional function to apply to each item in a collection;
 it will be executed prior to applying the value to
 the new object.  Return false to prevent the copy.</span>
                                                         </dd>
