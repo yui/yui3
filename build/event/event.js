@@ -1375,6 +1375,13 @@ var adapt = Y.Env.evt.plugins,
  *
  * @for YUI
  * @event focus
+ * @param type {string} 'focus'
+ * @param fn {string} the function to execute
+ * @param o {string} the element(s) to bind
+ * @param context optional context object
+ * @param args 0..n additional arguments that should be provided 
+ * to the listener.
+ * @return {Event.Handle} the detach handle
  */
 adapt.focus = {
     on: function(type, fn, o) {
@@ -1397,6 +1404,13 @@ adapt.focus = {
  *
  * @for YUI
  * @event blur
+ * @param type {string} 'focus'
+ * @param fn {string} the function to execute
+ * @param o {string} the element(s) to bind
+ * @param context optional context object
+ * @param args 0..n additional arguments that should be provided 
+ * to the listener.
+ * @return {Event.Handle} the detach handle
  */
 adapt.blur = {
     on: function(type, fn, o) {
@@ -1406,7 +1420,6 @@ adapt.blur = {
         }
         return Y.Event._attach(a, CAPTURE_CONFIG);
     }
-
 };
 
 })();
