@@ -1519,39 +1519,23 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
  * @function cached
  * @param source {function} the function to memoize
  * @param cache an optional cache seed
+ * @param refetch if supplied, this value is tested against the cached
+ * value.  If the values are equal, the wrapped function is executed again.
  * @return {Function} the wrapped function
  */
-Y.cached = function(source, cache){
+Y.cached = function(source, cache, refetch){
     cache = cache || {};
-
-    // I want the profiler to show me separate entries for each
-    // cached function.  Is this too much to ask?
-    
-    // return function cached_sourceFunction
-    // return this['cached_' + source.name] = function
-    // var a = function(){}; a.name = 'foo'; return a;
 
     return function(arg1, arg2) {
 
-        // (?)()   51  5.76%   0.571ms 1.01ms  0.02ms  0.001ms 0.041ms
-        // A() 76  6.58%   0.652ms 0.652ms 0.009ms 0.005ms 0.03ms
-        // var key = (arg2 !== undefined) ? Y.Array(arguments, 0, true).join(DELIMITER) : arg1;
+        var k = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1,
+            v = cache[k];
 
-        // (?)()   51  8.57%   0.837ms 0.838ms 0.016ms 0.013ms 0.024ms
-        // var key = (arguments.length > 1) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
-
-        // (?)()   51  8.06%  0.761ms 0.762ms 0.015ms 0.002ms 0.025ms
-        // var key = (arg2 !== undefined) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
-        
-        // (?)()   51  7.87%   0.749ms 0.751ms 0.015ms 0.001ms 0.027ms
-        // A() 30  2.23%   0.214ms 0.214ms 0.007ms 0.005ms 0.009ms
-        var key = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
-
-        if (!(key in cache)) {
-            cache[key] = source.apply(source, arguments);
+        if (!(k in cache) || (refetch && cache[k] == refetch)) {
+            cache[k] = source.apply(source, arguments);
         }
 
-        return cache[key];
+        return cache[k];
     };
 
 };
@@ -1790,7 +1774,14 @@ O.setValue = function(o, path, val) {
  */
 Y.UA = function() {
 
-    var nav = navigator,
+    var numberfy = function(s) {
+            var c = 0;
+            return parseFloat(s.replace(/\./g, function() {
+                return (c++ == 1) ? '' : '.';
+            }));
+        },
+    
+        nav = navigator,
 
         o = {
 
@@ -1909,9 +1900,9 @@ Y.UA = function() {
 
     if (ua) {
 
-        if ((/windows|win32/).test(ua)) {
+        if ((/windows|win32/i).test(ua)) {
             o.os = 'windows';
-        } else if ((/macintosh/).test(ua)) {
+        } else if ((/macintosh/i).test(ua)) {
             o.os = 'macintosh';
         }
 
@@ -1922,7 +1913,7 @@ Y.UA = function() {
         // Modern WebKit browsers are at least X-Grade
         m=ua.match(/AppleWebKit\/([^\s]*)/);
         if (m&&m[1]) {
-            o.webkit=parseFloat(m[1]);
+            o.webkit=numberfy(m[1]);
 
             // Mobile browser check
             if (/ Mobile\//.test(ua)) {
@@ -1945,7 +1936,7 @@ Y.UA = function() {
             // @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)
             m=ua.match(/Opera[\s\/]([^\s]*)/);
             if (m&&m[1]) {
-                o.opera=parseFloat(m[1]);
+                o.opera=numberfy(m[1]);
                 m=ua.match(/Opera Mini[^;]*/);
                 if (m) {
                     o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
@@ -1953,14 +1944,14 @@ Y.UA = function() {
             } else { // not opera or webkit
                 m=ua.match(/MSIE\s([^;]*)/);
                 if (m&&m[1]) {
-                    o.ie=parseFloat(m[1]);
+                    o.ie=numberfy(m[1]);
                 } else { // not opera, webkit, or ie
                     m=ua.match(/Gecko\/([^\s]*)/);
                     if (m) {
                         o.gecko=1; // Gecko detected, look for revision
                         m=ua.match(/rv:([^\s\)]*)/);
                         if (m&&m[1]) {
-                            o.gecko=parseFloat(m[1]);
+                            o.gecko=numberfy(m[1]);
                         }
                     }
                 }
@@ -2941,11 +2932,6 @@ YUI.add('loader', function(Y) {
  * </ul>
  */
 
-// @TODO backed out the custom event changes so that the event system
-// isn't required in the seed build.  If needed, we may want to 
-// add them back if the event system is detected.
-
-
 /*
  * Global loader queue
  * @property _loaderQueue
@@ -2954,7 +2940,8 @@ YUI.add('loader', function(Y) {
  */
 YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Y.Queue();
 
-var GLOBAL_ENV = YUI.Env,
+var NOT_FOUND = {},
+    GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED,
     BASE = 'base', 
     CSS = 'css',
@@ -2970,7 +2957,6 @@ var GLOBAL_ENV = YUI.Env,
     ROOT = VERSION + '/build/',
     CONTEXT = '-context',
 
-
     ANIMBASE = 'anim-base',
     DDDRAG = 'dd-drag',
     DOM = 'dom',
@@ -2985,6 +2971,7 @@ var GLOBAL_ENV = YUI.Env,
     IOBASE = 'io-base',
     NODE = 'node',
     NODEBASE = 'node-base',
+    NODESTYLE = 'node-style',
     OOP = 'oop',
     SELECTORCSS2 = 'selector-css2',
     SUBSTITUTE = 'substitute',
@@ -3053,11 +3040,11 @@ var GLOBAL_ENV = YUI.Env,
 
         node: {
             requires: [DOM, BASE],
-            expound: EVENT,
+            // expound: EVENT,
 
             submodules: {
                 'node-base': {
-                    requires: [DOMBASE, BASE, SELECTORCSS2]
+                    requires: [DOMBASE, BASE, SELECTORCSS2, EVENT]
                 },
 
                 'node-style': {
@@ -3081,7 +3068,7 @@ var GLOBAL_ENV = YUI.Env,
             submodules: {
 
                 'anim-base': {
-                    requires: [BASE, 'node-style']
+                    requires: [BASE, NODESTYLE]
                 },
 
                 'anim-color': {
@@ -3268,7 +3255,8 @@ var GLOBAL_ENV = YUI.Env,
         },
 
         event: { 
-            requires: [EVENTCUSTOM, NODE]
+            expound: NODEBASE,
+            requires: [EVENTCUSTOM]
         },
 
         'event-custom': { 
@@ -3307,11 +3295,11 @@ var GLOBAL_ENV = YUI.Env,
                 }, 
 
                 'io-form': {
-                    requires: [IOBASE, NODE]
+                    requires: [IOBASE, NODEBASE, NODESTYLE]
                 }, 
 
                 'io-upload-iframe': {
-                    requires: [IOBASE, NODE]
+                    requires: [IOBASE, NODEBASE]
                 },
 
                 'io-queue': {
@@ -3413,16 +3401,14 @@ var GLOBAL_ENV = YUI.Env,
     }
 },
 
-_path = function(dir, file, type) {
+_path = Y.cached(function(dir, file, type) {
     return dir + '/' + file + '-min.' + (type || CSS);
-},
+}),
 
 _queue = YUI.Env._loaderQueue,
 
 mods  = META.modules, i, bname, mname, contextname,
-L     = Y.Lang, 
-PROV  = "_provides", 
-SUPER = "_supersedes";
+L     = Y.Lang;
 
 // Create the metadata for both the regular and context-aware
 // versions of the YUI CSS foundation.
@@ -4100,65 +4086,38 @@ Y.Loader.prototype = {
         }
 
         mod.expanded = Y.Object.keys(Y.Array.hash(d));
-
-
         return mod.expanded;
     },
 
 
     /**
-     * Returns an object literal of the modules the supplied module satisfies
+     * Returns a hash of module names the supplied module satisfies.
      * @method getProvides
-     * @param name{string} The name of the module
-     * @param notMe {string} don't add this module name, only include superseded modules
+     * @param name {string} The name of the module
      * @return what this module provides
      */
-    getProvides: function(name, notMe) {
-        var addMe = !(notMe), ckey = (addMe) ? PROV : SUPER,
-            m = this.getModule(name), o = {},
-            s, done, me, i,
-
-            // use worker to break cycles
-            add = function(mm) {
-                if (!done[mm]) {
-                    done[mm] = true;
-                    // we always want the return value normal behavior 
-                    // (provides) for superseded modules.
-                    Y.mix(o, me.getProvides(mm));
-                } 
-                
-                // else {
-                // }
-            };
+    getProvides: function(name) {
+        var m = this.getModule(name), o, s;
 
         if (!m) {
-            return o;
+            return NOT_FOUND;
         }
 
-        if (m[ckey]) {
-            return m[ckey];
-        }
+        if (m && !m.provides) {
+            o = {};
+            s = m.supersedes;
 
-        s    = m.supersedes;
-        done = {};
-        me   = this;
-
-
-        // calculate superseded modules
-        if (s) {
-            for (i=0; i<s.length; i=i+1) {
-                add(s[i]);
+            if (s) {
+                Y.Array.each(s, function(v) {
+                    Y.mix(o, this.getProvides(v));
+                }, this);
             }
+
+            o[name] = true;
+            m.provides = o;
         }
 
-        // supersedes cache
-        m[SUPER] = o;
-        // provides cache
-        m[PROV] = Y.merge(o);
-        m[PROV][name] = true;
-
-
-        return m[ckey];
+        return m.provides;
     },
 
 
@@ -4261,32 +4220,28 @@ Y.Loader.prototype = {
      */
     _explode: function() {
 
-        var r=this.required, i, mod, req, me = this, f = function(name) {
+        var r = this.required, m, reqs;
 
-                mod = me.getModule(name);
+        Y.Object.each(r, function(v, name) {
 
-                var expound = mod && mod.expound;
+            m = this.getModule(name);
 
-                if (mod) {
+            var expound = m && m.expound;
 
-                    if (expound) {
-                        r[expound] = me.getModule(expound);
-                        req = me.getRequires(r[expound]);
-                        Y.mix(r, Y.Array.hash(req));
-                    }
+            if (m) {
 
-                    req = me.getRequires(mod);
-
-                    Y.mix(r, Y.Array.hash(req));
+                if (expound) {
+                    r[expound] = this.getModule(expound);
+                    reqs = this.getRequires(r[expound]);
+                    Y.mix(r, Y.Array.hash(reqs));
                 }
-            };
 
+                reqs = this.getRequires(m);
 
-        for (i in r) {
-            if (r.hasOwnProperty(i)) {
-                f(i);
+                Y.mix(r, Y.Array.hash(reqs));
             }
-        }
+
+        }, this);
     },
 
     getModule: function(name) {
@@ -4513,54 +4468,55 @@ Y.Loader.prototype = {
      * @private
      */
     _sort: function() {
+
         // create an indexed list
-        var s=Y.Object.keys(this.required), info=this.moduleInfo, loaded=this.loaded,
-            p, l, a, b, j, k, moved, done = {},
+        var s = Y.Object.keys(this.required), 
+            info = this.moduleInfo, 
+            loaded = this.loaded,
+            done = {},
+            p=0, l, a, b, j, k, moved, doneKey,
 
         // returns true if b is not loaded, and is required
         // directly or by means of modules it supersedes.
-            requires = Y.cached(function(aa, bb) {
+            requires = Y.cached(function(mod1, mod2) {
 
-                var mm = info[aa], ii, rr, after, other, ss;
+                var m = info[mod1], i, r, after, other, s;
 
-                if (loaded[bb] || !mm) {
+                if (loaded[mod2] || !m) {
                     return false;
                 }
 
-                rr    = mm.expanded;
-                after = mm.after; 
-                other = info[bb];
+                r     = m.expanded;
+                after = m.after; 
+                other = info[mod2];
 
                 // check if this module requires the other directly
-                if (rr && Y.Array.indexOf(rr, bb) > -1) {
+                if (r && Y.Array.indexOf(r, mod2) > -1) {
                     return true;
                 }
 
                 // check if this module should be sorted after the other
-                if (after && Y.Array.indexOf(after, bb) > -1) {
+                if (after && Y.Array.indexOf(after, mod2) > -1) {
                     return true;
                 }
 
                 // check if this module requires one the other supersedes
-                ss = info[bb] && info[bb].supersedes;
-                if (ss) {
-                    for (ii=0; ii<ss.length; ii=ii+1) {
-                        if (requires(aa, ss[ii])) {
+                s = info[mod2] && info[mod2].supersedes;
+                if (s) {
+                    for (i=0; i<s.length; i=i+1) {
+                        if (requires(mod1, s[i])) {
                             return true;
                         }
                     }
                 }
 
                 // external css files should be sorted below yui css
-                if (mm.ext && mm.type == CSS && !other.ext && other.type == CSS) {
+                if (m.ext && m.type == CSS && !other.ext && other.type == CSS) {
                     return true;
                 }
 
                 return false;
             });
-
-        // pointer to the first unsorted item
-        p = 0; 
 
         // keep going until we make a pass without moving anything
         for (;;) {
@@ -4578,8 +4534,8 @@ Y.Loader.prototype = {
                 // check everything below current item and move if we
                 // find a requirement for the current item
                 for (k=j+1; k<l; k=k+1) {
-                    var key = a + s[k];
-                    if (requires(a, s[k]) && !(done[key])) {
+                    doneKey = a + s[k];
+                    if (!done[doneKey] && requires(a, s[k])) {
 
                         // extract the dependency so we can move it up
                         b = s.splice(k, 1);
@@ -4590,7 +4546,7 @@ Y.Loader.prototype = {
 
                         // only swap two dependencies once to short circut
                         // circular dependencies
-                        done[key] = true;
+                        done[doneKey] = true;
 
                         // keep working 
                         moved = true;

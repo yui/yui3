@@ -24,13 +24,16 @@
 	* @return void
 	*/
 	function _swf(uri, yid) {
-		var XDR_SWF = '<object id="yuiIoSwf" type="application/x-shockwave-flash" data="' +
-		              uri + '" width="0" height="0">' +
-		     		  '<param name="movie" value="' + uri + '">' +
-		     		  '<param name="FlashVars" value="yid=' + yid + '">' +
-                      '<param name="allowScriptAccess" value="sameDomain">' +
-		    	      '</object>';
-		Y.get('body').appendChild(Y.Node.create(XDR_SWF));
+		var o = '<object id="yuiIoSwf" type="application/x-shockwave-flash" data="' +
+		        uri + '" width="0" height="0">' +
+		     	'<param name="movie" value="' + uri + '">' +
+		     	'<param name="FlashVars" value="yid=' + yid + '">' +
+                '<param name="allowScriptAccess" value="always">' +
+		    	'</object>',
+		    c = document.createElement('div');
+
+		document.body.appendChild(c);
+		c.innerHTML = o;
 	}
 
     Y.mix(Y.io, {
@@ -70,7 +73,7 @@
 		*/
 		_xdr: function(uri, o, c) {
 			if (c.on) {
-				this._fn[o.id] = c.on;
+				this._fn[o.id] = { on: c.on, arguments: c.arguments }
 			}
 			o.c.send(uri, c, o.id);
 
@@ -103,11 +106,9 @@
 		* @return void
 		*/
 		transport: function(o) {
-			switch (o.id) {
-				case 'flash':
-					_swf(o.src, o.yid);
-					this._transport.flash = Y.config.doc.getElementById('yuiIoSwf');
-					break;
-			}
+			var id = o.yid ? o.yid : Y.id;
+
+			_swf(o.src, id);
+			this._transport.flash = Y.config.doc.getElementById('yuiIoSwf');
 		}
 	});
