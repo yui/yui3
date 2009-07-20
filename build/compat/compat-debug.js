@@ -16,30 +16,7 @@ if (window.YAHOO != YUI) {
     if (o) {
         Y.mix(Y, o);
     }
-
 }
-
-
-/*
-if ((!globalUpdated) && (!(window.YAHOO instanceof YUI))) {
-
-    globalUpdated = true;
-
-    // get any existing YAHOO obj props
-    var o = (window.YAHOO) ? YUI.merge(window.YAHOO) : null;
-
-    // Make the YUI global the YAHOO global
-    // window.YAHOO = YUI().use('node', 'compat');
-    window.YAHOO = YUI().use('node', 'compat');
-
-    // augment old YAHOO props
-    if (o) {
-        Y.mix(Y, o);
-    }
-
-
-}
-*/
 
 // add old namespaces
 Y.namespace("util", "widget", "example");
@@ -81,10 +58,9 @@ Y.mix(L, {
 
 L.augment = L.augmentProto;
 
-// IE won't enumerate this
-L.hasOwnProperty = Y.Object.owns;
-
-// L.merge = Y.merge;
+L.hasOwnProperty = function(o, k) {
+    return (o.hasOwnProperty(k));
+};
 
 Y.augmentProto = L.augmentProto;
 
