@@ -854,7 +854,6 @@ var INSTANCE = Y,
     LOGEVENT = 'yui:log',
     UNDEFINED = 'undefined',
     _createEvent = function() {
-        console.log('publishing');
         Y.publish(LOGEVENT, {
             broadcast: 2,
             emitFacade: 1

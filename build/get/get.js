@@ -309,7 +309,10 @@ Y.Get = function() {
 
 
         if (q.timeout) {
-            q.timer = L.later(q.timeout, q, _timeout, id);
+            // q.timer = L.later(q.timeout, q, _timeout, id);
+            q.timer = setTimeout(function() { 
+                _timeout(id);
+            }, q.timeout);
         }
 
         if (q.type === "script") {
@@ -411,7 +414,10 @@ Y.Get = function() {
             q.attributes.charset = opts.charset;
         }
 
-        L.later(0, q, _next, id);
+        // L.later(0, q, _next, id);
+        setTimeout(function() {
+            _next(id);
+        }, 0);
 
         return {
             tId: id
@@ -497,7 +503,10 @@ Y.Get = function() {
          * @private
          */
         _finalize: function(id) {
-            L.later(0, null, _finish, id);
+            // L.later(0, null, _finish, id);
+            setTimeout(function() {
+                _finish(id);
+            }, 0);
         },
 
         /**
