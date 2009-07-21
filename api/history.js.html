@@ -583,7 +583,7 @@
 
                 <span class="k">var</span> <span class="nx">state</span><span class="o">,</span> <span class="nx">decodedModuleId</span> <span class="o">=</span> <span class="nx">decode</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">);</span>
 
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">states</span><span class="o">,</span> <span class="nx">decodedModuleId</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">states</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">decodedModuleId</span><span class="o">))</span> <span class="o">{</span>
                     <span class="c">// The caller did not wish to modify the state of this</span>
 <span class="c"></span>                    <span class="c">// module. We must however include it in fqstate!</span>
 <span class="c"></span>                    <span class="nx">state</span> <span class="o">=</span> <span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span><span class="o">;</span>
