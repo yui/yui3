@@ -573,7 +573,7 @@ Event = function() {
         /**
          * The number of times we should look for elements that are not
          * in the DOM at the time the event is requested after the document
-         * has been loaded.  The default is 2000@amp;20 ms, so it will poll
+         * has been loaded.  The default is 1000@amp;40 ms, so it will poll
          * for 40 seconds or until all outstanding handlers are bound
          * (whichever comes first).
          * @property POLL_RETRYS
@@ -1386,7 +1386,9 @@ var adapt = Y.Env.evt.plugins,
 adapt.focus = {
     on: function(type, fn, o) {
         var a = Y.Array(arguments, 0, true);
-        if (Y.UA.opera) {
+        if (Y.UA.ie) {
+            a[0] = a[0].replace(/focus/, 'focusin');
+        } else if (Y.UA.opera) {
             _captureHack(type, o);
         }
         return Y.Event._attach(a, CAPTURE_CONFIG);
@@ -1415,7 +1417,9 @@ adapt.focus = {
 adapt.blur = {
     on: function(type, fn, o) {
         var a = Y.Array(arguments, 0, true);
-        if (Y.UA.opera) {
+        if (Y.UA.ie) {
+            a[0] = a[0].replace(/blur/, 'focusout');
+        } else if (Y.UA.opera) {
             _captureHack(type, o);
         }
         return Y.Event._attach(a, CAPTURE_CONFIG);

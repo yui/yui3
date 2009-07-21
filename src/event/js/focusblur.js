@@ -44,7 +44,9 @@ var adapt = Y.Env.evt.plugins,
 adapt.focus = {
     on: function(type, fn, o) {
         var a = Y.Array(arguments, 0, true);
-        if (Y.UA.opera) {
+        if (Y.UA.ie) {
+            a[0] = a[0].replace(/focus/, 'focusin');
+        } else if (Y.UA.opera) {
             _captureHack(type, o);
         }
         return Y.Event._attach(a, CAPTURE_CONFIG);
@@ -73,7 +75,9 @@ adapt.focus = {
 adapt.blur = {
     on: function(type, fn, o) {
         var a = Y.Array(arguments, 0, true);
-        if (Y.UA.opera) {
+        if (Y.UA.ie) {
+            a[0] = a[0].replace(/blur/, 'focusout');
+        } else if (Y.UA.opera) {
             _captureHack(type, o);
         }
         return Y.Event._attach(a, CAPTURE_CONFIG);
