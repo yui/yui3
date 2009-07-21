@@ -62,7 +62,7 @@
 
 
         <span class="k">var</span> <span class="nx">Drag</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">config</span><span class="o">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">host</span><span class="o">;</span>
+            <span class="nx">config</span><span class="o">.</span><span class="nx">node</span> <span class="o">=</span> <span class="o">((</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Widget</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="o">.</span><span class="nx">host</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Widget</span><span class="o">)</span> <span class="o">?</span> <span class="nx">config</span><span class="o">.</span><span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="o">)</span> <span class="o">:</span> <span class="nx">config</span><span class="o">.</span><span class="nx">host</span><span class="o">);</span>
             <span class="nx">Drag</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">};</span>
         

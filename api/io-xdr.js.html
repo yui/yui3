@@ -74,11 +74,11 @@
 <span class="c">	*/</span>
 	<span class="k">function</span> <span class="nx">_swf</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">yid</span><span class="o">)</span> <span class="o">{</span>
 		<span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="s1">&#39;&lt;object id=&quot;yuiIoSwf&quot; type=&quot;application/x-shockwave-flash&quot; data=&quot;&#39;</span> <span class="o">+</span>
-		          <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;&quot; width=&quot;0&quot; height=&quot;0&quot;&gt;&#39;</span> <span class="o">+</span>
-		     	  <span class="s1">&#39;&lt;param name=&quot;movie&quot; value=&quot;&#39;</span> <span class="o">+</span> <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
-		     	  <span class="s1">&#39;&lt;param name=&quot;FlashVars&quot; value=&quot;yid=&#39;</span> <span class="o">+</span> <span class="nx">yid</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
-                  <span class="s1">&#39;&lt;param name=&quot;allowScriptAccess&quot; value=&quot;sameDomain&quot;&gt;&#39;</span> <span class="o">+</span>
-		    	  <span class="s1">&#39;&lt;/object&gt;&#39;</span><span class="o">,</span>
+		        <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;&quot; width=&quot;0&quot; height=&quot;0&quot;&gt;&#39;</span> <span class="o">+</span>
+		     	<span class="s1">&#39;&lt;param name=&quot;movie&quot; value=&quot;&#39;</span> <span class="o">+</span> <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
+		     	<span class="s1">&#39;&lt;param name=&quot;FlashVars&quot; value=&quot;yid=&#39;</span> <span class="o">+</span> <span class="nx">yid</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
+                <span class="s1">&#39;&lt;param name=&quot;allowScriptAccess&quot; value=&quot;always&quot;&gt;&#39;</span> <span class="o">+</span>
+		    	<span class="s1">&#39;&lt;/object&gt;&#39;</span><span class="o">,</span>
 		    <span class="nx">c</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s1">&#39;div&#39;</span><span class="o">);</span>
 
 		<span class="nb">document</span><span class="o">.</span><span class="nx">body</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">c</span><span class="o">);</span>
@@ -122,7 +122,7 @@
 <span class="c">		*/</span>
 		<span class="nx">_xdr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
 			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">)</span> <span class="o">{</span>
-				<span class="k">this</span><span class="o">.</span><span class="nx">_fn</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">;</span>
+				<span class="k">this</span><span class="o">.</span><span class="nx">_fn</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span> <span class="nx">on</span><span class="o">:</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">:</span> <span class="nx">c</span><span class="o">.</span><span class="nx">arguments</span> <span class="o">}</span>
 			<span class="o">}</span>
 			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">send</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
 
@@ -155,12 +155,10 @@
 <span class="c">		* @return void</span>
 <span class="c">		*/</span>
 		<span class="nx">transport</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">switch</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">case</span> <span class="s1">&#39;flash&#39;</span><span class="o">:</span>
-					<span class="nx">_swf</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">src</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">yid</span><span class="o">);</span>
-					<span class="k">this</span><span class="o">.</span><span class="nx">_transport</span><span class="o">.</span><span class="nx">flash</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="s1">&#39;yuiIoSwf&#39;</span><span class="o">);</span>
-					<span class="k">break</span><span class="o">;</span>
-			<span class="o">}</span>
+			<span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">yid</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">yid</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">;</span>
+
+			<span class="nx">_swf</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">src</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
+			<span class="k">this</span><span class="o">.</span><span class="nx">_transport</span><span class="o">.</span><span class="nx">flash</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="s1">&#39;yuiIoSwf&#39;</span><span class="o">);</span>
 		<span class="o">}</span>
 	<span class="o">});</span>
 </pre></div>

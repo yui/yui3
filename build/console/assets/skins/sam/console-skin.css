@@ -1,8 +1,20 @@
-.yui-skin-sam .yui-console {
+.yui-skin-sam .yui-separate-console {
     position:absolute;
     right:1em;
     top:1em;
     z-index:999;
+}
+
+.yui-skin-sam .yui-inline-console {
+    /* xbrowser inline-block styles */
+    display: -moz-inline-stack; /* FF2 */
+    display: inline-block;
+    *display: inline; /* IE 7- (with zoom) */
+    zoom: 1;
+    vertical-align: top;
+}
+.yui-skin-sam .yui-inline-console .yui-console-content {
+    position: relative;
 }
 
 .yui-skin-sam .yui-console-content {
