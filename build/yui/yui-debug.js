@@ -2318,7 +2318,8 @@ Y.Get = function() {
 
         var q = queues[id], sc;
         if (q.timer) {
-            q.timer.cancel();
+            // q.timer.cancel();
+            clearTimeout(q.timer);
         }
 
         // execute failure callback
@@ -2350,7 +2351,8 @@ Y.Get = function() {
         Y.log("Finishing transaction " + id, "info", "get");
         var q = queues[id], msg, sc;
         if (q.timer) {
-            q.timer.cancel();
+            // q.timer.cancel();
+            clearTimeout(q.timer);
         }
         q.finished = true;
 
@@ -2402,7 +2404,8 @@ Y.Get = function() {
 
         if (q.timer) {
             // Y.log('cancel timer');
-            q.timer.cancel();
+            // q.timer.cancel();
+            clearTimeout(q.timer);
         }
 
         if (q.aborted) {
