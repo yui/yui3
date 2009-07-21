@@ -1568,6 +1568,13 @@ var Lang = Y.Lang,
     },
 
 	attach = function (type, key, element) {
+
+        // @TODO this approach makes it so we can't delegate custom
+        // event types like focus and blur.  There isn't currently
+        // a way to make these events emit the native event payload,
+        // so trying to fix this might mean that the implementation
+        // needs to be prepared for both payloads.
+        
 		Y.Event._attach([type, function (e) {
             _worker(key, (e || window.event), element);
 		}, element], { facade: false });

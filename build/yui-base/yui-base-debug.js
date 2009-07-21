@@ -863,9 +863,16 @@ YUI.add('yui-base', function(Y) {
  */
 (function() {
 
-var instance = Y,
+var INSTANCE = Y,
     LOGEVENT = 'yui:log',
-    _published;
+    UNDEFINED = 'undefined',
+    _createEvent = function() {
+        Y.publish(LOGEVENT, {
+            broadcast: 2,
+            emitFacade: 1
+        });
+        _createEvent = function(){};
+    };
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -886,46 +893,37 @@ var instance = Y,
  * @param  {boolean} silent If true, the log event won't fire
  * @return {YUI}      YUI instance
  */
-instance.log = function(msg, cat, src, silent) {
-    var Y = instance, c = Y.config, bail = false, exc, inc, m, f;
+INSTANCE.log = function(msg, cat, src, silent) {
+    var c = Y.config, bail, excl, incl, m, f;
     // suppress log message if the config is off or the event stack
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
         // apply source filters
         if (src) {
 
-            exc = c.logExclude; 
-            inc = c.logInclude;
+            excl = c.logExclude; 
+            incl = c.logInclude;
 
-            if (inc && !(src in inc)) {
-                bail = true;
-            } else if (exc && (src in exc)) {
-                bail = true;
+            if (incl && !(src in incl)) {
+                bail = 1;
+            } else if (excl && (src in excl)) {
+                bail = 1;
             }
         }
 
         if (!bail) {
-
             if (c.useBrowserConsole) {
                 m = (src) ? src + ': ' + msg : msg;
-                if (typeof console != 'undefined') {
+                if (typeof console != UNDEFINED) {
                     f = (cat && console[cat]) ? cat : 'log';
                     console[f](m);
-                } else if (typeof opera != 'undefined') {
+                } else if (typeof opera != UNDEFINED) {
                     opera.postError(m);
                 }
             }
 
             if (Y.fire && !bail && !silent) {
-                if (!_published) {
-                    Y.publish(LOGEVENT, {
-                        broadcast: 2,
-                        emitFacade: true
-                    });
-
-                    _published = true;
-
-                }
+                _createEvent();
                 Y.fire(LOGEVENT, {
                     msg: msg, 
                     cat: cat, 
@@ -951,34 +949,9 @@ instance.log = function(msg, cat, src, silent) {
  * @param  {boolean} silent If true, the log event won't fire
  * @return {YUI}      YUI instance
  */
-instance.message = function() {
-    return instance.log.apply(instance, arguments);
+INSTANCE.message = function() {
+    return INSTANCE.log.apply(INSTANCE, arguments);
 };
-
-/*
- * @TODO I'm not convinced the current log statement scrubbing routine can
- * be made safe with all the variations that could be supplied for
- * the condition.
- *
- * Logs a message with Y.log() if the first parameter is true
- * Y.logIf((life == 'good'), 'yay'); 
- * logIf statements are stripped from the raw and min files.
- * @method logIf
- * @for YUI
- * @param  {boolean} condition Logging only occurs if a truthy value is provided
- * @param  {String}  msg  The message to log.
- * @param  {String}  cat  The log category for the message.  Default
- *                        categories are "info", "warn", "error", time".
- *                        Custom categories can be used as well. (opt)
- * @param  {String}  src  The source of the the message (opt)
- * @param  {boolean} silent If true, the log event won't fire
- * @return {YUI}      YUI instance
- */
-// instance.logIf = function(condition, msg, cat, src, silent) {
-//     if (condition) {
-//         return Y.log.apply(Y, arguments);
-//     }
-// };
 
 })();
 (function() {
