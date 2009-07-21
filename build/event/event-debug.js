@@ -37,7 +37,7 @@ var GLOBAL_ENV = YUI.Env,
 
         // create custom event
 
-/*!  DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */
+/*! DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */
 
         // Internet Explorer: use the readyState of a defered script.
         // This isolates what appears to be a safe moment to manipulate
@@ -45,16 +45,26 @@ var GLOBAL_ENV = YUI.Env,
         // it is safe to do so.
         if (navigator.userAgent.match(/MSIE/)) {
 
-            GLOBAL_ENV._dri = setInterval(function() {
-                try {
-                    // throws an error if doc is not ready
-                    document.documentElement.doScroll('left');
-                    clearInterval(GLOBAL_ENV._dri);
-                    GLOBAL_ENV._dri = null;
-                    _ready();
-                } catch (ex) { 
-                }
-            }, POLL_INTERVAL); 
+            if (window !== window.top) {
+                document.onreadystatechange = function() {
+                    if (document.readyState == 'complete') {
+                        document.onreadystatechange = null;
+                        _ready();
+                    }
+                };
+            } else {
+
+                GLOBAL_ENV._dri = setInterval(function() {
+                    try {
+                        // throws an error if doc is not ready
+                        document.documentElement.doScroll('left');
+                        clearInterval(GLOBAL_ENV._dri);
+                        GLOBAL_ENV._dri = null;
+                        _ready();
+                    } catch (ex) { 
+                    }
+                }, POLL_INTERVAL); 
+            }
 
         // FireFox, Opera, Safari 3+: These browsers provide a event for this
         // moment.
@@ -164,7 +174,7 @@ if (GLOBAL_ENV.DOMReady) {
 /**
  * Wraps a DOM event, properties requiring browser abstraction are
  * fixed here.  Provids a security layer when required.
- * @class EventFacade
+ * @class DOMEventFacade
  * @param ev {Event} the DOM event
  * @param currentTarget {HTMLElement} the element the listener was attached to
  * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
@@ -310,11 +320,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
     //////////////////////////////////////////////////////
 
-    /**
-     * The keyCode for key events.  Uses charCode if keyCode is not available
-     * @property keyCode
-     * @type int
-     */
     c = e.keyCode || e.charCode || 0;
 
     if (ua.webkit && (c in webkitKeymap)) {
@@ -1384,6 +1389,13 @@ var adapt = Y.Env.evt.plugins,
  *
  * @for YUI
  * @event focus
+ * @param type {string} 'focus'
+ * @param fn {string} the function to execute
+ * @param o {string} the element(s) to bind
+ * @param context optional context object
+ * @param args 0..n additional arguments that should be provided 
+ * to the listener.
+ * @return {Event.Handle} the detach handle
  */
 adapt.focus = {
     on: function(type, fn, o) {
@@ -1406,6 +1418,13 @@ adapt.focus = {
  *
  * @for YUI
  * @event blur
+ * @param type {string} 'focus'
+ * @param fn {string} the function to execute
+ * @param o {string} the element(s) to bind
+ * @param context optional context object
+ * @param args 0..n additional arguments that should be provided 
+ * to the listener.
+ * @return {Event.Handle} the detach handle
  */
 adapt.blur = {
     on: function(type, fn, o) {
@@ -1415,7 +1434,6 @@ adapt.blur = {
         }
         return Y.Event._attach(a, CAPTURE_CONFIG);
     }
-
 };
 
 })();
@@ -1519,7 +1537,9 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 (function() {
 
 var Lang = Y.Lang,
+
 	delegates = {},
+
 	resolveTextNode = function(n) {
 	    try {
 	        if (n && 3 == n.nodeType) {
@@ -1528,6 +1548,7 @@ var Lang = Y.Lang,
 	    } catch(e) { }
 	    return n;
 	},
+
     _worker = function(delegateKey, e, el) {
         var target = resolveTextNode((e.target || e.srcElement)), 
             tests  = delegates[delegateKey],
@@ -1566,6 +1587,13 @@ var Lang = Y.Lang,
     },
 
 	attach = function (type, key, element) {
+
+        // @TODO this approach makes it so we can't delegate custom
+        // event types like focus and blur.  There isn't currently
+        // a way to make these events emit the native event payload,
+        // so trying to fix this might mean that the implementation
+        // needs to be prepared for both payloads.
+        
 		Y.Event._attach([type, function (e) {
             _worker(key, (e || window.event), element);
 		}, element], { facade: false });
@@ -1584,7 +1612,7 @@ var Lang = Y.Lang,
  * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
- * @return {Event.Handle} the detach handle
+ * @return {EventHandle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.delegate = {
@@ -1805,7 +1833,7 @@ var isString = Y.Lang.isString,
  * @param el {string|node} The element(s) to assign the listener to.
  * @param spec {string} Optional.  String representing a selector that must 
  * match the target of the event in order for the listener to be called.
- * @return {Event.Handle} the detach handle
+ * @return {EventHandle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.mouseenter = eventConfig;
@@ -1822,7 +1850,7 @@ Y.Env.evt.plugins.mouseenter = eventConfig;
 * @param el {string|node} The element(s) to assign the listener to.
 * @param spec {string} Optional.  String representing a selector that must 
 * match the target of the event in order for the listener to be called.
-* @return {Event.Handle} the detach handle
+* @return {EventHandle} the detach handle
 * @for YUI
  */
 Y.Env.evt.plugins.mouseleave = eventConfig;

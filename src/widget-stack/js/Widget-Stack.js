@@ -206,7 +206,7 @@
          *
          * @method _afterShimChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterShimChange : function(e) {
             this._uiSetShim(e.newVal);
@@ -218,7 +218,7 @@
          * 
          * @method _afterZIndexChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterZIndexChange : function(e) {
             this._uiSetZIndex(e.newVal);

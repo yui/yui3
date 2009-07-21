@@ -1,4 +1,4 @@
-/*
+/**
  * Functionality to make the node a delegated event container
  * @module node
  * @submodule node-event-delegate

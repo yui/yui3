@@ -61,7 +61,7 @@ convenience methods for various JavaScript object types.
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "DataType.Date provides a set of utility functions to operate against Date objects.", "guessedname": "DataType.Date", "name": "DataType.Date"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "The Date.Locale class is a container for all localised date strings\nused by Y.DataType.Date. It is used internally, but may be extended\nto provide new date localisations.\nTo create your own Locale, follow these steps:\n<ol>\n<li>Find an existing locale that matches closely with your needs<\/li>\n<li>Use this as your base class.  Use Y.DataType.Date.Locale[\"en\"] if nothing\nmatches.<\/li>\n<li>Create your own class as an extension of the base class using\nY.merge, and add your own localisations where needed.<\/li>\n<\/ol>\nSee the Y.DataType.Date.Locale[\"en-US\"] and Y.DataType.Date.Locale[\"en-GB\"]\nclasses which extend Y.DataType.Date.Locale[\"en\"].\nFor example, to implement locales for French french and Canadian french,\nwe would do the following:\n<ol>\n<li>For French french, we have no existing similar locale, so use\nY.DataType.Date.Locale[\"en\"] as the base, and extend it:\n<pre>\nY.DataType.Date.Locale[\"fr\"] = Y.merge(Y.DataType.Date.Locale, {\na: [\"dim\", \"lun\", \"mar\", \"mer\", \"jeu\", \"ven\", \"sam\"],\nA: [\"dimanche\", \"lundi\", \"mardi\", \"mercredi\", \"jeudi\", \"vendredi\", \"samedi\"],\nb: [\"jan\", \"f&eacute;v\", \"mar\", \"avr\", \"mai\", \"jun\", \"jui\", \"ao&ucirc;\", \"sep\", \"oct\", \"nov\", \"d&eacute;c\"],\nB: [\"janvier\", \"f&eacute;vrier\", \"mars\", \"avril\", \"mai\", \"juin\", \"juillet\", \"ao&ucirc;t\", \"septembre\", \"octobre\", \"novembre\", \"d&eacute;cembre\"],\nc: \"%a %d %b %Y %T %Z\",\np: [\"\", \"\"],\nP: [\"\", \"\"],\nx: \"%d.%m.%Y\",\nX: \"%T\"\n});\n<\/pre>\n<\/li>\n<li>For Canadian french, we start with French french and change the meaning of \\%x:\n<pre>\nY.DataType.Date.Locale[\"fr-CA\"] = Y.merge(Y.DataType.Date.Locale[\"fr\"], {\nx: \"%Y-%m-%d\"\n});\n<\/pre>\n<\/li>\n<\/ol>\nWith that, you can use your new locales:\n<pre>\nvar d = new Date(\"2008\/04\/22\");\nY.DataType.Date.format(d, { format: \"%A, %d %B == %x\", locale: \"fr\" });\n<\/pre>\nwill return:\n<pre>\nmardi, 22 avril == 22.04.2008\n<\/pre>\nAnd\n<pre>\nY.DataType.Date.format(d, {format: \"%A, %d %B == %x\", locale: \"fr-CA\" });\n<\/pre>\nWill return:\n<pre>\nmardi, 22 avril == 2008-04-22\n<\/pre>", "guessedname": "DataType.Date.Locale", "name": "DataType.Date.Locale"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "DataType.Number provides a set of utility functions to operate against Number objects.", "guessedname": "DataType.Number", "name": "DataType.Number"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "DataType.XML provides a set of utility functions to operate against XML documents.", "guessedname": "DataType.XML", "name": "DataType.XML"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "DataType.Date provides a set of utility functions to operate against Date objects.", "guessedname": "DataType.Date", "name": "DataType.Date"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "The Date.Locale class is a container for all localised date strings\nused by Y.DataType.Date. It is used internally, but may be extended\nto provide new date localisations.\nTo create your own Locale, follow these steps:\n<ol>\n<li>Find an existing locale that matches closely with your needs</li>\n<li>Use this as your base class.  Use Y.DataType.Date.Locale[\"en\"] if nothing\nmatches.</li>\n<li>Create your own class as an extension of the base class using\nY.merge, and add your own localisations where needed.</li>\n</ol>\nSee the Y.DataType.Date.Locale[\"en-US\"] and Y.DataType.Date.Locale[\"en-GB\"]\nclasses which extend Y.DataType.Date.Locale[\"en\"].\nFor example, to implement locales for French french and Canadian french,\nwe would do the following:\n<ol>\n<li>For French french, we have no existing similar locale, so use\nY.DataType.Date.Locale[\"en\"] as the base, and extend it:\n<pre>\nY.DataType.Date.Locale[\"fr\"] = Y.merge(Y.DataType.Date.Locale, {\na: [\"dim\", \"lun\", \"mar\", \"mer\", \"jeu\", \"ven\", \"sam\"],\nA: [\"dimanche\", \"lundi\", \"mardi\", \"mercredi\", \"jeudi\", \"vendredi\", \"samedi\"],\nb: [\"jan\", \"f&eacute;v\", \"mar\", \"avr\", \"mai\", \"jun\", \"jui\", \"ao&ucirc;\", \"sep\", \"oct\", \"nov\", \"d&eacute;c\"],\nB: [\"janvier\", \"f&eacute;vrier\", \"mars\", \"avril\", \"mai\", \"juin\", \"juillet\", \"ao&ucirc;t\", \"septembre\", \"octobre\", \"novembre\", \"d&eacute;cembre\"],\nc: \"%a %d %b %Y %T %Z\",\np: [\"\", \"\"],\nP: [\"\", \"\"],\nx: \"%d.%m.%Y\",\nX: \"%T\"\n});\n</pre>\n</li>\n<li>For Canadian french, we start with French french and change the meaning of \\%x:\n<pre>\nY.DataType.Date.Locale[\"fr-CA\"] = Y.merge(Y.DataType.Date.Locale[\"fr\"], {\nx: \"%Y-%m-%d\"\n});\n</pre>\n</li>\n</ol>\nWith that, you can use your new locales:\n<pre>\nvar d = new Date(\"2008/04/22\");\nY.DataType.Date.format(d, { format: \"%A, %d %B == %x\", locale: \"fr\" });\n</pre>\nwill return:\n<pre>\nmardi, 22 avril == 22.04.2008\n</pre>\nAnd\n<pre>\nY.DataType.Date.format(d, {format: \"%A, %d %B == %x\", locale: \"fr-CA\" });\n</pre>\nWill return:\n<pre>\nmardi, 22 avril == 2008-04-22\n</pre>", "guessedname": "DataType.Date.Locale", "name": "DataType.Date.Locale"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "DataType.Number provides a set of utility functions to operate against Number objects.", "guessedname": "DataType.Number", "name": "DataType.Number"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "DataType.XML provides a set of utility functions to operate against XML documents.", "guessedname": "DataType.XML", "name": "DataType.XML"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
@@ -76,20 +76,26 @@ convenience methods for various JavaScript object types.
                                     <div class="submodules">
                                         <h4>Submodules:</h4> 
                                         <dl>
-                                            <dt><code><a href="DataType.Date.html" title="datatype-date-format">datatype-date-format</a></code></dt>
+                                            <dt><code>datatype-date</code></dt>
+                                            <dd>Date submodule.</dd>
+                                            <dt><code>datatype-date-format</code></dt>
                                             <dd>Format date submodule implements strftime formatters for javascript based on the
 Open Group specification defined at
 http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html
 This implementation does not include modified conversion specifiers (i.e., Ex and Ox)</dd>
-                                            <dt><code><a href="DataType.Number.html" title="datatype-number-parse">datatype-number-parse</a></code></dt>
+                                            <dt><code>datatype-number-parse</code></dt>
                                             <dd>Parse number submodule.</dd>
-                                            <dt><code><a href="DataType.Date.html" title="datatype-date-parse">datatype-date-parse</a></code></dt>
+                                            <dt><code>datatype-date-parse</code></dt>
                                             <dd>Parse number submodule.</dd>
-                                            <dt><code><a href="DataType.XML.html" title="datatype-xml-parse">datatype-xml-parse</a></code></dt>
-                                            <dd>DataType.XML provides a set of utility functions to operate against XML documents.</dd>
-                                            <dt><code><a href="DataType.Number.html" title="datatype-xml-format">datatype-xml-format</a></code></dt>
-                                            <dd>DataType.Number provides a set of utility functions to operate against Number objects.</dd>
-                                            <dt><code><a href="DataType.Number.html" title="datatype-number-format">datatype-number-format</a></code></dt>
+                                            <dt><code>datatype-xml-parse</code></dt>
+                                            <dd>Parse XML submodule.</dd>
+                                            <dt><code>datatype-xml-format</code></dt>
+                                            <dd>Format XML submodule.</dd>
+                                            <dt><code>datatype-xml</code></dt>
+                                            <dd>XML submodule.</dd>
+                                            <dt><code>datatype-number</code></dt>
+                                            <dd>Number submodule.</dd>
+                                            <dt><code>datatype-number-format</code></dt>
                                             <dd>Format number submodule.</dd>
                                         </dl>
                                     </div>
@@ -110,6 +116,7 @@ This implementation does not include modified conversion specifiers (i.e., Ex an
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -134,18 +141,16 @@ This implementation does not include modified conversion specifiers (i.e., Ex an
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 

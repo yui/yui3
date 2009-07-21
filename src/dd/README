@@ -12,7 +12,7 @@ Added a plugin to support Window and Node based scrolling
         node: '#some-parent-with-scroll'
     });
 
-Proxy and Constrained where moved to the plugin modal, there are some syntax changes:
+Proxy and Constrained were moved to the plugin modal, there are some syntax changes:
 
 PR2 - Proxy:
     var dd = new Y.DD.Drag({

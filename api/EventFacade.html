@@ -59,8 +59,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Wraps a DOM event, properties requiring browser abstraction are
-fixed here.  Provids a security layer when required.
+                        Wraps and protects a custom event for use when emitFacade is set to true.
                     </div>
 
                     
@@ -68,36 +67,6 @@ fixed here.  Provids a security layer when required.
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="" rel="yui:property" resource="#property_button">
-                                    <h4><a name="property_button" property="yui:name">button</a>
-                                        - <code><span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The button that was pushed.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_charCode">
-                                    <h4><a name="property_charCode" property="yui:name">charCode</a>
-                                        - <code><span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The charCode for key events.  Same as keyCode
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:property" resource="#property_currentTarget">
                                     <h4><a name="property_currentTarget" property="yui:name">currentTarget</a>
                                         - <code><span property="yui:type">Node</span></code>
@@ -128,51 +97,6 @@ fixed here.  Provids a security layer when required.
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_keyCode">
-                                    <h4><a name="property_keyCode" property="yui:name">keyCode</a>
-                                        - <code><span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The keyCode for key events.  Uses charCode if keyCode is not available
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_pageX">
-                                    <h4><a name="property_pageX" property="yui:name">pageX</a>
-                                        - <code><span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The X location of the event on the page (including scroll)
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_pageY">
-                                    <h4><a name="property_pageY" property="yui:name">pageY</a>
-                                        - <code><span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The Y location of the event on the page (including scroll)
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:property" resource="#property_relatedTarget">
                                     <h4><a name="property_relatedTarget" property="yui:name">relatedTarget</a>
                                         - <code><span property="yui:type">Node</span></code>
@@ -194,7 +118,7 @@ fixed here.  Provids a security layer when required.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Node reference for the targeted element
+                                            Node reference for the targeted eventtarget
                                         </div>
                                     </div>
      
@@ -210,36 +134,6 @@ fixed here.  Provids a security layer when required.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             The event type
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:property" resource="#property_webkitKeymap">
-                                    <h4><a name="property_webkitKeymap" property="yui:name">webkitKeymap</a>
-                                        - <code>private <span property="yui:type">object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            webkit key remapping required for Safari < 3.1
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_which">
-                                    <h4><a name="property_which" property="yui:name">which</a>
-                                        - <code><span property="yui:type">int</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The button that was pushed.  Same as button.
                                         </div>
                                     </div>
      
@@ -326,45 +220,6 @@ on the current target will not be executed</span>
                                         
                                         <div class="description" property="yui:description">
                                             Prevents the event's default behavior
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method_resolve">
-                                    <h4>
-                                        <a name="method_resolve">resolve</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">resolve</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns a wrapped node.  Intended to be used on event targets,
-so it will return the node's parent if the target is a text
-node
                                         </div>
 
                                         <div class="description">
@@ -489,6 +344,7 @@ on the current target.
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -513,31 +369,42 @@ on the current target.
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class=""><a href="CustomEvent.html" title="CustomEvent">CustomEvent</a></li>
+                                <li class=""><a href="Do.html" title="Do">Do</a></li>
+                                <li class=""><a href="Do.AlterArgs.html" title="Do.AlterArgs">Do.AlterArgs</a></li>
+                                <li class=""><a href="Do.AlterReturn.html" title="Do.AlterReturn">Do.AlterReturn</a></li>
+                                <li class=""><a href="Do.Error.html" title="Do.Error">Do.Error</a></li>
+                                <li class=""><a href="Do.Halt.html" title="Do.Halt">Do.Halt</a></li>
+                                <li class=""><a href="Do.Method.html" title="Do.Method">Do.Method</a></li>
+                                <li class=""><a href="Do.Prevent.html" title="Do.Prevent">Do.Prevent</a></li>
                                 <li class="selected"><a href="EventFacade.html" title="EventFacade">EventFacade</a></li>
+                                <li class=""><a href="EventHandle.html" title="EventHandle">EventHandle</a></li>
+                                <li class=""><a href="EventTarget.html" title="EventTarget">EventTarget</a></li>
+                                <li class=""><a href="Subscriber.html" title="Subscriber">Subscriber</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="event-custom.js.html" title="event-custom.js">event-custom.js</a></li>
+                                <li class=""><a href="event-do.js.html" title="event-do.js">event-do.js</a></li>
                                 <li class=""><a href="event-facade.js.html" title="event-facade.js">event-facade.js</a></li>
                                 <li class=""><a href="event-target.js.html" title="event-target.js">event-target.js</a></li>
                                 <li class=""><a href="event.js.html" title="event.js">event.js</a></li>
@@ -547,18 +414,11 @@ on the current target.
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_button" title="button">button</a></li>
-                                <li class=""><a href="#property_charCode" title="charCode">charCode</a></li>
                                 <li class=""><a href="#property_currentTarget" title="currentTarget">currentTarget</a></li>
                                 <li class=""><a href="#property_details" title="details">details</a></li>
-                                <li class=""><a href="#property_keyCode" title="keyCode">keyCode</a></li>
-                                <li class=""><a href="#property_pageX" title="pageX">pageX</a></li>
-                                <li class=""><a href="#property_pageY" title="pageY">pageY</a></li>
                                 <li class=""><a href="#property_relatedTarget" title="relatedTarget">relatedTarget</a></li>
                                 <li class=""><a href="#property_target" title="target">target</a></li>
                                 <li class=""><a href="#property_type" title="type">type</a></li>
-                                <li class="private"><a href="#property_webkitKeymap" title="webkitKeymap">webkitKeymap</a></li>
-                                <li class=""><a href="#property_which" title="which">which</a></li>
                         </ul>
                     </div>
 
@@ -567,7 +427,6 @@ on the current target.
                         <ul class="content">        
                                 <li class=""><a href="#method_halt" title="halt">halt</a></li>
                                 <li class=""><a href="#method_preventDefault" title="preventDefault">preventDefault</a></li>
-                                <li class="private"><a href="#method_resolve" title="resolve">resolve</a></li>
                                 <li class=""><a href="#method_stopImmediatePropagation" title="stopImmediatePropagation">stopImmediatePropagation</a></li>
                                 <li class=""><a href="#method_stopPropagation" title="stopPropagation">stopPropagation</a></li>
                         </ul>
@@ -584,7 +443,7 @@ on the current target.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "EventFacade", "name": "button", "url": "EventFacade.html#property_button", "type": "property"}, {"access": "", "host": "EventFacade", "name": "charCode", "url": "EventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "EventFacade", "name": "currentTarget", "url": "EventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "EventFacade", "name": "details", "url": "EventFacade.html#property_details", "type": "property"}, {"access": "", "host": "EventFacade", "name": "halt", "url": "EventFacade.html#method_halt", "type": "method"}, {"access": "", "host": "EventFacade", "name": "keyCode", "url": "EventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "EventFacade", "name": "pageX", "url": "EventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "EventFacade", "name": "pageY", "url": "EventFacade.html#property_pageY", "type": "property"}, {"access": "", "host": "EventFacade", "name": "preventDefault", "url": "EventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "EventFacade", "name": "relatedTarget", "url": "EventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "EventFacade", "name": "resolve", "url": "EventFacade.html#method_resolve", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopImmediatePropagation", "url": "EventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopPropagation", "url": "EventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "target", "url": "EventFacade.html#property_target", "type": "property"}, {"access": "", "host": "EventFacade", "name": "type", "url": "EventFacade.html#property_type", "type": "property"}, {"access": "private", "host": "EventFacade", "name": "webkitKeymap", "url": "EventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "EventFacade", "name": "which", "url": "EventFacade.html#property_which", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "EventFacade", "name": "currentTarget", "url": "EventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "EventFacade", "name": "details", "url": "EventFacade.html#property_details", "type": "property"}, {"access": "", "host": "EventFacade", "name": "halt", "url": "EventFacade.html#method_halt", "type": "method"}, {"access": "", "host": "EventFacade", "name": "preventDefault", "url": "EventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "EventFacade", "name": "relatedTarget", "url": "EventFacade.html#property_relatedTarget", "type": "property"}, {"access": "", "host": "EventFacade", "name": "stopImmediatePropagation", "url": "EventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopPropagation", "url": "EventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "target", "url": "EventFacade.html#property_target", "type": "property"}, {"access": "", "host": "EventFacade", "name": "type", "url": "EventFacade.html#property_type", "type": "property"}];
 </script>
 </body>
 </html>

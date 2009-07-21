@@ -47,7 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">/**</span>
+                        <div class="highlight" ><pre><span class="c">/**</span>
 <span class="c"> * String variable substitution and string formatting.</span>
 <span class="c"> * If included, the substitute method is added to the YUI instance.</span>
 <span class="c"> *</span>
@@ -61,6 +61,10 @@
 <span class="c">     * @class YUI~substitute</span>
 <span class="c">     */</span>
 
+     <span class="c">// @todo template configurability is not implemented yet</span>
+<span class="c"></span>     <span class="c">// @param ldelim {string} optional left delimiter for the replacement token (default: left brace)</span>
+<span class="c"></span>     <span class="c">// @param rdelim {string} optional right delimiter for the replacement token (default: right brace)</span>
+<span class="c"></span>
     <span class="c">/**</span>
 <span class="c">     * Does variable substitution on a string. It scans through the string </span>
 <span class="c">     * looking for expressions enclosed in { } braces. If an expression </span>
@@ -80,17 +84,15 @@
 <span class="c">     * in the YUI module.</span>
 <span class="c">     *</span>
 <span class="c">     * @method substitute</span>
-<span class="c">     * @for YUI</span>
 <span class="c">     * @param s {string} The string that will be modified.</span>
 <span class="c">     * @param o An object containing the replacement values</span>
 <span class="c">     * @param f {function} An optional function that can be used to</span>
 <span class="c">     *                     process each match.  It receives the key,</span>
 <span class="c">     *                     value, and any extra metadata included with</span>
 <span class="c">     *                     the key inside of the braces.</span>
-<span class="c">     * @param ldelim {string} optional left delimiter for the replacement token (default: {)</span>
-<span class="c">     * @param rdelim {string} optional right delimiter for the replacement token (default: })</span>
 <span class="c">     * @return {string} the substituted string</span>
 <span class="c">     */</span>
+
     <span class="nx">substitute</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">ldelim</span><span class="o">,</span> <span class="nx">rdelim</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">meta</span><span class="o">,</span> <span class="nx">saved</span><span class="o">=[],</span> <span class="nx">token</span><span class="o">,</span> <span class="nx">dump</span><span class="o">;</span>
         <span class="nx">ldelim</span> <span class="o">=</span> <span class="nx">ldelim</span> <span class="o">||</span> <span class="nx">LBRACE</span><span class="o">;</span>
@@ -172,6 +174,7 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">substitute</span> <span class="o">=</span> <span class="nx">substitute</span><span class="o">;</span>
     <span class="nx">L</span><span class="o">.</span><span class="nx">substitute</span> <span class="o">=</span> <span class="nx">substitute</span><span class="o">;</span>
 </pre></div>
+
                     </div>
 			</div>
 		</div>
@@ -186,6 +189,7 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -210,18 +214,16 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class="selected"><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -252,7 +254,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [];
+    ALL_YUI_PROPS = [{"access": "", "host": "YUI~substitute", "name": "substitute", "url": "YUI~substitute.html#method_substitute", "type": "method"}];
 </script>
 </body>
 </html>

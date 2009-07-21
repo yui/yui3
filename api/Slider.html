@@ -61,7 +61,8 @@
 
                     <div class="summary description" property="yui:description">
                         Create a slider to represent an integer value between a given minimum and
-maximum.
+maximum.  Sliders may be aligned vertically or horizontally, based on the
+<code>axis</code> configuration.
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
@@ -137,7 +138,7 @@ the Slider's value.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Collection of object property names from the appropriate hash set in
-Slider.AXIS_KEYS.
+Slider._AXIS_KEYS.
                                         </div>
                                     </div>
      
@@ -215,25 +216,9 @@ coordinates for the thumb.
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_Slider.ATTRS">
-                                    <h4><a name="property_Slider.ATTRS" property="yui:name">Slider.ATTRS</a>
-                                        - <code>static <span property="yui:type">Object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Static property used to define the default attribute configuration of
-the Widget.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_Slider.AXIS_KEYS">
-                                    <h4><a name="property_Slider.AXIS_KEYS" property="yui:name">Slider.AXIS_KEYS</a>
-                                        - <code>static <span property="yui:type">Object</span></code>
+                                    <div class="protected" rel="yui:property" resource="#property_Slider._AXIS_KEYS">
+                                    <h4><a name="property_Slider._AXIS_KEYS" property="yui:name">Slider._AXIS_KEYS</a>
+                                        - <code>protected static <span property="yui:type">Object</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -248,9 +233,25 @@ its representative value).
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_Slider.HTML_PARSER">
+                                    <div class="protected" rel="yui:property" resource="#property_Slider.ATTRS">
+                                    <h4><a name="property_Slider.ATTRS" property="yui:name">Slider.ATTRS</a>
+                                        - <code>protected static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Static property used to define the default attribute configuration of
+the Widget.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property_Slider.HTML_PARSER">
                                     <h4><a name="property_Slider.HTML_PARSER" property="yui:name">Slider.HTML_PARSER</a>
-                                        - <code>static <span property="yui:type">Object</span></code>
+                                        - <code>protected static <span property="yui:type">Object</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -412,8 +413,7 @@ attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Calls syncUI to update the Slider UI in response to change in the max
-attribute.
+                                            Updates the Slider UI in response to change in the max attribute.
                                         </div>
 
                                         <div class="description">
@@ -464,8 +464,7 @@ attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Calls syncUI to update the Slider UI in response to change in the min
-attribute.
+                                            Updates the Slider UI in response to change in the min attribute.
                                         </div>
 
                                         <div class="description">
@@ -516,8 +515,7 @@ attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Calls syncUI to update the Slider UI in response to change in the
-railSize attribute.
+                                            Updates the Slider UI in response to change in the railSize attribute.
                                         </div>
 
                                         <div class="description">
@@ -569,7 +567,7 @@ railSize attribute.
                                         
                                         <div class="description" property="yui:description">
                                             Replaces the thumb Node in response to a change in the thumb attribute.
-This only has effect before the Slider is rendered.
+This only has effect after the Slider is rendered.
                                         </div>
 
                                         <div class="description">
@@ -622,7 +620,7 @@ This only has effect before the Slider is rendered.
                                         <div class="description" property="yui:description">
                                             Sets or replaces the thumb's contained <code>img</code> Node with the
 new Node in response to a change in the thumbImage attribute.  This only
-has effect before the Slider is rendered.
+has effect after the Slider is rendered.
                                         </div>
 
                                         <div class="description">
@@ -673,8 +671,8 @@ has effect before the Slider is rendered.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Fires the internal valueSet event in response to a change in the value
-attribute.
+                                            Fires the internal positionThumb event in response to a change in the
+value attribute.
                                         </div>
 
                                         <div class="description">
@@ -742,6 +740,57 @@ attribute.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__convertOffsetToValue">
+                                    <h4>
+                                        <a name="method__convertOffsetToValue">_convertOffsetToValue</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_convertOffsetToValue</strong>
+                                           (
+                                                
+                                                        
+                                                         v
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Converts a pixel offset of the thumb on the rail to a value.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">v</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  pixel offset of the thumb on the rail</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__convertValueToOffset">
                                     <h4>
                                         <a name="method__convertValueToOffset">_convertValueToOffset</a></h4>
@@ -762,7 +811,7 @@ attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Converts a value to an integer offset for the thumb position on the rail.
+                                            Converts a value to a pixel offset for the thumb position on the rail.
                                         </div>
 
                                         <div class="description">
@@ -897,16 +946,16 @@ match the current attribute values.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:method" resource="#method__defUpdateValueFromDD">
+                                    <div class="protected" rel="yui:method" resource="#method__defThumbDragFn">
                                     <h4>
-                                        <a name="method__defUpdateValueFromDD">_defUpdateValueFromDD</a></h4>
+                                        <a name="method__defThumbDragFn">_defThumbDragFn</a></h4>
                                     <div class="detail" >
                                         <code>
                                          protected 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_defUpdateValueFromDD</strong>
+                                            <strong property="yui:name">_defThumbDragFn</strong>
                                            (
                                                 
                                                         
@@ -970,8 +1019,8 @@ multiplier and the min value.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Moves the thumb to the mousedown position and hands control over to DD
-if the Slider is not disabled and railEnabled is true.
+                                            If the Slider is not disabled and railEnabled is true, moves the thumb
+to the mousedown position and hands control over to DD.
                                         </div>
 
                                         <div class="description">
@@ -1027,8 +1076,7 @@ if the Slider is not disabled and railEnabled is true.
                                         
                                         <div class="description" property="yui:description">
                                             Event handler assigned to the thumbImage's load and error event if it
-was not loaded prior to instantiation.  Calls _ready method and restores
-the Slider's disabled attribute.
+was not loaded prior to instantiation.  Restores the disabled value.
                                         </div>
 
                                         <div class="description">
@@ -1080,7 +1128,8 @@ the Slider's disabled attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Creates the rail element if not provided or discovered via HTML_PARSER.
+                                            Creates the rail element if not provided and not discovered via
+HTML_PARSER.
                                         </div>
 
                                         <div class="description">
@@ -1155,12 +1204,12 @@ backgroundEnabled is true.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Creates the thumb element (not image) if not provided or discovered via
-HTML_PARSER.  If thumb is present and an <code>img</code> element
-<em>and</em> no thumbImage provided, reassigns the thumb element to the
-thumbImage and defaults the thumb element as a div.
-Makes sure the thumb is a child of the rail element and calls
-_initThumbImage if thumbImage is provided.
+                                            <p>Creates the thumb element (not image) if not provided and not
+discovered via HTML_PARSER.  If the thumb is an <code>img</code> element
+but no thumbImage configured or discovered, reassigns the thumb element
+to the thumbImage and defaults the thumb element as a div.</p>
+<p>Makes sure the thumb is a child of the rail element and calls
+_initThumbImage if thumbImage is provided.</p>
                                         </div>
 
                                         <div class="description">
@@ -1548,8 +1597,9 @@ slideStart event in response to the DD's drag:start.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Fires the internal sync event, which barring preventDefault should
-execute _defSyncFn.
+                                            Applies a class to the content box if the thumbImage failed to resolve,
+the fires the internal sync event triggering a sync between UI and
+state.
                                         </div>
 
                                         <div class="description">
@@ -1654,7 +1704,7 @@ after the Slider is rendered.
                                         
                                         <div class="description" property="yui:description">
                                             Resets the cached region inside the DD constrain instance to support
-repositioning the Slider after instantiation. Workaround for ticket
+repositioning the Slider after instantiation.
                                         </div>
 
                                         <div class="description">
@@ -1735,7 +1785,7 @@ The Slider is disabled while it waits.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Setter applied to the input when updating the railSize attribute.
+                                            Setter applied to the input when updating the axis attribute.
                                         </div>
 
                                         <div class="description">
@@ -1908,7 +1958,8 @@ be a Node, raw HTMLElement, or a selector string to locate it.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Store the current XY position of the rail Node on the page.  For use in calculating thumb position from value.
+                                            Store the current XY position of the rail Node on the page.  For use in
+calculating thumb position from value.
                                         </div>
 
                                         <div class="description">
@@ -2054,9 +2105,8 @@ or image URL</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Sets the _thumbOffset property for use in establishing the point in the
-thumb that should align to the rail position representing the calculated
-value.
+                                            Establishes the point in the thumb that should align to the rail
+position representing the calculated value.
                                         </div>
 
                                         <div class="description">
@@ -2068,57 +2118,6 @@ value.
                                                         void
                                                     </code></dt>
                                                     <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__setValueFn">
-                                    <h4>
-                                        <a name="method__setValueFn">_setValueFn</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        Number
-                                            <strong property="yui:name">_setValueFn</strong>
-                                           (
-                                                
-                                                        
-                                                         v
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Setter applied to the input when updating the value attribute.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">v</span>
-                                                        &lt;<span property="yui:type">Number</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  proposed new value for the Slider</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Number
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">rounded value or configured min if non-number input</dd>
                                                 </dl>
 
 
@@ -2289,8 +2288,8 @@ axis, for use in calculating thumb position from the value.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Captures the thumbs pixel height or width, depending on the Slider's
-axis, for use in positioning calculations.
+                                            Captures the thumb's pixel height or width (depending on the Slider's
+axis) for use in positioning calculations.
                                         </div>
 
                                         <div class="description">
@@ -2377,7 +2376,7 @@ axis, for use in positioning calculations.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Validator applied to the max attribute. Only numbers are allowed.
+                                            Validator applied to the max attribute.
                                         </div>
 
                                         <div class="description">
@@ -2386,7 +2385,7 @@ axis, for use in positioning calculations.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">v</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  proposed value for the max attribute</span>
                                                         </dd>
@@ -2421,7 +2420,7 @@ axis, for use in positioning calculations.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Validator applied to the min attribute. Only numbers are allowed.
+                                            Validator applied to the min attribute.
                                         </div>
 
                                         <div class="description">
@@ -2430,7 +2429,7 @@ axis, for use in positioning calculations.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">v</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  proposed value for the min attribute</span>
                                                         </dd>
@@ -2465,8 +2464,8 @@ axis, for use in positioning calculations.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Validator applied to the rail attribute. Only allows values through
-before the Slider is rendered.
+                                            Validator applied to the rail attribute. Rejects all values after the
+Slider has been rendered.
                                         </div>
 
                                         <div class="description">
@@ -2475,7 +2474,7 @@ before the Slider is rendered.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">v</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  proposed value for the rail attribute</span>
                                                         </dd>
@@ -2510,8 +2509,8 @@ before the Slider is rendered.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Validator applied to the railSize attribute. Only css size values (e.g.
-'200px' are allowed.
+                                            Validator applied to the railSize attribute. Only strings of css size
+values (e.g. '200px') are allowed.
                                         </div>
 
                                         <div class="description">
@@ -2555,8 +2554,8 @@ before the Slider is rendered.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Validator applied to the thumb attribute. Only allows values through
-before the Slider is rendered.
+                                            Validator applied to the thumb attribute.  Rejects all values after the
+Slider has been rendered.
                                         </div>
 
                                         <div class="description">
@@ -2565,7 +2564,7 @@ before the Slider is rendered.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">v</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  proposed value for the thumb attribute</span>
                                                         </dd>
@@ -2600,8 +2599,8 @@ before the Slider is rendered.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Validator applied to the thumbImage attribute. Only allows values through
-before the Slider is rendered.
+                                            Validator applied to the thumbImage attribute.  Rejects all values after
+the Slider has been rendered.
                                         </div>
 
                                         <div class="description">
@@ -2610,7 +2609,7 @@ before the Slider is rendered.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">v</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  proposed value for the thumbImage attribute</span>
                                                         </dd>
@@ -2645,8 +2644,7 @@ before the Slider is rendered.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Validator applied to the value attribute. Only numbers between the min
-and max are allowed.
+                                            Validator applied to the value attribute.
                                         </div>
 
                                         <div class="description">
@@ -2655,7 +2653,7 @@ and max are allowed.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">v</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  proposed value for the value attribute</span>
                                                         </dd>
@@ -2685,8 +2683,8 @@ and max are allowed.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Calls _bindThumbDD to create the Y.DD instance used to handle the thumb
-movement and binds Slider interaction to the configured value model.
+                                            Creates the Y.DD instance used to handle the thumb movement and binds
+Slider interaction to the configured value model.
                                         </div>
 
                                         <div class="description">
@@ -2761,8 +2759,8 @@ Equivalent to <code>slider.get(&quot;value&quot;)</code>.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Construction logic executed durint Slider instantiation. Subscribe to
-after events for min, max, and railSize.  Publish custom events
+                                            Construction logic executed durint Slider instantiation. Subscribes to
+after events for min, max, and railSize.  Publishes custom events
 including slideStart and slideEnd.
                                         </div>
 
@@ -2800,7 +2798,7 @@ including slideStart and slideEnd.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Create the DOM structure for the Slider.  Calls _initRail and _initThumb.
+                                            Create the DOM structure for the Slider.
                                         </div>
 
                                         <div class="description">
@@ -2918,30 +2916,57 @@ taken into consideration for calculations.
                         </div>
 
                         <div rel="yui:inheritance">                    
-                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
-                                <h4>Methods inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="EventTarget.html">
+                                <h4>Methods inherited from <a href="EventTarget.html" property="yui:name" title="EventTarget">EventTarget</a>:</h4>
                                 <div class="content" rel="yui:methods">
                                     <code>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__destroyPlugins">                                        
-                                            <a class="private" href="Plugin.Host.html#method__destroyPlugins" property="yui:name" title="_destroyPlugins">_destroyPlugins</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__getType">                                        
+                                            <a class="private" href="EventTarget.html#method__getType" property="yui:name" title="_getType">_getType</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__initPlugins">                                        
-                                            <a class="private" href="Plugin.Host.html#method__initPlugins" property="yui:name" title="_initPlugins">_initPlugins</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__parseType">                                        
+                                            <a class="private" href="EventTarget.html#method__parseType" property="yui:name" title="_parseType">_parseType</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__plug">                                        
-                                            <a class="private" href="Plugin.Host.html#method__plug" property="yui:name" title="_plug">_plug</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_addTarget">                                        
+                                            <a class="" href="EventTarget.html#method_addTarget" property="yui:name" title="addTarget">addTarget</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__unplug">                                        
-                                            <a class="private" href="Plugin.Host.html#method__unplug" property="yui:name" title="_unplug">_unplug</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_after">                                        
+                                            <a class="" href="EventTarget.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method_hasPlugin">                                        
-                                            <a class="" href="Plugin.Host.html#method_hasPlugin" property="yui:name" title="hasPlugin">hasPlugin</a><span class="">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_before">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_before" property="yui:name" title="before">before</a><span class=" deprecated">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method_plug">                                        
-                                            <a class="" href="Plugin.Host.html#method_plug" property="yui:name" title="plug">plug</a><span class="">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_bubble">                                        
+                                            <a class="" href="EventTarget.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method_unplug">                                        
-                                            <a class="" href="Plugin.Host.html#method_unplug" property="yui:name" title="unplug">unplug</a>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detach">                                        
+                                            <a class="" href="EventTarget.html#method_detach" property="yui:name" title="detach">detach</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detachAll">                                        
+                                            <a class="" href="EventTarget.html#method_detachAll" property="yui:name" title="detachAll">detachAll</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_fire">                                        
+                                            <a class="" href="EventTarget.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getEvent">                                        
+                                            <a class="" href="EventTarget.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_on">                                        
+                                            <a class="" href="EventTarget.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_publish">                                        
+                                            <a class="" href="EventTarget.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_removeTarget">                                        
+                                            <a class="" href="EventTarget.html#method_removeTarget" property="yui:name" title="removeTarget">removeTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_subscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribeAll">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
                                             </span>
                                     </code>
                                 </div>
@@ -3201,15 +3226,30 @@ taken into consideration for calculations.
                                     </code>
                                 </div>
                             </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="Event.Target.html">
-                                <h4>Methods inherited from <a href="Event.Target.html" property="yui:name" title="Event.Target">Event.Target</a>:</h4>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
+                                <h4>Methods inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
                                 <div class="content" rel="yui:methods">
                                     <code>
-                                            <span rel="yui:method" resource="Event.Target.html#method__getType">                                        
-                                            <a class="" href="Event.Target.html#method__getType" property="yui:name" title="_getType">_getType</a><span class="">,</span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__destroyPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__destroyPlugins" property="yui:name" title="_destroyPlugins">_destroyPlugins</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Event.Target.html#method__parseType">                                        
-                                            <a class="private" href="Event.Target.html#method__parseType" property="yui:name" title="_parseType">_parseType</a>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__initPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__initPlugins" property="yui:name" title="_initPlugins">_initPlugins</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__plug">                                        
+                                            <a class="private" href="Plugin.Host.html#method__plug" property="yui:name" title="_plug">_plug</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__unplug">                                        
+                                            <a class="private" href="Plugin.Host.html#method__unplug" property="yui:name" title="_unplug">_unplug</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_hasPlugin">                                        
+                                            <a class="" href="Plugin.Host.html#method_hasPlugin" property="yui:name" title="hasPlugin">hasPlugin</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_plug">                                        
+                                            <a class="" href="Plugin.Host.html#method_plug" property="yui:name" title="plug">plug</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_unplug">                                        
+                                            <a class="" href="Plugin.Host.html#method_unplug" property="yui:name" title="unplug">unplug</a>
                                             </span>
                                     </code>
                                 </div>
@@ -3435,6 +3475,58 @@ taken into consideration for calculations.
                                                         
                                                 </dl>
 
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_positionThumb">
+                                    <h4>
+                                        <a name="event_positionThumb">positionThumb</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">positionThumb</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Signals a request to reposition the thumb in response to API methods.
+Triggers the thumb placement logic in _defPositionThumbFn.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  An Event Facade object with the following attribute specific properties added:
+<dl>
+<dt>changeEv</dt>
+<dd><code>valueChange</code> event fired in response to the change in the value attribute</dd>
+</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+                                            <div class="preventable">
+                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defPositionThumbFn.
+                                            </div>        
 
                                         </div>
 
@@ -3694,7 +3786,7 @@ the DD.Drag instance's drag:start event under key ddEvent.
                                         <div class="description" property="yui:description">
                                             Communicates a request to synchronize the Slider UI with the
 attribute state.  Links the sync request with the default sync
-logic in the default function _defSyncFn.
+logic in _defSyncFn.
                                         </div>
 
                                         <div class="description">
@@ -3785,8 +3877,7 @@ logic in the default function _defSyncFn.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Communicates user interaction with the thumb.  Triggers the logic
-to update the value via the default function _defUpdateValueFromDD.
+                                            Bridges user interaction with the thumb to the value attribute.
                                         </div>
 
                                         <div class="description">
@@ -3808,7 +3899,7 @@ to update the value via the default function _defUpdateValueFromDD.
                                                 </dl>
 
                                             <div class="preventable">
-                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defUpdateValueFromDD.
+                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defThumbDragFn.
                                             </div>        
 
                                         </div>
@@ -3898,59 +3989,6 @@ to update the value via the default function _defUpdateValueFromDD.
                                                         
                                                 </dl>
 
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:event" resource="#event_valueSet">
-                                    <h4>
-                                        <a name="event_valueSet">valueSet</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">valueSet</strong>
-
-                                            (
-                                                
-                                                        
-                                                         event
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Signals a value change via API, requiring the thumb position to be
-updated.  Triggers the thumb placement logic in the default function
-_defSetThumbPosition.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">event</span>
-                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                            </code>
-                                                            <span property="yui:description">  An Event Facade object with the following attribute specific properties added:
-<dl>
-<dt>changeEv</dt>
-<dd><code>valueChange</code> event fired in response to the change in the value attribute</dd>
-</dl></span>
-                                                        </dd>
-                                                        
-                                                </dl>
-
-                                            <div class="preventable">
-                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defPositionThumbFn.
-                                            </div>        
 
                                         </div>
 
@@ -4063,8 +4101,8 @@ horizontal, &quot;y&quot; for vertical.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Integer value associated with the right or bottom terminus of the
-Slider's rail, depending on the configured axis.
+                                            Value associated with the right or bottom most position of the thumb
+on the rail.
                                         </div>
                                     </div>
  
@@ -4081,9 +4119,9 @@ Slider's rail, depending on the configured axis.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Like CSS padding, the distance in pixels from the inner bottom right
-corner of the rail node within which the thumb can travel.  Negative
-values allow the edge of the thumb to escape the rail node
+                                            Like CSS padding, the distance in pixels from the inner bottom or
+right edge of the rail node within which the thumb can travel.
+Negative values allow the edge of the thumb to escape the rail node
 boundaries.
                                         </div>
                                     </div>
@@ -4101,8 +4139,8 @@ boundaries.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Integer value associated with the left or top terminus of the
-Slider's rail, depending on the configured axis.
+                                            Value associated with the left or top most position of the thumb on
+the rail.
                                         </div>
                                     </div>
  
@@ -4119,8 +4157,8 @@ Slider's rail, depending on the configured axis.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Like CSS padding, the distance in pixels from the inner top left
-corner of the rail node within which the thumb can travel.  Negative
+                                            Like CSS padding, the distance in pixels from the inner top or left
+edge of the rail node within which the thumb can travel.  Negative
 values allow the edge of the thumb to escape the rail node
 boundaries.
                                         </div>
@@ -4176,11 +4214,11 @@ trigger thumb movement.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The width or height of the rail element representing the physical
+                                            <p>The width or height of the rail element representing the physical
 space along which the thumb can move.  CSS size values (e.g. '30em')
-accepted but converted to pixels during render.
-Alternately, but not recommended, this attribute can be left
-unassigned in favor of specifying height or width.
+accepted but converted to pixels during render.</p>
+<p>Alternately, but not recommended, this attribute can be left
+unassigned in favor of specifying height or width.</p>
                                         </div>
                                     </div>
  
@@ -4197,14 +4235,14 @@ unassigned in favor of specifying height or width.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The Node representing the Slider's thumb, usually visualized as a
+                                            <p>The Node representing the Slider's thumb, usually visualized as a
 pointer using a contained image Node (see thumbImage).  The current
 value of the Slider is calculated from the centerpoint of this
 Node in relation to the rail Node.  If provided, the thumbImage
-Node is contained within this Node.
-If no thumbImage is provided and the Node passed as the thumb is an
-<code>img</code> element, the assigned Node will be allocated to the
-thumbImage and the thumb container defaulted.
+Node is contained within this Node.</p>
+<p>If no thumbImage is provided and the Node passed as the thumb is
+an <code>img</code> element, the assigned Node will be allocated to
+the thumbImage and the thumb container defaulted.</p>
                                         </div>
                                     </div>
  
@@ -4221,15 +4259,15 @@ thumbImage and the thumb container defaulted.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The Node representing the image element to use for the Slider's
-thumb.
-Alternately, an image URL can be passed and an <code>img</code>
-Node will be generated accordingly.
-If no thumbImage is provided and the Node passed as the thumb is an
-<code>img</code> element, the assigned Node will be allocated to the
-thumbImage and the thumb container defaulted.
-If thumbImage is provided but its URL resolves to a 404, a default
-style will be applied to maintain basic functionality.
+                                            <p>The Node representing the image element to use for the Slider's
+thumb.</p>
+<p>Alternately, an image URL can be passed and an <code>img</code>
+Node will be generated accordingly.</p>
+<p>If no thumbImage is provided and the Node passed as the thumb is
+an <code>img</code> element, the assigned Node will be allocated to
+the thumbImage and the thumb container defaulted.</p>
+<p>If thumbImage is provided but its URL resolves to a 404, a default
+style will be applied to maintain basic functionality.</p>
                                         </div>
                                     </div>
  
@@ -4337,6 +4375,7 @@ position for the thumb along the Slider's rail.
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -4361,18 +4400,16 @@ position for the thumb along the Slider's rail.
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class="selected"><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -4400,9 +4437,9 @@ position for the thumb along the Slider's rail.
                                 <li class="protected"><a href="#property__stall" title="_stall">_stall</a></li>
                                 <li class="protected"><a href="#property__thumbOffset" title="_thumbOffset">_thumbOffset</a></li>
                                 <li class="protected"><a href="#property__thumbSize" title="_thumbSize">_thumbSize</a></li>
-                                <li class=""><a href="#property_Slider.ATTRS" title="Slider.ATTRS">Slider.ATTRS</a></li>
-                                <li class=""><a href="#property_Slider.AXIS_KEYS" title="Slider.AXIS_KEYS">Slider.AXIS_KEYS</a></li>
-                                <li class=""><a href="#property_Slider.HTML_PARSER" title="Slider.HTML_PARSER">Slider.HTML_PARSER</a></li>
+                                <li class="protected"><a href="#property_Slider._AXIS_KEYS" title="Slider._AXIS_KEYS">Slider._AXIS_KEYS</a></li>
+                                <li class="protected"><a href="#property_Slider.ATTRS" title="Slider.ATTRS">Slider.ATTRS</a></li>
+                                <li class="protected"><a href="#property_Slider.HTML_PARSER" title="Slider.HTML_PARSER">Slider.HTML_PARSER</a></li>
                                 <li class=""><a href="#property_Slider.NAME" title="Slider.NAME">Slider.NAME</a></li>
                         </ul>
                     </div>
@@ -4418,10 +4455,11 @@ position for the thumb along the Slider's rail.
                                 <li class="protected"><a href="#method__afterThumbImageChange" title="_afterThumbImageChange">_afterThumbImageChange</a></li>
                                 <li class="protected"><a href="#method__afterValueChange" title="_afterValueChange">_afterValueChange</a></li>
                                 <li class="protected"><a href="#method__bindThumbDD" title="_bindThumbDD">_bindThumbDD</a></li>
+                                <li class="protected"><a href="#method__convertOffsetToValue" title="_convertOffsetToValue">_convertOffsetToValue</a></li>
                                 <li class="protected"><a href="#method__convertValueToOffset" title="_convertValueToOffset">_convertValueToOffset</a></li>
                                 <li class="protected"><a href="#method__defPositionThumbFn" title="_defPositionThumbFn">_defPositionThumbFn</a></li>
                                 <li class="protected"><a href="#method__defSyncFn" title="_defSyncFn">_defSyncFn</a></li>
-                                <li class="protected"><a href="#method__defUpdateValueFromDD" title="_defUpdateValueFromDD">_defUpdateValueFromDD</a></li>
+                                <li class="protected"><a href="#method__defThumbDragFn" title="_defThumbDragFn">_defThumbDragFn</a></li>
                                 <li class="protected"><a href="#method__handleRailMouseDown" title="_handleRailMouseDown">_handleRailMouseDown</a></li>
                                 <li class="protected"><a href="#method__imageLoaded" title="_imageLoaded">_imageLoaded</a></li>
                                 <li class="protected"><a href="#method__initRail" title="_initRail">_initRail</a></li>
@@ -4446,7 +4484,6 @@ position for the thumb along the Slider's rail.
                                 <li class="protected"><a href="#method__setThumbFn" title="_setThumbFn">_setThumbFn</a></li>
                                 <li class="protected"><a href="#method__setThumbImageFn" title="_setThumbImageFn">_setThumbImageFn</a></li>
                                 <li class="protected"><a href="#method__setThumbOffset" title="_setThumbOffset">_setThumbOffset</a></li>
-                                <li class="protected"><a href="#method__setValueFn" title="_setValueFn">_setValueFn</a></li>
                                 <li class="protected"><a href="#method__stallDisabledChange" title="_stallDisabledChange">_stallDisabledChange</a></li>
                                 <li class="protected"><a href="#method__uiPositionThumb" title="_uiPositionThumb">_uiPositionThumb</a></li>
                                 <li class="protected"><a href="#method__uiSetRailSize" title="_uiSetRailSize">_uiSetRailSize</a></li>
@@ -4476,6 +4513,7 @@ position for the thumb along the Slider's rail.
                                 <li class=""><a href="#event_maxGutterChange" title="maxGutterChange">maxGutterChange</a></li>
                                 <li class=""><a href="#event_minChange" title="minChange">minChange</a></li>
                                 <li class=""><a href="#event_minGutterChange" title="minGutterChange">minGutterChange</a></li>
+                                <li class=""><a href="#event_positionThumb" title="positionThumb">positionThumb</a></li>
                                 <li class=""><a href="#event_railChange" title="railChange">railChange</a></li>
                                 <li class=""><a href="#event_railEnabledChange" title="railEnabledChange">railEnabledChange</a></li>
                                 <li class=""><a href="#event_railSizeChange" title="railSizeChange">railSizeChange</a></li>
@@ -4486,7 +4524,6 @@ position for the thumb along the Slider's rail.
                                 <li class=""><a href="#event_thumbDrag" title="thumbDrag">thumbDrag</a></li>
                                 <li class=""><a href="#event_thumbImageChange" title="thumbImageChange">thumbImageChange</a></li>
                                 <li class=""><a href="#event_valueChange" title="valueChange">valueChange</a></li>
-                                <li class=""><a href="#event_valueSet" title="valueSet">valueSet</a></li>
                         </ul>
                     </div>
 
@@ -4516,7 +4553,7 @@ position for the thumb along the Slider's rail.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "Slider", "name": "_afterDisabledChange", "url": "Slider.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMaxChange", "url": "Slider.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMinChange", "url": "Slider.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterRailSizeChange", "url": "Slider.html#method__afterRailSizeChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbChange", "url": "Slider.html#method__afterThumbChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbImageChange", "url": "Slider.html#method__afterThumbImageChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterValueChange", "url": "Slider.html#method__afterValueChange", "type": "method"}, {"access": "", "host": "Slider", "name": "axis", "url": "Slider.html#config_axis", "type": "config"}, {"access": "", "host": "Slider", "name": "axisChange", "url": "Slider.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_bindThumbDD", "url": "Slider.html#method__bindThumbDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "bindUI", "url": "Slider.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_convertValueToOffset", "url": "Slider.html#method__convertValueToOffset", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defPositionThumbFn", "url": "Slider.html#method__defPositionThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defSyncFn", "url": "Slider.html#method__defSyncFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defUpdateValueFromDD", "url": "Slider.html#method__defUpdateValueFromDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_disabled", "url": "Slider.html#property__disabled", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_factor", "url": "Slider.html#property__factor", "type": "property"}, {"access": "", "host": "Slider", "name": "getValue", "url": "Slider.html#method_getValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_handleRailMouseDown", "url": "Slider.html#method__handleRailMouseDown", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_imageLoaded", "url": "Slider.html#method__imageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "initializer", "url": "Slider.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRail", "url": "Slider.html#method__initRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRailDD", "url": "Slider.html#method__initRailDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumb", "url": "Slider.html#method__initThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumbImage", "url": "Slider.html#method__initThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isDisplayNone", "url": "Slider.html#method__isDisplayNone", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoaded", "url": "Slider.html#method__isImageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoading", "url": "Slider.html#method__isImageLoading", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_key", "url": "Slider.html#property__key", "type": "property"}, {"access": "", "host": "Slider", "name": "max", "url": "Slider.html#config_max", "type": "config"}, {"access": "", "host": "Slider", "name": "maxChange", "url": "Slider.html#event_maxChange", "type": "event"}, {"access": "", "host": "Slider", "name": "maxGutter", "url": "Slider.html#config_maxGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "maxGutterChange", "url": "Slider.html#event_maxGutterChange", "type": "event"}, {"access": "", "host": "Slider", "name": "min", "url": "Slider.html#config_min", "type": "config"}, {"access": "", "host": "Slider", "name": "minChange", "url": "Slider.html#event_minChange", "type": "event"}, {"access": "", "host": "Slider", "name": "minGutter", "url": "Slider.html#config_minGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "minGutterChange", "url": "Slider.html#event_minGutterChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_onDDDrag", "url": "Slider.html#method__onDDDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDEndDrag", "url": "Slider.html#method__onDDEndDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDStartDrag", "url": "Slider.html#method__onDDStartDrag", "type": "method"}, {"access": "", "host": "Slider", "name": "rail", "url": "Slider.html#config_rail", "type": "config"}, {"access": "", "host": "Slider", "name": "railChange", "url": "Slider.html#event_railChange", "type": "event"}, {"access": "", "host": "Slider", "name": "railEnabled", "url": "Slider.html#config_railEnabled", "type": "config"}, {"access": "", "host": "Slider", "name": "railEnabledChange", "url": "Slider.html#event_railEnabledChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_railSize", "url": "Slider.html#property__railSize", "type": "property"}, {"access": "", "host": "Slider", "name": "railSize", "url": "Slider.html#config_railSize", "type": "config"}, {"access": "", "host": "Slider", "name": "railSizeChange", "url": "Slider.html#event_railSizeChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_ready", "url": "Slider.html#method__ready", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_refresh", "url": "Slider.html#method__refresh", "type": "method"}, {"access": "protected", "host": "Slider", "name": "renderUI", "url": "Slider.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_resetDDCacheRegion", "url": "Slider.html#method__resetDDCacheRegion", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_scheduleSync", "url": "Slider.html#method__scheduleSync", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setAxisFn", "url": "Slider.html#method__setAxisFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setDDGutter", "url": "Slider.html#method__setDDGutter", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setFactor", "url": "Slider.html#method__setFactor", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailFn", "url": "Slider.html#method__setRailFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailOffsetXY", "url": "Slider.html#method__setRailOffsetXY", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbFn", "url": "Slider.html#method__setThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbImageFn", "url": "Slider.html#method__setThumbImageFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbOffset", "url": "Slider.html#method__setThumbOffset", "type": "method"}, {"access": "", "host": "Slider", "name": "setValue", "url": "Slider.html#method_setValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setValueFn", "url": "Slider.html#method__setValueFn", "type": "method"}, {"access": "", "host": "Slider", "name": "slideEnd", "url": "Slider.html#event_slideEnd", "type": "event"}, {"access": "", "host": "Slider", "name": "Slider.ATTRS", "url": "Slider.html#property_Slider.ATTRS", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.AXIS_KEYS", "url": "Slider.html#property_Slider.AXIS_KEYS", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.HTML_PARSER", "url": "Slider.html#property_Slider.HTML_PARSER", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.NAME", "url": "Slider.html#property_Slider.NAME", "type": "property"}, {"access": "", "host": "Slider", "name": "slideStart", "url": "Slider.html#event_slideStart", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_stall", "url": "Slider.html#property__stall", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_stallDisabledChange", "url": "Slider.html#method__stallDisabledChange", "type": "method"}, {"access": "", "host": "Slider", "name": "sync", "url": "Slider.html#event_sync", "type": "event"}, {"access": "", "host": "Slider", "name": "syncUI", "url": "Slider.html#method_syncUI", "type": "method"}, {"access": "", "host": "Slider", "name": "thumb", "url": "Slider.html#config_thumb", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbChange", "url": "Slider.html#event_thumbChange", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbDrag", "url": "Slider.html#event_thumbDrag", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbImage", "url": "Slider.html#config_thumbImage", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbImageChange", "url": "Slider.html#event_thumbImageChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_thumbOffset", "url": "Slider.html#property__thumbOffset", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_thumbSize", "url": "Slider.html#property__thumbSize", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_uiPositionThumb", "url": "Slider.html#method__uiPositionThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetRailSize", "url": "Slider.html#method__uiSetRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetThumbSize", "url": "Slider.html#method__uiSetThumbSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewAxis", "url": "Slider.html#method__validateNewAxis", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMax", "url": "Slider.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMin", "url": "Slider.html#method__validateNewMin", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRail", "url": "Slider.html#method__validateNewRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRailSize", "url": "Slider.html#method__validateNewRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumb", "url": "Slider.html#method__validateNewThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumbImage", "url": "Slider.html#method__validateNewThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewValue", "url": "Slider.html#method__validateNewValue", "type": "method"}, {"access": "", "host": "Slider", "name": "value", "url": "Slider.html#config_value", "type": "config"}, {"access": "", "host": "Slider", "name": "valueChange", "url": "Slider.html#event_valueChange", "type": "event"}, {"access": "", "host": "Slider", "name": "valueSet", "url": "Slider.html#event_valueSet", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "Slider", "name": "_afterDisabledChange", "url": "Slider.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMaxChange", "url": "Slider.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMinChange", "url": "Slider.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterRailSizeChange", "url": "Slider.html#method__afterRailSizeChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbChange", "url": "Slider.html#method__afterThumbChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbImageChange", "url": "Slider.html#method__afterThumbImageChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterValueChange", "url": "Slider.html#method__afterValueChange", "type": "method"}, {"access": "", "host": "Slider", "name": "axis", "url": "Slider.html#config_axis", "type": "config"}, {"access": "", "host": "Slider", "name": "axisChange", "url": "Slider.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_bindThumbDD", "url": "Slider.html#method__bindThumbDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "bindUI", "url": "Slider.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_convertOffsetToValue", "url": "Slider.html#method__convertOffsetToValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_convertValueToOffset", "url": "Slider.html#method__convertValueToOffset", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defPositionThumbFn", "url": "Slider.html#method__defPositionThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defSyncFn", "url": "Slider.html#method__defSyncFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defThumbDragFn", "url": "Slider.html#method__defThumbDragFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_disabled", "url": "Slider.html#property__disabled", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_factor", "url": "Slider.html#property__factor", "type": "property"}, {"access": "", "host": "Slider", "name": "getValue", "url": "Slider.html#method_getValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_handleRailMouseDown", "url": "Slider.html#method__handleRailMouseDown", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_imageLoaded", "url": "Slider.html#method__imageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "initializer", "url": "Slider.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRail", "url": "Slider.html#method__initRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRailDD", "url": "Slider.html#method__initRailDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumb", "url": "Slider.html#method__initThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumbImage", "url": "Slider.html#method__initThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isDisplayNone", "url": "Slider.html#method__isDisplayNone", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoaded", "url": "Slider.html#method__isImageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoading", "url": "Slider.html#method__isImageLoading", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_key", "url": "Slider.html#property__key", "type": "property"}, {"access": "", "host": "Slider", "name": "max", "url": "Slider.html#config_max", "type": "config"}, {"access": "", "host": "Slider", "name": "maxChange", "url": "Slider.html#event_maxChange", "type": "event"}, {"access": "", "host": "Slider", "name": "maxGutter", "url": "Slider.html#config_maxGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "maxGutterChange", "url": "Slider.html#event_maxGutterChange", "type": "event"}, {"access": "", "host": "Slider", "name": "min", "url": "Slider.html#config_min", "type": "config"}, {"access": "", "host": "Slider", "name": "minChange", "url": "Slider.html#event_minChange", "type": "event"}, {"access": "", "host": "Slider", "name": "minGutter", "url": "Slider.html#config_minGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "minGutterChange", "url": "Slider.html#event_minGutterChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_onDDDrag", "url": "Slider.html#method__onDDDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDEndDrag", "url": "Slider.html#method__onDDEndDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDStartDrag", "url": "Slider.html#method__onDDStartDrag", "type": "method"}, {"access": "", "host": "Slider", "name": "positionThumb", "url": "Slider.html#event_positionThumb", "type": "event"}, {"access": "", "host": "Slider", "name": "rail", "url": "Slider.html#config_rail", "type": "config"}, {"access": "", "host": "Slider", "name": "railChange", "url": "Slider.html#event_railChange", "type": "event"}, {"access": "", "host": "Slider", "name": "railEnabled", "url": "Slider.html#config_railEnabled", "type": "config"}, {"access": "", "host": "Slider", "name": "railEnabledChange", "url": "Slider.html#event_railEnabledChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_railSize", "url": "Slider.html#property__railSize", "type": "property"}, {"access": "", "host": "Slider", "name": "railSize", "url": "Slider.html#config_railSize", "type": "config"}, {"access": "", "host": "Slider", "name": "railSizeChange", "url": "Slider.html#event_railSizeChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_ready", "url": "Slider.html#method__ready", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_refresh", "url": "Slider.html#method__refresh", "type": "method"}, {"access": "protected", "host": "Slider", "name": "renderUI", "url": "Slider.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_resetDDCacheRegion", "url": "Slider.html#method__resetDDCacheRegion", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_scheduleSync", "url": "Slider.html#method__scheduleSync", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setAxisFn", "url": "Slider.html#method__setAxisFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setDDGutter", "url": "Slider.html#method__setDDGutter", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setFactor", "url": "Slider.html#method__setFactor", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailFn", "url": "Slider.html#method__setRailFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailOffsetXY", "url": "Slider.html#method__setRailOffsetXY", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbFn", "url": "Slider.html#method__setThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbImageFn", "url": "Slider.html#method__setThumbImageFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbOffset", "url": "Slider.html#method__setThumbOffset", "type": "method"}, {"access": "", "host": "Slider", "name": "setValue", "url": "Slider.html#method_setValue", "type": "method"}, {"access": "", "host": "Slider", "name": "slideEnd", "url": "Slider.html#event_slideEnd", "type": "event"}, {"access": "protected", "host": "Slider", "name": "Slider.ATTRS", "url": "Slider.html#property_Slider.ATTRS", "type": "property"}, {"access": "protected", "host": "Slider", "name": "Slider._AXIS_KEYS", "url": "Slider.html#property_Slider._AXIS_KEYS", "type": "property"}, {"access": "protected", "host": "Slider", "name": "Slider.HTML_PARSER", "url": "Slider.html#property_Slider.HTML_PARSER", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.NAME", "url": "Slider.html#property_Slider.NAME", "type": "property"}, {"access": "", "host": "Slider", "name": "slideStart", "url": "Slider.html#event_slideStart", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_stall", "url": "Slider.html#property__stall", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_stallDisabledChange", "url": "Slider.html#method__stallDisabledChange", "type": "method"}, {"access": "", "host": "Slider", "name": "sync", "url": "Slider.html#event_sync", "type": "event"}, {"access": "", "host": "Slider", "name": "syncUI", "url": "Slider.html#method_syncUI", "type": "method"}, {"access": "", "host": "Slider", "name": "thumb", "url": "Slider.html#config_thumb", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbChange", "url": "Slider.html#event_thumbChange", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbDrag", "url": "Slider.html#event_thumbDrag", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbImage", "url": "Slider.html#config_thumbImage", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbImageChange", "url": "Slider.html#event_thumbImageChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_thumbOffset", "url": "Slider.html#property__thumbOffset", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_thumbSize", "url": "Slider.html#property__thumbSize", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_uiPositionThumb", "url": "Slider.html#method__uiPositionThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetRailSize", "url": "Slider.html#method__uiSetRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetThumbSize", "url": "Slider.html#method__uiSetThumbSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewAxis", "url": "Slider.html#method__validateNewAxis", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMax", "url": "Slider.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMin", "url": "Slider.html#method__validateNewMin", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRail", "url": "Slider.html#method__validateNewRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRailSize", "url": "Slider.html#method__validateNewRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumb", "url": "Slider.html#method__validateNewThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumbImage", "url": "Slider.html#method__validateNewThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewValue", "url": "Slider.html#method__validateNewValue", "type": "method"}, {"access": "", "host": "Slider", "name": "value", "url": "Slider.html#config_value", "type": "config"}, {"access": "", "host": "Slider", "name": "valueChange", "url": "Slider.html#event_valueChange", "type": "event"}];
 </script>
 </body>
 </html>

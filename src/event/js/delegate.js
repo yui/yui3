@@ -1,7 +1,9 @@
 (function() {
 
 var Lang = Y.Lang,
+
 	delegates = {},
+
 	resolveTextNode = function(n) {
 	    try {
 	        if (n && 3 == n.nodeType) {
@@ -10,6 +12,7 @@ var Lang = Y.Lang,
 	    } catch(e) { }
 	    return n;
 	},
+
     _worker = function(delegateKey, e, el) {
         var target = resolveTextNode((e.target || e.srcElement)), 
             tests  = delegates[delegateKey],
@@ -48,6 +51,13 @@ var Lang = Y.Lang,
     },
 
 	attach = function (type, key, element) {
+
+        // @TODO this approach makes it so we can't delegate custom
+        // event types like focus and blur.  There isn't currently
+        // a way to make these events emit the native event payload,
+        // so trying to fix this might mean that the implementation
+        // needs to be prepared for both payloads.
+        
 		Y.Event._attach([type, function (e) {
             _worker(key, (e || window.event), element);
 		}, element], { facade: false });
@@ -66,7 +76,7 @@ var Lang = Y.Lang,
  * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
- * @return {Event.Handle} the detach handle
+ * @return {EventHandle} the detach handle
  * @for YUI
  */
 Y.Env.evt.plugins.delegate = {

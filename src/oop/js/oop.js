@@ -54,7 +54,7 @@
             Y.each(sProto, function(v, k) {
                 replacements[k] = function() {
 
-// Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
+// Y.log('sequestered function "' + k + '" executed.  Initializing EventTarget');
 // overwrite the prototype with all of the sequestered functions,
 // but only if it hasn't been overridden
                     for (i in sequestered) {
@@ -194,23 +194,23 @@
     };
 
     /**
-     * Deep obj/array copy.  Functions will are cloned with Y.bind.
+     * Deep obj/array copy.  Functions are cloned with Y.bind.
      * Array-like objects are treated as arrays.
-     * primitives are returned untouched.  Optionally a
+     * Primitives are returned untouched.  Optionally, a
      * function can be provided to handle other data types,
      * filter keys, validate values, etc.
      *
      * @method clone
      * @param o what to clone
      * @param safe {boolean} if true, objects will not have prototype
-     * items from the source.  If false, it does.  In this case, the
-     * original is initally protected, but the clone is not completely immune
+     * items from the source.  If false, they will.  In this case, the
+     * original is initially protected, but the clone is not completely immune
      * from changes to the source object prototype.  Also, cloned prototype
      * items that are deleted from the clone will result in the value
-     * of the source prototype to be exposed.  If operating on a non-safe
+     * of the source prototype being exposed.  If operating on a non-safe
      * clone, items should be nulled out rather than deleted.
      * @TODO review
-     * @param f optional function to apply to each item in a collection
+     * @param f optional function to apply to each item in a collection;
      *          it will be executed prior to applying the value to
      *          the new object.  Return false to prevent the copy.
      * @param c optional execution context for f

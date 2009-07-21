@@ -1,18 +1,22 @@
 (function() {
-/**
- * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
- * events.
- * @module event
- */
 
 /**
+ * EventTarget provides the implementation for any object to
+ * publish, subscribe and fire to custom events, and also
+ * alows other EventTargets to target the object with events
+ * sourced from the other object.
  * EventTarget is designed to be used with Y.augment to wrap 
  * EventCustom in an interface that allows events to be listened to 
  * and fired by name.  This makes it possible for implementing code to
  * subscribe to an event that either has not been created yet, or will
  * not be created at all.
- *
- * @Class Event.Target
+ * @class EventTarget
+ * @param opts a configuration object
+ * @config emitFacade {boolean} if true, all events will emit event 
+ * facade payloads by default (default false)
+ * @config prefix {string} the prefix to apply to non-prefixed event names 
+ * @config chain {boolean} if true, on/after/detach return the host to allow 
+ * chaining, otherwise they return an EventHandle (default false)
  */
 
 var L = Y.Lang,
@@ -25,6 +29,7 @@ var L = Y.Lang,
      * event type is not prefixed, the instance prefix is
      * applied to the supplied type.
      * @method _getType
+     * @private
      */
     _getType = Y.cached(function(type, pre) {
 
@@ -35,7 +40,7 @@ var L = Y.Lang,
         return pre + PREFIX_DELIMITER + type;
     }),
 
-    /**lt
+    /**
      * Returns an array with the detach key (if provided),
      * and the prefixed event name from _getType
      * Y.on('detachcategory, menu:click', fn)
@@ -81,19 +86,9 @@ var L = Y.Lang,
         return [detachcategory, full_t, after, t];
     }),
 
-    /**
-     * An event target can fire events and be targeted by events.
-     * @class EventTarget
-     * @param opts a configuration object
-     * @config emitFacade {boolean} if true, all events will emit event 
-     * facade payloads by default (default false)
-     * @config prefix {string} the prefix to apply to non-prefixed event names 
-     * @config chain {boolean} if true, on/after/detach return the host to allow 
-     * chaining, otherwise they return an EventHandle (default false)
-     */
     ET = function(opts) {
 
-        // console.log('Event.Target constructor executed: ' + this._yuid);
+        // console.log('EventTarget constructor executed: ' + this._yuid);
 
         var o = (L.isObject(opts)) ? opts : {};
 
@@ -194,8 +189,8 @@ ET.prototype = {
                     args[2] = Node.getDOMNode(n);
                 }
                 handle = adapt.on.apply(Y, args);
-            // check to see if the target is an Event.Target.  If so,
-            // delegate to it (the Event.Target should handle whether
+            // check to see if the target is an EventTarget.  If so,
+            // delegate to it (the EventTarget should handle whether
             // or not the prefix was included);
             // } else if (o && !(o instanceof YUI) && o.getEvent) {
             //     a = Y.Array(arguments, 0, true);
@@ -350,7 +345,7 @@ ET.prototype = {
      * Removes all listeners from the specified event.  If the event type
      * is not specified, all listeners from all hosted custom events will
      * be removed.
-     * @method unsubscribeAll
+     * @method detachAll
      * @param type {string}   The type, or name of the event
      */
     detachAll: function(type) {
@@ -472,11 +467,11 @@ ET.prototype = {
     },
 
     /**
-     * Registers another Event.Target as a bubble target.  Bubble order
+     * Registers another EventTarget as a bubble target.  Bubble order
      * is determined by the order registered.  Multiple targets can
      * be specified.
      * @method addTarget
-     * @param o {Event.Target} the target to add
+     * @param o {EventTarget} the target to add
      */
     addTarget: function(o) {
         this._yuievt.targets[Y.stamp(o)] = o;
@@ -486,7 +481,7 @@ ET.prototype = {
     /**
      * Removes a bubble target
      * @method removeTarget
-     * @param o {Event.Target} the target to remove
+     * @param o {EventTarget} the target to remove
      */
     removeTarget: function(o) {
         delete this._yuievt.targets[Y.stamp(o)];
@@ -685,9 +680,11 @@ YUI.Env.globalEvents = YUI.Env.globalEvents || new ET();
 
 /**
  * Hosts YUI page level events.  This is where events bubble to
- * when the broadcast config is set to 2.
+ * when the broadcast config is set to 2.  This property is
+ * only available if the custom event module is loaded.
  * @property Global
  * @type EventTarget
+ * @for YUI
  */
 Y.Global = YUI.Env.globalEvents;
 

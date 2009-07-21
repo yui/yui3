@@ -7,7 +7,7 @@
 - However, using the queue interface, the transaction callbacks are processed in the order of: transaction 1, 2, 3.
 
 * All transaction event flows now resolves to "success" or "failure"; the abort
-event removed.  Transaction abort and timeout conditions resolve to "failure",
+event was removed.  Transaction abort and timeout conditions resolve to "failure",
 and is distinguishable in the response data.  Specifically, the response
 object's status and statusText properties will be populated as:
 

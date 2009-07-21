@@ -1,8 +1,9 @@
 YUI.add('io-base', function(Y) {
 
    /**
-   	* HTTP communications module.
+   	* Base IO functionality. Provides basic XHR transport support.
    	* @module io
+   	* @submodule io-base
    	*/
 
    /**
@@ -203,7 +204,6 @@ YUI.add('io-base', function(Y) {
    			// If config.data is defined, concatenate the data to the form string.
    			if (d) {
    				f += "&" + d;
-   				Y.log('Configuration object.data added to serialized HTML form data. The string is: ' + f, 'info', 'io');
    			}
 
    			if (m === 'POST') {
@@ -212,7 +212,6 @@ YUI.add('io-base', function(Y) {
    			}
    			else if (m === 'GET') {
    				uri = _concat(uri, f);
-   				Y.log('Configuration object.data added to serialized HTML form data. The querystring is: ' + uri, 'info', 'io');
    			}
    		}
    		else if (d && m === 'POST') {
@@ -232,7 +231,7 @@ YUI.add('io-base', function(Y) {
    		/* End Configuration Properties */
 
    		o.c.onreadystatechange = function() { _readyState(o, c); };
-   		try { _open(o.c, m, uri); } catch (e0) {}
+   		try { _open(o.c, m, uri); } catch(e0) {}
    		_setHeaders(o.c, (c.headers || {}));
 
    		// Do not pass null, in the absence of data, as this
@@ -276,14 +275,15 @@ YUI.add('io-base', function(Y) {
    	*/
    	function _ioStart(id, c) {
    		var m = Y.io._fn || {},
-   			fn = (m && m[id]) ? m[id] : null,
+   			fn = m[id] ? m[id] : null,
    			event;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
    		if (fn) {
-   			c.on.start = fn.start;
+   			c.on.start = fn.on.start;
+   			c.arguments = fn.arguments;
    		}
 
    		Y.fire(E_START, id);
@@ -292,7 +292,6 @@ YUI.add('io-base', function(Y) {
    			event = _tPubSub('start', c);
    			event.fire(id);
    		}
-   		Y.log('Transaction ' + id + ' started.', 'info', 'io');
    	}
 
 
@@ -322,7 +321,6 @@ YUI.add('io-base', function(Y) {
    			event = _tPubSub('complete', c);
    			event.fire(o.id, r);
    		}
-   		Y.log('Transaction ' + o.id + ' completed.', 'info', 'io');
    	}
 
    /**
@@ -340,15 +338,16 @@ YUI.add('io-base', function(Y) {
    	*/
    	function _ioSuccess(o, c) {
    		var m = Y.io._fn || {},
-   			fn = (m && m[o.id]) ? m[o.id] : null,
+   			fn = m[o.id] ? m[o.id] : null,
    			event;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
    		if (fn) {
-   			c.on.success = fn.success;
-   			//Decode the response from IO.swf
+   			c.on.success = fn.on.success;
+   			c.arguments = fn.arguments;
+   			//Decode the response from io.swf
    			o.c.responseText = decodeURI(o.c.responseText);
    		}
 
@@ -359,7 +358,6 @@ YUI.add('io-base', function(Y) {
    			event.fire(o.id, o.c);
    		}
 
-   		Y.log('HTTP Status evaluates to Success. The transaction is: ' + o.id, 'info', 'io');
    		_ioEnd(o, c);
    	}
 
@@ -378,15 +376,16 @@ YUI.add('io-base', function(Y) {
    	*/
    	function _ioFailure(o, c) {
    		var m = Y.io._fn || {},
-   			fn = (m && m[o.id]) ? m[o.id] : null,
+   			fn = m[o.id] ? m[o.id] : null,
    			r, event;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
    		if (fn) {
-   			c.on.failure = fn.failure;
-   			//Decode the response from IO.swf
+   			c.on.failure = fn.on.failure;
+   			c.arguments = fn.arguments;
+   			//Decode the response from io.swf
    			o.c.responseText = decodeURI(o.c.responseText);
    		}
 
@@ -398,7 +397,6 @@ YUI.add('io-base', function(Y) {
    			event.fire(o.id, r);
    		}
 
-   		Y.log('HTTP Status evaluates to Failure. The transaction is: ' + o.id, 'info', 'io');
    		_ioEnd(o, c);
    	}
 
@@ -417,14 +415,15 @@ YUI.add('io-base', function(Y) {
    	*/
    	function _ioEnd(o, c) {
    		var m = Y.io._fn || {},
-   			fn = (m && m[o.id]) ? m[o.id] : null,
+   			fn = m[o.id] ? m[o.id] : null,
    			event;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
    		if (fn) {
-   			c.on.end = fn.end;
+   			c.on.end = fn.on.end;
+   			c.arguments = fn.arguments;
    			delete m[o.id];
    		}
 
@@ -436,7 +435,6 @@ YUI.add('io-base', function(Y) {
    		}
 
    		_destroy(o, (c.xdr) ? true : false );
-   		Y.log('Transaction ' + o.id + ' ended.', 'info', 'io');
    	}
 
    /**
@@ -457,7 +455,6 @@ YUI.add('io-base', function(Y) {
    			o.status = s;
    			o.c.abort();
    		}
-   		Y.log('Transaction cancelled due to time out or explicitly aborted. The transaction is: ' + o.id, 'info', 'io');
    	}
 
    /**
@@ -491,7 +488,6 @@ YUI.add('io-base', function(Y) {
    		var id = transactionId;
    		transactionId++;
 
-   		Y.log('Transaction id generated. The id is: ' + id, 'info', 'io');
    		return id;
    	}
 
@@ -589,12 +585,10 @@ YUI.add('io-base', function(Y) {
    				if (h[p]) {
    					// Configuration headers will supersede IO preset headers,
    					// if headers match.
-   					Y.log('Matching configuration HTTP header: ' + p + ' found with value of ' + _headers[p], 'info', 'io');
    					break;
    				}
    				else {
    					h[p] = _headers[p];
-   					Y.log('HTTP header ' + p + ' found with value of ' + _headers[p], 'info', 'io');
    				}
    			}
    		}
@@ -602,7 +596,6 @@ YUI.add('io-base', function(Y) {
    		for (p in h) {
    			if (h.hasOwnProperty(p)) {
    				o.setRequestHeader(p, h[p]);
-   				Y.log('HTTP Header ' + p + ' set with value of ' + h[p], 'info', 'io');
    			}
    		}
    	}
@@ -704,7 +697,6 @@ YUI.add('io-base', function(Y) {
    		}
    		catch(e1) {
    			status = 0;
-   			Y.log('HTTP status unreadable. The transaction is: ' + o.id, 'warn', 'io');
    		}
 
    		// IE reports HTTP 204 as HTTP 1223.
@@ -731,6 +723,7 @@ YUI.add('io-base', function(Y) {
    	}
 
    	_io.start = _ioStart;
+	_io.complete = _ioComplete;
    	_io.success = _ioSuccess;
    	_io.failure = _ioFailure;
    	_io.isInProgress = _isInProgress;
@@ -769,4 +762,4 @@ YUI.add('io-base', function(Y) {
 
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-custom']});

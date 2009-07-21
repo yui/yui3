@@ -1,7 +1,7 @@
 /**
- * The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
+ * The NodeList module provides support for managing collections of Nodes.
  * @module node
- * @submodule node-list
+ * @submodule nodelist
  */    
 
 /**

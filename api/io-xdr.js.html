@@ -47,7 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre>   <span class="c">/**</span>
+                        <div class="highlight" ><pre>   <span class="c">/**</span>
 <span class="c">    * Extends the IO base class to provide an alternate, Flash transport, for making</span>
 <span class="c">    * cross-domain requests.</span>
 <span class="c">	* @module io</span>
@@ -73,13 +73,16 @@
 <span class="c">	* @return void</span>
 <span class="c">	*/</span>
 	<span class="k">function</span> <span class="nx">_swf</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">yid</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">XDR_SWF</span> <span class="o">=</span> <span class="s1">&#39;&lt;object id=&quot;yuiIoSwf&quot; type=&quot;application/x-shockwave-flash&quot; data=&quot;&#39;</span> <span class="o">+</span>
-		              <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;&quot; width=&quot;0&quot; height=&quot;0&quot;&gt;&#39;</span> <span class="o">+</span>
-		     		  <span class="s1">&#39;&lt;param name=&quot;movie&quot; value=&quot;&#39;</span> <span class="o">+</span> <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
-		     		  <span class="s1">&#39;&lt;param name=&quot;FlashVars&quot; value=&quot;yid=&#39;</span> <span class="o">+</span> <span class="nx">yid</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
-                      <span class="s1">&#39;&lt;param name=&quot;allowScriptAccess&quot; value=&quot;sameDomain&quot;&gt;&#39;</span> <span class="o">+</span>
-		    	      <span class="s1">&#39;&lt;/object&gt;&#39;</span><span class="o">;</span>
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;body&#39;</span><span class="o">).</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="nx">XDR_SWF</span><span class="o">));</span>
+		<span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="s1">&#39;&lt;object id=&quot;yuiIoSwf&quot; type=&quot;application/x-shockwave-flash&quot; data=&quot;&#39;</span> <span class="o">+</span>
+		        <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;&quot; width=&quot;0&quot; height=&quot;0&quot;&gt;&#39;</span> <span class="o">+</span>
+		     	<span class="s1">&#39;&lt;param name=&quot;movie&quot; value=&quot;&#39;</span> <span class="o">+</span> <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
+		     	<span class="s1">&#39;&lt;param name=&quot;FlashVars&quot; value=&quot;yid=&#39;</span> <span class="o">+</span> <span class="nx">yid</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
+                <span class="s1">&#39;&lt;param name=&quot;allowScriptAccess&quot; value=&quot;always&quot;&gt;&#39;</span> <span class="o">+</span>
+		    	<span class="s1">&#39;&lt;/object&gt;&#39;</span><span class="o">,</span>
+		    <span class="nx">c</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s1">&#39;div&#39;</span><span class="o">);</span>
+
+		<span class="nb">document</span><span class="o">.</span><span class="nx">body</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">c</span><span class="o">);</span>
+		<span class="nx">c</span><span class="o">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
 	<span class="o">}</span>
 
     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">,</span> <span class="o">{</span>
@@ -119,7 +122,7 @@
 <span class="c">		*/</span>
 		<span class="nx">_xdr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
 			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">)</span> <span class="o">{</span>
-				<span class="k">this</span><span class="o">.</span><span class="nx">_fn</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">;</span>
+				<span class="k">this</span><span class="o">.</span><span class="nx">_fn</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span> <span class="nx">on</span><span class="o">:</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">:</span> <span class="nx">c</span><span class="o">.</span><span class="nx">arguments</span> <span class="o">}</span>
 			<span class="o">}</span>
 			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">send</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
 
@@ -152,15 +155,14 @@
 <span class="c">		* @return void</span>
 <span class="c">		*/</span>
 		<span class="nx">transport</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">switch</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">case</span> <span class="s1">&#39;flash&#39;</span><span class="o">:</span>
-					<span class="nx">_swf</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">src</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">yid</span><span class="o">);</span>
-					<span class="k">this</span><span class="o">.</span><span class="nx">_transport</span><span class="o">.</span><span class="nx">flash</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="s1">&#39;yuiIoSwf&#39;</span><span class="o">);</span>
-					<span class="k">break</span><span class="o">;</span>
-			<span class="o">}</span>
+			<span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">yid</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">yid</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">;</span>
+
+			<span class="nx">_swf</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">src</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
+			<span class="k">this</span><span class="o">.</span><span class="nx">_transport</span><span class="o">.</span><span class="nx">flash</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="s1">&#39;yuiIoSwf&#39;</span><span class="o">);</span>
 		<span class="o">}</span>
 	<span class="o">});</span>
 </pre></div>
+
                     </div>
 			</div>
 		</div>
@@ -175,6 +177,7 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -199,18 +202,16 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 

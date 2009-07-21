@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: selector  Selector   (YUI Library)</title>
+	<title>API: dom  Selector   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>Selector Utility&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>dom&nbsp; <span class="subtitle">3.0.0b1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_selector.html" title="selector">selector</a>
+            &gt; <a href="./module_dom.html" title="dom">dom</a>
                  &gt; Selector 
                 
         <form onsubmit="return false">
@@ -59,7 +59,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Provides helper methods for collecting and filtering DOM elements.
+                        Provides support for using CSS selectors to query the DOM
                     </div>
 
                     
@@ -75,6 +75,21 @@
                                         <div class="description" property="yui:description">
                                             List of operators and corresponding boolean functions. 
 These functions are passed the attribute and the current node's value of the attribute.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_PARENT_NODE">
+                                    <h4><a name="property_PARENT_NODE" property="yui:name">PARENT_NODE</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Provides helper methods for collecting and filtering DOM elements.
                                         </div>
                                     </div>
      
@@ -135,6 +150,210 @@ Combinator is attached to the previous token.
                                                         void
                                                     </code></dt>
                                                     <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_inRegion">
+                                    <h4>
+                                        <a name="method_inRegion">inRegion</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong property="yui:name">inRegion</strong>
+                                           (
+                                                
+                                                        
+                                                         all
+                                                    
+                                                
+                                                        , 
+                                                         altRegion
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Check if any part of this node is in the passed region
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">all</span>
+                                                        &lt;<span property="yui:type">Object} node2 The node to get the region from or an Object literal of the region
+$param {Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Should all of the node be inside the region</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">altRegion</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">True if in region, false if not.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_intersect">
+                                    <h4>
+                                        <a name="method_intersect">intersect</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">intersect</strong>
+                                           (
+                                                
+                                                        
+                                                         element
+                                                    
+                                                
+                                                        , 
+                                                         element2
+                                                    
+                                                
+                                                        , 
+                                                         altRegion
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Find the intersect information for the passes nodes.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">element</span>
+                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The first element</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">element2</span>
+                                                        &lt;<span property="yui:type">HTMLElement | Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The element or region to check the interect with</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">altRegion</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object literal containing the region for the first element if we already have the data (for performance i.e. DragDrop)</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Object literal containing the following intersection data: (top, right, bottom, left, area, yoff, xoff, inRegion)</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_inViewportRegion">
+                                    <h4>
+                                        <a name="method_inViewportRegion">inViewportRegion</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong property="yui:name">inViewportRegion</strong>
+                                           (
+                                                
+                                                        
+                                                         element
+                                                    
+                                                
+                                                        , 
+                                                         all
+                                                    
+                                                
+                                                        , 
+                                                         altRegion
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Check if any part of this element is in the viewport
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">element</span>
+                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The DOM element.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">all</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Should all of the node be inside the region</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">altRegion</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">True if in region, false if not.</dd>
                                                 </dl>
 
 
@@ -216,6 +435,94 @@ Combinator is attached to the previous token.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_region">
+                                    <h4>
+                                        <a name="method_region">region</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">region</strong>
+                                           (
+                                                
+                                                        
+                                                         element
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns an Object literal containing the following about this element: (top, right, bottom, left)
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">element</span>
+                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The DOM element.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Object literal containing the following about this element: (top, right, bottom, left)</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_viewportRegion">
+                                    <h4>
+                                        <a name="method_viewportRegion">viewportRegion</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">viewportRegion</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns an Object literal containing the following about the visible region of viewport: (top, right, bottom, left)
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Object literal containing the following about the visible region of the viewport: (top, right, bottom, left)</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -243,6 +550,7 @@ Combinator is attached to the previous token.
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -250,7 +558,7 @@ Combinator is attached to the previous token.
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class="selected"><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
@@ -267,33 +575,48 @@ Combinator is attached to the previous token.
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class="selected"><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class=""><a href="DOM.html" title="DOM">DOM</a></li>
                                 <li class="selected"><a href="Selector.html" title="Selector">Selector</a></li>
                         </ul>
                     </div>
 
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="color.js.html" title="color.js">color.js</a></li>
+                                <li class=""><a href="dom-class.js.html" title="dom-class.js">dom-class.js</a></li>
+                                <li class=""><a href="dom-ie-style.js.html" title="dom-ie-style.js">dom-ie-style.js</a></li>
+                                <li class=""><a href="dom-region.js.html" title="dom-region.js">dom-region.js</a></li>
+                                <li class=""><a href="dom-screen.js.html" title="dom-screen.js">dom-screen.js</a></li>
+                                <li class=""><a href="dom-style.js.html" title="dom-style.js">dom-style.js</a></li>
+                                <li class=""><a href="dom.js.html" title="dom.js">dom.js</a></li>
+                                <li class=""><a href="selector-css2.js.html" title="selector-css2.js">selector-css2.js</a></li>
+                                <li class=""><a href="selector-css3.js.html" title="selector-css3.js">selector-css3.js</a></li>
+                                <li class=""><a href="selector-native.js.html" title="selector-native.js">selector-native.js</a></li>
+                        </ul>
+                    </div>
 
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class=""><a href="#property_operators" title="operators">operators</a></li>
+                                <li class=""><a href="#property_PARENT_NODE" title="PARENT_NODE">PARENT_NODE</a></li>
                                 <li class=""><a href="#property_shorthand" title="shorthand">shorthand</a></li>
                         </ul>
                     </div>
@@ -302,7 +625,12 @@ Combinator is attached to the previous token.
                         <h4>Methods</h4>
                         <ul class="content">        
                                 <li class=""><a href="#method__tokenize" title="_tokenize">_tokenize</a></li>
+                                <li class=""><a href="#method_inRegion" title="inRegion">inRegion</a></li>
+                                <li class=""><a href="#method_intersect" title="intersect">intersect</a></li>
+                                <li class=""><a href="#method_inViewportRegion" title="inViewportRegion">inViewportRegion</a></li>
                                 <li class=""><a href="#method_query" title="query">query</a></li>
+                                <li class=""><a href="#method_region" title="region">region</a></li>
+                                <li class=""><a href="#method_viewportRegion" title="viewportRegion">viewportRegion</a></li>
                         </ul>
                     </div>
 
@@ -317,7 +645,7 @@ Combinator is attached to the previous token.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Selector", "name": "inRegion", "url": "Selector.html#method_inRegion", "type": "method"}, {"access": "", "host": "Selector", "name": "intersect", "url": "Selector.html#method_intersect", "type": "method"}, {"access": "", "host": "Selector", "name": "inViewportRegion", "url": "Selector.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "PARENT_NODE", "url": "Selector.html#property_PARENT_NODE", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "Selector", "name": "region", "url": "Selector.html#method_region", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "Selector", "name": "viewportRegion", "url": "Selector.html#method_viewportRegion", "type": "method"}];
 </script>
 </body>
 </html>

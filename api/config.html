@@ -1,0 +1,747 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: yui  config   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>yui&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_yui.html" title="yui">yui</a>
+                 &gt; config 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        <code>static</code>
+                        
+                            Class <b property="yui:name">config</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        The config object contains all of the configuration options for
+the YUI instance.  This object is supplied by the implementer 
+when instantiating a YUI instance.  Some properties have default
+values if they are not supplied by the implementer.
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:property" resource="#property_base">
+                                    <h4><a name="property_base" property="yui:name">base</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Base directory for dynamic loading
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_charset">
+                                    <h4><a name="property_charset" property="yui:name">charset</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            charset for dynamic nodes
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_combine">
+                                    <h4><a name="property_combine" property="yui:name">combine</a>
+                                        - <code><span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Use the YUI combo service to reduce the number of http connections 
+required to load your dependencies
+For dynamic loading.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: true if 'base' is not supplied, false if it is.
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_comboBase">
+                                    <h4><a name="property_comboBase" property="yui:name">comboBase</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?
+For dynamic loading.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_core">
+                                    <h4><a name="property_core" property="yui:name">core</a>
+                                        - <code><span property="yui:type">string[]</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A list of modules that defines the YUI core (overrides the default)</li>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_cssAttributes">
+                                    <h4><a name="property_cssAttributes" property="yui:name">cssAttributes</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Object literal containing attributes to add to dynamically loaded link nodes.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_dateFormat">
+                                    <h4><a name="property_dateFormat" property="yui:name">dateFormat</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The default date format
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_debug">
+                                    <h4><a name="property_debug" property="yui:name">debug</a>
+                                        - <code><span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Turn debug statements on or off
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: true
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_doc">
+                                    <h4><a name="property_doc" property="yui:name">doc</a>
+                                        - <code><span property="yui:type">Document</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The document associated with the 'win' configuration
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: the document hosting YUI
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_filter">
+                                    <h4><a name="property_filter" property="yui:name">filter</a>
+                                        - <code><span property="yui:type">string|object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A filter to apply to result urls.  This filter will modify the default
+path for all modules.  The default path for the YUI library is the
+minified version of the files (e.g., event-min.js).  The filter property
+can be a predefined filter or a custom filter.  The valid predefined 
+filters are:
+<dl>
+<dt>DEBUG</dt>
+<dd>Selects the debug versions of the library (e.g., event-debug.js).
+This option will automatically include the Logger widget</dd>
+<dt>RAW</dt>
+<dd>Selects the non-minified version of the library (e.g., event.js).</dd>
+</dl>
+You can also define a custom filter, which must be an object literal 
+containing a search expression and a replace string:
+<pre>
+myFilter: &#123; 
+'searchExp': "-min\\.js", 
+'replaceStr': "-debug.js"
+&#125;
+</pre>
+For dynamic loading.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_filters">
+                                    <h4><a name="property_filters" property="yui:name">filters</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Hash of per-component filter specification.  If specified for a given component, 
+this overrides the filter config
+For dynamic loading.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_force">
+                                    <h4><a name="property_force" property="yui:name">force</a>
+                                        - <code><span property="yui:type">string[]</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A list of modules that should always be loaded when required, even if already 
+present on the page.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_ignore">
+                                    <h4><a name="property_ignore" property="yui:name">ignore</a>
+                                        - <code><span property="yui:type">string[]</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A list of modules that should never be dynamically loaded
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_injected">
+                                    <h4><a name="property_injected" property="yui:name">injected</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Set to true if the yui seed file was dynamically loaded in 
+order to bootstrap components relying on the window load event 
+and onDOMReady.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_insertBefore">
+                                    <h4><a name="property_insertBefore" property="yui:name">insertBefore</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Node or id for a node that should be used as the insertion point for new nodes
+For dynamic loading.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_jsAttributes">
+                                    <h4><a name="property_jsAttributes" property="yui:name">jsAttributes</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Object literal containing attributes to add to dynamically loaded script nodes.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_locale">
+                                    <h4><a name="property_locale" property="yui:name">locale</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The default locale
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_logExclude">
+                                    <h4><a name="property_logExclude" property="yui:name">logExclude</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_logInclude">
+                                    <h4><a name="property_logInclude" property="yui:name">logInclude</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_modules">
+                                    <h4><a name="property_modules" property="yui:name">modules</a>
+                                        - <code><span property="yui:type">function</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A list of module definitions to add to the list of YUI components.  
+These components can then be dynamically loaded side by side with
+YUI via the use() method.See Loader.addModule for the supported
+module metadata.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_onCSS">
+                                    <h4><a name="property_onCSS" property="yui:name">onCSS</a>
+                                        - <code><span property="yui:type">function</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Callback for the 'CSSComplete' event.  When dynamically loading YUI 
+components with CSS, this property fires when the CSS is finished
+loading but script loading is still ongoing.  This provides an
+opportunity to enhance the presentation of a loading page a little
+bit before the entire loading process is done.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_pollInterval">
+                                    <h4><a name="property_pollInterval" property="yui:name">pollInterval</a>
+                                        - <code><span property="yui:type">int</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The default interval when polling in milliseconds.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: 20
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_purgethreshold">
+                                    <h4><a name="property_purgethreshold" property="yui:name">purgethreshold</a>
+                                        - <code><span property="yui:type">int</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The number of dynamic nodes to insert by default before
+automatically removing them.  This applies to script nodes
+because remove the node will not make the evaluated script
+unavailable.  Dynamic CSS is not auto purged, because removing
+a linked style sheet will also remove the style definitions.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: 20
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_root">
+                                    <h4><a name="property_root" property="yui:name">root</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The root path to prepend to module names for the combo service. Ex: 3.0.0b1/build/
+For dynamic loading.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_secureBase">
+                                    <h4><a name="property_secureBase" property="yui:name">secureBase</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The secure base dir (not implemented)
+For dynamic loading.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_throwFail">
+                                    <h4><a name="property_throwFail" property="yui:name">throwFail</a>
+                                        - <code><span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            If throwFail is set, Y.fail will generate or re-throw a JS Error.  Otherwise the failure is logged.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: true
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_timeout">
+                                    <h4><a name="property_timeout" property="yui:name">timeout</a>
+                                        - <code><span property="yui:type">int</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Number of milliseconds before a timeout occurs when dynamically 
+loading nodes. If not set, there is no timeout.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_useBrowserConsole">
+                                    <h4><a name="property_useBrowserConsole" property="yui:name">useBrowserConsole</a>
+                                        - <code><span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Log to the browser console if debug is on and the browser has a
+supported console
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: true
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_win">
+                                    <h4><a name="property_win" property="yui:name">win</a>
+                                        - <code><span property="yui:type">Window</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The window/frame that this instance should operate in
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: the window hosting YUI
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_windowResizeDelay">
+                                    <h4><a name="property_windowResizeDelay" property="yui:name">windowResizeDelay</a>
+                                        - <code><span property="yui:type">int</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The default interval when polling in milliseconds.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: 40
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class="selected"><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Array.html" title="Array">Array</a></li>
+                                <li class="selected"><a href="config.html" title="config">config</a></li>
+                                <li class=""><a href="Get.html" title="Get">Get</a></li>
+                                <li class=""><a href="Lang.html" title="Lang">Lang</a></li>
+                                <li class=""><a href="Loader.html" title="Loader">Loader</a></li>
+                                <li class=""><a href="Object.html" title="Object">Object</a></li>
+                                <li class=""><a href="UA.html" title="UA">UA</a></li>
+                                <li class=""><a href="YUI.html" title="YUI">YUI</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="_module.js.html" title="_module.js">_module.js</a></li>
+                                <li class=""><a href="get.js.html" title="get.js">get.js</a></li>
+                                <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
+                                <li class=""><a href="yui-array.js.html" title="yui-array.js">yui-array.js</a></li>
+                                <li class=""><a href="yui-base.js.html" title="yui-base.js">yui-base.js</a></li>
+                                <li class=""><a href="yui-core.js.html" title="yui-core.js">yui-core.js</a></li>
+                                <li class=""><a href="yui-init.js.html" title="yui-init.js">yui-init.js</a></li>
+                                <li class=""><a href="yui-lang.js.html" title="yui-lang.js">yui-lang.js</a></li>
+                                <li class=""><a href="yui-later.js.html" title="yui-later.js">yui-later.js</a></li>
+                                <li class=""><a href="yui-log.js.html" title="yui-log.js">yui-log.js</a></li>
+                                <li class=""><a href="yui-object.js.html" title="yui-object.js">yui-object.js</a></li>
+                                <li class=""><a href="yui-ua.js.html" title="yui-ua.js">yui-ua.js</a></li>
+                                <li class=""><a href="yui.js.html" title="yui.js">yui.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_base" title="base">base</a></li>
+                                <li class=""><a href="#property_charset" title="charset">charset</a></li>
+                                <li class=""><a href="#property_combine" title="combine">combine</a></li>
+                                <li class=""><a href="#property_comboBase" title="comboBase">comboBase</a></li>
+                                <li class=""><a href="#property_core" title="core">core</a></li>
+                                <li class=""><a href="#property_cssAttributes" title="cssAttributes">cssAttributes</a></li>
+                                <li class=""><a href="#property_dateFormat" title="dateFormat">dateFormat</a></li>
+                                <li class=""><a href="#property_debug" title="debug">debug</a></li>
+                                <li class=""><a href="#property_doc" title="doc">doc</a></li>
+                                <li class=""><a href="#property_filter" title="filter">filter</a></li>
+                                <li class=""><a href="#property_filters" title="filters">filters</a></li>
+                                <li class=""><a href="#property_force" title="force">force</a></li>
+                                <li class=""><a href="#property_ignore" title="ignore">ignore</a></li>
+                                <li class=""><a href="#property_injected" title="injected">injected</a></li>
+                                <li class=""><a href="#property_insertBefore" title="insertBefore">insertBefore</a></li>
+                                <li class=""><a href="#property_jsAttributes" title="jsAttributes">jsAttributes</a></li>
+                                <li class=""><a href="#property_locale" title="locale">locale</a></li>
+                                <li class=""><a href="#property_logExclude" title="logExclude">logExclude</a></li>
+                                <li class=""><a href="#property_logInclude" title="logInclude">logInclude</a></li>
+                                <li class=""><a href="#property_modules" title="modules">modules</a></li>
+                                <li class=""><a href="#property_onCSS" title="onCSS">onCSS</a></li>
+                                <li class=""><a href="#property_pollInterval" title="pollInterval">pollInterval</a></li>
+                                <li class=""><a href="#property_purgethreshold" title="purgethreshold">purgethreshold</a></li>
+                                <li class=""><a href="#property_root" title="root">root</a></li>
+                                <li class=""><a href="#property_secureBase" title="secureBase">secureBase</a></li>
+                                <li class=""><a href="#property_throwFail" title="throwFail">throwFail</a></li>
+                                <li class=""><a href="#property_timeout" title="timeout">timeout</a></li>
+                                <li class=""><a href="#property_useBrowserConsole" title="useBrowserConsole">useBrowserConsole</a></li>
+                                <li class=""><a href="#property_win" title="win">win</a></li>
+                                <li class=""><a href="#property_windowResizeDelay" title="windowResizeDelay">windowResizeDelay</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "Object", "name": "()", "url": "Object.html#method_()", "type": "method"}, {"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "config", "name": "base", "url": "config.html#property_base", "type": "property"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "cached", "url": "YUI.html#method_cached", "type": "method"}, {"access": "", "host": "config", "name": "charset", "url": "config.html#property_charset", "type": "property"}, {"access": "", "host": "config", "name": "combine", "url": "config.html#property_combine", "type": "property"}, {"access": "", "host": "config", "name": "comboBase", "url": "config.html#property_comboBase", "type": "property"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "config", "name": "core", "url": "config.html#property_core", "type": "property"}, {"access": "", "host": "config", "name": "cssAttributes", "url": "config.html#property_cssAttributes", "type": "property"}, {"access": "", "host": "config", "name": "dateFormat", "url": "config.html#property_dateFormat", "type": "property"}, {"access": "", "host": "config", "name": "debug", "url": "config.html#property_debug", "type": "property"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#event_delegate", "type": "event"}, {"access": "", "host": "config", "name": "doc", "url": "config.html#property_doc", "type": "property"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "Object", "name": "each", "url": "Object.html#method_each", "type": "method"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "private", "host": "Object", "name": "_extract", "url": "Object.html#method__extract", "type": "method"}, {"access": "", "host": "config", "name": "filter", "url": "config.html#property_filter", "type": "property"}, {"access": "", "host": "config", "name": "filters", "url": "config.html#property_filters", "type": "property"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "config", "name": "force", "url": "config.html#property_force", "type": "property"}, {"access": "", "host": "Object", "name": "getValue", "url": "Object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "Global", "url": "YUI.html#property_Global", "type": "property"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "", "host": "Object", "name": "hasKey", "url": "Object.html#method_hasKey", "type": "method"}, {"access": "", "host": "Object", "name": "hasValue", "url": "Object.html#method_hasValue", "type": "method"}, {"access": "", "host": "config", "name": "ignore", "url": "config.html#property_ignore", "type": "property"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "config", "name": "injected", "url": "config.html#property_injected", "type": "property"}, {"access": "", "host": "config", "name": "insertBefore", "url": "config.html#property_insertBefore", "type": "property"}, {"access": "", "host": "config", "name": "jsAttributes", "url": "config.html#property_jsAttributes", "type": "property"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "Object", "name": "keys", "url": "Object.html#method_keys", "type": "method"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "", "host": "config", "name": "locale", "url": "config.html#property_locale", "type": "property"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "config", "name": "logExclude", "url": "config.html#property_logExclude", "type": "property"}, {"access": "", "host": "config", "name": "logInclude", "url": "config.html#property_logInclude", "type": "property"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "config", "name": "modules", "url": "config.html#property_modules", "type": "property"}, {"access": "", "host": "YUI", "name": "mouseenter", "url": "YUI.html#event_mouseenter", "type": "event"}, {"access": "", "host": "YUI", "name": "mouseleave", "url": "YUI.html#event_mouseleave", "type": "event"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "", "host": "config", "name": "onCSS", "url": "config.html#property_onCSS", "type": "property"}, {"access": "", "host": "Object", "name": "owns", "url": "Object.html#method_owns", "type": "method"}, {"access": "", "host": "config", "name": "pollInterval", "url": "config.html#property_pollInterval", "type": "property"}, {"access": "", "host": "config", "name": "purgethreshold", "url": "config.html#property_purgethreshold", "type": "property"}, {"access": "", "host": "config", "name": "root", "url": "config.html#property_root", "type": "property"}, {"access": "", "host": "config", "name": "secureBase", "url": "config.html#property_secureBase", "type": "property"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "Object", "name": "setValue", "url": "Object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "Object", "name": "size", "url": "Object.html#method_size", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "config", "name": "throwFail", "url": "config.html#property_throwFail", "type": "property"}, {"access": "", "host": "config", "name": "timeout", "url": "config.html#property_timeout", "type": "property"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "config", "name": "useBrowserConsole", "url": "config.html#property_useBrowserConsole", "type": "property"}, {"access": "", "host": "Object", "name": "values", "url": "Object.html#method_values", "type": "method"}, {"access": "", "host": "config", "name": "win", "url": "config.html#property_win", "type": "property"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}, {"access": "", "host": "config", "name": "windowResizeDelay", "url": "config.html#property_windowResizeDelay", "type": "property"}];
+</script>
+</body>
+</html>

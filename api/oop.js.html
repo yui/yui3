@@ -47,7 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">/**</span>
+                        <div class="highlight" ><pre><span class="c">/**</span>
 <span class="c"> * Supplies object inheritance and manipulation utilities.  This adds</span>
 <span class="c"> * additional functionaity to what is provided in yui-base, and the</span>
 <span class="c"> * methods are applied directly to the YUI instance.  This module</span>
@@ -103,7 +103,7 @@
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">sProto</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">replacements</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-<span class="c">// Y.log(&#39;sequestered function &quot;&#39; + k + &#39;&quot; executed.  Initializing Event.Target&#39;);</span>
+<span class="c">// Y.log(&#39;sequestered function &quot;&#39; + k + &#39;&quot; executed.  Initializing EventTarget&#39;);</span>
 <span class="c">// overwrite the prototype with all of the sequestered functions,</span>
 <span class="c">// but only if it hasn&#39;t been overridden</span>
 <span class="c"></span>                    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">sequestered</span><span class="o">)</span> <span class="o">{</span>
@@ -243,23 +243,23 @@
 <span class="c"></span>    <span class="o">};</span>
 
     <span class="c">/**</span>
-<span class="c">     * Deep obj/array copy.  Functions will are cloned with Y.bind.</span>
+<span class="c">     * Deep obj/array copy.  Functions are cloned with Y.bind.</span>
 <span class="c">     * Array-like objects are treated as arrays.</span>
-<span class="c">     * primitives are returned untouched.  Optionally a</span>
+<span class="c">     * Primitives are returned untouched.  Optionally, a</span>
 <span class="c">     * function can be provided to handle other data types,</span>
 <span class="c">     * filter keys, validate values, etc.</span>
 <span class="c">     *</span>
 <span class="c">     * @method clone</span>
 <span class="c">     * @param o what to clone</span>
 <span class="c">     * @param safe {boolean} if true, objects will not have prototype</span>
-<span class="c">     * items from the source.  If false, it does.  In this case, the</span>
-<span class="c">     * original is initally protected, but the clone is not completely immune</span>
+<span class="c">     * items from the source.  If false, they will.  In this case, the</span>
+<span class="c">     * original is initially protected, but the clone is not completely immune</span>
 <span class="c">     * from changes to the source object prototype.  Also, cloned prototype</span>
 <span class="c">     * items that are deleted from the clone will result in the value</span>
-<span class="c">     * of the source prototype to be exposed.  If operating on a non-safe</span>
+<span class="c">     * of the source prototype being exposed.  If operating on a non-safe</span>
 <span class="c">     * clone, items should be nulled out rather than deleted.</span>
 <span class="c">     * @TODO review</span>
-<span class="c">     * @param f optional function to apply to each item in a collection</span>
+<span class="c">     * @param f optional function to apply to each item in a collection;</span>
 <span class="c">     *          it will be executed prior to applying the value to</span>
 <span class="c">     *          the new object.  Return false to prevent the copy.</span>
 <span class="c">     * @param c optional execution context for f</span>
@@ -346,6 +346,7 @@
         <span class="o">};</span>
     <span class="o">};</span>
 </pre></div>
+
                     </div>
 			</div>
 		</div>
@@ -360,6 +361,7 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -384,18 +386,16 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 

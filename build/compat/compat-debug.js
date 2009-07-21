@@ -16,30 +16,7 @@ if (window.YAHOO != YUI) {
     if (o) {
         Y.mix(Y, o);
     }
-
 }
-
-
-/*
-if ((!globalUpdated) && (!(window.YAHOO instanceof YUI))) {
-
-    globalUpdated = true;
-
-    // get any existing YAHOO obj props
-    var o = (window.YAHOO) ? YUI.merge(window.YAHOO) : null;
-
-    // Make the YUI global the YAHOO global
-    // window.YAHOO = YUI().use('node', 'compat');
-    window.YAHOO = YUI().use('node', 'compat');
-
-    // augment old YAHOO props
-    if (o) {
-        Y.mix(Y, o);
-    }
-
-
-}
-*/
 
 // add old namespaces
 Y.namespace("util", "widget", "example");
@@ -81,10 +58,9 @@ Y.mix(L, {
 
 L.augment = L.augmentProto;
 
-// IE won't enumerate this
-L.hasOwnProperty = Y.Object.owns;
-
-// L.merge = Y.merge;
+L.hasOwnProperty = function(o, k) {
+    return (o.hasOwnProperty(k));
+};
 
 Y.augmentProto = L.augmentProto;
 
@@ -543,13 +519,13 @@ if (Y.Event) {
         //console.log('Compat CustomEvent constructor executed: ' + this._yuid);
         if (!this._yuievt) {
             var sub = this.subscribe;
-            Y.Event.Target.apply(this, arguments);
+            Y.EventTarget.apply(this, arguments);
             this.subscribe = sub;
             this.__yuiepinit = function() {};
         }
     };
 
-    Y.extend(EP, Y.Event.Target, {
+    Y.extend(EP, Y.EventTarget, {
 
         createEvent: function(type, o) {
             o = o || {};
@@ -566,7 +542,7 @@ if (Y.Event) {
                 // a[1] = obj;
             }
 
-            Y.Event.Target.prototype.subscribe.apply(this, a);
+            Y.EventTarget.prototype.subscribe.apply(this, a);
         },
 
         fireEvent: function(type) {

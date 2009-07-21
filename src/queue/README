@@ -4,15 +4,19 @@ Queue
     There are three submodules available for Queue:
     * queue-base - a simple queue with add(..) and next()
     * queue-promote - adds promote(c) and delete(c) to queue-base
-    * queue-run - the fully featured queue with autorun asynchronous callback execution, timeout chaining, event broadcasting
+    * queue-run - Adds a new fully featured queue class AsyncQueue with autorun
+                  asynchronous callback execution, timeout chaining, event
+                  broadcasting
 
     See the user guide and API docs for more detail.
 
-3.0.0 beta1
+3.0.0 beta 1
     * Overhaul.  Broken into queue-base, queue-promote, and queue-run.
 
-3.0.0pr2
+    See the user guide and API docs for more detail.
+
+3.0.0 PR2
     No changes
 
-3.0.0pr1
+3.0.0 PR1
     Initial release

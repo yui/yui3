@@ -31,7 +31,7 @@ Y.mix(Y.DOM, {
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
      * @method winHeight
-
+     * @return {Number} The current height of the viewport.
      */
     winHeight: function(node) {
         var h = Y.DOM._getWinSize(node).height;
@@ -41,7 +41,7 @@ Y.mix(Y.DOM, {
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
      * @method winWidth
-
+     * @return {Number} The current width of the viewport.
      */
     winWidth: function(node) {
         var w = Y.DOM._getWinSize(node).width;
@@ -51,7 +51,7 @@ Y.mix(Y.DOM, {
     /**
      * Document height 
      * @method docHeight
-
+     * @return {Number} The current height of the document.
      */
     docHeight:  function(node) {
         var h = Y.DOM._getDocSize(node).height;
@@ -61,6 +61,7 @@ Y.mix(Y.DOM, {
     /**
      * Document width 
      * @method docWidth
+     * @return {Number} The current width of the document.
      */
     docWidth:  function(node) {
         var w = Y.DOM._getDocSize(node).width;
@@ -68,8 +69,9 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Amount page has been scroll vertically 
+     * Amount page has been scroll horizontally 
      * @method docScrollX
+     * @return {Number} The current amount the screen is scrolled horizontally.
      */
     docScrollX: function(node) {
         var doc = Y.DOM._getDoc(node);
@@ -77,8 +79,9 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Amount page has been scroll horizontally 
+     * Amount page has been scroll vertically 
      * @method docScrollY
+     * @return {Number} The current amount the screen is scrolled vertically.
      */
     docScrollY:  function(node) {
         var doc = Y.DOM._getDoc(node);
@@ -93,7 +96,7 @@ Y.mix(Y.DOM, {
      * @param element The target element
      * @return {Array} The XY position of the element
 
-     TODO: test inDocument/display
+     TODO: test inDocument/display?
      */
     getXY: function() {
         if (document[DOCUMENT_ELEMENT][GET_BOUNDING_CLIENT_RECT]) {
@@ -384,13 +387,6 @@ Y.mix(Y.DOM, {
 });
 })(Y);
 (function(Y) {
-/**
- * Adds position and region management functionality to DOM.
- * @module dom
- * @submodule dom-screen
- * @for DOM
- */
-
 var TOP = 'top',
     RIGHT = 'right',
     BOTTOM = 'bottom',

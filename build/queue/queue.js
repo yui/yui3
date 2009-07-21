@@ -1,12 +1,26 @@
 YUI.add('queue-base', function(Y) {
 
 /**
- * A simple FIFO queue of function references.
+ * <p>The Queue module adds a common data structure for FIFO operations. In its
+ * simplest form, it is little more than an array wrapper. Additional
+ * submodules introduce more functionality such as promotion and removal of
+ * queued items.</p>
+ *
+ * <p>An AsyncQueue class is provided in the queue-run submodule.  This class
+ * affords a mechanism to do complex sequential and iterative callback
+ * execution across configured timeouts.
+ *
+ * @module queue
+ */
+
+/**
+ * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and
+ * removed using next().
  *
  * @module queue
  * @submodule queue-base
  * @class Queue
- * @param callback* {Function} 0..n callback functions to seed the queue
+ * @param item* {MIXED} 0..n items to seed the queue
  */
 function Queue() {
     this._init();
@@ -22,7 +36,7 @@ Queue.prototype = {
      */
     _init : function () {
         /**
-         * The collection of enqueued functions
+         * The collection of enqueued items
          *
          * @property _q
          * @type {Array}
@@ -32,20 +46,20 @@ Queue.prototype = {
     },
 
     /**
-     * Get the next callback in the queue.
+     * Get the next item in the queue.
      *
      * @method next
-     * @return {Function} the next callback in the queue
+     * @return {MIXED} the next item in the queue
      */
     next : function () {
         return this._q.shift();
     },
 
     /**
-     * Add 0..n callbacks to the end of the queue
+     * Add 0..n items to the end of the queue
      *
      * @method add
-     * @param callback* {Function} 0..n callback functions
+     * @param item* {MIXED} 0..n items
      */
     add : function () {
         Y.Array.each(Y.Array(arguments,0,true),function (fn) {
@@ -56,7 +70,7 @@ Queue.prototype = {
     },
 
     /**
-     * Returns the current number of queued callbacks
+     * Returns the current number of queued items
      *
      * @method size
      * @return {Number}
@@ -72,7 +86,50 @@ Y.Queue = Queue;
 }, '@VERSION@' );
 YUI.add('queue-run', function(Y) {
 
-var Queue   = Y.Queue,
+/**
+ * <p>Adds a new class AsyncQueue that is restricted to function callbacks, but
+ * includes a host of additional features, including events, callback
+ * iterations, and a run() method that can execute queued callbacks in order,
+ * even across configured timeouts.</p>
+ *
+ * @module queue
+ * @submodule queue-run
+ */
+
+/**
+ * <p>A specialized queue class that supports scheduling callbacks to execute
+ * sequentially, iteratively, even asynchronously.</p>
+ *
+ * <p>Callbacks can be function refs or objects with the following keys.  Only
+ * the <code>fn</code> key is required.</p>
+ *
+ * <ul>
+ * <li><code>fn</code> -- The callback function</li>
+ * <li><code>context</code> -- The execution context for the callbackFn.</li>
+ * <li><code>args</code> -- Arguments to pass to callbackFn.</li>
+ * <li><code>timeout</code> -- Millisecond delay before executing callbackFn.
+ *                     (Applies to each iterative execution of callback)</li>
+ * <li><code>iterations</code> -- Number of times to repeat the callback.
+ * <li><code>until</code> -- Repeat the callback until this function returns
+ *                         true.  This setting trumps iterations.</li>
+ * <li><code>autoContinue</code> -- Set to false to prevent the AsyncQueue from
+ *                        executing the next callback in the Queue after
+ *                        the callback completes.</li>
+ * <li><code>id</code> -- Name that can be used to get, promote, get the
+ *                        indexOf, or delete this callback.</li>
+ * </ul>
+ *
+ * @class AsyncQueue
+ * @extends EventTarget
+ * @constructor
+ * @param callback* {Function|Object} 0..n callbacks to seed the queue
+ */
+Y.AsyncQueue = function() {
+    this._init();
+    this.add.apply(this, arguments);
+};
+
+var Queue   = Y.AsyncQueue,
     EXECUTE = 'execute',
     SHIFT   = 'shift',
     PROMOTE = 'promote',
@@ -82,18 +139,17 @@ var Queue   = Y.Queue,
     isFunction = Y.Lang.isFunction;
 
 /**
- * Remaps functionality to preventable events, adds support for scheduling
- * callbacks to execute asynchronously, as well as iterative callbacks.
+ * <p>Static default values used to populate callback configuration properties.
+ * Preconfigured defaults include:</p>
  *
- * @module queue
- * @submodule queue-run
- * @for Queue
- */
-
-/**
- * Static default values used to populate callback configuration properties.
+ * <ul>
+ *  <li><code>autoContinue</code>: <code>true</code></li>
+ *  <li><code>iterations</code>: 1</li>
+ *  <li><code>timeout</code>: -1 (synchronous operation)</li>
+ *  <li><code>until</code>: (function to run until iterations &lt;= 0)</li>
+ * </ul>
  *
- * @property Queue.defaults
+ * @property AsyncQueue.defaults
  * @type {Object}
  * @static
  */
@@ -107,9 +163,9 @@ Queue.defaults = Y.mix({
     }
 }, Y.config.queueDefaults || {});
 
-Y.mix(Queue.prototype, {
+Y.extend(Queue, Y.EventTarget, {
     /**
-     *  used to indicate the Queue is currently executing a callback.
+     * Used to indicate the queue is currently executing a callback.
      *
      * @property _running
      * @type {Boolean|Object} true for synchronous callback execution, the
@@ -119,8 +175,7 @@ Y.mix(Queue.prototype, {
     _running : false,
 
     /**
-     * Initializes the Queue instance properties and events.  Overrides the
-     * base implementation.
+     * Initializes the AsyncQueue instance properties and events.
      *
      * @method _init
      * @protected
@@ -192,10 +247,13 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Shifts the callback from the queue
+     * Default functionality for the &quot;shift&quot; event.  Shifts the
+     * callback stored in the event object's <em>callback</em> property from
+     * the queue if it is the first item.
      *
      * @method _defShiftFn
      * @param e {Event} The event object
+     * @protected
      */
     _defShiftFn : function (e) {
         if (this.indexOf(e.callback) === 0) {
@@ -205,11 +263,11 @@ Y.mix(Queue.prototype, {
 
     /**
      * Creates a wrapper function to execute the callback using the aggregated 
-     * configuration from static Queue.defaults to the instance defaults to the
-     * specified callback settings.
+     * configuration generated by combining the static AsyncQueue.defaults, the
+     * instance defaults, and the specified callback settings.
      *
      * The wrapper function is decorated with the callback configuration as
-     * properties.
+     * properties for runtime modification.
      *
      * @method _prepare
      * @param callback {Object|Function} the raw callback
@@ -241,12 +299,13 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Sets the Queue in motion.  All queued callbacks will be executed in
+     * Sets the queue in motion.  All queued callbacks will be executed in
      * order unless pause() or stop() is called or if one of the callbacks is
      * configured with autoContinue: false.
      *
      * @method run
-     * @return {Queue} the Queue instance
+     * @return {AsyncQueue} the AsyncQueue instance
+     * @chainable
      */
     run : function () {
         var callback,
@@ -273,7 +332,8 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Handles the execution of synchronous callbacks.
+     * Handles the execution of callbacks. Returns a boolean indicating
+     * whether it is appropriate to continue running.
      *
      * @method _execute
      * @param callback {Object} the callback object to execute
@@ -312,10 +372,10 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Determines if the Queue is waiting for a callback to complete execution.
+     * Determines if the queue is waiting for a callback to complete execution.
      *
      * @method isRunning
-     * @return {Boolean} true if Queue is waiting for a 
+     * @return {Boolean} true if queue is waiting for a 
      *                   from any initiated transactions
      */
     isRunning : function () {
@@ -323,7 +383,9 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Executes the callback function
+     * Default functionality for the &quot;execute&quot; event.  Executes the
+     * callback function
+     *
      * @method _defExecFn
      * @param e {Event} the event object
      * @protected
@@ -334,12 +396,12 @@ Y.mix(Queue.prototype, {
 
     /**
      * Add any number of callbacks to the end of the queue. Callbacks may be
-     * provided as functions or objects with at least a <code>fn</code>
-     * property containing a reference to the callback function.
+     * provided as functions or objects.
      *
      * @method add
      * @param callback* {Function|Object} 0..n callbacks
-     * @return {Queue} the Queue instance
+     * @return {AsyncQueue} the AsyncQueue instance
+     * @chainable
      */
     add : function () {
         this.fire('add', { callbacks: Y.Array(arguments,0,true) });
@@ -348,12 +410,14 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Adds the callbacks in the event facade to the queue. Callbacks
-     * successfully added to the queue are present in the event's
-     * <code>added</code> property in the after phase.
+     * Default functionality for the &quot;add&quot; event.  Adds the callbacks
+     * in the event facade to the queue. Callbacks successfully added to the
+     * queue are present in the event's <code>added</code> property in the
+     * after phase.
      *
      * @method _defAddFn
      * @param e {Event} the event object
+     * @protected
      */
     _defAddFn : function(e) {
         var _q = this._q,
@@ -370,12 +434,14 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Pause the execution of the Queue after the execution of the current
+     * Pause the execution of the queue after the execution of the current
      * callback completes.  If called from code outside of a queued callback,
-     * clears the timeout for the pending callback. Paused Queue can be
+     * clears the timeout for the pending callback. Paused queue can be
      * restarted with q.run()
+     *
      * @method pause
-     * @return {Queue} the Queue instance
+     * @return {AsyncQueue} the AsyncQueue instance
+     * @chainable
      */
     pause: function () {
         if (isObject(this._running)) {
@@ -388,10 +454,12 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Stop and clear the Queue's queue after the current execution of the
+     * Stop and clear the queue after the current execution of the
      * current callback completes.
+     *
      * @method stop
-     * @return {Queue} the Queue instance
+     * @return {AsyncQueue} the AsyncQueue instance
+     * @chainable
      */
     stop : function () { 
         this._q = [];
@@ -422,7 +490,7 @@ Y.mix(Queue.prototype, {
 
     /**
      * Retrieve a callback by its id.  Useful to modify the configuration
-     * while the Queue is running.
+     * while the queue is running.
      *
      * @method getCallback
      * @param id {String} the id assigned to the callback
@@ -441,7 +509,8 @@ Y.mix(Queue.prototype, {
      *
      * @method promote
      * @param callback {String|Object} the callback object or a callback's id
-     * @return {Queue} the Queue instance
+     * @return {AsyncQueue} the AsyncQueue instance
+     * @chainable
      */
     promote : function (callback) {
         var payload = { callback : callback },e;
@@ -459,10 +528,11 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Promotes the named callback to the top of the queue.
+     * <p>Default functionality for the &quot;promote&quot; event.  Promotes the
+     * named callback to the head of the queue.</p>
      *
-     * The event object will contain a property &quot;callback&quot;, which
-     * hold the id of a callback or the callback object itself.
+     * <p>The event object will contain a property &quot;callback&quot;, which
+     * holds the id of a callback or the callback object itself.</p>
      *
      * @method _defPromoteFn
      * @param e {Event} the custom event
@@ -480,12 +550,13 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Removes the callback from the queue.  If the Queue is active, the
+     * Removes the callback from the queue.  If the queue is active, the
      * removal is scheduled to occur after the current callback has completed.
      *
      * @method remove
      * @param callback {String|Object} the callback object or a callback's id
-     * @return {Queue} the Queue instance
+     * @return {AsyncQueue} the AsyncQueue instance
+     * @chainable
      */
     remove : function (callback) {
         var payload = { callback : callback },e;
@@ -505,10 +576,11 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Removes the callback from the queue.
+     * <p>Default functionality for the &quot;remove&quot; event.  Removes the
+     * callback from the queue.</p>
      *
-     * The event object will contain a property &quot;callback&quot;, which
-     * hold the id of a callback or the callback object itself.
+     * <p>The event object will contain a property &quot;callback&quot;, which
+     * holds the id of a callback or the callback object itself.</p>
      *
      * @method _defRemoveFn
      * @param e {Event} the custom event
@@ -521,7 +593,7 @@ Y.mix(Queue.prototype, {
     },
 
     /**
-     * Returns the number of callbacks in the queue
+     * Returns the number of callbacks in the queue.
      *
      * @method size
      * @return {Number}
@@ -535,9 +607,8 @@ Y.mix(Queue.prototype, {
 
         return this._q.length;
     }
-},true);
+});
 
-Y.augment(Queue, Y.EventTarget);
 
 
 }, '@VERSION@' ,{requires:['queue-base','oop','event-custom']});

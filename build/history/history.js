@@ -533,7 +533,7 @@ YUI.add('history', function(Y) {
 
                 var state, decodedModuleId = decode(moduleId);
 
-                if (!Y.Object.owns(states, decodedModuleId)) {
+                if (!states.hasOwnProperty(decodedModuleId)) {
                     // The caller did not wish to modify the state of this
                     // module. We must however include it in fqstate!
                     state = module.currentState;

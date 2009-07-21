@@ -6,14 +6,24 @@ YUI.add('datasource-local', function(Y) {
  *
  * @module datasource
  */
-var LANG = Y.Lang,
     
 /**
- * Base class for the YUI DataSource utility.
+ * Provides the base DataSource implementation, which can be extended to
+ * create DataSources for specific data protocols, such as the IO Utility, the
+ * Get Utility, or custom functions.
+ *
+ * @module datasource
+ * @submodule datasource-local
+ */
+
+/**
+ * Base class for the DataSource Utility.
  * @class DataSource.Local
  * @extends Base
  * @constructor
  */    
+var LANG = Y.Lang,
+
 DSLocal = function() {
     DSLocal.superclass.constructor.apply(this, arguments);
 };
@@ -325,14 +335,14 @@ Y.namespace("DataSource").Local = DSLocal;
 YUI.add('datasource-io', function(Y) {
 
 /**
- * The DataSource utility provides a common configurable interface for widgets to
- * access a variety of data, from JavaScript arrays to online database servers.
+ * Provides a DataSource implementation which can be used to retrieve data via the IO Utility.
  *
  * @module datasource
+ * @submodule datasource-io
  */
-    
+
 /**
- * IO subclass for the YUI DataSource utility.
+ * IO subclass for the DataSource Utility.
  * @class DataSource.IO
  * @extends DataSource.Local
  * @constructor
@@ -464,14 +474,14 @@ Y.DataSource.IO = DSIO;
 YUI.add('datasource-get', function(Y) {
 
 /**
- * The DataSource utility provides a common configurable interface for widgets to
- * access a variety of data, from JavaScript arrays to online database servers.
+ * Provides a DataSource implementation which can be used to retrieve data via the Get Utility.
  *
  * @module datasource
+ * @submodule datasource-get
  */
-    
+
 /**
- * Get Utility subclass for the YUI DataSource utility.
+ * Get Utility subclass for the DataSource Utility.
  * @class DataSource.Get
  * @extends DataSource.Local
  * @constructor
@@ -686,18 +696,20 @@ YUI.namespace("Env.DataSource.callbacks");
 YUI.add('datasource-function', function(Y) {
 
 /**
- * The DataSource utility provides a common configurable interface for widgets to
- * access a variety of data, from JavaScript arrays to online database servers.
+ * Provides a DataSource implementation which can be used to retrieve data from a custom function.
  *
  * @module datasource
+ * @submodule datasource-function
  */
-var LANG = Y.Lang,
+
 /**
- * Function subclass for the YUI DataSource utility.
+ * Function subclass for the DataSource Utility.
  * @class DataSource.Function
  * @extends DataSource.Local
  * @constructor
  */    
+var LANG = Y.Lang,
+
     DSFn = function() {
         DSFn.superclass.constructor.apply(this, arguments);
     };
@@ -794,7 +806,7 @@ YUI.add('datasource-cache', function(Y) {
  */
 
 /**
- * Adds cacheability to the YUI DataSource utility.
+ * Adds cacheability to the DataSource Utility.
  * @class DataSourceCache
  * @extends Cache
  */    
@@ -924,7 +936,7 @@ YUI.add('datasource-jsonschema', function(Y) {
  */
 
 /**
- * Adds schema-parsing to the YUI DataSource utility.
+ * Adds schema-parsing to the DataSource Utility.
  * @class DataSourceJSONSchema
  * @extends Plugin.Base
  */    
@@ -1031,7 +1043,7 @@ YUI.add('datasource-xmlschema', function(Y) {
  */
 
 /**
- * Adds schema-parsing to the YUI DataSource utility.
+ * Adds schema-parsing to the DataSource Utility.
  * @class DataSourceXMLSchema
  * @extends Plugin.Base
  */    
@@ -1138,7 +1150,7 @@ YUI.add('datasource-arrayschema', function(Y) {
  */
 
 /**
- * Adds schema-parsing to the YUI DataSource utility.
+ * Adds schema-parsing to the DataSource Utility.
  * @class DataSourceArraySchema
  * @extends Plugin.Base
  */    
@@ -1245,7 +1257,7 @@ YUI.add('datasource-textschema', function(Y) {
  */
 
 /**
- * Adds schema-parsing to the YUI DataSource utility.
+ * Adds schema-parsing to the DataSource Utility.
  * @class DataSourceTextSchema
  * @extends Plugin.Base
  */    
@@ -1350,18 +1362,18 @@ YUI.add('datasource-polling', function(Y) {
  * @module datasource
  * @submodule datasource-polling
  */
-    var LANG = Y.Lang,
     
-    /**
-     * Adds polling to the YUI DataSource utility.
-     * @class Pollable
-     * @extends DataSource.Local
-     */    
+/**
+ * Adds polling to the DataSource Utility.
+ * @class Pollable
+ * @extends DataSource.Local
+ */    
+var LANG = Y.Lang,
+
     Pollable = function() {
         this._intervals = {};
     };
 
-    
 Pollable.prototype = {
 
     /**

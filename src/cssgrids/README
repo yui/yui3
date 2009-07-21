@@ -1,3 +1,8 @@
+*** NOTE: This module is deprecated. This functionality will be provided in a future release. 
+
+**** version 3.0.0 beta 1 ***	
+  * deprecated for YUI 3
+  
 **** version 3.0.0 PR2 ***
 
     * Added self-clearing for templates (e.g. div.yui-t1) for 
@@ -31,4 +36,6 @@ over 1000 page layout combinations. Other features include:
       longer, the footer stays below the longest.
     * Accommodates IAB's Ad Unit Guidelines for common 
       ad dimensions.
+
+*** NOTE: This module is deprecated. This functionality will be provided in a future release. 
 

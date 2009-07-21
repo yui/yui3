@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: console-filters   filter.js  (YUI Library)</title>
+	<title>API: console-filters   console-filters.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_console-filters.html" title="console-filters">console-filters</a>
                 
-                 &gt; filter.js (source view) 
+                 &gt; console-filters.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,11 +47,10 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Adds the ability to filter log entries on their category/logLevel or their</span>
-<span class="c"> * source (global, event, attribute, etc).</span>
-<span class="c"> * Checkboxes are added to the Console footer to control the visibility of each</span>
-<span class="c"> * category and source.  </span>
+                        <div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * &lt;p&gt;Provides Plugin.ConsoleFilters plugin class.&lt;/p&gt;</span>
+<span class="c"> *</span>
+<span class="c"> * &lt;p&gt;This plugin adds the ability to control which Console entries display by filtering on category and source. Two groups of checkboxes are added to the Console footer, one for categories and the other for sources.  Only those messages that match a checked category or source are displayed.&lt;/p&gt;</span>
 <span class="c"> *</span>
 <span class="c"> * @module console-filters</span>
 <span class="c"> * @namespace Plugin</span>
@@ -93,7 +92,6 @@
 <span class="c">     *</span>
 <span class="c">     * @property ConsoleFilters.NAME</span>
 <span class="c">     * @type String</span>
-<span class="c">     * @readOnly</span>
 <span class="c">     * @static</span>
 <span class="c">     * @default &#39;consoleFilters&#39;</span>
 <span class="c">     */</span>
@@ -104,7 +102,6 @@
 <span class="c">     *</span>
 <span class="c">     * @property ConsoleFilters.NS</span>
 <span class="c">     * @type String</span>
-<span class="c">     * @readOnly</span>
 <span class="c">     * @static</span>
 <span class="c">     * @default &#39;filter&#39;</span>
 <span class="c">     */</span>
@@ -138,10 +135,10 @@
 <span class="c">     * @static</span>
 <span class="c">     */</span>
     <span class="nx">FILTER_TEMPLATE</span> <span class="o">:</span>
-        <span class="c">// IE8 doesn&#39;t permit breaking _between_ nowrap elements AND it doesn&#39;t</span>
-<span class="c"></span>        <span class="c">// understand the (non spec) wbr tag AND it doesn&#39;t create text nodes</span>
-<span class="c"></span>        <span class="c">// for spaces between elements in innerHTML strings.  The thin-space</span>
-<span class="c"></span>        <span class="c">// entity suffices to create a breakable point.</span>
+        <span class="c">// IE8 and FF3 don&#39;t permit breaking _between_ nowrap elements.  IE8</span>
+<span class="c"></span>        <span class="c">// doesn&#39;t understand (non spec) wbr tag, nor does it create text nodes</span>
+<span class="c"></span>        <span class="c">// for spaces in innerHTML strings.  The thin-space entity suffices to</span>
+<span class="c"></span>        <span class="c">// create a breakable point.</span>
 <span class="c"></span>        <span class="s1">&#39;&lt;label class=&quot;{filter_label}&quot;&gt;&#39;</span><span class="o">+</span>
             <span class="s1">&#39;&lt;input type=&quot;checkbox&quot; value=&quot;{filter_name}&quot; &#39;</span><span class="o">+</span>
                 <span class="s1">&#39;class=&quot;{filter} {filter_class}&quot;&gt; {filter_name}&#39;</span><span class="o">+</span>
@@ -219,6 +216,27 @@
             <span class="nx">validator</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">,</span><span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateSource</span><span class="o">(</span><span class="nx">k</span><span class="o">,</span><span class="nx">v</span><span class="o">);</span>
             <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Maximum number of entries to store in the message cache.  Use this to</span>
+<span class="c">         * limit the memory footprint in environments with heavy log usage.</span>
+<span class="c">         * By default, there is no limit (Number.POSITIVE_INFINITY).</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute cacheLimit</span>
+<span class="c">         * @type {Number}</span>
+<span class="c">         * @default Number.POSITIVE_INFINITY</span>
+<span class="c">         */</span>
+        <span class="nx">cacheLimit</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="nb">Number</span><span class="o">.</span><span class="nx">POSITIVE_INFINITY</span><span class="o">,</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_cacheLimit</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+                    <span class="k">return</span> <span class="nx">v</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">INVALID_VALUE</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">}</span>
 <span class="o">});</span>
@@ -236,6 +254,8 @@
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_entries</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+
+    <span class="nx">_cacheLimit</span> <span class="o">:</span> <span class="nb">Number</span><span class="o">.</span><span class="nx">POSITIVE_INFINITY</span><span class="o">,</span>
 
     <span class="c">/**</span>
 <span class="c">     * The container node created to house the category filters.</span>
@@ -260,6 +280,7 @@
 <span class="c">     * methods.</span>
 <span class="c">     *</span>
 <span class="c">     * @method initializer</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">initializer</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_entries</span> <span class="o">=</span> <span class="o">[];</span>
@@ -277,12 +298,15 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">syncUI</span><span class="o">();</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">bindUI</span><span class="o">();</span>
         <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;cacheLimitChange&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterCacheLimitChange</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
 <span class="c">     * Removes the plugin UI and unwires events.</span>
 <span class="c">     *</span>
 <span class="c">     * @method destructor</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">destructor</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="c">//TODO: grab last {consoleLimit} entries and update the console with</span>
@@ -301,6 +325,7 @@
 <span class="c">     * Adds the category and source filter sections to the Console footer.</span>
 <span class="c">     *</span>
 <span class="c">     * @method renderUI</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">renderUI</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">foot</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;contentBox&#39;</span><span class="o">).</span><span class="nx">query</span><span class="o">(</span><span class="nx">C_FOOT</span><span class="o">),</span>
@@ -326,6 +351,7 @@
 <span class="c">     * maintain the UI state.</span>
 <span class="c">     *</span>
 <span class="c">     * @method bindUI</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">bindUI</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_categories</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;click&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_onCategoryCheckboxClick</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
@@ -365,12 +391,17 @@
 <span class="c">     */</span>
     <span class="nx">_onEntry</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_entries</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">message</span><span class="o">);</span>
-
+        
         <span class="k">var</span> <span class="nx">cat</span> <span class="o">=</span> <span class="nx">CATEGORY_DOT</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">message</span><span class="o">.</span><span class="nx">category</span><span class="o">,</span>
             <span class="nx">src</span> <span class="o">=</span> <span class="nx">SOURCE_DOT</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">message</span><span class="o">.</span><span class="nx">source</span><span class="o">,</span>
             <span class="nx">cat_filter</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">cat</span><span class="o">),</span>
             <span class="nx">src_filter</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">src</span><span class="o">),</span>
+            <span class="nx">overLimit</span>  <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_entries</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">_cacheLimit</span><span class="o">,</span>
             <span class="nx">visible</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">overLimit</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_entries</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">overLimit</span><span class="o">);</span>
+        <span class="o">}</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">cat_filter</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">visible</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DEF_VISIBILITY</span><span class="o">);</span>
@@ -479,6 +510,23 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
+<span class="c">     * Trims the cache of entries to the appropriate new length.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterCacheLimitChange </span>
+<span class="c">     * @param e {Event} the attribute change event object</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_afterCacheLimitChange</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nb">isFinite</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">delta</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_entries</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">delta</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_entries</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">0</span><span class="o">,</span><span class="nx">delta</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
 <span class="c">     * Repopulates the Console with entries appropriate to the current filter</span>
 <span class="c">     * settings.</span>
 <span class="c">     *</span>
@@ -497,7 +545,7 @@
         <span class="k">if</span> <span class="o">(</span><span class="nx">body</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">host</span><span class="o">.</span><span class="nx">_cancelPrintLoop</span><span class="o">();</span>
 
-            <span class="c">// Capture from bottom up.  Entry order reversed.</span>
+            <span class="c">// Evaluate all entries from latest to oldest</span>
 <span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">entries</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> <span class="nx">remaining</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="o">--</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">e</span> <span class="o">=</span> <span class="nx">entries</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">cats</span><span class="o">[</span><span class="nx">e</span><span class="o">.</span><span class="nx">category</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">srcs</span><span class="o">[</span><span class="nx">e</span><span class="o">.</span><span class="nx">source</span><span class="o">])</span> <span class="o">{</span>
@@ -548,8 +596,9 @@
     <span class="c">/**</span>
 <span class="c">     * Passes checkbox clicks on to the category attribute.</span>
 <span class="c">     *</span>
-<span class="c">     * @metho _onCategoryCheckboxClick</span>
+<span class="c">     * @method _onCategoryCheckboxClick</span>
 <span class="c">     * @param e {Event} the DOM event</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_onCategoryCheckboxClick</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span> <span class="nx">cat</span><span class="o">;</span>
@@ -567,6 +616,7 @@
 <span class="c">     *</span>
 <span class="c">     * @method _onSourceCheckboxClick</span>
 <span class="c">     * @param e {Event} the DOM event</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_onSourceCheckboxClick</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span> <span class="nx">src</span><span class="o">;</span>
@@ -629,11 +679,11 @@
 
     <span class="c">/**</span>
 <span class="c">     * Shows any number of sources in the UI.  Convenience method for</span>
-<span class="c">     * myConsole.filter.set(&#39;category.foo&#39;, true); set(&#39;category.bar&#39;, true);</span>
+<span class="c">     * myConsole.filter.set(&#39;source.foo&#39;, true); set(&#39;source.bar&#39;, true);</span>
 <span class="c">     * and so on.</span>
 <span class="c">     *</span>
 <span class="c">     * @method showSource</span>
-<span class="c">     * @param cat* {String} 1..n sources to allow to display in the UI</span>
+<span class="c">     * @param src* {String} 1..n sources to allow to display in the UI</span>
 <span class="c">     */</span>
     <span class="nx">showSource</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">src</span><span class="o">,</span> <span class="nx">multiple</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">isString</span><span class="o">(</span><span class="nx">multiple</span><span class="o">))</span> <span class="o">{</span>
@@ -651,6 +701,7 @@
 <span class="c">     * @method _createCheckbox</span>
 <span class="c">     * @param container {Node} the parentNode of the new checkbox and label</span>
 <span class="c">     * @param name {String} the identifier of the filter</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_createCheckbox</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">container</span><span class="o">,</span> <span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">info</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">ConsoleFilters</span><span class="o">.</span><span class="nx">CHROME_CLASSES</span><span class="o">,</span> <span class="o">{</span>
@@ -670,7 +721,8 @@
 <span class="c">     * @method _validateCategory</span>
 <span class="c">     * @param cat {String} the new category:visibility map</span>
 <span class="c">     * @param v {String} the subattribute path updated</span>
-<span class="c">     * return Boolean</span>
+<span class="c">     * @return Boolean</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_validateCategory</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">cat</span><span class="o">,</span> <span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span><span class="kc">true</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">cat</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="sr">/\./</span><span class="o">).</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="m">3</span><span class="o">;</span>
@@ -683,7 +735,8 @@
 <span class="c">     * @method _validateSource</span>
 <span class="c">     * @param cat {String} the new source:visibility map</span>
 <span class="c">     * @param v {String} the subattribute path updated</span>
-<span class="c">     * return Boolean</span>
+<span class="c">     * @return Boolean</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_validateSource</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">src</span><span class="o">,</span> <span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span><span class="kc">true</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">src</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="sr">/\./</span><span class="o">).</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="m">3</span><span class="o">;</span>
@@ -693,6 +746,7 @@
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;Plugin&#39;</span><span class="o">).</span><span class="nx">ConsoleFilters</span> <span class="o">=</span> <span class="nx">ConsoleFilters</span><span class="o">;</span>
 </pre></div>
+
                     </div>
 			</div>
 		</div>
@@ -707,6 +761,7 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class="selected"><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -731,18 +786,16 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -756,8 +809,7 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="console.js.html" title="console.js">console.js</a></li>
-                                <li class="selected"><a href="filter.js.html" title="filter.js">filter.js</a></li>
+                                <li class="selected"><a href="console-filters.js.html" title="console-filters.js">console-filters.js</a></li>
                         </ul>
                     </div>
 
@@ -774,7 +826,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterCategoryChange", "url": "Plugin.ConsoleFilters.html#method__afterCategoryChange", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterClearConsole", "url": "Plugin.ConsoleFilters.html#method__afterClearConsole", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterSourceChange", "url": "Plugin.ConsoleFilters.html#method__afterSourceChange", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "bindUI", "url": "Plugin.ConsoleFilters.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_categories", "url": "Plugin.ConsoleFilters.html#property__categories", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "category", "url": "Plugin.ConsoleFilters.html#config_category", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "categoryChange", "url": "Plugin.ConsoleFilters.html#event_categoryChange", "type": "event"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.CATEGORIES_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.CATEGORIES_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.CHROME_CLASSES", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.FILTER_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.FILTER_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.NAME", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.NAME", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.NS", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.NS", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.SOURCES_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.SOURCES_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "_createCheckbox", "url": "Plugin.ConsoleFilters.html#method__createCheckbox", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "defaultVisibility", "url": "Plugin.ConsoleFilters.html#config_defaultVisibility", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "defaultVisibilityChange", "url": "Plugin.ConsoleFilters.html#event_defaultVisibilityChange", "type": "event"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "destructor", "url": "Plugin.ConsoleFilters.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_entries", "url": "Plugin.ConsoleFilters.html#property__entries", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_filterBuffer", "url": "Plugin.ConsoleFilters.html#method__filterBuffer", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "hideCategory", "url": "Plugin.ConsoleFilters.html#method_hideCategory", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "hideSource", "url": "Plugin.ConsoleFilters.html#method_hideSource", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "initializer", "url": "Plugin.ConsoleFilters.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "_onCategoryCheckboxClick", "url": "Plugin.ConsoleFilters.html#method__onCategoryCheckboxClick", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_onEntry", "url": "Plugin.ConsoleFilters.html#method__onEntry", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "_onSourceCheckboxClick", "url": "Plugin.ConsoleFilters.html#method__onSourceCheckboxClick", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "refreshConsole", "url": "Plugin.ConsoleFilters.html#method_refreshConsole", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "renderUI", "url": "Plugin.ConsoleFilters.html#method_renderUI", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "showCategory", "url": "Plugin.ConsoleFilters.html#method_showCategory", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "showSource", "url": "Plugin.ConsoleFilters.html#method_showSource", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "source", "url": "Plugin.ConsoleFilters.html#config_source", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "sourceChange", "url": "Plugin.ConsoleFilters.html#event_sourceChange", "type": "event"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_sources", "url": "Plugin.ConsoleFilters.html#property__sources", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "syncUI", "url": "Plugin.ConsoleFilters.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_uiSetCheckbox", "url": "Plugin.ConsoleFilters.html#method__uiSetCheckbox", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "_validateCategory", "url": "Plugin.ConsoleFilters.html#method__validateCategory", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "_validateSource", "url": "Plugin.ConsoleFilters.html#method__validateSource", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterCacheLimitChange", "url": "Plugin.ConsoleFilters.html#method__afterCacheLimitChange", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterCategoryChange", "url": "Plugin.ConsoleFilters.html#method__afterCategoryChange", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterClearConsole", "url": "Plugin.ConsoleFilters.html#method__afterClearConsole", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_afterSourceChange", "url": "Plugin.ConsoleFilters.html#method__afterSourceChange", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "bindUI", "url": "Plugin.ConsoleFilters.html#method_bindUI", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "cacheLimit", "url": "Plugin.ConsoleFilters.html#config_cacheLimit", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "cacheLimitChange", "url": "Plugin.ConsoleFilters.html#event_cacheLimitChange", "type": "event"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_categories", "url": "Plugin.ConsoleFilters.html#property__categories", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "category", "url": "Plugin.ConsoleFilters.html#config_category", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "categoryChange", "url": "Plugin.ConsoleFilters.html#event_categoryChange", "type": "event"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.CATEGORIES_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.CATEGORIES_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.CHROME_CLASSES", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.FILTER_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.FILTER_TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.NAME", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.NAME", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.NS", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.NS", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "ConsoleFilters.SOURCES_TEMPLATE", "url": "Plugin.ConsoleFilters.html#property_ConsoleFilters.SOURCES_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_createCheckbox", "url": "Plugin.ConsoleFilters.html#method__createCheckbox", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "defaultVisibility", "url": "Plugin.ConsoleFilters.html#config_defaultVisibility", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "defaultVisibilityChange", "url": "Plugin.ConsoleFilters.html#event_defaultVisibilityChange", "type": "event"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "destructor", "url": "Plugin.ConsoleFilters.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_entries", "url": "Plugin.ConsoleFilters.html#property__entries", "type": "property"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_filterBuffer", "url": "Plugin.ConsoleFilters.html#method__filterBuffer", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "hideCategory", "url": "Plugin.ConsoleFilters.html#method_hideCategory", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "hideSource", "url": "Plugin.ConsoleFilters.html#method_hideSource", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "initializer", "url": "Plugin.ConsoleFilters.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_onCategoryCheckboxClick", "url": "Plugin.ConsoleFilters.html#method__onCategoryCheckboxClick", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_onEntry", "url": "Plugin.ConsoleFilters.html#method__onEntry", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_onSourceCheckboxClick", "url": "Plugin.ConsoleFilters.html#method__onSourceCheckboxClick", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "refreshConsole", "url": "Plugin.ConsoleFilters.html#method_refreshConsole", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "renderUI", "url": "Plugin.ConsoleFilters.html#method_renderUI", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "showCategory", "url": "Plugin.ConsoleFilters.html#method_showCategory", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "showSource", "url": "Plugin.ConsoleFilters.html#method_showSource", "type": "method"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "source", "url": "Plugin.ConsoleFilters.html#config_source", "type": "config"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "sourceChange", "url": "Plugin.ConsoleFilters.html#event_sourceChange", "type": "event"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_sources", "url": "Plugin.ConsoleFilters.html#property__sources", "type": "property"}, {"access": "", "host": "Plugin.ConsoleFilters", "name": "syncUI", "url": "Plugin.ConsoleFilters.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_uiSetCheckbox", "url": "Plugin.ConsoleFilters.html#method__uiSetCheckbox", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_validateCategory", "url": "Plugin.ConsoleFilters.html#method__validateCategory", "type": "method"}, {"access": "protected", "host": "Plugin.ConsoleFilters", "name": "_validateSource", "url": "Plugin.ConsoleFilters.html#method__validateSource", "type": "method"}];
 </script>
 </body>
 </html>

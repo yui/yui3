@@ -1,14 +1,12 @@
 /**
  * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.
- * @module selector
- * @title Selector Utility
- * @requires yahoo, dom
+ * @module dom
+ * @submodule selector-css2
+ * @for Selector
  */
 
 /**
  * Provides helper methods for collecting and filtering DOM elements.
- * @class Selector
- * @static
  */
 
 var PARENT_NODE = 'parentNode',
@@ -285,7 +283,7 @@ var PARENT_NODE = 'parentNode',
                         test = Selector._getRegExp(test.replace('{val}', val));
                     }
                     
-                    if (match[1] === 'id' && val) { // store ID for fast-path match
+                    if (match[1] === 'id' && operator === '=' &&  val) { // store ID for fast-path match
                         token.id = val;
                         token.prefilter = function(root) {
                             var doc = root.nodeType === 9 ? root : root.ownerDocument,

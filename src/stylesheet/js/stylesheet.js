@@ -1,6 +1,6 @@
 /**
- * The StyleSheet component is a utility for managing css rules at the
- * stylesheet level
+ * The StyleSheet component is a module for creating and modifying CSS
+ * stylesheets.
  *
  * @module stylesheet
  */
@@ -18,17 +18,15 @@ var d      = Y.config.doc,
     FLOAT   = 'float',
     EMPTY   = '';
 
-/*
- * Normalizes the removal of an assigned style for opacity.  IE uses the filter property.
- */
+// Normalizes the removal of an assigned style for opacity.  IE uses the filter
+// property.
 _unsetOpacity = (OPACITY in workerStyle) ?
     function (style) { style.opacity = EMPTY; } :
     function (style) { style.filter = EMPTY; };
         
-/*
- * Normalizes the removal of an assigned style for a given property.  Expands
- * shortcut properties if necessary and handles the various names for the float property.
- */
+// Normalizes the removal of an assigned style for a given property.  Expands
+// shortcut properties if necessary and handles the various names for the float
+// property.
 workerStyle.border = "1px solid red";
 workerStyle.border = EMPTY; // IE doesn't unset child properties
 _unsetProperty = workerStyle.borderLeft ?
@@ -101,7 +99,7 @@ _unsetProperty = workerStyle.borderLeft ?
  * @constructor
  * @param seed {String|HTMLElement|Node} a style or link node, its id, or a
  *              name or guid of a StyleSheet, or a string of css text
- * @param name {String} OPTIONAL name to register instance for future static
+ * @param name {String} (optional) name to register instance for future static
  *              access
  */
 function StyleSheet(seed, name) {
@@ -230,7 +228,7 @@ function StyleSheet(seed, name) {
          * Enable all the rules in the sheet
          *
          * @method enable
-         * @return {StyleSheet} the instance
+         * @return {StyleSheet}
          * @chainable
          */
         enable : function () { sheet.disabled = false; return this; },
@@ -240,16 +238,16 @@ function StyleSheet(seed, name) {
          * StyleSheet is disabled.
          *
          * @method disable
-         * @return {StyleSheet} the instance
+         * @return {StyleSheet}
          * @chainable
          */
         disable : function () { sheet.disabled = true; return this; },
 
         /**
-         * Returns boolean indicating whether the StyleSheet is enabled
+         * Returns false if the StyleSheet is disabled.  Otherwise true.
          *
          * @method isEnabled
-         * @return {Boolean} is it enabled?
+         * @return {Boolean}
          */
         isEnabled : function () { return !sheet.disabled; },
 
@@ -268,7 +266,7 @@ function StyleSheet(seed, name) {
          * @method set
          * @param sel {String} the selector string to apply the changes to
          * @param css {Object} Object literal of style properties and new values
-         * @return {StyleSheet} the StyleSheet instance
+         * @return {StyleSheet}
          * @chainable
          */
         set : function (sel,css) {
@@ -322,7 +320,7 @@ function StyleSheet(seed, name) {
          * remaining in the rule after unsetting, the rule is removed.</p>
          *
          * <p>The style property or properties in the second parameter must be the
-         * <p>JavaScript style property names. E.g. fontSize rather than font-size.</p>
+         * JavaScript style property names. E.g. fontSize rather than font-size.</p>
          *
          * <p>The float style property will be unset by any of &quot;float&quot;,
          * &quot;styleFloat&quot;, or &quot;cssFloat&quot;.</p>
@@ -330,7 +328,7 @@ function StyleSheet(seed, name) {
          * @method unset
          * @param sel {String} the selector string to apply the changes to
          * @param css {String|Array} style property name or Array of names
-         * @return {StyleSheet} the StyleSheet instance
+         * @return {StyleSheet}
          * @chainable
          */
         unset : function (sel,css) {
@@ -454,7 +452,7 @@ Y.mix(StyleSheet, {
      *
      * @method StyleSheet.toCssText
      * @param css {Object} object literal of style properties and values
-     * @param cssText {String} OPTIONAL starting cssText value
+     * @param cssText {String} (optional) starting cssText value
      * @return {String} the resulting cssText string
      * @static
      */

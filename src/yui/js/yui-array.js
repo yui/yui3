@@ -1,14 +1,18 @@
-(function() {
-/**
- * YUI core
+
+/*
+ * Provides information about the environment hosting YUI
  * @module yui
+ * @submodule Array
  */
+
+(function() {
 
 var L = Y.Lang, Native = Array.prototype,
 
 /**
- * Adds the following array utilities to the YUI instance
- * @class YUI~array
+ * Adds the following array utilities to the YUI instance.  Additional
+ * array helpers can be found in the collection component.
+ * @class Array
  */
 
 /** 
@@ -23,7 +27,7 @@ var L = Y.Lang, Native = Array.prototype,
  *   such as forms and selects.  Passing true as the third param will
  *   force a conversion.
  *
- * @method Array
+ * @method ()
  * @static
  *   @param o the item to arrayify
  *   @param i {int} if an array or array-like, this is the start index
@@ -67,7 +71,7 @@ Y.Array = YArray;
  * something else.  This is used to handle the arguments collection 
  * available within functions, and HTMLElement collections
  *
- * @method Array.test
+ * @method test
  * @static
  *
  * @todo current implementation (intenionally) will not implicitly 
@@ -99,7 +103,7 @@ YArray.test = function(o) {
 
 /**
  * Executes the supplied function on each item in the array.
- * @method Array.each
+ * @method each
  * @param a {Array} the array to iterate
  * @param f {Function} the function to execute on each item
  * @param o Optional context object
@@ -123,7 +127,7 @@ YArray.each = (Native.forEach) ?
  * Returns an object using the first array as keys, and
  * the second as values.  If the second array is not
  * provided the value is set to true for each.
- * @method Array.hash
+ * @method hash
  * @static
  * @param k {Array} keyset
  * @param v {Array} optional valueset
@@ -142,7 +146,7 @@ YArray.hash = function(k, v) {
  * Returns the index of the first item in the array
  * that contains the specified value, -1 if the
  * value isn't found.
- * @method Array.indexOf
+ * @method indexOf
  * @static
  * @param a {Array} the array to search
  * @param val the value to search for
@@ -150,7 +154,7 @@ YArray.hash = function(k, v) {
  */
 YArray.indexOf = (Native.indexOf) ?
     function(a, val) {
-        return a.indexOf(val);
+        return Native.indexOf.call(a, val);
     } :
     function(a, val) {
         for (var i=0; i<a.length; i=i+1) {
@@ -176,7 +180,7 @@ YArray.numericSort = function(a, b) {
  * Returning true from the processing function will stop the 
  * processing of the remaining
  * items.
- * @method Array.some
+ * @method some
  * @param a {Array} the array to iterate
  * @param f {Function} the function to execute on each item
  * @param o Optional context object

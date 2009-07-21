@@ -1,6 +1,5 @@
 /**
  * Aria support for Node
- *
  * @module node
  * @submodule node-aria
  */

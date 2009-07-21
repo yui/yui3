@@ -9,7 +9,7 @@ YUI Custom Events
       are in effect, after listeners), although this is still possible
       by added either Y or Y.Global as event targets.
     - Moved custom event out of event package
-    - Event.Target accepts a prefix configuration.  This is used
+    - EventTarget accepts a prefix configuration.  This is used
       in all exposed methods to handle shortcuts to event names,
       e.g., 'click' and 'menu:click' are the same if the prefix
       is 'menu'

@@ -1,14 +1,14 @@
 YUI.add('datasource-io', function(Y) {
 
 /**
- * The DataSource utility provides a common configurable interface for widgets to
- * access a variety of data, from JavaScript arrays to online database servers.
+ * Provides a DataSource implementation which can be used to retrieve data via the IO Utility.
  *
  * @module datasource
+ * @submodule datasource-io
  */
-    
+
 /**
- * IO subclass for the YUI DataSource utility.
+ * IO subclass for the DataSource Utility.
  * @class DataSource.IO
  * @extends DataSource.Local
  * @constructor

@@ -91,8 +91,8 @@ button {
         <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
     </div>
     <div id="doc" class="doc-wrap">
-        <a href="http://www.yahoo.com" id="link-1">Yahoo!</a>
-        <a href="http://www.yahoo.com" id="link-2" tabIndex="-1">Yahoo!</a>
+        <a href="http://www.yahoo.com/foo" id="link-1">Yahoo!</a>
+        <a href="foo.html" id="link-2" tabIndex="-1">foo</a>
         <form id="test-form" class="test-class" action="#">
             <input name="test-text-value" value="text value">
             <input name="test-text-novalue">
@@ -411,8 +411,9 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.areEqual('inserted node', node.appendChild(Y.get(insertNode)).get('innerHTML'), 'appendChild(Node input)');
             Assert.areEqual('inserted node', node.removeChild(Y.get(insertNode)).get('innerHTML'), 'removeChild(Node input)');
 
-            Assert.areEqual(1, node.cloneNode().get('nodeType'), 'cloneNode()');
-            Assert.isFalse(node === node.cloneNode(), 'node === node.cloneNode()');
+            var clone = node.cloneNode();
+            Assert.isFalse(node === clone, 'node === node.cloneNode()');
+            Assert.areEqual(1, clone.get('nodeType'), 'cloneNode()');
 
             // TODO: test deep clone with bound descendant
             Assert.isTrue(node.get('childNodes').size() === node.cloneNode(true).get('childNodes').size(), 'node.get("childNodes").size() === node.cloneNode(true).get("childNodes").size()');
@@ -457,6 +458,9 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
             Assert.areEqual('0', Y.get('select[name=test-select] option:nth-child(1)').getAttribute('value'), 'option1.getAttribute("value") (from innerText)');
             Assert.areEqual('1', Y.get('select[name=test-select] option:nth-child(2)').getAttribute('value'), 'option2.getAttribute("value") (from innerText)');
             Assert.areEqual('', Y.get('select[name=test-select] option:nth-child(3)').getAttribute('value'), 'option3.getAttribute("value") (from innerText)');
+
+            Assert.areEqual('http://www.yahoo.com/foo', Y.get('#link-1').getAttribute('href'), "Y.get('#link1').getAttribute('href')");
+            Assert.areEqual('foo.html', Y.get('#link-2').getAttribute('href'), "Y.get('#link1').getAttribute('href')");
         },
 
         test_fragment: function() {
@@ -591,19 +595,6 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
                 'right': '10em'
             });
             Assert.isTrue( (node.style.top == '5px' && node.style.right == '10em'), "setStyles()");
-       },
-
-        test_rootNode: function() {
-            var element = byId('test-prop');
-            var node = Y.Node.get(element, null, true);
-            Assert.isNull(Y.get('body', null, true).get('parentNode'), "Y.get('body', null, true).get('parentNode')");
-            Assert.isNull(node.get('parentNode'), "node.get('parentNode')");
-            Assert.isNull(node.get('offsetParent'), "node.get('offsetParent')");
-            Assert.isNull(node.get('previousSibling'), "node.get('previousSibling')");
-            Assert.isNull(node.get('previousSibling'), "node.get('previousSibling')");
-
-            Assert.isTrue(node.get('firstChild').compareTo(element.firstChild), "node.firstChild() (is textNode)");
-            Assert.isTrue(node.get('lastChild').compareTo(element.lastChild), "node.lastChild()");
         },
 
         test_selector: function() {
@@ -672,11 +663,6 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
                 Y.DOM.byId('test-insert-html').innerHTML,
                 "Y.get('#test-insert-html').prepend('<em>baz</em>')");
 
-            Y.get('#test-insert-html').prepend('<sc' + 'ript>var test_inject = "script injected";</sc' + 'ript>');
-            Assert.areEqual('script injected', test_inject, "Y.get('#test-insert-html').prepend('<sc' + 'ript>var test_inject = 'script injected';</sc' + 'ript>'");
-
-
-            
             var html = '<strong>baz</strong>';
             Y.get('#test-insert-html').setContent(html);
             Assert.areEqual(html,

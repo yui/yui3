@@ -4,14 +4,24 @@
  *
  * @module datasource
  */
-var LANG = Y.Lang,
     
 /**
- * Base class for the YUI DataSource utility.
+ * Provides the base DataSource implementation, which can be extended to
+ * create DataSources for specific data protocols, such as the IO Utility, the
+ * Get Utility, or custom functions.
+ *
+ * @module datasource
+ * @submodule datasource-local
+ */
+
+/**
+ * Base class for the DataSource Utility.
  * @class DataSource.Local
  * @extends Base
  * @constructor
  */    
+var LANG = Y.Lang,
+
 DSLocal = function() {
     DSLocal.superclass.constructor.apply(this, arguments);
 };

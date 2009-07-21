@@ -432,7 +432,10 @@ Y.DOM = {
      * @param {HTMLDocument} doc An optional document context 
      */
     create: function(html, doc) {
-        html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
+        if (typeof html === 'string') {
+            html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
+        }
+
         if (!doc && Y.DOM._cloneCache[html]) {
             return Y.DOM._cloneCache[html].cloneNode(true); // NOTE: return
         }
@@ -482,10 +485,10 @@ Y.DOM = {
      * @param {String} attr The attribute to set.
      * @param {String} val The value of the attribute.
      */
-    setAttribute: function(el, attr, val) {
+    setAttribute: function(el, attr, val, ieAttr) {
         if (el && el.setAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-            el.setAttribute(attr, val);
+            el.setAttribute(attr, val, ieAttr);
         }
     },
 
@@ -497,11 +500,12 @@ Y.DOM = {
      * @param {String} attr The attribute to get.
      * @return {String} The current value of the attribute. 
      */
-    getAttribute: function(el, attr) {
+    getAttribute: function(el, attr, ieAttr) {
+        ieAttr = (ieAttr !== undefined) ? ieAttr : 2;
         var ret = '';
         if (el && el.getAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-            ret = el.getAttribute(attr, 2);
+            ret = el.getAttribute(attr, ieAttr);
 
             if (ret === null) {
                 ret = ''; // per DOM spec
@@ -550,10 +554,19 @@ Y.DOM = {
 
     _cloneCache: {},
 
-    addHTML: function(node, content, where, execScripts) {
-        content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
-        var scripts,
-            newNode = Y.DOM._cloneCache[content];
+    /**
+     * Inserts content in a node at the given location 
+     * @method addHTML
+     * @param {HTMLElement} node The node to insert into
+     * @param {String} content The content to be inserted 
+     * @param {String} where Where to insert the content; default is after lastChild 
+     */
+    addHTML: function(node, content, where) {
+        if (typeof content === 'string') {
+            content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
+        }
+
+        var newNode = Y.DOM._cloneCache[content];
             
         if (newNode) {
             newNode = newNode.cloneNode(true);
@@ -593,17 +606,6 @@ Y.DOM = {
             }
         } else {
             node.appendChild(newNode);
-        }
-
-        if (execScripts) {
-            if (newNode.tagName.toUpperCase() === 'SCRIPT' && !Y.UA.gecko) {
-                scripts = [newNode]; // execute the new script
-            } else {
-                scripts = newNode.getElementsByTagName('script');
-            }
-            Y.DOM._execScripts(scripts);
-        } else if (content.nodeType || (content.indexOf && content.indexOf('<script') > -1)) { // prevent any scripts from being injected
-            Y.DOM._stripScripts(newNode);
         }
 
         return newNode;
@@ -923,15 +925,6 @@ Y.DOM = {
 })(Y);
 
 })(Y);
-/** 
- * The DOM utility provides a cross-browser abtraction layer
- * normalizing DOM tasks, and adds extra helper functionality
- * for other common tasks. 
- * @module dom
- * @submodule dom-base
- * @for DOM
- */
-
 Y.mix(Y.DOM, {
     /**
      * Determines whether a DOM element has the given className.
@@ -1160,13 +1153,6 @@ if (Y.UA.webkit) {
 }
 })(Y);
 (function(Y) {
-/**
- * Add style management functionality to DOM.
- * @module dom
- * @submodule dom-style
- * @for DOM
- */
-
 var TO_STRING = 'toString',
     PARSE_INT = parseInt,
     RE = RegExp;
@@ -1238,13 +1224,6 @@ Y.Color = {
 })(Y);
 
 (function(Y) {
-/**
- * Add style management functionality to DOM.
- * @module dom
- * @submodule dom-style
- * @for DOM
- */
-
 var CLIENT_TOP = 'clientTop',
     CLIENT_LEFT = 'clientLeft',
     HAS_LAYOUT = 'hasLayout',
@@ -1465,7 +1444,8 @@ try {
 } catch(e) { // IE throws error on invalid style set; trap common cases
     Y.DOM.CUSTOM_STYLES.height = {
         set: function(node, val, style) {
-            if (parseInt(val, 10) >= 0) {
+            var floatVal = parseFloat(val);
+            if (isNaN(floatVal) || floatVal >= 0) {
                 style.height = val;
             } else {
             }
@@ -1474,7 +1454,8 @@ try {
 
     Y.DOM.CUSTOM_STYLES.width = {
         set: function(node, val, style) {
-            if (parseInt(val, 10) >= 0) {
+            var floatVal = parseFloat(val);
+            if (isNaN(floatVal) || floatVal >= 0) {
                 style.width = val;
             } else {
             }
@@ -1544,7 +1525,7 @@ Y.mix(Y.DOM, {
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
      * @method winHeight
-
+     * @return {Number} The current height of the viewport.
      */
     winHeight: function(node) {
         var h = Y.DOM._getWinSize(node).height;
@@ -1554,7 +1535,7 @@ Y.mix(Y.DOM, {
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
      * @method winWidth
-
+     * @return {Number} The current width of the viewport.
      */
     winWidth: function(node) {
         var w = Y.DOM._getWinSize(node).width;
@@ -1564,7 +1545,7 @@ Y.mix(Y.DOM, {
     /**
      * Document height 
      * @method docHeight
-
+     * @return {Number} The current height of the document.
      */
     docHeight:  function(node) {
         var h = Y.DOM._getDocSize(node).height;
@@ -1574,6 +1555,7 @@ Y.mix(Y.DOM, {
     /**
      * Document width 
      * @method docWidth
+     * @return {Number} The current width of the document.
      */
     docWidth:  function(node) {
         var w = Y.DOM._getDocSize(node).width;
@@ -1581,8 +1563,9 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Amount page has been scroll vertically 
+     * Amount page has been scroll horizontally 
      * @method docScrollX
+     * @return {Number} The current amount the screen is scrolled horizontally.
      */
     docScrollX: function(node) {
         var doc = Y.DOM._getDoc(node);
@@ -1590,8 +1573,9 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Amount page has been scroll horizontally 
+     * Amount page has been scroll vertically 
      * @method docScrollY
+     * @return {Number} The current amount the screen is scrolled vertically.
      */
     docScrollY:  function(node) {
         var doc = Y.DOM._getDoc(node);
@@ -1606,7 +1590,7 @@ Y.mix(Y.DOM, {
      * @param element The target element
      * @return {Array} The XY position of the element
 
-     TODO: test inDocument/display
+     TODO: test inDocument/display?
      */
     getXY: function() {
         if (document[DOCUMENT_ELEMENT][GET_BOUNDING_CLIENT_RECT]) {
@@ -1897,13 +1881,6 @@ Y.mix(Y.DOM, {
 });
 })(Y);
 (function(Y) {
-/**
- * Adds position and region management functionality to DOM.
- * @module dom
- * @submodule dom-screen
- * @for DOM
- */
-
 var TOP = 'top',
     RIGHT = 'right',
     BOTTOM = 'bottom',
@@ -2075,16 +2052,20 @@ Y.mix(DOM, {
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'dom-style'], skinnable:false});
-YUI.add('selector', function(Y) {
+YUI.add('selector-native', function(Y) {
 
 (function(Y) {
 /**
  * The selector-native module provides support for native querySelector
- * @module selector-native
+ * @module dom
+ * @submodule selector-native
+ * @for Selector
  */
 
 /**
- * Provides a wrapper for native querySelectorAll 
+ * Provides support for using CSS selectors to query the DOM 
+ * @class Selector 
+ * @static
  * @for Selector
  */
 
@@ -2278,17 +2259,20 @@ Y.Selector.test = NativeSelector._test;
 Y.Selector.filter = NativeSelector._filter;
 
 })(Y);
+
+
+}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+YUI.add('selector-css2', function(Y) {
+
 /**
  * The selector module provides helper methods allowing CSS2 Selectors to be used with DOM elements.
- * @module selector
- * @title Selector Utility
- * @requires yahoo, dom
+ * @module dom
+ * @submodule selector-css2
+ * @for Selector
  */
 
 /**
  * Provides helper methods for collecting and filtering DOM elements.
- * @class Selector
- * @static
  */
 
 var PARENT_NODE = 'parentNode',
@@ -2564,7 +2548,7 @@ var PARENT_NODE = 'parentNode',
                         test = Selector._getRegExp(test.replace('{val}', val));
                     }
                     
-                    if (match[1] === 'id' && val) { // store ID for fast-path match
+                    if (match[1] === 'id' && operator === '=' &&  val) { // store ID for fast-path match
                         token.id = val;
                         token.prefilter = function(root) {
                             var doc = root.nodeType === 9 ? root : root.ownerDocument,
@@ -2710,8 +2694,8 @@ if (!Y.Selector._supportsNative()) {
 }
 
 
-}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+}, '@VERSION@' ,{requires:['selector-native'], skinnable:false});
 
 
-YUI.add('dom', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dom-base', 'dom-style', 'dom-screen', 'selector']});
+YUI.add('dom', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dom-base', 'dom-style', 'dom-screen', 'selector-native', 'selector-css2']});
 

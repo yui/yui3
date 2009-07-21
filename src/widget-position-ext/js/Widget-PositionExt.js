@@ -29,7 +29,7 @@
          * @param {Object} User configuration object
          */
         function PositionExt(config) {
-            if (!this.hasImpl(Y.WidgetPosition) || !this._posNode) {
+            if (!this._posNode) {
                 Y.error("WidgetPosition needs to be added to the Widget, before WidgetPositionExt is added"); 
             }
             Y.after(this._syncUIPosExtras, this, SYNCUI);
@@ -229,7 +229,7 @@
              * 
              * @method _afterAlignChange
              * @protected
-             * @param {Event.Facade} e The event facade for the attribute change
+             * @param {EventFacade} e The event facade for the attribute change
              */
             _afterAlignChange : function(e) {
                 if (e.newVal) {

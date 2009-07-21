@@ -1,8 +1,9 @@
 YUI.add('io-base', function(Y) {
 
    /**
-   	* HTTP communications module.
+   	* Base IO functionality. Provides basic XHR transport support.
    	* @module io
+   	* @submodule io-base
    	*/
 
    /**
@@ -230,7 +231,7 @@ YUI.add('io-base', function(Y) {
    		/* End Configuration Properties */
 
    		o.c.onreadystatechange = function() { _readyState(o, c); };
-   		try { _open(o.c, m, uri); } catch (e0) {}
+   		try { _open(o.c, m, uri); } catch(e0) {}
    		_setHeaders(o.c, (c.headers || {}));
 
    		// Do not pass null, in the absence of data, as this
@@ -274,14 +275,15 @@ YUI.add('io-base', function(Y) {
    	*/
    	function _ioStart(id, c) {
    		var m = Y.io._fn || {},
-   			fn = (m && m[id]) ? m[id] : null,
+   			fn = m[id] ? m[id] : null,
    			event;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
    		if (fn) {
-   			c.on.start = fn.start;
+   			c.on.start = fn.on.start;
+   			c.arguments = fn.arguments;
    		}
 
    		Y.fire(E_START, id);
@@ -336,15 +338,16 @@ YUI.add('io-base', function(Y) {
    	*/
    	function _ioSuccess(o, c) {
    		var m = Y.io._fn || {},
-   			fn = (m && m[o.id]) ? m[o.id] : null,
+   			fn = m[o.id] ? m[o.id] : null,
    			event;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
    		if (fn) {
-   			c.on.success = fn.success;
-   			//Decode the response from IO.swf
+   			c.on.success = fn.on.success;
+   			c.arguments = fn.arguments;
+   			//Decode the response from io.swf
    			o.c.responseText = decodeURI(o.c.responseText);
    		}
 
@@ -373,15 +376,16 @@ YUI.add('io-base', function(Y) {
    	*/
    	function _ioFailure(o, c) {
    		var m = Y.io._fn || {},
-   			fn = (m && m[o.id]) ? m[o.id] : null,
+   			fn = m[o.id] ? m[o.id] : null,
    			r, event;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
    		if (fn) {
-   			c.on.failure = fn.failure;
-   			//Decode the response from IO.swf
+   			c.on.failure = fn.on.failure;
+   			c.arguments = fn.arguments;
+   			//Decode the response from io.swf
    			o.c.responseText = decodeURI(o.c.responseText);
    		}
 
@@ -411,14 +415,15 @@ YUI.add('io-base', function(Y) {
    	*/
    	function _ioEnd(o, c) {
    		var m = Y.io._fn || {},
-   			fn = (m && m[o.id]) ? m[o.id] : null,
+   			fn = m[o.id] ? m[o.id] : null,
    			event;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
    		if (fn) {
-   			c.on.end = fn.end;
+   			c.on.end = fn.on.end;
+   			c.arguments = fn.arguments;
    			delete m[o.id];
    		}
 
@@ -718,6 +723,7 @@ YUI.add('io-base', function(Y) {
    	}
 
    	_io.start = _ioStart;
+	_io.complete = _ioComplete;
    	_io.success = _ioSuccess;
    	_io.failure = _ioFailure;
    	_io.isInProgress = _isInProgress;
@@ -756,4 +762,4 @@ YUI.add('io-base', function(Y) {
 
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-custom']});

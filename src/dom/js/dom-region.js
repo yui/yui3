@@ -1,11 +1,4 @@
 (function(Y) {
-/**
- * Adds position and region management functionality to DOM.
- * @module dom
- * @submodule dom-screen
- * @for DOM
- */
-
 var TOP = 'top',
     RIGHT = 'right',
     BOTTOM = 'bottom',

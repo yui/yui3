@@ -12,7 +12,7 @@
 YUI({
     base : '../../../build/',
     filter : 'debug'
-}).use('queue','io-base', function (Y) {
+}).use('queue','io-base', 'node', function (Y) {
 
     function f(message) {
         document.getElementById('results').appendChild(
@@ -30,7 +30,7 @@ YUI({
     Y.get('#go').on('click', function () {
         var m = new MyObject("Message a go-go");
 
-        Y.Queue(null,//{ timeout : 10 },
+        Y.AsyncQueue(null,//{ timeout : 10 },
             f, // Default message
             f, // Default message
             {

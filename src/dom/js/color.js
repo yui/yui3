@@ -1,11 +1,4 @@
 (function(Y) {
-/**
- * Add style management functionality to DOM.
- * @module dom
- * @submodule dom-style
- * @for DOM
- */
-
 var TO_STRING = 'toString',
     PARSE_INT = parseInt,
     RE = RegExp;

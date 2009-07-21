@@ -1,3 +1,9 @@
+
+/*
+ * Provides information about the environment hosting YUI
+ * @module yui
+ * @submodule UA
+ */
 /**
  * YUI user agent detection.
  * Do not fork for a browser if it can be avoided.  Use feature detection when
@@ -13,7 +19,16 @@
  */
 Y.UA = function() {
 
-    var o={
+    var numberfy = function(s) {
+            var c = 0;
+            return parseFloat(s.replace(/\./g, function() {
+                return (c++ == 1) ? '' : '.';
+            }));
+        },
+    
+        nav = navigator,
+
+        o = {
 
         /**
          * Internet Explorer version number or 0.  Example: 6
@@ -21,7 +36,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        ie:0,
+        ie: 0,
 
         /**
          * Opera version number or 0.  Example: 9.2
@@ -29,7 +44,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        opera:0,
+        opera: 0,
 
         /**
          * Gecko engine revision number.  Will evaluate to 1 if Gecko 
@@ -45,7 +60,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        gecko:0,
+        gecko: 0,
 
         /**
          * AppleWebKit version.  KHTML browsers that are not WebKit browsers 
@@ -72,7 +87,7 @@ Y.UA = function() {
          * @type float
          * @static
          */
-        webkit:0,
+        webkit: 0,
 
         /**
          * The mobile property will be set to a string containing any relevant
@@ -98,7 +113,7 @@ Y.UA = function() {
          * @property caja
          * @type float
          */
-        caja: 0,
+        caja: nav.cajaVersion,
 
         /**
          * Set to true if the page appears to be in SSL
@@ -118,7 +133,7 @@ Y.UA = function() {
         
     },
 
-    ua = navigator && navigator.userAgent, 
+    ua = nav && nav.userAgent, 
 
     loc = Y.config.win.location,
 
@@ -130,9 +145,9 @@ Y.UA = function() {
 
     if (ua) {
 
-        if ((/windows|win32/).test(ua)) {
+        if ((/windows|win32/i).test(ua)) {
             o.os = 'windows';
-        } else if ((/macintosh/).test(ua)) {
+        } else if ((/macintosh/i).test(ua)) {
             o.os = 'macintosh';
         }
 
@@ -143,7 +158,7 @@ Y.UA = function() {
         // Modern WebKit browsers are at least X-Grade
         m=ua.match(/AppleWebKit\/([^\s]*)/);
         if (m&&m[1]) {
-            o.webkit=parseFloat(m[1]);
+            o.webkit=numberfy(m[1]);
 
             // Mobile browser check
             if (/ Mobile\//.test(ua)) {
@@ -166,7 +181,7 @@ Y.UA = function() {
             // @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)
             m=ua.match(/Opera[\s\/]([^\s]*)/);
             if (m&&m[1]) {
-                o.opera=parseFloat(m[1]);
+                o.opera=numberfy(m[1]);
                 m=ua.match(/Opera Mini[^;]*/);
                 if (m) {
                     o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
@@ -174,23 +189,18 @@ Y.UA = function() {
             } else { // not opera or webkit
                 m=ua.match(/MSIE\s([^;]*)/);
                 if (m&&m[1]) {
-                    o.ie=parseFloat(m[1]);
+                    o.ie=numberfy(m[1]);
                 } else { // not opera, webkit, or ie
                     m=ua.match(/Gecko\/([^\s]*)/);
                     if (m) {
                         o.gecko=1; // Gecko detected, look for revision
                         m=ua.match(/rv:([^\s\)]*)/);
                         if (m&&m[1]) {
-                            o.gecko=parseFloat(m[1]);
+                            o.gecko=numberfy(m[1]);
                         }
                     }
                 }
             }
-        }
-
-        m=ua.match(/Caja\/([^\s]*)/);
-        if (m&&m[1]) {
-            o.caja=parseFloat(m[1]);
         }
     }
     

@@ -2,16 +2,16 @@
 
 /**
  * Adds the following Object utilities to the YUI instance
- * @class YUI~object
+ * @class Object
  */
 
 /**
  * Y.Object(o) returns a new object based upon the supplied object.  
  * @TODO Use native Object.create() when available
- * @method Object
+ * @method ()
  * @static
  * @param o the supplier object
- * @return {object} the new object
+ * @return {Object} the new object
  */
 Y.Object = function(o) {
     var F = function() {};
@@ -30,6 +30,7 @@ UNDEFINED = undefined,
  * @param o the object
  * @param what what to extract (0: keys, 1: values, 2: size)
  * @return {boolean|Array} the extracted info
+ * @static
  * @private
  */
 _extract = function(o, what) {
@@ -51,7 +52,7 @@ _extract = function(o, what) {
 /**
  * Returns an array containing the object's keys
  * @TODO use native Object.keys() if available
- * @method Object.keys
+ * @method keys
  * @static
  * @param o an object
  * @return {string[]} the keys
@@ -63,7 +64,7 @@ O.keys = function(o) {
 /**
  * Returns an array containing the object's values
  * @TODO use native Object.values() if available
- * @method Object.values
+ * @method values
  * @static
  * @param o an object
  * @return {Array} the values
@@ -75,7 +76,7 @@ O.values = function(o) {
 /**
  * Returns the size of an object
  * @TODO use native Object.size() if available
- * @method Object.size
+ * @method size
  * @static
  * @param o an object
  * @return {int} the size
@@ -86,7 +87,7 @@ O.size = function(o) {
 
 /**
  * Returns true if the object contains a given key
- * @method Object.hasKey
+ * @method hasKey
  * @static
  * @param o an object
  * @param k the key to query
@@ -99,7 +100,7 @@ O.hasKey = function(o, k) {
 
 /**
  * Returns true if the object contains a given value
- * @method Object.hasValue
+ * @method hasValue
  * @static
  * @param o an object
  * @param v the value to query
@@ -120,7 +121,7 @@ O.hasValue = function(o, v) {
  *
  * @TODO Remove in B1
  *
- * @method Object.owns
+ * @method owns
  * @static
  * @param o {any} The object being testing
  * @param p {string} the property to look for
@@ -134,7 +135,7 @@ O.owns = function(o, k) {
  * Executes a function on each item. The function
  * receives the value, the key, and the object
  * as paramters (in that order).
- * @method Object.each
+ * @method each
  * @static
  * @param o the object to iterate
  * @param f {function} the function to execute

@@ -1,24 +1,34 @@
 YUI.add('json-parse', function(Y) {
 
 /**
- * The JSON Utility provides methods to serialize JavaScript objects into
- * JSON strings and parse JavaScript objects from strings containing JSON data.
- * Three modules are available for inclusion:
- * <ol>
- * <li>1. <code>json-parse</code> for parsing JSON strings into native JavaScript data</li>
- * <li>2. <code>json-stringify</code> for stringification of JavaScript objects into JSON strings</li>
- * <li>3. <code>json</code> for both parsing and stringification</li>
- * </ol>
+ * <p>The JSON module adds support for serializing JavaScript objects into
+ * JSON strings and parsing JavaScript objects from strings in JSON format.</p>
+ *
+ * <p>The JSON namespace is added to your YUI instance including static methods
+ * Y.JSON.parse(..) and Y.JSON.stringify(..).</p>
+ *
+ * <p>The functionality and method signatures follow the ECMAScript 5
+ * specification.  In browsers with native JSON support, the native
+ * implementation is used.</p>
+ *
+ * <p>The <code>json</code> module is a rollup of <code>json-parse</code> and
+ * <code>json-stringify</code>.</p>
  * 
- * Both <code>json-parse</code> and <code>json-stringify</code> create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).
+ * <p>As their names suggest, <code>json-parse</code> adds support for parsing
+ * JSON data (Y.JSON.parse) and <code>json-stringify</code> for serializing
+ * JavaScript data into JSON strings (Y.JSON.stringify).  You may choose to
+ * include either of the submodules individually if you don't need the
+ * complementary functionality, or include the rollup for both.</p>
+ *
  * @module json
  * @class JSON
  * @static
  */
 
 /**
- * Provides Y.JSON.parse method to take JSON strings and return native
+ * Provides Y.JSON.parse method to accept JSON strings and return native
  * JavaScript objects.
+ *
  * @module json
  * @submodule json-parse
  * @for JSON
@@ -29,7 +39,7 @@ YUI.add('json-parse', function(Y) {
 // All internals kept private for security reasons
 
 
-    /*
+    /**
      * Alias to native browser implementation of the JSON object if available.
      *
      * @property Native
@@ -44,6 +54,7 @@ var Native = Y.config.win.JSON,
      * endings--with escape sequences.
      * IMPORTANT NOTE: This regex will be used to modify the input if a match is
      * found.
+     *
      * @property _UNICODE_EXCEPTIONS
      * @type {RegExp}
      * @private
@@ -52,8 +63,9 @@ var Native = Y.config.win.JSON,
 
 
     /**
-     * First step in the validation.  Regex used to replace all escape
+     * First step in the safety evaluation.  Regex used to replace all escape
      * sequences (i.e. "\\", etc) with '@' characters (a non-JSON character).
+     *
      * @property _ESCAPES
      * @type {RegExp}
      * @private
@@ -61,8 +73,9 @@ var Native = Y.config.win.JSON,
     _ESCAPES = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,
 
     /**
-     * Second step in the validation.  Regex used to replace all simple
+     * Second step in the safety evaluation.  Regex used to replace all simple
      * values with ']' characters.
+     *
      * @property _VALUES
      * @type {RegExp}
      * @private
@@ -70,8 +83,10 @@ var Native = Y.config.win.JSON,
     _VALUES  = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
 
     /**
-     * Third step in the validation.  Regex used to remove all open square
-     * brackets following a colon, comma, or at the beginning of the string.
+     * Third step in the safety evaluation.  Regex used to remove all open
+     * square brackets following a colon, comma, or at the beginning of the
+     * string.
+     *
      * @property _BRACKETS
      * @type {RegExp}
      * @private
@@ -79,22 +94,24 @@ var Native = Y.config.win.JSON,
     _BRACKETS = /(?:^|:|,)(?:\s*\[)+/g,
 
     /**
-     * Final step in the validation.  Regex used to test the string left after
-     * all previous replacements for invalid characters.
-     * @property _INVALID
+     * Final step in the safety evaluation.  Regex used to test the string left
+     * after all previous replacements for invalid characters.
+     *
+     * @property _UNSAFE
      * @type {RegExp}
      * @private
      */
-    _INVALID = /[^\],:{}\s]/,
+    _UNSAFE = /[^\],:{}\s]/,
     
     /**
      * Test for JSON string of simple data string, number, boolean, or null.
      * E.g. '"some string"', "true", "false", "null", or numbers "-123e+7"
-     * Currently FireFox 3.1b2 JSON.parse requires object/array wrapped data
+     * This was needed for some WIP native implementations (FF3.1b2) but may be
+     * unnecessary now.
      *
      * @property _SIMPLE
      * @type {RegExp}
-     * @protected
+     * @private
      */
     _SIMPLE = /^\s*(?:"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)\s*$/,
 
@@ -117,6 +134,7 @@ var Native = Y.config.win.JSON,
      * from the function will replace the original value in the key:value pair.
      * If the value returned is undefined, the key will be omitted from the
      * returned object.
+     *
      * @method _revive
      * @param data {MIXED} Any JavaScript data
      * @param reviver {Function} filter or mutation function
@@ -146,6 +164,7 @@ var Native = Y.config.win.JSON,
 
     /**
      * Parse a JSON string, returning the native JavaScript representation.
+     *
      * @param s {string} JSON string data
      * @param reviver {function} (optional) function(k,v) passed each key value
      *          pair of object literals, allowing pruning or altering values
@@ -153,7 +172,6 @@ var Native = Y.config.win.JSON,
      * @throws SyntaxError
      * @method parse
      * @static
-     * @public
      */
     // JavaScript implementation in lieu of native browser support.  Based on
     // the json2.js library from http://json.org
@@ -165,7 +183,7 @@ var Native = Y.config.win.JSON,
             s = s.replace(_UNICODE_EXCEPTIONS, _escapeException);
             
             // Test for any remaining invalid characters
-            if (!_INVALID.test(s.replace(_ESCAPES,'@').
+            if (!_UNSAFE.test(s.replace(_ESCAPES,'@').
                                  replace(_VALUES,']').
                                  replace(_BRACKETS,''))) {
 
@@ -186,7 +204,7 @@ if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
     try {
         test = Native.parse('{"x":1}', function (k,v) {return k=='x' ? 2 : v;});
         switch (test.x) {
-            case 1 : // Reviver not supported (currently FF3.1b2)
+            case 1 : // Reviver not supported
                 _parse = function (s,reviver) {
                     return _SIMPLE.test(s) ?
                             eval('(' + s + ')') :
@@ -194,7 +212,7 @@ if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
                 };
                 break;
 
-            case 2 : // Full support (currently IE8)
+            case 2 : // Full support
                 _parse = function (s, reviver) {
                     return Native.parse(s, reviver);
                 };
@@ -206,7 +224,7 @@ if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
     catch (e) {} // defer to JS implementation
 }
 
-Y.mix(Y.namespace('JSON'),{ parse : _parse });
+Y.namespace('JSON').parse = _parse;
 
 
 }, '@VERSION@' );
@@ -214,6 +232,7 @@ YUI.add('json-stringify', function(Y) {
 
 /**
  * Provides Y.JSON.stringify method for converting objects to JSON strings.
+ *
  * @module json
  * @submodule json-stringify
  * @for JSON
@@ -249,18 +268,20 @@ Y.mix(Y.namespace('JSON'),{
     /**
      * Regex used to capture characters that need escaping before enclosing
      * their containing string in quotes.
+     *
      * @property _SPECIAL_CHARS
      * @type {RegExp}
-     * @private
+     * @protected
      */
     _SPECIAL_CHARS : /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 
     /**
      * Character substitution map for common escapes and special characters.
+     *
      * @property _CHARS
      * @type {Object}
      * @static
-     * @private
+     * @protected
      */
     _CHARS : {
         '\b': '\\b',
@@ -276,6 +297,7 @@ Y.mix(Y.namespace('JSON'),{
      * Serializes a Date instance as a UTC date string.  Used internally by
      * stringify.  Override this method if you need Dates serialized in a
      * different format.
+     *
      * @method dateToString
      * @param d {Date} The Date to serialize
      * @return {String} stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ
@@ -295,16 +317,24 @@ Y.mix(Y.namespace('JSON'),{
     },
 
     /**
-     * Converts an arbitrary value to a JSON string representation.
-     * Objects with cyclical references will trigger an exception.
-     * If a whitelist is provided, only matching object keys will be included.
-     * If a positive integer or non-empty string is passed as the third
+     * <p>Converts an arbitrary value to a JSON string representation.</p>
+     *
+     * <p>Objects with cyclical references will trigger an exception.</p>
+     *
+     * <p>If a whitelist is provided, only matching object keys will be
+     * included.  Alternately, a replacer function may be passed as the
+     * second parameter.  This function is executed on every value in the
+     * input, and its return value will be used in place of the original value.
+     * This is useful to serialize specialized objects or class instances.</p>
+     *
+     * <p>If a positive integer or non-empty string is passed as the third
      * parameter, the output will be formatted with carriage returns and
      * indentation for readability.  If a String is passed (such as "\t") it
      * will be used once for each indentation level.  If a number is passed,
-     * that number of spaces will be used.
+     * that number of spaces will be used.</p>
+     *
      * @method stringify
-     * @param o {MIXED} any arbitrary object to convert to JSON string
+     * @param o {MIXED} any arbitrary value to convert to JSON string
      * @param w {Array|Function} (optional) whitelist of acceptable object
      *                  keys to include, or a replacer function to modify the
      *                  raw value before serialization
@@ -312,7 +342,6 @@ Y.mix(Y.namespace('JSON'),{
      *                  spaces to format the output.
      * @return {string} JSON string representation of the input
      * @static
-     * @public
      */
     stringify : function (o,w,ind) {
 

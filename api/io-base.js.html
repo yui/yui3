@@ -47,9 +47,10 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre>   <span class="c">/**</span>
-<span class="c">   	* HTTP communications module.</span>
+                        <div class="highlight" ><pre>   <span class="c">/**</span>
+<span class="c">   	* Base IO functionality. Provides basic XHR transport support.</span>
 <span class="c">   	* @module io</span>
+<span class="c">   	* @submodule io-base</span>
 <span class="c">   	*/</span>
 
    <span class="c">/**</span>
@@ -250,7 +251,6 @@
    			<span class="c">// If config.data is defined, concatenate the data to the form string.</span>
 <span class="c"></span>   			<span class="k">if</span> <span class="o">(</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
    				<span class="nx">f</span> <span class="o">+=</span> <span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span> <span class="nx">d</span><span class="o">;</span>
-   				<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Configuration object.data added to serialized HTML form data. The string is: &#39;</span> <span class="o">+</span> <span class="nx">f</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    			<span class="o">}</span>
 
    			<span class="k">if</span> <span class="o">(</span><span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;POST&#39;</span><span class="o">)</span> <span class="o">{</span>
@@ -259,7 +259,6 @@
    			<span class="o">}</span>
    			<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;GET&#39;</span><span class="o">)</span> <span class="o">{</span>
    				<span class="nx">uri</span> <span class="o">=</span> <span class="nx">_concat</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">f</span><span class="o">);</span>
-   				<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Configuration object.data added to serialized HTML form data. The querystring is: &#39;</span> <span class="o">+</span> <span class="nx">uri</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    			<span class="o">}</span>
    		<span class="o">}</span>
    		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">d</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;POST&#39;</span><span class="o">)</span> <span class="o">{</span>
@@ -279,7 +278,7 @@
    		<span class="c">/* End Configuration Properties */</span>
 
    		<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="nx">_readyState</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span> <span class="o">};</span>
-   		<span class="k">try</span> <span class="o">{</span> <span class="nx">_open</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">uri</span><span class="o">);</span> <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">e0</span><span class="o">)</span> <span class="o">{}</span>
+   		<span class="k">try</span> <span class="o">{</span> <span class="nx">_open</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">uri</span><span class="o">);</span> <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e0</span><span class="o">)</span> <span class="o">{}</span>
    		<span class="nx">_setHeaders</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">headers</span> <span class="o">||</span> <span class="o">{}));</span>
 
    		<span class="c">// Do not pass null, in the absence of data, as this</span>
@@ -323,14 +322,15 @@
 <span class="c">   	*/</span>
    	<span class="k">function</span> <span class="nx">_ioStart</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
    		<span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_fn</span> <span class="o">||</span> <span class="o">{},</span>
-   			<span class="nx">fn</span> <span class="o">=</span> <span class="o">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="o">[</span><span class="nx">id</span><span class="o">])</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">id</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+   			<span class="nx">fn</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="nx">id</span><span class="o">]</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">id</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
    			<span class="nx">event</span><span class="o">;</span>
    			<span class="c">// Set default value of argument c, property &quot;on&quot; to Object if</span>
 <span class="c"></span>   			<span class="c">// the property is null or undefined.</span>
 <span class="c"></span>   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">||</span> <span class="o">{};</span>
 
    		<span class="k">if</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">start</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">start</span><span class="o">;</span>
+   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">start</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">start</span><span class="o">;</span>
+   			<span class="nx">c</span><span class="o">.</span><span class="nx">arguments</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">arguments</span><span class="o">;</span>
    		<span class="o">}</span>
 
    		<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E_START</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
@@ -339,7 +339,6 @@
    			<span class="nx">event</span> <span class="o">=</span> <span class="nx">_tPubSub</span><span class="o">(</span><span class="s1">&#39;start&#39;</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
    			<span class="nx">event</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
    		<span class="o">}</span>
-   		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; started.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    	<span class="o">}</span>
 
 
@@ -369,7 +368,6 @@
    			<span class="nx">event</span> <span class="o">=</span> <span class="nx">_tPubSub</span><span class="o">(</span><span class="s1">&#39;complete&#39;</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
    			<span class="nx">event</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
    		<span class="o">}</span>
-   		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; completed.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    	<span class="o">}</span>
 
    <span class="c">/**</span>
@@ -387,15 +385,16 @@
 <span class="c">   	*/</span>
    	<span class="k">function</span> <span class="nx">_ioSuccess</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
    		<span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_fn</span> <span class="o">||</span> <span class="o">{},</span>
-   			<span class="nx">fn</span> <span class="o">=</span> <span class="o">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">])</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+   			<span class="nx">fn</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
    			<span class="nx">event</span><span class="o">;</span>
    			<span class="c">// Set default value of argument c, property &quot;on&quot; to Object if</span>
 <span class="c"></span>   			<span class="c">// the property is null or undefined.</span>
 <span class="c"></span>   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">||</span> <span class="o">{};</span>
 
    		<span class="k">if</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">success</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">success</span><span class="o">;</span>
-   			<span class="c">//Decode the response from IO.swf</span>
+   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">success</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">success</span><span class="o">;</span>
+   			<span class="nx">c</span><span class="o">.</span><span class="nx">arguments</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">arguments</span><span class="o">;</span>
+   			<span class="c">//Decode the response from io.swf</span>
 <span class="c"></span>   			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseText</span> <span class="o">=</span> <span class="nb">decodeURI</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseText</span><span class="o">);</span>
    		<span class="o">}</span>
 
@@ -406,7 +405,6 @@
    			<span class="nx">event</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">);</span>
    		<span class="o">}</span>
 
-   		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;HTTP Status evaluates to Success. The transaction is: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    		<span class="nx">_ioEnd</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
    	<span class="o">}</span>
 
@@ -425,15 +423,16 @@
 <span class="c">   	*/</span>
    	<span class="k">function</span> <span class="nx">_ioFailure</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
    		<span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_fn</span> <span class="o">||</span> <span class="o">{},</span>
-   			<span class="nx">fn</span> <span class="o">=</span> <span class="o">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">])</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+   			<span class="nx">fn</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
    			<span class="nx">r</span><span class="o">,</span> <span class="nx">event</span><span class="o">;</span>
    			<span class="c">// Set default value of argument c, property &quot;on&quot; to Object if</span>
 <span class="c"></span>   			<span class="c">// the property is null or undefined.</span>
 <span class="c"></span>   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">||</span> <span class="o">{};</span>
 
    		<span class="k">if</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">failure</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">failure</span><span class="o">;</span>
-   			<span class="c">//Decode the response from IO.swf</span>
+   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">failure</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">failure</span><span class="o">;</span>
+   			<span class="nx">c</span><span class="o">.</span><span class="nx">arguments</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">arguments</span><span class="o">;</span>
+   			<span class="c">//Decode the response from io.swf</span>
 <span class="c"></span>   			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseText</span> <span class="o">=</span> <span class="nb">decodeURI</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseText</span><span class="o">);</span>
    		<span class="o">}</span>
 
@@ -445,7 +444,6 @@
    			<span class="nx">event</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
    		<span class="o">}</span>
 
-   		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;HTTP Status evaluates to Failure. The transaction is: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    		<span class="nx">_ioEnd</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
    	<span class="o">}</span>
 
@@ -464,14 +462,15 @@
 <span class="c">   	*/</span>
    	<span class="k">function</span> <span class="nx">_ioEnd</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
    		<span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_fn</span> <span class="o">||</span> <span class="o">{},</span>
-   			<span class="nx">fn</span> <span class="o">=</span> <span class="o">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">])</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+   			<span class="nx">fn</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
    			<span class="nx">event</span><span class="o">;</span>
    			<span class="c">// Set default value of argument c, property &quot;on&quot; to Object if</span>
 <span class="c"></span>   			<span class="c">// the property is null or undefined.</span>
 <span class="c"></span>   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">||</span> <span class="o">{};</span>
 
    		<span class="k">if</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">end</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">end</span><span class="o">;</span>
+   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">end</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">end</span><span class="o">;</span>
+   			<span class="nx">c</span><span class="o">.</span><span class="nx">arguments</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">arguments</span><span class="o">;</span>
    			<span class="nx">delete</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">];</span>
    		<span class="o">}</span>
 
@@ -483,7 +482,6 @@
    		<span class="o">}</span>
 
    		<span class="nx">_destroy</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span> <span class="o">);</span>
-   		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; ended.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    	<span class="o">}</span>
 
    <span class="c">/**</span>
@@ -504,7 +502,6 @@
    			<span class="nx">o</span><span class="o">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">s</span><span class="o">;</span>
    			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">abort</span><span class="o">();</span>
    		<span class="o">}</span>
-   		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction cancelled due to time out or explicitly aborted. The transaction is: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    	<span class="o">}</span>
 
    <span class="c">/**</span>
@@ -538,7 +535,6 @@
    		<span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">transactionId</span><span class="o">;</span>
    		<span class="nx">transactionId</span><span class="o">++;</span>
 
-   		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction id generated. The id is: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    		<span class="k">return</span> <span class="nx">id</span><span class="o">;</span>
    	<span class="o">}</span>
 
@@ -636,12 +632,10 @@
    				<span class="k">if</span> <span class="o">(</span><span class="nx">h</span><span class="o">[</span><span class="nx">p</span><span class="o">])</span> <span class="o">{</span>
    					<span class="c">// Configuration headers will supersede IO preset headers,</span>
 <span class="c"></span>   					<span class="c">// if headers match.</span>
-<span class="c"></span>   					<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Matching configuration HTTP header: &#39;</span> <span class="o">+</span> <span class="nx">p</span> <span class="o">+</span> <span class="s1">&#39; found with value of &#39;</span> <span class="o">+</span> <span class="nx">_headers</span><span class="o">[</span><span class="nx">p</span><span class="o">],</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-   					<span class="k">break</span><span class="o">;</span>
+<span class="c"></span>   					<span class="k">break</span><span class="o">;</span>
    				<span class="o">}</span>
    				<span class="k">else</span> <span class="o">{</span>
    					<span class="nx">h</span><span class="o">[</span><span class="nx">p</span><span class="o">]</span> <span class="o">=</span> <span class="nx">_headers</span><span class="o">[</span><span class="nx">p</span><span class="o">];</span>
-   					<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;HTTP header &#39;</span> <span class="o">+</span> <span class="nx">p</span> <span class="o">+</span> <span class="s1">&#39; found with value of &#39;</span> <span class="o">+</span> <span class="nx">_headers</span><span class="o">[</span><span class="nx">p</span><span class="o">],</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    				<span class="o">}</span>
    			<span class="o">}</span>
    		<span class="o">}</span>
@@ -649,7 +643,6 @@
    		<span class="k">for</span> <span class="o">(</span><span class="nx">p</span> <span class="k">in</span> <span class="nx">h</span><span class="o">)</span> <span class="o">{</span>
    			<span class="k">if</span> <span class="o">(</span><span class="nx">h</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">p</span><span class="o">))</span> <span class="o">{</span>
    				<span class="nx">o</span><span class="o">.</span><span class="nx">setRequestHeader</span><span class="o">(</span><span class="nx">p</span><span class="o">,</span> <span class="nx">h</span><span class="o">[</span><span class="nx">p</span><span class="o">]);</span>
-   				<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;HTTP Header &#39;</span> <span class="o">+</span> <span class="nx">p</span> <span class="o">+</span> <span class="s1">&#39; set with value of &#39;</span> <span class="o">+</span> <span class="nx">h</span><span class="o">[</span><span class="nx">p</span><span class="o">],</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    			<span class="o">}</span>
    		<span class="o">}</span>
    	<span class="o">}</span>
@@ -751,7 +744,6 @@
    		<span class="o">}</span>
    		<span class="k">catch</span><span class="o">(</span><span class="nx">e1</span><span class="o">)</span> <span class="o">{</span>
    			<span class="nx">status</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-   			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;HTTP status unreadable. The transaction is: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
    		<span class="o">}</span>
 
    		<span class="c">// IE reports HTTP 204 as HTTP 1223.</span>
@@ -778,6 +770,7 @@
    	<span class="o">}</span>
 
    	<span class="nx">_io</span><span class="o">.</span><span class="nx">start</span> <span class="o">=</span> <span class="nx">_ioStart</span><span class="o">;</span>
+	<span class="nx">_io</span><span class="o">.</span><span class="nx">complete</span> <span class="o">=</span> <span class="nx">_ioComplete</span><span class="o">;</span>
    	<span class="nx">_io</span><span class="o">.</span><span class="nx">success</span> <span class="o">=</span> <span class="nx">_ioSuccess</span><span class="o">;</span>
    	<span class="nx">_io</span><span class="o">.</span><span class="nx">failure</span> <span class="o">=</span> <span class="nx">_ioFailure</span><span class="o">;</span>
    	<span class="nx">_io</span><span class="o">.</span><span class="nx">isInProgress</span> <span class="o">=</span> <span class="nx">_isInProgress</span><span class="o">;</span>
@@ -814,6 +807,7 @@
    	<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span> <span class="o">=</span> <span class="nx">_io</span><span class="o">;</span>
 	<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">http</span> <span class="o">=</span> <span class="nx">_io</span><span class="o">;</span>
 </pre></div>
+
                     </div>
 			</div>
 		</div>
@@ -828,6 +822,7 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -852,18 +847,16 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 

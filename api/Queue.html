@@ -59,7 +59,8 @@
   
 
                     <div class="summary description" property="yui:description">
-                        A simple FIFO queue of function references.
+                        A simple FIFO queue.  Items are added to the Queue with add(1..n items) and
+removed using next().
                     </div>
 
                     
@@ -73,54 +74,7 @@
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The collection of enqueued functions
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:property" resource="#property__running">
-                                    <h4><a name="property__running" property="yui:name">_running</a>
-                                        - <code>protected <span property="yui:type">{Boolean|Object} true for synchronous callback execution, the
-return handle from Y.later for async callbacks</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            used to indicate the Queue is currently executing a callback.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_defaults">
-                                    <h4><a name="property_defaults" property="yui:name">defaults</a>
-                                        - <code><span property="yui:type">{Object}</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Callback defaults for this instance.  Static defaults that are not
-overridden are also included.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_Queue.defaults">
-                                    <h4><a name="property_Queue.defaults" property="yui:name">Queue.defaults</a>
-                                        - <code>static <span property="yui:type">{Object}</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Static default values used to populate callback configuration properties.
+                                            The collection of enqueued items
                                         </div>
                                     </div>
      
@@ -138,318 +92,6 @@ overridden are also included.
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="" rel="yui:method" resource="#method__defAddFn">
-                                    <h4>
-                                        <a name="method__defAddFn">_defAddFn</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_defAddFn</strong>
-                                           (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Adds the callbacks in the event facade to the queue. Callbacks
-successfully added to the queue are present in the event's
-<code>added</code> property in the after phase.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">Event</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the event object</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__defExecFn">
-                                    <h4>
-                                        <a name="method__defExecFn">_defExecFn</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_defExecFn</strong>
-                                           (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Executes the callback function
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">Event</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the event object</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__defPromoteFn">
-                                    <h4>
-                                        <a name="method__defPromoteFn">_defPromoteFn</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_defPromoteFn</strong>
-                                           (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Promotes the named callback to the top of the queue.
-The event object will contain a property &quot;callback&quot;, which
-hold the id of a callback or the callback object itself.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">Event</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the custom event</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__defRemoveFn">
-                                    <h4>
-                                        <a name="method__defRemoveFn">_defRemoveFn</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_defRemoveFn</strong>
-                                           (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Removes the callback from the queue.
-The event object will contain a property &quot;callback&quot;, which
-hold the id of a callback or the callback object itself.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">Event</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the custom event</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method__defShiftFn">
-                                    <h4>
-                                        <a name="method__defShiftFn">_defShiftFn</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_defShiftFn</strong>
-                                           (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Shifts the callback from the queue
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">Event</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  The event object</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__execute">
-                                    <h4>
-                                        <a name="method__execute">_execute</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        Boolean
-                                            <strong property="yui:name">_execute</strong>
-                                           (
-                                                
-                                                        
-                                                         callback
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Handles the execution of synchronous callbacks.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">callback</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the callback object to execute</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">whether the run loop should continue</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__init">
                                     <h4>
                                         <a name="method__init">_init</a></h4>
@@ -465,8 +107,7 @@ hold the id of a callback or the callback object itself.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Initializes the Queue instance properties and events.  Overrides the
-base implementation.
+                                            Initialize the queue
                                         </div>
 
                                         <div class="description">
@@ -478,149 +119,6 @@ base implementation.
                                                         void
                                                     </code></dt>
                                                     <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__initEvents">
-                                    <h4>
-                                        <a name="method__initEvents">_initEvents</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_initEvents</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Initializes the instance events.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__prepare">
-                                    <h4>
-                                        <a name="method__prepare">_prepare</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        Function
-                                            <strong property="yui:name">_prepare</strong>
-                                           (
-                                                
-                                                        
-                                                         callback
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Creates a wrapper function to execute the callback using the aggregated 
-configuration from static Queue.defaults to the instance defaults to the
-specified callback settings.
-The wrapper function is decorated with the callback configuration as
-properties.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">callback</span>
-                                                        &lt;<span property="yui:type">Object|Function</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the raw callback</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Function
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">a decorated function wrapper to execute the callback</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__schedule">
-                                    <h4>
-                                        <a name="method__schedule">_schedule</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        Boolean
-                                            <strong property="yui:name">_schedule</strong>
-                                           (
-                                                
-                                                        
-                                                         callback
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Schedules the execution of asynchronous callbacks.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">callback</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the callback object to execute</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">whether the run loop should continue</dd>
                                                 </dl>
 
 
@@ -639,21 +137,19 @@ properties.
                                         
                                         
                                         
-                                        Queue
+                                        void
                                             <strong property="yui:name">add</strong>
                                            (
                                                 
                                                         
-                                                         callback*
+                                                         item*
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Add any number of callbacks to the end of the queue. Callbacks may be
-provided as functions or objects with at least a <code>fn</code>
-property containing a reference to the callback function.
+                                            Add 0..n items to the end of the queue
                                         </div>
 
                                         <div class="description">
@@ -661,71 +157,19 @@ property containing a reference to the callback function.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">callback*</span>
-                                                        &lt;<span property="yui:type">Function|Object</span>&gt;
+                                                        <code><span property="yui:name">item*</span>
+                                                        &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  0..n callbacks</span>
+                                                        <span property="yui:description">  0..n items</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Queue
+                                                        void
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">the Queue instance</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_getCallback">
-                                    <h4>
-                                        <a name="method_getCallback">getCallback</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Object
-                                            <strong property="yui:name">getCallback</strong>
-                                           (
-                                                
-                                                        
-                                                         id
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Retrieve a callback by its id.  Useful to modify the configuration
-while the Queue is running.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">id</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the id assigned to the callback</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">the callback object</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -749,15 +193,14 @@ while the Queue is running.
                                            (
                                                 
                                                         
-                                                         callback
+                                                         needle
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns the current index of a callback.  Pass in either the id or
-callback function from getCallback.
+                                            Returns the current index in the queue of the specified item
                                         </div>
 
                                         <div class="description">
@@ -765,10 +208,10 @@ callback function from getCallback.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">callback</span>
-                                                        &lt;<span property="yui:type">String|Function</span>&gt;
+                                                        <code><span property="yui:name">needle</span>
+                                                        &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the callback or its specified id</span>
+                                                        <span property="yui:description">  the item to search for</span>
                                                         </dd>
                                                 </dl>
 
@@ -777,45 +220,7 @@ callback function from getCallback.
                                                     <code property="yui:return">
                                                         Number
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">index of the callback or -1 if not found</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_isRunning">
-                                    <h4>
-                                        <a name="method_isRunning">isRunning</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Boolean
-                                            <strong property="yui:name">isRunning</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Determines if the Queue is waiting for a callback to complete execution.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">true if Queue is waiting for a 
-from any initiated transactions</dd>
+                                                    <dd property="yui:returnInfo">the index of the item or -1 if not found</dd>
                                                 </dl>
 
 
@@ -834,17 +239,14 @@ from any initiated transactions</dd>
                                         
                                         
                                         
-                                        Function
+                                        MIXED
                                             <strong property="yui:name">next</strong>
                                            (
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns the next callback needing execution.  If a callback is
-configured to repeat via iterations or until, it will be returned until
-the completion criteria is met.
-When the queue is empty, null is returned.
+                                            Get the next item in the queue.
                                         </div>
 
                                         <div class="description">
@@ -853,49 +255,9 @@ When the queue is empty, null is returned.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Function
+                                                        MIXED
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">the callback to execute</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_pause">
-                                    <h4>
-                                        <a name="method_pause">pause</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Queue
-                                            <strong property="yui:name">pause</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Pause the execution of the Queue after the execution of the current
-callback completes.  If called from code outside of a queued callback,
-clears the timeout for the pending callback. Paused Queue can be
-restarted with q.run()
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Queue
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">the Queue instance</dd>
+                                                    <dd property="yui:returnInfo">the next item in the queue</dd>
                                                 </dl>
 
 
@@ -914,21 +276,19 @@ restarted with q.run()
                                         
                                         
                                         
-                                        Queue
+                                        void
                                             <strong property="yui:name">promote</strong>
                                            (
                                                 
                                                         
-                                                         callback
+                                                         item
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Promotes the named callback to the top of the queue. If a callback is
-currently executing or looping (via until or iterations), the promotion
-is scheduled to occur after the current callback has completed.
+                                            Moves the referenced item to the head of the queue
                                         </div>
 
                                         <div class="description">
@@ -936,19 +296,19 @@ is scheduled to occur after the current callback has completed.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">callback</span>
-                                                        &lt;<span property="yui:type">String|Object</span>&gt;
+                                                        <code><span property="yui:name">item</span>
+                                                        &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the callback object or a callback's id</span>
+                                                        <span property="yui:description">  an item in the queue</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Queue
+                                                        void
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">the Queue instance</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -967,20 +327,19 @@ is scheduled to occur after the current callback has completed.
                                         
                                         
                                         
-                                        Queue
+                                        void
                                             <strong property="yui:name">remove</strong>
                                            (
                                                 
                                                         
-                                                         callback
+                                                         item
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Removes the callback from the queue.  If the Queue is active, the
-removal is scheduled to occur after the current callback has completed.
+                                            Removes the referenced item from the queue
                                         </div>
 
                                         <div class="description">
@@ -988,58 +347,19 @@ removal is scheduled to occur after the current callback has completed.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">callback</span>
-                                                        &lt;<span property="yui:type">String|Object</span>&gt;
+                                                        <code><span property="yui:name">item</span>
+                                                        &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the callback object or a callback's id</span>
+                                                        <span property="yui:description">  an item in the queue</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Queue
+                                                        void
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">the Queue instance</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_run">
-                                    <h4>
-                                        <a name="method_run">run</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Queue
-                                            <strong property="yui:name">run</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Sets the Queue in motion.  All queued callbacks will be executed in
-order unless pause() or stop() is called or if one of the callbacks is
-configured with autoContinue: false.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Queue
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">the Queue instance</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -1065,7 +385,7 @@ configured with autoContinue: false.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns the number of callbacks in the queue
+                                            Returns the current number of queued items
                                         </div>
 
                                         <div class="description">
@@ -1087,84 +407,12 @@ configured with autoContinue: false.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_stop">
-                                    <h4>
-                                        <a name="method_stop">stop</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Queue
-                                            <strong property="yui:name">stop</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Stop and clear the Queue's queue after the current execution of the
-current callback completes.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Queue
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">the Queue instance</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                             </div>
                         </div>
 
                     </div>
 
                     <div rel="yui:events" resource="#events">
-                        <div class="section method details">
-                            <h3 id="events">Events</h3>
-                            <div class="content">
-                                    <div class="" rel="yui:event" resource="#event_complete">
-                                    <h4>
-                                        <a name="event_complete">complete</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">complete</strong>
-
-                                            (
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Event fired after the last queued callback is executed.
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
 
 
                     </div>
@@ -1186,6 +434,7 @@ current callback completes.
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -1210,24 +459,23 @@ current callback completes.
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class="selected"><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class=""><a href="AsyncQueue.html" title="AsyncQueue">AsyncQueue</a></li>
                                 <li class="selected"><a href="Queue.html" title="Queue">Queue</a></li>
                         </ul>
                     </div>
@@ -1245,45 +493,22 @@ current callback completes.
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class="protected"><a href="#property__q" title="_q">_q</a></li>
-                                <li class="protected"><a href="#property__running" title="_running">_running</a></li>
-                                <li class=""><a href="#property_defaults" title="defaults">defaults</a></li>
-                                <li class=""><a href="#property_Queue.defaults" title="Queue.defaults">Queue.defaults</a></li>
                         </ul>
                     </div>
 
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class=""><a href="#method__defAddFn" title="_defAddFn">_defAddFn</a></li>
-                                <li class="protected"><a href="#method__defExecFn" title="_defExecFn">_defExecFn</a></li>
-                                <li class="protected"><a href="#method__defPromoteFn" title="_defPromoteFn">_defPromoteFn</a></li>
-                                <li class="protected"><a href="#method__defRemoveFn" title="_defRemoveFn">_defRemoveFn</a></li>
-                                <li class=""><a href="#method__defShiftFn" title="_defShiftFn">_defShiftFn</a></li>
-                                <li class="protected"><a href="#method__execute" title="_execute">_execute</a></li>
                                 <li class="protected"><a href="#method__init" title="_init">_init</a></li>
-                                <li class="protected"><a href="#method__initEvents" title="_initEvents">_initEvents</a></li>
-                                <li class="protected"><a href="#method__prepare" title="_prepare">_prepare</a></li>
-                                <li class="protected"><a href="#method__schedule" title="_schedule">_schedule</a></li>
                                 <li class=""><a href="#method_add" title="add">add</a></li>
-                                <li class=""><a href="#method_getCallback" title="getCallback">getCallback</a></li>
                                 <li class=""><a href="#method_indexOf" title="indexOf">indexOf</a></li>
-                                <li class=""><a href="#method_isRunning" title="isRunning">isRunning</a></li>
                                 <li class=""><a href="#method_next" title="next">next</a></li>
-                                <li class=""><a href="#method_pause" title="pause">pause</a></li>
                                 <li class=""><a href="#method_promote" title="promote">promote</a></li>
                                 <li class=""><a href="#method_remove" title="remove">remove</a></li>
-                                <li class=""><a href="#method_run" title="run">run</a></li>
                                 <li class=""><a href="#method_size" title="size">size</a></li>
-                                <li class=""><a href="#method_stop" title="stop">stop</a></li>
                         </ul>
                     </div>
 
-                    <div id="eventsList" class="module">
-                        <h4>Events</h4>
-                        <ul class="content">        
-                                <li class=""><a href="#event_complete" title="complete">complete</a></li>
-                        </ul>
-                    </div>
 
 
             </div>
@@ -1295,7 +520,7 @@ current callback completes.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "complete", "url": "Queue.html#event_complete", "type": "event"}, {"access": "", "host": "Queue", "name": "_defAddFn", "url": "Queue.html#method__defAddFn", "type": "method"}, {"access": "", "host": "Queue", "name": "defaults", "url": "Queue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_defExecFn", "url": "Queue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_defPromoteFn", "url": "Queue.html#method__defPromoteFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_defRemoveFn", "url": "Queue.html#method__defRemoveFn", "type": "method"}, {"access": "", "host": "Queue", "name": "_defShiftFn", "url": "Queue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_execute", "url": "Queue.html#method__execute", "type": "method"}, {"access": "", "host": "Queue", "name": "getCallback", "url": "Queue.html#method_getCallback", "type": "method"}, {"access": "", "host": "Queue", "name": "indexOf", "url": "Queue.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_initEvents", "url": "Queue.html#method__initEvents", "type": "method"}, {"access": "", "host": "Queue", "name": "isRunning", "url": "Queue.html#method_isRunning", "type": "method"}, {"access": "", "host": "Queue", "name": "next", "url": "Queue.html#method_next", "type": "method"}, {"access": "", "host": "Queue", "name": "pause", "url": "Queue.html#method_pause", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_prepare", "url": "Queue.html#method__prepare", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_q", "url": "Queue.html#property__q", "type": "property"}, {"access": "", "host": "Queue", "name": "Queue.defaults", "url": "Queue.html#property_Queue.defaults", "type": "property"}, {"access": "", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "run", "url": "Queue.html#method_run", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_running", "url": "Queue.html#property__running", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_schedule", "url": "Queue.html#method__schedule", "type": "method"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "stop", "url": "Queue.html#method_stop", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "AsyncQueue", "name": "add", "url": "AsyncQueue.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "AsyncQueue.defaults", "url": "AsyncQueue.html#property_AsyncQueue.defaults", "type": "property"}, {"access": "", "host": "AsyncQueue", "name": "complete", "url": "AsyncQueue.html#event_complete", "type": "event"}, {"access": "protected", "host": "AsyncQueue", "name": "_defAddFn", "url": "AsyncQueue.html#method__defAddFn", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "defaults", "url": "AsyncQueue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "AsyncQueue", "name": "_defExecFn", "url": "AsyncQueue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defPromoteFn", "url": "AsyncQueue.html#method__defPromoteFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defRemoveFn", "url": "AsyncQueue.html#method__defRemoveFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defShiftFn", "url": "AsyncQueue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_execute", "url": "AsyncQueue.html#method__execute", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "getCallback", "url": "AsyncQueue.html#method_getCallback", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "indexOf", "url": "AsyncQueue.html#method_indexOf", "type": "method"}, {"access": "", "host": "Queue", "name": "indexOf", "url": "Queue.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_init", "url": "AsyncQueue.html#method__init", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_initEvents", "url": "AsyncQueue.html#method__initEvents", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "isRunning", "url": "AsyncQueue.html#method_isRunning", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "next", "url": "AsyncQueue.html#method_next", "type": "method"}, {"access": "", "host": "Queue", "name": "next", "url": "Queue.html#method_next", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "pause", "url": "AsyncQueue.html#method_pause", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_prepare", "url": "AsyncQueue.html#method__prepare", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "promote", "url": "AsyncQueue.html#method_promote", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_q", "url": "Queue.html#property__q", "type": "property"}, {"access": "", "host": "AsyncQueue", "name": "remove", "url": "AsyncQueue.html#method_remove", "type": "method"}, {"access": "", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "run", "url": "AsyncQueue.html#method_run", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_running", "url": "AsyncQueue.html#property__running", "type": "property"}, {"access": "protected", "host": "AsyncQueue", "name": "_schedule", "url": "AsyncQueue.html#method__schedule", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "size", "url": "AsyncQueue.html#method_size", "type": "method"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "stop", "url": "AsyncQueue.html#method_stop", "type": "method"}];
 </script>
 </body>
 </html>

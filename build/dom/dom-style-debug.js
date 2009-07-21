@@ -153,13 +153,6 @@ if (Y.UA.webkit) {
 }
 })(Y);
 (function(Y) {
-/**
- * Add style management functionality to DOM.
- * @module dom
- * @submodule dom-style
- * @for DOM
- */
-
 var TO_STRING = 'toString',
     PARSE_INT = parseInt,
     RE = RegExp;
@@ -231,13 +224,6 @@ Y.Color = {
 })(Y);
 
 (function(Y) {
-/**
- * Add style management functionality to DOM.
- * @module dom
- * @submodule dom-style
- * @for DOM
- */
-
 var CLIENT_TOP = 'clientTop',
     CLIENT_LEFT = 'clientLeft',
     HAS_LAYOUT = 'hasLayout',
@@ -459,7 +445,8 @@ try {
 } catch(e) { // IE throws error on invalid style set; trap common cases
     Y.DOM.CUSTOM_STYLES.height = {
         set: function(node, val, style) {
-            if (parseInt(val, 10) >= 0) {
+            var floatVal = parseFloat(val);
+            if (isNaN(floatVal) || floatVal >= 0) {
                 style.height = val;
             } else {
                 Y.log('invalid style value for height: ' + val, 'warn', 'dom-style');
@@ -469,7 +456,8 @@ try {
 
     Y.DOM.CUSTOM_STYLES.width = {
         set: function(node, val, style) {
-            if (parseInt(val, 10) >= 0) {
+            var floatVal = parseFloat(val);
+            if (isNaN(floatVal) || floatVal >= 0) {
                 style.width = val;
             } else {
                 Y.log('invalid style value for width: ' + val, 'warn', 'dom-style');

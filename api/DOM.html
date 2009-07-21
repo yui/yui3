@@ -357,6 +357,77 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_addHTML">
+                                    <h4>
+                                        <a name="method_addHTML">addHTML</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">addHTML</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                                        , 
+                                                         content
+                                                    
+                                                
+                                                        , 
+                                                         where
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Inserts content in a node at the given location
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The node to insert into</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">content</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The content to be inserted</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">where</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Where to insert the content; default is after lastChild</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_byId">
                                     <h4>
                                         <a name="method_byId">byId</a></h4>
@@ -548,7 +619,7 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                         
                                         
                                         
-                                        void
+                                        Number
                                             <strong property="yui:name">docHeight</strong>
                                            (
                                             )
@@ -564,9 +635,9 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        void
+                                                        Number
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
+                                                    <dd property="yui:returnInfo">The current height of the document.</dd>
                                                 </dl>
 
 
@@ -585,14 +656,14 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                         
                                         
                                         
-                                        void
+                                        Number
                                             <strong property="yui:name">docScrollX</strong>
                                            (
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Amount page has been scroll vertically
+                                            Amount page has been scroll horizontally
                                         </div>
 
                                         <div class="description">
@@ -601,9 +672,9 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        void
+                                                        Number
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
+                                                    <dd property="yui:returnInfo">The current amount the screen is scrolled horizontally.</dd>
                                                 </dl>
 
 
@@ -622,14 +693,14 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                         
                                         
                                         
-                                        void
+                                        Number
                                             <strong property="yui:name">docScrollY</strong>
                                            (
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Amount page has been scroll horizontally
+                                            Amount page has been scroll vertically
                                         </div>
 
                                         <div class="description">
@@ -638,9 +709,9 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        void
+                                                        Number
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
+                                                    <dd property="yui:returnInfo">The current amount the screen is scrolled vertically.</dd>
                                                 </dl>
 
 
@@ -659,7 +730,7 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                         
                                         
                                         
-                                        void
+                                        Number
                                             <strong property="yui:name">docWidth</strong>
                                            (
                                             )
@@ -675,9 +746,9 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        void
+                                                        Number
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
+                                                    <dd property="yui:returnInfo">The current width of the document.</dd>
                                                 </dl>
 
 
@@ -1101,7 +1172,7 @@ Element must be part of the DOM tree to have page coordinates
                                                         Array
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">The XY position of the element
-TODO: test inDocument/display</dd>
+TODO: test inDocument/display?</dd>
                                                 </dl>
 
 
@@ -1287,68 +1358,6 @@ Element must be part of the DOM tree to have page coordinates
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_inRegion">
-                                    <h4>
-                                        <a name="method_inRegion">inRegion</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Boolean
-                                            <strong property="yui:name">inRegion</strong>
-                                           (
-                                                
-                                                        
-                                                         all
-                                                    
-                                                
-                                                        , 
-                                                         altRegion
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Check if any part of this node is in the passed region
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">all</span>
-                                                        &lt;<span property="yui:type">Object} node2 The node to get the region from or an Object literal of the region
-$param {Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Should all of the node be inside the region</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">altRegion</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">True if in region, false if not.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_insertAfter">
                                     <h4>
                                         <a name="method_insertAfter">insertAfter</a></h4>
@@ -1461,199 +1470,6 @@ $param {Boolean</span>&gt;
                                                         HTMLElement
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">The node that was inserted (or null if insert fails)</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_intersect">
-                                    <h4>
-                                        <a name="method_intersect">intersect</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Object
-                                            <strong property="yui:name">intersect</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         element2
-                                                    
-                                                
-                                                        , 
-                                                         altRegion
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Find the intersect information for the passes nodes.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The first element</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element2</span>
-                                                        &lt;<span property="yui:type">HTMLElement | Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The element or region to check the interect with</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">altRegion</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> An object literal containing the region for the first element if we already have the data (for performance i.e. DragDrop)</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Object literal containing the following intersection data: (top, right, bottom, left, area, yoff, xoff, inRegion)</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_inViewportRegion">
-                                    <h4>
-                                        <a name="method_inViewportRegion">inViewportRegion</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Boolean
-                                            <strong property="yui:name">inViewportRegion</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         all
-                                                    
-                                                
-                                                        , 
-                                                         altRegion
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Check if any part of this element is in the viewport
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The DOM element.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">all</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Should all of the node be inside the region</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">altRegion</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">True if in region, false if not.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_region">
-                                    <h4>
-                                        <a name="method_region">region</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Object
-                                            <strong property="yui:name">region</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns an Object literal containing the following about this element: (top, right, bottom, left)
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The DOM element.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Object literal containing the following about this element: (top, right, bottom, left)</dd>
                                                 </dl>
 
 
@@ -2318,43 +2134,6 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_viewportRegion">
-                                    <h4>
-                                        <a name="method_viewportRegion">viewportRegion</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Object
-                                            <strong property="yui:name">viewportRegion</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns an Object literal containing the following about the visible region of viewport: (top, right, bottom, left)
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Object literal containing the following about the visible region of the viewport: (top, right, bottom, left)</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_winHeight">
                                     <h4>
                                         <a name="method_winHeight">winHeight</a></h4>
@@ -2363,7 +2142,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                         
                                         
                                         
-                                        void
+                                        Number
                                             <strong property="yui:name">winHeight</strong>
                                            (
                                             )
@@ -2379,9 +2158,9 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        void
+                                                        Number
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
+                                                    <dd property="yui:returnInfo">The current height of the viewport.</dd>
                                                 </dl>
 
 
@@ -2400,7 +2179,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                         
                                         
                                         
-                                        void
+                                        Number
                                             <strong property="yui:name">winWidth</strong>
                                            (
                                             )
@@ -2416,9 +2195,9 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        void
+                                                        Number
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
+                                                    <dd property="yui:returnInfo">The current width of the viewport.</dd>
                                                 </dl>
 
 
@@ -2456,6 +2235,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -2480,18 +2260,16 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -2499,12 +2277,14 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class="selected"><a href="DOM.html" title="DOM">DOM</a></li>
+                                <li class=""><a href="Selector.html" title="Selector">Selector</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="color.js.html" title="color.js">color.js</a></li>
                                 <li class=""><a href="dom-class.js.html" title="dom-class.js">dom-class.js</a></li>
                                 <li class=""><a href="dom-ie-style.js.html" title="dom-ie-style.js">dom-ie-style.js</a></li>
                                 <li class=""><a href="dom-region.js.html" title="dom-region.js">dom-region.js</a></li>
@@ -2526,6 +2306,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class="private"><a href="#method__getRegExp" title="_getRegExp">_getRegExp</a></li>
                                 <li class="private"><a href="#method__getWin" title="_getWin">_getWin</a></li>
                                 <li class=""><a href="#method_addClass" title="addClass">addClass</a></li>
+                                <li class=""><a href="#method_addHTML" title="addHTML">addHTML</a></li>
                                 <li class=""><a href="#method_byId" title="byId">byId</a></li>
                                 <li class=""><a href="#method_contains" title="contains">contains</a></li>
                                 <li class=""><a href="#method_create" title="create">create</a></li>
@@ -2543,12 +2324,8 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class=""><a href="#method_getY" title="getY">getY</a></li>
                                 <li class=""><a href="#method_hasClass" title="hasClass">hasClass</a></li>
                                 <li class=""><a href="#method_inDoc" title="inDoc">inDoc</a></li>
-                                <li class=""><a href="#method_inRegion" title="inRegion">inRegion</a></li>
                                 <li class=""><a href="#method_insertAfter" title="insertAfter">insertAfter</a></li>
                                 <li class=""><a href="#method_insertBefore" title="insertBefore">insertBefore</a></li>
-                                <li class=""><a href="#method_intersect" title="intersect">intersect</a></li>
-                                <li class=""><a href="#method_inViewportRegion" title="inViewportRegion">inViewportRegion</a></li>
-                                <li class=""><a href="#method_region" title="region">region</a></li>
                                 <li class=""><a href="#method_removeClass" title="removeClass">removeClass</a></li>
                                 <li class=""><a href="#method_replaceClass" title="replaceClass">replaceClass</a></li>
                                 <li class=""><a href="#method_setAttibute" title="setAttibute">setAttibute</a></li>
@@ -2559,7 +2336,6 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class=""><a href="#method_setXY" title="setXY">setXY</a></li>
                                 <li class=""><a href="#method_setY" title="setY">setY</a></li>
                                 <li class=""><a href="#method_toggleClass" title="toggleClass">toggleClass</a></li>
-                                <li class=""><a href="#method_viewportRegion" title="viewportRegion">viewportRegion</a></li>
                                 <li class=""><a href="#method_winHeight" title="winHeight">winHeight</a></li>
                                 <li class=""><a href="#method_winWidth" title="winWidth">winWidth</a></li>
                         </ul>
@@ -2576,7 +2352,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addClass", "url": "DOM.html#method_addClass", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "hasClass", "url": "DOM.html#method_hasClass", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "DOM", "name": "inRegion", "url": "DOM.html#method_inRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "insertAfter", "url": "DOM.html#method_insertAfter", "type": "method"}, {"access": "", "host": "DOM", "name": "insertBefore", "url": "DOM.html#method_insertBefore", "type": "method"}, {"access": "", "host": "DOM", "name": "intersect", "url": "DOM.html#method_intersect", "type": "method"}, {"access": "", "host": "DOM", "name": "inViewportRegion", "url": "DOM.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "region", "url": "DOM.html#method_region", "type": "method"}, {"access": "", "host": "DOM", "name": "removeClass", "url": "DOM.html#method_removeClass", "type": "method"}, {"access": "", "host": "DOM", "name": "replaceClass", "url": "DOM.html#method_replaceClass", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "DOM", "name": "toggleClass", "url": "DOM.html#method_toggleClass", "type": "method"}, {"access": "", "host": "DOM", "name": "viewportRegion", "url": "DOM.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addClass", "url": "DOM.html#method_addClass", "type": "method"}, {"access": "", "host": "DOM", "name": "addHTML", "url": "DOM.html#method_addHTML", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "hasClass", "url": "DOM.html#method_hasClass", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "Selector", "name": "inRegion", "url": "Selector.html#method_inRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "insertAfter", "url": "DOM.html#method_insertAfter", "type": "method"}, {"access": "", "host": "DOM", "name": "insertBefore", "url": "DOM.html#method_insertBefore", "type": "method"}, {"access": "", "host": "Selector", "name": "intersect", "url": "Selector.html#method_intersect", "type": "method"}, {"access": "", "host": "Selector", "name": "inViewportRegion", "url": "Selector.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "PARENT_NODE", "url": "Selector.html#property_PARENT_NODE", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "Selector", "name": "region", "url": "Selector.html#method_region", "type": "method"}, {"access": "", "host": "DOM", "name": "removeClass", "url": "DOM.html#method_removeClass", "type": "method"}, {"access": "", "host": "DOM", "name": "replaceClass", "url": "DOM.html#method_replaceClass", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "DOM", "name": "toggleClass", "url": "DOM.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "Selector", "name": "viewportRegion", "url": "Selector.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
 </script>
 </body>
 </html>

@@ -1,8 +1,24 @@
 /**
- * A user interface for viewing log messages.
+ * Console creates a visualization for messages logged through calls to a YUI
+ * instance's <code>Y.log( message, category, source )</code> method.  The
+ * debug versions of YUI modules will include logging statements to offer some
+ * insight into the steps executed during that module's operation.  Including
+ * log statements in your code will cause those messages to also appear in the
+ * Console.  Use Console to aid in developing your page or application.
+ *
+ * Entry categories &quot;info&quot;, &quot;warn&quot;, and &quot;error&quot;
+ * are also referred to as the log level, and entries are filtered against the
+ * configured logLevel.
  *
  * @module console
+ * @class Console
+ * @extends Widget
+ * @param conf {Object} Configuration object (see Configuration attributes)
+ * @constructor
  */
+function Console() {
+    Console.superclass.constructor.apply(this,arguments);
+}
 
 var getCN = Y.ClassNameManager.getClassName,
     CHECKED        = 'checked',
@@ -13,7 +29,6 @@ var getCN = Y.ClassNameManager.getClassName,
     CONTENT_BOX    = 'contentBox',
     DISABLED       = 'disabled',
     ENTRY          = 'entry',
-    ENTRY_TEMPLATE = 'entryTemplate',
     ERROR          = 'error',
     HEIGHT         = 'height',
     INFO           = 'info',
@@ -56,6 +71,21 @@ var getCN = Y.ClassNameManager.getClassName,
     ESC_GT  = '&#62;',
     ESC_LT  = '&#60;',
     
+    ENTRY_TEMPLATE_STR =
+        '<div class="{entry_class} {cat_class} {src_class}">'+
+            '<p class="{entry_meta_class}">'+
+                '<span class="{entry_src_class}">'+
+                    '{sourceAndDetail}'+
+                '</span>'+
+                '<span class="{entry_cat_class}">'+
+                    '{category}</span>'+
+                '<span class="{entry_time_class}">'+
+                    ' {totalTime}ms (+{elapsedTime}) {localTime}'+
+                '</span>'+
+            '</p>'+
+            '<pre class="{entry_content_class}">{message}</pre>'+
+        '</div>',
+
     L = Y.Lang,
     create     = Y.Node.create,
     isNumber   = L.isNumber,
@@ -63,25 +93,6 @@ var getCN = Y.ClassNameManager.getClassName,
     merge      = Y.merge,
     substitute = Y.substitute;
     
-
-/**
- * Console creates a visualization for messages logged through calls to a YUI
- * instance's <code>Y.log( message, category, source )</code> method.  The
- * debug versions of YUI modules will include logging statements to offer some
- * insight into the steps executed during that module's operation.  Including
- * log statements in your code will cause those messages to also appear in the
- * Console.  Use Console to aid in developing your page or application.
- *
- * Entry categories are also referred to as the log level, and entries are
- * filtered against the configured logLevel.
- *
- * @class Console
- * @extends Widget
- */
-
-function Console() {
-    Console.superclass.constructor.apply(this,arguments);
-}
 
 Y.mix(Console, {
 
@@ -197,10 +208,12 @@ Y.mix(Console, {
      * these {placeholder}s:
      *
      * <ul>
+     *   <li>console_button_class - contributed by Console.CHROME_CLASSES</li>
+     *   <li>console_collapse_class - contributed by Console.CHROME_CLASSES</li>
      *   <li>console_hd_class - contributed by Console.CHROME_CLASSES</li>
      *   <li>console_title_class - contributed by Console.CHROME_CLASSES</li>
-     *   <li>str_title - pulled from attribute strings.title</li>
      *   <li>str_collapse - pulled from attribute strings.collapse</li>
+     *   <li>str_title - pulled from attribute strings.title</li>
      * </ul>
      *
      * @property Console.HEADER_TEMPLATE
@@ -265,7 +278,6 @@ Y.mix(Console, {
      * <ul>
      *   <li>cat_class</li>
      *   <li>src_class</li>
-     *   <li>label</li>
      *   <li>totalTime</li>
      *   <li>elapsedTime</li>
      *   <li>localTime</li>
@@ -277,20 +289,7 @@ Y.mix(Console, {
      * @type String
      * @static
      */
-    ENTRY_TEMPLATE :
-        '<div class="{entry_class} {cat_class} {src_class}">'+
-            '<p class="{entry_meta_class}">'+
-                '<span class="{entry_src_class}">'+
-                    '{sourceAndDetail}'+
-                '</span>'+
-                '<span class="{entry_cat_class}">'+
-                    '{label}</span>'+
-                '<span class="{entry_time_class}">'+
-                    ' {totalTime}ms (+{elapsedTime}) {localTime}'+
-                '</span>'+
-            '</p>'+
-            '<pre class="{entry_content_class}">{message}</pre>'+
-        '</div>',
+    ENTRY_TEMPLATE : ENTRY_TEMPLATE_STR,
 
     /**
      * Static property used to define the default attribute configuration of
@@ -372,7 +371,8 @@ Y.mix(Console, {
 
         /**
          * If a category is not specified in the Y.log(..) statement, this
-         * category will be used. Category is also called &quot;log level&quot;.
+         * category will be used. Categories &quot;info&quot;,
+         * &quot;warn&quot;, and &quot;error&quot; are also called log level.
          *
          * @attribute defaultCategory
          * @type String
@@ -401,10 +401,10 @@ Y.mix(Console, {
          *
          * @attribute entryTemplate
          * @type String
-         * @default (see Console.ENTRY_TEMPLATE)
+         * @default Console.ENTRY_TEMPLATE
          */
         entryTemplate : {
-            value : '',
+            value : ENTRY_TEMPLATE_STR,
             validator : isString
         },
 
@@ -415,11 +415,11 @@ Y.mix(Console, {
          * that configuration is not set.
          *
          * Possible values are &quot;info&quot;, &quot;warn&quot;,
-         * &quot;error&quot; (case insensitive), or the corresponding statics
+         * &quot;error&quot; (case insensitive), or their corresponding statics
          * Console.LOG_LEVEL_INFO and so on.
          *
          * @attribute logLevel
-         * @type String|Number
+         * @type String
          * @default Y.config.logLevel or Console.LOG_LEVEL_INFO
          */
         logLevel : {
@@ -430,8 +430,8 @@ Y.mix(Console, {
         },
 
         /**
-         * Millisecond timeout to maintain before emptying buffer of Console
-         * entries to the UI.
+         * Millisecond timeout between iterations of the print loop, moving
+         * entries from the buffer to the UI.
          *
          * @attribute printTimeout
          * @type Number
@@ -443,13 +443,12 @@ Y.mix(Console, {
         },
 
         /**
-         * Maximum number of entries printed in each printBuffer iteration.
-         * This is used to prevent excessive logging bogging down runtime
-         * performance.
+         * Maximum number of entries printed in each iteration of the print
+         * loop. This is used to prevent excessive logging locking the page UI.
          *
          * @attribute printLimit
          * @type Number
-         * @default 00
+         * @default 50
          */
         printLimit : {
             value : 50,
@@ -535,7 +534,7 @@ Y.mix(Console, {
         /**
         * String with units, or number, representing the height of the Console,
         * inclusive of header and footer. If a number is provided, the default
-        * unit, defined by the Widgets DEF_UNIT, property is used.
+        * unit, defined by Widget's DEF_UNIT, property is used.
         *
         * @attribute height
         * @default "300px"
@@ -547,7 +546,7 @@ Y.mix(Console, {
 
         /**
         * String with units, or number, representing the width of the Console.
-        * If a number is provided, the default unit, defined by the Widgets
+        * If a number is provided, the default unit, defined by Widget's
         * DEF_UNIT, property is used.
         *
         * @attribute width
@@ -556,7 +555,37 @@ Y.mix(Console, {
         */
         width: {
             value: "300px"
-        }
+        },
+
+        /**
+         * Pass through to the YUI instance useBrowserConsole configuration.
+         * By default this is set to false, which will disable logging to the
+         * browser console when a Console instance is created.  If the
+         * logSource is not a YUI instance, this has no effect.
+         * 
+         * @attribute useBrowserConsole
+         * @type {Boolean}
+         * @default false
+         */
+         useBrowserConsole : {
+            lazyAdd: false,
+            value: false,
+            getter : function () {
+                var logSource = this.get('logSource');
+                return logSource instanceof YUI ?
+                    logSource.config.useBrowserConsole : null;
+            },
+            setter : function (v) {
+                var logSource = this.get('logSource');
+                if (logSource instanceof YUI) {
+                    v = !!v;
+                    logSource.config.useBrowserConsole = !!v;
+                    return v;
+                } else {
+                    return Y.Attribute.INVALID_VALUE;
+                }
+            }
+         }
     }
 
 });
@@ -574,7 +603,7 @@ Y.extend(Console,Y.Widget,{
     _evtCat : null,
 
     /**
-     * Reference to the Node instance containing the head contents.
+     * Reference to the Node instance containing the header contents.
      *
      * @property _head
      * @type Node
@@ -596,7 +625,7 @@ Y.extend(Console,Y.Widget,{
     /**
      * Reference to the Node instance containing the footer contents.
      *
-     * @property _head
+     * @property _foot
      * @type Node
      * @default null
      * @protected
@@ -604,8 +633,8 @@ Y.extend(Console,Y.Widget,{
     _foot    : null,
 
     /**
-     * Object API returned from <code>Y.later</code>. Holds the timer id
-     * returned by <code>setInterval</code> for scheduling of buffered messages.
+     * Holds the object API returned from <code>Y.later</code> for the print
+     * loop interval.
      *
      * @property _printLoop
      * @type Object
@@ -620,6 +649,7 @@ Y.extend(Console,Y.Widget,{
      * @property buffer
      * @type Array
      * @default null
+     * @protected
      */
     buffer   : null,
 
@@ -627,10 +657,13 @@ Y.extend(Console,Y.Widget,{
      * Wrapper for <code>Y.log</code>.
      *
      * @method log
-     * @param {Any*} * (all arguments passed through to <code>Y.log</code>)
+     * @param arg* {MIXED} (all arguments passed through to <code>Y.log</code>)
+     * @chainable
      */
     log : function () {
-        return Y.log.apply(Y,arguments);
+        Y.log.apply(Y,arguments);
+
+        return this;
     },
 
     /**
@@ -663,27 +696,35 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Collapses the UI.
+     * Collapses the body and footer.
      *
      * @method collapse
      * @chainable
      */
     collapse : function () {
         this.set(COLLAPSED, true);
+
+        return this;
     },
 
     /**
-     * Expands the UI if collapsed.
+     * Expands the body and footer if collapsed.
      *
-     * @method collapse
+     * @method expand
      * @chainable
      */
     expand : function () {
         this.set(COLLAPSED, false);
+
+        return this;
     },
 
     /**
-     * Outputs all buffered messages to the console UI.
+     * Outputs buffered messages to the console UI.  This is typically called
+     * from a scheduled interval until the buffer is empty (referred to as the
+     * print loop).  The number of buffered messages output to the Console is
+     * limited to the number provided as an argument.  If no limit is passed,
+     * all buffered messages are rendered.
      * 
      * @method printBuffer
      * @param limit {Number} (optional) max number of buffered entries to write
@@ -750,16 +791,12 @@ Y.extend(Console,Y.Widget,{
 
         this.buffer = [];
 
-        if (!this.get(ENTRY_TEMPLATE)) {
-            this.set(ENTRY_TEMPLATE,Console.ENTRY_TEMPLATE);
-        }
-
         this.get('logSource').on(this._evtCat +
             this.get('logEvent'),Y.bind("_onLogEvent",this));
 
         /**
-         * Triggers the processing of an incoming message via the default logic
-         * in _defEntryFn.
+         * Transfers a received message to the print loop buffer.  Default
+         * behavior defined in _defEntryFn.
          *
          * @event entry
          * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
@@ -783,6 +820,12 @@ Y.extend(Console,Y.Widget,{
         this.after('rendered', this._schedulePrint);
     },
 
+    /**
+     * Tears down the instance, flushing event subscriptions and purging the UI.
+     *
+     * @method destructor
+     * @protected
+     */
     destructor : function () {
         var bb = this.get('boundingBox');
 
@@ -931,13 +974,12 @@ Y.extend(Console,Y.Widget,{
      *     <li>category - logLevel or custom category for the message</li>
      *     <li>source - when provided, the widget or util calling Y.log</li>
      *     <li>sourceAndDetail - same as source but can include instance info</li>
-     *     <li>label - logLevel/category label for the entry</li>
      *     <li>localTime - readable version of time</li>
      *     <li>elapsedTime - ms since last entry</li>
      *     <li>totalTime - ms since Console was instantiated or reset</li>
      * </ul>
      *
-     * @mehod _normalizeMessage
+     * @method _normalizeMessage
      * @param e {Event} custom event containing the log message
      * @return Object the message object
      * @protected
@@ -954,7 +996,6 @@ Y.extend(Console,Y.Widget,{
                 category        : cat || this.get('defaultCategory'),
                 sourceAndDetail : src || this.get('defaultSource'),
                 source          : null,
-                label           : null,
                 localTime       : null,
                 elapsedTime     : null,
                 totalTime       : null
@@ -963,7 +1004,6 @@ Y.extend(Console,Y.Widget,{
         // Extract m.source "Foo" from m.sourceAndDetail "Foo bar baz"
         m.source          = RE_INLINE_SOURCE.test(m.sourceAndDetail) ?
                                 RegExp.$1 : m.sourceAndDetail;
-        m.label           = m.category;
         m.localTime       = m.time.toLocaleTimeString ? 
                             m.time.toLocaleTimeString() : (m.time + '');
         m.elapsedTime     = m.time - this.get(LAST_TIME);
@@ -975,7 +1015,7 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Sets a timeout for buffered messages to be output to the console.
+     * Sets an interval for buffered messages to be output to the console.
      *
      * @method _schedulePrint
      * @protected
@@ -990,7 +1030,7 @@ Y.extend(Console,Y.Widget,{
     },
 
     /**
-     * Translates message meta into the markup for a console entry
+     * Translates message meta into the markup for a console entry.
      *
      * @method _createEntryHTML
      * @param m {Object} object literal containing normalized message metadata
@@ -1037,7 +1077,6 @@ Y.extend(Console,Y.Widget,{
     _htmlEscapeMessage : function (m) {
         m = Y.clone(m);
         m.message         = this._encodeHTML(m.message);
-        m.label           = this._encodeHTML(m.label);
         m.source          = this._encodeHTML(m.source);
         m.sourceAndDetail = this._encodeHTML(m.sourceAndDetail);
         m.category        = this._encodeHTML(m.category);
@@ -1079,7 +1118,7 @@ Y.extend(Console,Y.Widget,{
                 for (;i < l; ++i) {
                     e = entries.item(i);
                     if (e) {
-                        e.get('parentNode').removeChild(e);
+                        e.remove();
                     }
                 }
 
@@ -1147,9 +1186,9 @@ Y.extend(Console,Y.Widget,{
 
     /**
      * Event handler for clicking on the Collapse/Expand button. Sets the
-     * &quot;collapsed&quot; attribute accordingly
+     * &quot;collapsed&quot; attribute accordingly.
      *
-     * @method _onClearClick
+     * @method _onCollapseClick
      * @param e {Event} DOM event facade for the click event
      * @protected
      */
@@ -1160,10 +1199,8 @@ Y.extend(Console,Y.Widget,{
 
     /**
      * Setter method for logLevel attribute.  Acceptable values are
-     * &quot;error&quot, &quot;warn&quot, &quot;info&quot (case insensitive),
-     * and Y.Console.LOG_LEVEL_ERROR, Y.Console.LOG_LEVEL_WARN, 
-     * Y.Console.LOG_LEVEL_INFO.  Any other value is treated as
-     * Y.Console.LOG_LEVEL_INFO.
+     * &quot;error&quot, &quot;warn&quot, and &quot;info&quot (case
+     * insensitive).  Other values are treated as &quot;info&quot;.
      *
      * @method _setLogLevel
      * @param v {String} the desired log level
@@ -1210,34 +1247,23 @@ Y.extend(Console,Y.Widget,{
         var prop   = e.subAttrName ? e.subAttrName.split(DOT)[1] : null,
             cb     = this.get(CONTENT_BOX),
             before = e.prevVal,
-            after  = e.newVal,
-            el;
+            after  = e.newVal;
 
         if ((!prop || prop === TITLE) && before.title !== after.title) {
-            el = cb.query(DOT+C_CONSOLE_TITLE);
-            if (el) {
-                el.set(INNER_HTML,after.title);
-            }
+            cb.queryAll(DOT+C_CONSOLE_TITLE).set(INNER_HTML, after.title);
         }
 
         if ((!prop || prop === PAUSE) && before.pause !== after.pause) {
-            el = cb.query(DOT+C_PAUSE_LABEL);
-            if (el) {
-                el.set(INNER_HTML,after.pause);
-            }
+            cb.queryAll(DOT+C_PAUSE_LABEL).set(INNER_HTML, after.pause);
         }
 
         if ((!prop || prop === CLEAR) && before.clear !== after.clear) {
-            el = cb.query(DOT+C_CLEAR);
-            if (el) {
-                el.set('value',after.clear);
-            }
+            cb.queryAll(DOT+C_CLEAR).set('value',after.clear);
         }
     },
 
     /**
-     * Updates the UI and schedules or cancels the scheduled buffer printing
-     * operation.
+     * Updates the UI and schedules or cancels the print loop.
      *
      * @method _afterPausedChange
      * @param e {Event} Custom event for the attribute change
@@ -1305,20 +1331,18 @@ Y.extend(Console,Y.Widget,{
      * @protected
      */
     _uiUpdateCollapsed : function (v) {
-        var cb     = this.get(CONTENT_BOX),
-            button = cb.queryAll('button.'+C_COLLAPSE),
+        var bb     = this.get('boundingBox'),
+            button = bb.queryAll('button.'+C_COLLAPSE),
             method = v ? 'addClass' : 'removeClass',
             str    = this.get('strings.'+(v ? 'expand' : 'collapse'));
 
-        cb[method](C_COLLAPSED);
+        bb[method](C_COLLAPSED);
 
         if (button) {
             button.set('innerHTML',str);
         }
 
-        if (!v) {
-            this._uiSetHeight(this.get(HEIGHT));
-        }
+        this._uiSetHeight(v ? this._head.get('offsetHeight'): this.get(HEIGHT));
     },
 
     /**

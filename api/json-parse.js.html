@@ -47,25 +47,35 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The JSON Utility provides methods to serialize JavaScript objects into</span>
-<span class="c"> * JSON strings and parse JavaScript objects from strings containing JSON data.</span>
-<span class="c"> * Three modules are available for inclusion:</span>
-<span class="c"> * &lt;ol&gt;</span>
-<span class="c"> * &lt;li&gt;1. &lt;code&gt;json-parse&lt;/code&gt; for parsing JSON strings into native JavaScript data&lt;/li&gt;</span>
-<span class="c"> * &lt;li&gt;2. &lt;code&gt;json-stringify&lt;/code&gt; for stringification of JavaScript objects into JSON strings&lt;/li&gt;</span>
-<span class="c"> * &lt;li&gt;3. &lt;code&gt;json&lt;/code&gt; for both parsing and stringification&lt;/li&gt;</span>
-<span class="c"> * &lt;/ol&gt;</span>
+                        <div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * &lt;p&gt;The JSON module adds support for serializing JavaScript objects into</span>
+<span class="c"> * JSON strings and parsing JavaScript objects from strings in JSON format.&lt;/p&gt;</span>
+<span class="c"> *</span>
+<span class="c"> * &lt;p&gt;The JSON namespace is added to your YUI instance including static methods</span>
+<span class="c"> * Y.JSON.parse(..) and Y.JSON.stringify(..).&lt;/p&gt;</span>
+<span class="c"> *</span>
+<span class="c"> * &lt;p&gt;The functionality and method signatures follow the ECMAScript 5</span>
+<span class="c"> * specification.  In browsers with native JSON support, the native</span>
+<span class="c"> * implementation is used.&lt;/p&gt;</span>
+<span class="c"> *</span>
+<span class="c"> * &lt;p&gt;The &lt;code&gt;json&lt;/code&gt; module is a rollup of &lt;code&gt;json-parse&lt;/code&gt; and</span>
+<span class="c"> * &lt;code&gt;json-stringify&lt;/code&gt;.&lt;/p&gt;</span>
 <span class="c"> * </span>
-<span class="c"> * Both &lt;code&gt;json-parse&lt;/code&gt; and &lt;code&gt;json-stringify&lt;/code&gt; create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).</span>
+<span class="c"> * &lt;p&gt;As their names suggest, &lt;code&gt;json-parse&lt;/code&gt; adds support for parsing</span>
+<span class="c"> * JSON data (Y.JSON.parse) and &lt;code&gt;json-stringify&lt;/code&gt; for serializing</span>
+<span class="c"> * JavaScript data into JSON strings (Y.JSON.stringify).  You may choose to</span>
+<span class="c"> * include either of the submodules individually if you don&#39;t need the</span>
+<span class="c"> * complementary functionality, or include the rollup for both.&lt;/p&gt;</span>
+<span class="c"> *</span>
 <span class="c"> * @module json</span>
 <span class="c"> * @class JSON</span>
 <span class="c"> * @static</span>
 <span class="c"> */</span>
 
 <span class="c">/**</span>
-<span class="c"> * Provides Y.JSON.parse method to take JSON strings and return native</span>
+<span class="c"> * Provides Y.JSON.parse method to accept JSON strings and return native</span>
 <span class="c"> * JavaScript objects.</span>
+<span class="c"> *</span>
 <span class="c"> * @module json</span>
 <span class="c"> * @submodule json-parse</span>
 <span class="c"> * @for JSON</span>
@@ -76,7 +86,7 @@
 <span class="c">// All internals kept private for security reasons</span>
 <span class="c"></span>
 
-    <span class="c">/*</span>
+    <span class="c">/**</span>
 <span class="c">     * Alias to native browser implementation of the JSON object if available.</span>
 <span class="c">     *</span>
 <span class="c">     * @property Native</span>
@@ -91,6 +101,7 @@
 <span class="c">     * endings--with escape sequences.</span>
 <span class="c">     * IMPORTANT NOTE: This regex will be used to modify the input if a match is</span>
 <span class="c">     * found.</span>
+<span class="c">     *</span>
 <span class="c">     * @property _UNICODE_EXCEPTIONS</span>
 <span class="c">     * @type {RegExp}</span>
 <span class="c">     * @private</span>
@@ -99,8 +110,9 @@
 
 
     <span class="c">/**</span>
-<span class="c">     * First step in the validation.  Regex used to replace all escape</span>
+<span class="c">     * First step in the safety evaluation.  Regex used to replace all escape</span>
 <span class="c">     * sequences (i.e. &quot;\\&quot;, etc) with &#39;@&#39; characters (a non-JSON character).</span>
+<span class="c">     *</span>
 <span class="c">     * @property _ESCAPES</span>
 <span class="c">     * @type {RegExp}</span>
 <span class="c">     * @private</span>
@@ -108,8 +120,9 @@
     <span class="nx">_ESCAPES</span> <span class="o">=</span> <span class="sr">/\\(?:[&quot;\\\/bfnrt]|u[0-9a-fA-F]{4})/g</span><span class="o">,</span>
 
     <span class="c">/**</span>
-<span class="c">     * Second step in the validation.  Regex used to replace all simple</span>
+<span class="c">     * Second step in the safety evaluation.  Regex used to replace all simple</span>
 <span class="c">     * values with &#39;]&#39; characters.</span>
+<span class="c">     *</span>
 <span class="c">     * @property _VALUES</span>
 <span class="c">     * @type {RegExp}</span>
 <span class="c">     * @private</span>
@@ -117,8 +130,10 @@
     <span class="nx">_VALUES</span>  <span class="o">=</span> <span class="sr">/&quot;[^&quot;\\\n\r]*&quot;|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g</span><span class="o">,</span>
 
     <span class="c">/**</span>
-<span class="c">     * Third step in the validation.  Regex used to remove all open square</span>
-<span class="c">     * brackets following a colon, comma, or at the beginning of the string.</span>
+<span class="c">     * Third step in the safety evaluation.  Regex used to remove all open</span>
+<span class="c">     * square brackets following a colon, comma, or at the beginning of the</span>
+<span class="c">     * string.</span>
+<span class="c">     *</span>
 <span class="c">     * @property _BRACKETS</span>
 <span class="c">     * @type {RegExp}</span>
 <span class="c">     * @private</span>
@@ -126,22 +141,24 @@
     <span class="nx">_BRACKETS</span> <span class="o">=</span> <span class="sr">/(?:^|:|,)(?:\s*\[)+/g</span><span class="o">,</span>
 
     <span class="c">/**</span>
-<span class="c">     * Final step in the validation.  Regex used to test the string left after</span>
-<span class="c">     * all previous replacements for invalid characters.</span>
-<span class="c">     * @property _INVALID</span>
+<span class="c">     * Final step in the safety evaluation.  Regex used to test the string left</span>
+<span class="c">     * after all previous replacements for invalid characters.</span>
+<span class="c">     *</span>
+<span class="c">     * @property _UNSAFE</span>
 <span class="c">     * @type {RegExp}</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
-    <span class="nx">_INVALID</span> <span class="o">=</span> <span class="sr">/[^\],:{}\s]/</span><span class="o">,</span>
+    <span class="nx">_UNSAFE</span> <span class="o">=</span> <span class="sr">/[^\],:{}\s]/</span><span class="o">,</span>
     
     <span class="c">/**</span>
 <span class="c">     * Test for JSON string of simple data string, number, boolean, or null.</span>
 <span class="c">     * E.g. &#39;&quot;some string&quot;&#39;, &quot;true&quot;, &quot;false&quot;, &quot;null&quot;, or numbers &quot;-123e+7&quot;</span>
-<span class="c">     * Currently FireFox 3.1b2 JSON.parse requires object/array wrapped data</span>
+<span class="c">     * This was needed for some WIP native implementations (FF3.1b2) but may be</span>
+<span class="c">     * unnecessary now.</span>
 <span class="c">     *</span>
 <span class="c">     * @property _SIMPLE</span>
 <span class="c">     * @type {RegExp}</span>
-<span class="c">     * @protected</span>
+<span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="nx">_SIMPLE</span> <span class="o">=</span> <span class="sr">/^\s*(?:&quot;[^&quot;\\\n\r]*&quot;|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)\s*$/</span><span class="o">,</span>
 
@@ -164,6 +181,7 @@
 <span class="c">     * from the function will replace the original value in the key:value pair.</span>
 <span class="c">     * If the value returned is undefined, the key will be omitted from the</span>
 <span class="c">     * returned object.</span>
+<span class="c">     *</span>
 <span class="c">     * @method _revive</span>
 <span class="c">     * @param data {MIXED} Any JavaScript data</span>
 <span class="c">     * @param reviver {Function} filter or mutation function</span>
@@ -193,6 +211,7 @@
 
     <span class="c">/**</span>
 <span class="c">     * Parse a JSON string, returning the native JavaScript representation.</span>
+<span class="c">     *</span>
 <span class="c">     * @param s {string} JSON string data</span>
 <span class="c">     * @param reviver {function} (optional) function(k,v) passed each key value</span>
 <span class="c">     *          pair of object literals, allowing pruning or altering values</span>
@@ -200,7 +219,6 @@
 <span class="c">     * @throws SyntaxError</span>
 <span class="c">     * @method parse</span>
 <span class="c">     * @static</span>
-<span class="c">     * @public</span>
 <span class="c">     */</span>
     <span class="c">// JavaScript implementation in lieu of native browser support.  Based on</span>
 <span class="c"></span>    <span class="c">// the json2.js library from http://json.org</span>
@@ -212,7 +230,7 @@
 <span class="c"></span>            <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">_UNICODE_EXCEPTIONS</span><span class="o">,</span> <span class="nx">_escapeException</span><span class="o">);</span>
             
             <span class="c">// Test for any remaining invalid characters</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="nx">_INVALID</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">_ESCAPES</span><span class="o">,</span><span class="s1">&#39;@&#39;</span><span class="o">).</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="nx">_UNSAFE</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">_ESCAPES</span><span class="o">,</span><span class="s1">&#39;@&#39;</span><span class="o">).</span>
                                  <span class="nx">replace</span><span class="o">(</span><span class="nx">_VALUES</span><span class="o">,</span><span class="s1">&#39;]&#39;</span><span class="o">).</span>
                                  <span class="nx">replace</span><span class="o">(</span><span class="nx">_BRACKETS</span><span class="o">,</span><span class="s1">&#39;&#39;</span><span class="o">)))</span> <span class="o">{</span>
 
@@ -233,7 +251,7 @@
     <span class="k">try</span> <span class="o">{</span>
         <span class="nx">test</span> <span class="o">=</span> <span class="nx">Native</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span><span class="s1">&#39;{&quot;x&quot;:1}&#39;</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">k</span><span class="o">,</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span><span class="k">return</span> <span class="nx">k</span><span class="o">==</span><span class="s1">&#39;x&#39;</span> <span class="o">?</span> <span class="m">2</span> <span class="o">:</span> <span class="nx">v</span><span class="o">;});</span>
         <span class="nx">switch</span> <span class="o">(</span><span class="nx">test</span><span class="o">.</span><span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">case</span> <span class="m">1</span> <span class="o">:</span> <span class="c">// Reviver not supported (currently FF3.1b2)</span>
+            <span class="nx">case</span> <span class="m">1</span> <span class="o">:</span> <span class="c">// Reviver not supported</span>
 <span class="c"></span>                <span class="nx">_parse</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span><span class="nx">reviver</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">return</span> <span class="nx">_SIMPLE</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">s</span><span class="o">)</span> <span class="o">?</span>
                             <span class="nb">eval</span><span class="o">(</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="o">)</span> <span class="o">:</span>
@@ -241,7 +259,7 @@
                 <span class="o">};</span>
                 <span class="k">break</span><span class="o">;</span>
 
-            <span class="nx">case</span> <span class="m">2</span> <span class="o">:</span> <span class="c">// Full support (currently IE8)</span>
+            <span class="nx">case</span> <span class="m">2</span> <span class="o">:</span> <span class="c">// Full support</span>
 <span class="c"></span>                <span class="nx">_parse</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">reviver</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">return</span> <span class="nx">Native</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">reviver</span><span class="o">);</span>
                 <span class="o">};</span>
@@ -253,8 +271,9 @@
     <span class="k">catch</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{}</span> <span class="c">// defer to JS implementation</span>
 <span class="c"></span><span class="o">}</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;JSON&#39;</span><span class="o">),{</span> <span class="nx">parse</span> <span class="o">:</span> <span class="nx">_parse</span> <span class="o">});</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;JSON&#39;</span><span class="o">).</span><span class="nx">parse</span> <span class="o">=</span> <span class="nx">_parse</span><span class="o">;</span>
 </pre></div>
+
                     </div>
 			</div>
 		</div>
@@ -269,6 +288,7 @@
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
@@ -293,18 +313,16 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue.html" title="queue">queue</a></li>
-                                <li class=""><a href="module_selector.html" title="selector">selector</a></li>
-                                <li class=""><a href="module_selector-native.html" title="selector-native">selector-native</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -336,7 +354,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "_INVALID", "url": "JSON.html#property__INVALID", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "protected", "host": "JSON", "name": "_SIMPLE", "url": "JSON.html#property__SIMPLE", "type": "property"}, {"access": "private", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "protected", "host": "JSON", "name": "_CHARS", "url": "JSON.html#property__CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "Native", "url": "JSON.html#property_Native", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_SIMPLE", "url": "JSON.html#property__SIMPLE", "type": "property"}, {"access": "protected", "host": "JSON", "name": "_SPECIAL_CHARS", "url": "JSON.html#property__SPECIAL_CHARS", "type": "property"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_UNSAFE", "url": "JSON.html#property__UNSAFE", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
 </script>
 </body>
 </html>

@@ -2,16 +2,14 @@
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
- * @module event
+ * @module event-custom
  */
-
-
 
 /**
  * Return value from all subscribe operations
  * @class EventHandle
  * @constructor
- * @param evt {Event.Custom} the custom event
+ * @param evt {CustomEvent} the custom event
  * @param sub {Subscriber} the subscriber
  */
 
@@ -49,7 +47,7 @@ Y.EventHandle = function(evt, sub) {
 
     /**
      * The custom event
-     * @type Event.Custom
+     * @type CustomEvent
      */
     this.evt = evt;
 
@@ -75,13 +73,13 @@ Y.EventHandle.prototype = {
 };
 
 /**
- * The Event.Custom class lets you define events for your application
+ * The CustomEvent class lets you define events for your application
  * that can be subscribed to by one or more independent component.
  *
  * @param {String}  type The type of event, which is passed to the callback
  *                  when the event fires
  * @param o configuration object
- * @class Event.Custom
+ * @class CustomEvent
  * @constructor
  */
 Y.CustomEvent = function(type, o) {
@@ -194,7 +192,7 @@ Y.CustomEvent = function(type, o) {
      * Specifies the host for this custom event.  This is used
      * to enable event bubbling
      * @property host
-     * @type Event.Target
+     * @type EventTarget
      */
     // this.host = null;
 
@@ -916,7 +914,7 @@ Y.Subscriber.prototype = {
      * Executes the subscriber.
      * @method notify
      * @param args {Array} Arguments array for the subscriber
-     * @param ce {Event.Custom} The custom event that sent the notification
+     * @param ce {CustomEvent} The custom event that sent the notification
      */
     notify: function(args, ce) {
         var c = this.context,

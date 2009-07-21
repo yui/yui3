@@ -16,12 +16,12 @@ YUI.add('node-base', function(Y) {
  *
  * @class Node
  * @constructor
+ * @for Node
  */
 
 // "globals"
 var g_nodes = {},
     g_nodelists = {},
-    g_restrict = {},
     g_slice = Array.prototype.slice,
 
     DOT = '.',
@@ -34,22 +34,23 @@ var g_nodes = {},
     SuperConstr = Y.Base,
     SuperConstrProto = Y.Base.prototype,
 
-    Node = function(node, restricted) {
-        var config = null;
-        this[UID] = Y.stamp(node);
-        if (!this[UID]) { // stamp failed; likely IE non-HTMLElement
-            this[UID] = Y.guid(); 
+    Node = function(node) {
+        var config = null,
+            uid = node[UID];
+
+        if (uid && g_nodes[uid] && g_nodes[uid] !== node) {
+            node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
 
-        g_nodes[this[UID]] = node;
-        Node._instances[this[UID]] = this;
-
-        if (restricted) {
-            config = {
-                restricted: restricted
-            };
-            g_restrict[this[UID]] = true; 
+        uid = Y.stamp(node);
+        if (!uid) { // stamp failed; likely IE non-HTMLElement
+            uid = Y.guid();
         }
+
+        this[UID] = uid;
+
+        g_nodes[uid] = node;
+        Node._instances[uid] = this;
 
         this._lazyAttrInit = true;
         this._silentInit = true;
@@ -77,6 +78,7 @@ Node.NAME = 'Node';
 
 Node.DOM_EVENTS = {
     abort: true,
+    beforeunload: true,
     blur: true,
     change: true,
     click: true,
@@ -119,8 +121,6 @@ Node.DOM_EVENTS = {
 // that delegate, key, available, contentready, etc all will
 // be available through Node.on
 Y.mix(Node.DOM_EVENTS, Y.Env.evt.plugins);
-
-Node.EXEC_SCRIPTS = true;
 
 Node._instances = {};
 
@@ -180,12 +180,8 @@ Node.scrubVal = function(val, node, depth) {
     if (node && val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y.DOM.isWindow(val)) {// node || window
-                if (g_restrict[node[UID]] && !node.contains(val)) {
-                    val = null; // not allowed to go outside of root node
-                } else {
-                    val = Node.get(val);
-                }
-            } else if (val.item || // dom collection or Node instance // TODO: check each node for restrict? block ancestor?
+                val = Node.get(val);
+            } else if (val.item || // dom collection or Node instance
                     (val[0] && val[0][NODE_TYPE])) { // array of DOM Nodes
                 val = Y.all(val);
             } else {
@@ -246,32 +242,35 @@ Node.importMethod = function(host, name, altName) {
  * @static
  * @param {String | HTMLElement} node a node or Selector 
  * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
- * @param {Boolean} restrict Whether or not the Node instance should be restricted to accessing
- * its subtree only.
  */
-Node.get = function(node, doc, restrict) {
-    var instance = null;
-
-    if (typeof node === 'string') {
-        if (node.indexOf('doc') === 0) { // doc OR document
-            node = Y.config.doc;
-        } else if (node.indexOf('win') === 0) { // doc OR document
-            node = Y.config.win;
-        } else {
-            node = Y.Selector.query(node, doc, true);
-        }
-    }
+Node.get = function(node, doc) {
+    var instance = null,
+        cachedNode,
+        uid;
 
     if (node) {
-        instance = Node._instances[node[UID]]; // reuse exising instances
-        if (!instance) {
-            instance = new Node(node, restrict);
-        } else if (restrict) {
-            g_restrict[instance[UID]] = true;
-            instance._set('restricted', true);
+        if (typeof node === 'string') {
+            if (node.indexOf('doc') === 0) { // doc OR document
+                node = Y.config.doc;
+            } else if (node.indexOf('win') === 0) { // doc OR document
+                node = Y.config.win;
+            } else {
+                node = Y.Selector.query(node, doc, true);
+            }
+            if (!node) {
+                return null;
+            }
+        } else if (node instanceof Node) {
+            return node; // NOTE: return
+        }
+
+        uid = node._yuid;
+        cachedNode = g_nodes[uid];
+        instance = Node._instances[uid]; // reuse exising instances
+        if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
+            instance = new Node(node);
         }
     }
-    // TODO: restrict on subsequent call?
     return instance;
 };
 
@@ -345,25 +344,6 @@ Node.ATTRS = {
             Y.DOM.setValue(g_nodes[this[UID]], val);
             return val;
         }
-    },
-
-/*
-    style: {
-        getter: function(attr) {
-            return Y.DOM.getStyle(g_nodes[this[UID]].style, attr);
-        }
-    },
-*/
-
-    /**
-     * Whether or not this Node can traverse outside of its subtree.
-     * @config restricted
-     * @writeOnce
-     * @type Boolean
-     */
-    restricted: {
-        writeOnce: true,
-        value: false
     }
 };
 
@@ -519,7 +499,7 @@ Y.mix(Node.prototype, {
    /**
      * Returns the nearest ancestor that passes the test applied by supplied boolean method.
      * @method ancestor
-     * @param {String | Function} fn A selector or boolean method for testing elements.
+     * @param {String | Function} fn A selector string or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
      * @return {Node} The matching Node instance or null if not found
      */
@@ -629,7 +609,6 @@ Y.mix(Node.prototype, {
         //var uid = this[UID];
 
         //delete g_nodes[uid];
-        //delete g_restrict[uid];
         //delete Node._instances[uid];
     },
 
@@ -674,24 +653,17 @@ Y.mix(Node.prototype, {
      * @method insert
      * @param {String | Y.Node | HTMLElement} content The content to insert 
      * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.
-     * @param {Boolean} execScripts Whether or not to execute any scripts found in
-     * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    insert: function(content, where, execScripts) {
+    insert: function(content, where) {
         if (content) {
-            execScripts = (execScripts && Node.EXEC_SCRIPTS);
             if (typeof where === 'number') { // allow index
                 where = g_nodes[this[UID]].childNodes[where];
             }
             if (typeof content !== 'string') { // pass the DOM node
                 content = Y.Node.getDOMNode(content);
             }
-            if (!where || // only allow inserting into this Node's subtree
-                (!g_restrict[this[UID]] || 
-                    (typeof where !== 'string' && this.contains(where)))) { 
-                Y.DOM.addHTML(g_nodes[this[UID]], content, where, execScripts);
-            }
+            Y.DOM.addHTML(g_nodes[this[UID]], content, where);
         }
         return this;
     },
@@ -700,37 +672,30 @@ Y.mix(Node.prototype, {
      * Inserts the content as the firstChild of the node. 
      * @method prepend
      * @param {String | Y.Node | HTMLElement} content The content to insert 
-     * @param {Boolean} execScripts Whether or not to execute any scripts found in
-     * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    prepend: function(content, execScripts) {
-        return this.insert(content, 0, execScripts);
+    prepend: function(content) {
+        return this.insert(content, 0);
     },
 
     /**
      * Inserts the content as the lastChild of the node. 
      * @method append
      * @param {String | Y.Node | HTMLElement} content The content to insert 
-     * @param {Boolean} execScripts Whether or not to execute any scripts found in
-     * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    append: function(content, execScripts) {
-        return this.insert(content, null, execScripts);
+    append: function(content) {
+        return this.insert(content, null);
     },
 
     /**
      * Replaces the node's current content with the content.
      * @method setContent
      * @param {String | Y.Node | HTMLElement} content The content to insert 
-     * @param {Boolean} execScripts Whether or not to execute any scripts found in
-     * the content.  If false, all scripts will be stripped out.
      * @chainable
      */
-    setContent: function(content, execScripts) {
-        execScripts = (execScripts && Node.EXEC_SCRIPTS);
-        Y.DOM.addHTML(g_nodes[this[UID]], content, 'replace', execScripts);
+    setContent: function(content) {
+        Y.DOM.addHTML(g_nodes[this[UID]], content, 'replace');
         return this;
     },
 
@@ -744,9 +709,9 @@ Y.mix(Node.prototype, {
 Y.Node = Node;
 Y.get = Y.Node.get;
 /**
- * The NodeList Utility provides a DOM-like interface for interacting with DOM nodes.
+ * The NodeList module provides support for managing collections of Nodes.
  * @module node
- * @submodule node-list
+ * @submodule nodelist
  */    
 
 /**
@@ -1238,7 +1203,8 @@ Y.Array.each([
     /**
      * Passes through to DOM method.
      * @method cloneNode
-     * @param {HTMLElement | Node} node Node to be cloned 
+     * @param {Boolean} deep Whether or not to perform a deep clone, which includes
+     * subtree and attributes
      * @return {Node} The clone 
      */
     'cloneNode',
@@ -1375,28 +1341,7 @@ if (!document.documentElement.hasAttribute) { // IE < 8
  * @return {string} The attribute value 
  */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
-
-(function() { // IE clones expandos; regenerate UID
-    var node = document.createElement('div'),
-        UID = '_yuid';
-
-    Y.stamp(node);
-    if (node[UID] === node.cloneNode(true)[UID]) {
-        Y.Node.prototype.cloneNode = function(deep) {
-            var node = Y.Node.getDOMNode(this).cloneNode(deep);
-            node[UID] = Y.guid();
-            return Y.get(node);
-        };
-    }
-})();
 (function(Y) {
-/**
- * Extended Node interface for managing classNames.
- * @module node
- * @submodule node
- * @for Node
- */
-
     var methods = [
     /**
      * Determines whether each node has the given className.
@@ -1487,7 +1432,7 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
      */
     Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
-/*
+/**
  * Functionality to make the node a delegated event container
  * @module node
  * @submodule node-event-delegate
@@ -1520,7 +1465,6 @@ YUI.add('node-style', function(Y) {
  * Extended Node interface for managing node styles.
  * @module node
  * @submodule node-style
- * @for Node
  */
 
 var methods = [
@@ -1607,7 +1551,6 @@ YUI.add('node-screen', function(Y) {
  * Adds support for positioning elements and normalizes window size and scroll detection. 
  * @module node
  * @submodule node-screen
- * @for Node
  */
 
 // these are all "safe" returns, no wrapping required
@@ -1754,14 +1697,6 @@ Y.Node.importMethod(Y.DOM, [
 ]);
 
 /**
- * Extended Node interface for managing regions and screen positioning.
- * Adds support for positioning elements and normalizes window size and scroll detection. 
- * @module node
- * @submodule node-screen
- * @for Node
- */
-
-/**
  * Returns a region object for the node 
  * @config region
  * @for Node
@@ -1833,7 +1768,6 @@ YUI.add('node-aria', function(Y) {
 
 /**
  * Aria support for Node
- *
  * @module node
  * @submodule node-aria
  */
@@ -1857,5 +1791,5 @@ Y.Node.prototype._addAriaAttr = function(name) {
 }, '@VERSION@' ,{requires:['node-base']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-aria']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-aria'], skinnable:false, requires:['dom']});
 

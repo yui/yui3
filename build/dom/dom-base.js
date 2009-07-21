@@ -432,7 +432,10 @@ Y.DOM = {
      * @param {HTMLDocument} doc An optional document context 
      */
     create: function(html, doc) {
-        html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
+        if (typeof html === 'string') {
+            html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
+        }
+
         if (!doc && Y.DOM._cloneCache[html]) {
             return Y.DOM._cloneCache[html].cloneNode(true); // NOTE: return
         }
@@ -482,10 +485,10 @@ Y.DOM = {
      * @param {String} attr The attribute to set.
      * @param {String} val The value of the attribute.
      */
-    setAttribute: function(el, attr, val) {
+    setAttribute: function(el, attr, val, ieAttr) {
         if (el && el.setAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-            el.setAttribute(attr, val);
+            el.setAttribute(attr, val, ieAttr);
         }
     },
 
@@ -497,11 +500,12 @@ Y.DOM = {
      * @param {String} attr The attribute to get.
      * @return {String} The current value of the attribute. 
      */
-    getAttribute: function(el, attr) {
+    getAttribute: function(el, attr, ieAttr) {
+        ieAttr = (ieAttr !== undefined) ? ieAttr : 2;
         var ret = '';
         if (el && el.getAttribute) {
             attr = Y.DOM.CUSTOM_ATTRIBUTES[attr] || attr;
-            ret = el.getAttribute(attr, 2);
+            ret = el.getAttribute(attr, ieAttr);
 
             if (ret === null) {
                 ret = ''; // per DOM spec
@@ -550,10 +554,19 @@ Y.DOM = {
 
     _cloneCache: {},
 
-    addHTML: function(node, content, where, execScripts) {
-        content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
-        var scripts,
-            newNode = Y.DOM._cloneCache[content];
+    /**
+     * Inserts content in a node at the given location 
+     * @method addHTML
+     * @param {HTMLElement} node The node to insert into
+     * @param {String} content The content to be inserted 
+     * @param {String} where Where to insert the content; default is after lastChild 
+     */
+    addHTML: function(node, content, where) {
+        if (typeof content === 'string') {
+            content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
+        }
+
+        var newNode = Y.DOM._cloneCache[content];
             
         if (newNode) {
             newNode = newNode.cloneNode(true);
@@ -593,17 +606,6 @@ Y.DOM = {
             }
         } else {
             node.appendChild(newNode);
-        }
-
-        if (execScripts) {
-            if (newNode.tagName.toUpperCase() === 'SCRIPT' && !Y.UA.gecko) {
-                scripts = [newNode]; // execute the new script
-            } else {
-                scripts = newNode.getElementsByTagName('script');
-            }
-            Y.DOM._execScripts(scripts);
-        } else if (content.nodeType || (content.indexOf && content.indexOf('<script') > -1)) { // prevent any scripts from being injected
-            Y.DOM._stripScripts(newNode);
         }
 
         return newNode;
@@ -923,15 +925,6 @@ Y.DOM = {
 })(Y);
 
 })(Y);
-/** 
- * The DOM utility provides a cross-browser abtraction layer
- * normalizing DOM tasks, and adds extra helper functionality
- * for other common tasks. 
- * @module dom
- * @submodule dom-base
- * @for DOM
- */
-
 Y.mix(Y.DOM, {
     /**
      * Determines whether a DOM element has the given className.

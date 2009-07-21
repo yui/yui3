@@ -1,8 +1,7 @@
 /**
- * Adds the ability to filter log entries on their category/logLevel or their
- * source (global, event, attribute, etc).
- * Checkboxes are added to the Console footer to control the visibility of each
- * category and source.  
+ * <p>Provides Plugin.ConsoleFilters plugin class.</p>
+ *
+ * <p>This plugin adds the ability to control which Console entries display by filtering on category and source. Two groups of checkboxes are added to the Console footer, one for categories and the other for sources.  Only those messages that match a checked category or source are displayed.</p>
  *
  * @module console-filters
  * @namespace Plugin
@@ -44,7 +43,6 @@ Y.mix(ConsoleFilters,{
      *
      * @property ConsoleFilters.NAME
      * @type String
-     * @readOnly
      * @static
      * @default 'consoleFilters'
      */
@@ -55,7 +53,6 @@ Y.mix(ConsoleFilters,{
      *
      * @property ConsoleFilters.NS
      * @type String
-     * @readOnly
      * @static
      * @default 'filter'
      */
@@ -89,10 +86,10 @@ Y.mix(ConsoleFilters,{
      * @static
      */
     FILTER_TEMPLATE :
-        // IE8 doesn't permit breaking _between_ nowrap elements AND it doesn't
-        // understand the (non spec) wbr tag AND it doesn't create text nodes
-        // for spaces between elements in innerHTML strings.  The thin-space
-        // entity suffices to create a breakable point.
+        // IE8 and FF3 don't permit breaking _between_ nowrap elements.  IE8
+        // doesn't understand (non spec) wbr tag, nor does it create text nodes
+        // for spaces in innerHTML strings.  The thin-space entity suffices to
+        // create a breakable point.
         '<label class="{filter_label}">'+
             '<input type="checkbox" value="{filter_name}" '+
                 'class="{filter} {filter_class}"> {filter_name}'+
@@ -170,6 +167,27 @@ Y.mix(ConsoleFilters,{
             validator : function (v,k) {
                 return this._validateSource(k,v);
             }
+        },
+
+        /**
+         * Maximum number of entries to store in the message cache.  Use this to
+         * limit the memory footprint in environments with heavy log usage.
+         * By default, there is no limit (Number.POSITIVE_INFINITY).
+         *
+         * @attribute cacheLimit
+         * @type {Number}
+         * @default Number.POSITIVE_INFINITY
+         */
+        cacheLimit : {
+            value : Number.POSITIVE_INFINITY,
+            setter : function (v) {
+                if (Y.Lang.isNumber(v)) {
+                    this._cacheLimit = v;
+                    return v;
+                } else {
+                    return Y.Attribute.INVALID_VALUE;
+                }
+            }
         }
     }
 });
@@ -187,6 +205,8 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @protected
      */
     _entries : null,
+
+    _cacheLimit : Number.POSITIVE_INFINITY,
 
     /**
      * The container node created to house the category filters.
@@ -211,6 +231,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * methods.
      *
      * @method initializer
+     * @protected
      */
     initializer : function () {
         this._entries = [];
@@ -228,12 +249,15 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
             this.syncUI();
             this.bindUI();
         }
+
+        this.after("cacheLimitChange", this._afterCacheLimitChange);
     },
 
     /**
      * Removes the plugin UI and unwires events.
      *
      * @method destructor
+     * @protected
      */
     destructor : function () {
         //TODO: grab last {consoleLimit} entries and update the console with
@@ -252,6 +276,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * Adds the category and source filter sections to the Console footer.
      *
      * @method renderUI
+     * @protected
      */
     renderUI : function () {
         var foot = this.get(HOST).get('contentBox').query(C_FOOT),
@@ -277,6 +302,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * maintain the UI state.
      *
      * @method bindUI
+     * @protected
      */
     bindUI : function () {
         this._categories.on('click', Y.bind(this._onCategoryCheckboxClick, this));
@@ -316,12 +342,17 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      */
     _onEntry : function (e) {
         this._entries.push(e.message);
-
+        
         var cat = CATEGORY_DOT + e.message.category,
             src = SOURCE_DOT + e.message.source,
             cat_filter = this.get(cat),
             src_filter = this.get(src),
+            overLimit  = this._entries.length - this._cacheLimit,
             visible;
+
+        if (overLimit > 0) {
+            this._entries.splice(0, overLimit);
+        }
 
         if (cat_filter === undefined) {
             visible = this.get(DEF_VISIBILITY);
@@ -430,6 +461,23 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
     },
 
     /**
+     * Trims the cache of entries to the appropriate new length.
+     *
+     * @method _afterCacheLimitChange 
+     * @param e {Event} the attribute change event object
+     * @protected
+     */
+    _afterCacheLimitChange : function (e) {
+        if (isFinite(e.newVal)) {
+            var delta = this._entries.length - e.newVal;
+
+            if (delta > 0) {
+                this._entries.splice(0,delta);
+            }
+        }
+    },
+
+    /**
      * Repopulates the Console with entries appropriate to the current filter
      * settings.
      *
@@ -448,7 +496,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
         if (body) {
             host._cancelPrintLoop();
 
-            // Capture from bottom up.  Entry order reversed.
+            // Evaluate all entries from latest to oldest
             for (i = entries.length - 1; i >= 0 && remaining >= 0; --i) {
                 e = entries[i];
                 if (cats[e.category] && srcs[e.source]) {
@@ -499,8 +547,9 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
     /**
      * Passes checkbox clicks on to the category attribute.
      *
-     * @metho _onCategoryCheckboxClick
+     * @method _onCategoryCheckboxClick
      * @param e {Event} the DOM event
+     * @protected
      */
     _onCategoryCheckboxClick : function (e) {
         var t = e.target, cat;
@@ -518,6 +567,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      *
      * @method _onSourceCheckboxClick
      * @param e {Event} the DOM event
+     * @protected
      */
     _onSourceCheckboxClick : function (e) {
         var t = e.target, src;
@@ -580,11 +630,11 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
 
     /**
      * Shows any number of sources in the UI.  Convenience method for
-     * myConsole.filter.set('category.foo', true); set('category.bar', true);
+     * myConsole.filter.set('source.foo', true); set('source.bar', true);
      * and so on.
      *
      * @method showSource
-     * @param cat* {String} 1..n sources to allow to display in the UI
+     * @param src* {String} 1..n sources to allow to display in the UI
      */
     showSource : function (src, multiple) {
         if (isString(multiple)) {
@@ -602,6 +652,7 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @method _createCheckbox
      * @param container {Node} the parentNode of the new checkbox and label
      * @param name {String} the identifier of the filter
+     * @protected
      */
     _createCheckbox : function (container, name) {
         var info = Y.merge(ConsoleFilters.CHROME_CLASSES, {
@@ -621,7 +672,8 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @method _validateCategory
      * @param cat {String} the new category:visibility map
      * @param v {String} the subattribute path updated
-     * return Boolean
+     * @return Boolean
+     * @protected
      */
     _validateCategory : function (cat, v) {
         return Y.Lang.isObject(v,true) && cat.split(/\./).length < 3;
@@ -634,7 +686,8 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      * @method _validateSource
      * @param cat {String} the new source:visibility map
      * @param v {String} the subattribute path updated
-     * return Boolean
+     * @return Boolean
+     * @protected
      */
     _validateSource : function (src, v) {
         return Y.Lang.isObject(v,true) && src.split(/\./).length < 3;
