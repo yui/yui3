@@ -12,7 +12,7 @@ The YUI Global
 3.0.0 GA
 
 * User agent detection is more granular.  e.g., FireFox 3.5 reports gecko 1.91 rather than 1.9.
-* Fixed UA.os.
+* Fixed UA.os. .
 
 3.0.0 beta 1
 

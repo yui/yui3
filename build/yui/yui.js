@@ -2303,7 +2303,8 @@ Y.Get = function() {
 
         var q = queues[id], sc;
         if (q.timer) {
-            q.timer.cancel();
+            // q.timer.cancel();
+            clearTimeout(q.timer);
         }
 
         // execute failure callback
@@ -2334,7 +2335,8 @@ Y.Get = function() {
     _finish = function(id) {
         var q = queues[id], msg, sc;
         if (q.timer) {
-            q.timer.cancel();
+            // q.timer.cancel();
+            clearTimeout(q.timer);
         }
         q.finished = true;
 
@@ -2383,7 +2385,8 @@ Y.Get = function() {
         var q = queues[id], msg, w, d, h, n, url, s;
 
         if (q.timer) {
-            q.timer.cancel();
+            // q.timer.cancel();
+            clearTimeout(q.timer);
         }
 
         if (q.aborted) {
