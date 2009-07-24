@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI3 cross instance communication</title>
+<script src="http://yui.yahooapis.com/3.0.0b1/build/yui/yui-debug.js" type="text/javascript"></script>  
+<body>
+
+<form name="form1">
+    <input id="button1" type="button" value="Click!" />
+</form>
+
+<script type="text/javascript">
+
+YUI().use('event', function(Y) {
+    var count = 0;
+
+    Y.publish('myapp:myevent', {
+        emitFacade: true,
+        broadcast: 2
+    });
+
+    Y.on('click', function() {
+        Y.log('button click');
+        Y.fire('myapp:myevent', {
+            count: ++count
+        });
+    }, '#button1');
+});
+
+YUI().use('event-custom', function(Y) {
+    Y.Global.on('myapp:myevent', function(e) {
+        Y.log('received notification from the other instance: ' + e.count);
+    });
+});
+
+</script>
+
+</body>
+</html>
