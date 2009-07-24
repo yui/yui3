@@ -9,19 +9,17 @@
  * @event key
  * @for YUI
  * @param type {string} 'key'
- * @param fn {string} the function to execute
- * @param id {string} the element(s) to bind
+ * @param fn {function} the function to execute
+ * @param id {string|HTMLElement|collection} the element(s) to bind
  * @param spec {string} the keyCode and modifier specification
  * @param o optional context object
- * @param args 0..n additional arguments that should be provided 
- * to the listener.
+ * @param args 0..n additional arguments to provide to the listener.
  * @return {Event.Handle} the detach handle
  */
 Y.Env.evt.plugins.key = {
 
     on: function(type, fn, id, spec, o) {
-        var a = Y.Array(arguments, 0, true),
-            parsed, etype, criteria, ename;
+        var a = Y.Array(arguments, 0, true), parsed, etype, criteria, ename;
 
 
         if (!spec || spec.indexOf(':') == -1) {

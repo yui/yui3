@@ -68,14 +68,31 @@ var Lang = Y.Lang,
     });
 
 /**
- * Sets up a delegated listener container.
+ * Sets up event delegation on a container element.  The delegated event
+ * will use a supplied selector to test if the target or one of the
+ * descendants of the target match it.  The supplied callback function 
+ * will only be executed if a match was encountered, and, in fact, 
+ * will be executed for each element that matches if you supply an 
+ * ambiguous selector.
+ *
+ * The event object for the delegated event is supplied to the callback
+ * function.  It is modified slightly in order to support all properties
+ * that may be needed for event delegation.  'currentTarget' is set to
+ * the element that matched the delegation specifcation.  'container' is
+ * set to the element that the listener is bound to (this normally would
+ * be the 'currentTarget').
+ *
  * @event delegate
  * @param type {string} 'delegate'
- * @param fn {string} the function to execute
+ * @param fn {function} the callback function to execute.  This function
+ * will be provided the event object for the delegated event.
  * @param el {string|node} the element that is the delegation container
  * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
+ * @param context optional argument that specifies what 'this' refers to.
+ * @param args* 0..n additional arguments to pass on to the callback function.
+ * These arguments will be added after the event object.
  * @return {EventHandle} the detach handle
  * @for YUI
  */

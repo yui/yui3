@@ -84,7 +84,6 @@ var isString = Y.Lang.isString,
 				args.splice(2, 1);
 			}
             
-
 	        // Subscribe to the custom event for the delegation spec
 	        return Y.on.apply(Y, args);
 
@@ -100,7 +99,7 @@ var isString = Y.Lang.isString,
  * 
  * @event mouseenter
  * @param type {string} "mouseenter"
- * @param fn {string} The method the event invokes.
+ * @param fn {function} The method the event invokes.
  * @param el {string|node} The element(s) to assign the listener to.
  * @param spec {string} Optional.  String representing a selector that must 
  * match the target of the event in order for the listener to be called.
@@ -117,7 +116,7 @@ Y.Env.evt.plugins.mouseenter = eventConfig;
 * 
 * @event mouseleave
 * @param type {string} "mouseleave"
-* @param fn {string} The method the event invokes.
+* @param fn {function} The method the event invokes.
 * @param el {string|node} The element(s) to assign the listener to.
 * @param spec {string} Optional.  String representing a selector that must 
 * match the target of the event in order for the listener to be called.
