@@ -50,8 +50,15 @@
                         <div class="highlight" ><pre><span class="c">/**</span>
 <span class="c"> * Executes the callback as soon as the specified element </span>
 <span class="c"> * is detected in the DOM.</span>
-<span class="c"> * @for YUI</span>
 <span class="c"> * @event available</span>
+<span class="c"> * @param type {string} &#39;available&#39;</span>
+<span class="c"> * @param fn {function} the callback function to execute.</span>
+<span class="c"> * @param el {string|HTMLElement|collection} the element(s) to attach</span>
+<span class="c"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
+<span class="c"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
+<span class="c"> * These arguments will be added after the event object.</span>
+<span class="c"> * @return {EventHandle} the detach handle</span>
+<span class="c"> * @for YUI</span>
 <span class="c"> */</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">.</span><span class="nx">available</span> <span class="o">=</span> <span class="o">{</span>
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
@@ -64,8 +71,15 @@
 <span class="c"> * Executes the callback as soon as the specified element </span>
 <span class="c"> * is detected in the DOM with a nextSibling property</span>
 <span class="c"> * (indicating that the element&#39;s children are available)</span>
-<span class="c"> * @for YUI</span>
 <span class="c"> * @event contentready</span>
+<span class="c"> * @param type {string} &#39;contentready&#39;</span>
+<span class="c"> * @param fn {function} the callback function to execute.</span>
+<span class="c"> * @param el {string|HTMLElement|collection} the element(s) to attach</span>
+<span class="c"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
+<span class="c"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
+<span class="c"> * These arguments will be added after the event object.</span>
+<span class="c"> * @return {EventHandle} the detach handle</span>
+<span class="c"> * @for YUI</span>
 <span class="c"> */</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">.</span><span class="nx">contentready</span> <span class="o">=</span> <span class="o">{</span>
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
