@@ -243,23 +243,23 @@
 <span class="c"></span>    <span class="o">};</span>
 
     <span class="c">/**</span>
-<span class="c">     * Deep obj/array copy.  Functions will are cloned with Y.bind.</span>
+<span class="c">     * Deep obj/array copy.  Functions are cloned with Y.bind.</span>
 <span class="c">     * Array-like objects are treated as arrays.</span>
-<span class="c">     * primitives are returned untouched.  Optionally a</span>
+<span class="c">     * Primitives are returned untouched.  Optionally, a</span>
 <span class="c">     * function can be provided to handle other data types,</span>
 <span class="c">     * filter keys, validate values, etc.</span>
 <span class="c">     *</span>
 <span class="c">     * @method clone</span>
 <span class="c">     * @param o what to clone</span>
 <span class="c">     * @param safe {boolean} if true, objects will not have prototype</span>
-<span class="c">     * items from the source.  If false, it does.  In this case, the</span>
-<span class="c">     * original is initally protected, but the clone is not completely immune</span>
+<span class="c">     * items from the source.  If false, they will.  In this case, the</span>
+<span class="c">     * original is initially protected, but the clone is not completely immune</span>
 <span class="c">     * from changes to the source object prototype.  Also, cloned prototype</span>
 <span class="c">     * items that are deleted from the clone will result in the value</span>
-<span class="c">     * of the source prototype to be exposed.  If operating on a non-safe</span>
+<span class="c">     * of the source prototype being exposed.  If operating on a non-safe</span>
 <span class="c">     * clone, items should be nulled out rather than deleted.</span>
 <span class="c">     * @TODO review</span>
-<span class="c">     * @param f optional function to apply to each item in a collection</span>
+<span class="c">     * @param f optional function to apply to each item in a collection;</span>
 <span class="c">     *          it will be executed prior to applying the value to</span>
 <span class="c">     *          the new object.  Return false to prevent the copy.</span>
 <span class="c">     * @param c optional execution context for f</span>

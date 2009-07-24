@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>YUI: DragDrop</title>
+</head>
+<body class="yui-skin-sam">
+<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+<script>
+var yConfig = {
+    base: '../../../build/',
+    allowRollup: false,
+    filter: 'DEBUG',
+    logExclude: {
+        'YUI': true,
+        Event: true,
+        Base: true,
+        Attribute: true,
+        augment: true
+    },
+    throwFail: true,
+    debug: false
+};
+
+YUI(yConfig).use('node', function(Y) {
+    var Target = function() {
+        Target.superclass.constructor.apply(this, arguments);
+    };
+
+    Target.NAME = 'Target';
+    Y.extend(Target, Y.Base);
+
+    var Item = function() {
+        Item.superclass.constructor.apply(this, arguments);
+
+        this.publish('foo', {
+            type: 'foo',
+            emitFacade: true,
+            bubbles: true,
+            preventable: false,
+            queuable: false,
+            prefix: 'bar'
+        });
+    };
+
+    Item.NAME = 'Item';
+    Y.extend(Item, Y.Base);
+
+
+    var bubbleTarget = new Target();
+    bubbleTarget.on('foo', function(e) {
+        console.log('bubble: ', e);
+    });
+
+    var item = new Item();
+    item.addTarget(bubbleTarget);
+    item.on('foo', function(e) {
+        console.log('item: ', e);
+    });
+    item.fire('foo');
+    
+});
+</script>
+</body>
+</html>

@@ -34,12 +34,11 @@ Y.mix(adapt, {
      * signature is:</p>
      * <p>"DOMReady", [], obj</p>
      *
-     *
      * @event domready
      * @for YUI
      *
      * @param {function} fn what to execute when the element is found.
-     * @optional context execution context
+     * @optional context optional execution context
      * @optional args 0..n arguments to send to the listener
      *
      */

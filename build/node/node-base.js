@@ -78,6 +78,7 @@ Node.NAME = 'Node';
 
 Node.DOM_EVENTS = {
     abort: true,
+    beforeunload: true,
     blur: true,
     change: true,
     click: true,

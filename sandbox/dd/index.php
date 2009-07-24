@@ -276,7 +276,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
     });
     console.log(dd4);
     */
-
+    /*
     var DOC_SCROLL_X = 0,
         DOC_SCROLL_Y = 0;
     
@@ -292,7 +292,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
     Y1.DOM.docScrollY = function(node) {
         return DOC_SCROLL_Y;
     };
-
+    */
     
     dd4 = new Y1.DD.Drag({
         node: '#drag4',
@@ -391,9 +391,8 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     });
     
     Y.DD.DDM.on('drag:drag', function(e) {
-        //console.log('DDM:drag:drag :: ', e);
+        console.log('DDM:drag:drag :: ', e);
     });
-    
     //Y.DD.DDM.set('multiDrop', false);
 
 /* //Event Hijacking
@@ -425,7 +424,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
             three: 'This is my data object'
         }
     });
-    console.log(dd);
+    console.log(dd, dd.get('bubbles'));
     
     dd.on('drag:end', function(e) {
         //console.log('drag:end: ', e);

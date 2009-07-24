@@ -192,39 +192,23 @@
 <span class="c"> * @function cached</span>
 <span class="c"> * @param source {function} the function to memoize</span>
 <span class="c"> * @param cache an optional cache seed</span>
+<span class="c"> * @param refetch if supplied, this value is tested against the cached</span>
+<span class="c"> * value.  If the values are equal, the wrapped function is executed again.</span>
 <span class="c"> * @return {Function} the wrapped function</span>
 <span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">source</span><span class="o">,</span> <span class="nx">cache</span><span class="o">){</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">source</span><span class="o">,</span> <span class="nx">cache</span><span class="o">,</span> <span class="nx">refetch</span><span class="o">){</span>
     <span class="nx">cache</span> <span class="o">=</span> <span class="nx">cache</span> <span class="o">||</span> <span class="o">{};</span>
 
-    <span class="c">// I want the profiler to show me separate entries for each</span>
-<span class="c"></span>    <span class="c">// cached function.  Is this too much to ask?</span>
-<span class="c"></span>    
-    <span class="c">// return function cached_sourceFunction</span>
-<span class="c"></span>    <span class="c">// return this[&#39;cached_&#39; + source.name] = function</span>
-<span class="c"></span>    <span class="c">// var a = function(){}; a.name = &#39;foo&#39;; return a;</span>
-<span class="c"></span>
     <span class="k">return</span> <span class="k">function</span><span class="o">(</span><span class="nx">arg1</span><span class="o">,</span> <span class="nx">arg2</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="c">// (?)()   51  5.76%   0.571ms 1.01ms  0.02ms  0.001ms 0.041ms</span>
-<span class="c"></span>        <span class="c">// A() 76  6.58%   0.652ms 0.652ms 0.009ms 0.005ms 0.03ms</span>
-<span class="c"></span>        <span class="c">// var key = (arg2 !== undefined) ? Y.Array(arguments, 0, true).join(DELIMITER) : arg1;</span>
-<span class="c"></span>
-        <span class="c">// (?)()   51  8.57%   0.837ms 0.838ms 0.016ms 0.013ms 0.024ms</span>
-<span class="c"></span>        <span class="c">// var key = (arguments.length &gt; 1) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;</span>
-<span class="c"></span>
-        <span class="c">// (?)()   51  8.06%  0.761ms 0.762ms 0.015ms 0.002ms 0.025ms</span>
-<span class="c"></span>        <span class="c">// var key = (arg2 !== undefined) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;</span>
-<span class="c"></span>        
-        <span class="c">// (?)()   51  7.87%   0.749ms 0.751ms 0.015ms 0.001ms 0.027ms</span>
-<span class="c"></span>        <span class="c">// A() 30  2.23%   0.214ms 0.214ms 0.007ms 0.005ms 0.009ms</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="o">(</span><span class="nx">arg2</span><span class="o">)</span> <span class="o">?</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">join</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">DELIMITER</span><span class="o">)</span> <span class="o">:</span> <span class="nx">arg1</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">k</span> <span class="o">=</span> <span class="o">(</span><span class="nx">arg2</span><span class="o">)</span> <span class="o">?</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">join</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">DELIMITER</span><span class="o">)</span> <span class="o">:</span> <span class="nx">arg1</span><span class="o">,</span>
+            <span class="nx">v</span> <span class="o">=</span> <span class="nx">cache</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
 
-        <span class="k">if</span> <span class="o">(!(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">cache</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">cache</span><span class="o">[</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">source</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">source</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(!(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">cache</span><span class="o">)</span> <span class="o">||</span> <span class="o">(</span><span class="nx">refetch</span> <span class="o">&amp;&amp;</span> <span class="nx">cache</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">==</span> <span class="nx">refetch</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">cache</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">source</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">source</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="k">return</span> <span class="nx">cache</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
+        <span class="k">return</span> <span class="nx">cache</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
     <span class="o">};</span>
 
 <span class="o">};</span>

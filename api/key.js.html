@@ -57,19 +57,17 @@
 <span class="c"> * @event key</span>
 <span class="c"> * @for YUI</span>
 <span class="c"> * @param type {string} &#39;key&#39;</span>
-<span class="c"> * @param fn {string} the function to execute</span>
-<span class="c"> * @param id {string} the element(s) to bind</span>
+<span class="c"> * @param fn {function} the function to execute</span>
+<span class="c"> * @param id {string|HTMLElement|collection} the element(s) to bind</span>
 <span class="c"> * @param spec {string} the keyCode and modifier specification</span>
 <span class="c"> * @param o optional context object</span>
-<span class="c"> * @param args 0..n additional arguments that should be provided </span>
-<span class="c"> * to the listener.</span>
+<span class="c"> * @param args 0..n additional arguments to provide to the listener.</span>
 <span class="c"> * @return {Event.Handle} the detach handle</span>
 <span class="c"> */</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">.</span><span class="nx">key</span> <span class="o">=</span> <span class="o">{</span>
 
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">spec</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span>
-            <span class="nx">parsed</span><span class="o">,</span> <span class="nx">etype</span><span class="o">,</span> <span class="nx">criteria</span><span class="o">,</span> <span class="nx">ename</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">parsed</span><span class="o">,</span> <span class="nx">etype</span><span class="o">,</span> <span class="nx">criteria</span><span class="o">,</span> <span class="nx">ename</span><span class="o">;</span>
 
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">spec</span> <span class="o">||</span> <span class="nx">spec</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>

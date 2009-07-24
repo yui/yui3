@@ -78,6 +78,7 @@ Node.NAME = 'Node';
 
 Node.DOM_EVENTS = {
     abort: true,
+    beforeunload: true,
     blur: true,
     change: true,
     click: true,
@@ -1799,5 +1800,5 @@ Y.Node.prototype._addAriaAttr = function(name) {
 }, '@VERSION@' ,{requires:['node-base']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom'], use:['node-base', 'node-style', 'node-screen', 'node-aria'], skinnable:false});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-aria'], skinnable:false, requires:['dom']});
 
