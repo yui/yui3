@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Test Page</title>
+</head>
+<body>
+    <h1>The typing-pause special event</h1>
+    <p>Type stuff in the input below and watch for messages in the console.</p>
+
+    <input id="delay">
+
+    <script src="http://yui.yahooapis.com/3.0.0b1/build/yui/yui-min.js" type="text/javascript"></script>
+    <!--script src="../../../build/typing-pause/typing-pause.js"></script-->
+    <script src="typing-pause.js"></script>
+    <script>
+        YUI().use('node','typing-pause', function (Y) {
+            var i = 0;
+
+            Y.on('typing-pause', function (e) {
+                console.log('Delay ' + (++i));
+            }, '#delay', { // this is the configuration, with the defaults
+                adaptive: true,
+                minLength: 1,
+                minWait: 400,
+                maxWait: 3000,
+                initialWait: 3000,
+                waitMultiplier: 4,
+                filter: function (inputValue) { return inputValue; }
+            });
+        });
+    </script>
+</body>
+</html>
