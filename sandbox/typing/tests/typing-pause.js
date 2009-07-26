@@ -1,3 +1,5 @@
+YUI.add('typing-pause', function(Y) {
+
 /**
  * Custom event that fires after a configured delay in keyboard activity.  The
  * optional configuration object passed as the fourth param to Y.on accepts the
@@ -133,3 +135,6 @@ Y.Env.evt.plugins[eventName] = event;
 if (Y.Node) {
     Y.Node.DOM_EVENTS[eventName] = event;
 }
+
+
+}, '@VERSION@' ,{requires:['node-base']});
