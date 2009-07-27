@@ -1,8 +1,15 @@
 /**
  * Executes the callback as soon as the specified element 
  * is detected in the DOM.
- * @for YUI
  * @event available
+ * @param type {string} 'available'
+ * @param fn {function} the callback function to execute.
+ * @param el {string|HTMLElement|collection} the element(s) to attach
+ * @param context optional argument that specifies what 'this' refers to.
+ * @param args* 0..n additional arguments to pass on to the callback function.
+ * These arguments will be added after the event object.
+ * @return {EventHandle} the detach handle
+ * @for YUI
  */
 Y.Env.evt.plugins.available = {
     on: function(type, fn, id, o) {
@@ -15,8 +22,15 @@ Y.Env.evt.plugins.available = {
  * Executes the callback as soon as the specified element 
  * is detected in the DOM with a nextSibling property
  * (indicating that the element's children are available)
- * @for YUI
  * @event contentready
+ * @param type {string} 'contentready'
+ * @param fn {function} the callback function to execute.
+ * @param el {string|HTMLElement|collection} the element(s) to attach
+ * @param context optional argument that specifies what 'this' refers to.
+ * @param args* 0..n additional arguments to pass on to the callback function.
+ * These arguments will be added after the event object.
+ * @return {EventHandle} the detach handle
+ * @for YUI
  */
 Y.Env.evt.plugins.contentready = {
     on: function(type, fn, id, o) {

@@ -1610,7 +1610,7 @@ YUI.add('test', function(Y) {
          */
         getMessage : function () {
             return this.message + "\nExpected: " + this.expected + " (" + (typeof this.expected) + ")"  +
-                "\nActual:" + this.actual + " (" + (typeof this.actual) + ")";
+                "\nActual: " + this.actual + " (" + (typeof this.actual) + ")";
         }
     
     });
