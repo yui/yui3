@@ -126,11 +126,14 @@
         * @type {Event.Custom}
         */
     
-    Drag = function() {
+    Drag = function(o) {
         this._lazyAddAttrs = false;
         Drag.superclass.constructor.apply(this, arguments);
 
-        DDM._regDrag(this);
+        var valid = DDM._regDrag(this);
+        if (!valid) {
+            Y.error('Failed to register node, already in use: ' + o.node);
+        }
     };
 
     Drag.NAME = 'drag';
