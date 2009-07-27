@@ -440,21 +440,6 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
         }
     });
 
-    ddTest = new Y.DD.Drag({
-        node: '#drag',
-        groups: ['one', 'three'],
-        target: true,
-        dragMode: 'intersect',
-        handles: ['h2'],
-        //bubbles: false,
-        //dragMode: 'strict',
-        data: {
-            one: 'This is my data object',
-            two: 'This is my data object',
-            three: 'This is my data object'
-        }
-    });
-    
     dd.on('drag:end', function(e) {
         //console.log('drag:end: ', e);
         //e.preventDefault();
