@@ -118,10 +118,15 @@ YUI.add('dd-ddm-base', function(Y) {
         * @param {Drag} d The Drag object
         */
         _regDrag: function(d) {
-            this._drags[this._drags.length] = d;
+            if (this.getDrag(d.get('node'))) {
+                return false;
+            }
+            
             if (!this._active) {
                 this._setupListeners();
             }
+            this._drags.push(d);
+            return true;
         },
         /**
         * @private

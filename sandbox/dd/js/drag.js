@@ -127,11 +127,14 @@ YUI.add('dd-drag', function(Y) {
         * @type {Event.Custom}
         */
     
-    Drag = function() {
+    Drag = function(o) {
         this._lazyAddAttrs = false;
         Drag.superclass.constructor.apply(this, arguments);
 
-        DDM._regDrag(this);
+        var valid = DDM._regDrag(this);
+        if (!valid) {
+            Y.error('Failed to register node, already in use: ' + o.node);
+        }
     };
 
     Drag.NAME = 'drag';
@@ -839,8 +842,11 @@ YUI.add('dd-drag', function(Y) {
             if (!this.get(DRAG_NODE)) {
                 this.set(DRAG_NODE, this.get(NODE));
             }
-            this._prep();
-            this._dragThreshMet = false;
+
+            //Fix for #2528096
+            //Don't prep the DD instance until all plugins are loaded.
+            this.on('initializedChange', Y.bind(this._prep, this));
+
             //Shouldn't have to do this..
             this.set('groups', this.get('groups'));
         },
@@ -850,6 +856,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Attach event listners and add classname
         */
         _prep: function() {
+            this._dragThreshMet = false;
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
             node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this));

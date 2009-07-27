@@ -118,10 +118,15 @@ YUI.add('dd-ddm-base', function(Y) {
         * @param {Drag} d The Drag object
         */
         _regDrag: function(d) {
-            this._drags[this._drags.length] = d;
+            if (this.getDrag(d.get('node'))) {
+                return false;
+            }
+            
             if (!this._active) {
                 this._setupListeners();
             }
+            this._drags.push(d);
+            return true;
         },
         /**
         * @private
@@ -930,11 +935,14 @@ YUI.add('dd-drag', function(Y) {
         * @type {Event.Custom}
         */
     
-    Drag = function() {
+    Drag = function(o) {
         this._lazyAddAttrs = false;
         Drag.superclass.constructor.apply(this, arguments);
 
-        DDM._regDrag(this);
+        var valid = DDM._regDrag(this);
+        if (!valid) {
+            Y.error('Failed to register node, already in use: ' + o.node);
+        }
     };
 
     Drag.NAME = 'drag';
@@ -1642,8 +1650,11 @@ YUI.add('dd-drag', function(Y) {
             if (!this.get(DRAG_NODE)) {
                 this.set(DRAG_NODE, this.get(NODE));
             }
-            this._prep();
-            this._dragThreshMet = false;
+
+            //Fix for #2528096
+            //Don't prep the DD instance until all plugins are loaded.
+            this.on('initializedChange', Y.bind(this._prep, this));
+
             //Shouldn't have to do this..
             this.set('groups', this.get('groups'));
         },
@@ -1653,6 +1664,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Attach event listners and add classname
         */
         _prep: function() {
+            this._dragThreshMet = false;
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
             node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this));
@@ -3242,7 +3254,7 @@ YUI.add('dd-drop', function(Y) {
             this.shim.setStyles({
                 top: '-999px',
                 left: '-999px',
-                zIndex: '2'
+                zIndex: '1'
             });
             this.overTarget = false;
         },
@@ -3372,8 +3384,8 @@ YUI.add('dd-drop', function(Y) {
             DDM._pg.appendChild(s);
             this.shim = s;
 
-            s.on('mouseover', Y.bind(this._handleOverEvent, this));
-            s.on('mouseout', Y.bind(this._handleOutEvent, this));
+            s.on('mouseenter', Y.bind(this._handleOverEvent, this));
+            s.on('mouseleave', Y.bind(this._handleOutEvent, this));
         },
         /**
         * @private
