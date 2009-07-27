@@ -715,7 +715,8 @@ Y.CustomEvent.prototype = {
             Y.Env._eventstack = null;
         } 
 
-        return (ret !== false);
+        // return (ret !== false);
+        return this.stopped ? false : true;
     },
 
     /**

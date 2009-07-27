@@ -114,12 +114,11 @@ Y.mix(adapt, {
      * signature is:</p>
      * <p>"DOMReady", [], obj</p>
      *
-     *
      * @event domready
      * @for YUI
      *
      * @param {function} fn what to execute when the element is found.
-     * @optional context execution context
+     * @optional context optional execution context
      * @optional args 0..n arguments to send to the listener
      *
      */
@@ -575,7 +574,7 @@ Event = function() {
         /**
          * The number of times we should look for elements that are not
          * in the DOM at the time the event is requested after the document
-         * has been loaded.  The default is 2000@amp;20 ms, so it will poll
+         * has been loaded.  The default is 1000@amp;40 ms, so it will poll
          * for 40 seconds or until all outstanding handlers are bound
          * (whichever comes first).
          * @property POLL_RETRYS
@@ -1331,8 +1330,15 @@ Event._poll();
 /**
  * Executes the callback as soon as the specified element 
  * is detected in the DOM.
- * @for YUI
  * @event available
+ * @param type {string} 'available'
+ * @param fn {function} the callback function to execute.
+ * @param el {string|HTMLElement|collection} the element(s) to attach
+ * @param context optional argument that specifies what 'this' refers to.
+ * @param args* 0..n additional arguments to pass on to the callback function.
+ * These arguments will be added after the event object.
+ * @return {EventHandle} the detach handle
+ * @for YUI
  */
 Y.Env.evt.plugins.available = {
     on: function(type, fn, id, o) {
@@ -1345,8 +1351,15 @@ Y.Env.evt.plugins.available = {
  * Executes the callback as soon as the specified element 
  * is detected in the DOM with a nextSibling property
  * (indicating that the element's children are available)
- * @for YUI
  * @event contentready
+ * @param type {string} 'contentready'
+ * @param fn {function} the callback function to execute.
+ * @param el {string|HTMLElement|collection} the element(s) to attach
+ * @param context optional argument that specifies what 'this' refers to.
+ * @param args* 0..n additional arguments to pass on to the callback function.
+ * These arguments will be added after the event object.
+ * @return {EventHandle} the detach handle
+ * @for YUI
  */
 Y.Env.evt.plugins.contentready = {
     on: function(type, fn, id, o) {
@@ -1390,17 +1403,18 @@ var adapt = Y.Env.evt.plugins,
  * @for YUI
  * @event focus
  * @param type {string} 'focus'
- * @param fn {string} the function to execute
- * @param o {string} the element(s) to bind
+ * @param fn {function} the callback function to execute
+ * @param o {string|HTMLElement|collection} the element(s) to bind
  * @param context optional context object
- * @param args 0..n additional arguments that should be provided 
- * to the listener.
- * @return {Event.Handle} the detach handle
+ * @param args 0..n additional arguments to provide to the listener.
+ * @return {EventHandle} the detach handle
  */
 adapt.focus = {
     on: function(type, fn, o) {
         var a = Y.Array(arguments, 0, true);
-        if (Y.UA.opera) {
+        if (Y.UA.ie) {
+            a[0] = a[0].replace(/focus/, 'focusin');
+        } else if (Y.UA.opera) {
             _captureHack(type, o);
         }
         return Y.Event._attach(a, CAPTURE_CONFIG);
@@ -1419,17 +1433,18 @@ adapt.focus = {
  * @for YUI
  * @event blur
  * @param type {string} 'focus'
- * @param fn {string} the function to execute
- * @param o {string} the element(s) to bind
+ * @param fn {function} the callback function to execute
+ * @param o {string|HTMLElement|collection} the element(s) to bind
  * @param context optional context object
- * @param args 0..n additional arguments that should be provided 
- * to the listener.
- * @return {Event.Handle} the detach handle
+ * @param args 0..n additional arguments to provide to the listener.
+ * @return {EventHandle} the detach handle
  */
 adapt.blur = {
     on: function(type, fn, o) {
         var a = Y.Array(arguments, 0, true);
-        if (Y.UA.opera) {
+        if (Y.UA.ie) {
+            a[0] = a[0].replace(/blur/, 'focusout');
+        } else if (Y.UA.opera) {
             _captureHack(type, o);
         }
         return Y.Event._attach(a, CAPTURE_CONFIG);
@@ -1448,19 +1463,17 @@ adapt.blur = {
  * @event key
  * @for YUI
  * @param type {string} 'key'
- * @param fn {string} the function to execute
- * @param id {string} the element(s) to bind
+ * @param fn {function} the function to execute
+ * @param id {string|HTMLElement|collection} the element(s) to bind
  * @param spec {string} the keyCode and modifier specification
  * @param o optional context object
- * @param args 0..n additional arguments that should be provided 
- * to the listener.
+ * @param args 0..n additional arguments to provide to the listener.
  * @return {Event.Handle} the detach handle
  */
 Y.Env.evt.plugins.key = {
 
     on: function(type, fn, id, spec, o) {
-        var a = Y.Array(arguments, 0, true),
-            parsed, etype, criteria, ename;
+        var a = Y.Array(arguments, 0, true), parsed, etype, criteria, ename;
 
 
         if (!spec || spec.indexOf(':') == -1) {
@@ -1604,14 +1617,31 @@ var Lang = Y.Lang,
     });
 
 /**
- * Sets up a delegated listener container.
+ * Sets up event delegation on a container element.  The delegated event
+ * will use a supplied selector to test if the target or one of the
+ * descendants of the target match it.  The supplied callback function 
+ * will only be executed if a match was encountered, and, in fact, 
+ * will be executed for each element that matches if you supply an 
+ * ambiguous selector.
+ *
+ * The event object for the delegated event is supplied to the callback
+ * function.  It is modified slightly in order to support all properties
+ * that may be needed for event delegation.  'currentTarget' is set to
+ * the element that matched the delegation specifcation.  'container' is
+ * set to the element that the listener is bound to (this normally would
+ * be the 'currentTarget').
+ *
  * @event delegate
  * @param type {string} 'delegate'
- * @param fn {string} the function to execute
+ * @param fn {function} the callback function to execute.  This function
+ * will be provided the event object for the delegated event.
  * @param el {string|node} the element that is the delegation container
  * @param delegateType {string} the event type to delegate
  * @param spec {string} a selector that must match the target of the
  * event.
+ * @param context optional argument that specifies what 'this' refers to.
+ * @param args* 0..n additional arguments to pass on to the callback function.
+ * These arguments will be added after the event object.
  * @return {EventHandle} the detach handle
  * @for YUI
  */
@@ -1813,7 +1843,6 @@ var isString = Y.Lang.isString,
 				args.splice(2, 1);
 			}
             
-
 	        // Subscribe to the custom event for the delegation spec
 	        return Y.on.apply(Y, args);
 
@@ -1829,7 +1858,7 @@ var isString = Y.Lang.isString,
  * 
  * @event mouseenter
  * @param type {string} "mouseenter"
- * @param fn {string} The method the event invokes.
+ * @param fn {function} The method the event invokes.
  * @param el {string|node} The element(s) to assign the listener to.
  * @param spec {string} Optional.  String representing a selector that must 
  * match the target of the event in order for the listener to be called.
@@ -1846,7 +1875,7 @@ Y.Env.evt.plugins.mouseenter = eventConfig;
 * 
 * @event mouseleave
 * @param type {string} "mouseleave"
-* @param fn {string} The method the event invokes.
+* @param fn {function} The method the event invokes.
 * @param el {string|node} The element(s) to assign the listener to.
 * @param spec {string} Optional.  String representing a selector that must 
 * match the target of the event in order for the listener to be called.

@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+    <style type="text/css">
+        body { font: normal 87%/1.4 Arial, sans-serif; }
+        input { width: 35em; }
+        p { margin: 1.4em 0 1ex; }
+    </style>
+</head>
+<body class="yui-skin-sam">
+    <h1>The typing-pause special event</h1>
+    <p>Type stuff in the inputs below and watch for messages in the console.</p>
+
+    <p>Simple event subscription via Y.on</p>
+    <input id="a">
+
+    <p>Non-adaptive delay subscription from Node instance (400ms delay)</p>
+    <input id="b">
+
+    <p>Configured subscription, fires shortly after a mention of a dog</p>
+    <input id="c"></p>
+
+    <script src="http://yui.yahooapis.com/3.0.0b1/build/yui/yui-min.js" type="text/javascript"></script>
+    <!--script src="../../../build/typing-pause/typing-pause.js"></script-->
+    <script src="typing-pause.js"></script>
+    <script>
+        YUI({useBrowserConsole:false}).use('console','typing-pause', function (Y) {
+            new Y.Console({newestOnTop:false}).render();
+
+            var a = 0,
+                b = 0,
+                c = 0;
+
+            // Simple event subscription via Y.on
+            Y.on('typing-pause', function (e) {
+                Y.log("delay " + (++a), 'info', 'Field 1');
+            }, '#a');
+
+            // Subscription from Node instance, not adaptive (400ms delay)
+            Y.get('#b').on('typing-pause', function (e) {
+                Y.log('delay ' + (++b), 'info', 'Field 2');
+            }, { adaptive: false });
+            
+            // Configured subscription, fires shortly after a mention of a dog
+            Y.on('typing-pause', function (e) {
+                Y.log("delay " + (++c) +
+                    "\ne.inputValue = \"" + e.inputValue + '"' +
+                    "\ne.value = \"" + e.value + '"',
+                    'info', 'Field 3');
+            }, '#c', {
+                //adaptive: true,
+                minLength: 8,
+                minWait: 1000,
+                maxWait: 5000,
+                waitMultiplier: 2,
+                filter: function (v) {
+                    var m = /\bdog\b/i.exec(v);
+                    return m ? ("'"+m[0]+"' at "+RegExp.leftContext.length) :'';
+                }
+            });
+
+            /*
+             * Default configuration:
+             *   adaptive: true,
+             *   minLength: 1,
+             *   minWait: 400,
+             *   maxWait: 3000,
+             *   waitMultiplier: 4,
+             *   filter: null
+             */
+
+        });
+    </script>
+    <script type="text/javascript" src="/assets/dpSyntaxHighlighter.js" ></script>
+    <script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js?highlight=javascript"></script>
+</body>
+</html>

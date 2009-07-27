@@ -33,7 +33,8 @@
             min: 0,
             avg: 0,
             points: []
-        };      
+        };
+        return report[name];
     }
     
     /* (intentionally not documented)
