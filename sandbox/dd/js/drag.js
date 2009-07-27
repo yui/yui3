@@ -877,7 +877,7 @@ YUI.add('dd-drag', function(Y) {
                 var node = this.get(NODE), ow = node.get(OFFSET_WIDTH), oh = node.get(OFFSET_HEIGHT);
                 this._startTime = (new Date()).getTime();
 
-                DDM._start(this.deltaXY, [oh, ow]);
+                DDM._start();
                 node.addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, {
                     pageX: this.nodeXY[0],

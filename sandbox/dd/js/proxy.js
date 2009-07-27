@@ -42,6 +42,14 @@ YUI.add('dd-proxy', function(Y) {
             value: TRUE
         },
         /**
+        * @attribute hideOnEnd
+        * @description Hide the drag node at the end of the drag. Default: true
+        * @type Boolean
+        */
+        hideOnEnd: {
+            value: TRUE
+        },
+        /**
         * @attribute resizeFrame
         * @description Make the Proxy node assume the size of the original node. Default: true
         * @type Boolean
@@ -106,7 +114,9 @@ YUI.add('dd-proxy', function(Y) {
                     if (this.get('moveOnEnd')) {
                         host.get(NODE).setXY(host.lastXY);
                     }
-                    host.get(DRAG_NODE).setStyle('display', 'none');
+                    if (this.get('hideOnEnd')) {
+                        host.get(DRAG_NODE).setStyle('display', 'none');
+                    }
                 }
             }, this));
             this._hands = [h, h1];

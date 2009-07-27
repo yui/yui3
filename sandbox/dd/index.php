@@ -399,7 +399,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     });
     
     Y.DD.DDM.on('drag:drag', function(e) {
-        console.log('DDM:drag:drag :: ', e);
+        //console.log('DDM:drag:drag :: ', e);
     });
     //Y.DD.DDM.set('multiDrop', false);
 
@@ -416,7 +416,14 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
                 el.attachEvent("on" + type, fn2);
         } 
     };
-  */  
+  */
+
+    Y.DD.DDM.on('ddm:start', function(e) {
+        //console.log('DDM:start :: ', e);
+    });
+    Y.DD.DDM.on('ddm:end', function(e) {
+        //console.log('DDM:end :: ', e);
+    });
     
     dd = new Y.DD.Drag({
         node: '#drag',
