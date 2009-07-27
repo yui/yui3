@@ -512,7 +512,7 @@
         * @description A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true}
         * @type {Object}
         */
-        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true},
+        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true },
         /**
         * @private
         * @property _dragThreshMet
