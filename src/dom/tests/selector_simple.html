@@ -3,48 +3,16 @@
 <head>
 <title>Selector Test Suite</title>
 
-<link type="text/css" rel="stylesheet" href="../../../../yui2/build/logger/assets/logger.css">
-<link type="text/css" rel="stylesheet" href="../../../../yui2/build/yuitest/assets/testlogger.css">     
-
-<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
-<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
-<script type="text/javascript" src="../../../build/event/event.js"></script>
-<script type="text/javascript" src="../../../build/oop/oop.js"></script>
-<script type="text/javascript" src="../../../build/dom/dom-debug.js"></script>
-<script type="text/javascript" src="../../../build/attribute/attribute-debug.js"></script>
-<script type="text/javascript" src="../../../build/base/base-debug.js"></script>
-<script type="text/javascript" src="../../../build/node/node-debug.js"></script>
-
-<script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/event/event.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/logger/logger-min.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/yuitest/yuitest.js"></script>
-
+<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
 <script>
 onload = function() {
-    YUI().use('*', function(Y) {
-        console.log(Y.get('#root-test').getElementsByTagName('li').size());
-        console.log(Y.DOM.byId('root-test').getElementsByTagName('li').length);
+    var YUI_CONFIG = {
+        base: '../../../build/',
+        filter: 'raw'
+    };
 
-        var count = 0;
-
-        Y.get('#root-test').getElementsByTagName('li').each(function(item) {
-            count++;
-        });
-        alert(count + ' items');
-
-        count = 0;
-        Y.Array.each(lis, function(item) {
-            count++;
-        });
-        alert(count + ' items');
-
-        count = 0;
-        Array.prototype.forEach.call(lis, function(item) {
-            count++;
-        });
-        alert(count + ' items');
+    YUI(YUI_CONFIG).use('node', function(Y) {
+        console.log(Y.all('body div h1').size());
     });
 };
 </script>
@@ -53,6 +21,8 @@ onload = function() {
 </style>
 </head>
 <body class="body-node" id="body">
+<div><h1 class="heading" id="header">Selector Test</h1></div>
+<h1>Test H1</h1>
 <span lang="en-us"></span>
     <div id="demo" class="foo-foo-foo" title="this is a demo">
         <p class="para first" id="demo-first-child"><em>lorem ipsum</em></p>
