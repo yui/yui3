@@ -80,27 +80,27 @@ var PARENT_NODE = 'parentNode',
             } 
         },
 
-        _brute: {
-            /**
-             * Retrieves a set of nodes based on a given CSS selector. 
-             * @method query
-             *
-             * @param {string} selector The CSS Selector to test the node against.
-             * @param {HTMLElement} root optional An HTMLElement to start the query from. Defaults to Y.config.doc
-             * @param {Boolean} firstOnly optional Whether or not to return only the first match.
-             * @return {Array} An array of nodes that match the given selector.
-             * @static
-             */
-            query: function(selector, root, firstOnly) {
-                var ret = [];
-                if (selector) {
-                    ret = Selector._query(selector, root, firstOnly);
-                }
-
-                Y.log('query: ' + selector + ' returning: ' + ret.length, 'info', 'Selector');
-                Selector._cleanup();
-                return (firstOnly) ? (ret[0] || null) : ret;
+        /**
+         * Retrieves a set of nodes based on a given CSS selector. 
+         * @method query
+         *
+         * @param {string} selector The CSS Selector to test the node against.
+         * @param {HTMLElement} root optional An HTMLElement to start the query from. Defaults to Y.config.doc
+         * @param {Boolean} firstOnly optional Whether or not to return only the first match.
+         * @return {Array} An array of nodes that match the given selector.
+         * @static
+         */
+        query: function(selector, root, firstOnly) {
+            var ret = [],
+                query = (Selector._supportsNative() && Selector.useNative) ?
+                    Selector._nativeQuery : Selector._query;
+            if (selector) {
+                ret = query(selector, root, firstOnly);
             }
+
+            Y.log('query: ' + selector + ' returning: ' + ret.length, 'info', 'Selector');
+            Selector._cleanup();
+            return (firstOnly) ? (ret[0] || null) : ret;
 
         },
 
@@ -177,11 +177,7 @@ var PARENT_NODE = 'parentNode',
                         nodes = root.getElementsByTagName(tagName || '*');
                     }
                     if (nodes.length) {
-                        if (firstOnly) {
-                            //Y.Array.some(nodes, Selector._testToken, token);
-                        } else {
-                            ret = Selector._filterNodes(nodes, tokens);
-                        }
+                        ret = Selector._filterNodes(nodes, tokens, firstOnly);
                     }
                 }
             }
@@ -189,19 +185,20 @@ var PARENT_NODE = 'parentNode',
             return ret;
         },
         
-        _filterNodes: function(nodes, tokens) {
+        _filterNodes: function(nodes, tokens, firstOnly) {
             var i = 0,
-                j = 0,
+                j,
+                n,
                 len = tokens.length,
                 result = [],
                 EQ = '=',
-                n = len - 1,
                 node = nodes[0],
                 tmpNode = node,
                 operator,
                 combinator,
                 token,
                 path,
+                broke,
                 test;
 
             do {
@@ -209,28 +206,23 @@ var PARENT_NODE = 'parentNode',
                 n = len - 1;
                 path = null;
                 
-                tests:
-                while (tmpNode) {
+                //tests:
+                while (tmpNode && tmpNode.tagName) {
+                    broke = false;
                     token = tokens[n];
-                    for (j = 0; test = token.tests[j++];) {
+                    j = token.tests.length;
+                    while ((test = token.tests[--j])) {
                         operator = test[1];
                         if (/*(operator === EQ &&*/ tmpNode[test[0]] !== test[2]) {//|| 
                             //(operator.test && !operator.test(tmpNode[test[0]]))) { 
                             tmpNode = tmpNode[path];
-                            if (!tmpNode || !tmpNode.tagName) {
-                                break tests;
-                            }
-                            continue tests;
+                            broke = true;
+                            break;
                         }
                     }
-                    for (test in token.pseudos) {
-                        if (token.pseudos.hasOwnProperty(test)) {
-                            test = token.pseudos[test];
-                            if (!test(tmpNode)) {
-                                tmpNode = tmpNode[path];
-                                continue tests;
-                            }
-                        }
+
+                    if (broke) {
+                        continue;
                     }
 
                     if ((combinator = token.combinator)) {
@@ -242,12 +234,12 @@ var PARENT_NODE = 'parentNode',
                             path = null; // one pass only
                         }
 
-                        if (!tmpNode || !tmpNode.tagName) {
-                            break;
-                        }
                         continue;
                     } else { // success if we made it this far
                         result[result.length] = node;
+                        if (firstOnly) {
+                            return result;
+                        }
                         break;
                     }
                 }
@@ -373,6 +365,9 @@ var PARENT_NODE = 'parentNode',
                 found = false; // reset after full pass
                 for (i = 0, parser; parser = Selector._parsers[i++];) {
                     if ( (match = parser.re.exec(selector)) ) { // note assignment
+                        if (parser !== COMBINATOR) {
+                            token.selector = match[0];
+                        }
                         selector = selector.replace(match[0], ''); // strip current match from selector
                         if (!selector.length) {
                             token.last = true;
@@ -425,11 +420,6 @@ var PARENT_NODE = 'parentNode',
     };
 
 Y.mix(Y.Selector, SelectorCSS2, true);
-
-// only override native when not supported
-if (!Y.Selector._supportsNative()) {
-    Y.Selector.query = Selector._brute.query;
-}
 
 
 }, '@VERSION@' ,{requires:['selector-native'], skinnable:false});

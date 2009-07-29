@@ -2071,7 +2071,7 @@ YUI.add('selector-native', function(Y) {
 
 Y.namespace('Selector'); // allow native module to standalone
 
-var NativeSelector = {
+var Selector = {
     _reLead: /^\s*([>+~]|:self)/,
     _reUnSupported: /!./,
 
@@ -2083,6 +2083,8 @@ var NativeSelector = {
         return ( (Y.UA.ie >= 8 || Y.UA.webkit > 525) &&
             document.querySelectorAll);
     },
+
+    useNative: false,
 
     _toArray: function(nodes) { // TODO: move to Y.Array
         var ret = nodes,
@@ -2102,7 +2104,7 @@ var NativeSelector = {
     },
 
     _clearFoundCache: function() {
-        var foundCache = NativeSelector._foundCache,
+        var foundCache = Selector._foundCache,
             i, len;
 
         for (i = 0, len = foundCache.length; i < len; ++i) {
@@ -2117,7 +2119,7 @@ var NativeSelector = {
 
     _sort: function(nodes) {
         if (nodes) {
-            nodes = NativeSelector._toArray(nodes);
+            nodes = Selector._toArray(nodes);
             if (nodes.sort) {
                 nodes.sort(function(a, b) {
                     return Y.DOM.srcIndex(a) - Y.DOM.srcIndex(b);
@@ -2130,7 +2132,7 @@ var NativeSelector = {
 
     _deDupe: function(nodes) {
         var ret = [],
-            cache = NativeSelector._foundCache,
+            cache = Selector._foundCache,
             i, node;
 
         for (i = 0, node; node = nodes[i++];) {
@@ -2139,7 +2141,7 @@ var NativeSelector = {
                 node._found = true;
             }
         }
-        NativeSelector._clearFoundCache();
+        Selector._clearFoundCache();
         return ret;
     },
 
@@ -2167,8 +2169,8 @@ var NativeSelector = {
         return queries;
     },
 
-    _query: function(selector, root, firstOnly) {
-        if (NativeSelector._reUnSupported.test(selector)) {
+    _nativeQuery: function(selector, root, firstOnly) {
+        if (Selector._reUnSupported.test(selector)) {
             return Y.Selector._brute.query(selector, root, firstOnly);
         }
 
@@ -2181,14 +2183,14 @@ var NativeSelector = {
         root = root || Y.config.doc;
 
         if (selector) {
-            queries = NativeSelector._prepQuery(root, selector);
+            queries = Selector._prepQuery(root, selector);
             ret = [];
 
             for (i = 0, query; query = queries[i++];) {
                 try {
                     result = query.root[queryName](query.selector);
                     if (queryName === 'querySelectorAll') { // convert NodeList to Array
-                        result = NativeSelector._toArray(result);
+                        result = Selector._toArray(result);
                     }
                     ret = ret.concat(result);
                 } catch(e) {
@@ -2196,20 +2198,20 @@ var NativeSelector = {
             }
 
             if (queries.length > 1) { // remove dupes and sort by doc order 
-                ret = NativeSelector._sort(NativeSelector._deDupe(ret));
+                ret = Selector._sort(Selector._deDupe(ret));
             }
             ret = (!firstOnly) ? ret : ret[0] || null;
         }
         return ret;
     },
 
-    _filter: function(nodes, selector) {
+    filter: function(nodes, selector) {
         var ret = [],
             i, node;
 
         if (nodes && selector) {
             for (i = 0, node; (node = nodes[i++]);) {
-                if (Y.Selector._test(node, selector)) {
+                if (Y.Selector.test(node, selector)) {
                     ret[ret.length] = node;
                 }
             }
@@ -2219,7 +2221,7 @@ var NativeSelector = {
         return ret;
     },
 
-    _test: function(node, selector) {
+    test: function(node, selector) {
         var ret = false,
             groups = selector.split(','),
             item,
@@ -2227,9 +2229,9 @@ var NativeSelector = {
 
         if (node && node.tagName) { // only test HTMLElements
             node.id = node.id || Y.guid();
-            for (i = 0, group; group = groups[i++];) {
+            for (i = 0, group; group = groups[i++];) { // TODO: off-dom test
                 group += '#' + node.id; // add ID for uniqueness
-                item = Y.Selector.query(group, null, true);
+                item = Y.Selector.query(group, node.parentNode, true);
                 ret = (item === node);
                 if (ret) {
                     break;
@@ -2242,21 +2244,15 @@ var NativeSelector = {
 };
 
 if (Y.UA.ie && Y.UA.ie <= 8) {
-    NativeSelector._reUnSupported = /:(?:nth|not|root|only|checked|first|last|empty)/;
+    Selector._reUnSupported = /:(?:nth|not|root|only|checked|first|last|empty)/;
 }
-
-
-
-Y.mix(Y.Selector, NativeSelector, true);
 
 // allow standalone selector-native module
-if (NativeSelector._supportsNative()) {
-    Y.Selector.query = NativeSelector._query;
-    //Y.Selector.filter = NativeSelector._filter;
-    //Y.Selector.test = NativeSelector._test;
+if (Selector._supportsNative() && Selector.useNative) {
+    Y.Selector.query = Y.Selector.query || Selector._nativeQuery;
 }
-Y.Selector.test = NativeSelector._test;
-Y.Selector.filter = NativeSelector._filter;
+
+Y.mix(Y.Selector, Selector, true);
 
 })(Y);
 
@@ -2344,26 +2340,26 @@ var PARENT_NODE = 'parentNode',
             } 
         },
 
-        _brute: {
-            /**
-             * Retrieves a set of nodes based on a given CSS selector. 
-             * @method query
-             *
-             * @param {string} selector The CSS Selector to test the node against.
-             * @param {HTMLElement} root optional An HTMLElement to start the query from. Defaults to Y.config.doc
-             * @param {Boolean} firstOnly optional Whether or not to return only the first match.
-             * @return {Array} An array of nodes that match the given selector.
-             * @static
-             */
-            query: function(selector, root, firstOnly) {
-                var ret = [];
-                if (selector) {
-                    ret = Selector._query(selector, root, firstOnly);
-                }
-
-                Selector._cleanup();
-                return (firstOnly) ? (ret[0] || null) : ret;
+        /**
+         * Retrieves a set of nodes based on a given CSS selector. 
+         * @method query
+         *
+         * @param {string} selector The CSS Selector to test the node against.
+         * @param {HTMLElement} root optional An HTMLElement to start the query from. Defaults to Y.config.doc
+         * @param {Boolean} firstOnly optional Whether or not to return only the first match.
+         * @return {Array} An array of nodes that match the given selector.
+         * @static
+         */
+        query: function(selector, root, firstOnly) {
+            var ret = [],
+                query = (Selector._supportsNative() && Selector.useNative) ?
+                    Selector._nativeQuery : Selector._query;
+            if (selector) {
+                ret = query(selector, root, firstOnly);
             }
+
+            Selector._cleanup();
+            return (firstOnly) ? (ret[0] || null) : ret;
 
         },
 
@@ -2440,11 +2436,7 @@ var PARENT_NODE = 'parentNode',
                         nodes = root.getElementsByTagName(tagName || '*');
                     }
                     if (nodes.length) {
-                        if (firstOnly) {
-                            //Y.Array.some(nodes, Selector._testToken, token);
-                        } else {
-                            ret = Selector._filterNodes(nodes, tokens);
-                        }
+                        ret = Selector._filterNodes(nodes, tokens, firstOnly);
                     }
                 }
             }
@@ -2452,19 +2444,20 @@ var PARENT_NODE = 'parentNode',
             return ret;
         },
         
-        _filterNodes: function(nodes, tokens) {
+        _filterNodes: function(nodes, tokens, firstOnly) {
             var i = 0,
-                j = 0,
+                j,
+                n,
                 len = tokens.length,
                 result = [],
                 EQ = '=',
-                n = len - 1,
                 node = nodes[0],
                 tmpNode = node,
                 operator,
                 combinator,
                 token,
                 path,
+                broke,
                 test;
 
             do {
@@ -2472,28 +2465,23 @@ var PARENT_NODE = 'parentNode',
                 n = len - 1;
                 path = null;
                 
-                tests:
-                while (tmpNode) {
+                //tests:
+                while (tmpNode && tmpNode.tagName) {
+                    broke = false;
                     token = tokens[n];
-                    for (j = 0; test = token.tests[j++];) {
+                    j = token.tests.length;
+                    while ((test = token.tests[--j])) {
                         operator = test[1];
                         if (/*(operator === EQ &&*/ tmpNode[test[0]] !== test[2]) {//|| 
                             //(operator.test && !operator.test(tmpNode[test[0]]))) { 
                             tmpNode = tmpNode[path];
-                            if (!tmpNode || !tmpNode.tagName) {
-                                break tests;
-                            }
-                            continue tests;
+                            broke = true;
+                            break;
                         }
                     }
-                    for (test in token.pseudos) {
-                        if (token.pseudos.hasOwnProperty(test)) {
-                            test = token.pseudos[test];
-                            if (!test(tmpNode)) {
-                                tmpNode = tmpNode[path];
-                                continue tests;
-                            }
-                        }
+
+                    if (broke) {
+                        continue;
                     }
 
                     if ((combinator = token.combinator)) {
@@ -2505,12 +2493,12 @@ var PARENT_NODE = 'parentNode',
                             path = null; // one pass only
                         }
 
-                        if (!tmpNode || !tmpNode.tagName) {
-                            break;
-                        }
                         continue;
                     } else { // success if we made it this far
                         result[result.length] = node;
+                        if (firstOnly) {
+                            return result;
+                        }
                         break;
                     }
                 }
@@ -2636,6 +2624,9 @@ var PARENT_NODE = 'parentNode',
                 found = false; // reset after full pass
                 for (i = 0, parser; parser = Selector._parsers[i++];) {
                     if ( (match = parser.re.exec(selector)) ) { // note assignment
+                        if (parser !== COMBINATOR) {
+                            token.selector = match[0];
+                        }
                         selector = selector.replace(match[0], ''); // strip current match from selector
                         if (!selector.length) {
                             token.last = true;
@@ -2687,11 +2678,6 @@ var PARENT_NODE = 'parentNode',
     };
 
 Y.mix(Y.Selector, SelectorCSS2, true);
-
-// only override native when not supported
-if (!Y.Selector._supportsNative()) {
-    Y.Selector.query = Selector._brute.query;
-}
 
 
 }, '@VERSION@' ,{requires:['selector-native'], skinnable:false});
