@@ -164,10 +164,15 @@
 <span class="c">        * @param {Drag} d The Drag object</span>
 <span class="c">        */</span>
         <span class="nx">_regDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_drags</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_drags</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">d</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">getDrag</span><span class="o">(</span><span class="nx">d</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">)))</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span>
+            
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_active</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_setupListeners</span><span class="o">();</span>
             <span class="o">}</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_drags</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">d</span><span class="o">);</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>

@@ -438,6 +438,8 @@ Y.extend(DSIO, Y.DataSource.Local, {
      */
     _defRequestFn: function(e) {
         var uri = this.get("source"),
+            io = this.get("io"),
+            request = e.request,
             cfg = Y.mix(e.cfg, {
                 on: {
                     success: function (id, response, e) {
@@ -453,7 +455,16 @@ Y.extend(DSIO, Y.DataSource.Local, {
                 arguments: e
             });
         
-        this.get("io")(uri, cfg);
+        // Support for POST transactions
+        if(Y.Lang.isString(request)) {
+            if(cfg.method && (cfg.method.toUpperCase() === "POST")) {
+                cfg.data = cfg.data ? cfg.data+request : request;
+            }
+            else {
+                uri += request;
+            }
+        }
+        io(uri, cfg);
         return e.tId;
     }
 });
