@@ -106,6 +106,7 @@
             <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_setX</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
             <span class="o">},</span>
+            <span class="nx">lazyAdd</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span>
             <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getX</span><span class="o">();</span>
             <span class="o">}</span>
@@ -123,11 +124,12 @@
             <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_setY</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
             <span class="o">},</span>
+            <span class="nx">lazyAdd</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
             <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getY</span><span class="o">();</span>
             <span class="o">}</span>
         <span class="o">},</span>
-
+        
         <span class="c">/**</span>
 <span class="c">         * @attribute xy</span>
 <span class="c">         * @type Array</span>
@@ -137,6 +139,7 @@
 <span class="c">         */</span>
         <span class="nx">xy</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">value</span><span class="o">:[</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">],</span>
+
             <span class="nx">validator</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_validateXY</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
             <span class="o">}</span>
@@ -241,7 +244,7 @@
 <span class="c">         * @param {Number} val The X page co-ordinate value</span>
 <span class="c">         */</span>
         <span class="nx">_setX</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">XY_COORD</span><span class="o">,</span> <span class="o">[</span><span class="nx">val</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">XY_COORD</span><span class="o">)[</span><span class="m">0</span><span class="o">]]);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">XY_COORD</span><span class="o">,</span> <span class="o">[</span><span class="nx">val</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">XY_COORD</span><span class="o">)[</span><span class="m">1</span><span class="o">]]);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -252,7 +255,7 @@
 <span class="c">         * @param {Number} val The Y page co-ordinate value</span>
 <span class="c">         */</span>
         <span class="nx">_setY</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">XY_COORD</span><span class="o">,</span> <span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">XY_COORD</span><span class="o">)[</span><span class="m">1</span><span class="o">],</span> <span class="nx">val</span><span class="o">]);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">XY_COORD</span><span class="o">,</span> <span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">XY_COORD</span><span class="o">)[</span><span class="m">0</span><span class="o">],</span> <span class="nx">val</span><span class="o">]);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
