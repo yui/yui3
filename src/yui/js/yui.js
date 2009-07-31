@@ -220,21 +220,25 @@ YUI.prototype = {
         // this.log('Adding a new component ' + name);
 
         // @todo expand this to include version mapping
-        
-        // @todo allow requires/supersedes
-
         // @todo may want to restore the build property
-        
         // @todo fire moduleAvailable event
         
-        var m = {
-            name: name, 
-            fn: fn,
-            version: version,
-            details: details || {}
-        };
+        // if (this.Lang.isFunction(fn)) {
 
-        YUI.Env.mods[name] = m;
+            YUI.Env.mods[name] = {
+                name: name, 
+                fn: fn,
+                version: version,
+                details: details || {}
+            };
+
+        // } else {
+        //     
+        //     var c = Y.config;
+        //     c.modules = c.modules || {};
+        //     c.modules[name] = c.modules[name] || fn;
+
+        // }
 
         return this; // chain support
     },
