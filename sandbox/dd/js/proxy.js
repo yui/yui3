@@ -101,9 +101,9 @@ YUI.add('dd-proxy', function(Y) {
                     host.set(DRAG_NODE, DDM._proxy);
                 }
             }
-            for (i in this._hands) {
-                this._hands[i].detach();
-            }
+            Y.each(this._hands, function(v) {
+                v.detach();
+            });
             h = DDM.on('ddm:start', Y.bind(function() {
                 if (DDM.activeDrag === host) {
                     DDM._setFrame(host);
