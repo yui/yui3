@@ -269,22 +269,26 @@
         <span class="c">// this.log(&#39;Adding a new component &#39; + name);</span>
 <span class="c"></span>
         <span class="c">// @todo expand this to include version mapping</span>
+<span class="c"></span>        <span class="c">// @todo may want to restore the build property</span>
+<span class="c"></span>        <span class="c">// @todo fire moduleAvailable event</span>
 <span class="c"></span>        
-        <span class="c">// @todo allow requires/supersedes</span>
+        <span class="c">// if (this.Lang.isFunction(fn)) {</span>
 <span class="c"></span>
-        <span class="c">// @todo may want to restore the build property</span>
-<span class="c"></span>        
-        <span class="c">// @todo fire moduleAvailable event</span>
-<span class="c"></span>        
-        <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="o">{</span>
-            <span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="o">,</span> 
-            <span class="nx">fn</span><span class="o">:</span> <span class="nx">fn</span><span class="o">,</span>
-            <span class="nx">version</span><span class="o">:</span> <span class="nx">version</span><span class="o">,</span>
-            <span class="nx">details</span><span class="o">:</span> <span class="nx">details</span> <span class="o">||</span> <span class="o">{}</span>
-        <span class="o">};</span>
+            <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span>
+                <span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="o">,</span> 
+                <span class="nx">fn</span><span class="o">:</span> <span class="nx">fn</span><span class="o">,</span>
+                <span class="nx">version</span><span class="o">:</span> <span class="nx">version</span><span class="o">,</span>
+                <span class="nx">details</span><span class="o">:</span> <span class="nx">details</span> <span class="o">||</span> <span class="o">{}</span>
+            <span class="o">};</span>
 
-        <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">m</span><span class="o">;</span>
-
+        <span class="c">// } else {</span>
+<span class="c"></span>        <span class="c">//     </span>
+<span class="c"></span>        <span class="c">//     var c = Y.config;</span>
+<span class="c"></span>        <span class="c">//     c.modules = c.modules || {};</span>
+<span class="c"></span>        <span class="c">//     c.modules[name] = c.modules[name] || fn;</span>
+<span class="c"></span>
+        <span class="c">// }</span>
+<span class="c"></span>
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span> <span class="c">// chain support</span>
 <span class="c"></span>    <span class="o">},</span>
 
