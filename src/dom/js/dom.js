@@ -478,6 +478,27 @@ Y.DOM = {
         'className': 'class'
     },
 
+    precedes: (document.documentElement.sourceIndex) ?
+        function(nodeA, nodeB) {
+            return (nodeA.sourceIndex < nodeB.sourceIndex);
+        } : (document.documentElement[COMPARE_DOCUMENT_POSITION] ?
+        function(nodeA, nodeB) {
+            return !!(nodeA[COMPARE_DOCUMENT_POSITION](nodeB) & 2);
+        } :
+        function(nodeA, nodeB) {
+            var rangeA, rangeB, compare;
+            if (nodeA && nodeB) {
+                rangeA = nodeA[OWNER_DOCUMENT].createRange();
+                rangeA.setStart(nodeA, 0);
+                rangeB = nodeB[OWNER_DOCUMENT].createRange();
+                rangeB.setStart(nodeB, 0);
+                compare = rangeA.compareBoundaryPoints(Range.START_TO_END, rangeB);
+            }
+
+            return (compare === -1) ? true : false;
+        
+    }),
+
     /**
      * Provides a normalized attribute interface. 
      * @method setAttibute

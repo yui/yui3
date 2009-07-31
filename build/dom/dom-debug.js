@@ -480,6 +480,27 @@ Y.DOM = {
         'className': 'class'
     },
 
+    precedes: (document.documentElement.sourceIndex) ?
+        function(nodeA, nodeB) {
+            return (nodeA.sourceIndex < nodeB.sourceIndex);
+        } : (document.documentElement[COMPARE_DOCUMENT_POSITION] ?
+        function(nodeA, nodeB) {
+            return !!(nodeA[COMPARE_DOCUMENT_POSITION](nodeB) & 2);
+        } :
+        function(nodeA, nodeB) {
+            var rangeA, rangeB, compare;
+            if (nodeA && nodeB) {
+                rangeA = nodeA[OWNER_DOCUMENT].createRange();
+                rangeA.setStart(nodeA, 0);
+                rangeB = nodeB[OWNER_DOCUMENT].createRange();
+                rangeB.setStart(nodeB, 0);
+                compare = rangeA.compareBoundaryPoints(Range.START_TO_END, rangeB);
+            }
+
+            return (compare === -1) ? true : false;
+        
+    }),
+
     /**
      * Provides a normalized attribute interface. 
      * @method setAttibute
@@ -2135,7 +2156,7 @@ var Selector = {
             nodes = Selector._toArray(nodes);
             if (nodes.sort) {
                 nodes.sort(function(a, b) {
-                    return Y.DOM.srcIndex(a) - Y.DOM.srcIndex(b);
+                    return Y.DOM.precedes(a, b);
                 });
             }
         }
@@ -2343,7 +2364,7 @@ var PARENT_NODE = 'parentNode',
          * @type object
          */
         operators: {
-            '': function(node, m) { return Y.DOM.getAttribute(node, m[0]) !== ''; }, // Just test for existence of attribute
+            '': function(node, attr) { return Y.DOM.getAttribute(node, attr) !== ''; }, // Just test for existence of attribute
             //'': '.+',
             //'=': '^{val}$', // equality
             '~=': '(?:^|\\s+){val}(?:\\s+|$)', // space-delimited
@@ -2441,13 +2462,13 @@ var PARENT_NODE = 'parentNode',
                     // prefilter nodes
                     id = token.id;
                     className = token.className;
-                    tagName = token.tagName;
+                    tagName = token.tagName || '*';
 
                     // try ID first
                     if (id && Y.config.doc.getElementById(id)) {
                         nodes = [Y.config.doc.getElementById(id)]; // TODO: DOM.byId?
                     // try className if supported
-                    } else if (className && root.getElementsByClassName) {
+                    } else if (className) {
                         nodes = root.getElementsByClassName(className);
                     } else if (tagName) { // default to tagName
                         nodes = root.getElementsByTagName(tagName || '*');
@@ -2464,41 +2485,39 @@ var PARENT_NODE = 'parentNode',
         _filterNodes: function(nodes, tokens, firstOnly) {
             var i = 0,
                 j,
-                n,
                 len = tokens.length,
+                n = len - 1,
                 result = [],
-                EQ = '=',
                 node = nodes[0],
                 tmpNode = node,
                 operator,
                 combinator,
                 token,
                 path,
-                broke,
+                FUNCTION = 'function',
+                tests,
                 test;
 
-            do {
-            //for (i = 0; tmpNode = node = nodes[i++];) {
+            //do {
+            for (i = 0; tmpNode = node = nodes[i++];) {
                 n = len - 1;
                 path = null;
                 
-                //tests:
+                testLoop:
                 while (tmpNode && tmpNode.tagName) {
-                    broke = false;
                     token = tokens[n];
-                    j = token.tests.length;
-                    while ((test = token.tests[--j])) {
-                        operator = test[1];
-                        if (/*(operator === EQ &&*/ tmpNode[test[0]] !== test[2]) {//|| 
-                            //(operator.test && !operator.test(tmpNode[test[0]]))) { 
-                            tmpNode = tmpNode[path];
-                            broke = true;
-                            break;
+                    tests = token.tests;
+                    j = tests.length;
+                    if (j) {
+                        while ((test = tests[--j])) {
+                            operator = test[1];
+                            if ((operator === '=' && tmpNode[test[0]] !== test[2])) {// || 
+                                //(typeof operator === FUNCTION && !operator(tmpNode, test[0])) ||
+                                //(operator.test && !operator.test(tmpNode[test[0]]))) { 
+                                tmpNode = tmpNode[path];
+                                continue testLoop;
+                            }
                         }
-                    }
-
-                    if (broke) {
-                        continue;
                     }
 
                     if ((combinator = token.combinator)) {
@@ -2512,14 +2531,15 @@ var PARENT_NODE = 'parentNode',
 
                         continue;
                     } else { // success if we made it this far
-                        result[result.length] = node;
+                        result.push(node);
                         if (firstOnly) {
                             return result;
                         }
                         break;
                     }
                 }
-            } while (tmpNode = node = nodes[++i]);
+            }// while (tmpNode = node = nodes[++i]);
+            node = tmpNode = null;
             return result;
         },
 
@@ -2562,7 +2582,7 @@ var PARENT_NODE = 'parentNode',
                         token.prefilter = match[1];
                         token[match[1]] = match[3];
                     }
-                    if (Y.Selector.operators[operator]) {
+                    if (operator in Y.Selector.operators) {
                         match[2] = Y.Selector._getRegExp(Y.Selector.operators[operator].replace('{val}', match[3]));
                     }
                     if (!token.last || token.prefilter !== match[1]) {
@@ -2596,7 +2616,10 @@ var PARENT_NODE = 'parentNode',
                 name: PSEUDOS,
                 re: /^:([\-\w]+)(?:\(['"]?(.+)['"]?\))*/i,
                 fn: function(match, token) {
-                    token.pseudos[match[1]] = Selector[PSEUDOS][match[1]];
+                    return [
+                        match[2],
+                        Selector[PSEUDOS][match[1]]
+                    ];
                 }
             }
             ],
@@ -2607,7 +2630,6 @@ var PARENT_NODE = 'parentNode',
                 id: null,
                 className: null,
                 attributes: {},
-                pseudos: {},
                 combinator: null,
                 tests: []
             };

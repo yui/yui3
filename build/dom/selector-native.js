@@ -68,7 +68,7 @@ var Selector = {
             nodes = Selector._toArray(nodes);
             if (nodes.sort) {
                 nodes.sort(function(a, b) {
-                    return Y.DOM.srcIndex(a) - Y.DOM.srcIndex(b);
+                    return Y.DOM.precedes(a, b);
                 });
             }
         }

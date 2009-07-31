@@ -70,20 +70,20 @@ Y.mix(Y.Selector.pseudos, {
         return node === node.ownerDocument.documentElement;
     },
 
-    'nth-child': function(node, m) {
-        return Y.Selector._getNth(node, m[1]);
+    'nth-child': function(node, expr) {
+        return Y.Selector._getNth(node, expr);
     },
 
-    'nth-last-child': function(node, m) {
-        return Y.Selector._getNth(node, m[1], null, true);
+    'nth-last-child': function(node, expr) {
+        return Y.Selector._getNth(node, expr, null, true);
     },
 
-    'nth-of-type': function(node, m) {
-        return Y.Selector._getNth(node, m[1], node.tagName);
+    'nth-of-type': function(node, expr) {
+        return Y.Selector._getNth(node, expr, node.tagName);
     },
      
-    'nth-last-of-type': function(node, m) {
-        return Y.Selector._getNth(node, m[1], node.tagName, true);
+    'nth-last-of-type': function(node) {
+        return Y.Selector._getNth(node, expr, node.tagName, true);
     },
      
     'last-child': function(node) {
@@ -113,13 +113,13 @@ Y.mix(Y.Selector.pseudos, {
         return node.childNodes.length === 0;
     },
 
-    'not': function(node, m) {
-        return !Y.Selector.test(node, m[1]);
+    'not': function(node, expr) {
+        return !Y.Selector.test(node, expr);
     },
 
-    'contains': function(node, m) {
+    'contains': function(node, expr) {
         var text = node.innerText || node.textContent || '';
-        return text.indexOf(m[1]) > -1;
+        return text.indexOf(expr) > -1;
     },
 
     'checked': function(node) {
