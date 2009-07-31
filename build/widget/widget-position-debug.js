@@ -59,6 +59,7 @@ YUI.add('widget-position', function(Y) {
             setter: function(val) {
                 this._setX(val);
             },
+            lazyAdd:false,
             getter: function() {
                 return this._getX();
             }
@@ -76,11 +77,12 @@ YUI.add('widget-position', function(Y) {
             setter: function(val) {
                 this._setY(val);
             },
+            lazyAdd: false,
             getter: function() {
                 return this._getY();
             }
         },
-
+        
         /**
          * @attribute xy
          * @type Array
@@ -90,6 +92,7 @@ YUI.add('widget-position', function(Y) {
          */
         xy: {
             value:[0,0],
+
             validator: function(val) {
                 return this._validateXY(val);
             }
@@ -194,7 +197,7 @@ YUI.add('widget-position', function(Y) {
          * @param {Number} val The X page co-ordinate value
          */
         _setX : function(val) {
-            this.set(XY_COORD, [val, this.get(XY_COORD)[0]]);
+            this.set(XY_COORD, [val, this.get(XY_COORD)[1]]);
         },
 
         /**
@@ -205,7 +208,7 @@ YUI.add('widget-position', function(Y) {
          * @param {Number} val The Y page co-ordinate value
          */
         _setY : function(val) {
-            this.set(XY_COORD, [this.get(XY_COORD)[1], val]);
+            this.set(XY_COORD, [this.get(XY_COORD)[0], val]);
         },
 
         /**
@@ -257,7 +260,6 @@ YUI.add('widget-position', function(Y) {
     };
 
     Y.WidgetPosition = Position;
-
 
 
 }, '@VERSION@' ,{requires:['widget']});
