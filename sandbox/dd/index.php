@@ -181,7 +181,15 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
     <div id="hd"><h1 id="header"><a href="http://blog.davglass.com/">YUI: DragDrop 3.x</a></h1></div>
     <div id="bd">
         <div id="play"></div>
-        <div id="drag"><h2><strong>Drag</strong> Me</h2></div>
+        <div id="drag"><h2><strong>Drag</strong> Me</h2>
+        <select name="wtf">
+            <option>Test Select</option>
+            <option selected>Test #2 Select</option>
+            <option>Test Select</option>
+            <option>Test Select</option>
+            <option>Test Select</option>
+        </select>
+        </div>
         <div id="drag2"><h2><strong>Drag</strong> <a href="#">Me II</a></h2></div>
         <div id="drag3"><h2 class="one">X</h2><h2 class="two">X</h2><h2 class="three">X</h2><h2 class="four">X</h2><br><br>Drag Me III</div>
         <button id="test">Test Programmatic Move</button><br>
@@ -391,7 +399,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     });
     
     Y.DD.DDM.on('drag:drag', function(e) {
-        console.log('DDM:drag:drag :: ', e);
+        //console.log('DDM:drag:drag :: ', e);
     });
     //Y.DD.DDM.set('multiDrop', false);
 
@@ -408,7 +416,14 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
                 el.attachEvent("on" + type, fn2);
         } 
     };
-  */  
+  */
+
+    Y.DD.DDM.on('ddm:start', function(e) {
+        //console.log('DDM:start :: ', e);
+    });
+    Y.DD.DDM.on('ddm:end', function(e) {
+        //console.log('DDM:end :: ', e);
+    });
     
     dd = new Y.DD.Drag({
         node: '#drag',
@@ -424,8 +439,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
             three: 'This is my data object'
         }
     });
-    console.log(dd, dd.get('bubbles'));
-    
+
     dd.on('drag:end', function(e) {
         //console.log('drag:end: ', e);
         //e.preventDefault();

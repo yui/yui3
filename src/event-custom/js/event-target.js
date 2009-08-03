@@ -503,7 +503,7 @@ ET.prototype = {
      * a 'type' property.
      * @param arguments {Object*} an arbitrary set of parameters to pass to 
      * the handler.
-     * @return {boolean} the return value from Event.Custom.fire
+     * @return {Event.Target} the event host
      *                   
      */
     fire: function(type) {

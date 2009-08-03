@@ -3,12 +3,19 @@
 <head>
 <title>YUI 3.0</title>
 <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<body>
+
+<input id="addButton" type="button" value="Add link" />
+
 <script type="text/javascript">
 
+YUI({ base: '../../build/' }).use('node', function(Y) {
 
-(function() {
-
-var Y = YUI();
+Y.on('click', function() {
+    for (var i=0; i<50; i=i+1) {
+        Y.Get.script("../../build/cookie/cookie-min.js");
+    }
+}, '#addButton');
 
 // Y.Get.css(["../../build/menu/assets/skins/sam/menu.css", "../../build/logger/assets/skins/sam/logger.css"], { 
 Y.Get.css(["http://yui.yahooapis.com/2.5.2/build/fonts/fonts.css"], { 
@@ -72,13 +79,9 @@ Y.Get.script("failure", {
 });
 
 
-})();
+});
 
 </script>
-<body>
-
-<input id="addButton" type="button" value="Add link" />
-
 </body>
 
 </html>

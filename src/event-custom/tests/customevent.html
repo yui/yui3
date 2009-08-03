@@ -333,7 +333,6 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
             },
 
-            
             testObjType: function() {
                 var f1, f2;
                 Y.on({
@@ -346,6 +345,40 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
                 Y.Assert.isTrue(f1);
                 Y.Assert.isTrue(f2);
+            },
+
+            testBubble: function() {
+                var count = 0,
+                    ret,
+                    config = {
+                        emitFacade: true,
+                        bubbles: true
+                    },
+                    a = new Y.EventTarget(config), 
+                    b = new Y.EventTarget(config);
+                    
+                b.addTarget(a);
+
+                // this should not be necessary
+                b.publish('test:foo');
+                    
+                a.on('test:foo', function() {
+                    count++;
+                });
+
+                ret = b.fire('test:foo');
+
+                Y.Assert.areEqual(1, count);
+                Y.Assert.isTrue(ret);
+
+                b.on('test:foo', function(e) {
+                    e.stopPropagation();
+                });
+
+                ret = b.fire('test:foo');
+
+                Y.Assert.areEqual(1, count);
+                Y.Assert.isFalse(ret);
             },
 
             testPreventFnOnce: function() {
@@ -422,7 +455,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
             },
 
-            'broadcast = 1 should be consumable by Y.on, 2 by Y.Global on': function() {
+            testBroadcast: function() {
                 var o = new Y.EventTarget(), s1, s2, s3, s4;
 
                 o.publish('y:foo2', {
@@ -480,7 +513,6 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
         filter: "debug",
         combine: false,
         useConsole: true,
-        // logInclude: ['event', 'test']
         logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
     }).use("datasource", function(Y) {
         Y.log('loaded datasource: ' + Y.DataSource);

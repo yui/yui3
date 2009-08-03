@@ -22,6 +22,7 @@
         OFFSET_HEIGHT = "offsetHeight",
         PARENT_NODE = "parentNode",
         FIRST_CHILD = "firstChild",
+        OWNER_DOCUMENT = "ownerDocument",
 
         WIDTH = "width",
         HEIGHT = "height",
@@ -358,7 +359,6 @@
             }
         },
 
-
         /**
          * For IE6, synchronizes the size and position of iframe shim to that of 
          * Widget bounding box which it is protecting. For all other browsers,
@@ -384,10 +384,7 @@
          * @return {Node} node A new shim Node instance.
          */
         _getShimTemplate : function() {
-            if (!Stack._SHIM_TEMPLATE) {
-                Stack._SHIM_TEMPLATE = Node.create(Stack.SHIM_TEMPLATE);
-            }
-            return Stack._SHIM_TEMPLATE.cloneNode(true);
+            return Node.create(Stack.SHIM_TEMPLATE, this._stackNode.get(OWNER_DOCUMENT));
         }
     };
 

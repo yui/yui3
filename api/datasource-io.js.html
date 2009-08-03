@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>datasource&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>datasource&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_datasource.html" title="datasource">datasource</a>
                 
@@ -155,24 +155,35 @@
 <span class="c">     */</span>
     <span class="nx">_defRequestFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;source&quot;</span><span class="o">),</span>
+            <span class="nx">io</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;io&quot;</span><span class="o">),</span>
+            <span class="nx">request</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">,</span>
             <span class="nx">cfg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">cfg</span><span class="o">,</span> <span class="o">{</span>
                 <span class="nx">on</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">success</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">response</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Received IO data response for \&quot;&quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-io&quot;</span><span class="o">);</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Received IO data response for \&quot;&quot;</span> <span class="o">+</span> <span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-io&quot;</span><span class="o">);</span>
                     <span class="o">},</span>
                     <span class="nx">failure</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">response</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;IO data failure&quot;</span><span class="o">);</span>
                         <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
                         <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Received IO data failure for \&quot;&quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-io&quot;</span><span class="o">);</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Received IO data failure for \&quot;&quot;</span> <span class="o">+</span> <span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-io&quot;</span><span class="o">);</span>
                     <span class="o">}</span>
                 <span class="o">},</span>
                 <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span>
                 <span class="nx">arguments</span><span class="o">:</span> <span class="nx">e</span>
             <span class="o">});</span>
         
-        <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;io&quot;</span><span class="o">)(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">);</span>
+        <span class="c">// Support for POST transactions</span>
+<span class="c"></span>        <span class="k">if</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">request</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span><span class="o">(</span><span class="nx">cfg</span><span class="o">.</span><span class="nx">method</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">cfg</span><span class="o">.</span><span class="nx">method</span><span class="o">.</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">===</span> <span class="s2">&quot;POST&quot;</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">cfg</span><span class="o">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">data</span> <span class="o">?</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">data</span><span class="o">+</span><span class="nx">request</span> <span class="o">:</span> <span class="nx">request</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">uri</span> <span class="o">+=</span> <span class="nx">request</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="nx">io</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">);</span>
         <span class="k">return</span> <span class="nx">e</span><span class="o">.</span><span class="nx">tId</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">});</span>

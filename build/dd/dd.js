@@ -118,10 +118,15 @@ YUI.add('dd-ddm-base', function(Y) {
         * @param {Drag} d The Drag object
         */
         _regDrag: function(d) {
-            this._drags[this._drags.length] = d;
+            if (this.getDrag(d.get('node'))) {
+                return false;
+            }
+            
             if (!this._active) {
                 this._setupListeners();
             }
+            this._drags.push(d);
+            return true;
         },
         /**
         * @private
@@ -154,14 +159,10 @@ YUI.add('dd-ddm-base', function(Y) {
         * @private
         * @method _start
         * @description Internal method used by Drag to signal the start of a drag operation
-        * @param {Number} x The x position of the drag element
-        * @param {Number} y The y position of the drag element
-        * @param {Number} w The width of the drag element
-        * @param {Number} h The height of the drag element
         */
-        _start: function(x, y, w, h) {
+        _start: function() {
             this.fire('ddm:start');
-            this._startDrag.apply(this, arguments);
+            this._startDrag();
         },
         /**
         * @private
@@ -186,8 +187,6 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description Internal method used by Drag to signal the end of a drag operation
         */
         _end: function() {
-            //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
-            //Add as a config option??
             if (this.activeDrag) {
                 this._endDrag();
                 this.fire('ddm:end');
@@ -266,6 +265,16 @@ YUI.add('dd-ddm-base', function(Y) {
     Y.namespace('DD');
     Y.DD.DDM = new DDMBase();
 
+    /**
+    * @event ddm:start
+    * @description Fires from the DDM before all drag events fire.
+    * @type {Event.Custom}
+    */
+    /**
+    * @event ddm:end
+    * @description Fires from the DDM after the DDM finishes, before the drag end events.
+    * @type {Event.Custom}
+    */
 
 
 
@@ -926,11 +935,14 @@ YUI.add('dd-drag', function(Y) {
         * @type {Event.Custom}
         */
     
-    Drag = function() {
+    Drag = function(o) {
         this._lazyAddAttrs = false;
         Drag.superclass.constructor.apply(this, arguments);
 
-        DDM._regDrag(this);
+        var valid = DDM._regDrag(this);
+        if (!valid) {
+            Y.error('Failed to register node, already in use: ' + o.node);
+        }
     };
 
     Drag.NAME = 'drag';
@@ -1312,7 +1324,7 @@ YUI.add('dd-drag', function(Y) {
         * @description A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true}
         * @type {Object}
         */
-        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true},
+        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true },
         /**
         * @private
         * @property _dragThreshMet
@@ -1638,8 +1650,11 @@ YUI.add('dd-drag', function(Y) {
             if (!this.get(DRAG_NODE)) {
                 this.set(DRAG_NODE, this.get(NODE));
             }
-            this._prep();
-            this._dragThreshMet = false;
+
+            //Fix for #2528096
+            //Don't prep the DD instance until all plugins are loaded.
+            this.on('initializedChange', Y.bind(this._prep, this));
+
             //Shouldn't have to do this..
             this.set('groups', this.get('groups'));
         },
@@ -1649,6 +1664,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Attach event listners and add classname
         */
         _prep: function() {
+            this._dragThreshMet = false;
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
             node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this));
@@ -1676,7 +1692,7 @@ YUI.add('dd-drag', function(Y) {
                 var node = this.get(NODE), ow = node.get(OFFSET_WIDTH), oh = node.get(OFFSET_HEIGHT);
                 this._startTime = (new Date()).getTime();
 
-                DDM._start(this.deltaXY, [oh, ow]);
+                DDM._start();
                 node.addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, {
                     pageX: this.nodeXY[0],
@@ -1927,6 +1943,14 @@ YUI.add('dd-proxy', function(Y) {
             value: TRUE
         },
         /**
+        * @attribute hideOnEnd
+        * @description Hide the drag node at the end of the drag. Default: true
+        * @type Boolean
+        */
+        hideOnEnd: {
+            value: TRUE
+        },
+        /**
         * @attribute resizeFrame
         * @description Make the Proxy node assume the size of the original node. Default: true
         * @type Boolean
@@ -1978,9 +2002,9 @@ YUI.add('dd-proxy', function(Y) {
                     host.set(DRAG_NODE, DDM._proxy);
                 }
             }
-            for (i in this._hands) {
-                this._hands[i].detach();
-            }
+            Y.each(this._hands, function(v) {
+                v.detach();
+            });
             h = DDM.on('ddm:start', Y.bind(function() {
                 if (DDM.activeDrag === host) {
                     DDM._setFrame(host);
@@ -1991,7 +2015,9 @@ YUI.add('dd-proxy', function(Y) {
                     if (this.get('moveOnEnd')) {
                         host.get(NODE).setXY(host.lastXY);
                     }
-                    host.get(DRAG_NODE).setStyle('display', 'none');
+                    if (this.get('hideOnEnd')) {
+                        host.get(DRAG_NODE).setStyle('display', 'none');
+                    }
                 }
             }, this));
             this._hands = [h, h1];
@@ -2001,9 +2027,9 @@ YUI.add('dd-proxy', function(Y) {
         },
         destructor: function() {
             var host = this.get(HOST);
-            for (var i in this._hands) {
-                this._hands[i].detach();
-            }
+            Y.each(this._hands, function(v) {
+                v.detach();
+            });
             host.set(DRAG_NODE, host.get(NODE));
         }
     };
@@ -2228,7 +2254,7 @@ YUI.add('dd-constrain', function(Y) {
         },
         /**
         * @attribute constrain2node
-        * @description Will attempt to constrain the drag node to the bounderies of this node.
+        * @description Will attempt to constrain the drag node to the boundaries of this node.
         * @type Object
         */
         constrain2node: {
@@ -2246,7 +2272,7 @@ YUI.add('dd-constrain', function(Y) {
         },
         /**
         * @attribute constrain2view
-        * @description Will attempt to constrain the drag node to the bounderies of the viewport region.
+        * @description Will attempt to constrain the drag node to the boundaries of the viewport region.
         * @type Object
         */
         constrain2view: {
@@ -3228,7 +3254,7 @@ YUI.add('dd-drop', function(Y) {
             this.shim.setStyles({
                 top: '-999px',
                 left: '-999px',
-                zIndex: '2'
+                zIndex: '1'
             });
             this.overTarget = false;
         },
@@ -3358,8 +3384,8 @@ YUI.add('dd-drop', function(Y) {
             DDM._pg.appendChild(s);
             this.shim = s;
 
-            s.on('mouseover', Y.bind(this._handleOverEvent, this));
-            s.on('mouseout', Y.bind(this._handleOutEvent, this));
+            s.on('mouseenter', Y.bind(this._handleOverEvent, this));
+            s.on('mouseleave', Y.bind(this._handleOutEvent, this));
         },
         /**
         * @private

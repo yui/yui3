@@ -121,7 +121,7 @@ Y.Get = function() {
      * @private
      */
     _purge = function(tId) {
-        var q=queues[tId], n, l, d, h, s, i;
+        var q=queues[tId], n, l, d, h, s, i, node, attr;
         if (q) {
             n = q.nodes; 
             l = n.length;
@@ -136,7 +136,16 @@ Y.Get = function() {
             }
 
             for (i=0; i<l; i=i+1) {
-                h.removeChild(n[i]);
+                node = n[i];
+                if (node.clearAttributes) {
+                    node.clearAttributes();
+                } else {
+                    for (attr in node) {
+                        delete node[attr];
+                    }
+                }
+
+                h.removeChild(node);
             }
         }
         q.nodes = [];
