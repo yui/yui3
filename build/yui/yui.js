@@ -103,20 +103,17 @@ YUI.prototype = {
         // find targeted window/frame
         // @TODO create facades
         var v = '@VERSION@', Y = this;
-        o.win = o.win || window || {};
-        o.win = o.win.contentWindow || o.win;
-        o.doc = o.win.document;
-        o.debug = ('debug' in o) ? o.debug : true;
-        o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
-        o.throwFail = ('throwFail' in o) ? o.throwFail : true;
-    
-        // add a reference to o for anything that needs it
-        // before _setup is called.
-        Y.config = o;
+
+        if (v.indexOf('@') > -1) {
+            v = 'test';
+        }
+
+        Y.version = v;
 
         Y.Env = {
             // @todo expand the new module metadata
             mods: {},
+            cdn: 'http://yui.yahooapis.com/' + v + '/build/',
             _idx: 0,
             _used: {},
             _attached: {},
@@ -125,24 +122,48 @@ YUI.prototype = {
             _loaded: {}
         };
 
+        o.win = o.win || window || {};
+        o.win = o.win.contentWindow || o.win;
+        o.doc = o.win.document;
+        o.debug = ('debug' in o) ? o.debug : true;
+        o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
+        o.throwFail = ('throwFail' in o) ? o.throwFail : true;
+    
+        o.base = o.base || function() {
+            var b, nodes, i, match;
 
-        if (v.indexOf('@') > -1) {
-            v = 'test';
-        }
+            // get from querystring
+            nodes = document.getElementsByTagName('script');
 
-        Y.version = v;
+            for (i=0; i<nodes.length; i=i+1) {
+                match = nodes[i].src.match(/^(.*)yui\/yui[\.\-].*js(\?.*)?$/);
+                b = match && match[1];
+                if (b) {
+                    break;
+                }
+            }
+
+            // use CDN default
+            return b || Y.Env.cdn;
+
+        }();
+
+        o.loaderPath = o.loaderPath || 'yui/loader-min.js';
+
+        // add a reference to o for anything that needs it
+        // before _setup is called.
+        Y.config = o;
 
         Y.Env._loaded[v] = {};
 
         if (YUI.Env) {
             Y.Env._yidx = (++YUI.Env._yidx);
-            Y.Env._guidp = ('yui_' + this.version + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
+            Y.Env._guidp = ('yui_' + v + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
             Y.id = Y.stamp(Y);
             _instances[Y.id] = Y;
         }
 
         Y.constructor = YUI;
-
 
         // this.log(this.id + ') init ');
     },
@@ -2306,6 +2327,11 @@ Y.Get = function() {
                 if (node.clearAttributes) {
                     node.clearAttributes();
                 } else {
+                    // This is a hostile delete
+                    // operation attempting to improve
+                    // memory performance.  As such, the
+                    // hasOwnProperty check is intentionally
+                    // ommitted.
                     for (attr in node) {
                         delete node[attr];
                     }

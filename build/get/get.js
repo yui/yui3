@@ -140,6 +140,11 @@ Y.Get = function() {
                 if (node.clearAttributes) {
                     node.clearAttributes();
                 } else {
+                    // This is a hostile delete
+                    // operation attempting to improve
+                    // memory performance.  As such, the
+                    // hasOwnProperty check is intentionally
+                    // ommitted.
                     for (attr in node) {
                         delete node[attr];
                     }
