@@ -299,7 +299,7 @@
                         break;
                         
                     case this.TEST_FAIL_EVENT:
-                        message = event.testName + ": " + event.error.getMessage();
+                        message = event.testName + ": failed.\n" + event.error.getMessage();
                         messageType = "fail";
                         break;
                         

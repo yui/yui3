@@ -3,8 +3,9 @@ Module Name: "test"
 Documentation: http://developer.yahoo.com/yui/3/test
 
 3.0.0
-    * Added missing space in assert failure message (trac #2528058)
+    * Added missing space in assert failure message (trac #2528058).
     * Fixed ArrayAssert errors (trac #2528142).
+    * Failed tests now output "failed" into the log (trac #2527916).
 
 3.0.0b1
 
