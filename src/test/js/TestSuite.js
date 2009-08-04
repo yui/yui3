@@ -51,6 +51,7 @@
             if (testObject instanceof Y.Test.Suite || testObject instanceof Y.Test.Case) {
                 this.items.push(testObject);
             }
+            return this;
         },
         
         //-------------------------------------------------------------------------

@@ -348,7 +348,7 @@
                         <span class="k">break</span><span class="o">;</span>
                         
                     <span class="nx">case</span> <span class="k">this</span><span class="o">.</span><span class="nx">TEST_FAIL_EVENT</span><span class="o">:</span>
-                        <span class="nx">message</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">testName</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="o">.</span><span class="nx">error</span><span class="o">.</span><span class="nx">getMessage</span><span class="o">();</span>
+                        <span class="nx">message</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">testName</span> <span class="o">+</span> <span class="s2">&quot;: failed.\n&quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="o">.</span><span class="nx">error</span><span class="o">.</span><span class="nx">getMessage</span><span class="o">();</span>
                         <span class="nx">messageType</span> <span class="o">=</span> <span class="s2">&quot;fail&quot;</span><span class="o">;</span>
                         <span class="k">break</span><span class="o">;</span>
                         
@@ -849,6 +849,7 @@
 <span class="c">             */</span>
             <span class="nx">add</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">testObject</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">masterSuite</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">testObject</span><span class="o">);</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
             <span class="o">},</span>
             
             <span class="c">/**</span>
