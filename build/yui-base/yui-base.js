@@ -114,6 +114,7 @@ YUI.prototype = {
             // @todo expand the new module metadata
             mods: {},
             cdn: 'http://yui.yahooapis.com/' + v + '/build/',
+            bootstrapped: false,
             _idx: 0,
             _used: {},
             _attached: {},
@@ -148,7 +149,7 @@ YUI.prototype = {
 
         }();
 
-        o.loaderPath = o.loaderPath || 'yui/loader-min.js';
+        o.loaderPath = o.loaderPath || 'loader/loader-min.js';
 
         // add a reference to o for anything that needs it
         // before _setup is called.
@@ -468,6 +469,21 @@ YUI.prototype = {
             loader.attaching = a;
             loader.require(missing);
             loader.insert();
+        } else if (Y.Get && missing.length && !Y.Env.bootstrapped) {
+
+            a = Y.Array(arguments, 0, true);
+            // a.unshift('loader');
+
+            Y.Get.script(Y.config.base + Y.config.loaderPath, {
+                onEnd: function() {
+                    Y.Env.bootstrapped = true;
+                    Y._attach(['loader']);
+                    Y.use.apply(Y, a);
+                }
+            });
+
+            return Y;
+
         } else {
             Y._attach(r);
             onComplete();
@@ -910,7 +926,7 @@ YUI.prototype = {
  * when boostrapping with the get utility alone.
  *
  * @property loaderPath
- * @default yui/loader-min.js
+ * @default loader/loader-min.js
  */
 YUI.add('yui-base', function(Y) {
 
@@ -2083,12 +2099,9 @@ Y.UA = function() {
 
 
     if (C.core) {
-
         core = C.core;
-
     } else {
-
-        core = ['queue-base', 'get', 'loader'];
+        core = ['queue-base', 'get'];
     }
 
     Y.use.apply(Y, core);
