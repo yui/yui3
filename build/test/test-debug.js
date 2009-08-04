@@ -176,6 +176,7 @@ YUI.add('test', function(Y) {
             if (testObject instanceof Y.Test.Suite || testObject instanceof Y.Test.Case) {
                 this.items.push(testObject);
             }
+            return this;
         },
         
         //-------------------------------------------------------------------------
@@ -1002,6 +1003,7 @@ YUI.add('test', function(Y) {
              */
             add : function (testObject) {
                 this.masterSuite.add(testObject);
+                return this;
             },
             
             /**

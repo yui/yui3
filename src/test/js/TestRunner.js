@@ -800,6 +800,7 @@
              */
             add : function (testObject) {
                 this.masterSuite.add(testObject);
+                return this;
             },
             
             /**

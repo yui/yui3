@@ -6,6 +6,7 @@ Documentation: http://developer.yahoo.com/yui/3/test
     * Added missing space in assert failure message (trac #2528058).
     * Fixed ArrayAssert errors (trac #2528142).
     * Failed tests now output "failed" into the log (trac #2527916).
+    * Added chainability for the add() method on Y.Test.Runner and Y.Test.Suite (trac #2527899).
 
 3.0.0b1
 
