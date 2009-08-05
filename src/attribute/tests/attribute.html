@@ -585,6 +585,14 @@
                     Y.Assert.areEqual("MyNewDEVal", h.get("DE"));
                 },
 
+                testAdHocGetSet : function() {
+                    var h = this.createHost();
+
+                    Y.Assert.areEqual(undefined, h.get("AdHoc"));
+                    h.set("AdHoc", "TestAdHoc");
+                    Y.Assert.areEqual("TestAdHoc", h.get("AdHoc"));
+                },
+
                 testReset : function() {
                     var h = this.createHost({A:"MyAVal", B:"MyBVal", C:"MyCVal", D:"MyDVal", E:"MyEVal", DE:"MyDEVal"});
 
@@ -1028,6 +1036,14 @@
                     Y.Assert.areEqual("exteval", h.get("E"));
                     Y.Assert.areEqual("MyNewFVal", h.get("F"));
                     Y.Assert.areEqual("MyNewDEVal", h.get("DE"));
+                },
+
+                testAdHocGetSet : function() {
+                    var h = this.createHost();
+
+                    Y.Assert.areEqual(undefined, h.get("AdHoc"));
+                    h.set("AdHoc", "TestAdHoc");
+                    Y.Assert.areEqual("TestAdHoc", h.get("AdHoc"));
                 },
 
                 testReset : function() {

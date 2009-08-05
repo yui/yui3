@@ -118,7 +118,6 @@ YUI.add('attribute', function(Y) {
             return o;
         }
     };
-
     /**
      * The attribute module provides an augmentable Attribute implementation, which 
      * adds configurable attributes and attribute change events to the class being 
@@ -197,8 +196,12 @@ YUI.add('attribute', function(Y) {
         // Perf tweak - avoid creating event literals if not required.
         this._ATTR_E_FACADE = {};
 
+        this._requireAddAttr = false;
+
         EventTarget.call(this, {emitFacade:true});
+
         this._conf = new Y.State();
+        this._confProxy = null;
     }
 
     /**
@@ -419,38 +422,7 @@ YUI.add('attribute', function(Y) {
          * @return {Any} The value of the attribute
          */
         get : function(name) {
-
-            var fullName = name,
-                conf = this._conf,
-                path,
-                getter,
-                val;
-
-            if (name.indexOf(DOT) !== -1) {
-                path = name.split(DOT);
-                name = path.shift();
-            }
-
-            // On Demand - Should be rare - handles out of order valueFn references
-            if (this._tCfgs && this._tCfgs[name]) {
-                var cfg = {};
-                cfg[name] = this._tCfgs[name];
-                delete this._tCfgs[name];
-                this._addAttrs(cfg, this._tVals);
-            }
-
-            // Lazy Init
-            if (this._isLazyAttr(name)) {
-                this._addLazyAttr(name);
-            }
-
-            val = conf.get(name, VALUE);
-            getter = conf.get(name, GETTER);
-
-            val = (getter) ? getter.call(this, val, fullName) : val;
-            val = (path) ? O.getValue(val, path) : val;
-
-            return val;
+            return this._getAttr(name);
         },
 
         /**
@@ -547,6 +519,53 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
+         * Provides the common implementation for the public get method,
+         * allowing Attribute hosts to over-ride either method.
+         *
+         * See <a href="#method_get">get</a> for argument details.
+         *
+         * @method _getAttr
+         * @protected
+         * @chainable
+         *
+         * @param {String} name The name of the attribute.
+         * @return {Any} The value of the attribute.
+         */
+        _getAttr : function(name) {
+            var fullName = name,
+                conf = this._conf,
+                path,
+                getter,
+                val;
+
+            if (name.indexOf(DOT) !== -1) {
+                path = name.split(DOT);
+                name = path.shift();
+            }
+
+            // On Demand - Should be rare - handles out of order valueFn references
+            if (this._tCfgs && this._tCfgs[name]) {
+                var cfg = {};
+                cfg[name] = this._tCfgs[name];
+                delete this._tCfgs[name];
+                this._addAttrs(cfg, this._tVals);
+            }
+
+            // Lazy Init
+            if (this._isLazyAttr(name)) {
+                this._addLazyAttr(name);
+            }
+
+            val = conf.get(name, VALUE);
+            getter = conf.get(name, GETTER);
+
+            val = (getter) ? getter.call(this, val, fullName) : val;
+            val = (path) ? O.getValue(val, path) : val;
+
+            return val;
+        },
+
+        /**
          * Provides the common implementation for the public set and protected _set methods.
          *
          * See <a href="#method_set">set</a> for argument details.
@@ -585,7 +604,7 @@ YUI.add('attribute', function(Y) {
 
             initialSet = (!data.value || !(name in data.value));
 
-            if (!this.attrAdded(name)) {
+            if (this._requireAddAttr && !this.attrAdded(name)) {
                 Y.log('Set attribute:' + name + ', aborted; Attribute is not configured', 'warn', 'attribute');
             } else {
 
@@ -943,7 +962,7 @@ YUI.add('attribute', function(Y) {
 
             if (!cfg.readOnly && initValues) {
 
-                Y.log('Checking initValues in _getAttrIniVal: ' + attr, 'info', 'attribute');
+                Y.log('Checking initValues in _getAttrInitVal: ' + attr, 'info', 'attribute');
 
                 // Simple Attributes
                 simple = initValues.simple;
@@ -973,7 +992,6 @@ YUI.add('attribute', function(Y) {
     Y.mix(Attribute, EventTarget, false, null, 1);
 
     Y.Attribute = Attribute;
-
 
 
 }, '@VERSION@' ,{requires:['event-custom']});

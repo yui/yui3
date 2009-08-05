@@ -135,14 +135,19 @@ YUI.add('base-build', function(Y) {
         },
 
         _hasImpl : function(extClass) {
-            if (this.constructor._yuibuild) {
-                var f = this.constructor._yuibuild.exts,
-                    l = f.length,
-                    i;
-
-                for (i = 0; i < l; i++) {
-                    if (f[i] === extClass) {
-                        return true;
+            var classes = this._getClasses();
+            for (var i = 0, l = classes.length; i < l; i++) {
+                var cls = classes[i];
+                 
+                if (cls._yuibuild) {
+                    var exts = cls._yuibuild.exts,
+                        ll = exts.length,
+                        j;
+    
+                    for (j = 0; j < ll; j++) {
+                        if (exts[j] === extClass) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -184,7 +189,6 @@ YUI.add('base-build', function(Y) {
             return aggr;
         }
     });
-
 
 
 }, '@VERSION@' ,{requires:['base-base']});

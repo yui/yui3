@@ -112,25 +112,27 @@ YUI.add('base-base', function(Y) {
         _initPlugins: function(config) {
 
             // Class Configuration
-            var classes = this._getClasses(),
+            var classes = (this._getClasses) ? this._getClasses() : null,
                 plug = [],
                 unplug = {},
                 constructor, i, classPlug, classUnplug, pluginClassName;
 
             //TODO: Room for optimization. Can we apply statically/unplug in same pass?
-            for (i = classes.length - 1; i >= 0; i--) {
-                constructor = classes[i];
+            if (classes) {
+                for (i = classes.length - 1; i >= 0; i--) {
+                    constructor = classes[i];
 
-                classUnplug = constructor._UNPLUG;
-                if (classUnplug) {
-                    // subclasses over-write
-                    Y.mix(unplug, classUnplug, true);
-                }
-
-                classPlug = constructor._PLUG;
-                if (classPlug) {
-                    // subclasses over-write
-                    Y.mix(plug, classPlug, true);
+                    classUnplug = constructor._UNPLUG;
+                    if (classUnplug) {
+                        // subclasses over-write
+                        Y.mix(unplug, classUnplug, true);
+                    }
+    
+                    classPlug = constructor._PLUG;
+                    if (classPlug) {
+                        // subclasses over-write
+                        Y.mix(plug, classPlug, true);
+                    }
                 }
             }
     
@@ -279,7 +281,6 @@ YUI.add('base-base', function(Y) {
     };
 
     Y.namespace("Plugin").Host = PluginHost;
-
     /**
      * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
      * The module also provides two ways to reuse code - An augmentable Plugin.Host interface which provides plugin support 
@@ -307,7 +308,9 @@ YUI.add('base-base', function(Y) {
         DEEP = "deep",
         SHALLOW = "shallow",
         VALUE = "value",
-        DESTRUCTOR = "destructor";
+        DESTRUCTOR = "destructor",
+
+        Attribute = Y.Attribute;
 
     /**
      * <p>
@@ -333,10 +336,9 @@ YUI.add('base-base', function(Y) {
     function Base() {
         Y.log('constructor called', 'life', 'base');
 
-        Y.Attribute.call(this);
-        Y.Plugin.Host.call(this);
+        Attribute.call(this);
+        PluginHost.call(this);
 
-        this._silentInit = this._silentInit || false;
         if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
 
         this.init.apply(this, arguments);
@@ -351,7 +353,7 @@ YUI.add('base-base', function(Y) {
      * @static
      * @private
      */
-    Base._ATTR_CFG = Y.Attribute._ATTR_CFG.concat("cloneDefaultValue");
+    Base._ATTR_CFG = Attribute._ATTR_CFG.concat("cloneDefaultValue");
 
     /**
      * <p>
@@ -367,7 +369,7 @@ YUI.add('base-base', function(Y) {
      * @type String
      * @static
      */
-    Base.NAME = 'base';
+    Base.NAME = "base";
 
     /**
      * The default set of attributes which will be available for instances of this class, and 
@@ -455,12 +457,10 @@ YUI.add('base-base', function(Y) {
              * @param {EventFacade} e Event object, with a cfg property which 
              * refers to the configuration object passed to the constructor.
              */
-            if (!this._silentInit) {
-                this.publish(INIT, {
-                    queuable:false,
-                    defaultFn:this._defInitFn
-                });
-            }
+            this.publish(INIT, {
+                queuable:false,
+                defaultFn:this._defInitFn
+            });
 
             if (config) {
                 if (config.on) {
@@ -471,11 +471,7 @@ YUI.add('base-base', function(Y) {
                 }
             }
 
-            if (!this._silentInit) {
-                this.fire(INIT, {cfg: config});
-            } else {
-                this._defInitFn({cfg: config});
-            }
+            this.fire(INIT, {cfg: config});
 
             return this;
         },
@@ -534,12 +530,7 @@ YUI.add('base-base', function(Y) {
         _defInitFn : function(e) {
             this._initHierarchy(e.cfg);
             this._initPlugins(e.cfg);
-
-            if (!this._silentInit) {
-                this._set(INITIALIZED, true);
-            } else {
-                this._conf.add(INITIALIZED, VALUE, true);
-            }
+            this._set(INITIALIZED, true);
         },
 
         /**
@@ -662,11 +653,11 @@ YUI.add('base-base', function(Y) {
          * @return {Object} The aggregate set of ATTRS definitions for the instance
          */
         _aggregateAttrs : function(allAttrs) {
-            var attr, 
-                attrs, 
-                cfg, 
-                val, 
-                path, 
+            var attr,
+                attrs,
+                cfg,
+                val,
+                path,
                 i, 
                 clone, 
                 cfgProps = Base._ATTR_CFG,
@@ -794,7 +785,7 @@ YUI.add('base-base', function(Y) {
     };
 
     // Straightup augment, no wrapper functions
-    Y.mix(Base, Y.Attribute, false, null, 1);
+    Y.mix(Base, Attribute, false, null, 1);
     Y.mix(Base, PluginHost, false, null, 1);
 
     /**
@@ -821,9 +812,7 @@ YUI.add('base-base', function(Y) {
     Y.Base = Base;
 
 
-
 }, '@VERSION@' ,{requires:['attribute']});
-
 YUI.add('base-build', function(Y) {
 
     /**
@@ -961,14 +950,19 @@ YUI.add('base-build', function(Y) {
         },
 
         _hasImpl : function(extClass) {
-            if (this.constructor._yuibuild) {
-                var f = this.constructor._yuibuild.exts,
-                    l = f.length,
-                    i;
-
-                for (i = 0; i < l; i++) {
-                    if (f[i] === extClass) {
-                        return true;
+            var classes = this._getClasses();
+            for (var i = 0, l = classes.length; i < l; i++) {
+                var cls = classes[i];
+                 
+                if (cls._yuibuild) {
+                    var exts = cls._yuibuild.exts,
+                        ll = exts.length,
+                        j;
+    
+                    for (j = 0; j < ll; j++) {
+                        if (exts[j] === extClass) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -1012,9 +1006,7 @@ YUI.add('base-build', function(Y) {
     });
 
 
-
 }, '@VERSION@' ,{requires:['base-base']});
-
 
 
 YUI.add('base', function(Y){}, '@VERSION@' ,{use:['base-base', 'base-build']});
