@@ -196,17 +196,17 @@ YUI.add('attribute', function(Y) {
         // Perf tweak - avoid creating event literals if not required.
         this._ATTR_E_FACADE = {};
 
-        this._requireAddAttr = false;
-
         EventTarget.call(this, {emitFacade:true});
 
-        this._conf = new Y.State();
-        this._confProxy = null;
+        this._conf = this._state = new Y.State();
+
+        this._stateProxy = null;
+        this._requireAddAttr = false;
     }
 
     /**
      * <p>The value to return from an attribute setter in order to prevent the set from going through.</p>
-     * 
+     *
      * <p>You can return this value from your setter if you wish to combine validator and setter 
      * functionality into a single setter function, which either returns the massaged value to be stored or 
      * Attribute.INVALID_VALUE to prevent invalid values from being stored.</p>
@@ -309,20 +309,25 @@ YUI.add('attribute', function(Y) {
         addAttr: function(name, config, lazy) {
 
             Y.log('Adding attribute: ' + name, 'info', 'attribute');
-            var conf = this._conf;
+
+            var state = this._state;
 
             lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
 
+            if (this._stateProxy && this._stateProxy[name]) { Y.log('addAttr: ' + name + ' exists on the _stateProxy object. The newly added attribute will override the use of _stateProxy for this attribute', 'warn', 'attribute'); }
+
             if (lazy && !this.attrAdded(name)) {
+
                 Y.log('Lazy Add: ' + name, 'info', 'attribute');
 
-                conf.add(name, LAZY, config || {});
-                conf.add(name, ADDED, true);
+                state.add(name, LAZY, config || {});
+                state.add(name, ADDED, true);
+
             } else {
 
-                if (this.attrAdded(name) && !conf.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
+                if (this.attrAdded(name) && !state.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
-                if (!this.attrAdded(name) || conf.get(name, IS_LAZY_ADD)) {
+                if (!this.attrAdded(name) || state.get(name, IS_LAZY_ADD)) {
                     Y.log('Non-Lazy Add: ' + name, 'info', 'attribute');
 
                     config = config || {};
@@ -331,7 +336,7 @@ YUI.add('attribute', function(Y) {
                     if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
 
                     if(hasValue) {
-                        // We'll go through set, don't want to set value in _conf directory
+                        // We'll go through set, don't want to set value in _state directly
                         value = config.value;
                         delete config.value;
                     }
@@ -339,14 +344,14 @@ YUI.add('attribute', function(Y) {
                     config.added = true;
                     config.initializing = true;
 
-                    conf.addAll(name, config);
+                    state.addAll(name, config);
 
                     if (hasValue) {
                         // Go through set, so that raw values get normalized/validated
                         this.set(name, value);
                     }
 
-                    conf.remove(name, INITIALIZING);
+                    state.remove(name, INITIALIZING);
                 }
             }
 
@@ -361,7 +366,7 @@ YUI.add('attribute', function(Y) {
          * @return {boolean} true if an attribute with the given name has been added, false if it hasn't. This method will return true for lazily added attributes.
          */
         attrAdded: function(name) {
-            return !!this._conf.get(name, ADDED);
+            return !!this._state.get(name, ADDED);
         },
 
         /**
@@ -383,14 +388,14 @@ YUI.add('attribute', function(Y) {
                     this._addLazyAttr(name);
                 }
 
-                var prop, conf = this._conf;
+                var prop, state = this._state;
                 for (prop in config) {
                     if (MODIFIABLE[prop] && config.hasOwnProperty(prop)) {
-                        conf.add(name, prop, config[prop]);
+                        state.add(name, prop, config[prop]);
 
                         // If we reconfigured broadcast, need to republish
                         if (prop === BROADCAST) {
-                            conf.remove(name, PUBLISHED);
+                            state.remove(name, PUBLISHED);
                         }
                     }
                 }
@@ -406,7 +411,7 @@ YUI.add('attribute', function(Y) {
          * @param {String} name The name of the attribute to be removed.
          */
         removeAttr: function(name) {
-            this._conf.removeAll(name);
+            this._state.removeAll(name);
         },
 
         /**
@@ -435,7 +440,7 @@ YUI.add('attribute', function(Y) {
          * @return {boolean} true if it's a lazily added attribute, false otherwise.
          */
         _isLazyAttr: function(name) {
-            return this._conf.get(name, LAZY);
+            return this._state.get(name, LAZY);
         },
 
         /**
@@ -446,10 +451,10 @@ YUI.add('attribute', function(Y) {
          * @param {Object} name The name of the attribute
          */
         _addLazyAttr: function(name) {
-            var conf = this._conf;
-            var lazyCfg = conf.get(name, LAZY);
-            conf.add(name, IS_LAZY_ADD, true);
-            conf.remove(name, LAZY);
+            var state = this._state;
+            var lazyCfg = state.get(name, LAZY);
+            state.add(name, IS_LAZY_ADD, true);
+            state.remove(name, LAZY);
             this.addAttr(name, lazyCfg);
         },
 
@@ -491,9 +496,9 @@ YUI.add('attribute', function(Y) {
                 if (this._isLazyAttr(name)) {
                     this._addLazyAttr(name);
                 }
-                this.set(name, this._conf.get(name, INIT_VALUE));
+                this.set(name, this._state.get(name, INIT_VALUE));
             } else {
-                var added = this._conf.data.added;
+                var added = this._state.data.added;
                 Y.each(added, function(v, n) {
                     this.reset(n);
                 }, this);
@@ -533,7 +538,7 @@ YUI.add('attribute', function(Y) {
          */
         _getAttr : function(name) {
             var fullName = name,
-                conf = this._conf,
+                state = this._state,
                 path,
                 getter,
                 val;
@@ -556,8 +561,8 @@ YUI.add('attribute', function(Y) {
                 this._addLazyAttr(name);
             }
 
-            val = conf.get(name, VALUE);
-            getter = conf.get(name, GETTER);
+            val = this._getStateVal(name);
+            getter = state.get(name, GETTER);
 
             val = (getter) ? getter.call(this, val, fullName) : val;
             val = (path) ? O.getValue(val, path) : val;
@@ -585,8 +590,8 @@ YUI.add('attribute', function(Y) {
          */
         _setAttr : function(name, val, opts, force) {
             var allowSet = true,
-                conf = this._conf,
-                data = conf.data,
+                state = this._state,
+                data = state.data,
                 initialSet,
                 strPath,
                 path,
@@ -610,12 +615,12 @@ YUI.add('attribute', function(Y) {
 
                 if (!initialSet && !force) {
 
-                    if (conf.get(name, WRITE_ONCE)) {
+                    if (state.get(name, WRITE_ONCE)) {
                         Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
                         allowSet = false;
                     }
 
-                    if (conf.get(name, READ_ONLY)) {
+                    if (state.get(name, READ_ONLY)) {
                         Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
                         allowSet = false;
                     }
@@ -634,7 +639,7 @@ YUI.add('attribute', function(Y) {
                     }
 
                     if (allowSet) {
-                        if (conf.get(name, INITIALIZING)) {
+                        if (state.get(name, INITIALIZING)) {
                             this._setAttrVal(name, strPath, currVal, val);
                         } else {
                             this._fireAttrChange(name, strPath, currVal, val, opts);
@@ -660,17 +665,17 @@ YUI.add('attribute', function(Y) {
          */
         _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts) {
             var eventName = attrName + CHANGE,
-                conf = this._conf,
+                state = this._state,
                 facade;
 
-            if (!conf.get(attrName, PUBLISHED)) {
+            if (!state.get(attrName, PUBLISHED)) {
                 this.publish(eventName, {
                     queuable:false, 
                     defaultFn:this._defAttrChangeFn, 
                     silent:true,
-                    broadcast : conf.get(attrName, BROADCAST)
+                    broadcast : state.get(attrName, BROADCAST)
                 });
-                conf.add(attrName, PUBLISHED, true);
+                state.add(attrName, PUBLISHED, true);
             }
 
             facade = (opts) ? Y.merge(opts) : this._ATTR_E_FACADE;
@@ -697,7 +702,25 @@ YUI.add('attribute', function(Y) {
                 // Prevent "after" listeners from being invoked since nothing changed.
                 e.stopImmediatePropagation();
             } else {
-                e.newVal = this._conf.get(e.attrName, VALUE);
+                e.newVal = this._getStateVal(e.attrName);
+            }
+        },
+
+        _getStateVal : function(name) {
+            var stateProxy = this._stateProxy;
+            if (!stateProxy || this.attrAdded(name)) {
+                return this._state.get(name, VALUE);
+            } else {
+                return (stateProxy && stateProxy[name]);
+            }
+        },
+
+        _setStateVal : function(name, value) {
+            var stateProxy = this._stateProxy;
+            if (!stateProxy || this.attrAdded(name)) {
+                this._state.add(name, VALUE, value);
+            } else {
+                stateProxy[name] = value;             
             }
         },
 
@@ -717,11 +740,11 @@ YUI.add('attribute', function(Y) {
         _setAttrVal : function(attrName, subAttrName, prevVal, newVal) {
 
             var allowSet = true,
-                conf = this._conf,
+                state = this._state,
 
-                validator  = conf.get(attrName, VALIDATOR),
-                setter = conf.get(attrName, SETTER),
-                initializing = conf.get(attrName, INITIALIZING),
+                validator  = state.get(attrName, VALIDATOR),
+                setter = state.get(attrName, SETTER),
+                initializing = state.get(attrName, INITIALIZING),
 
                 name = subAttrName || attrName,
                 retVal;
@@ -730,7 +753,7 @@ YUI.add('attribute', function(Y) {
                 var valid = validator.call(this, newVal, name);
 
                 if (!valid && initializing) {
-                    newVal = conf.get(attrName, DEF_VALUE);
+                    newVal = state.get(attrName, DEF_VALUE);
                     valid = true; // Assume it's valid, for perf.
                 }
             }
@@ -754,10 +777,10 @@ YUI.add('attribute', function(Y) {
                         allowSet = false;
                     } else {
                         // Store value
-                        if (conf.get(attrName, INIT_VALUE) === undefined) {
-                            conf.add(attrName, INIT_VALUE, newVal);
+                        if (state.get(attrName, INIT_VALUE) === undefined) {
+                            state.add(attrName, INIT_VALUE, newVal);
                         }
-                        conf.add(attrName, VALUE, newVal);
+                        this._setStateVal(attrName, newVal);
                     }
                 }
 
@@ -798,14 +821,14 @@ YUI.add('attribute', function(Y) {
             var o = {}, i, l, attr, val,
                 modifiedOnly = (attrs === true);
 
-            attrs = (attrs && !modifiedOnly) ? attrs : O.keys(this._conf.data.added);
+            attrs = (attrs && !modifiedOnly) ? attrs : O.keys(this._state.data.added);
 
             for (i = 0, l = attrs.length; i < l; i++) {
                 // Go through get, to honor cloning/normalization
                 attr = attrs[i];
                 val = this.get(attr);
 
-                if (!modifiedOnly || this._conf.get(attr, VALUE) != this._conf.get(attr, INIT_VALUE)) {
+                if (!modifiedOnly || this._getStateVal(attr) != this._state.get(attr, INIT_VALUE)) {
                     o[attr] = this.get(attr); 
                 }
             }

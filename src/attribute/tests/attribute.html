@@ -5,6 +5,12 @@
     <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 
     <style type="text/css">
+        #console .yui-console-entry {
+            padding:2px;
+            margin:0px;
+            min-height:0;
+        }
+        
         #console .yui-console-entry-fail .yui-console-entry-cat {
             background-color:red;
         }
@@ -591,6 +597,15 @@
                     Y.Assert.areEqual(undefined, h.get("AdHoc"));
                     h.set("AdHoc", "TestAdHoc");
                     Y.Assert.areEqual("TestAdHoc", h.get("AdHoc"));
+                    
+                    h.addAttr("AdHoc", {
+                        setter: function(val) {
+                            return val.toUpperCase();
+                        }
+                    });
+
+                    h.set("AdHoc", "TestAdHocConfigured");
+                    Y.Assert.areEqual("TESTADHOCCONFIGURED", h.get("AdHoc"));
                 },
 
                 testReset : function() {
