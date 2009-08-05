@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dd&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>dd&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dd.html" title="dd">dd</a>
                 
@@ -148,9 +148,9 @@
                     <span class="nx">host</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">,</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">_hands</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_hands</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">detach</span><span class="o">();</span>
-            <span class="o">}</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_hands</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">v</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
+            <span class="o">});</span>
             <span class="nx">h</span> <span class="o">=</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;ddm:start&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span> <span class="o">===</span> <span class="nx">host</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">DDM</span><span class="o">.</span><span class="nx">_setFrame</span><span class="o">(</span><span class="nx">host</span><span class="o">);</span>
@@ -173,9 +173,9 @@
         <span class="o">},</span>
         <span class="nx">destructor</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">);</span>
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">_hands</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_hands</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">detach</span><span class="o">();</span>
-            <span class="o">}</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_hands</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">v</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
+            <span class="o">});</span>
             <span class="nx">host</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">,</span> <span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">));</span>
         <span class="o">}</span>
     <span class="o">};</span>
