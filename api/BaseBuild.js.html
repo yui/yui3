@@ -182,14 +182,19 @@
         <span class="o">},</span>
 
         <span class="nx">_hasImpl</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">extClass</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">,</span>
-                    <span class="nx">l</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span>
-                    <span class="nx">i</span><span class="o">;</span>
-
-                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">extClass</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">();</span>
+            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">cls</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                 
+                <span class="k">if</span> <span class="o">(</span><span class="nx">cls</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">var</span> <span class="nx">exts</span> <span class="o">=</span> <span class="nx">cls</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">,</span>
+                        <span class="nx">ll</span> <span class="o">=</span> <span class="nx">exts</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span>
+                        <span class="nx">j</span><span class="o">;</span>
+    
+                    <span class="k">for</span> <span class="o">(</span><span class="nx">j</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">ll</span><span class="o">;</span> <span class="nx">j</span><span class="o">++)</span> <span class="o">{</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">exts</span><span class="o">[</span><span class="nx">j</span><span class="o">]</span> <span class="o">===</span> <span class="nx">extClass</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+                        <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
