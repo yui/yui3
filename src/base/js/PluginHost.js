@@ -110,27 +110,25 @@
         _initPlugins: function(config) {
 
             // Class Configuration
-            var classes = (this._getClasses) ? this._getClasses() : null,
+            var classes = (this._getClasses) ? this._getClasses() : [this.constructor],
                 plug = [],
                 unplug = {},
                 constructor, i, classPlug, classUnplug, pluginClassName;
 
             //TODO: Room for optimization. Can we apply statically/unplug in same pass?
-            if (classes) {
-                for (i = classes.length - 1; i >= 0; i--) {
-                    constructor = classes[i];
+            for (i = classes.length - 1; i >= 0; i--) {
+                constructor = classes[i];
 
-                    classUnplug = constructor._UNPLUG;
-                    if (classUnplug) {
-                        // subclasses over-write
-                        Y.mix(unplug, classUnplug, true);
-                    }
-    
-                    classPlug = constructor._PLUG;
-                    if (classPlug) {
-                        // subclasses over-write
-                        Y.mix(plug, classPlug, true);
-                    }
+                classUnplug = constructor._UNPLUG;
+                if (classUnplug) {
+                    // subclasses over-write
+                    Y.mix(unplug, classUnplug, true);
+                }
+
+                classPlug = constructor._PLUG;
+                if (classPlug) {
+                    // subclasses over-write
+                    Y.mix(plug, classPlug, true);
                 }
             }
     
