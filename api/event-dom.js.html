@@ -303,9 +303,8 @@
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">p_obj</span><span class="o">,</span> <span class="nx">p_override</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">compat</span><span class="o">);</span>
         <span class="o">},</span>
 
-
         <span class="c">/**</span>
-<span class="c">         * Appends an event handler</span>
+<span class="c">         * Adds an event listener</span>
 <span class="c">         *</span>
 <span class="c">         * @method attach</span>
 <span class="c">         *</span>
@@ -314,17 +313,14 @@
 <span class="c">         * @param {String|HTMLElement|Array|NodeList} el An id, an element </span>
 <span class="c">         *  reference, or a collection of ids and/or elements to assign the </span>
 <span class="c">         *  listener to.</span>
-<span class="c">         * @param {Object}   obj    An arbitrary object that will be </span>
-<span class="c">         *                             passed as a parameter to the handler</span>
+<span class="c">         * @param {Object}   context optional context object</span>
 <span class="c">         * @param {Boolean|object}  args 0..n arguments to pass to the callback</span>
-<span class="c">         * @return {Boolean} True if the action was successful or defered,</span>
-<span class="c">         *                        false if one or more of the elements </span>
-<span class="c">         *                        could not have the listener attached,</span>
-<span class="c">         *                        or if the operation throws an exception.</span>
+<span class="c">         * @return {EventHandle} an object to that can be used to detach the listener</span>
+<span class="c">         *                     </span>
 <span class="c">         * @static</span>
 <span class="c">         */</span>
 
-        <span class="nx">attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
         <span class="o">},</span>
 
@@ -519,13 +515,14 @@
 <span class="c">         *</span>
 <span class="c">         * @method detach</span>
 <span class="c">         *</span>
-<span class="c">         * @param {String|HTMLElement|Array|NodeList} el An id, an element </span>
-<span class="c">         *  reference, or a collection of ids and/or elements to remove</span>
-<span class="c">         *  the listener from.</span>
 <span class="c">         * @param {String} type the type of event to remove.</span>
 <span class="c">         * @param {Function} fn the method the event invokes.  If fn is</span>
-<span class="c">         *  undefined, then all event handlers for the type of event are *  removed.</span>
-<span class="c">         * @return {boolean} true if the unbind was successful, false *  otherwise.</span>
+<span class="c">         * undefined, then all event handlers for the type of event are </span>
+<span class="c">         * removed.</span>
+<span class="c">         * @param {String|HTMLElement|Array|NodeList|EventHandle} el An </span>
+<span class="c">         * event handle, an id, an element reference, or a collection </span>
+<span class="c">         * of ids and/or elements to remove the listener from.</span>
+<span class="c">         * @return {boolean} true if the unbind was successful, false otherwise.</span>
 <span class="c">         * @static</span>
 <span class="c">         */</span>
         <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
