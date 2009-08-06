@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>attribute&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>attribute&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_attribute.html" title="attribute">attribute</a>
                  &gt; Attribute 
@@ -404,6 +404,62 @@ if this is a sub-attribute value being change. Otherwise null.</span>
                                                     <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__getAttr">
+                                    <h4>
+                                        <a name="method__getAttr">_getAttr</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Any
+                                            <strong property="yui:name">_getAttr</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Provides the common implementation for the public get method,
+allowing Attribute hosts to over-ride either method.
+See <a href="#method_get">get</a> for argument details.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Any
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The value of the attribute.</dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
 
              
 
@@ -1655,6 +1711,7 @@ set called externally by the application developer.</span>
                                 <li class="private"><a href="#method__addLazyAttr" title="_addLazyAttr">_addLazyAttr</a></li>
                                 <li class="private"><a href="#method__defAttrChangeFn" title="_defAttrChangeFn">_defAttrChangeFn</a></li>
                                 <li class="private"><a href="#method__fireAttrChange" title="_fireAttrChange">_fireAttrChange</a></li>
+                                <li class="protected"><a href="#method__getAttr" title="_getAttr">_getAttr</a></li>
                                 <li class="private"><a href="#method__getAttrInitVal" title="_getAttrInitVal">_getAttrInitVal</a></li>
                                 <li class="private"><a href="#method__isLazyAttr" title="_isLazyAttr">_isLazyAttr</a></li>
                                 <li class="protected"><a href="#method__set" title="_set">_set</a></li>
@@ -1685,7 +1742,7 @@ set called externally by the application developer.</span>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addAttrs", "url": "Attribute.html#method__addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addLazyAttr", "url": "Attribute.html#method__addLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "Attribute._ATTR_CFG", "url": "Attribute.html#property_Attribute._ATTR_CFG", "type": "property"}, {"access": "", "host": "Attribute", "name": "Attribute.INVALID_VALUE", "url": "Attribute.html#property_Attribute.INVALID_VALUE", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_isLazyAttr", "url": "Attribute.html#method__isLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "modifyAttr", "url": "Attribute.html#method_modifyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrVals", "url": "Attribute.html#method__splitAttrVals", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addAttrs", "url": "Attribute.html#method__addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addLazyAttr", "url": "Attribute.html#method__addLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "Attribute._ATTR_CFG", "url": "Attribute.html#property_Attribute._ATTR_CFG", "type": "property"}, {"access": "", "host": "Attribute", "name": "Attribute.INVALID_VALUE", "url": "Attribute.html#property_Attribute.INVALID_VALUE", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_getAttr", "url": "Attribute.html#method__getAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_isLazyAttr", "url": "Attribute.html#method__isLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "modifyAttr", "url": "Attribute.html#method_modifyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrVals", "url": "Attribute.html#method__splitAttrVals", "type": "method"}];
 </script>
 </body>
 </html>

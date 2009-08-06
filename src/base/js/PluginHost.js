@@ -110,7 +110,7 @@
         _initPlugins: function(config) {
 
             // Class Configuration
-            var classes = this._getClasses(),
+            var classes = (this._getClasses) ? this._getClasses() : [this.constructor],
                 plug = [],
                 unplug = {},
                 constructor, i, classPlug, classUnplug, pluginClassName;

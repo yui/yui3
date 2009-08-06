@@ -89,6 +89,7 @@ YUI.add('widget-position-ext', function(Y) {
                 setter: function(val) {
                     return this._setAlignCenter(val);
                 },
+                lazyAdd:false,
                 value:false
             }
         };
@@ -394,7 +395,6 @@ YUI.add('widget-position-ext', function(Y) {
         };
 
         Y.WidgetPositionExt = PositionExt;
-
 
 
 }, '@VERSION@' ,{requires:['widget', 'widget-position']});
