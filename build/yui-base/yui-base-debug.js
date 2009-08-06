@@ -413,9 +413,9 @@ YUI.prototype = {
 
                 // process queued use requests as long until done 
                 // or dynamic load happens again.
-                this._loading = false;
-                while (this._useQueue && this._useQueue.size() && !this._loading) {
-                    Y.use.apply(Y, this._useQueue.next());
+                Y._loading = false;
+                while (Y._useQueue && Y._useQueue.size() && !Y._loading) {
+                    Y.use.apply(Y, Y._useQueue.next());
                 }
             };
 
@@ -479,6 +479,7 @@ YUI.prototype = {
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
             loader.onTimeout = onComplete;
+            loader.context = Y;
             loader.attaching = a;
             loader.require(missing);
             loader.insert();
