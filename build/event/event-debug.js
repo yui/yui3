@@ -503,13 +503,12 @@ shouldIterate = function(o) {
             // o.tagName ="adsf";
         // }
 
-        return ( o                     && // o is something
+        return ( (o                    && // o is something
                  typeof o !== "string" && // o is not a string
-                 // o.length  && // o is indexed
-                 (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
+                 o.length              && // o is indexed
                  !o.tagName            && // o is not an HTML element
                  !o.alert              && // o is not a window
-                 (o.item || typeof o[0] !== "undefined") );
+                 (o.item || typeof o[0] !== "undefined")) || (o instanceof Y.NodeList));
     } catch(ex) {
         Y.log("collection check failure", "warn", "event");
         return false;
@@ -717,9 +716,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             return this.onAvailable(id, fn, p_obj, p_override, true, compat);
         },
 
-
         /**
-         * Appends an event handler
+         * Adds an event listener
          *
          * @method attach
          *
@@ -728,17 +726,14 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * @param {String|HTMLElement|Array|NodeList} el An id, an element 
          *  reference, or a collection of ids and/or elements to assign the 
          *  listener to.
-         * @param {Object}   obj    An arbitrary object that will be 
-         *                             passed as a parameter to the handler
+         * @param {Object}   context optional context object
          * @param {Boolean|object}  args 0..n arguments to pass to the callback
-         * @return {Boolean} True if the action was successful or defered,
-         *                        false if one or more of the elements 
-         *                        could not have the listener attached,
-         *                        or if the operation throws an exception.
+         * @return {EventHandle} an object to that can be used to detach the listener
+         *                     
          * @static
          */
 
-        attach: function(type, fn, el, obj) {
+        attach: function(type, fn, el, context) {
             return Y.Event._attach(Y.Array(arguments, 0, true));
         },
 
@@ -819,10 +814,10 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return false;
             }
 
+
             // The el argument can be an array of elements or element ids.
             if (shouldIterate(el)) {
 
-                // Y.log('collection: ' + el);
                 // Y.log('collection: ' + el.item(0) + ', ' + el.item(1));
 
                 handles=[];
@@ -878,19 +873,14 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 }
             }
 
-            // Element should be an html element or an array if we get here.
+            // Element should be an html element or node
             if (!el) {
                 Y.log("unable to attach event " + type, "warn", "event");
                 return false;
             }
 
-            // the custom event key is the uid for the element + type
-
-            // allow a node reference to Y.on to work with load time addEventListener check
-            // (Node currently only has the addEventListener interface and that may be
-            // removed).
             if (Y.Node && el instanceof Y.Node) {
-                return el.on.apply(el, args);
+                el = Y.Node.getDOMNode(el);
             }
 
  			cewrapper = this._createWrapper(el, type, capture, compat, facade);
@@ -933,13 +923,14 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          *
          * @method detach
          *
-         * @param {String|HTMLElement|Array|NodeList} el An id, an element 
-         *  reference, or a collection of ids and/or elements to remove
-         *  the listener from.
          * @param {String} type the type of event to remove.
          * @param {Function} fn the method the event invokes.  If fn is
-         *  undefined, then all event handlers for the type of event are *  removed.
-         * @return {boolean} true if the unbind was successful, false *  otherwise.
+         * undefined, then all event handlers for the type of event are 
+         * removed.
+         * @param {String|HTMLElement|Array|NodeList|EventHandle} el An 
+         * event handle, an id, an element reference, or a collection 
+         * of ids and/or elements to remove the listener from.
+         * @return {boolean} true if the unbind was successful, false otherwise.
          * @static
          */
         detach: function(type, fn, el, obj) {

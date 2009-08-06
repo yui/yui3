@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>YUI DOM Event Tests</title>
+</head>
+<body class="yui-skin-sam">
+    <div id="doc">
+
+		<div id="clickcontainer">
+            <div id="clicker1" class="clickers">click1</div>
+            <div id="clicker2" class="clickers">click2</div>
+        </div>
+
+    </div>
+	<!-- YUI3 Core //-->
+	<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+	<!-- Initialization process //-->
+	<script type="text/javascript">
+		YUI({
+		    base: "../../../build/",
+		    filter: 'debug',
+		    combine: false,
+	        useConsole: true,
+	        logExclude: {yui:true, get: true, loader: true, Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+		}).use('console', 'test', 'node', 'event-simulate', function (Y) {
+			
+		    // creating the console...
+			(new Y.Console()).render();
+			
+			// starting the testing process
+			
+			// add the test cases and suites 
+			Y.Test.Runner.add(new Y.Test.Case({
+				
+				name: "DOM Event Tests",
+				
+				test_on_with_string: function() {
+					
+					var clicked = false, 
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        };
+					
+					Y.on('click', function(e, extra1, extra2) {
+						clicked = true;
+                        context = this;
+                        ex1 = extra1;
+                        ex2 = extra2;
+					}, '#clickcontainer', obj, 2, 3);
+					
+					Y.Event.simulate(document.getElementById('clickcontainer'), 'click');
+
+					Y.Assert.isTrue(clicked, "click handler via Y.on didn't work when passed a string.");
+					Y.Assert.areEqual(1, context.a, "context didn't work");
+					Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+					Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+				},
+
+				test_on_with_node: function() {
+					
+					var clicked = false, 
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+                        node = Y.get('#clickcontainer');
+					
+					Y.on('click', function(e, extra1, extra2) {
+						clicked = true;
+                        context = this;
+                        ex1 = extra1;
+                        ex2 = extra2;
+					}, node, obj, 2, 3);
+					
+					Y.Event.simulate(document.getElementById('clickcontainer'), 'click');
+
+					Y.Assert.isTrue(clicked, "click handler via Y.on didn't work when passed a node.");
+					Y.Assert.areEqual(1, context.a, "context didn't work");
+					Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+					Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+				},
+
+				test_node_on: function() {
+					
+					var clicked = false, 
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+                        node = Y.get('#clickcontainer');
+					
+					node.on('click', function(e, extra1, extra2) {
+						clicked = true;
+                        context = this;
+                        ex1 = extra1;
+                        ex2 = extra2;
+					}, obj, 2, 3);
+					
+					Y.Event.simulate(document.getElementById('clickcontainer'), 'click');
+
+					Y.Assert.isTrue(clicked, "click handler didn't work");
+					Y.Assert.areEqual(1, context.a, "context didn't work");
+					Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+					Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+				},
+
+				test_nodelist_on: function() {
+					
+					var clicked = 0, 
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+                        nodelist = Y.all('.clickers');
+
+					nodelist.on('click', function(e, extra1, extra2) {
+						clicked++;
+                        context = this;
+                        ex1 = extra1;
+                        ex2 = extra2;
+					}, obj, 2, 3);
+					
+					Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+					Y.Assert.areEqual(1, clicked, "click handler didn't work");
+					Y.Assert.areEqual(1, context.a, "context didn't work");
+					// Y.Assert.areEqual(2, ex1, "extra arg1 didn't work"); // bug #2528155
+					// Y.Assert.areEqual(3, ex2, "extra arg2 didn't work"); // bug #2528155
+
+					Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+					Y.Assert.areEqual(2, clicked, "click handler didn't work");
+					Y.Assert.areEqual(1, context.a, "context didn't work");
+					// Y.Assert.areEqual(2, ex1, "extra arg1 didn't work"); // bug #2528155
+					// Y.Assert.areEqual(3, ex2, "extra arg2 didn't work"); // bug #2528155
+				},
+
+				test_y_on_with_nodelist: function() {
+					
+					var clicked = 0, 
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+                        nodelist = Y.all('.clickers');
+
+					Y.on('click', function(e, extra1, extra2) {
+						clicked++;
+                        context = this;
+                        ex1 = extra1;
+                        ex2 = extra2;
+					}, nodelist, obj, 2, 3);
+					
+					Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+					Y.Assert.areEqual(1, clicked, "click handler didn't work");
+					Y.Assert.areEqual(1, context.a, "context didn't work");
+					Y.Assert.areEqual(2, ex1, "extra arg1 didn't work"); // bug #2528155
+					Y.Assert.areEqual(3, ex2, "extra arg2 didn't work"); // bug #2528155
+
+					Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+					Y.Assert.areEqual(2, clicked, "click handler didn't work");
+					Y.Assert.areEqual(1, context.a, "context didn't work");
+					Y.Assert.areEqual(2, ex1, "extra arg1 didn't work"); // bug #2528155
+					Y.Assert.areEqual(3, ex2, "extra arg2 didn't work"); // bug #2528155
+				}
+				
+			})); 
+			
+			//run all tests 
+			Y.Test.Runner.run();
+			
+			/* finishing the testing process */
+			
+		});
+	</script>
+</body>
+</html>
