@@ -1513,7 +1513,7 @@ ET.prototype = {
 
         var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
-            Node = Y.Node, n;
+            Node = Y.Node, n, domevent;
 
         if (L.isObject(type, true)) {
 
@@ -1564,26 +1564,24 @@ ET.prototype = {
             adapt = Y.Env.evt.plugins[type];
             args  = Y.Array(arguments, 0, true);
             args[0] = shorttype;
+
+            if (Node) {
+                n = args[2];
+
+                if (n instanceof Y.NodeList) {
+                    args[2] = Y.NodeList.getDOMNodes(n);
+                } else if (n instanceof Node) {
+                    args[2] = Node.getDOMNode(n);
+                }
+
+                domevent = (shorttype in Node.DOM_EVENTS);
+            }
+
             // check for the existance of an event adaptor
-            n = args[2];
-            if (adapt && adapt.on) {
+            if (adapt) {
                 Y.log('Using adaptor for ' + shorttype + ', ' + n, 'info', 'event');
-                if (Node && n && (n instanceof Node)) {
-                    args[2] = Node.getDOMNode(n);
-                }
                 handle = adapt.on.apply(Y, args);
-            // check to see if the target is an EventTarget.  If so,
-            // delegate to it (the EventTarget should handle whether
-            // or not the prefix was included);
-            // } else if (o && !(o instanceof YUI) && o.getEvent) {
-            //     a = Y.Array(arguments, 0, true);
-            //     a.splice(2, 1);
-            //     return o.on.apply(o, a);
-            // } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
-            } else if ((!type) || (!adapt && Node && (shorttype in Node.DOM_EVENTS))) {
-                if (n instanceof Node) {
-                    args[2] = Node.getDOMNode(n);
-                }
+            } else if ((!type) || domevent) {
                 handle = Y.Event._attach(args);
             }
 

@@ -40,13 +40,12 @@ shouldIterate = function(o) {
             // o.tagName ="adsf";
         // }
 
-        return ( o                     && // o is something
+        return ( (o                    && // o is something
                  typeof o !== "string" && // o is not a string
-                 // o.length  && // o is indexed
-                 (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
+                 o.length              && // o is indexed
                  !o.tagName            && // o is not an HTML element
                  !o.alert              && // o is not a window
-                 (o.item || typeof o[0] !== "undefined") );
+                 (o.item || typeof o[0] !== "undefined")) || (o instanceof Y.NodeList));
     } catch(ex) {
         Y.log("collection check failure", "warn", "event");
         return false;
