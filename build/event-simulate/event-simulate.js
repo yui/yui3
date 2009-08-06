@@ -4,6 +4,7 @@ YUI.add('event-simulate', function(Y) {
 /**
  * Synthetic DOM events
  * @module event-simulate
+ * @requires event
  */
 
 //shortcuts
@@ -479,5 +480,4 @@ Y.Event.simulate = function(target, type, options){
 })();
 
 
-
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event']});
