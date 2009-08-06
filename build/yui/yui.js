@@ -1984,9 +1984,9 @@ Y.UA = function() {
             if (/ Mobile\//.test(ua)) {
                 o.mobile = "Apple"; // iPhone or iPod Touch
             } else {
-                m=ua.match(/NokiaN[^\/]*/);
+                m=ua.match(/NokiaN[^\/]*|Android \d\.\d|webOS\/\d\.\d/);
                 if (m) {
-                    o.mobile = m[0]; // Nokia N-series, ex: NokiaN95
+                    o.mobile = m[0]; // Nokia N-series, Android, webOS, ex: NokiaN95
                 }
             }
 

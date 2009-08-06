@@ -15,6 +15,7 @@ The YUI Global
 * Fixed UA.os.
 * Extracted the loader from the seed file.  Instead, if loader not included, 'get is included,
   and dependencies are missing, the loader will be fetched before continuing.
+* Added additional mobile device detection.
 
 3.0.0 beta 1
 
