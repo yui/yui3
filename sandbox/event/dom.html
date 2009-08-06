@@ -94,6 +94,14 @@ YUI({
         }, false);
     */
 
+    Y.on('click', function() {
+        Y.log("never should happen");
+    }, '#neverwillbehere');
+
+    Y.on('click', function() {
+        Y.log("lazy element worked");
+    }, '#lazy');
+
 
     Y.on('focus', function() {
         Y.log("FORM focus fired");
@@ -331,5 +339,16 @@ Y.on('windowresize', function(e) {
     <form>
         <input type="radio" id="radio1" name="radiocollection[]" />
     </form>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p id="lazy">Me</p>
 </body>
 </html>

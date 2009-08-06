@@ -378,35 +378,40 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             // ready
             } else if (Y.Lang.isString(el)) {
 
-                // @TODO switch to using DOM directly here
-                // oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
-                oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
+                // oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
+
+                if (compat) {
+                    oEl = Y.DOM.byId(el);
+                } else {
+
+                    oEl = Y.Selector.query(el);
+
+                    switch (oEl.length) {
+                        case 0:
+                            oEl = null;
+                            break;
+                        case 1:
+                            oEl = oEl[0];
+                            break;
+                        default:
+                            args[2] = oEl;
+                            return E._attach(args, config);
+                    }
+                }
 
                 if (oEl) {
 
-                    if (Y.Lang.isArray(oEl)) {
-                        if (oEl.length == 1) {
-                            el = oEl[0];
-                        } else {
-                            args[2] = oEl;
-                            return E._attach(args, config);
-                        }
-
-                    // HTMLElement
-                    } else {
-                        // Y.log('no size: ' + oEl + ', ' + type);
-                        el = oEl;
-                    }
+                    el = oEl;
 
                 // Not found = defer adding the event until the element is available
                 } else {
 
                     // Y.log(el + ' not found');
-
                     return this.onAvailable(el, function() {
                         // Y.log('lazy attach: ' + args);
                         E._attach(args, config);
                     }, E, true, false, compat);
+
                 }
             }
 
