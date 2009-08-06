@@ -341,6 +341,7 @@ Node.ATTRS = {
             return val;
         }
     }
+};
 
 // call with instance context
 Node.DEFAULT_SETTER = function(name, val) {
@@ -370,10 +371,6 @@ Node.DEFAULT_GETTER = function(name) {
     }
 
     return val ? Y.Node.scrubVal(val, this) : val;
-};
-
-Node.getters = {
-
 };
 
 Y.augment(Node, Y.Event.Target);
@@ -428,8 +425,7 @@ Y.mix(Node.prototype, {
     },
 
     set: function(attr, val) {
-        var attrConfig = this._attrs[attr],
-            val;
+        var attrConfig = this._attrs[attr];
 
         if (attrConfig && attrConfig.setter) {
             attrConfig.setter.call(this, val);

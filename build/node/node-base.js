@@ -31,34 +31,16 @@ var g_nodes = {},
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
-<<<<<<< HEAD:build/node/node-base.js
-    Node = function(node, restricted) {
-        var config = null;
-        this[UID] = Y.stamp(node);
-        if (!this[UID]) { // stamp failed; likely IE non-HTMLElement
-            this[UID] = Y.guid(); 
-        }
-=======
-    SuperConstr = Y.Base,
-    SuperConstrProto = Y.Base.prototype,
-
     Node = function(node) {
-        var config = null,
-            uid = node[UID];
->>>>>>> master:build/node/node-base.js
+        var uid = node[UID];
 
         if (uid && g_nodes[uid] && g_nodes[uid] !== node) {
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
 
-<<<<<<< HEAD:build/node/node-base.js
-        if (restricted) {
-            g_restrict[this[UID]] = true; 
-        }
-
         this.addAttrs(Node.ATTRS);
         this._initPlugins();
-=======
+
         uid = Y.stamp(node);
         if (!uid) { // stamp failed; likely IE non-HTMLElement
             uid = Y.guid();
@@ -68,11 +50,6 @@ var g_nodes = {},
 
         g_nodes[uid] = node;
         Node._instances[uid] = this;
-
-        this._lazyAttrInit = true;
-        this._silentInit = true;
-        SuperConstr.call(this, config);
->>>>>>> master:build/node/node-base.js
     },
 
     // used with previous/next/ancestor tests
@@ -269,17 +246,10 @@ Node.get = function(node, doc) {
         uid;
 
     if (node) {
-<<<<<<< HEAD:build/node/node-base.js
-        instance = Node._instances[node[UID]]; // reuse exising instances
-        if (!instance) {
-            instance = new Node(node, restrict);
-        } else if (restrict) {
-            g_restrict[instance[UID]] = true;
-=======
         if (typeof node === 'string') {
             if (node.indexOf('doc') === 0) { // doc OR document
                 node = Y.config.doc;
-            } else if (node.indexOf('win') === 0) { // doc OR document
+            } else if (node.indexOf('win') === 0) { // win OR window
                 node = Y.config.win;
             } else {
                 node = Y.Selector.query(node, doc, true);
@@ -296,7 +266,6 @@ Node.get = function(node, doc) {
         instance = Node._instances[uid]; // reuse exising instances
         if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
             instance = new Node(node);
->>>>>>> master:build/node/node-base.js
         }
     }
     return instance;
@@ -372,19 +341,7 @@ Node.ATTRS = {
             Y.DOM.setValue(g_nodes[this[UID]], val);
             return val;
         }
-<<<<<<< HEAD:build/node/node-base.js
-    },
-
-/*
-    style: {
-        getter: function(attr) {
-            return Y.DOM.getStyle(g_nodes[this[UID]].style, attr);
-        }
-    },
-*/
-=======
     }
->>>>>>> master:build/node/node-base.js
 };
 
 // call with instance context
@@ -415,10 +372,6 @@ Node.DEFAULT_GETTER = function(name) {
     }
 
     return val ? Y.Node.scrubVal(val, this) : val;
-};
-
-Node.getters = {
-
 };
 
 Y.augment(Node, Y.Event.Target);
@@ -473,8 +426,7 @@ Y.mix(Node.prototype, {
     },
 
     set: function(attr, val) {
-        var attrConfig = this._attrs[attr],
-            val;
+        var attrConfig = this._attrs[attr];
 
         if (attrConfig && attrConfig.setter) {
             attrConfig.setter.call(this, val);
@@ -792,8 +744,8 @@ Y.Array.diff = function(a, b) {
 };
 
 var NodeList = function(config) {
-    var doc = config.doc || Y.config.doc,
-        nodes = config.nodes || [];
+    var nodes = config.nodes || [],
+        doc = config.doc || Y.config.doc;
 
     if (typeof nodes === 'string') {
         this._query = nodes;
@@ -803,10 +755,6 @@ var NodeList = function(config) {
     Y.stamp(this);
     NodeList._instances[this[UID]] = this;
     g_nodelists[this[UID]] = nodes;
-
-    if (config.restricted) {
-        g_restrict = this[UID];
-    }
 };
 // end "globals"
 
@@ -1189,8 +1137,7 @@ Y.all = function(nodes, doc, restrict) {
     // TODO: propagate restricted to nodes?
     var nodeList = new NodeList({
         nodes: nodes,
-        doc: doc,
-        restricted: restrict
+        doc: doc
     });
 
     // zero-length result returns null

@@ -42,8 +42,8 @@ Y.Array.diff = function(a, b) {
 };
 
 var NodeList = function(config) {
-    var doc = config.doc || Y.config.doc,
-        nodes = config.nodes || [];
+    var nodes = config.nodes || [],
+        doc = config.doc || Y.config.doc;
 
     if (typeof nodes === 'string') {
         this._query = nodes;
@@ -53,10 +53,6 @@ var NodeList = function(config) {
     Y.stamp(this);
     NodeList._instances[this[UID]] = this;
     g_nodelists[this[UID]] = nodes;
-
-    if (config.restricted) {
-        g_restrict = this[UID];
-    }
 };
 // end "globals"
 
@@ -441,8 +437,7 @@ Y.all = function(nodes, doc, restrict) {
     // TODO: propagate restricted to nodes?
     var nodeList = new NodeList({
         nodes: nodes,
-        doc: doc,
-        restricted: restrict
+        doc: doc
     });
 
     // zero-length result returns null

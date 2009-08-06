@@ -59,7 +59,6 @@ Y.Node.importMethod(Y.DOM, methods);
  * @param {String} attr The style attribute to retrieve. 
  * @return {Array} The computed values for each node.
  */
-'getComputedStyle',
 
 /**
  * Sets a style property on each node.
@@ -69,7 +68,6 @@ Y.Node.importMethod(Y.DOM, methods);
  * @param {String|Number} val The value. 
  * @chainable
  */
-'setStyle',
 
 /**
  * Sets multiple style properties on each node.
@@ -78,7 +76,6 @@ Y.Node.importMethod(Y.DOM, methods);
  * @param {Object} hash An object literal of property:value pairs. 
  * @chainable
  */
-'setStyles'
 Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 
