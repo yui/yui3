@@ -102,4 +102,4 @@ YUI.add('attribute-complex', function(Y) {
     Y.mix(Y.Attribute, Y.Attribute.Complex, true, null, 1);
 
 
-}, '@VERSION@' ,{requires:['attribute-core']});
+}, '@VERSION@' ,{requires:['attribute-base']});

@@ -1,4 +1,4 @@
-YUI.add('attribute-core', function(Y) {
+YUI.add('attribute-base', function(Y) {
 
     /**
      * The State class maintains state for a collection of named items, with 
@@ -190,6 +190,7 @@ YUI.add('attribute-core', function(Y) {
      * @uses EventTarget
      */
     function Attribute() {
+        Y.log('Attribute constructor called', 'info', 'attribute');
 
         var host = this; // help compression
 
@@ -309,6 +310,7 @@ YUI.add('attribute-core', function(Y) {
          */
         addAttr: function(name, config, lazy) {
 
+            Y.log('Adding attribute: ' + name, 'info', 'attribute');
 
             var host = this, // help compression
                 state = host._state,
@@ -317,12 +319,14 @@ YUI.add('attribute-core', function(Y) {
 
             lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
 
+            if (host._stateProxy && host._stateProxy[name]) { Y.log('addAttr: ' + name + ' exists on the _stateProxy object. The newly added attribute will override the use of _stateProxy for this attribute', 'warn', 'attribute'); }
 
             if (lazy && !host.attrAdded(name)) {
                 state.add(name, LAZY, config || {});
                 state.add(name, ADDED, true);
             } else {
 
+                if (host.attrAdded(name) && !state.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
                 if (!host.attrAdded(name) || state.get(name, IS_LAZY_ADD)) {
 
@@ -330,6 +334,7 @@ YUI.add('attribute-core', function(Y) {
 
                     hasValue = (VALUE in config);
 
+                    if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
 
                     if(hasValue) {
                         // We'll go through set, don't want to set value in _state directly
@@ -400,6 +405,7 @@ YUI.add('attribute-core', function(Y) {
                 }
             }
 
+            if (!host.attrAdded(name)) {Y.log('Attribute modifyAttr:' + name + ' has not been added. Use addAttr to add the attribute', 'warn', 'attribute');}
         },
 
         /**
@@ -614,15 +620,18 @@ YUI.add('attribute-core', function(Y) {
             initialSet = (!data.value || !(name in data.value));
 
             if (this._requireAddAttr && !this.attrAdded(name)) {
+                Y.log('Set attribute:' + name + ', aborted; Attribute is not configured', 'warn', 'attribute');
             } else {
 
                 if (!initialSet && !force) {
 
                     if (state.get(name, WRITE_ONCE)) {
+                        Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
                         allowSet = false;
                     }
 
                     if (state.get(name, READ_ONLY)) {
+                        Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
                         allowSet = false;
                     }
                 }
@@ -634,6 +643,7 @@ YUI.add('attribute-core', function(Y) {
                        val = O.setValue(Y.clone(currVal), path, val);
 
                        if (val === undefined) {
+                           Y.log('Set attribute path:' + strPath + ', aborted; Path is invalid', 'warn', 'attribute');
                            allowSet = false;
                        }
                     }
@@ -699,6 +709,7 @@ YUI.add('attribute-core', function(Y) {
          */
         _defAttrChangeFn : function(e) {
             if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
+                Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
                 // Prevent "after" listeners from being invoked since nothing changed.
                 e.stopImmediatePropagation();
             } else {
@@ -765,14 +776,17 @@ YUI.add('attribute-core', function(Y) {
                     retVal = setter.call(host, newVal, name);
 
                     if (retVal === INVALID_VALUE) {
+                        Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
                         allowSet = false;
                     } else if (retVal !== undefined){
+                        Y.log('Attribute: ' + attrName + ', raw value: ' + newVal + ' modified by setter to:' + retVal, 'info', 'attribute');
                         newVal = retVal;
                     }
                 }
 
                 if (allowSet) {
                     if(!subAttrName && newVal === prevVal) {
+                        Y.log('Attribute: ' + attrName + ', value unchanged:' + newVal, 'warn', 'attribute');
                         allowSet = false;
                     } else {
                         // Store value
@@ -784,6 +798,7 @@ YUI.add('attribute-core', function(Y) {
                 }
 
             } else {
+                Y.log('Attribute:' + attrName + ', Validation failed for value:' + newVal, 'warn', 'attribute');
                 allowSet = false;
             }
 
@@ -954,6 +969,7 @@ YUI.add('attribute-core', function(Y) {
                                 cfg[VALUE_FN].call(this) : 
                                 cfg[VALUE];
 
+            Y.log('initValue for ' + attr + ':' + val, 'info', 'attribute');
 
             return val;
         }

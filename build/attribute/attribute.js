@@ -1,4 +1,4 @@
-YUI.add('attribute-core', function(Y) {
+YUI.add('attribute-base', function(Y) {
 
     /**
      * The State class maintains state for a collection of named items, with 
@@ -1070,8 +1070,8 @@ YUI.add('attribute-complex', function(Y) {
     Y.mix(Y.Attribute, Y.Attribute.Complex, true, null, 1);
 
 
-}, '@VERSION@' ,{requires:['attribute-core']});
+}, '@VERSION@' ,{requires:['attribute-base']});
 
 
-YUI.add('attribute', function(Y){}, '@VERSION@' ,{use:['attribute-core', 'attribute-complex']});
+YUI.add('attribute', function(Y){}, '@VERSION@' ,{use:['attribute-base', 'attribute-complex']});
 
