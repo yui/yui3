@@ -212,9 +212,9 @@
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="sr">/ Mobile\//</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">ua</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">o</span><span class="o">.</span><span class="nx">mobile</span> <span class="o">=</span> <span class="s2">&quot;Apple&quot;</span><span class="o">;</span> <span class="c">// iPhone or iPod Touch</span>
 <span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/NokiaN[^\/]*/</span><span class="o">);</span>
+                <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/NokiaN[^\/]*|Android \d\.\d|webOS\/\d\.\d/</span><span class="o">);</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">o</span><span class="o">.</span><span class="nx">mobile</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="m">0</span><span class="o">];</span> <span class="c">// Nokia N-series, ex: NokiaN95</span>
+                    <span class="nx">o</span><span class="o">.</span><span class="nx">mobile</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="m">0</span><span class="o">];</span> <span class="c">// Nokia N-series, Android, webOS, ex: NokiaN95</span>
 <span class="c"></span>                <span class="o">}</span>
             <span class="o">}</span>
 
