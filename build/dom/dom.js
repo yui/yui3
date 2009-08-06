@@ -478,27 +478,6 @@ Y.DOM = {
         'className': 'class'
     },
 
-    precedes: (document.documentElement.sourceIndex) ?
-        function(nodeA, nodeB) {
-            return (nodeA.sourceIndex < nodeB.sourceIndex);
-        } : (document.documentElement[COMPARE_DOCUMENT_POSITION] ?
-        function(nodeA, nodeB) {
-            return !!(nodeA[COMPARE_DOCUMENT_POSITION](nodeB) & 2);
-        } :
-        function(nodeA, nodeB) {
-            var rangeA, rangeB, compare;
-            if (nodeA && nodeB) {
-                rangeA = nodeA[OWNER_DOCUMENT].createRange();
-                rangeA.setStart(nodeA, 0);
-                rangeB = nodeB[OWNER_DOCUMENT].createRange();
-                rangeB.setStart(nodeB, 0);
-                compare = rangeA.compareBoundaryPoints(Range.START_TO_END, rangeB);
-            }
-
-            return (compare === -1) ? true : false;
-        
-    }),
-
     /**
      * Provides a normalized attribute interface. 
      * @method setAttibute
@@ -2092,9 +2071,14 @@ YUI.add('selector-native', function(Y) {
 
 Y.namespace('Selector'); // allow native module to standalone
 
+var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
+    OWNER_DOCUMENT = 'ownerDocument',
+    TMP_PREFIX = 'yui-tmp-',
+    g_counter = 0;
+
 var Selector = {
     _reLead: /^\s*([>+~]|:self)/,
-    _reUnSupported: /!./,
+    _reUnSupported: /!./g,
 
     _foundCache: [],
 
@@ -2105,7 +2089,7 @@ var Selector = {
             document.querySelectorAll);
     },
 
-    useNative: false,
+    useNative: true,
 
     _toArray: function(nodes) { // TODO: move to Y.Array
         var ret = nodes,
@@ -2138,13 +2122,46 @@ var Selector = {
         foundCache = [];
     },
 
+    _compare: ('sourceIndex' in document.documentElement) ?
+        function(nodeA, nodeB) {
+            var a = nodeA.sourceIndex,
+                b = nodeB.sourceIndex;
+
+            if (a === b) {
+                return 0;
+            } else if (a > b) {
+                return 1;
+            }
+
+            return -1;
+
+        } : (document.documentElement[COMPARE_DOCUMENT_POSITION] ?
+        function(nodeA, nodeB) {
+            if (nodeA[COMPARE_DOCUMENT_POSITION](nodeB) & 4) {
+                return -1;
+            } else {
+                return 1;
+            }
+        } :
+        function(nodeA, nodeB) {
+            var rangeA, rangeB, compare;
+            if (nodeA && nodeB) {
+                rangeA = nodeA[OWNER_DOCUMENT].createRange();
+                rangeA.setStart(nodeA, 0);
+                rangeB = nodeB[OWNER_DOCUMENT].createRange();
+                rangeB.setStart(nodeB, 0);
+                compare = rangeA.compareBoundaryPoints(Range.START_TO_END, rangeB);
+            }
+
+            return compare;
+        
+    }),
+
     _sort: function(nodes) {
         if (nodes) {
             nodes = Selector._toArray(nodes);
             if (nodes.sort) {
-                nodes.sort(function(a, b) {
-                    return Y.DOM.precedes(a, b);
-                });
+                nodes.sort(Selector._compare);
             }
         }
 
@@ -2171,6 +2188,7 @@ var Selector = {
     _prepQuery: function(root, selector) {
         var groups = selector.split(','),
             queries = [],
+            inDoc = true,
             isDocRoot = (root && root.nodeType === 9),
             i, len;
 
@@ -2180,7 +2198,7 @@ var Selector = {
                 // break into separate queries for element scoping
                 for (i = 0, len = groups.length; i < len; ++i) {
                     selector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
-                    queries.push({root: root.ownerDocument, selector: selector});
+                    queries.push({root: root, selector: selector});
                 }
             } else {
                 queries.push({root: root, selector: selector});
@@ -2192,7 +2210,7 @@ var Selector = {
 
     _nativeQuery: function(selector, root, firstOnly) {
         if (Selector._reUnSupported.test(selector)) {
-            return Y.Selector._brute.query(selector, root, firstOnly);
+            return Y.Selector.query(selector, root, firstOnly);
         }
 
         var ret = firstOnly ? null : [],
@@ -2221,7 +2239,7 @@ var Selector = {
             if (queries.length > 1) { // remove dupes and sort by doc order 
                 ret = Selector._sort(Selector._deDupe(ret));
             }
-            ret = (!firstOnly) ? ret : ret[0] || null;
+            ret = (firstOnly) ? (ret[0] || null) : ret;
         }
         return ret;
     },
@@ -2249,10 +2267,12 @@ var Selector = {
             i, group;
 
         if (node && node.tagName) { // only test HTMLElements
-            node.id = node.id || Y.guid();
+            if (!node.id) {
+                node.id = TMP_PREFIX + g_counter++;
+            }
             for (i = 0, group; group = groups[i++];) { // TODO: off-dom test
                 group += '#' + node.id; // add ID for uniqueness
-                item = Y.Selector.query(group, node.parentNode, true);
+                item = Y.Selector.query(group, node.ownerDocument, true);
                 ret = (item === node);
                 if (ret) {
                     break;
@@ -2300,7 +2320,13 @@ var PARENT_NODE = 'parentNode',
     PREVIOUS = 'previous',
     PREVIOUS_SIBLING = 'previousSibling',
 
-    _childCache = [], // cache to cleanup expando node.children
+    TMP_PREFIX = 'yui-tmp-',
+
+    g_counter = 0,
+    g_idCache = [],
+    g_passCache = {},
+
+    g_childCache = [], // cache to cleanup expando node.children
 
     Selector = Y.Selector,
 
@@ -2317,8 +2343,8 @@ var PARENT_NODE = 'parentNode',
                         ret[ret.length] = n;
                     }
                 }
-                _childCache[_childCache.length] = node;
                 node.children = ret;
+                g_childCache.push(ret);
             }
 
             return ret || [];
@@ -2328,6 +2354,7 @@ var PARENT_NODE = 'parentNode',
 
         _re: {
             attr: /(\[.*\])/g,
+            pseudos: /:([\-\w]+(?:\(?:['"]?(.+)['"]?\)))*/i,
             urls: /^(?:href|src)/
         },
 
@@ -2372,11 +2399,15 @@ var PARENT_NODE = 'parentNode',
          * @static
          */
         query: function(selector, root, firstOnly) {
-            var ret = [],
-                query = (Selector._supportsNative() && Selector.useNative) ?
-                    Selector._nativeQuery : Selector._query;
+            var ret = [];
+
+            if (Selector.useNative && Selector._supportsNative() && // use native
+                !Selector._reUnSupported.test(selector)) { // unless selector is not supported
+                return Selector._nativeQuery.apply(Selector, arguments);
+                
+            }
             if (selector) {
-                ret = query(selector, root, firstOnly);
+                ret = Selector._query.apply(Selector, arguments);
             }
 
             Selector._cleanup();
@@ -2386,17 +2417,22 @@ var PARENT_NODE = 'parentNode',
 
         // TODO: make extensible? events?
         _cleanup: function() {
-            for (var i = 0, node; node = _childCache[i++];) {
-                delete node.children;
+            for (var i = 0, node; node = g_idCache[i++];) {
+                node.removeAttribute('id');
             }
 
-            _childCache = [];
+            for (i = 0, node; node = g_childCache[i++];) {
+                delete node.children;
+            }
+            g_idCache = [];
+            g_passCache = {};
         },
 
         _query: function(selector, root, firstOnly, deDupe) {
             var ret = [],
                 groups = selector.split(','), // TODO: handle comma in attribute/pseudo
                 nodes = [],
+                rootDoc,
                 tokens,
                 token,
                 id,
@@ -2410,52 +2446,50 @@ var PARENT_NODE = 'parentNode',
                             root, firstOnly, true)); 
                 }
 
+                ret = Selector._deDupe(ret);
                 ret = Selector.SORT_RESULTS ? Selector._sort(ret) : ret;
-                Selector._clearFoundCache();
             } else {
                 root = root || Y.config.doc;
 
-                if (root.nodeType !== 9) { // enforce element scope
-                    if (!root.id) {
+                tokens = Selector._tokenize(selector);
+
+                if (root.tagName) { // enforce element scope
+                    if (!root.id) { // by prepending ID
                         root.id = Y.guid();
                     }
-                    // fast-path ID when possible
-                    // TODO: no prefilter for off-dom id
-                    if (root.ownerDocument.getElementById(root.id)) {
-                        selector = '#' + root.id + ' ' + selector;
-                        root = root.ownerDocument;
-
-                    }
+                    selector = '#' + root.id + ' ' + selector;
+                    rootDoc = root.ownerDocument;
+                    tokens = Selector._tokenize(selector); // regenerate tokens
+                } else {
+                    rootDoc = root;
                 }
 
-                tokens = Selector._tokenize(selector, root);
+                // if we have an initial ID, set to root when in document
+                if (rootDoc === root &&  
+                        (id = tokens[0].id) &&
+                        rootDoc.getElementById(id)) {
+                    root = rootDoc.getElementById(id);
+                }
+
                 token = tokens[tokens.length - 1];
-
                 if (token) {
-                    if (deDupe) {
-                        token.deDupe = true; // TODO: better approach?
-                    }
-                    if (tokens[0] &&
-                        root.nodeType === 9 && 
-                        (id = tokens[0].attributes.id) &&
-                        root.getElementById(id.value)) {
-                        root = root.getElementById(id.value);
-                    }
-
                     // prefilter nodes
                     id = token.id;
                     className = token.className;
                     tagName = token.tagName || '*';
 
                     // try ID first
-                    if (id && Y.config.doc.getElementById(id)) {
-                        nodes = [Y.config.doc.getElementById(id)]; // TODO: DOM.byId?
+                    if (id) {
+                        if (rootDoc.getElementById(id)) { // if in document
+                        nodes = [rootDoc.getElementById(id)]; // TODO: DOM.byId?
+                    }
                     // try className if supported
                     } else if (className) {
                         nodes = root.getElementsByClassName(className);
                     } else if (tagName) { // default to tagName
                         nodes = root.getElementsByTagName(tagName || '*');
                     }
+
                     if (nodes.length) {
                         ret = Selector._filterNodes(nodes, tokens, firstOnly);
                     }
@@ -2473,11 +2507,14 @@ var PARENT_NODE = 'parentNode',
                 result = [],
                 node = nodes[0],
                 tmpNode = node,
+                getters = Y.Selector.getters,
                 operator,
                 combinator,
                 token,
                 path,
+                pass,
                 FUNCTION = 'function',
+                value,
                 tests,
                 test;
 
@@ -2489,32 +2526,62 @@ var PARENT_NODE = 'parentNode',
                 testLoop:
                 while (tmpNode && tmpNode.tagName) {
                     token = tokens[n];
+                    //pass = g_passCache[tmpNode.id];
                     tests = token.tests;
                     j = tests.length;
-                    if (j) {
+                    if (j && !pass) {
                         while ((test = tests[--j])) {
                             operator = test[1];
-                            if ((operator === '=' && tmpNode[test[0]] !== test[2])) {// || 
-                                //(typeof operator === FUNCTION && !operator(tmpNode, test[0])) ||
-                                //(operator.test && !operator.test(tmpNode[test[0]]))) { 
-                                tmpNode = tmpNode[path];
+                            value = tmpNode[test[0]];
+
+                            // skip node as soon as a test fails 
+                            if (getters[test[0]]) {
+                                value = getters[test[0]](tmpNode, test[0]);
+                            }
+                            if ((operator === '=' && value !== test[2]) ||  // fast path for equality
+                                (operator.test && !operator.test(value)) ||  // regex test
+                                (operator.call && !operator(tmpNode, test[0]))) { // function test
+
+                                // skip non element nodes or non-matching tags
+                                if ((tmpNode = tmpNode[path])) {
+                                    while (tmpNode &&
+                                        (!tmpNode.tagName ||
+                                            (token.tagName && token.tagName !== tmpNode.tagName))
+                                    ) {
+                                        tmpNode = tmpNode[path]; 
+                                    }
+                                }
                                 continue testLoop;
                             }
                         }
                     }
 
-                    if ((combinator = token.combinator)) {
+                    n--; // move to next token
+                    // now that we've passed the test, move up the tree by combinator
+                    if (!pass && (combinator = token.combinator)) {
                         path = combinator.axis;
                         tmpNode = tmpNode[path];
-                        n--; // move to next token
 
-                        if (combinator.direct) {
-                            path = null; // one pass only
+                        // skip non element nodes
+                        while (tmpNode && !tmpNode.tagName) {
+                            tmpNode = tmpNode[path]; 
                         }
 
-                        continue;
+                        if (combinator.direct) { // one pass only
+                            path = null; 
+                        }
+
                     } else { // success if we made it this far
                         result.push(node);
+                        /*
+                        if (!pass) {
+                            if (!tmpNode.id) {
+                                tmpNode.id = TMP_PREFIX + g_counter++;
+                                g_idCache.push(tmpNode);
+                            }
+                            //g_passCache[tmpNode.id] = 1;
+                        }
+                        */
                         if (firstOnly) {
                             return result;
                         }
@@ -2557,16 +2624,26 @@ var PARENT_NODE = 'parentNode',
                 name: ATTRIBUTES,
                 re: /^\[([a-z]+\w*)+([~\|\^\$\*!=]=?)?['"]?([^\]]*?)['"]?\]/i,
                 fn: function(match, token) {
-                    var operator = match[2];
-                    if (match[1] === 'id' ||
+                    var operator = match[2] || '',
+                        operators = Y.Selector.operators,
+                        test;
+
+                    // add prefiltering for ID and CLASS
+                    if ((match[1] === 'id' && operator === '=') ||
                             (match[1] === 'className' &&
                             document.getElementsByClassName &&
                             (operator === '~=' || operator === '='))) {
                         token.prefilter = match[1];
                         token[match[1]] = match[3];
                     }
-                    if (operator in Y.Selector.operators) {
-                        match[2] = Y.Selector._getRegExp(Y.Selector.operators[operator].replace('{val}', match[3]));
+
+                    // add tests
+                    if (operator in operators) {
+                        test = operators[operator];
+                        if (typeof test === 'string') {
+                            test = Y.Selector._getRegExp(test.replace('{val}', match[3]));
+                        }
+                        match[2] = test;
                     }
                     if (!token.last || token.prefilter !== match[1]) {
                         return match.slice(1);
@@ -2581,7 +2658,7 @@ var PARENT_NODE = 'parentNode',
                     var tag = match[1].toUpperCase();
                     token.tagName = tag;
 
-                    if (!token.last || token.prefilter) {
+                    if (tag !== '*' && (!token.last || token.prefilter)) {
                         return [TAG_NAME, '=', tag];
                     }
                     if (!token.prefilter) {
@@ -2599,7 +2676,7 @@ var PARENT_NODE = 'parentNode',
                 name: PSEUDOS,
                 re: /^:([\-\w]+)(?:\(['"]?(.+)['"]?\))*/i,
                 fn: function(match, token) {
-                    return [
+                    return [ // reorder match array
                         match[2],
                         Selector[PSEUDOS][match[1]]
                     ];
@@ -2646,17 +2723,23 @@ var PARENT_NODE = 'parentNode',
                 found = false; // reset after full pass
                 for (i = 0, parser; parser = Selector._parsers[i++];) {
                     if ( (match = parser.re.exec(selector)) ) { // note assignment
-                        if (parser !== COMBINATOR) {
-                            token.selector = match[0];
+                        if (parser !== COMBINATOR ) {
+                            token.selector = selector;
                         }
                         selector = selector.replace(match[0], ''); // strip current match from selector
                         if (!selector.length) {
                             token.last = true;
                         }
+
+                        if (Selector._attrFilters[match[1]]) { // convert class to className, etc.
+                            match[1] = Selector._attrFilters[match[1]];
+                        }
+
                         test = parser.fn(match, token);
                         if (test) {
                             token.tests.push(test);
                         }
+
                         if (!selector.length || parser.name === COMBINATOR) {
                             tokens.push(token);
                             token = Selector._getToken(token);
@@ -2678,7 +2761,12 @@ var PARENT_NODE = 'parentNode',
         _replaceShorthand: function(selector) {
             var shorthand = Selector.shorthand,
                 attrs = selector.match(Selector._re.attr), // pull attributes to avoid false pos on "." and "#"
+                pseudos = selector.match(Selector._re.pseudos), // pull attributes to avoid false pos on "." and "#"
                 re, i, len;
+
+            if (pseudos) {
+                selector = selector.replace(Selector._re.pseudos, 'REPLACED_PSEUDO');
+            }
 
             if (attrs) {
                 selector = selector.replace(Selector._re.attr, 'REPLACED_ATTRIBUTE');
@@ -2695,14 +2783,174 @@ var PARENT_NODE = 'parentNode',
                     selector = selector.replace('REPLACED_ATTRIBUTE', attrs[i]);
                 }
             }
+            if (pseudos) {
+                for (i = 0, len = pseudos.length; i < len; ++i) {
+                    selector = selector.replace('REPLACED_PSEUDO', pseudos[i]);
+                }
+            }
             return selector;
+        },
+
+        _attrFilters: {
+            'class': 'className',
+            'for': 'htmlFor'
+        },
+
+        getters: {
+            href: function(node, attr) {
+                return Y.DOM.getAttribute(node, attr);
+            }
         }
     };
 
 Y.mix(Y.Selector, SelectorCSS2, true);
+Y.Selector.getters.src = Y.Selector.getters.rel = Y.Selector.getters.href;
 
 
 }, '@VERSION@' ,{requires:['selector-native'], skinnable:false});
+YUI.add('selector-css3', function(Y) {
+
+/**
+ * The selector css3 module provides support for css3 selectors.
+ * @module dom
+ * @submodule selector-css3
+ * @for Selector
+ */
+
+/*
+    an+b = get every _a_th node starting at the _b_th
+    0n+b = no repeat ("0" and "n" may both be omitted (together) , e.g. "0n+1" or "1", not "0+1"), return only the _b_th element
+    1n+b =  get every element starting from b ("1" may may be omitted, e.g. "1n+0" or "n+0" or "n")
+    an+0 = get every _a_th element, "0" may be omitted 
+*/
+
+Y.Selector._reNth = /^(?:([-]?\d*)(n){1}|(odd|even)$)*([-+]?\d*)$/;
+
+Y.Selector._getNth = function(node, expr, tag, reverse) {
+    Y.Selector._reNth.test(expr);
+    var a = parseInt(RegExp.$1, 10), // include every _a_ elements (zero means no repeat, just first _a_)
+        n = RegExp.$2, // "n"
+        oddeven = RegExp.$3, // "odd" or "even"
+        b = parseInt(RegExp.$4, 10) || 0, // start scan from element _b_
+        result = [],
+        op;
+
+    var siblings = node.parentNode.children || Y.Selector._children(node.parentNode); 
+    if (oddeven) {
+        a = 2; // always every other
+        op = '+';
+        n = 'n';
+        b = (oddeven === 'odd') ? 1 : 0;
+    } else if ( isNaN(a) ) {
+        a = (n) ? 1 : 0; // start from the first or no repeat
+    }
+
+    if (a === 0) { // just the first
+        if (reverse) {
+            b = siblings.length - b + 1; 
+        }
+
+        if (siblings[b - 1] === node) {
+            return true;
+        } else {
+            return false;
+        }
+
+    } else if (a < 0) {
+        reverse = !!reverse;
+        a = Math.abs(a);
+    }
+
+    if (!reverse) {
+        for (var i = b - 1, len = siblings.length; i < len; i += a) {
+            if ( i >= 0 && siblings[i] === node ) {
+                return true;
+            }
+        }
+    } else {
+        for (var i = siblings.length - b, len = siblings.length; i >= 0; i -= a) {
+            if ( i < len && siblings[i] === node ) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
+Y.mix(Y.Selector.pseudos, {
+    'root': function(node) {
+        return node === node.ownerDocument.documentElement;
+    },
+
+    'nth-child': function(node, expr) {
+        return Y.Selector._getNth(node, expr);
+    },
+
+    'nth-last-child': function(node, expr) {
+        return Y.Selector._getNth(node, expr, null, true);
+    },
+
+    'nth-of-type': function(node, expr) {
+        return Y.Selector._getNth(node, expr, node.tagName);
+    },
+     
+    'nth-last-of-type': function(node) {
+        return Y.Selector._getNth(node, expr, node.tagName, true);
+    },
+     
+    'last-child': function(node) {
+        var children = node.parentNode.children || Y.Selector._children(node.parentNode);
+        return children[children.length - 1] === node;
+    },
+
+    'first-of-type': function(node) {
+        return Y.DOM._childrenByTag(node.parentNode, node.tagName)[0];
+    },
+     
+    'last-of-type': function(node) {
+        var children = Y.DOM._childrenByTag(node.parentNode, node.tagName);
+        return children[children.length - 1];
+    },
+     
+    'only-child': function(node) {
+        var children = node.parentNode.children || Y.Selector._children(node.parentNode);
+        return children.length === 1 && children[0] === node;
+    },
+
+    'only-of-type': function(node) {
+        return Y.DOM._childrenByTag(node.parentNode, node.tagName).length === 1;
+    },
+
+    'empty': function(node) {
+        return node.childNodes.length === 0;
+    },
+
+    'not': function(node, expr) {
+        return !Y.Selector.test(node, expr);
+    },
+
+    'contains': function(node, expr) {
+        var text = node.innerText || node.textContent || '';
+        return text.indexOf(expr) > -1;
+    },
+
+    'checked': function(node) {
+        return node.checked === true;
+    }
+});
+
+Y.mix(Y.Selector.operators, {
+    '^=': '^{val}', // Match starts with value
+    '$=': '{val}$', // Match ends with value
+    '*=': '{val}' // Match contains value as substring 
+});
+
+Y.Selector.combinators['~'] = {
+    axis: 'previousSibling'
+};
+
+
+}, '@VERSION@' ,{requires:['dom-base', 'selector-native', 'selector-css2'], skinnable:false});
 
 
 YUI.add('dom', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dom-base', 'dom-style', 'dom-screen', 'selector-native', 'selector-css2']});

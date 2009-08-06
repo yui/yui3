@@ -17,9 +17,14 @@ YUI.add('selector-native', function(Y) {
 
 Y.namespace('Selector'); // allow native module to standalone
 
+var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
+    OWNER_DOCUMENT = 'ownerDocument',
+    TMP_PREFIX = 'yui-tmp-',
+    g_counter = 0;
+
 var Selector = {
     _reLead: /^\s*([>+~]|:self)/,
-    _reUnSupported: /!./,
+    _reUnSupported: /!./g,
 
     _foundCache: [],
 
@@ -30,7 +35,7 @@ var Selector = {
             document.querySelectorAll);
     },
 
-    useNative: false,
+    useNative: true,
 
     _toArray: function(nodes) { // TODO: move to Y.Array
         var ret = nodes,
@@ -63,13 +68,46 @@ var Selector = {
         foundCache = [];
     },
 
+    _compare: ('sourceIndex' in document.documentElement) ?
+        function(nodeA, nodeB) {
+            var a = nodeA.sourceIndex,
+                b = nodeB.sourceIndex;
+
+            if (a === b) {
+                return 0;
+            } else if (a > b) {
+                return 1;
+            }
+
+            return -1;
+
+        } : (document.documentElement[COMPARE_DOCUMENT_POSITION] ?
+        function(nodeA, nodeB) {
+            if (nodeA[COMPARE_DOCUMENT_POSITION](nodeB) & 4) {
+                return -1;
+            } else {
+                return 1;
+            }
+        } :
+        function(nodeA, nodeB) {
+            var rangeA, rangeB, compare;
+            if (nodeA && nodeB) {
+                rangeA = nodeA[OWNER_DOCUMENT].createRange();
+                rangeA.setStart(nodeA, 0);
+                rangeB = nodeB[OWNER_DOCUMENT].createRange();
+                rangeB.setStart(nodeB, 0);
+                compare = rangeA.compareBoundaryPoints(Range.START_TO_END, rangeB);
+            }
+
+            return compare;
+        
+    }),
+
     _sort: function(nodes) {
         if (nodes) {
             nodes = Selector._toArray(nodes);
             if (nodes.sort) {
-                nodes.sort(function(a, b) {
-                    return Y.DOM.precedes(a, b);
-                });
+                nodes.sort(Selector._compare);
             }
         }
 
@@ -96,6 +134,7 @@ var Selector = {
     _prepQuery: function(root, selector) {
         var groups = selector.split(','),
             queries = [],
+            inDoc = true,
             isDocRoot = (root && root.nodeType === 9),
             i, len;
 
@@ -105,7 +144,7 @@ var Selector = {
                 // break into separate queries for element scoping
                 for (i = 0, len = groups.length; i < len; ++i) {
                     selector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
-                    queries.push({root: root.ownerDocument, selector: selector});
+                    queries.push({root: root, selector: selector});
                 }
             } else {
                 queries.push({root: root, selector: selector});
@@ -117,7 +156,7 @@ var Selector = {
 
     _nativeQuery: function(selector, root, firstOnly) {
         if (Selector._reUnSupported.test(selector)) {
-            return Y.Selector._brute.query(selector, root, firstOnly);
+            return Y.Selector.query(selector, root, firstOnly);
         }
 
         var ret = firstOnly ? null : [],
@@ -147,7 +186,7 @@ var Selector = {
             if (queries.length > 1) { // remove dupes and sort by doc order 
                 ret = Selector._sort(Selector._deDupe(ret));
             }
-            ret = (!firstOnly) ? ret : ret[0] || null;
+            ret = (firstOnly) ? (ret[0] || null) : ret;
         }
         return ret;
     },
@@ -177,10 +216,12 @@ var Selector = {
             i, group;
 
         if (node && node.tagName) { // only test HTMLElements
-            node.id = node.id || Y.guid();
+            if (!node.id) {
+                node.id = TMP_PREFIX + g_counter++;
+            }
             for (i = 0, group; group = groups[i++];) { // TODO: off-dom test
                 group += '#' + node.id; // add ID for uniqueness
-                item = Y.Selector.query(group, node.parentNode, true);
+                item = Y.Selector.query(group, node.ownerDocument, true);
                 ret = (item === node);
                 if (ret) {
                     break;

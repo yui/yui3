@@ -1,5 +1,12 @@
 YUI.add('selector-css3', function(Y) {
 
+/**
+ * The selector css3 module provides support for css3 selectors.
+ * @module dom
+ * @submodule selector-css3
+ * @for Selector
+ */
+
 /*
     an+b = get every _a_th node starting at the _b_th
     0n+b = no repeat ("0" and "n" may both be omitted (together) , e.g. "0n+1" or "1", not "0+1"), return only the _b_th element
@@ -65,20 +72,20 @@ Y.mix(Y.Selector.pseudos, {
         return node === node.ownerDocument.documentElement;
     },
 
-    'nth-child': function(node, m) {
-        return Y.Selector._getNth(node, m[1]);
+    'nth-child': function(node, expr) {
+        return Y.Selector._getNth(node, expr);
     },
 
-    'nth-last-child': function(node, m) {
-        return Y.Selector._getNth(node, m[1], null, true);
+    'nth-last-child': function(node, expr) {
+        return Y.Selector._getNth(node, expr, null, true);
     },
 
-    'nth-of-type': function(node, m) {
-        return Y.Selector._getNth(node, m[1], node.tagName);
+    'nth-of-type': function(node, expr) {
+        return Y.Selector._getNth(node, expr, node.tagName);
     },
      
-    'nth-last-of-type': function(node, m) {
-        return Y.Selector._getNth(node, m[1], node.tagName, true);
+    'nth-last-of-type': function(node) {
+        return Y.Selector._getNth(node, expr, node.tagName, true);
     },
      
     'last-child': function(node) {
@@ -108,13 +115,13 @@ Y.mix(Y.Selector.pseudos, {
         return node.childNodes.length === 0;
     },
 
-    'not': function(node, m) {
-        return !Y.Selector.test(node, m[1]);
+    'not': function(node, expr) {
+        return !Y.Selector.test(node, expr);
     },
 
-    'contains': function(node, m) {
+    'contains': function(node, expr) {
         var text = node.innerText || node.textContent || '';
-        return text.indexOf(m[1]) > -1;
+        return text.indexOf(expr) > -1;
     },
 
     'checked': function(node) {
@@ -128,17 +135,9 @@ Y.mix(Y.Selector.operators, {
     '*=': '{val}' // Match contains value as substring 
 });
 
-Y.Selector.combinators['~'] = function(node, token) {
-    var sib = node.previousSibling;
-    while (sib) {
-        if (sib.nodeType === 1 && Y.Selector._testToken(sib, null, null, token.previous)) {
-            return true;
-        }
-        sib = sib.previousSibling;
-    }
-
-    return false;
-}
+Y.Selector.combinators['~'] = {
+    axis: 'previousSibling'
+};
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'selector'], skinnable:false});
+}, '@VERSION@' ,{requires:['dom-base', 'selector-native', 'selector-css2'], skinnable:false});

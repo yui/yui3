@@ -133,14 +133,6 @@ Y.mix(Y.Selector.operators, {
     '*=': '{val}' // Match contains value as substring 
 });
 
-Y.Selector.combinators['~'] = function(node, token) {
-    var sib = node.previousSibling;
-    while (sib) {
-        if (sib.nodeType === 1 && Y.Selector._testToken(sib, null, null, token.previous)) {
-            return true;
-        }
-        sib = sib.previousSibling;
-    }
-
-    return false;
-}
+Y.Selector.combinators['~'] = {
+    axis: 'previousSibling'
+};
