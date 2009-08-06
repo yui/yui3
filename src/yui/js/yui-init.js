@@ -9,12 +9,9 @@
     Y.log(Y.id + ' initialized', 'info', 'yui');
 
     if (C.core) {
-
         core = C.core;
-
     } else {
-
-        core = ['queue-base', 'get', 'loader'];
+        core = ['queue-base', 'get'];
     }
 
     Y.use.apply(Y, core);

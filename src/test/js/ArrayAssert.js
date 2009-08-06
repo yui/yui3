@@ -68,7 +68,7 @@
                 throw new TypeError("ArrayAssert.containsMatch(): First argument must be a function.");
             }
             
-            if (!Y.Array.some(matcher)){
+            if (!Y.Array.some(haystack, matcher)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
             }
         },
@@ -135,7 +135,7 @@
                 throw new TypeError("ArrayAssert.doesNotContainMatch(): First argument must be a function.");
             }
             
-            if (Y.Array.some(matcher)){
+            if (Y.Array.some(haystack, matcher)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
             }
         },
