@@ -401,11 +401,11 @@
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
 
+
             <span class="c">// The el argument can be an array of elements or element ids.</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">shouldIterate</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
 
-                <span class="c">// Y.log(&#39;collection: &#39; + el);</span>
-<span class="c"></span>                <span class="c">// Y.log(&#39;collection: &#39; + el.item(0) + &#39;, &#39; + el.item(1));</span>
+                <span class="c">// Y.log(&#39;collection: &#39; + el.item(0) + &#39;, &#39; + el.item(1));</span>
 <span class="c"></span>
                 <span class="nx">handles</span><span class="o">=[];</span>
                 
@@ -460,19 +460,14 @@
                 <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="c">// Element should be an html element or an array if we get here.</span>
+            <span class="c">// Element should be an html element or node</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;unable to attach event &quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;event&quot;</span><span class="o">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="c">// the custom event key is the uid for the element + type</span>
-<span class="c"></span>
-            <span class="c">// allow a node reference to Y.on to work with load time addEventListener check</span>
-<span class="c"></span>            <span class="c">// (Node currently only has the addEventListener interface and that may be</span>
-<span class="c"></span>            <span class="c">// removed).</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">el</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">el</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
             <span class="o">}</span>
 
  			<span class="nx">cewrapper</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_createWrapper</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">capture</span><span class="o">,</span> <span class="nx">compat</span><span class="o">,</span> <span class="nx">facade</span><span class="o">);</span>
