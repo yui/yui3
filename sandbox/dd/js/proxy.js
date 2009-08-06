@@ -42,6 +42,14 @@ YUI.add('dd-proxy', function(Y) {
             value: TRUE
         },
         /**
+        * @attribute hideOnEnd
+        * @description Hide the drag node at the end of the drag. Default: true
+        * @type Boolean
+        */
+        hideOnEnd: {
+            value: TRUE
+        },
+        /**
         * @attribute resizeFrame
         * @description Make the Proxy node assume the size of the original node. Default: true
         * @type Boolean
@@ -93,9 +101,9 @@ YUI.add('dd-proxy', function(Y) {
                     host.set(DRAG_NODE, DDM._proxy);
                 }
             }
-            for (i in this._hands) {
-                this._hands[i].detach();
-            }
+            Y.each(this._hands, function(v) {
+                v.detach();
+            });
             h = DDM.on('ddm:start', Y.bind(function() {
                 if (DDM.activeDrag === host) {
                     DDM._setFrame(host);
@@ -106,7 +114,9 @@ YUI.add('dd-proxy', function(Y) {
                     if (this.get('moveOnEnd')) {
                         host.get(NODE).setXY(host.lastXY);
                     }
-                    host.get(DRAG_NODE).setStyle('display', 'none');
+                    if (this.get('hideOnEnd')) {
+                        host.get(DRAG_NODE).setStyle('display', 'none');
+                    }
                 }
             }, this));
             this._hands = [h, h1];
@@ -116,9 +126,9 @@ YUI.add('dd-proxy', function(Y) {
         },
         destructor: function() {
             var host = this.get(HOST);
-            for (var i in this._hands) {
-                this._hands[i].detach();
-            }
+            Y.each(this._hands, function(v) {
+                v.detach();
+            });
             host.set(DRAG_NODE, host.get(NODE));
         }
     };

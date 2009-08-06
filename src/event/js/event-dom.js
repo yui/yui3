@@ -111,7 +111,7 @@ Event = function() {
         /**
          * The number of times we should look for elements that are not
          * in the DOM at the time the event is requested after the document
-         * has been loaded.  The default is 2000@amp;20 ms, so it will poll
+         * has been loaded.  The default is 1000@amp;40 ms, so it will poll
          * for 40 seconds or until all outstanding handlers are bound
          * (whichever comes first).
          * @property POLL_RETRYS
@@ -254,9 +254,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             return this.onAvailable(id, fn, p_obj, p_override, true, compat);
         },
 
-
         /**
-         * Appends an event handler
+         * Adds an event listener
          *
          * @method attach
          *
@@ -265,17 +264,14 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * @param {String|HTMLElement|Array|NodeList} el An id, an element 
          *  reference, or a collection of ids and/or elements to assign the 
          *  listener to.
-         * @param {Object}   obj    An arbitrary object that will be 
-         *                             passed as a parameter to the handler
+         * @param {Object}   context optional context object
          * @param {Boolean|object}  args 0..n arguments to pass to the callback
-         * @return {Boolean} True if the action was successful or defered,
-         *                        false if one or more of the elements 
-         *                        could not have the listener attached,
-         *                        or if the operation throws an exception.
+         * @return {EventHandle} an object to that can be used to detach the listener
+         *                     
          * @static
          */
 
-        attach: function(type, fn, el, obj) {
+        attach: function(type, fn, el, context) {
             return Y.Event._attach(Y.Array(arguments, 0, true));
         },
 
@@ -378,35 +374,40 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             // ready
             } else if (Y.Lang.isString(el)) {
 
-                // @TODO switch to using DOM directly here
-                // oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
-                oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
+                // oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
+
+                if (compat) {
+                    oEl = Y.DOM.byId(el);
+                } else {
+
+                    oEl = Y.Selector.query(el);
+
+                    switch (oEl.length) {
+                        case 0:
+                            oEl = null;
+                            break;
+                        case 1:
+                            oEl = oEl[0];
+                            break;
+                        default:
+                            args[2] = oEl;
+                            return E._attach(args, config);
+                    }
+                }
 
                 if (oEl) {
 
-                    if (Y.Lang.isArray(oEl)) {
-                        if (oEl.length == 1) {
-                            el = oEl[0];
-                        } else {
-                            args[2] = oEl;
-                            return E._attach(args, config);
-                        }
-
-                    // HTMLElement
-                    } else {
-                        // Y.log('no size: ' + oEl + ', ' + type);
-                        el = oEl;
-                    }
+                    el = oEl;
 
                 // Not found = defer adding the event until the element is available
                 } else {
 
                     // Y.log(el + ' not found');
-
                     return this.onAvailable(el, function() {
                         // Y.log('lazy attach: ' + args);
                         E._attach(args, config);
                     }, E, true, false, compat);
+
                 }
             }
 
@@ -465,13 +466,14 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          *
          * @method detach
          *
-         * @param {String|HTMLElement|Array|NodeList} el An id, an element 
-         *  reference, or a collection of ids and/or elements to remove
-         *  the listener from.
          * @param {String} type the type of event to remove.
          * @param {Function} fn the method the event invokes.  If fn is
-         *  undefined, then all event handlers for the type of event are *  removed.
-         * @return {boolean} true if the unbind was successful, false *  otherwise.
+         * undefined, then all event handlers for the type of event are 
+         * removed.
+         * @param {String|HTMLElement|Array|NodeList|EventHandle} el An 
+         * event handle, an id, an element reference, or a collection 
+         * of ids and/or elements to remove the listener from.
+         * @return {boolean} true if the unbind was successful, false otherwise.
          * @static
          */
         detach: function(type, fn, el, obj) {

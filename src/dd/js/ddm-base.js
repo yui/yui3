@@ -116,10 +116,15 @@
         * @param {Drag} d The Drag object
         */
         _regDrag: function(d) {
-            this._drags[this._drags.length] = d;
+            if (this.getDrag(d.get('node'))) {
+                return false;
+            }
+            
             if (!this._active) {
                 this._setupListeners();
             }
+            this._drags.push(d);
+            return true;
         },
         /**
         * @private
@@ -152,14 +157,10 @@
         * @private
         * @method _start
         * @description Internal method used by Drag to signal the start of a drag operation
-        * @param {Number} x The x position of the drag element
-        * @param {Number} y The y position of the drag element
-        * @param {Number} w The width of the drag element
-        * @param {Number} h The height of the drag element
         */
-        _start: function(x, y, w, h) {
+        _start: function() {
             this.fire('ddm:start');
-            this._startDrag.apply(this, arguments);
+            this._startDrag();
         },
         /**
         * @private
@@ -184,8 +185,6 @@
         * @description Internal method used by Drag to signal the end of a drag operation
         */
         _end: function() {
-            //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
-            //Add as a config option??
             if (this.activeDrag) {
                 this._endDrag();
                 this.fire('ddm:end');
@@ -264,5 +263,15 @@
     Y.namespace('DD');
     Y.DD.DDM = new DDMBase();
 
+    /**
+    * @event ddm:start
+    * @description Fires from the DDM before all drag events fire.
+    * @type {Event.Custom}
+    */
+    /**
+    * @event ddm:end
+    * @description Fires from the DDM after the DDM finishes, before the drag end events.
+    * @type {Event.Custom}
+    */
 
 

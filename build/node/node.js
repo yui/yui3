@@ -22,7 +22,6 @@ YUI.add('node-base', function(Y) {
 // "globals"
 var g_nodes = {},
     g_nodelists = {},
-    g_restrict = {},
     g_slice = Array.prototype.slice,
 
     DOT = '.',
@@ -32,22 +31,48 @@ var g_nodes = {},
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
+<<<<<<< HEAD:build/node/node.js
     Node = function(node, restricted) {
         var config = null;
         this[UID] = Y.stamp(node);
         if (!this[UID]) { // stamp failed; likely IE non-HTMLElement
             this[UID] = Y.guid(); 
         }
+=======
+    SuperConstr = Y.Base,
+    SuperConstrProto = Y.Base.prototype,
 
-        g_nodes[this[UID]] = node;
-        Node._instances[this[UID]] = this;
+    Node = function(node) {
+        var config = null,
+            uid = node[UID];
+>>>>>>> master:build/node/node.js
 
+        if (uid && g_nodes[uid] && g_nodes[uid] !== node) {
+            node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
+        }
+
+<<<<<<< HEAD:build/node/node.js
         if (restricted) {
             g_restrict[this[UID]] = true; 
         }
 
         this.addAttrs(Node.ATTRS);
         this._initPlugins();
+=======
+        uid = Y.stamp(node);
+        if (!uid) { // stamp failed; likely IE non-HTMLElement
+            uid = Y.guid();
+        }
+
+        this[UID] = uid;
+
+        g_nodes[uid] = node;
+        Node._instances[uid] = this;
+
+        this._lazyAttrInit = true;
+        this._silentInit = true;
+        SuperConstr.call(this, config);
+>>>>>>> master:build/node/node.js
     },
 
     // used with previous/next/ancestor tests
@@ -73,6 +98,7 @@ Node.re_aria = /^(?:role$|aria-)/;
 
 Node.DOM_EVENTS = {
     abort: true,
+    beforeunload: true,
     blur: true,
     change: true,
     click: true,
@@ -174,12 +200,8 @@ Node.scrubVal = function(val, node, depth) {
     if (node && val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y.DOM.isWindow(val)) {// node || window
-                if (g_restrict[node[UID]] && !node.contains(val)) {
-                    val = null; // not allowed to go outside of root node
-                } else {
-                    val = Node.get(val);
-                }
-            } else if (val.item || // dom collection or Node instance // TODO: check each node for restrict? block ancestor?
+                val = Node.get(val);
+            } else if (val.item || // dom collection or Node instance
                     (val[0] && val[0][NODE_TYPE])) { // array of DOM Nodes
                 val = Y.all(val);
             } else {
@@ -240,31 +262,43 @@ Node.importMethod = function(host, name, altName) {
  * @static
  * @param {String | HTMLElement} node a node or Selector 
  * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
- * @param {Boolean} restrict Whether or not the Node instance should be restricted to accessing
- * its subtree only.
  */
-Node.get = function(node, doc, restrict) {
-    var instance = null;
-
-    if (typeof node === 'string') {
-        if (node.indexOf('doc') === 0) { // doc OR document
-            node = Y.config.doc;
-        } else if (node.indexOf('win') === 0) { // doc OR document
-            node = Y.config.win;
-        } else {
-            node = Y.Selector.query(node, doc, true);
-        }
-    }
+Node.get = function(node, doc) {
+    var instance = null,
+        cachedNode,
+        uid;
 
     if (node) {
+<<<<<<< HEAD:build/node/node.js
         instance = Node._instances[node[UID]]; // reuse exising instances
         if (!instance) {
             instance = new Node(node, restrict);
         } else if (restrict) {
             g_restrict[instance[UID]] = true;
+=======
+        if (typeof node === 'string') {
+            if (node.indexOf('doc') === 0) { // doc OR document
+                node = Y.config.doc;
+            } else if (node.indexOf('win') === 0) { // doc OR document
+                node = Y.config.win;
+            } else {
+                node = Y.Selector.query(node, doc, true);
+            }
+            if (!node) {
+                return null;
+            }
+        } else if (node instanceof Node) {
+            return node; // NOTE: return
+        }
+
+        uid = node._yuid;
+        cachedNode = g_nodes[uid];
+        instance = Node._instances[uid]; // reuse exising instances
+        if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
+            instance = new Node(node);
+>>>>>>> master:build/node/node.js
         }
     }
-    // TODO: restrict on subsequent call?
     return instance;
 };
 
@@ -338,6 +372,7 @@ Node.ATTRS = {
             Y.DOM.setValue(g_nodes[this[UID]], val);
             return val;
         }
+<<<<<<< HEAD:build/node/node.js
     },
 
 /*
@@ -347,6 +382,9 @@ Node.ATTRS = {
         }
     },
 */
+=======
+    }
+>>>>>>> master:build/node/node.js
 };
 
 // call with instance context
@@ -501,7 +539,7 @@ Y.mix(Node.prototype, {
    /**
      * Returns the nearest ancestor that passes the test applied by supplied boolean method.
      * @method ancestor
-     * @param {String | Function} fn A selector or boolean method for testing elements.
+     * @param {String | Function} fn A selector string or boolean method for testing elements.
      * If a function is used, it receives the current node being tested as the only argument.
      * @return {Node} The matching Node instance or null if not found
      */
@@ -611,7 +649,6 @@ Y.mix(Node.prototype, {
         //var uid = this[UID];
 
         //delete g_nodes[uid];
-        //delete g_restrict[uid];
         //delete Node._instances[uid];
     },
 
@@ -666,11 +703,7 @@ Y.mix(Node.prototype, {
             if (typeof content !== 'string') { // pass the DOM node
                 content = Y.Node.getDOMNode(content);
             }
-            if (!where || // only allow inserting into this Node's subtree
-                (!g_restrict[this[UID]] || 
-                    (typeof where !== 'string' && this.contains(where)))) { 
-                Y.DOM.addHTML(g_nodes[this[UID]], content, where);
-            }
+            Y.DOM.addHTML(g_nodes[this[UID]], content, where);
         }
         return this;
     },
@@ -1210,7 +1243,8 @@ Y.Array.each([
     /**
      * Passes through to DOM method.
      * @method cloneNode
-     * @param {HTMLElement | Node} node Node to be cloned 
+     * @param {Boolean} deep Whether or not to perform a deep clone, which includes
+     * subtree and attributes
      * @return {Node} The clone 
      */
     'cloneNode',
@@ -1347,20 +1381,6 @@ if (!document.documentElement.hasAttribute) { // IE < 8
  * @return {string} The attribute value 
  */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
-
-(function() { // IE clones expandos; regenerate UID
-    var node = document.createElement('div'),
-        UID = '_yuid';
-
-    Y.stamp(node);
-    if (node[UID] === node.cloneNode(true)[UID]) {
-        Y.Node.prototype.cloneNode = function(deep) {
-            var node = Y.Node.getDOMNode(this).cloneNode(deep);
-            node[UID] = Y.guid();
-            return Y.get(node);
-        };
-    }
-})();
 (function(Y) {
     var methods = [
     /**

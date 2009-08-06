@@ -16,7 +16,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
         var Drag = function(config) {
-            config.node = config.host;
+            config.node = ((Y.Widget && config.host instanceof Y.Widget) ? config.host.get('boundingBox') : config.host);
             Drag.superclass.constructor.apply(this, arguments);
         };
         

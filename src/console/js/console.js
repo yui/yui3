@@ -585,6 +585,22 @@ Y.mix(Console, {
                     return Y.Attribute.INVALID_VALUE;
                 }
             }
+         },
+
+         /**
+          * Allows the Console to flow in the document.  Available values are
+          * 'inline', 'block', and 'separate' (the default).  
+          *
+          * @attribute style
+          * @type {String}
+          * @default 'separate'
+          */
+         style : {
+            value : 'separate',
+            writeOnce : true,
+            validator : function (v) {
+                return this._validateStyle(v);
+            }
          }
     }
 
@@ -848,6 +864,12 @@ Y.extend(Console,Y.Widget,{
         this._initHead();
         this._initBody();
         this._initFoot();
+
+        // Apply positioning to the bounding box if appropriate
+        var style = this.get('style');
+        if (style !== 'block') {
+            this.get('boundingBox').addClass('yui-'+style+'-console');
+        }
     },
 
     /**
@@ -1158,6 +1180,19 @@ Y.extend(Console,Y.Widget,{
             this._printLoop.cancel();
             this._printLoop = null;
         }
+    },
+
+    /**
+     * Validates input value for style attribute.  Accepts only values 'inline',
+     * 'block', and 'separate'.
+     *
+     * @method _validateStyle
+     * @param style {String} the proposed value
+     * @return {Boolean} pass/fail
+     * @protected
+     */
+    _validateStyle : function (style) {
+        return style === 'inline' || style === 'block' || style === 'separate';
     },
 
     /**

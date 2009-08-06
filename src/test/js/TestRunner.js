@@ -299,7 +299,7 @@
                         break;
                         
                     case this.TEST_FAIL_EVENT:
-                        message = event.testName + ": " + event.error.getMessage();
+                        message = event.testName + ": failed.\n" + event.error.getMessage();
                         messageType = "fail";
                         break;
                         
@@ -536,7 +536,10 @@
             _resumeTest : function (segment) {
             
                 //get relevant information
-                var node = this._cur;
+                var node = this._cur;                
+                
+                //we know there's no more waiting now
+                this._waiting = false;
                 
                 //if there's no node, it probably means a wait() was called after resume()
                 if (!node){
@@ -673,9 +676,6 @@
                     node.parent.results.passed++;
                 }
                 node.parent.results.total++;
-                
-                //we know there's no more waiting now
-                this._waiting = false;
     
                 //set timeout not supported in all environments
                 if (typeof setTimeout != "undefined"){
@@ -800,6 +800,7 @@
              */
             add : function (testObject) {
                 this.masterSuite.add(testObject);
+                return this;
             },
             
             /**

@@ -2,7 +2,10 @@
 <html>
 <head>
 <title>YUI 3.0</title>
-<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+<!--
+<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0b1/build/yui/yui-debug.js"></script>
+-->
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 <style>
 .dd {
             padding-left: 20px;
@@ -32,7 +35,7 @@ top: 200px;
 
 <script type="text/javascript">
 YUI({
-        base: '../../build/'
+//        base: '../../build/'
     }).use('node', function(Y) {
     var node = Y.get('#demo');
     var used = [];

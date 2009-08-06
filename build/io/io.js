@@ -231,7 +231,7 @@ YUI.add('io-base', function(Y) {
    		/* End Configuration Properties */
 
    		o.c.onreadystatechange = function() { _readyState(o, c); };
-   		try { _open(o.c, m, uri); } catch (e0) {}
+   		try { _open(o.c, m, uri); } catch(e0) {}
    		_setHeaders(o.c, (c.headers || {}));
 
    		// Do not pass null, in the absence of data, as this
@@ -758,7 +758,7 @@ YUI.add('io-base', function(Y) {
 
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-custom']});
 
 YUI.add('io-form', function(Y) {
 
@@ -852,7 +852,7 @@ YUI.add('io-form', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['io-base']});
+}, '@VERSION@' ,{requires:['io-base', 'node-base']});
 
 YUI.add('io-xdr', function(Y) {
 
@@ -882,13 +882,16 @@ YUI.add('io-xdr', function(Y) {
 	* @return void
 	*/
 	function _swf(uri, yid) {
-		var XDR_SWF = '<object id="yuiIoSwf" type="application/x-shockwave-flash" data="' +
-		              uri + '" width="0" height="0">' +
-		     		  '<param name="movie" value="' + uri + '">' +
-		     		  '<param name="FlashVars" value="yid=' + yid + '">' +
-                      '<param name="allowScriptAccess" value="sameDomain">' +
-		    	      '</object>';
-		Y.get('body').appendChild(Y.Node.create(XDR_SWF));
+		var o = '<object id="yuiIoSwf" type="application/x-shockwave-flash" data="' +
+		          uri + '" width="0" height="0">' +
+		     	  '<param name="movie" value="' + uri + '">' +
+		     	  '<param name="FlashVars" value="yid=' + yid + '">' +
+                  '<param name="allowScriptAccess" value="sameDomain">' +
+		    	  '</object>',
+		    c = document.createElement('div');
+
+		document.body.appendChild(c);
+		c.innerHTML = o;
 	}
 
     Y.mix(Y.io, {
@@ -1105,6 +1108,7 @@ YUI.add('io-upload-iframe', function(Y) {
 		*/
 		_upload: function(o, uri, c) {
 			var f = (typeof c.form.id === 'string') ? document.getElementById(c.form.id) : c.form.id,
+				ie8 = (document.documentMode && document.documentMode === 8) ? true : false,
 				e, fields, i, p, attr;
 
 			_create(o, c);
@@ -1119,7 +1123,7 @@ YUI.add('io-upload-iframe', function(Y) {
 			f.setAttribute('action', uri);
 			f.setAttribute('method', 'POST');
 			f.setAttribute('target', 'ioupload' + o.id );
-			f.setAttribute((Y.UA.ie && !document.documentMode) ? 'encoding' : 'enctype', 'multipart/form-data');
+			f.setAttribute((Y.UA.ie && !ie8) ? 'encoding' : 'enctype', 'multipart/form-data');
 
 			if (c.data) {
 				fields = _addData(f, c.data);

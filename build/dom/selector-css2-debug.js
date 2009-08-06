@@ -285,7 +285,7 @@ var PARENT_NODE = 'parentNode',
                         test = Selector._getRegExp(test.replace('{val}', val));
                     }
                     
-                    if (match[1] === 'id' && val) { // store ID for fast-path match
+                    if (match[1] === 'id' && operator === '=' &&  val) { // store ID for fast-path match
                         token.id = val;
                         token.prefilter = function(root) {
                             var doc = root.nodeType === 9 ? root : root.ownerDocument,
@@ -432,4 +432,4 @@ if (!Y.Selector._supportsNative()) {
 }
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'selector-native'], skinnable:false});
+}, '@VERSION@' ,{requires:['selector-native'], skinnable:false});

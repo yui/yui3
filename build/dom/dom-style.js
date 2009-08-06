@@ -444,7 +444,8 @@ try {
 } catch(e) { // IE throws error on invalid style set; trap common cases
     Y.DOM.CUSTOM_STYLES.height = {
         set: function(node, val, style) {
-            if (parseInt(val, 10) >= 0) {
+            var floatVal = parseFloat(val);
+            if (isNaN(floatVal) || floatVal >= 0) {
                 style.height = val;
             } else {
             }
@@ -453,7 +454,8 @@ try {
 
     Y.DOM.CUSTOM_STYLES.width = {
         set: function(node, val, style) {
-            if (parseInt(val, 10) >= 0) {
+            var floatVal = parseFloat(val);
+            if (isNaN(floatVal) || floatVal >= 0) {
                 style.width = val;
             } else {
             }
