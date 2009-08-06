@@ -1470,7 +1470,7 @@ var L = Y.Lang,
 
     ET = function(opts) {
 
-        // console.log('EventTarget constructor executed: ' + this._yuid);
+        // Y.log('EventTarget constructor executed: ' + this._yuid);
 
         var o = (L.isObject(opts)) ? opts : {};
 
@@ -1554,6 +1554,7 @@ ET.prototype = {
         if (Node && (this instanceof Node) && (shorttype in Node.DOM_EVENTS)) {
             args = Y.Array(arguments, 0, true);
             args.splice(2, 0, Node.getDOMNode(this));
+            // Y.log("Node detected, redirecting with these args: " + args);
             return Y.on.apply(Y, args);
         }
 
@@ -1564,8 +1565,8 @@ ET.prototype = {
             args  = Y.Array(arguments, 0, true);
             args[0] = shorttype;
             // check for the existance of an event adaptor
+            n = args[2];
             if (adapt && adapt.on) {
-                n = args[2];
                 Y.log('Using adaptor for ' + shorttype + ', ' + n, 'info', 'event');
                 if (Node && n && (n instanceof Node)) {
                     args[2] = Node.getDOMNode(n);
@@ -1580,6 +1581,9 @@ ET.prototype = {
             //     return o.on.apply(o, a);
             // } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
             } else if ((!type) || (!adapt && Node && (shorttype in Node.DOM_EVENTS))) {
+                if (n instanceof Node) {
+                    args[2] = Node.getDOMNode(n);
+                }
                 handle = Y.Event._attach(args);
             }
 

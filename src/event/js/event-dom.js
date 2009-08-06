@@ -352,10 +352,10 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return false;
             }
 
+
             // The el argument can be an array of elements or element ids.
             if (shouldIterate(el)) {
 
-                // Y.log('collection: ' + el);
                 // Y.log('collection: ' + el.item(0) + ', ' + el.item(1));
 
                 handles=[];
@@ -411,19 +411,14 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 }
             }
 
-            // Element should be an html element or an array if we get here.
+            // Element should be an html element or node
             if (!el) {
                 Y.log("unable to attach event " + type, "warn", "event");
                 return false;
             }
 
-            // the custom event key is the uid for the element + type
-
-            // allow a node reference to Y.on to work with load time addEventListener check
-            // (Node currently only has the addEventListener interface and that may be
-            // removed).
             if (Y.Node && el instanceof Y.Node) {
-                return el.on.apply(el, args);
+                el = Y.Node.getDOMNode(el);
             }
 
  			cewrapper = this._createWrapper(el, type, capture, compat, facade);
