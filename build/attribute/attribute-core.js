@@ -190,7 +190,6 @@ YUI.add('attribute-core', function(Y) {
      * @uses EventTarget
      */
     function Attribute() {
-        Y.log('Attribute constructor called', 'info', 'attribute');
 
         var host = this; // help compression
 
@@ -310,7 +309,6 @@ YUI.add('attribute-core', function(Y) {
          */
         addAttr: function(name, config, lazy) {
 
-            Y.log('Adding attribute: ' + name, 'info', 'attribute');
 
             var host = this, // help compression
                 state = host._state,
@@ -319,14 +317,12 @@ YUI.add('attribute-core', function(Y) {
 
             lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
 
-            if (host._stateProxy && host._stateProxy[name]) { Y.log('addAttr: ' + name + ' exists on the _stateProxy object. The newly added attribute will override the use of _stateProxy for this attribute', 'warn', 'attribute'); }
 
             if (lazy && !host.attrAdded(name)) {
                 state.add(name, LAZY, config || {});
                 state.add(name, ADDED, true);
             } else {
 
-                if (host.attrAdded(name) && !state.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
                 if (!host.attrAdded(name) || state.get(name, IS_LAZY_ADD)) {
 
@@ -334,7 +330,6 @@ YUI.add('attribute-core', function(Y) {
 
                     hasValue = (VALUE in config);
 
-                    if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
 
                     if(hasValue) {
                         // We'll go through set, don't want to set value in _state directly
@@ -405,7 +400,6 @@ YUI.add('attribute-core', function(Y) {
                 }
             }
 
-            if (!host.attrAdded(name)) {Y.log('Attribute modifyAttr:' + name + ' has not been added. Use addAttr to add the attribute', 'warn', 'attribute');}
         },
 
         /**
@@ -620,18 +614,15 @@ YUI.add('attribute-core', function(Y) {
             initialSet = (!data.value || !(name in data.value));
 
             if (this._requireAddAttr && !this.attrAdded(name)) {
-                Y.log('Set attribute:' + name + ', aborted; Attribute is not configured', 'warn', 'attribute');
             } else {
 
                 if (!initialSet && !force) {
 
                     if (state.get(name, WRITE_ONCE)) {
-                        Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
                         allowSet = false;
                     }
 
                     if (state.get(name, READ_ONLY)) {
-                        Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
                         allowSet = false;
                     }
                 }
@@ -643,7 +634,6 @@ YUI.add('attribute-core', function(Y) {
                        val = O.setValue(Y.clone(currVal), path, val);
 
                        if (val === undefined) {
-                           Y.log('Set attribute path:' + strPath + ', aborted; Path is invalid', 'warn', 'attribute');
                            allowSet = false;
                        }
                     }
@@ -709,7 +699,6 @@ YUI.add('attribute-core', function(Y) {
          */
         _defAttrChangeFn : function(e) {
             if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
-                Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
                 // Prevent "after" listeners from being invoked since nothing changed.
                 e.stopImmediatePropagation();
             } else {
@@ -776,17 +765,14 @@ YUI.add('attribute-core', function(Y) {
                     retVal = setter.call(host, newVal, name);
 
                     if (retVal === INVALID_VALUE) {
-                        Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
                         allowSet = false;
                     } else if (retVal !== undefined){
-                        Y.log('Attribute: ' + attrName + ', raw value: ' + newVal + ' modified by setter to:' + retVal, 'info', 'attribute');
                         newVal = retVal;
                     }
                 }
 
                 if (allowSet) {
                     if(!subAttrName && newVal === prevVal) {
-                        Y.log('Attribute: ' + attrName + ', value unchanged:' + newVal, 'warn', 'attribute');
                         allowSet = false;
                     } else {
                         // Store value
@@ -798,7 +784,6 @@ YUI.add('attribute-core', function(Y) {
                 }
 
             } else {
-                Y.log('Attribute:' + attrName + ', Validation failed for value:' + newVal, 'warn', 'attribute');
                 allowSet = false;
             }
 
@@ -969,7 +954,6 @@ YUI.add('attribute-core', function(Y) {
                                 cfg[VALUE_FN].call(this) : 
                                 cfg[VALUE];
 
-            Y.log('initValue for ' + attr + ':' + val, 'info', 'attribute');
 
             return val;
         }
@@ -982,112 +966,3 @@ YUI.add('attribute-core', function(Y) {
 
 
 }, '@VERSION@' ,{requires:['event-custom']});
-YUI.add('attribute-complex', function(Y) {
-
-    var O = Y.Object,
-        DOT = ".";
-
-    Y.Attribute.Complex = function() {};
-    Y.Attribute.Complex.prototype = {
-
-        /**
-         * Utility method to split out simple attribute name/value pairs ("x") 
-         * from complex attribute name/value pairs ("x.y.z"), so that complex
-         * attributes can be keyed by the top level attribute name.
-         *
-         * @method _normAttrVals
-         * @param {Object} valueHash An object with attribute name/value pairs
-         *
-         * @return {Object} An object literal with 2 properties - "simple" and "complex",
-         * containing simple and complex attribute values respectively keyed 
-         * by the top level attribute name, or null, if valueHash is falsey.
-         *
-         * @private
-         */
-        _normAttrVals : function(valueHash) {
-            var vals = {},
-                subvals = {},
-                path,
-                attr,
-                v, k;
-
-            if (valueHash) {
-                for (k in valueHash) {
-                    if (valueHash.hasOwnProperty(k)) {
-                        if (k.indexOf(DOT) !== -1) {
-                            path = k.split(DOT);
-                            attr = path.shift();
-                            v = subvals[attr] = subvals[attr] || [];
-                            v[v.length] = {
-                                path : path, 
-                                value: valueHash[k]
-                            };
-                        } else {
-                            vals[k] = valueHash[k];
-                        }
-                    }
-                }
-                return { simple:vals, complex:subvals };
-            } else {
-                return null;
-            }
-        },
-
-        /**
-         * Returns the initial value of the given attribute from
-         * either the default configuration provided, or the 
-         * over-ridden value if it exists in the set of initValues 
-         * provided and the attribute is not read-only.
-         *
-         * @param {String} attr The name of the attribute
-         * @param {Object} cfg The attribute configuration object
-         * @param {Object} initValues The object with simple and complex attribute name/value pairs returned from _normAttrVals
-         *
-         * @return {Any} The initial value of the attribute.
-         *
-         * @method _getAttrInitVal
-         * @private
-         */
-        _getAttrInitVal : function(attr, cfg, initValues) {
-
-            var val = (cfg.valueFn) ? cfg.valueFn.call(this) : cfg.value,
-                simple,
-                complex,
-                i,
-                l,
-                path,
-                subval,
-                subvals;
-
-            if (!cfg.readOnly && initValues) {
-
-                // Simple Attributes
-                simple = initValues.simple;
-                if (simple && simple.hasOwnProperty(attr)) {
-                    val = simple[attr];
-                }
-
-                // Complex Attributes (complex values applied, after simple, incase both are set)
-                complex = initValues.complex;
-                if (complex && complex.hasOwnProperty(attr)) {
-                    subvals = complex[attr];
-                    for (i = 0, l = subvals.length; i < l; ++i) {
-                        path = subvals[i].path;
-                        subval = subvals[i].value;
-                        O.setValue(val, path, subval);
-                    }
-                }
-            }
-
-            return val;
-        }
-    };
-
-    Y.mix(Y.Attribute, Y.Attribute.Complex, true, null, 1);
-
-
-}, '@VERSION@' ,{requires:['attribute-core']});
-
-
-YUI.add('attribute', function(Y){}, '@VERSION@' ,{use:['attribute-core', 'attribute-complex']});
-
