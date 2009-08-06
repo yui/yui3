@@ -129,15 +129,16 @@ button {
 
 <iframe src="test-frame"></iframe>
 <div id="test-insert-html">foo</div>
+<div id="yui-log"></div>
 <script type="text/javascript">
-YUI().use('node', function(Y) {
+YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', function(Y) {
 console.log(Y);
     var tool = YAHOO.tool,
     suite = new tool.TestSuite("yuisuite");
 
     var Assert = YAHOO.util.Assert;
     var ArrayAssert = YAHOO.util.ArrayAssert;
-    var logger = new tool.TestLogger(null, { height: '800px', fontSize: '100%' });
+    var logger = new tool.TestLogger('yui-log', { height: '800px', fontSize: '100%' });
 
     var handle = Y.get('html').on('click', function(e) {
         alert('click');
@@ -244,6 +245,7 @@ console.log(Y);
         },
 
         test_indexOf: function() {
+            console.log(Y.NodeList.getDOMNodes(Y.all('div')));
             Assert.areEqual(0, Y.all('div').indexOf(Y.get('#test-append')),
                 "Y.all('div').indexOf(Y.get('#test-append'))");
 

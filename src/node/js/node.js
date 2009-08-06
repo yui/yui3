@@ -47,6 +47,7 @@ var g_nodes = {},
         this[UID] = uid;
 
         g_nodes[uid] = node;
+        this._stateProxy = node;
         Node._instances[uid] = this;
     },
 
@@ -345,7 +346,7 @@ Node.ATTRS = {
 
 // call with instance context
 Node.DEFAULT_SETTER = function(name, val) {
-    var node = g_nodes[this[UID]],
+    var node = this._stateProxy,
         strPath;
 
     if (name.indexOf(DOT) > -1) {
@@ -361,7 +362,7 @@ Node.DEFAULT_SETTER = function(name, val) {
 
 // call with instance context
 Node.DEFAULT_GETTER = function(name) {
-    var node = g_nodes[this[UID]],
+    var node = this._stateProxy,
         val;
 
     if (name.indexOf && name.indexOf(DOT) > -1) {

@@ -49,6 +49,7 @@ var g_nodes = {},
         this[UID] = uid;
 
         g_nodes[uid] = node;
+        this._stateProxy = node;
         Node._instances[uid] = this;
     },
 
@@ -346,7 +347,7 @@ Node.ATTRS = {
 
 // call with instance context
 Node.DEFAULT_SETTER = function(name, val) {
-    var node = g_nodes[this[UID]],
+    var node = this._stateProxy,
         strPath;
 
     if (name.indexOf(DOT) > -1) {
@@ -362,7 +363,7 @@ Node.DEFAULT_SETTER = function(name, val) {
 
 // call with instance context
 Node.DEFAULT_GETTER = function(name) {
-    var node = g_nodes[this[UID]],
+    var node = this._stateProxy,
         val;
 
     if (name.indexOf && name.indexOf(DOT) > -1) {
@@ -1442,32 +1443,6 @@ Y.Node.prototype.delegate = function(type, fn, selector, context) {
     return Y.on.apply(Y, a);
 };
 
-var onMutation = function(e) {
-    var node = Y.Node._instances[e.relatedNode._yuid],
-        type,
-        evt,
-        field;
-        
-console.log(e, node);
-    // only process if someone is listening
-    if (node && node._yuievt && node._yuievt.events[type]) {
-        type = e.type.substring(3);
-        evt = {};
-        for (field in e) {
-            if (e[field].nodeType) {
-                evt[field] = Y.get(e[field]);
-            } else {
-                evt[field] = e[field];
-            }
-        }
-        evt.type = type;
-        node.fire(type, evt);
-    }
-};
-
-Y.config.doc.addEventListener('DOMAttrModified', onMutation, 0);
-Y.config.doc.addEventListener('DOMNodeInserted', onMutation, 0);
-Y.config.doc.addEventListener('DOMNodeRemoved', onMutation, 0);
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'base', 'selector']});
@@ -1776,5 +1751,5 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 }, '@VERSION@' ,{requires:['dom-screen']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen'], skinnable:false, requires:['dom']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom'], use:['node-base', 'node-style', 'node-screen'], skinnable:false});
 
