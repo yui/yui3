@@ -28,13 +28,12 @@ Y.Env.evt.plugins.key = {
     on: function(type, fn, id, spec, o) {
         var a = Y.Array(arguments, 0, true), parsed, etype, criteria, ename;
 
+        parsed = spec && spec.split(':');
 
-        if (!spec || spec.indexOf(':') == -1) {
-            a[0] = 'keypress';
+        if (!spec || spec.indexOf(':') == -1 || !parsed[1]) {
+            a[0] = 'key' + ((parsed && parsed[0]) || 'press');
             return Y.on.apply(Y, a);
         }
-
-        parsed = spec.split(':');
 
         // key event type: 'down', 'up', or 'press'
         etype = parsed[0];

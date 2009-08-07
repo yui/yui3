@@ -1,6 +1,7 @@
-/**
+/*
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 (function() {
@@ -79,9 +80,10 @@ var GLOBAL_ENV = YUI.Env,
 YUI.add('event-base', function(Y) {
 
 (function() {
-/**
+/*
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 var GLOBAL_ENV = YUI.Env,
@@ -110,6 +112,7 @@ if (GLOBAL_ENV.DOMReady) {
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
  * @module event
+ * @submodule event-base
  */
 
 /**
@@ -419,6 +422,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 /**
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 /**
@@ -429,7 +433,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
  * @class Event
  * @static
  */
-
 
 var add = YUI.Env.add,
 remove = YUI.Env.remove,
@@ -1271,6 +1274,13 @@ Event.Facade = Y.EventFacade;
 Event._poll();
 
 })();
+
+/**
+ * DOM event listener abstraction layer
+ * @module event
+ * @submodule event-base
+ */
+
 /**
  * Executes the callback as soon as the specified element 
  * is detected in the DOM.

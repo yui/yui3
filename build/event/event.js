@@ -1,6 +1,7 @@
-/**
+/*
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 (function() {
@@ -79,9 +80,10 @@ var GLOBAL_ENV = YUI.Env,
 YUI.add('event-base', function(Y) {
 
 (function() {
-/**
+/*
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 var GLOBAL_ENV = YUI.Env,
@@ -110,6 +112,7 @@ if (GLOBAL_ENV.DOMReady) {
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
  * @module event
+ * @submodule event-base
  */
 
 /**
@@ -419,6 +422,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 /**
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 /**
@@ -429,7 +433,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
  * @class Event
  * @static
  */
-
 
 var add = YUI.Env.add,
 remove = YUI.Env.remove,
@@ -1260,6 +1263,13 @@ Event.Facade = Y.EventFacade;
 Event._poll();
 
 })();
+
+/**
+ * DOM event listener abstraction layer
+ * @module event
+ * @submodule event-base
+ */
+
 /**
  * Executes the callback as soon as the specified element 
  * is detected in the DOM.
@@ -1500,6 +1510,7 @@ var DOM_MOUSE_SCROLL = 'DOMMouseScroll',
  * Mousewheel event.  This listener is automatically attached to the
  * correct target, so one should not be supplied.  Mouse wheel 
  * direction and velocity is stored in the 'mouseDelta' field.
+ * @event mousewheel
  * @param type {string} 'mousewheel'
  * @param fn {function} the callback to execute
  * @param context optional context object
@@ -1686,13 +1697,12 @@ Y.Env.evt.plugins.key = {
     on: function(type, fn, id, spec, o) {
         var a = Y.Array(arguments, 0, true), parsed, etype, criteria, ename;
 
+        parsed = spec && spec.split(':');
 
-        if (!spec || spec.indexOf(':') == -1) {
-            a[0] = 'keypress';
+        if (!spec || spec.indexOf(':') == -1 || !parsed[1]) {
+            a[0] = 'key' + ((parsed && parsed[0]) || 'press');
             return Y.on.apply(Y, a);
         }
-
-        parsed = spec.split(':');
 
         // key event type: 'down', 'up', or 'press'
         etype = parsed[0];
