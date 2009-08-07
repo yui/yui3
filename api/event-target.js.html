@@ -236,12 +236,17 @@
                 <span class="nx">n</span> <span class="o">=</span> <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">];</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">n</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span><span class="o">.</span><span class="nx">getDOMNodes</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
+                    <span class="nx">n</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span><span class="o">.</span><span class="nx">getDOMNodes</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
                 <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">n</span> <span class="k">instanceof</span> <span class="nx">Node</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
+                    <span class="nx">n</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
                 <span class="o">}</span>
 
                 <span class="nx">domevent</span> <span class="o">=</span> <span class="o">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DOM_EVENTS</span><span class="o">);</span>
+
+                <span class="c">// Captures both DOM events and event plugins.</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">domevent</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">n</span><span class="o">;</span>
+                <span class="o">}</span>
             <span class="o">}</span>
 
             <span class="c">// check for the existance of an event adaptor</span>
@@ -255,24 +260,15 @@
         <span class="o">}</span> 
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">handle</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="c">// Y.log(&#39;parts: &#39; + parts);</span>
-<span class="c"></span>            <span class="nx">ce</span>     <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
-            <span class="c">// args   = Y.Array(arguments, 1, true);</span>
-<span class="c"></span>            <span class="c">// f = (after) ? ce.after : ce.on;</span>
-<span class="c"></span>            <span class="c">// handle = f.apply(ce, args);</span>
-<span class="c"></span>
+            <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
             <span class="nx">handle</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">_on</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="o">(</span><span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">3</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">3</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span> <span class="o">(</span><span class="nx">after</span><span class="o">)</span> <span class="o">?</span> <span class="s1">&#39;after&#39;</span> <span class="o">:</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">detachcategory</span><span class="o">)</span> <span class="o">{</span>
-
             <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">]</span> <span class="o">=</span> <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">]</span> <span class="o">||</span> <span class="o">{};</span>
             <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">][</span><span class="nx">type</span><span class="o">]</span> <span class="o">=</span> <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">][</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="o">[];</span>
             <span class="nx">store</span><span class="o">[</span><span class="nx">detachcategory</span><span class="o">][</span><span class="nx">type</span><span class="o">].</span><span class="nx">push</span><span class="o">(</span><span class="nx">handle</span><span class="o">);</span>
-
-            <span class="c">// Y.log(&#39;storing: &#39; + key);</span>
-<span class="c"></span>        <span class="o">}</span>
+        <span class="o">}</span>
 
         <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">chain</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="nx">handle</span><span class="o">;</span>
 
