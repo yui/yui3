@@ -1569,12 +1569,17 @@ ET.prototype = {
                 n = args[2];
 
                 if (n instanceof Y.NodeList) {
-                    args[2] = Y.NodeList.getDOMNodes(n);
+                    n = Y.NodeList.getDOMNodes(n);
                 } else if (n instanceof Node) {
-                    args[2] = Node.getDOMNode(n);
+                    n = Node.getDOMNode(n);
                 }
 
                 domevent = (shorttype in Node.DOM_EVENTS);
+
+                // Captures both DOM events and event plugins.
+                if (domevent) {
+                    args[2] = n;
+                }
             }
 
             // check for the existance of an event adaptor
@@ -1588,23 +1593,14 @@ ET.prototype = {
         } 
 
         if (!handle) {
-
-            // Y.log('parts: ' + parts);
-            ce     = this._yuievt.events[type] || this.publish(type);
-            // args   = Y.Array(arguments, 1, true);
-            // f = (after) ? ce.after : ce.on;
-            // handle = f.apply(ce, args);
-
+            ce = this._yuievt.events[type] || this.publish(type);
             handle = ce._on(fn, context, (arguments.length > 3) ? Y.Array(arguments, 3, true) : null, (after) ? 'after' : true);
         }
 
         if (detachcategory) {
-
             store[detachcategory] = store[detachcategory] || {};
             store[detachcategory][type] = store[detachcategory][type] || [];
             store[detachcategory][type].push(handle);
-
-            // Y.log('storing: ' + key);
         }
 
         return (this._yuievt.chain) ? this : handle;
