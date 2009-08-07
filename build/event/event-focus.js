@@ -1,3 +1,5 @@
+YUI.add('event-focus', function(Y) {
+
 /**
  * Adds focus and blur event listener support.  These events normally
  * do not bubble, so this adds support for that so these events
@@ -91,3 +93,6 @@ adapt.blur = {
 };
 
 })();
+
+
+}, '@VERSION@' );

@@ -1,3 +1,5 @@
+YUI.add('event-resize', function(Y) {
+
 /**
  * Adds a window resize event that has its behavior normalized to fire at the
  * end of the resize rather than constantly during the resize.
@@ -57,3 +59,6 @@ Y.Env.evt.plugins.windowresize = {
 };
 
 })();
+
+
+}, '@VERSION@' );

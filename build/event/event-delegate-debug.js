@@ -1,3 +1,5 @@
+YUI.add('event-delegate', function(Y) {
+
 /**
  * Adds event delegation support to the library.
  * 
@@ -161,3 +163,6 @@ Y.Env.evt.plugins.delegate = {
 };
 
 })();
+
+
+}, '@VERSION@' );

@@ -1,3 +1,5 @@
+YUI.add('event-delegate', function(Y) {
+
 /**
  * Adds event delegation support to the library.
  * 
@@ -107,7 +109,6 @@ Y.Env.evt.plugins.delegate = {
     on: function(type, fn, el, delegateType, spec) {
 
         if (!spec) {
-            Y.log('delegate: no spec, nothing to do', 'warn', 'event');
             return false;
         }
 
@@ -161,3 +162,6 @@ Y.Env.evt.plugins.delegate = {
 };
 
 })();
+
+
+}, '@VERSION@' );

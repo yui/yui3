@@ -1,3 +1,5 @@
+YUI.add('event-key', function(Y) {
+
 /**
  * Functionality to listen for one or more specific key combinations.
  * @module event
@@ -28,7 +30,6 @@ Y.Env.evt.plugins.key = {
 
 
         if (!spec || spec.indexOf(':') == -1) {
-Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info', 'event');
             a[0] = 'keypress';
             return Y.on.apply(Y, a);
         }
@@ -51,7 +52,6 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
             // subscribe spec validator to the DOM event
             Y.on(type + etype, function(e) {
 
-                // Y.log('keylistener: ' + e.keyCode);
                 
                 var passed = false, failed = false, i, crit, critInt;
 
@@ -64,11 +64,9 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
                     if (Y.Lang.isNumber(critInt)) {
 
                         if (e.charCode === critInt) {
-                            // Y.log('passed: ' + crit);
                             passed = true;
                         } else {
                             failed = true;
-                            // Y.log('failed: ' + crit);
                         }
 
                     // only check modifier if no keyCode was specified
@@ -77,7 +75,6 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
                     } else if (passed || !failed) {
                         passed = (e[crit + 'Key']);
                         failed = !passed;
-                        // Y.log(crit + ": " + passed);
                     }                    
                 }
 
@@ -98,3 +95,6 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
         return Y.on.apply(Y, a);
     }
 };
+
+
+}, '@VERSION@' );

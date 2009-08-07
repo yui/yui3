@@ -1,3 +1,5 @@
+YUI.add('event-mouseenter', function(Y) {
+
 /**
  * Adds support for mouseenter/mouseleave events
  * @module event
@@ -130,3 +132,6 @@ Y.Env.evt.plugins.mouseenter = eventConfig;
 * @for YUI
  */
 Y.Env.evt.plugins.mouseleave = eventConfig;
+
+
+}, '@VERSION@' );

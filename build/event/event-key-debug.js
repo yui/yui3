@@ -1,3 +1,5 @@
+YUI.add('event-key', function(Y) {
+
 /**
  * Functionality to listen for one or more specific key combinations.
  * @module event
@@ -98,3 +100,6 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
         return Y.on.apply(Y, a);
     }
 };
+
+
+}, '@VERSION@' );

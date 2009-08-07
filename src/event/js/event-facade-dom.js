@@ -124,6 +124,8 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     this.metaKey  = e.metaKey;
     this.shiftKey = e.shiftKey;
     this.type     = e.type;
+    this.clientX  = e.clientX;
+    this.clientY  = e.clientY;
 
     //////////////////////////////////////////////////////
 
@@ -223,7 +225,17 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
      * @type Node
      */
     this.relatedTarget = resolve(t);
-    
+
+    /**
+     * Number representing the direction and velocity of the movement of the mousewheel.
+     * Negative is down, the higher the number, the faster.  Applies to the mousewheel event.
+     * @property wheelDelta
+     * @type int
+     */
+    if (e.type == "mousewheel" || e.type == "DOMMouseScroll") {
+        this.wheelDelta = (e.detail) ? (e.detail * -1) : Math.round(e.wheelDelta / 80) || ((e.wheelDelta < 0) ? -1 : 1);
+    }
+
     //////////////////////////////////////////////////////
     // methods
 
