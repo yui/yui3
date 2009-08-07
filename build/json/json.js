@@ -237,7 +237,8 @@ var _JSON     = Y.config.win.JSON,
         '[object Number]'  : NUMBER,
         'boolean'          : BOOLEAN,
         '[object Boolean]' : BOOLEAN,
-        '[object Date]'    : DATE
+        '[object Date]'    : DATE,
+        '[object RegExp]'  : OBJECT
     },
     EMPTY     = '',
     OPEN_O    = '{',
