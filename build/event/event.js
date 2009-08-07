@@ -86,67 +86,9 @@ YUI.add('event', function(Y) {
 
 var GLOBAL_ENV = YUI.Env,
     
-    adapt = Y.Env.evt.plugins,
-
     yready = function() {
         Y.fire('domready');
     };
-
-Y.mix(adapt, {
-
-    /**
-     * Executes the supplied callback when the DOM is first usable.  This
-     * will execute immediately if called after the DOMReady event has
-     * fired.   @todo the DOMContentReady event does not fire when the
-     * script is dynamically injected into the page.  This means the
-     * DOMReady custom event will never fire in FireFox or Opera when the
-     * library is injected.  It _will_ fire in Safari, and the IE 
-     * implementation would allow for us to fire it if the defered script
-     * is not available.  We want this to behave the same in all browsers.
-     * Is there a way to identify when the script has been injected 
-     * instead of included inline?  Is there a way to know whether the 
-     * window onload event has fired without having had a listener attached 
-     * to it when it did so?
-     *
-     * <p>The callback is a Event.Custom, so the signature is:</p>
-     * <p>type &lt;string&gt;, args &lt;array&gt;, customobject &lt;object&gt;</p>
-     * <p>For DOMReady events, there are no fire argments, so the
-     * signature is:</p>
-     * <p>"DOMReady", [], obj</p>
-     *
-     * @event domready
-     * @for YUI
-     *
-     * @param {function} fn what to execute when the element is found.
-     * @optional context optional execution context
-     * @optional args 0..n arguments to send to the listener
-     *
-     */
-    domready: {},
-
-    /**
-     * Use domready event instead. @see domready
-     * @event event:ready
-     * @for YUI
-     * @deprecated use 'domready' instead
-     */
-    'event:ready': {
-
-        on: function() {
-            var a = Y.Array(arguments, 0, true);
-            a[0] = 'domready';
-            return Y.subscribe.apply(Y, a);
-        },
-
-        detach: function() {
-            var a = Y.Array(arguments, 0, true);
-            a[0] = 'domready';
-            return Y.unsubscribe.apply(Y, a);
-        }
-    }
-
-});
-
 
 Y.publish('domready', {
     fireOnce: true
@@ -497,18 +439,12 @@ COMPAT_ARG = '~yui|2|compat~',
 
 shouldIterate = function(o) {
     try {
-         
-        // if (o instanceof Y.Node) {
-            // o.tagName ="adsf";
-        // }
-
-        return ( o                     && // o is something
+        return ( (o                    && // o is something
                  typeof o !== "string" && // o is not a string
-                 // o.length  && // o is indexed
-                 (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
+                 o.length              && // o is indexed
                  !o.tagName            && // o is not an HTML element
                  !o.alert              && // o is not a window
-                 (o.item || typeof o[0] !== "undefined") );
+                 (o.item || typeof o[0] !== "undefined")) );
     } catch(ex) {
         return false;
     }
@@ -714,9 +650,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             return this.onAvailable(id, fn, p_obj, p_override, true, compat);
         },
 
-
         /**
-         * Appends an event handler
+         * Adds an event listener
          *
          * @method attach
          *
@@ -725,17 +660,14 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * @param {String|HTMLElement|Array|NodeList} el An id, an element 
          *  reference, or a collection of ids and/or elements to assign the 
          *  listener to.
-         * @param {Object}   obj    An arbitrary object that will be 
-         *                             passed as a parameter to the handler
+         * @param {Object}   context optional context object
          * @param {Boolean|object}  args 0..n arguments to pass to the callback
-         * @return {Boolean} True if the action was successful or defered,
-         *                        false if one or more of the elements 
-         *                        could not have the listener attached,
-         *                        or if the operation throws an exception.
+         * @return {EventHandle} an object to that can be used to detach the listener
+         *                     
          * @static
          */
 
-        attach: function(type, fn, el, obj) {
+        attach: function(type, fn, el, context) {
             return Y.Event._attach(Y.Array(arguments, 0, true));
         },
 
@@ -815,6 +747,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 return false;
             }
 
+
             // The el argument can be an array of elements or element ids.
             if (shouldIterate(el)) {
 
@@ -870,18 +803,13 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 }
             }
 
-            // Element should be an html element or an array if we get here.
+            // Element should be an html element or node
             if (!el) {
                 return false;
             }
 
-            // the custom event key is the uid for the element + type
-
-            // allow a node reference to Y.on to work with load time addEventListener check
-            // (Node currently only has the addEventListener interface and that may be
-            // removed).
             if (Y.Node && el instanceof Y.Node) {
-                return el.on.apply(el, args);
+                el = Y.Node.getDOMNode(el);
             }
 
  			cewrapper = this._createWrapper(el, type, capture, compat, facade);
@@ -924,13 +852,14 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          *
          * @method detach
          *
-         * @param {String|HTMLElement|Array|NodeList} el An id, an element 
-         *  reference, or a collection of ids and/or elements to remove
-         *  the listener from.
          * @param {String} type the type of event to remove.
          * @param {Function} fn the method the event invokes.  If fn is
-         *  undefined, then all event handlers for the type of event are *  removed.
-         * @return {boolean} true if the unbind was successful, false *  otherwise.
+         * undefined, then all event handlers for the type of event are 
+         * removed.
+         * @param {String|HTMLElement|Array|NodeList|EventHandle} el An 
+         * event handle, an id, an element reference, or a collection 
+         * of ids and/or elements to remove the listener from.
+         * @return {boolean} true if the unbind was successful, false otherwise.
          * @static
          */
         detach: function(type, fn, el, obj) {

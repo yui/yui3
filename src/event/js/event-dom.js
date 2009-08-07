@@ -34,19 +34,12 @@ COMPAT_ARG = '~yui|2|compat~',
 
 shouldIterate = function(o) {
     try {
-         
-        // Y.log('node? ' + (o instanceof Y.Node) + ', ' + ((o.size) ? o.size() : ' no size'));
-        // if (o instanceof Y.Node) {
-            // o.tagName ="adsf";
-        // }
-
-        return ( o                     && // o is something
+        return ( (o                    && // o is something
                  typeof o !== "string" && // o is not a string
-                 // o.length  && // o is indexed
-                 (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
+                 o.length              && // o is indexed
                  !o.tagName            && // o is not an HTML element
                  !o.alert              && // o is not a window
-                 (o.item || typeof o[0] !== "undefined") );
+                 (o.item || typeof o[0] !== "undefined")) );
     } catch(ex) {
         Y.log("collection check failure", "warn", "event");
         return false;
@@ -352,10 +345,10 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return false;
             }
 
+
             // The el argument can be an array of elements or element ids.
             if (shouldIterate(el)) {
 
-                // Y.log('collection: ' + el);
                 // Y.log('collection: ' + el.item(0) + ', ' + el.item(1));
 
                 handles=[];
@@ -411,19 +404,14 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 }
             }
 
-            // Element should be an html element or an array if we get here.
+            // Element should be an html element or node
             if (!el) {
                 Y.log("unable to attach event " + type, "warn", "event");
                 return false;
             }
 
-            // the custom event key is the uid for the element + type
-
-            // allow a node reference to Y.on to work with load time addEventListener check
-            // (Node currently only has the addEventListener interface and that may be
-            // removed).
             if (Y.Node && el instanceof Y.Node) {
-                return el.on.apply(el, args);
+                el = Y.Node.getDOMNode(el);
             }
 
  			cewrapper = this._createWrapper(el, type, capture, compat, facade);

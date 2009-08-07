@@ -484,7 +484,7 @@ YUI.prototype = {
             loader.require(missing);
             loader.insert();
         } else if (Y.Get && missing.length && !Y.Env.bootstrapped) {
-            Y.log('fetching loader: ' + Y.config.base + Y.config.loaderPath);
+            Y.log('fetching loader: ' + Y.config.base + Y.config.loaderPath, 'info', 'yui');
 
             a = Y.Array(arguments, 0, true);
             // a.unshift('loader');
