@@ -66,7 +66,6 @@
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
         <span class="nx">EventTarget</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">,</span>
-        <span class="nx">Base</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span>
 
         <span class="nx">DOT</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">,</span>
         <span class="nx">CHANGE</span> <span class="o">=</span> <span class="s2">&quot;Change&quot;</span><span class="o">,</span>
@@ -131,7 +130,8 @@
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
 
         <span class="k">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="c">// help compression</span>
-<span class="c"></span>            <span class="nx">attrs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">;</span>
+<span class="c"></span>            <span class="nx">attrs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">,</span>
+            <span class="nx">Base</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">;</span>
 
         <span class="c">// Perf tweak - avoid creating event literals if not required.</span>
 <span class="c"></span>        <span class="nx">host</span><span class="o">.</span><span class="nx">_ATTR_E_FACADE</span> <span class="o">=</span> <span class="o">{};</span>
@@ -144,10 +144,8 @@
         <span class="nx">host</span><span class="o">.</span><span class="nx">_stateProxy</span> <span class="o">=</span> <span class="nx">host</span><span class="o">.</span><span class="nx">_stateProxy</span> <span class="o">||</span> <span class="kc">null</span><span class="o">;</span>
         <span class="nx">host</span><span class="o">.</span><span class="nx">_requireAddAttr</span> <span class="o">=</span> <span class="nx">host</span><span class="o">.</span><span class="nx">_requireAddAttr</span> <span class="o">||</span> <span class="kc">false</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(</span> <span class="nx">attrs</span> <span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Base</span> <span class="o">&amp;&amp;</span> <span class="o">!(</span><span class="nx">host</span> <span class="k">instanceof</span> <span class="nx">Base</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">host</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="nx">attrs</span><span class="o">);</span>
-            <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span> <span class="nx">attrs</span> <span class="o">&amp;&amp;</span> <span class="o">!(</span><span class="nx">Base</span> <span class="o">&amp;&amp;</span> <span class="nx">host</span> <span class="k">instanceof</span> <span class="nx">Base</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">host</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">attrs</span><span class="o">));</span>
         <span class="o">}</span>
     <span class="o">}</span>
 
@@ -949,7 +947,6 @@
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
-                                <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>

@@ -1,3 +1,9 @@
+/**
+ * Adds event delegation support to the library.
+ * 
+ * @module event
+ * @submodule event-delegate
+ */
 (function() {
 
 var Lang = Y.Lang,

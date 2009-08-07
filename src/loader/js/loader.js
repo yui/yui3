@@ -129,6 +129,7 @@ var NOT_FOUND = {},
     DUMP = 'dump',
     GET = 'get',
     EVENT = 'event',
+    EVENTBASE = 'event-base',
     EVENTCUSTOM = 'event-custom',
     IOBASE = 'io-base',
     NODE = 'node',
@@ -206,7 +207,7 @@ var NOT_FOUND = {},
 
             submodules: {
                 'node-base': {
-                    requires: [DOMBASE, BASE, SELECTORCSS2, EVENT]
+                    requires: [DOMBASE, BASE, SELECTORCSS2, EVENTBASE]
                 },
 
                 'node-style': {
@@ -417,8 +418,31 @@ var NOT_FOUND = {},
         },
 
         event: { 
-            expound: NODEBASE,
-            requires: [EVENTCUSTOM]
+            expound: NODE,
+            submodules: {
+                'event-base': {
+                    expound: NODEBASE,
+                    requires: [EVENTCUSTOM]
+                },
+                'event-delegate': {
+                    requires: [EVENTBASE]
+                },
+                'event-focus': {
+                    requires: [EVENTBASE]
+                },
+                'event-key': {
+                    requires: [EVENTBASE]
+                },
+                'event-mouseenter': {
+                    requires: [EVENTBASE]
+                },
+                'event-mousewheel': {
+                    requires: [EVENTBASE]
+                },
+                'event-resize': {
+                    requires: [EVENTBASE]
+                }
+            }
         },
 
         'event-custom': { 
@@ -426,7 +450,7 @@ var NOT_FOUND = {},
         },
 
         'event-simulate': { 
-            requires: [EVENT]
+            requires: [EVENTBASE]
         },
 
         'node-focusmanager': { 

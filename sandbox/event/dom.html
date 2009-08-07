@@ -70,14 +70,14 @@ YUI({
     }, document);
     */
 
-    Y.on('asdasdafdsf|yui:log', function(e) {
-        var d=document, b=d.body, n=d.createElement("div");
-        if (b) {
-            n.appendChild(d.createTextNode(e.msg));
-            b.appendChild(n);
-        }
+    // Y.on('asdasdafdsf|yui:log', function(e) {
+    //     var d=document, b=d.body, n=d.createElement("div");
+    //     if (b) {
+    //         n.appendChild(d.createTextNode(e.msg));
+    //         b.appendChild(n);
+    //     }
 
-    });
+    // });
 
 /*
     Y.on('event:ready', function() {
@@ -321,6 +321,10 @@ Y.on('windowresize', function(e) {
     // Y.on('resize', function(e) {                                                                                                                                
         // alert('resized');                                                                                                                                       
     // });  
+
+    Y.on('mousewheel', function(e, arg1) {
+        Y.log('mousewheel: ' + e.wheelDelta + ', ' + arg1);
+    }, Y, 1);
 
 });
 

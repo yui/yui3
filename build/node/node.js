@@ -31,16 +31,14 @@ var g_nodes = {},
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
-    SuperConstr = Y.Base,
-    SuperConstrProto = Y.Base.prototype,
-
     Node = function(node) {
-        var config = null,
-            uid = node[UID];
+        var uid = node[UID];
 
         if (uid && g_nodes[uid] && g_nodes[uid] !== node) {
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
+
+        this._initPlugins();
 
         uid = Y.stamp(node);
         if (!uid) { // stamp failed; likely IE non-HTMLElement
@@ -48,13 +46,11 @@ var g_nodes = {},
         }
 
         this[UID] = uid;
+        this._conf = {};
 
         g_nodes[uid] = node;
+        this._stateProxy = node;
         Node._instances[uid] = this;
-
-        this._lazyAttrInit = true;
-        this._silentInit = true;
-        SuperConstr.call(this, config);
     },
 
     // used with previous/next/ancestor tests
@@ -75,6 +71,8 @@ var g_nodes = {},
 // end "globals"
 
 Node.NAME = 'Node';
+
+Node.re_aria = /^(?:role$|aria-)/;
 
 Node.DOM_EVENTS = {
     abort: true,
@@ -137,7 +135,7 @@ Node._instances = {};
 Node.plug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
-    Y.Base.plug.apply(Y.Base, args);
+    Y.Plugin.Host.plug.apply(Y.Base, args);
     return Node;
 };
 
@@ -152,7 +150,7 @@ Node.plug = function() {
 Node.unplug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
-    Y.Base.unplug.apply(Y.Base, args);
+    Y.Plugin.Host.unplug.apply(Y.Base, args);
     return Node;
 };
 
@@ -252,7 +250,7 @@ Node.get = function(node, doc) {
         if (typeof node === 'string') {
             if (node.indexOf('doc') === 0) { // doc OR document
                 node = Y.config.doc;
-            } else if (node.indexOf('win') === 0) { // doc OR document
+            } else if (node.indexOf('win') === 0) { // win OR window
                 node = Y.config.win;
             } else {
                 node = Y.Selector.query(node, doc, true);
@@ -321,7 +319,7 @@ Node.ATTRS = {
                 children = node.children,
                 childNodes, i, len;
 
-            if (children === undefined) {
+            if (!children) {
                 childNodes = node.childNodes;
                 children = [];
 
@@ -344,19 +342,29 @@ Node.ATTRS = {
             Y.DOM.setValue(g_nodes[this[UID]], val);
             return val;
         }
+    },
+
+    getter: function() {
+        return this._data;
+    },
+
+    setter: function(val) {
+        this._data = val;
+        return val;
     }
 };
 
 // call with instance context
 Node.DEFAULT_SETTER = function(name, val) {
-    var node = g_nodes[this[UID]],
+    var node = this._stateProxy,
         strPath;
 
     if (name.indexOf(DOT) > -1) {
         strPath = name;
         name = name.split(DOT);
+        // only allow when defined on node
         Y.Object.setValue(node, name, val);
-    } else if (node[name] !== undefined) { // only set DOM attributes
+    } else if (node[name] !== undefined) { // pass thru DOM properties 
         node[name] = val;
     }
 
@@ -365,19 +373,20 @@ Node.DEFAULT_SETTER = function(name, val) {
 
 // call with instance context
 Node.DEFAULT_GETTER = function(name) {
-    var node = g_nodes[this[UID]],
+    var node = this._stateProxy,
         val;
 
     if (name.indexOf && name.indexOf(DOT) > -1) {
         val = Y.Object.getValue(node, name.split(DOT));
-    } else {
+    } else if (node[name] !== undefined) { // pass thru from DOM
         val = node[name];
     }
 
     return val ? Y.Node.scrubVal(val, this) : val;
 };
 
-Y.extend(Node, Y.Base);
+Y.augment(Node, Y.Event.Target);
+Y.augment(Node, Y.Plugin.Host);
 
 Y.mix(Node.prototype, {
     toString: function() {
@@ -401,49 +410,32 @@ Y.mix(Node.prototype, {
         return str || errorMsg;
     },
 
-    _addDOMAttr: function(attr) {
-        var domNode = g_nodes[this[UID]];
-
-        if (domNode && domNode[attr] !== undefined) {
-            this.addAttr(attr, {
-                getter: function() {
-                    return Node.DEFAULT_GETTER.call(this, attr);
-                },
-
-                setter: function(val) {
-                    return Node.DEFAULT_SETTER.call(this, attr, val);
-                }
-            });
-        } else {
-        }
-    },
-
     get: function(attr) {
-        if (!this.attrAdded(attr)) { // use DEFAULT_GETTER for unconfigured attrs
-            if (Node.re_aria && Node.re_aria.test(attr)) { // except for aria
-                this._addAriaAttr(attr);
-            } else {
-                return Node.DEFAULT_GETTER.apply(this, arguments);
-            }
+        var attrConfig = Node.ATTRS[attr],
+            val;
+
+        if (attrConfig && attrConfig.getter) {
+            val = attrConfig.getter.call(this);
+        } else if (Node.re_aria.test(attr)) {
+            val = Y.Node.getDOMNode(this).getAttribute(attr, 2); 
+        } else {
+            val = Node.DEFAULT_GETTER.apply(this, arguments);
         }
 
-        return SuperConstrProto.get.apply(this, arguments);
+        return val;
     },
 
     set: function(attr, val) {
-        if (!this.attrAdded(attr)) { // use DEFAULT_SETTER for unconfigured attrs
-            // except for aria
-            if (Node.re_aria && Node.re_aria.test(attr)) {
-                this._addAriaAttr(attr);
-            //  or chained properties or if no change listeners
-            } else if (attr.indexOf(DOT) < 0 && this._yuievt.events['Node:' + attr + 'Change']) {
-                this._addDOMAttr(attr);
-            } else {
-                Node.DEFAULT_SETTER.call(this, attr, val);
-                return this; // NOTE: return
-            }
+        var attrConfig = Node.ATTRS[attr];
+
+        if (attrConfig && attrConfig.setter) {
+            attrConfig.setter.call(this, val);
+        } else if (Node.re_aria.test(attr)) {
+            Y.Node.getDOMNode(this).setAttribute(attr, val);
+        } else {
+            Node.DEFAULT_SETTER.apply(this, arguments);
         }
-        SuperConstrProto.set.apply(this, arguments);
+
         return this;
     },
 
@@ -752,8 +744,8 @@ Y.Array.diff = function(a, b) {
 };
 
 var NodeList = function(config) {
-    var doc = config.doc || Y.config.doc,
-        nodes = config.nodes || [];
+    var nodes = config.nodes || [],
+        doc = config.doc || Y.config.doc;
 
     if (typeof nodes === 'string') {
         this._query = nodes;
@@ -763,10 +755,6 @@ var NodeList = function(config) {
     Y.stamp(this);
     NodeList._instances[this[UID]] = this;
     g_nodelists[this[UID]] = nodes;
-
-    if (config.restricted) {
-        g_restrict = this[UID];
-    }
 };
 // end "globals"
 
@@ -988,7 +976,7 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
-     * Applies an event listens to each Node bound to the NodeList. 
+     * Applies an event listener to each Node bound to the NodeList. 
      * @method on
      * @param {String} type The event being listened for
      * @param {Function} fn The handler to call when the event fires
@@ -1005,7 +993,7 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
-     * Applies an event listens to each Node bound to the NodeList. 
+     * Applies an event listener to each Node bound to the NodeList. 
      * The handler is called only after all on() handlers are called
      * and the event is not prevented.
      * @method after
@@ -1149,8 +1137,7 @@ Y.all = function(nodes, doc, restrict) {
     // TODO: propagate restricted to nodes?
     var nodeList = new NodeList({
         nodes: nodes,
-        doc: doc,
-        restricted: restrict
+        doc: doc
     });
 
     // zero-length result returns null
@@ -1519,7 +1506,6 @@ Y.Node.importMethod(Y.DOM, methods);
  * @param {String} attr The style attribute to retrieve. 
  * @return {Array} The computed values for each node.
  */
-'getComputedStyle',
 
 /**
  * Sets a style property on each node.
@@ -1529,7 +1515,6 @@ Y.Node.importMethod(Y.DOM, methods);
  * @param {String|Number} val The value. 
  * @chainable
  */
-'setStyle',
 
 /**
  * Sets multiple style properties on each node.
@@ -1538,7 +1523,6 @@ Y.Node.importMethod(Y.DOM, methods);
  * @param {Object} hash An object literal of property:value pairs. 
  * @chainable
  */
-'setStyles'
 Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 
@@ -1764,32 +1748,7 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 
 
 }, '@VERSION@' ,{requires:['dom-screen']});
-YUI.add('node-aria', function(Y) {
-
-/**
- * Aria support for Node
- * @module node
- * @submodule node-aria
- */
-
-Y.Node.re_aria = /^(?:role$|aria-)/;
-
-Y.Node.prototype._addAriaAttr = function(name) {
-    this.addAttr(name, {
-        getter: function() {
-            return Y.Node.getDOMNode(this).getAttribute(name, 2); 
-        },
-
-        setter: function(val) {
-            Y.Node.getDOMNode(this).setAttribute(name, val);
-            return val; 
-        }
-    });
-};
 
 
-}, '@VERSION@' ,{requires:['node-base']});
-
-
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-aria'], skinnable:false, requires:['dom']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom'], use:['node-base', 'node-style', 'node-screen'], skinnable:false});
 

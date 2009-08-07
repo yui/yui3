@@ -1,3 +1,8 @@
+/**
+ * Functionality to listen for one or more specific key combinations.
+ * @module event
+ * @submodule event-key
+ */
 
 /**
  * Add a key listener.  The listener will only be notified if the

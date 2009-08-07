@@ -6,13 +6,13 @@ YUI.add('node-aria', function(Y) {
  * @submodule node-aria
  */
 
-Y.Node.re_aria = /^(?:role$|aria-)/;
+Y.Node.prototype.get = function(name) {
+    var val;
+    if (re_aria.test(name)) {
+            val = Y.Node.getDOMNode(this).getAttribute(name, 2); 
+    } else {
 
-Y.Node.prototype._addAriaAttr = function(name) {
-    this.addAttr(name, {
-        getter: function() {
-            return Y.Node.getDOMNode(this).getAttribute(name, 2); 
-        },
+    }
 
         setter: function(val) {
             Y.Node.getDOMNode(this).setAttribute(name, val);

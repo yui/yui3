@@ -1,3 +1,10 @@
+
+/**
+ * DOM event listener abstraction layer
+ * @module event
+ * @submodule event-base
+ */
+
 /**
  * Executes the callback as soon as the specified element 
  * is detected in the DOM.

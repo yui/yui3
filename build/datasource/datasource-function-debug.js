@@ -82,8 +82,14 @@ Y.extend(DSFn, Y.DataSource.Local, {
             response;
             
             if(fn) {
-                response = fn(e.request, this, e);
-                this.fire("data", Y.mix({data:response}, e));
+                try {
+                    response = fn(e.request, this, e);
+                    this.fire("data", Y.mix({data:response}, e));
+                }
+                catch(error) {
+                    e.error = error;
+                    this.fire("error", e);
+                }
             }
             else {
                 e.error = new Error("Function data failure");

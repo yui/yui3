@@ -42,8 +42,8 @@ Y.Array.diff = function(a, b) {
 };
 
 var NodeList = function(config) {
-    var doc = config.doc || Y.config.doc,
-        nodes = config.nodes || [];
+    var nodes = config.nodes || [],
+        doc = config.doc || Y.config.doc;
 
     if (typeof nodes === 'string') {
         this._query = nodes;
@@ -53,10 +53,6 @@ var NodeList = function(config) {
     Y.stamp(this);
     NodeList._instances[this[UID]] = this;
     g_nodelists[this[UID]] = nodes;
-
-    if (config.restricted) {
-        g_restrict = this[UID];
-    }
 };
 // end "globals"
 
@@ -280,7 +276,7 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
-     * Applies an event listens to each Node bound to the NodeList. 
+     * Applies an event listener to each Node bound to the NodeList. 
      * @method on
      * @param {String} type The event being listened for
      * @param {Function} fn The handler to call when the event fires
@@ -297,7 +293,7 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
-     * Applies an event listens to each Node bound to the NodeList. 
+     * Applies an event listener to each Node bound to the NodeList. 
      * The handler is called only after all on() handlers are called
      * and the event is not prevented.
      * @method after
@@ -441,8 +437,7 @@ Y.all = function(nodes, doc, restrict) {
     // TODO: propagate restricted to nodes?
     var nodeList = new NodeList({
         nodes: nodes,
-        doc: doc,
-        restricted: restrict
+        doc: doc
     });
 
     // zero-length result returns null

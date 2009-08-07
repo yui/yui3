@@ -1,3 +1,9 @@
+/**
+ * Adds support for mouseenter/mouseleave events
+ * @module event
+ * @submodule event-mouseenter
+ */
+
 var isString = Y.Lang.isString,
 
 	fireMouseEventForNode = function (node, relatedTarget, eventName, e, spec) {
