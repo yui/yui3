@@ -420,7 +420,7 @@ var NOT_FOUND = {},
         },
 
         event: { 
-            expound: NODEBASE,
+            expound: NODE,
             submodules: {
                 'event-base': {
                     expound: NODEBASE,
@@ -452,7 +452,7 @@ var NOT_FOUND = {},
         },
 
         'event-simulate': { 
-            requires: [EVENT]
+            requires: [EVENTBASE]
         },
 
         'node-focusmanager': { 
