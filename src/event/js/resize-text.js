@@ -14,7 +14,7 @@ var DOC    = Y.config.doc,
     SUPPORTS_CW_RESIZE = !(GECKO && GECKO <= 1.8),
     SECURE_FRAME_SOURCE = SECURE && Y.config.secureFrameSource
 
-/**
+/*
 * Initialize an empty IFRAME that is placed out of the visible area 
 * that can be used to detect text resize.
 * @method initResizeMonitor
@@ -32,7 +32,7 @@ initResizeMonitor: function () {
     }
 },
 
-/**
+/*
  * Create and initialize the text resize monitoring iframe.
  * 
  * @protected
@@ -137,7 +137,7 @@ _initResizeMonitor : function() {
     }
 },
 
-    /**
+    /*
     * Event handler fired when the resize monitor element is resized.
     * @method onDomResize
     * @param {DOMEvent} e The DOM resize event
