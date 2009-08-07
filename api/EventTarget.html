@@ -530,6 +530,11 @@ been published and it has no subscribers.  For performance sake, we
 immediate exit in this case.  This means the event won't bubble, so 
 if the intention is that a bubble target be notified, the event must 
 be published on this object first.
+The first argument is the event type, and any additional arguments are
+passed to the listeners as parameters.  If the first of these is an
+object literal, and the event is configured to emit an event facade,
+that object is mixed into the event facade and the facade is provided 
+in place of the original object.
                                         </div>
 
                                         <div class="description">
@@ -548,7 +553,10 @@ a 'type' property.</span>
                                                         &lt;<span property="yui:type">Object*</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  an arbitrary set of parameters to pass to 
-the handler.</span>
+the handler.  If the first of these is an object literal and the event is
+configured to emit an event facade, the event facade will replace that
+parameter after the properties the object literal contains are copied to
+the event facade.</span>
                                                         </dd>
                                                 </dl>
 
