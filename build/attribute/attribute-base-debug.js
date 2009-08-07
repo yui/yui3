@@ -127,6 +127,14 @@ YUI.add('attribute-base', function(Y) {
      *
      * @module attribute
      */
+
+    /**
+     * The attribute-base submodule provides core attribute handling support, with everything
+     * aside from complex attribute handling in the provider's constructor.
+     *
+     * @module attribute
+     * @submodule attribute-base
+     */
     var O = Y.Object,
         EventTarget = Y.EventTarget,
 
@@ -181,7 +189,7 @@ YUI.add('attribute-base', function(Y) {
      *
      * <p>See the <a href="#method_addAttr">addAttr</a> method, for the complete set of configuration
      * options available for attributes</p>.
-     * 
+     *
      * <p><strong>NOTE:</strong> Most implementations will be better off extending the <a href="Base.html">Base</a> class, 
      * instead of augmenting Attribute directly. Base augments Attribute and will handle the initial configuration 
      * of attributes for derived classes, accounting for values passed into the constructor.</p>
@@ -192,7 +200,8 @@ YUI.add('attribute-base', function(Y) {
     function Attribute() {
         Y.log('Attribute constructor called', 'info', 'attribute');
 
-        var host = this; // help compression
+        var host = this, // help compression
+            attrs = this.constructor.ATTRS;
 
         // Perf tweak - avoid creating event literals if not required.
         host._ATTR_E_FACADE = {};
@@ -204,6 +213,10 @@ YUI.add('attribute-base', function(Y) {
 
         host._stateProxy = host._stateProxy || null;
         host._requireAddAttr = host._requireAddAttr || false;
+
+        if ( attrs && Y.Base && !(host instanceof Y.Base) ) {
+            host.addAttrs(attrs);
+        }
     }
 
     /**
