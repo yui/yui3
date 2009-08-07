@@ -132,7 +132,6 @@ button {
 <div id="yui-log"></div>
 <script type="text/javascript">
 YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', function(Y) {
-console.log(Y);
     var tool = YAHOO.tool,
     suite = new tool.TestSuite("yuisuite");
 
@@ -245,7 +244,6 @@ console.log(Y);
         },
 
         test_indexOf: function() {
-            console.log(Y.NodeList.getDOMNodes(Y.all('div')));
             Assert.areEqual(0, Y.all('div').indexOf(Y.get('#test-append')),
                 "Y.all('div').indexOf(Y.get('#test-append'))");
 
@@ -366,7 +364,7 @@ console.log(Y);
 
             node.set('foo', 'foo');
             Assert.isUndefined(node.get('foo'), 'node.get("foo")');
-
+            
             node.set('title', 'my title');
             Assert.areEqual('my title', Y.Node.getDOMNode(node).title, 'node.title)');
             Assert.areEqual('my title', node.get('title'), 'node.set("title")');

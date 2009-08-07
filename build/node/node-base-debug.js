@@ -38,7 +38,6 @@ var g_nodes = {},
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
 
-        this.addAttrs(Node.ATTRS);
         this._initPlugins();
 
         uid = Y.stamp(node);
@@ -47,6 +46,7 @@ var g_nodes = {},
         }
 
         this[UID] = uid;
+        this._conf = {};
 
         g_nodes[uid] = node;
         this._stateProxy = node;
@@ -343,6 +343,15 @@ Node.ATTRS = {
             Y.DOM.setValue(g_nodes[this[UID]], val);
             return val;
         }
+    },
+
+    getter: function() {
+        return this._data;
+    },
+
+    setter: function(val) {
+        this._data = val;
+        return val;
     }
 };
 
@@ -354,8 +363,9 @@ Node.DEFAULT_SETTER = function(name, val) {
     if (name.indexOf(DOT) > -1) {
         strPath = name;
         name = name.split(DOT);
+        // only allow when defined on node
         Y.Object.setValue(node, name, val);
-    } else if (node[name] !== undefined) { // only set DOM attributes
+    } else if (node[name] !== undefined) { // pass thru DOM properties 
         node[name] = val;
     }
 
@@ -369,7 +379,7 @@ Node.DEFAULT_GETTER = function(name) {
 
     if (name.indexOf && name.indexOf(DOT) > -1) {
         val = Y.Object.getValue(node, name.split(DOT));
-    } else {
+    } else if (node[name] !== undefined) { // pass thru from DOM
         val = node[name];
     }
 
@@ -380,10 +390,6 @@ Y.augment(Node, Y.Event.Target);
 Y.augment(Node, Y.Plugin.Host);
 
 Y.mix(Node.prototype, {
-    _getClasses: function() {
-        return [Node];
-    },
-
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to a node',
@@ -405,15 +411,8 @@ Y.mix(Node.prototype, {
         return str || errorMsg;
     },
 
-    addAttrs: function(hash) {
-        this._attrs = this._attrs || {};
-        Y.each(hash, function(config, attr) {
-            this._attrs[attr] = config;
-        }, this);
-    },
-
     get: function(attr) {
-        var attrConfig = this._attrs[attr],
+        var attrConfig = Node.ATTRS[attr],
             val;
 
         if (attrConfig && attrConfig.getter) {
@@ -428,7 +427,7 @@ Y.mix(Node.prototype, {
     },
 
     set: function(attr, val) {
-        var attrConfig = this._attrs[attr];
+        var attrConfig = Node.ATTRS[attr];
 
         if (attrConfig && attrConfig.setter) {
             attrConfig.setter.call(this, val);
