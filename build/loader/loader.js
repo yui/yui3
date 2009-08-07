@@ -108,6 +108,7 @@ var NOT_FOUND = {},
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED,
     BASE = 'base', 
+    BASEBASE = 'base-base',
     CSS = 'css',
     JS = 'js',
     CSSRESET = 'cssreset',
@@ -274,7 +275,11 @@ var NOT_FOUND = {},
                 },
 
                 'base-build': {
-                    requires: ['base-base']
+                    requires: [BASEBASE]
+                },
+
+                'base-pluginhost': {
+                    requires: [BASEBASE, 'pluginhost']
                 }
             }
         },
@@ -528,6 +533,10 @@ var NOT_FOUND = {},
 
         plugin: { 
             requires: [BASE]
+        },
+
+        pluginhost: { 
+            requires: [YUIBASE]
         },
 
         profiler: { 
