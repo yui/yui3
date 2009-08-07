@@ -17,6 +17,7 @@
      */
     var O = Y.Object,
         EventTarget = Y.EventTarget,
+        Base = Y.Base,
 
         DOT = ".",
         CHANGE = "Change",
@@ -94,8 +95,10 @@
         host._stateProxy = host._stateProxy || null;
         host._requireAddAttr = host._requireAddAttr || false;
 
-        if ( attrs && Y.Base && !(host instanceof Y.Base) ) {
-            host.addAttrs(attrs);
+        if ( attrs ) {
+            if (Base && !(host instanceof Base)) {
+                host.addAttrs(attrs);
+            }
         }
     }
 
