@@ -229,12 +229,20 @@
         var testEntryManagement = new Y.Test.Case({
             name: "Entry Management Tests",
 
-            testAllowDuplicateEntries: function() {
+            testNonUniqueKeys: function() {
                 var cache = new Y.Cache({max:3});
                 cache.add(1, "a");
                 cache.add(2, "b");
-                cache.add(1, "a");
+                cache.add(1, "c");
                 ASSERT.areSame(3, cache.get("size"), "Expected 3 entries.");
+            },
+
+            testUniqueKeys: function() {
+                var cache = new Y.Cache({max:3,uniqueKeys:true});
+                cache.add(1, "a");
+                cache.add(2, "b");
+                cache.add(1, "c");
+                ASSERT.areSame(2, cache.get("size"), "Expected 2 entries.");
             },
 
             testFreshness: function() {

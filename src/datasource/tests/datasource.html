@@ -15,7 +15,7 @@
 (function() {
     YUI({
         base: "../../../build/",
-        //filter: "debug",
+        filter: "raw",
         logInclude:{"TestRunner":true,"datasource":true},
         useConsole: true
     }).use("dump", "test", "console", "io-base", "cache", "base", "plugin", "json", "datatype", "dataschema", "datasource", function(Y) {
@@ -494,6 +494,36 @@
                         ASSERT.areSame("callback", e.callback, "error: Expected callback.");
                         ASSERT.isUndefined(e.data, "error: Expected undefined data.");
                         ASSERT.isObject(e.error, "error: Expected error.");
+                    })]
+                });
+                ds.on("error", handler.handleError);
+
+                ds.sendRequest("a", "callback");
+                this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
+            },
+            
+            testFunctionException: function() {
+                var ds = new Y.DataSource.Function({
+                    source: function() {
+                        throw new Error("myException")
+                    }
+                });
+                ds.plug({fn: Y.Plugin.DataSourceArraySchema, cfg: {
+                    schema: {
+                        resultFields: ["type", "name"]
+                    }
+                }});
+
+                var handler = Y.Mock();
+                Y.Mock.expect(handler,{
+                    method: "handleError",
+                    args: [Y.Mock.Value(function(e){
+                        ASSERT.isNumber(e.tId, "error: Expected transaction ID.");
+                        ASSERT.areSame("a", e.request, "error: Expected request.");
+                        ASSERT.areSame("callback", e.callback, "error: Expected callback.");
+                        ASSERT.isUndefined(e.data, "error: Expected undefined data.");
+                        ASSERT.isObject(e.error, "error: Expected error.");
+                        ASSERT.areSame("myException", e.error.message, "error: Expected message.");
                     })]
                 });
                 ds.on("error", handler.handleError);
