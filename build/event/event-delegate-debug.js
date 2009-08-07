@@ -165,4 +165,4 @@ Y.Env.evt.plugins.delegate = {
 })();
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-base']});

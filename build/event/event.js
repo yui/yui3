@@ -1469,7 +1469,7 @@ Y.Env.evt.plugins.delegate = {
 })();
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-base']});
 YUI.add('event-mousewheel', function(Y) {
 
 /**
@@ -1518,7 +1518,7 @@ Y.Env.evt.plugins.mousewheel = {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-base']});
 YUI.add('event-mouseenter', function(Y) {
 
 /**
@@ -1655,7 +1655,7 @@ Y.Env.evt.plugins.mouseenter = eventConfig;
 Y.Env.evt.plugins.mouseleave = eventConfig;
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-base']});
 YUI.add('event-key', function(Y) {
 
 /**
@@ -1755,7 +1755,7 @@ Y.Env.evt.plugins.key = {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-base']});
 YUI.add('event-focus', function(Y) {
 
 /**
@@ -1853,7 +1853,7 @@ adapt.blur = {
 })();
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-base']});
 YUI.add('event-resize', function(Y) {
 
 /**
@@ -1917,7 +1917,7 @@ Y.Env.evt.plugins.windowresize = {
 })();
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-base']});
 
 
 YUI.add('event', function(Y){}, '@VERSION@' ,{use:['event-base', 'event-delegate', 'event-mousewheel', 'event-mouseenter', 'event-key', 'event-focus', 'event-resize']});

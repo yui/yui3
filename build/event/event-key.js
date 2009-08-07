@@ -97,4 +97,4 @@ Y.Env.evt.plugins.key = {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-base']});

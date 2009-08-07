@@ -102,4 +102,4 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-base']});

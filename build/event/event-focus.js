@@ -95,4 +95,4 @@ adapt.blur = {
 })();
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-base']});

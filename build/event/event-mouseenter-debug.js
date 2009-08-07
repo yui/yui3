@@ -134,4 +134,4 @@ Y.Env.evt.plugins.mouseenter = eventConfig;
 Y.Env.evt.plugins.mouseleave = eventConfig;
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-base']});
