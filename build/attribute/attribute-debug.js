@@ -137,7 +137,6 @@ YUI.add('attribute-base', function(Y) {
      */
     var O = Y.Object,
         EventTarget = Y.EventTarget,
-        Base = Y.Base,
 
         DOT = ".",
         CHANGE = "Change",
@@ -202,7 +201,8 @@ YUI.add('attribute-base', function(Y) {
         Y.log('Attribute constructor called', 'info', 'attribute');
 
         var host = this, // help compression
-            attrs = this.constructor.ATTRS;
+            attrs = this.constructor.ATTRS,
+            Base = Y.Base;
 
         // Perf tweak - avoid creating event literals if not required.
         host._ATTR_E_FACADE = {};
@@ -215,10 +215,8 @@ YUI.add('attribute-base', function(Y) {
         host._stateProxy = host._stateProxy || null;
         host._requireAddAttr = host._requireAddAttr || false;
 
-        if ( attrs ) {
-            if (Base && !(host instanceof Base)) {
-                host.addAttrs(attrs);
-            }
+        if ( attrs && !(Base && host instanceof Base)) {
+            host.addAttrs(Y.merge(attrs));
         }
     }
 
