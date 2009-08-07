@@ -56,6 +56,14 @@
 <span class="c">     *</span>
 <span class="c">     * @module attribute</span>
 <span class="c">     */</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The attribute-base submodule provides core attribute handling support, with everything</span>
+<span class="c">     * aside from complex attribute handling in the provider&#39;s constructor.</span>
+<span class="c">     *</span>
+<span class="c">     * @module attribute</span>
+<span class="c">     * @submodule attribute-base</span>
+<span class="c">     */</span>
     <span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
         <span class="nx">EventTarget</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">,</span>
 
@@ -110,7 +118,7 @@
 <span class="c">     *</span>
 <span class="c">     * &lt;p&gt;See the &lt;a href=&quot;#method_addAttr&quot;&gt;addAttr&lt;/a&gt; method, for the complete set of configuration</span>
 <span class="c">     * options available for attributes&lt;/p&gt;.</span>
-<span class="c">     * </span>
+<span class="c">     *</span>
 <span class="c">     * &lt;p&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; Most implementations will be better off extending the &lt;a href=&quot;Base.html&quot;&gt;Base&lt;/a&gt; class, </span>
 <span class="c">     * instead of augmenting Attribute directly. Base augments Attribute and will handle the initial configuration </span>
 <span class="c">     * of attributes for derived classes, accounting for values passed into the constructor.&lt;/p&gt;</span>
@@ -121,8 +129,10 @@
     <span class="k">function</span> <span class="nx">Attribute</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
 
-        <span class="k">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span> <span class="c">// help compression</span>
-<span class="c"></span>
+        <span class="k">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="c">// help compression</span>
+<span class="c"></span>            <span class="nx">attrs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">,</span>
+            <span class="nx">Base</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">;</span>
+
         <span class="c">// Perf tweak - avoid creating event literals if not required.</span>
 <span class="c"></span>        <span class="nx">host</span><span class="o">.</span><span class="nx">_ATTR_E_FACADE</span> <span class="o">=</span> <span class="o">{};</span>
 
@@ -133,6 +143,10 @@
 
         <span class="nx">host</span><span class="o">.</span><span class="nx">_stateProxy</span> <span class="o">=</span> <span class="nx">host</span><span class="o">.</span><span class="nx">_stateProxy</span> <span class="o">||</span> <span class="kc">null</span><span class="o">;</span>
         <span class="nx">host</span><span class="o">.</span><span class="nx">_requireAddAttr</span> <span class="o">=</span> <span class="nx">host</span><span class="o">.</span><span class="nx">_requireAddAttr</span> <span class="o">||</span> <span class="kc">false</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span> <span class="nx">attrs</span> <span class="o">&amp;&amp;</span> <span class="o">!(</span><span class="nx">Base</span> <span class="o">&amp;&amp;</span> <span class="nx">host</span> <span class="k">instanceof</span> <span class="nx">Base</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">host</span><span class="o">.</span><span class="nx">addAttrs</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">attrs</span><span class="o">));</span>
+        <span class="o">}</span>
     <span class="o">}</span>
 
     <span class="c">/**</span>
@@ -921,7 +935,6 @@
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class="selected"><a href="module_attribute.html" title="attribute">attribute</a></li>
-                                <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
