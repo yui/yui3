@@ -29,16 +29,14 @@ var g_nodes = {},
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
-    SuperConstr = Y.Base,
-    SuperConstrProto = Y.Base.prototype,
-
     Node = function(node) {
-        var config = null,
-            uid = node[UID];
+        var uid = node[UID];
 
         if (uid && g_nodes[uid] && g_nodes[uid] !== node) {
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
+
+        this._initPlugins();
 
         uid = Y.stamp(node);
         if (!uid) { // stamp failed; likely IE non-HTMLElement
@@ -46,13 +44,11 @@ var g_nodes = {},
         }
 
         this[UID] = uid;
+        this._conf = {};
 
         g_nodes[uid] = node;
+        this._stateProxy = node;
         Node._instances[uid] = this;
-
-        this._lazyAttrInit = true;
-        this._silentInit = true;
-        SuperConstr.call(this, config);
     },
 
     // used with previous/next/ancestor tests
@@ -73,6 +69,8 @@ var g_nodes = {},
 // end "globals"
 
 Node.NAME = 'Node';
+
+Node.re_aria = /^(?:role$|aria-)/;
 
 Node.DOM_EVENTS = {
     abort: true,
@@ -135,7 +133,7 @@ Node._instances = {};
 Node.plug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
-    Y.Base.plug.apply(Y.Base, args);
+    Y.Plugin.Host.plug.apply(Y.Base, args);
     return Node;
 };
 
@@ -150,7 +148,7 @@ Node.plug = function() {
 Node.unplug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
-    Y.Base.unplug.apply(Y.Base, args);
+    Y.Plugin.Host.unplug.apply(Y.Base, args);
     return Node;
 };
 
@@ -251,7 +249,7 @@ Node.get = function(node, doc) {
         if (typeof node === 'string') {
             if (node.indexOf('doc') === 0) { // doc OR document
                 node = Y.config.doc;
-            } else if (node.indexOf('win') === 0) { // doc OR document
+            } else if (node.indexOf('win') === 0) { // win OR window
                 node = Y.config.win;
             } else {
                 node = Y.Selector.query(node, doc, true);
@@ -320,7 +318,7 @@ Node.ATTRS = {
                 children = node.children,
                 childNodes, i, len;
 
-            if (children === undefined) {
+            if (!children) {
                 childNodes = node.childNodes;
                 children = [];
 
@@ -343,19 +341,29 @@ Node.ATTRS = {
             Y.DOM.setValue(g_nodes[this[UID]], val);
             return val;
         }
+    },
+
+    getter: function() {
+        return this._data;
+    },
+
+    setter: function(val) {
+        this._data = val;
+        return val;
     }
 };
 
 // call with instance context
 Node.DEFAULT_SETTER = function(name, val) {
-    var node = g_nodes[this[UID]],
+    var node = this._stateProxy,
         strPath;
 
     if (name.indexOf(DOT) > -1) {
         strPath = name;
         name = name.split(DOT);
+        // only allow when defined on node
         Y.Object.setValue(node, name, val);
-    } else if (node[name] !== undefined) { // only set DOM attributes
+    } else if (node[name] !== undefined) { // pass thru DOM properties 
         node[name] = val;
     }
 
@@ -364,19 +372,20 @@ Node.DEFAULT_SETTER = function(name, val) {
 
 // call with instance context
 Node.DEFAULT_GETTER = function(name) {
-    var node = g_nodes[this[UID]],
+    var node = this._stateProxy,
         val;
 
     if (name.indexOf && name.indexOf(DOT) > -1) {
         val = Y.Object.getValue(node, name.split(DOT));
-    } else {
+    } else if (node[name] !== undefined) { // pass thru from DOM
         val = node[name];
     }
 
     return val ? Y.Node.scrubVal(val, this) : val;
 };
 
-Y.extend(Node, Y.Base);
+Y.augment(Node, Y.Event.Target);
+Y.augment(Node, Y.Plugin.Host);
 
 Y.mix(Node.prototype, {
     toString: function() {
@@ -400,50 +409,32 @@ Y.mix(Node.prototype, {
         return str || errorMsg;
     },
 
-    _addDOMAttr: function(attr) {
-        var domNode = g_nodes[this[UID]];
-
-        if (domNode && domNode[attr] !== undefined) {
-            this.addAttr(attr, {
-                getter: function() {
-                    return Node.DEFAULT_GETTER.call(this, attr);
-                },
-
-                setter: function(val) {
-                    return Node.DEFAULT_SETTER.call(this, attr, val);
-                }
-            });
-        } else {
-            Y.log('unable to add DOM attribute: ' + attr + ' to node: ' + this, 'warn', 'Node');
-        }
-    },
-
     get: function(attr) {
-        if (!this.attrAdded(attr)) { // use DEFAULT_GETTER for unconfigured attrs
-            if (Node.re_aria && Node.re_aria.test(attr)) { // except for aria
-                this._addAriaAttr(attr);
-            } else {
-                return Node.DEFAULT_GETTER.apply(this, arguments);
-            }
+        var attrConfig = Node.ATTRS[attr],
+            val;
+
+        if (attrConfig && attrConfig.getter) {
+            val = attrConfig.getter.call(this);
+        } else if (Node.re_aria.test(attr)) {
+            val = Y.Node.getDOMNode(this).getAttribute(attr, 2); 
+        } else {
+            val = Node.DEFAULT_GETTER.apply(this, arguments);
         }
 
-        return SuperConstrProto.get.apply(this, arguments);
+        return val;
     },
 
     set: function(attr, val) {
-        if (!this.attrAdded(attr)) { // use DEFAULT_SETTER for unconfigured attrs
-            // except for aria
-            if (Node.re_aria && Node.re_aria.test(attr)) {
-                this._addAriaAttr(attr);
-            //  or chained properties or if no change listeners
-            } else if (attr.indexOf(DOT) < 0 && this._yuievt.events['Node:' + attr + 'Change']) {
-                this._addDOMAttr(attr);
-            } else {
-                Node.DEFAULT_SETTER.call(this, attr, val);
-                return this; // NOTE: return
-            }
+        var attrConfig = Node.ATTRS[attr];
+
+        if (attrConfig && attrConfig.setter) {
+            attrConfig.setter.call(this, val);
+        } else if (Node.re_aria.test(attr)) {
+            Y.Node.getDOMNode(this).setAttribute(attr, val);
+        } else {
+            Node.DEFAULT_SETTER.apply(this, arguments);
         }
-        SuperConstrProto.set.apply(this, arguments);
+
         return this;
     },
 
