@@ -34,18 +34,12 @@ COMPAT_ARG = '~yui|2|compat~',
 
 shouldIterate = function(o) {
     try {
-         
-        // Y.log('node? ' + (o instanceof Y.Node) + ', ' + ((o.size) ? o.size() : ' no size'));
-        // if (o instanceof Y.Node) {
-            // o.tagName ="adsf";
-        // }
-
         return ( (o                    && // o is something
                  typeof o !== "string" && // o is not a string
                  o.length              && // o is indexed
                  !o.tagName            && // o is not an HTML element
                  !o.alert              && // o is not a window
-                 (o.item || typeof o[0] !== "undefined")) || (o instanceof Y.NodeList));
+                 (o.item || typeof o[0] !== "undefined")) );
     } catch(ex) {
         Y.log("collection check failure", "warn", "event");
         return false;

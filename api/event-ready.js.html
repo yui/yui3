@@ -55,67 +55,9 @@
 
 <span class="k">var</span> <span class="nx">GLOBAL_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">,</span>
     
-    <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">,</span>
-
     <span class="nx">yready</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;domready&#39;</span><span class="o">);</span>
     <span class="o">};</span>
-
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">adapt</span><span class="o">,</span> <span class="o">{</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Executes the supplied callback when the DOM is first usable.  This</span>
-<span class="c">     * will execute immediately if called after the DOMReady event has</span>
-<span class="c">     * fired.   @todo the DOMContentReady event does not fire when the</span>
-<span class="c">     * script is dynamically injected into the page.  This means the</span>
-<span class="c">     * DOMReady custom event will never fire in FireFox or Opera when the</span>
-<span class="c">     * library is injected.  It _will_ fire in Safari, and the IE </span>
-<span class="c">     * implementation would allow for us to fire it if the defered script</span>
-<span class="c">     * is not available.  We want this to behave the same in all browsers.</span>
-<span class="c">     * Is there a way to identify when the script has been injected </span>
-<span class="c">     * instead of included inline?  Is there a way to know whether the </span>
-<span class="c">     * window onload event has fired without having had a listener attached </span>
-<span class="c">     * to it when it did so?</span>
-<span class="c">     *</span>
-<span class="c">     * &lt;p&gt;The callback is a Event.Custom, so the signature is:&lt;/p&gt;</span>
-<span class="c">     * &lt;p&gt;type &amp;lt;string&amp;gt;, args &amp;lt;array&amp;gt;, customobject &amp;lt;object&amp;gt;&lt;/p&gt;</span>
-<span class="c">     * &lt;p&gt;For DOMReady events, there are no fire argments, so the</span>
-<span class="c">     * signature is:&lt;/p&gt;</span>
-<span class="c">     * &lt;p&gt;&quot;DOMReady&quot;, [], obj&lt;/p&gt;</span>
-<span class="c">     *</span>
-<span class="c">     * @event domready</span>
-<span class="c">     * @for YUI</span>
-<span class="c">     *</span>
-<span class="c">     * @param {function} fn what to execute when the element is found.</span>
-<span class="c">     * @optional context optional execution context</span>
-<span class="c">     * @optional args 0..n arguments to send to the listener</span>
-<span class="c">     *</span>
-<span class="c">     */</span>
-    <span class="nx">domready</span><span class="o">:</span> <span class="o">{},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Use domready event instead. @see domready</span>
-<span class="c">     * @event event:ready</span>
-<span class="c">     * @for YUI</span>
-<span class="c">     * @deprecated use &#39;domready&#39; instead</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;event:ready&#39;</span><span class="o">:</span> <span class="o">{</span>
-
-        <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;domready&#39;</span><span class="o">;</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;domready&#39;</span><span class="o">;</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">unsubscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-
-<span class="o">});</span>
-
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s1">&#39;domready&#39;</span><span class="o">,</span> <span class="o">{</span>
     <span class="nx">fireOnce</span><span class="o">:</span> <span class="kc">true</span>
@@ -144,7 +86,6 @@
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
-                                <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>

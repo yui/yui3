@@ -44,7 +44,8 @@
      * @type {Object}
      * @private
      */
-var Native = Y.config.win.JSON,
+var _JSON  = Y.config.win.JSON,
+    Native = (Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON),
 
     /**
      * Replace certain Unicode characters that JavaScript may handle incorrectly
@@ -101,18 +102,6 @@ var Native = Y.config.win.JSON,
      */
     _UNSAFE = /[^\],:{}\s]/,
     
-    /**
-     * Test for JSON string of simple data string, number, boolean, or null.
-     * E.g. '"some string"', "true", "false", "null", or numbers "-123e+7"
-     * This was needed for some WIP native implementations (FF3.1b2) but may be
-     * unnecessary now.
-     *
-     * @property _SIMPLE
-     * @type {RegExp}
-     * @private
-     */
-    _SIMPLE = /^\s*(?:"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)\s*$/,
-
     /**
      * Replaces specific unicode characters with their appropriate \unnnn
      * format. Some browsers ignore certain characters during eval.
@@ -192,34 +181,22 @@ var Native = Y.config.win.JSON,
         }
 
         throw new SyntaxError('JSON.parse');
-    },
+    };
     
-    test;
+Y.namespace('JSON').parse = function (s,reviver) {
+    return Native && Y.JSON.useNativeParse ?
+        Native.parse(s,reviver) : _parse(s,reviver);
+};
 
-
-// Test the level of native browser support
-if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
-    try {
-        test = Native.parse('{"x":1}', function (k,v) {return k=='x' ? 2 : v;});
-        switch (test.x) {
-            case 1 : // Reviver not supported
-                _parse = function (s,reviver) {
-                    return _SIMPLE.test(s) ?
-                            eval('(' + s + ')') :
-                            _revive(Native.parse(s), reviver);
-                };
-                break;
-
-            case 2 : // Full support
-                _parse = function (s, reviver) {
-                    return Native.parse(s, reviver);
-                };
-                break;
-
-            // default is JS implementation
-        }
-    }
-    catch (e) {} // defer to JS implementation
-}
-
-Y.namespace('JSON').parse = _parse;
+/**
+ * Leverage native JSON parse if the browser has a native implementation.
+ * In general, this is a good idea.  See the Known Issues section in the
+ * JSON user guide for caveats.  The default value is true for browsers with
+ * native JSON support.
+ *
+ * @property useNativeParse
+ * @type Boolean
+ * @default true
+ * @static
+ */
+Y.JSON.useNativeParse = !!Native;

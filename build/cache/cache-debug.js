@@ -98,6 +98,19 @@ Y.mix(Cache, {
         },
 
         /**
+        * @attribute uniqueKeys
+        * @description Validate uniqueness of stored keys. Default is false and
+        * is more performant.
+        * @type Number
+        */
+        uniqueKeys: {
+            value: false,
+            validator: function(value) {
+                return (LANG.isBoolean(value));
+            }
+        },
+
+        /**
          * @attribute entries
          * @description Cached entries.
          * @type Array
@@ -213,6 +226,11 @@ Y.extend(Cache, Y.Plugin.Base, {
         var entries = this._entries,
             max = this.get("max"),
             entry = e.entry;
+
+        if(this.get("uniqueKeys") && (this.retrieve(e.entry.request))) {
+            entries.shift();
+        }
+
             
         // If the cache at or over capacity, make room by removing stalest element (index=0)
         while(entries.length>=max) {

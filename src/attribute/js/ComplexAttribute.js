@@ -1,3 +1,10 @@
+    /**
+     * Adds support for attribute providers to handle complex attributes in the constructor
+     *
+     * @module attribute
+     * @submodule attribute-complex
+     */
+
     var O = Y.Object,
         DOT = ".";
 

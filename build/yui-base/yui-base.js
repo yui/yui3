@@ -328,6 +328,7 @@ YUI.prototype = {
     use: function() {
 
         if (this._loading) {
+            this._useQueue = this._useQueue || new this.Queue();
             this._useQueue.add(SLICE.call(arguments, 0));
             return this;
         }
@@ -440,7 +441,6 @@ YUI.prototype = {
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
-            this._useQueue = this._useQueue || new Y.Queue();
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.ignoreRegistered = true;
@@ -461,7 +461,7 @@ YUI.prototype = {
 
         // dynamic load
         if (Y.Loader && missing.length) {
-            this._loading = true;
+            Y._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
@@ -471,12 +471,14 @@ YUI.prototype = {
             loader.require(missing);
             loader.insert();
         } else if (Y.Get && missing.length && !Y.Env.bootstrapped) {
+            Y._loading = true;
 
             a = Y.Array(arguments, 0, true);
             // a.unshift('loader');
 
             Y.Get.script(Y.config.base + Y.config.loaderPath, {
                 onEnd: function() {
+                    Y._loading = false;
                     Y.Env.bootstrapped = true;
                     Y._attach(['loader']);
                     Y.use.apply(Y, a);

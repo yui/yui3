@@ -127,6 +127,14 @@ YUI.add('attribute-base', function(Y) {
      *
      * @module attribute
      */
+
+    /**
+     * The attribute-base submodule provides core attribute handling support, with everything
+     * aside from complex attribute handling in the provider's constructor.
+     *
+     * @module attribute
+     * @submodule attribute-base
+     */
     var O = Y.Object,
         EventTarget = Y.EventTarget,
 
@@ -181,7 +189,7 @@ YUI.add('attribute-base', function(Y) {
      *
      * <p>See the <a href="#method_addAttr">addAttr</a> method, for the complete set of configuration
      * options available for attributes</p>.
-     * 
+     *
      * <p><strong>NOTE:</strong> Most implementations will be better off extending the <a href="Base.html">Base</a> class, 
      * instead of augmenting Attribute directly. Base augments Attribute and will handle the initial configuration 
      * of attributes for derived classes, accounting for values passed into the constructor.</p>
@@ -191,7 +199,9 @@ YUI.add('attribute-base', function(Y) {
      */
     function Attribute() {
 
-        var host = this; // help compression
+        var host = this, // help compression
+            attrs = this.constructor.ATTRS,
+            Base = Y.Base;
 
         // Perf tweak - avoid creating event literals if not required.
         host._ATTR_E_FACADE = {};
@@ -203,6 +213,10 @@ YUI.add('attribute-base', function(Y) {
 
         host._stateProxy = host._stateProxy || null;
         host._requireAddAttr = host._requireAddAttr || false;
+
+        if ( attrs && !(Base && host instanceof Base)) {
+            host.addAttrs(Y.merge(attrs));
+        }
     }
 
     /**
@@ -967,6 +981,13 @@ YUI.add('attribute-base', function(Y) {
 
 }, '@VERSION@' ,{requires:['event-custom']});
 YUI.add('attribute-complex', function(Y) {
+
+    /**
+     * Adds support for attribute providers to handle complex attributes in the constructor
+     *
+     * @module attribute
+     * @submodule attribute-complex
+     */
 
     var O = Y.Object,
         DOT = ".";
