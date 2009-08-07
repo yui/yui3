@@ -7,6 +7,7 @@ YUI.add('widget-stdmod', function(Y) {
  */
     var L = Y.Lang,
         Node = Y.Node,
+        NodeList = Y.NodeList,
         UA = Y.UA,
         Widget = Y.Widget,
 
@@ -26,6 +27,8 @@ YUI.add('widget-stdmod', function(Y) {
         INNER_HTML = "innerHTML",
         FIRST_CHILD = "firstChild",
         CHILD_NODES = "childNodes",
+        CREATE_DOCUMENT_FRAGMENT = "createDocumentFragment",
+        OWNER_DOCUMENT = "ownerDocument",
 
         CONTENT_BOX = "contentBox",
         BOUNDING_BOX = "boundingBox",
@@ -256,17 +259,6 @@ YUI.add('widget-stdmod', function(Y) {
         footer : '<div class="' + StdMod.SECTION_CLASS_NAMES[STD_FOOTER] + '"></div>'
     };
 
-    /**
-     * Stores nodes created from the WidgetStdMod.TEMPLATES strings,
-     * which are cloned to create new header, footer, body sections for
-     * new instances.
-     *
-     * @property WidgetStdMod._TEMPLATES
-     * @static
-     * @private
-     */
-    StdMod._TEMPLATES = {};
-
     StdMod.prototype = {
 
         /**
@@ -437,7 +429,7 @@ YUI.add('widget-stdmod', function(Y) {
         _uiSetStdMod : function(section, content, where) {
             if (content) {
                 var node = this.getStdModNode(section) || this._renderStdMod(section);
-                if (content instanceof Node) {
+                if (content instanceof Node || content instanceof NodeList) {
                     this._addNodeRef(node, content, where);
                 } else {
                     this._addNodeHTML(node, content, where);
@@ -508,12 +500,7 @@ YUI.add('widget-stdmod', function(Y) {
          * @return {Node} The new Node instance for the section
          */
         _getStdModTemplate : function(section) {
-            var template = StdMod._TEMPLATES[section];
-
-            if (!template) {
-                StdMod._TEMPLATES[section] = template = Node.create(StdMod.TEMPLATES[section]);
-            }
-            return template.cloneNode(true);
+            return Node.create(StdMod.TEMPLATES[section], this._stdModNode.get(OWNER_DOCUMENT));
         },
 
         /**
@@ -555,11 +542,11 @@ YUI.add('widget-stdmod', function(Y) {
         _addNodeRef : function(node, children, where) {
             var append = true, 
                 i, s;
-
+            
             if (where == BEFORE) {
                 var n = node.get(FIRST_CHILD);
                 if (n) {
-                    if (children instanceof Y.NodeList) {
+                    if (children instanceof NodeList) {
                         for (i = children.size() - 1; i >=0; --i) {
                             node.insertBefore(children.item(i), n);
                         }
@@ -571,8 +558,9 @@ YUI.add('widget-stdmod', function(Y) {
             } else if (where != AFTER) { // replace
                 node.set(INNER_HTML, EMPTY);
             }
+
             if (append) {
-                if (children instanceof Y.NodeList) {
+                if (children instanceof NodeList) {
                     for (i = 0, s = children.size(); i < s; ++i) {
                         node.appendChild(children.item(i));
                     }
@@ -628,8 +616,26 @@ YUI.add('widget-stdmod', function(Y) {
          * @return {String} Inner HTML string with the contents of the section
          */
         _parseStdModHTML : function(section) {
-            var node = this._findStdModSection(section);
-            return (node) ? node.get(INNER_HTML) : "";
+            var node = this._findStdModSection(section),
+                docFrag, children;
+
+            if (node) {
+                docFrag = node.get(OWNER_DOCUMENT).invoke(CREATE_DOCUMENT_FRAGMENT);
+                children = node.get(CHILD_NODES);
+
+                for (var i = children.size() - 1; i >= 0; i--) {
+                    var fc = docFrag.get(FIRST_CHILD);
+                    if (fc) {
+                        docFrag.insertBefore(children.item(i), fc);
+                    } else {
+                        docFrag.appendChild(children.item(i));
+                    }
+                }
+
+                return docFrag;
+            }
+
+            return null;
         },
 
         /**
@@ -737,7 +743,6 @@ YUI.add('widget-stdmod', function(Y) {
     };
 
     Y.WidgetStdMod = StdMod;
-
 
 
 }, '@VERSION@' ,{requires:['widget']});

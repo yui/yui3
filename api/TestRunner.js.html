@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>test&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>test&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_test.html" title="test">test</a>
                 
@@ -348,7 +348,7 @@
                         <span class="k">break</span><span class="o">;</span>
                         
                     <span class="nx">case</span> <span class="k">this</span><span class="o">.</span><span class="nx">TEST_FAIL_EVENT</span><span class="o">:</span>
-                        <span class="nx">message</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">testName</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="o">.</span><span class="nx">error</span><span class="o">.</span><span class="nx">getMessage</span><span class="o">();</span>
+                        <span class="nx">message</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">testName</span> <span class="o">+</span> <span class="s2">&quot;: failed.\n&quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="o">.</span><span class="nx">error</span><span class="o">.</span><span class="nx">getMessage</span><span class="o">();</span>
                         <span class="nx">messageType</span> <span class="o">=</span> <span class="s2">&quot;fail&quot;</span><span class="o">;</span>
                         <span class="k">break</span><span class="o">;</span>
                         
@@ -849,6 +849,7 @@
 <span class="c">             */</span>
             <span class="nx">add</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">testObject</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">masterSuite</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">testObject</span><span class="o">);</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
             <span class="o">},</span>
             
             <span class="c">/**</span>
@@ -924,7 +925,6 @@
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
-                                <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>

@@ -3,13 +3,7 @@
 var INSTANCE = Y,
     LOGEVENT = 'yui:log',
     UNDEFINED = 'undefined',
-    _createEvent = function() {
-        Y.publish(LOGEVENT, {
-            broadcast: 2,
-            emitFacade: 1
-        });
-        _createEvent = function(){};
-    };
+    _published;
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -60,7 +54,14 @@ INSTANCE.log = function(msg, cat, src, silent) {
             }
 
             if (Y.fire && !bail && !silent) {
-                _createEvent();
+                if (!_published) {
+                    Y.publish(LOGEVENT, {
+                        broadcast: 2,
+                        emitFacade: 1
+                    });
+                    _published = true;
+                }
+
                 Y.fire(LOGEVENT, {
                     msg: msg, 
                     cat: cat, 

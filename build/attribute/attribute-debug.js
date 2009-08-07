@@ -1,4 +1,4 @@
-YUI.add('attribute', function(Y) {
+YUI.add('attribute-base', function(Y) {
 
     /**
      * The State class maintains state for a collection of named items, with 
@@ -118,7 +118,6 @@ YUI.add('attribute', function(Y) {
             return o;
         }
     };
-
     /**
      * The attribute module provides an augmentable Attribute implementation, which 
      * adds configurable attributes and attribute change events to the class being 
@@ -129,6 +128,13 @@ YUI.add('attribute', function(Y) {
      * @module attribute
      */
 
+    /**
+     * The attribute-base submodule provides core attribute handling support, with everything
+     * aside from complex attribute handling in the provider's constructor.
+     *
+     * @module attribute
+     * @submodule attribute-base
+     */
     var O = Y.Object,
         EventTarget = Y.EventTarget,
 
@@ -183,7 +189,7 @@ YUI.add('attribute', function(Y) {
      *
      * <p>See the <a href="#method_addAttr">addAttr</a> method, for the complete set of configuration
      * options available for attributes</p>.
-     * 
+     *
      * <p><strong>NOTE:</strong> Most implementations will be better off extending the <a href="Base.html">Base</a> class, 
      * instead of augmenting Attribute directly. Base augments Attribute and will handle the initial configuration 
      * of attributes for derived classes, accounting for values passed into the constructor.</p>
@@ -194,16 +200,29 @@ YUI.add('attribute', function(Y) {
     function Attribute() {
         Y.log('Attribute constructor called', 'info', 'attribute');
 
-        // Perf tweak - avoid creating event literals if not required.
-        this._ATTR_E_FACADE = {};
+        var host = this, // help compression
+            attrs = this.constructor.ATTRS,
+            Base = Y.Base;
 
-        EventTarget.call(this, {emitFacade:true});
-        this._conf = new Y.State();
+        // Perf tweak - avoid creating event literals if not required.
+        host._ATTR_E_FACADE = {};
+
+        EventTarget.call(host, {emitFacade:true});
+
+        // _conf maintained for backwards compat
+        host._conf = host._state = new Y.State();
+
+        host._stateProxy = host._stateProxy || null;
+        host._requireAddAttr = host._requireAddAttr || false;
+
+        if ( attrs && !(Base && host instanceof Base)) {
+            host.addAttrs(Y.merge(attrs));
+        }
     }
 
     /**
      * <p>The value to return from an attribute setter in order to prevent the set from going through.</p>
-     * 
+     *
      * <p>You can return this value from your setter if you wish to combine validator and setter 
      * functionality into a single setter function, which either returns the massaged value to be stored or 
      * Attribute.INVALID_VALUE to prevent invalid values from being stored.</p>
@@ -306,29 +325,33 @@ YUI.add('attribute', function(Y) {
         addAttr: function(name, config, lazy) {
 
             Y.log('Adding attribute: ' + name, 'info', 'attribute');
-            var conf = this._conf;
+
+            var host = this, // help compression
+                state = host._state,
+                value,
+                hasValue;
 
             lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
 
-            if (lazy && !this.attrAdded(name)) {
-                Y.log('Lazy Add: ' + name, 'info', 'attribute');
+            if (host._stateProxy && host._stateProxy[name]) { Y.log('addAttr: ' + name + ' exists on the _stateProxy object. The newly added attribute will override the use of _stateProxy for this attribute', 'warn', 'attribute'); }
 
-                conf.add(name, LAZY, config || {});
-                conf.add(name, ADDED, true);
+            if (lazy && !host.attrAdded(name)) {
+                state.add(name, LAZY, config || {});
+                state.add(name, ADDED, true);
             } else {
 
-                if (this.attrAdded(name) && !conf.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
+                if (host.attrAdded(name) && !state.get(name, IS_LAZY_ADD)) { Y.log('Attribute: ' + name + ' already exists. Cannot add it again without removing it first', 'warn', 'attribute'); }
 
-                if (!this.attrAdded(name) || conf.get(name, IS_LAZY_ADD)) {
-                    Y.log('Non-Lazy Add: ' + name, 'info', 'attribute');
+                if (!host.attrAdded(name) || state.get(name, IS_LAZY_ADD)) {
 
                     config = config || {};
 
-                    var value, hasValue = (VALUE in config);
+                    hasValue = (VALUE in config);
+
                     if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
 
                     if(hasValue) {
-                        // We'll go through set, don't want to set value in _conf directory
+                        // We'll go through set, don't want to set value in _state directly
                         value = config.value;
                         delete config.value;
                     }
@@ -336,18 +359,18 @@ YUI.add('attribute', function(Y) {
                     config.added = true;
                     config.initializing = true;
 
-                    conf.addAll(name, config);
+                    state.addAll(name, config);
 
                     if (hasValue) {
                         // Go through set, so that raw values get normalized/validated
-                        this.set(name, value);
+                        host.set(name, value);
                     }
 
-                    conf.remove(name, INITIALIZING);
+                    state.remove(name, INITIALIZING);
                 }
             }
 
-            return this;
+            return host;
         },
 
         /**
@@ -358,7 +381,7 @@ YUI.add('attribute', function(Y) {
          * @return {boolean} true if an attribute with the given name has been added, false if it hasn't. This method will return true for lazily added attributes.
          */
         attrAdded: function(name) {
-            return !!this._conf.get(name, ADDED);
+            return !!this._state.get(name, ADDED);
         },
 
         /**
@@ -374,26 +397,29 @@ YUI.add('attribute', function(Y) {
          * @param {Object} config An object with configuration property/value pairs, specifying the configuration properties to modify.
          */
         modifyAttr: function(name, config) {
-            if (this.attrAdded(name)) {
+            var host = this, // help compression
+                prop, state;
 
-                if (this._isLazyAttr(name)) {
-                    this._addLazyAttr(name);
+            if (host.attrAdded(name)) {
+
+                if (host._isLazyAttr(name)) {
+                    host._addLazyAttr(name);
                 }
 
-                var prop, conf = this._conf;
+                state = host._state;
                 for (prop in config) {
                     if (MODIFIABLE[prop] && config.hasOwnProperty(prop)) {
-                        conf.add(name, prop, config[prop]);
+                        state.add(name, prop, config[prop]);
 
                         // If we reconfigured broadcast, need to republish
                         if (prop === BROADCAST) {
-                            conf.remove(name, PUBLISHED);
+                            state.remove(name, PUBLISHED);
                         }
                     }
                 }
             }
 
-            if (!this.attrAdded(name)) {Y.log('Attribute modifyAttr:' + name + ' has not been added. Use addAttr to add the attribute', 'warn', 'attribute');}
+            if (!host.attrAdded(name)) {Y.log('Attribute modifyAttr:' + name + ' has not been added. Use addAttr to add the attribute', 'warn', 'attribute');}
         },
 
         /**
@@ -403,7 +429,7 @@ YUI.add('attribute', function(Y) {
          * @param {String} name The name of the attribute to be removed.
          */
         removeAttr: function(name) {
-            this._conf.removeAll(name);
+            this._state.removeAll(name);
         },
 
         /**
@@ -419,38 +445,7 @@ YUI.add('attribute', function(Y) {
          * @return {Any} The value of the attribute
          */
         get : function(name) {
-
-            var fullName = name,
-                conf = this._conf,
-                path,
-                getter,
-                val;
-
-            if (name.indexOf(DOT) !== -1) {
-                path = name.split(DOT);
-                name = path.shift();
-            }
-
-            // On Demand - Should be rare - handles out of order valueFn references
-            if (this._tCfgs && this._tCfgs[name]) {
-                var cfg = {};
-                cfg[name] = this._tCfgs[name];
-                delete this._tCfgs[name];
-                this._addAttrs(cfg, this._tVals);
-            }
-
-            // Lazy Init
-            if (this._isLazyAttr(name)) {
-                this._addLazyAttr(name);
-            }
-
-            val = conf.get(name, VALUE);
-            getter = conf.get(name, GETTER);
-
-            val = (getter) ? getter.call(this, val, fullName) : val;
-            val = (path) ? O.getValue(val, path) : val;
-
-            return val;
+            return this._getAttr(name);
         },
 
         /**
@@ -463,7 +458,7 @@ YUI.add('attribute', function(Y) {
          * @return {boolean} true if it's a lazily added attribute, false otherwise.
          */
         _isLazyAttr: function(name) {
-            return this._conf.get(name, LAZY);
+            return this._state.get(name, LAZY);
         },
 
         /**
@@ -474,10 +469,11 @@ YUI.add('attribute', function(Y) {
          * @param {Object} name The name of the attribute
          */
         _addLazyAttr: function(name) {
-            var conf = this._conf;
-            var lazyCfg = conf.get(name, LAZY);
-            conf.add(name, IS_LAZY_ADD, true);
-            conf.remove(name, LAZY);
+            var state = this._state,
+                lazyCfg = state.get(name, LAZY);
+
+            state.add(name, IS_LAZY_ADD, true);
+            state.remove(name, LAZY);
             this.addAttr(name, lazyCfg);
         },
 
@@ -515,18 +511,21 @@ YUI.add('attribute', function(Y) {
          * @chainable
          */
         reset : function(name) {
+            var host = this,  // help compression
+                added;
+
             if (name) {
-                if (this._isLazyAttr(name)) {
-                    this._addLazyAttr(name);
+                if (host._isLazyAttr(name)) {
+                    host._addLazyAttr(name);
                 }
-                this.set(name, this._conf.get(name, INIT_VALUE));
+                host.set(name, host._state.get(name, INIT_VALUE));
             } else {
-                var added = this._conf.data.added;
+                added = host._state.data.added;
                 Y.each(added, function(v, n) {
-                    this.reset(n);
-                }, this);
+                    host.reset(n);
+                }, host);
             }
-            return this;
+            return host;
         },
 
         /**
@@ -544,6 +543,55 @@ YUI.add('attribute', function(Y) {
          */
         _set : function(name, val, opts) {
             return this._setAttr(name, val, opts, true);
+        },
+
+        /**
+         * Provides the common implementation for the public get method,
+         * allowing Attribute hosts to over-ride either method.
+         *
+         * See <a href="#method_get">get</a> for argument details.
+         *
+         * @method _getAttr
+         * @protected
+         * @chainable
+         *
+         * @param {String} name The name of the attribute.
+         * @return {Any} The value of the attribute.
+         */
+        _getAttr : function(name) {
+            var host = this, // help compression
+                fullName = name,
+                state = host._state,
+                path,
+                getter,
+                val,
+                cfg;
+
+            if (name.indexOf(DOT) !== -1) {
+                path = name.split(DOT);
+                name = path.shift();
+            }
+
+            // On Demand - Should be rare - handles out of order valueFn references
+            if (host._tCfgs && host._tCfgs[name]) {
+                cfg = {};
+                cfg[name] = host._tCfgs[name];
+                delete host._tCfgs[name];
+                host._addAttrs(cfg, host._tVals);
+            }
+
+            // Lazy Init
+            if (host._isLazyAttr(name)) {
+                host._addLazyAttr(name);
+            }
+
+            val = host._getStateVal(name);
+            getter = state.get(name, GETTER);
+
+            val = (getter) ? getter.call(host, val, fullName) : val;
+            val = (path) ? O.getValue(val, path) : val;
+
+            return val;
         },
 
         /**
@@ -566,8 +614,8 @@ YUI.add('attribute', function(Y) {
          */
         _setAttr : function(name, val, opts, force) {
             var allowSet = true,
-                conf = this._conf,
-                data = conf.data,
+                state = this._state,
+                data = state.data,
                 initialSet,
                 strPath,
                 path,
@@ -585,18 +633,18 @@ YUI.add('attribute', function(Y) {
 
             initialSet = (!data.value || !(name in data.value));
 
-            if (!this.attrAdded(name)) {
+            if (this._requireAddAttr && !this.attrAdded(name)) {
                 Y.log('Set attribute:' + name + ', aborted; Attribute is not configured', 'warn', 'attribute');
             } else {
 
                 if (!initialSet && !force) {
 
-                    if (conf.get(name, WRITE_ONCE)) {
+                    if (state.get(name, WRITE_ONCE)) {
                         Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
                         allowSet = false;
                     }
 
-                    if (conf.get(name, READ_ONLY)) {
+                    if (state.get(name, READ_ONLY)) {
                         Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
                         allowSet = false;
                     }
@@ -615,7 +663,7 @@ YUI.add('attribute', function(Y) {
                     }
 
                     if (allowSet) {
-                        if (conf.get(name, INITIALIZING)) {
+                        if (state.get(name, INITIALIZING)) {
                             this._setAttrVal(name, strPath, currVal, val);
                         } else {
                             this._fireAttrChange(name, strPath, currVal, val, opts);
@@ -640,21 +688,22 @@ YUI.add('attribute', function(Y) {
          * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
          */
         _fireAttrChange : function(attrName, subAttrName, currVal, newVal, opts) {
-            var eventName = attrName + CHANGE,
-                conf = this._conf,
+            var host = this,
+                eventName = attrName + CHANGE,
+                state = host._state,
                 facade;
 
-            if (!conf.get(attrName, PUBLISHED)) {
-                this.publish(eventName, {
+            if (!state.get(attrName, PUBLISHED)) {
+                host.publish(eventName, {
                     queuable:false, 
-                    defaultFn:this._defAttrChangeFn, 
+                    defaultFn:host._defAttrChangeFn, 
                     silent:true,
-                    broadcast : conf.get(attrName, BROADCAST)
+                    broadcast : state.get(attrName, BROADCAST)
                 });
-                conf.add(attrName, PUBLISHED, true);
+                state.add(attrName, PUBLISHED, true);
             }
 
-            facade = (opts) ? Y.merge(opts) : this._ATTR_E_FACADE;
+            facade = (opts) ? Y.merge(opts) : host._ATTR_E_FACADE;
 
             facade.type = eventName;
             facade.attrName = attrName;
@@ -662,7 +711,7 @@ YUI.add('attribute', function(Y) {
             facade.prevVal = currVal;
             facade.newVal = newVal;
 
-            this.fire(facade);
+            host.fire(facade);
         },
 
         /**
@@ -678,7 +727,25 @@ YUI.add('attribute', function(Y) {
                 // Prevent "after" listeners from being invoked since nothing changed.
                 e.stopImmediatePropagation();
             } else {
-                e.newVal = this._conf.get(e.attrName, VALUE);
+                e.newVal = this._getStateVal(e.attrName);
+            }
+        },
+
+        _getStateVal : function(name) {
+            var stateProxy = this._stateProxy;
+            if (!stateProxy || this.attrAdded(name)) {
+                return this._state.get(name, VALUE);
+            } else {
+                return (stateProxy && stateProxy[name]);
+            }
+        },
+
+        _setStateVal : function(name, value) {
+            var stateProxy = this._stateProxy;
+            if (!stateProxy || this.attrAdded(name)) {
+                this._state.add(name, VALUE, value);
+            } else {
+                stateProxy[name] = value;             
             }
         },
 
@@ -697,28 +764,30 @@ YUI.add('attribute', function(Y) {
          */
         _setAttrVal : function(attrName, subAttrName, prevVal, newVal) {
 
-            var allowSet = true,
-                conf = this._conf,
+            var host = this,
+                allowSet = true,
+                state = host._state,
 
-                validator  = conf.get(attrName, VALIDATOR),
-                setter = conf.get(attrName, SETTER),
-                initializing = conf.get(attrName, INITIALIZING),
+                validator = state.get(attrName, VALIDATOR),
+                setter = state.get(attrName, SETTER),
+                initializing = state.get(attrName, INITIALIZING),
 
                 name = subAttrName || attrName,
-                retVal;
+                retVal,
+                valid;
 
             if (validator) {
-                var valid = validator.call(this, newVal, name);
+                valid = validator.call(host, newVal, name);
 
                 if (!valid && initializing) {
-                    newVal = conf.get(attrName, DEF_VALUE);
+                    newVal = state.get(attrName, DEF_VALUE);
                     valid = true; // Assume it's valid, for perf.
                 }
             }
 
             if (!validator || valid) {
                 if (setter) {
-                    retVal = setter.call(this, newVal, name);
+                    retVal = setter.call(host, newVal, name);
 
                     if (retVal === INVALID_VALUE) {
                         Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
@@ -735,10 +804,10 @@ YUI.add('attribute', function(Y) {
                         allowSet = false;
                     } else {
                         // Store value
-                        if (conf.get(attrName, INIT_VALUE) === undefined) {
-                            conf.add(attrName, INIT_VALUE, newVal);
+                        if (state.get(attrName, INIT_VALUE) === undefined) {
+                            state.add(attrName, INIT_VALUE, newVal);
                         }
-                        conf.add(attrName, VALUE, newVal);
+                        host._setStateVal(attrName, newVal);
                     }
                 }
 
@@ -776,18 +845,20 @@ YUI.add('attribute', function(Y) {
          * @return {Object} An object with attribute name/value pairs.
          */
         getAttrs : function(attrs) {
-            var o = {}, i, l, attr, val,
+            var host = this,
+                o = {}, 
+                i, l, attr, val,
                 modifiedOnly = (attrs === true);
 
-            attrs = (attrs && !modifiedOnly) ? attrs : O.keys(this._conf.data.added);
+            attrs = (attrs && !modifiedOnly) ? attrs : O.keys(host._state.data.added);
 
             for (i = 0, l = attrs.length; i < l; i++) {
                 // Go through get, to honor cloning/normalization
                 attr = attrs[i];
-                val = this.get(attr);
+                val = host.get(attr);
 
-                if (!modifiedOnly || this._conf.get(attr, VALUE) != this._conf.get(attr, INIT_VALUE)) {
-                    o[attr] = this.get(attr); 
+                if (!modifiedOnly || host._getStateVal(attr) != host._state.get(attr, INIT_VALUE)) {
+                    o[attr] = host.get(attr); 
                 }
             }
 
@@ -815,16 +886,15 @@ YUI.add('attribute', function(Y) {
          * @return {Object} A reference to the host object.
          */
         addAttrs : function(cfgs, values, lazy) {
+            var host = this; // help compression
             if (cfgs) {
-                this._tCfgs = cfgs;
-                this._tVals = this._splitAttrVals(values);
-
-                this._addAttrs(cfgs, this._tVals, lazy);
-
-                this._tCfgs = this._tVals = null;
+                host._tCfgs = cfgs;
+                host._tVals = host._normAttrVals(values);
+                host._addAttrs(cfgs, host._tVals, lazy);
+                host._tCfgs = host._tVals = null;
             }
 
-            return this;
+            return host;
         },
 
         /**
@@ -845,7 +915,8 @@ YUI.add('attribute', function(Y) {
          * See <a href="#method_addAttr">addAttr</a>.
          */
         _addAttrs : function(cfgs, values, lazy) {
-            var attr,
+            var host = this, // help compression
+                attr,
                 attrCfg,
                 value;
 
@@ -857,17 +928,17 @@ YUI.add('attribute', function(Y) {
                     attrCfg.defaultValue = attrCfg.value;
 
                     // Handle simple, complex and user values, accounting for read-only
-                    value = this._getAttrInitVal(attr, attrCfg, this._tVals);
+                    value = host._getAttrInitVal(attr, attrCfg, host._tVals);
 
                     if (value !== undefined) {
                         attrCfg.value = value;
                     }
 
-                    if (this._tCfgs[attr]) {
-                        delete this._tCfgs[attr];
+                    if (host._tCfgs[attr]) {
+                        delete host._tCfgs[attr];
                     }
 
-                    this.addAttr(attr, attrCfg, lazy);
+                    host.addAttr(attr, attrCfg, lazy);
                 }
             }
         },
@@ -877,7 +948,75 @@ YUI.add('attribute', function(Y) {
          * from complex attribute name/value pairs ("x.y.z"), so that complex
          * attributes can be keyed by the top level attribute name.
          *
-         * @method _splitAttrVals
+         * @method _normAttrVals
+         * @param {Object} valueHash An object with attribute name/value pairs
+         *
+         * @return {Object}
+         *
+         * @private
+         */
+        _normAttrVals : function(valueHash) {
+            return (valueHash) ? Y.merge(valueHash) : null;
+        },
+
+        /**
+         * Returns the initial value of the given attribute from
+         * either the default configuration provided, or the 
+         * over-ridden value if it exists in the set of initValues 
+         * provided and the attribute is not read-only.
+         *
+         * @param {String} attr The name of the attribute
+         * @param {Object} cfg The attribute configuration object
+         * @param {Object} initValues The object with simple and complex attribute name/value pairs returned from _normAttrVals
+         *
+         * @return {Any} The initial value of the attribute.
+         *
+         * @method _getAttrInitVal
+         * @private
+         */
+        _getAttrInitVal : function(attr, cfg, initValues) {
+
+            // init value is provided by the user if it exists, else, provided by the config
+            var val = (!cfg[READ_ONLY] && initValues && initValues.hasOwnProperty(attr)) ?
+                            val = initValues[attr] :
+                            (cfg[VALUE_FN]) ?
+                                cfg[VALUE_FN].call(this) : 
+                                cfg[VALUE];
+
+            Y.log('initValue for ' + attr + ':' + val, 'info', 'attribute');
+
+            return val;
+        }
+    };
+
+    // Basic prototype augment - no lazy constructor invocation.
+    Y.mix(Attribute, EventTarget, false, null, 1);
+
+    Y.Attribute = Attribute;
+
+
+}, '@VERSION@' ,{requires:['event-custom']});
+YUI.add('attribute-complex', function(Y) {
+
+    /**
+     * Adds support for attribute providers to handle complex attributes in the constructor
+     *
+     * @module attribute
+     * @submodule attribute-complex
+     */
+
+    var O = Y.Object,
+        DOT = ".";
+
+    Y.Attribute.Complex = function() {};
+    Y.Attribute.Complex.prototype = {
+
+        /**
+         * Utility method to split out simple attribute name/value pairs ("x") 
+         * from complex attribute name/value pairs ("x.y.z"), so that complex
+         * attributes can be keyed by the top level attribute name.
+         *
+         * @method _normAttrVals
          * @param {Object} valueHash An object with attribute name/value pairs
          *
          * @return {Object} An object literal with 2 properties - "simple" and "complex",
@@ -886,7 +1025,7 @@ YUI.add('attribute', function(Y) {
          *
          * @private
          */
-        _splitAttrVals : function(valueHash) {
+        _normAttrVals : function(valueHash) {
             var vals = {},
                 subvals = {},
                 path,
@@ -923,7 +1062,7 @@ YUI.add('attribute', function(Y) {
          *
          * @param {String} attr The name of the attribute
          * @param {Object} cfg The attribute configuration object
-         * @param {Object} initValues The object with simple and complex attribute name/value pairs returned from _splitAttrVals
+         * @param {Object} initValues The object with simple and complex attribute name/value pairs returned from _normAttrVals
          *
          * @return {Any} The initial value of the attribute.
          *
@@ -943,8 +1082,6 @@ YUI.add('attribute', function(Y) {
 
             if (!cfg.readOnly && initValues) {
 
-                Y.log('Checking initValues in _getAttrIniVal: ' + attr, 'info', 'attribute');
-
                 // Simple Attributes
                 simple = initValues.simple;
                 if (simple && simple.hasOwnProperty(attr)) {
@@ -963,17 +1100,15 @@ YUI.add('attribute', function(Y) {
                 }
             }
 
-            Y.log('initValue for ' + attr + ':' + val, 'info', 'attribute');
-
             return val;
         }
     };
 
-    // Basic prototype augment - no lazy constructor invocation.
-    Y.mix(Attribute, EventTarget, false, null, 1);
-
-    Y.Attribute = Attribute;
+    Y.mix(Y.Attribute, Y.Attribute.Complex, true, null, 1);
 
 
+}, '@VERSION@' ,{requires:['attribute-base']});
 
-}, '@VERSION@' ,{requires:['event-custom']});
+
+YUI.add('attribute', function(Y){}, '@VERSION@' ,{use:['attribute-base', 'attribute-complex']});
+

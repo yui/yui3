@@ -1,3 +1,12 @@
+3.0.0
+
+* Fixed hasImpl method on built classes, to look up the class
+  hierarchy for applied extensions.
+
+* PluginHost can now be used on classes which don't have a 
+  _getClasses method (preparation to break it out Base, and remove
+  Base dependencies)
+
 3.0.0 beta 1
 
 * Config argument for init event now merged into the event facade, 

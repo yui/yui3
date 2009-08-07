@@ -11,8 +11,7 @@ YUI.add('loader', function(Y) {
  * this network to reduce the number of http connections required to download 
  * YUI files.
  *
- * @module yui
- * @submodule loader
+ * @module loader
  */
 
 /**
@@ -24,6 +23,11 @@ YUI.add('loader', function(Y) {
  * files from the Yahoo! CDN, and it can utilize the combo service provided on
  * this network to reduce the number of http connections required to download 
  * YUI files.
+ *
+ * While the loader can be instantiated by the end user, it normally is not.
+ * @see YUI.use for the normal use case.  The use function automatically will
+ * pull in missing dependencies.
+ *
  * @class Loader
  * @constructor
  * @param o an optional set of configuration options.  Valid options:
@@ -549,7 +553,7 @@ var NOT_FOUND = {},
         },
 
         yui: {
-            supersedes: [YUIBASE, GET, 'loader', 'queue-base']
+            supersedes: [YUIBASE, GET, 'queue-base']
         },
 
         'yui-base': { },
@@ -2061,4 +2065,4 @@ Y.Loader.prototype = {
 
 
 
-}, '@VERSION@' ,{requires:['queue-base']});
+}, '@VERSION@' );

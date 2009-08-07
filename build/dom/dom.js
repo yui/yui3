@@ -1199,15 +1199,19 @@ Y.Color = {
     toHex: function(val) {
         val = Y.Color.KEYWORDS[val] || val;
         if (Y.Color.re_RGB.exec(val)) {
-            var r = (RE.$1.length === 1) ? '0' + RE.$1 : Number(RE.$1),
-                g = (RE.$2.length === 1) ? '0' + RE.$2 : Number(RE.$2),
-                b = (RE.$3.length === 1) ? '0' + RE.$3 : Number(RE.$3);
-
             val = [
-                r[TO_STRING](16),
-                g[TO_STRING](16),
-                b[TO_STRING](16)
-            ].join('');
+                Number(RE.$1).toString(16),
+                Number(RE.$2).toString(16),
+                Number(RE.$3).toString(16)
+            ];
+
+            for (i = 0; i < val.length; i++) {
+                if (val[i].length < 2) {
+                    val[i] = val[i].replace(Y.Color.re_hex3, '$1$1');
+                }
+            }
+
+            val = '#' + val.join('');
         }
 
         if (val.length < 6) {

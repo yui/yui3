@@ -25,7 +25,9 @@
         DEEP = "deep",
         SHALLOW = "shallow",
         VALUE = "value",
-        DESTRUCTOR = "destructor";
+        DESTRUCTOR = "destructor",
+
+        Attribute = Y.Attribute;
 
     /**
      * <p>
@@ -51,10 +53,9 @@
     function Base() {
         Y.log('constructor called', 'life', 'base');
 
-        Y.Attribute.call(this);
-        Y.Plugin.Host.call(this);
+        Attribute.call(this);
+        PluginHost.call(this);
 
-        this._silentInit = this._silentInit || false;
         if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
 
         this.init.apply(this, arguments);
@@ -69,7 +70,7 @@
      * @static
      * @private
      */
-    Base._ATTR_CFG = Y.Attribute._ATTR_CFG.concat("cloneDefaultValue");
+    Base._ATTR_CFG = Attribute._ATTR_CFG.concat("cloneDefaultValue");
 
     /**
      * <p>
@@ -85,7 +86,7 @@
      * @type String
      * @static
      */
-    Base.NAME = 'base';
+    Base.NAME = "base";
 
     /**
      * The default set of attributes which will be available for instances of this class, and 
@@ -173,12 +174,10 @@
              * @param {EventFacade} e Event object, with a cfg property which 
              * refers to the configuration object passed to the constructor.
              */
-            if (!this._silentInit) {
-                this.publish(INIT, {
-                    queuable:false,
-                    defaultFn:this._defInitFn
-                });
-            }
+            this.publish(INIT, {
+                queuable:false,
+                defaultFn:this._defInitFn
+            });
 
             if (config) {
                 if (config.on) {
@@ -189,11 +188,7 @@
                 }
             }
 
-            if (!this._silentInit) {
-                this.fire(INIT, {cfg: config});
-            } else {
-                this._defInitFn({cfg: config});
-            }
+            this.fire(INIT, {cfg: config});
 
             return this;
         },
@@ -252,12 +247,7 @@
         _defInitFn : function(e) {
             this._initHierarchy(e.cfg);
             this._initPlugins(e.cfg);
-
-            if (!this._silentInit) {
-                this._set(INITIALIZED, true);
-            } else {
-                this._conf.add(INITIALIZED, VALUE, true);
-            }
+            this._set(INITIALIZED, true);
         },
 
         /**
@@ -380,11 +370,11 @@
          * @return {Object} The aggregate set of ATTRS definitions for the instance
          */
         _aggregateAttrs : function(allAttrs) {
-            var attr, 
-                attrs, 
-                cfg, 
-                val, 
-                path, 
+            var attr,
+                attrs,
+                cfg,
+                val,
+                path,
                 i, 
                 clone, 
                 cfgProps = Base._ATTR_CFG,
@@ -512,7 +502,7 @@
     };
 
     // Straightup augment, no wrapper functions
-    Y.mix(Base, Y.Attribute, false, null, 1);
+    Y.mix(Base, Attribute, false, null, 1);
     Y.mix(Base, PluginHost, false, null, 1);
 
     /**

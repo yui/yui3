@@ -265,7 +265,7 @@ YUI.add('dd-drop', function(Y) {
             this.shim.setStyles({
                 top: '-999px',
                 left: '-999px',
-                zIndex: '2'
+                zIndex: '1'
             });
             this.overTarget = false;
         },
@@ -395,8 +395,8 @@ YUI.add('dd-drop', function(Y) {
             DDM._pg.appendChild(s);
             this.shim = s;
 
-            s.on('mouseover', Y.bind(this._handleOverEvent, this));
-            s.on('mouseout', Y.bind(this._handleOutEvent, this));
+            s.on('mouseenter', Y.bind(this._handleOverEvent, this));
+            s.on('mouseleave', Y.bind(this._handleOutEvent, this));
         },
         /**
         * @private

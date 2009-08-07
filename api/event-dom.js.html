@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>event&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
                 
@@ -83,19 +83,12 @@
 
 <span class="nx">shouldIterate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">try</span> <span class="o">{</span>
-         
-        <span class="c">// Y.log(&#39;node? &#39; + (o instanceof Y.Node) + &#39;, &#39; + ((o.size) ? o.size() : &#39; no size&#39;));</span>
-<span class="c"></span>        <span class="c">// if (o instanceof Y.Node) {</span>
-<span class="c"></span>            <span class="c">// o.tagName =&quot;adsf&quot;;</span>
-<span class="c"></span>        <span class="c">// }</span>
-<span class="c"></span>
-        <span class="k">return</span> <span class="o">(</span> <span class="nx">o</span>                     <span class="o">&amp;&amp;</span> <span class="c">// o is something</span>
+        <span class="k">return</span> <span class="o">(</span> <span class="o">(</span><span class="nx">o</span>                    <span class="o">&amp;&amp;</span> <span class="c">// o is something</span>
 <span class="c"></span>                 <span class="k">typeof</span> <span class="nx">o</span> <span class="o">!==</span> <span class="s2">&quot;string&quot;</span> <span class="o">&amp;&amp;</span> <span class="c">// o is not a string</span>
-<span class="c"></span>                 <span class="c">// o.length  &amp;&amp; // o is indexed</span>
-<span class="c"></span>                 <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="o">((!</span><span class="nx">o</span><span class="o">.</span><span class="nx">size</span><span class="o">)</span> <span class="o">||</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)))</span>  <span class="o">&amp;&amp;</span> <span class="c">// o is indexed</span>
+<span class="c"></span>                 <span class="nx">o</span><span class="o">.</span><span class="nx">length</span>              <span class="o">&amp;&amp;</span> <span class="c">// o is indexed</span>
 <span class="c"></span>                 <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">tagName</span>            <span class="o">&amp;&amp;</span> <span class="c">// o is not an HTML element</span>
 <span class="c"></span>                 <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">alert</span>              <span class="o">&amp;&amp;</span> <span class="c">// o is not a window</span>
-<span class="c"></span>                 <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">item</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">o</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">!==</span> <span class="s2">&quot;undefined&quot;</span><span class="o">)</span> <span class="o">);</span>
+<span class="c"></span>                 <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">item</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">o</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">!==</span> <span class="s2">&quot;undefined&quot;</span><span class="o">))</span> <span class="o">);</span>
     <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">ex</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;collection check failure&quot;</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;event&quot;</span><span class="o">);</span>
         <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
@@ -303,9 +296,8 @@
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">p_obj</span><span class="o">,</span> <span class="nx">p_override</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">compat</span><span class="o">);</span>
         <span class="o">},</span>
 
-
         <span class="c">/**</span>
-<span class="c">         * Appends an event handler</span>
+<span class="c">         * Adds an event listener</span>
 <span class="c">         *</span>
 <span class="c">         * @method attach</span>
 <span class="c">         *</span>
@@ -314,17 +306,14 @@
 <span class="c">         * @param {String|HTMLElement|Array|NodeList} el An id, an element </span>
 <span class="c">         *  reference, or a collection of ids and/or elements to assign the </span>
 <span class="c">         *  listener to.</span>
-<span class="c">         * @param {Object}   obj    An arbitrary object that will be </span>
-<span class="c">         *                             passed as a parameter to the handler</span>
+<span class="c">         * @param {Object}   context optional context object</span>
 <span class="c">         * @param {Boolean|object}  args 0..n arguments to pass to the callback</span>
-<span class="c">         * @return {Boolean} True if the action was successful or defered,</span>
-<span class="c">         *                        false if one or more of the elements </span>
-<span class="c">         *                        could not have the listener attached,</span>
-<span class="c">         *                        or if the operation throws an exception.</span>
+<span class="c">         * @return {EventHandle} an object to that can be used to detach the listener</span>
+<span class="c">         *                     </span>
 <span class="c">         * @static</span>
 <span class="c">         */</span>
 
-        <span class="nx">attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
         <span class="o">},</span>
 
@@ -405,11 +394,11 @@
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
 
+
             <span class="c">// The el argument can be an array of elements or element ids.</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">shouldIterate</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
 
-                <span class="c">// Y.log(&#39;collection: &#39; + el);</span>
-<span class="c"></span>                <span class="c">// Y.log(&#39;collection: &#39; + el.item(0) + &#39;, &#39; + el.item(1));</span>
+                <span class="c">// Y.log(&#39;collection: &#39; + el.item(0) + &#39;, &#39; + el.item(1));</span>
 <span class="c"></span>
                 <span class="nx">handles</span><span class="o">=[];</span>
                 
@@ -427,51 +416,51 @@
 <span class="c"></span>            <span class="c">// ready</span>
 <span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
 
-                <span class="c">// @TODO switch to using DOM directly here</span>
-<span class="c"></span>                <span class="c">// oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);</span>
-<span class="c"></span>                <span class="nx">oEl</span> <span class="o">=</span> <span class="o">(</span><span class="nx">compat</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">byId</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
+                <span class="c">// oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);</span>
+<span class="c"></span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">compat</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">oEl</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">byId</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+
+                    <span class="nx">oEl</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
+
+                    <span class="nx">switch</span> <span class="o">(</span><span class="nx">oEl</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">case</span> <span class="m">0</span><span class="o">:</span>
+                            <span class="nx">oEl</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                            <span class="k">break</span><span class="o">;</span>
+                        <span class="nx">case</span> <span class="m">1</span><span class="o">:</span>
+                            <span class="nx">oEl</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+                            <span class="k">break</span><span class="o">;</span>
+                        <span class="nx">default</span><span class="o">:</span>
+                            <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">;</span>
+                            <span class="k">return</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">oEl</span><span class="o">)</span> <span class="o">{</span>
 
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">oEl</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">oEl</span><span class="o">.</span><span class="nx">length</span> <span class="o">==</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">el</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
-                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                            <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">;</span>
-                            <span class="k">return</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
-                        <span class="o">}</span>
-
-                    <span class="c">// HTMLElement</span>
-<span class="c"></span>                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                        <span class="c">// Y.log(&#39;no size: &#39; + oEl + &#39;, &#39; + type);</span>
-<span class="c"></span>                        <span class="nx">el</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">;</span>
-                    <span class="o">}</span>
+                    <span class="nx">el</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">;</span>
 
                 <span class="c">// Not found = defer adding the event until the element is available</span>
 <span class="c"></span>                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 
                     <span class="c">// Y.log(el + &#39; not found&#39;);</span>
-<span class="c"></span>
-                    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+<span class="c"></span>                    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                         <span class="c">// Y.log(&#39;lazy attach: &#39; + args);</span>
 <span class="c"></span>                        <span class="nx">E</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
                     <span class="o">},</span> <span class="nx">E</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">compat</span><span class="o">);</span>
+
                 <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="c">// Element should be an html element or an array if we get here.</span>
+            <span class="c">// Element should be an html element or node</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;unable to attach event &quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;event&quot;</span><span class="o">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="c">// the custom event key is the uid for the element + type</span>
-<span class="c"></span>
-            <span class="c">// allow a node reference to Y.on to work with load time addEventListener check</span>
-<span class="c"></span>            <span class="c">// (Node currently only has the addEventListener interface and that may be</span>
-<span class="c"></span>            <span class="c">// removed).</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">el</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">el</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
             <span class="o">}</span>
 
  			<span class="nx">cewrapper</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_createWrapper</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">capture</span><span class="o">,</span> <span class="nx">compat</span><span class="o">,</span> <span class="nx">facade</span><span class="o">);</span>
@@ -514,13 +503,14 @@
 <span class="c">         *</span>
 <span class="c">         * @method detach</span>
 <span class="c">         *</span>
-<span class="c">         * @param {String|HTMLElement|Array|NodeList} el An id, an element </span>
-<span class="c">         *  reference, or a collection of ids and/or elements to remove</span>
-<span class="c">         *  the listener from.</span>
 <span class="c">         * @param {String} type the type of event to remove.</span>
 <span class="c">         * @param {Function} fn the method the event invokes.  If fn is</span>
-<span class="c">         *  undefined, then all event handlers for the type of event are *  removed.</span>
-<span class="c">         * @return {boolean} true if the unbind was successful, false *  otherwise.</span>
+<span class="c">         * undefined, then all event handlers for the type of event are </span>
+<span class="c">         * removed.</span>
+<span class="c">         * @param {String|HTMLElement|Array|NodeList|EventHandle} el An </span>
+<span class="c">         * event handle, an id, an element reference, or a collection </span>
+<span class="c">         * of ids and/or elements to remove the listener from.</span>
+<span class="c">         * @return {boolean} true if the unbind was successful, false otherwise.</span>
 <span class="c">         * @static</span>
 <span class="c">         */</span>
         <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
@@ -926,7 +916,6 @@
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
-                                <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
