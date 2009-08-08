@@ -4,7 +4,6 @@
  * @module event
  * @submodule event-delegate
  */
-(function() {
 
 var Event = Y.Event,
 	Lang = Y.Lang,
@@ -236,5 +235,3 @@ Y.Event.delegate = function (type, fn, el, spec) {
 };
 
 Y.delegate = Event.delegate;
-
-})();

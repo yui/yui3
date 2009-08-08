@@ -6,98 +6,52 @@ YUI.add('event-mouseenter', function(Y) {
  * @submodule event-mouseenter
  */
 
-var isString = Y.Lang.isString,
+Y.Event._fireMouseEnter = function (e, eventName) {
 
-	fireMouseEventForNode = function (node, relatedTarget, eventName, e, spec) {
+	var relatedTarget = e.relatedTarget,
+		currentTarget = e.currentTarget;
 
-		if (!node.compareTo(relatedTarget) && !node.contains(relatedTarget)) {
+	if (!currentTarget.compareTo(relatedTarget) && 
+		!currentTarget.contains(relatedTarget)) {
 
-			e.container = e.currentTarget;
-			e.currentTarget = node;
+		Y.fire(eventName, e);
 
-			Y.fire(eventName, e);
-			
-		}
+	}
 
-	},
+};
 
-
-	handleMouseEvent = function (e, eventName, spec) {
-
-		var relatedTarget = e.relatedTarget,
-			currentTarget = e.currentTarget,
-			target = e.target;
-
-		if (spec) {
-
-			currentTarget.queryAll(spec).some(function (v) {
-
-				var bReturnVal;
-
-				if (v.compareTo(target) || v.contains(target)) {
-					fireMouseEventForNode(v, relatedTarget, eventName, e, spec);
-					bReturnVal = true;
-				}
-				
-				return bReturnVal; 
-			
-			});
-		
-		}
-		else {
-			fireMouseEventForNode(currentTarget, relatedTarget, eventName, e);
-		}
-
-	},
-
-	sanitize = Y.cached(function (str) {
-
-    	return str.replace(/[|,:]/g, "~");
-
-	}),
+var plugins = Y.Env.evt.plugins,
+	isString = Y.Lang.isString,
 
 	eventConfig = {
 
-    	on: function(type, fn, el, spec) {
+    	on: function(type, fn, el) {
 
 	        var sDOMEvent = (type === "mouseenter") ? "mouseover" : "mouseout",
+
+				//	The name of the custom event
 				sEventName = type + ":" + (isString(el) ? el : Y.stamp(el)) + sDOMEvent,
-	            args = Y.Array(arguments, 0, true),
-				sSelector;
 
-			if (isString(spec)) {
-				sSelector = spec;
-				sEventName = sEventName + sanitize(sSelector);
-			}
+	            args = Y.Array(arguments, 0, true);
 
+			//	Bind an actual DOM event listener that will call the 
+			//	the custom event
 	        if (!Y.getEvent(sEventName)) {
-
-	            // Set up the listener on the container
-	            Y.on(sDOMEvent, function (e) {
-	
-					handleMouseEvent(e, sEventName, sSelector);
-
-				}, el);
+				Y.on(sDOMEvent, Y.rbind(Y.Event._fireMouseEnter, Y, sEventName), el);
 	        }
 
 	        args[0] = sEventName;
 
+	        // Remove the element from the args
+			args.splice(2, 1);
 
-	        // Remove the element (and the spec--if defined) from the args
-		
-			if (sSelector) {
-	        	args.splice(2, 2);
-			}
-			else {
-				args.splice(2, 1);
-			}
-            
-	        // Subscribe to the custom event for the delegation spec
+	        // Subscribe to the custom event
 	        return Y.on.apply(Y, args);
 
 	    }
 
 	};
+
 
 /**
  * Sets up a "mouseenter" listener&#151;a listener that is called the first time 
@@ -114,7 +68,7 @@ var isString = Y.Lang.isString,
  * @return {EventHandle} the detach handle
  * @for YUI
  */
-Y.Env.evt.plugins.mouseenter = eventConfig;
+plugins.mouseenter = eventConfig;
 
 /**
 * Sets up a "mouseleave" listener&#151;a listener that is called the first time 
@@ -131,7 +85,7 @@ Y.Env.evt.plugins.mouseenter = eventConfig;
 * @return {EventHandle} the detach handle
 * @for YUI
  */
-Y.Env.evt.plugins.mouseleave = eventConfig;
+plugins.mouseleave = eventConfig;
 
 
 }, '@VERSION@' ,{requires:['event-base']});

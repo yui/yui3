@@ -1332,7 +1332,6 @@ YUI.add('event-delegate', function(Y) {
  * @module event
  * @submodule event-delegate
  */
-(function() {
 
 var Event = Y.Event,
 	Lang = Y.Lang,
@@ -1565,8 +1564,6 @@ Y.Event.delegate = function (type, fn, el, spec) {
 
 Y.delegate = Event.delegate;
 
-})();
-
 
 }, '@VERSION@' ,{requires:['event-base']});
 YUI.add('event-mousewheel', function(Y) {
@@ -1620,6 +1617,12 @@ Y.Env.evt.plugins.mousewheel = {
 
 }, '@VERSION@' ,{requires:['event-base']});
 YUI.add('event-mouseenter', function(Y) {
+
+/**
+ * Adds support for mouseenter/mouseleave events
+ * @module event
+ * @submodule event-mouseenter
+ */
 
 Y.Event._fireMouseEnter = function (e, eventName) {
 
