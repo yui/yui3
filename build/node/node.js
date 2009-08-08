@@ -295,9 +295,12 @@ Node.ATTRS = {
         }
     },
 
+     // IE: elements collection is also FORM node which trips up scrubVal.
+     // preconverting to NodeList
+     // TODO: break out for IE only
     'elements': {
         getter: function() {
-            return this.getElementsByTagName('*');
+            return Y.all(this._node.elements);
         }
     },
 
@@ -765,6 +768,7 @@ var NodeList = function(config) {
     Y.stamp(this);
     NodeList._instances[this[UID]] = this;
     g_nodelists[this[UID]] = nodes;
+    this._nodes = nodes;
 };
 // end "globals"
 
@@ -1760,5 +1764,5 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 }, '@VERSION@' ,{requires:['dom-screen']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom'], use:['node-base', 'node-style', 'node-screen'], skinnable:false});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen'], skinnable:false, requires:['dom']});
 

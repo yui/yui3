@@ -85,9 +85,10 @@ button {
         <a href="http://www.yahoo.com/foo" id="link-1">Yahoo!</a>
         <a href="foo.html" id="link-2" tabIndex="-1">foo</a>
         <form id="test-form" class="test-class" action="#">
+            <label for="test-text-value"><em>label</em></label>
             <input name="test-text-value" value="text value">
             <input name="test-text-novalue">
-
+    
             <textarea name="test-textarea-value" value="textarea value"></textarea>
             <textarea name="test-textarea-novalue"></textarea>
             <textarea name="test-textarea-textvalue">textarea text</textarea>
@@ -732,6 +733,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', funct
 
             node.replace(newNode);
             Assert.areEqual(newNode, Y.get('#test-replace').get('firstChild')._node, 'node.replace()');
+        },
+
+        test_elements: function() {
+            var elements = Y.get('#test-form').get('elements');
+
+            ArrayAssert.itemsAreEqual(Y.DOM.byId('test-form').elements, elements._nodes, "Y.get('#test-form').get('elements')");
         },
 
         test_aria: function() {
