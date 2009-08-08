@@ -295,9 +295,9 @@ Node.ATTRS = {
         }
     },
 
-    'options': {
+    'elements': {
         getter: function() {
-            return this.getElementsByTagName('option');
+            return this.getElementsByTagName('*');
         }
     },
 
@@ -1760,5 +1760,5 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 }, '@VERSION@' ,{requires:['dom-screen']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen'], skinnable:false, requires:['dom']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom'], use:['node-base', 'node-style', 'node-screen'], skinnable:false});
 

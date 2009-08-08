@@ -295,9 +295,9 @@ Node.ATTRS = {
         }
     },
 
-    'options': {
+    'elements': {
         getter: function() {
-            return this.getElementsByTagName('option');
+            return this.getElementsByTagName('*');
         }
     },
 
