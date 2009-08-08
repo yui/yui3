@@ -141,13 +141,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', funct
     var ArrayAssert = YAHOO.util.ArrayAssert;
     var logger = new tool.TestLogger('yui-log', { height: '800px', fontSize: '100%' });
 
-    var handle = Y.get('html').on('click', function(e) {
-        alert('click');
-        Y.get('html').detach('click');
-        //handle.detach();
-    });
-
-
     var byId = function(id) {
         return document.getElementById(id);
     };
