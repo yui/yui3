@@ -67,9 +67,7 @@
 <span class="c"> */</span>
 
 <span class="c">// &quot;globals&quot;</span>
-<span class="c"></span><span class="k">var</span> <span class="nx">g_nodes</span> <span class="o">=</span> <span class="o">{},</span>
-    <span class="nx">g_nodelists</span> <span class="o">=</span> <span class="o">{},</span>
-    <span class="nx">g_slice</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">slice</span><span class="o">,</span>
+<span class="c"></span><span class="k">var</span> <span class="nx">g_slice</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">slice</span><span class="o">,</span>
 
     <span class="nx">DOT</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">,</span>
     <span class="nx">NODE_NAME</span> <span class="o">=</span> <span class="s1">&#39;nodeName&#39;</span><span class="o">,</span>
@@ -81,7 +79,7 @@
     <span class="nx">Node</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">uid</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">UID</span><span class="o">];</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">uid</span> <span class="o">&amp;&amp;</span> <span class="nx">g_nodes</span><span class="o">[</span><span class="nx">uid</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">g_nodes</span><span class="o">[</span><span class="nx">uid</span><span class="o">]</span> <span class="o">!==</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">uid</span> <span class="o">&amp;&amp;</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="nx">uid</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="nx">uid</span><span class="o">].</span><span class="nx">_node</span> <span class="o">!==</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">node</span><span class="o">[</span><span class="nx">UID</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span> <span class="c">// unset existing uid to prevent collision (via clone or hack)</span>
 <span class="c"></span>        <span class="o">}</span>
 
@@ -95,7 +93,6 @@
         <span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]</span> <span class="o">=</span> <span class="nx">uid</span><span class="o">;</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span> <span class="o">=</span> <span class="o">{};</span>
 
-        <span class="nx">g_nodes</span><span class="o">[</span><span class="nx">uid</span><span class="o">]</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_stateProxy</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
         <span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="nx">uid</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
@@ -629,6 +626,19 @@
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">},</span>
 
+    <span class="nx">purge</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">recurse</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">purgeElement</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="nx">recurse</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="nx">destroy</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">purge</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">delete</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">purge</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">purge</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">},</span>
+
     <span class="c">/**</span>
 <span class="c">     * Invokes a method on the Node instance </span>
 <span class="c">     * @method invoke</span>
@@ -654,14 +664,6 @@
         <span class="nx">ret</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">method</span><span class="o">](</span><span class="nx">a</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>    
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">scrubVal</span><span class="o">(</span><span class="nx">ret</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
     <span class="o">},</span>
-
-    <span class="nx">destructor</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c">// TODO: What about shared instances?</span>
-<span class="c"></span>        <span class="c">//var uid = this[UID];</span>
-<span class="c"></span>
-        <span class="c">//delete g_nodes[uid];</span>
-<span class="c"></span>        <span class="c">//delete Node._instances[uid];</span>
-<span class="c"></span>    <span class="o">},</span>
 
     <span class="c">/**</span>
 <span class="c">     * Applies the given function to each Node in the NodeList.</span>

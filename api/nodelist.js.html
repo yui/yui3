@@ -101,7 +101,6 @@
 
     <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
     <span class="nx">NodeList</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-    <span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">;</span>
     <span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">;</span>
 <span class="o">};</span>
 <span class="c">// end &quot;globals&quot;</span>
@@ -117,13 +116,13 @@
 <span class="c"> * @return {Array} The array of DOM nodes bound to the NodeList</span>
 <span class="c"> */</span>
 <span class="nx">NodeList</span><span class="o">.</span><span class="nx">getDOMNodes</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">nodeList</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="nx">g_nodelists</span><span class="o">[</span><span class="nx">nodeList</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
+    <span class="k">return</span> <span class="nx">nodeList</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">;</span>
 <span class="o">};</span>
 
 <span class="nx">NodeList</span><span class="o">.</span><span class="nx">_instances</span> <span class="o">=</span> <span class="o">[];</span>
 
 <span class="nx">NodeList</span><span class="o">.</span><span class="nx">each</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">instance</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">g_nodelists</span><span class="o">[</span><span class="nx">instance</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
+    <span class="k">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">;</span>
     <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span> <span class="o">||</span> <span class="nx">instance</span><span class="o">);</span>
     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
@@ -138,15 +137,15 @@
             <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="o">[],</span>
                 <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
 
-            <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">UID</span> <span class="o">=</span> <span class="s1">&#39;_yuid&#39;</span><span class="o">,</span>
                     <span class="nx">instance</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="nx">node</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span>
                     <span class="nx">ctx</span><span class="o">,</span>
                     <span class="nx">result</span><span class="o">;</span>
 
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">instance</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">g_nodes</span><span class="o">[</span><span class="nx">tmp</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
                     <span class="nx">instance</span> <span class="o">=</span> <span class="nx">tmp</span><span class="o">;</span>
+                    <span class="nx">tmp</span><span class="o">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
                 <span class="o">}</span>
                 <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="nx">instance</span><span class="o">;</span>
                 <span class="nx">result</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ctx</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
@@ -192,7 +191,7 @@
 <span class="c">     * @return {Node} The Node instance at the given index.</span>
 <span class="c">     */</span>
     <span class="nx">item</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">((</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">||</span> <span class="o">[])[</span><span class="nx">index</span><span class="o">]);</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">((</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span> <span class="o">||</span> <span class="o">[])[</span><span class="nx">index</span><span class="o">]);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -206,7 +205,7 @@
 <span class="c">     */</span>
     <span class="nx">each</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
             <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">instance</span><span class="o">);</span>
         <span class="o">});</span>
@@ -217,11 +216,11 @@
         <span class="k">var</span> <span class="nx">nodelist</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
             <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">NodeList</span><span class="o">.</span><span class="nx">_getTempNode</span><span class="o">();</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="nx">node</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
             <span class="k">if</span> <span class="o">(!</span><span class="nx">instance</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">g_nodes</span><span class="o">[</span><span class="nx">tmp</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
                 <span class="nx">instance</span> <span class="o">=</span> <span class="nx">tmp</span><span class="o">;</span>
+                <span class="nx">tmp</span><span class="o">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
             <span class="o">}</span>
 
             <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">instance</span><span class="o">,</span> <span class="nx">instance</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">nodelist</span><span class="o">);</span>
@@ -240,7 +239,7 @@
 <span class="c">     */</span>
     <span class="nx">some</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">some</span><span class="o">(</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">some</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
             <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="nx">node</span><span class="o">;</span>
             <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">context</span><span class="o">,</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">instance</span><span class="o">);</span>
@@ -255,7 +254,7 @@
 <span class="c">     * @return {Int} the index of the node value or -1 if not found</span>
 <span class="c">     */</span>
     <span class="nx">indexOf</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">node</span><span class="o">));</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">node</span><span class="o">));</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -266,7 +265,7 @@
 <span class="c">     * @see Selector</span>
 <span class="c">     */</span>
     <span class="nx">filter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">filter</span><span class="o">(</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span> <span class="nx">selector</span><span class="o">));</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">filter</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">,</span> <span class="nx">selector</span><span class="o">));</span>
     <span class="o">},</span>
 
     <span class="nx">modulus</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">,</span> <span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
@@ -308,16 +307,14 @@
     <span class="nx">refresh</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">doc</span><span class="o">,</span>
             <span class="nx">diff</span><span class="o">,</span>
-            <span class="nx">oldList</span> <span class="o">=</span> <span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
+            <span class="nx">oldList</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">;</span>
         <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_query</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">&amp;&amp;</span>
-                    <span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]][</span><span class="m">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> 
-                    <span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]][</span><span class="m">0</span><span class="o">].</span><span class="nx">ownerDocument</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">doc</span> <span class="o">=</span> <span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]][</span><span class="m">0</span><span class="o">].</span><span class="nx">ownerDocument</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">oldList</span> <span class="o">&amp;&amp;</span> <span class="nx">oldList</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">oldList</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">ownerDocument</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">doc</span> <span class="o">=</span> <span class="nx">oldList</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">ownerDocument</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_query</span><span class="o">,</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">);</span>        
-            <span class="nx">diff</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">diff</span><span class="o">(</span><span class="nx">oldList</span><span class="o">,</span> <span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]);</span> 
+            <span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_query</span><span class="o">,</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">);</span>        
+            <span class="nx">diff</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">diff</span><span class="o">(</span><span class="nx">oldList</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">);</span> 
             <span class="nx">diff</span><span class="o">.</span><span class="nx">added</span> <span class="o">=</span> <span class="nx">diff</span><span class="o">.</span><span class="nx">added</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">diff</span><span class="o">.</span><span class="nx">added</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
             <span class="nx">diff</span><span class="o">.</span><span class="nx">removed</span> <span class="o">=</span> <span class="nx">diff</span><span class="o">.</span><span class="nx">removed</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">diff</span><span class="o">.</span><span class="nx">removed</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;refresh&#39;</span><span class="o">,</span> <span class="nx">diff</span><span class="o">);</span>
@@ -336,9 +333,10 @@
 <span class="c">     * @see Event.on</span>
 <span class="c">     */</span>
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">etc</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">arguments</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">g_slice</span><span class="o">(</span><span class="nx">arguments</span><span class="o">);</span>
+        <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">batch</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">node</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
         <span class="o">});</span>
     <span class="o">},</span>
 
@@ -355,9 +353,10 @@
 <span class="c">     * @see Event.on</span>
 <span class="c">     */</span>
     <span class="nx">after</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">etc</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">arguments</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">g_slice</span><span class="o">(</span><span class="nx">arguments</span><span class="o">);</span>
+        <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">batch</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">node</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
         <span class="o">});</span>
     <span class="o">},</span>
 
@@ -367,7 +366,7 @@
 <span class="c">     * @return {Int} The number of items in the NodeList. </span>
 <span class="c">     */</span>
     <span class="nx">size</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]].</span><span class="nx">length</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/** Called on each Node instance</span>
@@ -382,8 +381,8 @@
         <span class="nx">NodeList</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="nx">node</span><span class="o">[</span><span class="nx">UID</span><span class="o">]];</span>
             <span class="k">if</span> <span class="o">(!</span><span class="nx">instance</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">g_nodes</span><span class="o">[</span><span class="nx">tmp</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
                 <span class="nx">instance</span> <span class="o">=</span> <span class="nx">tmp</span><span class="o">;</span>
+                <span class="nx">tmp</span><span class="o">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
             <span class="o">}</span>
             <span class="nx">ret</span><span class="o">[</span><span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">instance</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
         <span class="o">});</span>
@@ -394,7 +393,7 @@
     <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
             <span class="nx">errorMsg</span> <span class="o">=</span> <span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]</span> <span class="o">+</span> <span class="s1">&#39;: not bound to any nodes&#39;</span><span class="o">,</span>
-            <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]],</span>
+            <span class="nx">nodes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">,</span>
             <span class="nx">node</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">{</span>
