@@ -15,9 +15,7 @@
 
 <script type="text/javascript">
 
-YUI({
-    base: '../../build/'
-}).use('event', function(Y) {
+YUI().use('event', function(Y) {
 
     ////////////////////////////////////////////////////////////////////
 
@@ -58,7 +56,8 @@ YUI({
         // handle.detach();
     };
 
-    var handle = Y.on('key', handler, textNode, 'press:65', null, 1, 2);
+    // var handle = Y.on('key', handler, textNode, 'press:65', null, 1, 2);
+    var handle = Y.on('key', handler, textNode, null, null, 1, 2);
 
     ////////////////////////////////////////////////////////////////////
 

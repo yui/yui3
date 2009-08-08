@@ -1,3 +1,9 @@
+/**
+ * Adds a window resize event that has its behavior normalized to fire at the
+ * end of the resize rather than constantly during the resize.
+ * @module event
+ * @submodule event-resize
+ */
 (function() {
 
 var detachHandle,

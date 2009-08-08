@@ -108,6 +108,7 @@ var NOT_FOUND = {},
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED,
     BASE = 'base', 
+    BASEBASE = 'base-base',
     CSS = 'css',
     JS = 'js',
     CSSRESET = 'cssreset',
@@ -131,6 +132,7 @@ var NOT_FOUND = {},
     DUMP = 'dump',
     GET = 'get',
     EVENT = 'event',
+    EVENTBASE = 'event-base',
     EVENTCUSTOM = 'event-custom',
     IOBASE = 'io-base',
     NODE = 'node',
@@ -208,7 +210,7 @@ var NOT_FOUND = {},
 
             submodules: {
                 'node-base': {
-                    requires: [DOMBASE, SELECTORCSS2, EVENT, BASE]
+                    requires: [DOMBASE, BASE, SELECTORCSS2, EVENTBASE]
                 },
 
                 'node-style': {
@@ -273,7 +275,11 @@ var NOT_FOUND = {},
                 },
 
                 'base-build': {
-                    requires: ['base-base']
+                    requires: [BASEBASE]
+                },
+
+                'base-pluginhost': {
+                    requires: [BASEBASE, 'pluginhost']
                 }
             }
         },
@@ -419,8 +425,31 @@ var NOT_FOUND = {},
         },
 
         event: { 
-            expound: NODEBASE,
-            requires: [EVENTCUSTOM]
+            expound: NODE,
+            submodules: {
+                'event-base': {
+                    expound: NODEBASE,
+                    requires: [EVENTCUSTOM]
+                },
+                'event-delegate': {
+                    requires: [EVENTBASE]
+                },
+                'event-focus': {
+                    requires: [EVENTBASE]
+                },
+                'event-key': {
+                    requires: [EVENTBASE]
+                },
+                'event-mouseenter': {
+                    requires: [EVENTBASE]
+                },
+                'event-mousewheel': {
+                    requires: [EVENTBASE]
+                },
+                'event-resize': {
+                    requires: [EVENTBASE]
+                }
+            }
         },
 
         'event-custom': { 
@@ -428,7 +457,7 @@ var NOT_FOUND = {},
         },
 
         'event-simulate': { 
-            requires: [EVENT]
+            requires: [EVENTBASE]
         },
 
         'node-focusmanager': { 
@@ -504,6 +533,10 @@ var NOT_FOUND = {},
 
         plugin: { 
             requires: [BASE]
+        },
+
+        pluginhost: { 
+            requires: [YUIBASE]
         },
 
         profiler: { 

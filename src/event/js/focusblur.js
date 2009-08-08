@@ -1,3 +1,11 @@
+/**
+ * Adds focus and blur event listener support.  These events normally
+ * do not bubble, so this adds support for that so these events
+ * can be used in event delegation scenarios.
+ * 
+ * @module event
+ * @submodule event-focus
+ */
 (function() {
 
 var adapt = Y.Env.evt.plugins,
@@ -22,6 +30,30 @@ var adapt = Y.Env.evt.plugins,
     };
 
 
+Y.Event._attachFocus = function (args, config) {
+
+    var a = Y.Array(args, 0, true);
+    if (Y.UA.ie) {
+        a[0] = a[0].replace(/focus/, 'focusin');
+    } else if (Y.UA.opera) {
+        _captureHack(a[0], a[2]);
+    }
+    return Y.Event._attach(a, config);
+	
+};
+
+Y.Event._attachBlur = function (args, config) {
+
+    var a = Y.Array(args, 0, true);
+    if (Y.UA.ie) {
+        a[0] = a[0].replace(/blur/, 'focusout');
+    } else if (Y.UA.opera) {
+        _captureHack(a[0], a[2]);
+    }
+    return Y.Event._attach(a, config);
+	
+};
+
 /**
  * Adds a DOM focus listener.  Uses the focusin event in IE,
  * and the capture phase otherwise so that
@@ -41,14 +73,8 @@ var adapt = Y.Env.evt.plugins,
  * @return {EventHandle} the detach handle
  */
 adapt.focus = {
-    on: function(type, fn, o) {
-        var a = Y.Array(arguments, 0, true);
-        if (Y.UA.ie) {
-            a[0] = a[0].replace(/focus/, 'focusin');
-        } else if (Y.UA.opera) {
-            _captureHack(type, o);
-        }
-        return Y.Event._attach(a, CAPTURE_CONFIG);
+    on: function() {
+		return Y.Event._attachFocus(arguments, CAPTURE_CONFIG);
     }
 };
 
@@ -71,14 +97,8 @@ adapt.focus = {
  * @return {EventHandle} the detach handle
  */
 adapt.blur = {
-    on: function(type, fn, o) {
-        var a = Y.Array(arguments, 0, true);
-        if (Y.UA.ie) {
-            a[0] = a[0].replace(/blur/, 'focusout');
-        } else if (Y.UA.opera) {
-            _captureHack(type, o);
-        }
-        return Y.Event._attach(a, CAPTURE_CONFIG);
+    on: function() {
+		return Y.Event._attachBlur(arguments, CAPTURE_CONFIG);
     }
 };
 

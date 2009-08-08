@@ -91,8 +91,8 @@
 <span class="o">};</span>
 
 <span class="k">var</span> <span class="nx">NodeList</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">,</span>
-        <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">nodes</span> <span class="o">||</span> <span class="o">[];</span>
+    <span class="k">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">nodes</span> <span class="o">||</span> <span class="o">[],</span>
+        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
 
     <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">nodes</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_query</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">;</span>
@@ -102,10 +102,6 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
     <span class="nx">NodeList</span><span class="o">.</span><span class="nx">_instances</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
     <span class="nx">g_nodelists</span><span class="o">[</span><span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">;</span>
-
-    <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">restricted</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">g_restrict</span> <span class="o">=</span> <span class="k">this</span><span class="o">[</span><span class="nx">UID</span><span class="o">];</span>
-    <span class="o">}</span>
 <span class="o">};</span>
 <span class="c">// end &quot;globals&quot;</span>
 <span class="c"></span>
@@ -329,7 +325,7 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Applies an event listens to each Node bound to the NodeList. </span>
+<span class="c">     * Applies an event listener to each Node bound to the NodeList. </span>
 <span class="c">     * @method on</span>
 <span class="c">     * @param {String} type The event being listened for</span>
 <span class="c">     * @param {Function} fn The handler to call when the event fires</span>
@@ -346,7 +342,7 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">     * Applies an event listens to each Node bound to the NodeList. </span>
+<span class="c">     * Applies an event listener to each Node bound to the NodeList. </span>
 <span class="c">     * The handler is called only after all on() handlers are called</span>
 <span class="c">     * and the event is not prevented.</span>
 <span class="c">     * @method after</span>
@@ -490,8 +486,7 @@
     <span class="c">// TODO: propagate restricted to nodes?</span>
 <span class="c"></span>    <span class="k">var</span> <span class="nx">nodeList</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NodeList</span><span class="o">({</span>
         <span class="nx">nodes</span><span class="o">:</span> <span class="nx">nodes</span><span class="o">,</span>
-        <span class="nx">doc</span><span class="o">:</span> <span class="nx">doc</span><span class="o">,</span>
-        <span class="nx">restricted</span><span class="o">:</span> <span class="nx">restrict</span>
+        <span class="nx">doc</span><span class="o">:</span> <span class="nx">doc</span>
     <span class="o">});</span>
 
     <span class="c">// zero-length result returns null</span>
@@ -523,7 +518,6 @@
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
-                                <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
@@ -562,7 +556,6 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="node-aria.js.html" title="node-aria.js">node-aria.js</a></li>
                                 <li class=""><a href="node-class.js.html" title="node-class.js">node-class.js</a></li>
                                 <li class=""><a href="node-event-delegate.js.html" title="node-event-delegate.js">node-event-delegate.js</a></li>
                                 <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>

@@ -1,7 +1,8 @@
 (function() {
-/**
+/*
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 var GLOBAL_ENV = YUI.Env,

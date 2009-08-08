@@ -63,38 +63,45 @@
 	
 		Y.on("contentready", function () {
 
-			Y.on('mouseenter', Y.rbind(function (e, arg1, arg2, arg3) {
+			// Y.on('mouseenter', Y.rbind(function (e, arg1, arg2, arg3) {
+			// 
+			// 	e.currentTarget.addClass("highlight");
+			// 
+			// 	Y.log("currentTarget: " + e.currentTarget + ", arguments: " + arg1 + ", " + arg2 + ", " + arg3);
+			// 	
+			// }, Y, "one", "two", "three"), this);
 
-				e.currentTarget.addClass("highlight");
+			Y.on('mouseenter', function (e) {
 
-				Y.log("currentTarget: " + e.currentTarget + ", arguments: " + arg1 + ", " + arg2 + ", " + arg3);
-				
-			}, Y, "one", "two", "three"), this);
+				console.log('mouseenter');
+
+			}, "#list-1");
 			
 			Y.on('mouseleave', function (e) {
 			
-				e.currentTarget.removeClass("highlight");
+				console.log('mouseleave');
 				
-			}, this);
-
-			Y.on('mouseenter', Y.rbind(function (e, arg1, arg2, arg3) {
-
-				Y.log(arguments.length);	//	Should be 4
-
-				Y.log("currentTarget: " + e.currentTarget + ", arguments: " + arg1 + ", " + arg2 + ", " + arg3);
-
-				//	Target of the event will be the element that matched the
-				//	specified CSS selector
-				
-				e.currentTarget.addClass("highlight");
-				
-			}, Y, "one", "two", "three"), this, '>li');
+			}, "#list-1");
 			
-			Y.on('mouseleave', function (e) {
-			
-				e.currentTarget.removeClass("highlight");
-				
-			}, this, '>li');		
+			// 
+			// Y.on('mouseenter', Y.rbind(function (e, arg1, arg2, arg3) {
+			// 
+			// 	Y.log(arguments.length);	//	Should be 4
+			// 
+			// 	Y.log("currentTarget: " + e.currentTarget + ", arguments: " + arg1 + ", " + arg2 + ", " + arg3);
+			// 
+			// 	//	Target of the event will be the element that matched the
+			// 	//	specified CSS selector
+			// 	
+			// 	e.currentTarget.addClass("highlight");
+			// 	
+			// }, Y, "one", "two", "three"), this, '>li');
+			// 
+			// Y.on('mouseleave', function (e) {
+			// 
+			// 	e.currentTarget.removeClass("highlight");
+			// 	
+			// }, this, '>li');		
 	
 		}, "#list-1");
 	
