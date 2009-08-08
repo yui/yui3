@@ -32,7 +32,7 @@ var LANG = Y.Lang,
             var xmldoc = data,
                 data_out = {results:[],meta:{}};
 
-            if(xmldoc && xmldoc.nodeType && xmldoc.nodeType === 9 && schema) {
+            if(xmldoc && xmldoc.nodeType && (xmldoc.nodeType === 9 || xmldoc.nodeType === 1 || xmldoc.nodeType === 11) && schema) {
                 // Parse results data
                 data_out = SchemaXML._parseResults(schema, xmldoc, data_out);
 
