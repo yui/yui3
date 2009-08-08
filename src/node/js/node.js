@@ -18,9 +18,7 @@
  */
 
 // "globals"
-var g_nodes = {},
-    g_nodelists = {},
-    g_slice = Array.prototype.slice,
+var g_slice = Array.prototype.slice,
 
     DOT = '.',
     NODE_NAME = 'nodeName',
@@ -32,7 +30,7 @@ var g_nodes = {},
     Node = function(node) {
         var uid = node[UID];
 
-        if (uid && g_nodes[uid] && g_nodes[uid] !== node) {
+        if (uid && Node._instances[uid] && Node._instances[uid]._node !== node) {
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
 
@@ -46,7 +44,6 @@ var g_nodes = {},
         this[UID] = uid;
         this._conf = {};
 
-        g_nodes[uid] = node;
         this._node = node;
         this._stateProxy = node;
         Node._instances[uid] = this;
@@ -580,6 +577,19 @@ Y.mix(Node.prototype, {
         return this;
     },
 
+    purge: function(recurse, type) {
+        Y.Event.purgeElement(this._node, recurse, type);
+    },
+
+    destroy: function(purge) {
+        delete Node._instances[this[UID]];
+        if (purge) {
+            this.purge(true);
+        }
+
+        this._node = null;
+    },
+
     /**
      * Invokes a method on the Node instance 
      * @method invoke
@@ -604,14 +614,6 @@ Y.mix(Node.prototype, {
 
         ret = node[method](a, b, c, d, e);    
         return Y.Node.scrubVal(ret, this);
-    },
-
-    destructor: function() {
-        // TODO: What about shared instances?
-        //var uid = this[UID];
-
-        //delete g_nodes[uid];
-        //delete Node._instances[uid];
     },
 
     /**
