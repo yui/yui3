@@ -294,6 +294,12 @@ Node.ATTRS = {
         }
     },
 
+    'options': {
+        getter: function() {
+            return this.getElementsByTagName('option');
+        }
+    },
+
     /**
      * Returns a NodeList instance of all HTMLElement children.
      * @readOnly
