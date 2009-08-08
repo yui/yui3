@@ -560,6 +560,20 @@ Y.mix(Node.prototype, {
     },
 
     /**
+     * Replace the node with the other node. This is a DOM update only
+     * and does not change the node bound to the Node instance.
+     * Shortcut for myNode.get('parentNode').replaceChild(newNode, myNode);
+     * @method replace
+     * @chainable
+     *
+     */
+    replace: function(newNode) {
+        var node = this._node;
+        node.parentNode.replaceChild(newNode, node);
+        return this;
+    },
+
+    /**
      * Invokes a method on the Node instance 
      * @method invoke
      * @param {String} method The name of the method to invoke
