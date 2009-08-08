@@ -343,9 +343,12 @@
         <span class="o">}</span>
     <span class="o">},</span>
 
-    <span class="s1">&#39;elements&#39;</span><span class="o">:</span> <span class="o">{</span>
+     <span class="c">// IE: elements collection is also FORM node which trips up scrubVal.</span>
+<span class="c"></span>     <span class="c">// preconverting to NodeList</span>
+<span class="c"></span>     <span class="c">// TODO: break out for IE only</span>
+<span class="c"></span>    <span class="s1">&#39;elements&#39;</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="s1">&#39;*&#39;</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">elements</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">},</span>
 
