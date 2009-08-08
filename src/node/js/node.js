@@ -702,3 +702,4 @@ Y.mix(Node.prototype, {
 
 Y.Node = Node;
 Y.get = Y.Node.get;
+Y.first = Y.Node.get;

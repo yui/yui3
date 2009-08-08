@@ -700,6 +700,7 @@ Y.mix(Node.prototype, {
 
 Y.Node = Node;
 Y.get = Y.Node.get;
+Y.first = Y.Node.get;
 /**
  * The NodeList module provides support for managing collections of Nodes.
  * @module node
@@ -1444,7 +1445,7 @@ Y.Node.prototype.delegate = function(type, fn, selector, context) {
 
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'base', 'selector']});
+}, '@VERSION@' ,{requires:['dom-base', 'event-custom', 'selector-css2', 'plugin']});
 YUI.add('node-style', function(Y) {
 
 (function(Y) {

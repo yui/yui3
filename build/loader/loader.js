@@ -208,7 +208,7 @@ var NOT_FOUND = {},
 
             submodules: {
                 'node-base': {
-                    requires: [DOMBASE, BASE, SELECTORCSS2, EVENT]
+                    requires: [DOMBASE, SELECTORCSS2, EVENT, BASE]
                 },
 
                 'node-style': {
