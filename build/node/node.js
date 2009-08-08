@@ -999,9 +999,10 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     on: function(type, fn, context, etc) {
-        arguments[2] = context || this;
+        var args = g_slice(arguments);
+        args[2] = context || this;
         this.batch(function(node) {
-            node.on.apply(node, arguments);
+            node.on.apply(node, args);
         });
     },
 
@@ -1018,9 +1019,10 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     after: function(type, fn, context, etc) {
-        arguments[2] = context || this;
+        var args = g_slice(arguments);
+        args[2] = context || this;
         this.batch(function(node) {
-            node.after.apply(node, arguments);
+            node.after.apply(node, args);
         });
     },
 
