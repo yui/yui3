@@ -8,7 +8,9 @@
 <script type="text/javascript" src="../../build/event-custom/event-custom.js"></script>
 <script type="text/javascript" src="../../build/event/event-debug.js"></script>
 <script type="text/javascript" src="../../build/event-simulate/event-simulate.js"></script>
+<!--
 <script type="text/javascript" src="../../build/dom/dom.js"></script>
+-->
 <script type="text/javascript" src="../../build/node/node.js"></script>
 <script type="text/javascript" src="../../build/dump/dump.js"></script>
 <script type="text/javascript" src="../../build/substitute/substitute.js"></script>
@@ -68,14 +70,14 @@ YUI({
     }, document);
     */
 
-    Y.on('asdasdafdsf|yui:log', function(e) {
-        var d=document, b=d.body, n=d.createElement("div");
-        if (b) {
-            n.appendChild(d.createTextNode(e.msg));
-            b.appendChild(n);
-        }
+    // Y.on('asdasdafdsf|yui:log', function(e) {
+    //     var d=document, b=d.body, n=d.createElement("div");
+    //     if (b) {
+    //         n.appendChild(d.createTextNode(e.msg));
+    //         b.appendChild(n);
+    //     }
 
-    });
+    // });
 
 /*
     Y.on('event:ready', function() {
@@ -91,6 +93,14 @@ YUI({
             e.stopPropagation();
         }, false);
     */
+
+    Y.on('click', function() {
+        Y.log("never should happen");
+    }, '#neverwillbehere');
+
+    Y.on('click', function() {
+        Y.log("lazy element worked");
+    }, '#lazy');
 
 
     Y.on('focus', function() {
@@ -312,6 +322,10 @@ Y.on('windowresize', function(e) {
         // alert('resized');                                                                                                                                       
     // });  
 
+    Y.on('mousewheel', function(e, arg1) {
+        Y.log('mousewheel: ' + e.wheelDelta + ', ' + arg1);
+    }, Y, 1);
+
 });
 
 </script>
@@ -329,5 +343,16 @@ Y.on('windowresize', function(e) {
     <form>
         <input type="radio" id="radio1" name="radiocollection[]" />
     </form>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p id="lazy">Me</p>
 </body>
 </html>

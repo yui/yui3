@@ -1,3 +1,9 @@
+/**
+ * Adds support for mouseenter/mouseleave events
+ * @module event
+ * @submodule event-mouseenter
+ */
+
 Y.Event._fireMouseEnter = function (e, eventName) {
 
 	var relatedTarget = e.relatedTarget,

@@ -10,10 +10,6 @@
         }
         .yui-skin-sam .yui-console .yui-console-content {
             font-size: 10px;
-            width: 32em;
-        }
-        .yui-skin-sam .yui-console .yui-console-bd {
-            height: 50em;
         }
         .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
             background: #070;
@@ -146,6 +142,8 @@ JSON_STRING = '[\
 /*****************************/
 /*     Tests begin here      */
 /*****************************/
+// wrapped in a function to allow repeating tests with native behavior disabled
+function addTests() {
 suite.add(new Y.Test.Case({
     name : "parse",
 
@@ -638,6 +636,8 @@ suite.add(new Y.Test.Case({
                 }]
             },null,0));
 
+        /* Commented out because FF3.5 has infinite loop bug for neg indents
+         * Fixed in FF for next version.
         Y.Assert.areSame('{"foo-4":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
             Y.JSON.stringify({
                 "foo-4" : [ 2, {
@@ -648,6 +648,7 @@ suite.add(new Y.Test.Case({
                     }]
                 }]
             },null,-4));
+        */
 
         Y.Assert.areSame('{"foo_false":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
             Y.JSON.stringify({
@@ -873,17 +874,27 @@ suite.add(new Y.Test.Case({
     },
 }));
 */
+}
 
 var yconsole = new Y.Console({
     contentBox:"log",
     newestOnTop: false,
-    height: '600px'
+    height: '580px'
 }).render();
 
 //yconsole.hideCategory('info');
 
-if (Object.prototype.toString.call(window.JSON) === '[object JSON]') {
-    Y.log("Browser has native JSON implementation","info","TestRunner");
+addTests();
+// If native JSON is available, run the tests again without native calls
+if (Y.JSON.useNativeParse) {
+    suite.add(new Y.Test.Case({
+        test_disableNative : function () {
+            Y.JSON.useNativeParse = false;
+            Y.JSON.useNativeStringify = false;
+            Y.log("Rerunning tests without native JSON API","section","TestRunner");
+        }
+    }));
+    addTests();
 }
 
 Y.Test.Runner.add(suite);

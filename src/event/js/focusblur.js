@@ -1,3 +1,11 @@
+/**
+ * Adds focus and blur event listener support.  These events normally
+ * do not bubble, so this adds support for that so these events
+ * can be used in event delegation scenarios.
+ * 
+ * @module event
+ * @submodule event-focus
+ */
 (function() {
 
 var adapt = Y.Env.evt.plugins,

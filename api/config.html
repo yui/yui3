@@ -85,7 +85,7 @@ values if they are not supplied by the implementer.
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_charset">
+                                    <div class=" deprecated" rel="yui:property" resource="#property_charset">
                                     <h4><a name="property_charset" property="yui:name">charset</a>
                                         - <code><span property="yui:type">string</span></code>
                                     </h4>
@@ -97,6 +97,9 @@ values if they are not supplied by the implementer.
      
                                         
 
+                                    <div class="deprecated" property="yui:deprecated">
+                                        <strong>Deprecated:</strong> use jsAttributes cssAttributes
+                                    </div>        
 
                                     <hr />
                                     </div>
@@ -107,7 +110,7 @@ values if they are not supplied by the implementer.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Use the YUI combo service to reduce the number of http connections 
-required to load your dependencies
+required to load your dependencies.
 For dynamic loading.
                                         </div>
                                     </div>
@@ -142,7 +145,7 @@ For dynamic loading.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            A list of modules that defines the YUI core (overrides the default)</li>
+                                            A list of modules that defines the YUI core (overrides the default).
                                         </div>
                                     </div>
      
@@ -187,7 +190,7 @@ For dynamic loading.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Turn debug statements on or off
+                                            Turn debug statements on or off.
                                         </div>
                                     </div>
      
@@ -205,7 +208,7 @@ For dynamic loading.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The document associated with the 'win' configuration
+                                            The document associated with the 'win' configuration.
                                         </div>
                                     </div>
      
@@ -308,7 +311,7 @@ present on the page.
                                         <div class="description" property="yui:description">
                                             Set to true if the yui seed file was dynamically loaded in 
 order to bootstrap components relying on the window load event 
-and onDOMReady.
+and the 'domready' custom event.
                                         </div>
                                     </div>
      
@@ -348,6 +351,26 @@ For dynamic loading.
 
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:property" resource="#property_loaderPath">
+                                    <h4><a name="property_loaderPath" property="yui:name">loaderPath</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The loader 'path' attribute to the loader itself.  This is combined
+with the 'base' attribute to dynamically load the loader component
+when boostrapping with the get utility alone.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: loader/loader-min.js
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:property" resource="#property_locale">
                                     <h4><a name="property_locale" property="yui:name">locale</a>
                                         - <code><span property="yui:type">string</span></code>
@@ -369,7 +392,7 @@ For dynamic loading.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+                                            A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.
                                         </div>
                                     </div>
      
@@ -543,7 +566,7 @@ loading nodes. If not set, there is no timeout.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Log to the browser console if debug is on and the browser has a
-supported console
+supported console.
                                         </div>
                                     </div>
      
@@ -561,7 +584,7 @@ supported console
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The window/frame that this instance should operate in
+                                            The window/frame that this instance should operate in.
                                         </div>
                                     </div>
      
@@ -619,7 +642,6 @@ supported console
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
-                                <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
@@ -632,7 +654,6 @@ supported console
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
-                                <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
@@ -667,7 +688,6 @@ supported console
                                 <li class="selected"><a href="config.html" title="config">config</a></li>
                                 <li class=""><a href="Get.html" title="Get">Get</a></li>
                                 <li class=""><a href="Lang.html" title="Lang">Lang</a></li>
-                                <li class=""><a href="Loader.html" title="Loader">Loader</a></li>
                                 <li class=""><a href="Object.html" title="Object">Object</a></li>
                                 <li class=""><a href="UA.html" title="UA">UA</a></li>
                                 <li class=""><a href="YUI.html" title="YUI">YUI</a></li>
@@ -679,7 +699,6 @@ supported console
                         <ul class="content">        
                                 <li class=""><a href="_module.js.html" title="_module.js">_module.js</a></li>
                                 <li class=""><a href="get.js.html" title="get.js">get.js</a></li>
-                                <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
                                 <li class=""><a href="yui-array.js.html" title="yui-array.js">yui-array.js</a></li>
                                 <li class=""><a href="yui-base.js.html" title="yui-base.js">yui-base.js</a></li>
                                 <li class=""><a href="yui-core.js.html" title="yui-core.js">yui-core.js</a></li>
@@ -697,7 +716,7 @@ supported console
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class=""><a href="#property_base" title="base">base</a></li>
-                                <li class=""><a href="#property_charset" title="charset">charset</a></li>
+                                <li class=" deprecated"><a href="#property_charset" title="charset">charset</a></li>
                                 <li class=""><a href="#property_combine" title="combine">combine</a></li>
                                 <li class=""><a href="#property_comboBase" title="comboBase">comboBase</a></li>
                                 <li class=""><a href="#property_core" title="core">core</a></li>
@@ -712,6 +731,7 @@ supported console
                                 <li class=""><a href="#property_injected" title="injected">injected</a></li>
                                 <li class=""><a href="#property_insertBefore" title="insertBefore">insertBefore</a></li>
                                 <li class=""><a href="#property_jsAttributes" title="jsAttributes">jsAttributes</a></li>
+                                <li class=""><a href="#property_loaderPath" title="loaderPath">loaderPath</a></li>
                                 <li class=""><a href="#property_locale" title="locale">locale</a></li>
                                 <li class=""><a href="#property_logExclude" title="logExclude">logExclude</a></li>
                                 <li class=""><a href="#property_logInclude" title="logInclude">logInclude</a></li>
@@ -741,7 +761,7 @@ supported console
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Object", "name": "()", "url": "Object.html#method_()", "type": "method"}, {"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "config", "name": "base", "url": "config.html#property_base", "type": "property"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "cached", "url": "YUI.html#method_cached", "type": "method"}, {"access": "", "host": "config", "name": "charset", "url": "config.html#property_charset", "type": "property"}, {"access": "", "host": "config", "name": "combine", "url": "config.html#property_combine", "type": "property"}, {"access": "", "host": "config", "name": "comboBase", "url": "config.html#property_comboBase", "type": "property"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "config", "name": "core", "url": "config.html#property_core", "type": "property"}, {"access": "", "host": "config", "name": "cssAttributes", "url": "config.html#property_cssAttributes", "type": "property"}, {"access": "", "host": "config", "name": "dateFormat", "url": "config.html#property_dateFormat", "type": "property"}, {"access": "", "host": "config", "name": "debug", "url": "config.html#property_debug", "type": "property"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#event_delegate", "type": "event"}, {"access": "", "host": "config", "name": "doc", "url": "config.html#property_doc", "type": "property"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "Object", "name": "each", "url": "Object.html#method_each", "type": "method"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "private", "host": "Object", "name": "_extract", "url": "Object.html#method__extract", "type": "method"}, {"access": "", "host": "config", "name": "filter", "url": "config.html#property_filter", "type": "property"}, {"access": "", "host": "config", "name": "filters", "url": "config.html#property_filters", "type": "property"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "config", "name": "force", "url": "config.html#property_force", "type": "property"}, {"access": "", "host": "Object", "name": "getValue", "url": "Object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "Global", "url": "YUI.html#property_Global", "type": "property"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "", "host": "Object", "name": "hasKey", "url": "Object.html#method_hasKey", "type": "method"}, {"access": "", "host": "Object", "name": "hasValue", "url": "Object.html#method_hasValue", "type": "method"}, {"access": "", "host": "config", "name": "ignore", "url": "config.html#property_ignore", "type": "property"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "config", "name": "injected", "url": "config.html#property_injected", "type": "property"}, {"access": "", "host": "config", "name": "insertBefore", "url": "config.html#property_insertBefore", "type": "property"}, {"access": "", "host": "config", "name": "jsAttributes", "url": "config.html#property_jsAttributes", "type": "property"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "Object", "name": "keys", "url": "Object.html#method_keys", "type": "method"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "", "host": "config", "name": "locale", "url": "config.html#property_locale", "type": "property"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "config", "name": "logExclude", "url": "config.html#property_logExclude", "type": "property"}, {"access": "", "host": "config", "name": "logInclude", "url": "config.html#property_logInclude", "type": "property"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "config", "name": "modules", "url": "config.html#property_modules", "type": "property"}, {"access": "", "host": "YUI", "name": "mouseenter", "url": "YUI.html#event_mouseenter", "type": "event"}, {"access": "", "host": "YUI", "name": "mouseleave", "url": "YUI.html#event_mouseleave", "type": "event"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "", "host": "config", "name": "onCSS", "url": "config.html#property_onCSS", "type": "property"}, {"access": "", "host": "Object", "name": "owns", "url": "Object.html#method_owns", "type": "method"}, {"access": "", "host": "config", "name": "pollInterval", "url": "config.html#property_pollInterval", "type": "property"}, {"access": "", "host": "config", "name": "purgethreshold", "url": "config.html#property_purgethreshold", "type": "property"}, {"access": "", "host": "config", "name": "root", "url": "config.html#property_root", "type": "property"}, {"access": "", "host": "config", "name": "secureBase", "url": "config.html#property_secureBase", "type": "property"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "Object", "name": "setValue", "url": "Object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "Object", "name": "size", "url": "Object.html#method_size", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "config", "name": "throwFail", "url": "config.html#property_throwFail", "type": "property"}, {"access": "", "host": "config", "name": "timeout", "url": "config.html#property_timeout", "type": "property"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "config", "name": "useBrowserConsole", "url": "config.html#property_useBrowserConsole", "type": "property"}, {"access": "", "host": "Object", "name": "values", "url": "Object.html#method_values", "type": "method"}, {"access": "", "host": "config", "name": "win", "url": "config.html#property_win", "type": "property"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}, {"access": "", "host": "config", "name": "windowResizeDelay", "url": "config.html#property_windowResizeDelay", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Object", "name": "()", "url": "Object.html#method_()", "type": "method"}, {"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "config", "name": "base", "url": "config.html#property_base", "type": "property"}, {"access": "", "host": "YUI", "name": "cached", "url": "YUI.html#method_cached", "type": "method"}, {"access": "", "host": "config", "name": "charset", "url": "config.html#property_charset", "type": "property"}, {"access": "", "host": "config", "name": "combine", "url": "config.html#property_combine", "type": "property"}, {"access": "", "host": "config", "name": "comboBase", "url": "config.html#property_comboBase", "type": "property"}, {"access": "", "host": "config", "name": "core", "url": "config.html#property_core", "type": "property"}, {"access": "", "host": "config", "name": "cssAttributes", "url": "config.html#property_cssAttributes", "type": "property"}, {"access": "", "host": "config", "name": "dateFormat", "url": "config.html#property_dateFormat", "type": "property"}, {"access": "", "host": "config", "name": "debug", "url": "config.html#property_debug", "type": "property"}, {"access": "", "host": "config", "name": "doc", "url": "config.html#property_doc", "type": "property"}, {"access": "", "host": "Object", "name": "each", "url": "Object.html#method_each", "type": "method"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "private", "host": "Object", "name": "_extract", "url": "Object.html#method__extract", "type": "method"}, {"access": "", "host": "config", "name": "filter", "url": "config.html#property_filter", "type": "property"}, {"access": "", "host": "config", "name": "filters", "url": "config.html#property_filters", "type": "property"}, {"access": "", "host": "config", "name": "force", "url": "config.html#property_force", "type": "property"}, {"access": "", "host": "Object", "name": "getValue", "url": "Object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "Global", "url": "YUI.html#property_Global", "type": "property"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "", "host": "Object", "name": "hasKey", "url": "Object.html#method_hasKey", "type": "method"}, {"access": "", "host": "Object", "name": "hasValue", "url": "Object.html#method_hasValue", "type": "method"}, {"access": "", "host": "config", "name": "ignore", "url": "config.html#property_ignore", "type": "property"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "config", "name": "injected", "url": "config.html#property_injected", "type": "property"}, {"access": "", "host": "config", "name": "insertBefore", "url": "config.html#property_insertBefore", "type": "property"}, {"access": "", "host": "config", "name": "jsAttributes", "url": "config.html#property_jsAttributes", "type": "property"}, {"access": "", "host": "Object", "name": "keys", "url": "Object.html#method_keys", "type": "method"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "", "host": "config", "name": "loaderPath", "url": "config.html#property_loaderPath", "type": "property"}, {"access": "", "host": "config", "name": "locale", "url": "config.html#property_locale", "type": "property"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "config", "name": "logExclude", "url": "config.html#property_logExclude", "type": "property"}, {"access": "", "host": "config", "name": "logInclude", "url": "config.html#property_logInclude", "type": "property"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "config", "name": "modules", "url": "config.html#property_modules", "type": "property"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "", "host": "config", "name": "onCSS", "url": "config.html#property_onCSS", "type": "property"}, {"access": "", "host": "Object", "name": "owns", "url": "Object.html#method_owns", "type": "method"}, {"access": "", "host": "config", "name": "pollInterval", "url": "config.html#property_pollInterval", "type": "property"}, {"access": "", "host": "config", "name": "purgethreshold", "url": "config.html#property_purgethreshold", "type": "property"}, {"access": "", "host": "config", "name": "root", "url": "config.html#property_root", "type": "property"}, {"access": "", "host": "config", "name": "secureBase", "url": "config.html#property_secureBase", "type": "property"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "Object", "name": "setValue", "url": "Object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "Object", "name": "size", "url": "Object.html#method_size", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "config", "name": "throwFail", "url": "config.html#property_throwFail", "type": "property"}, {"access": "", "host": "config", "name": "timeout", "url": "config.html#property_timeout", "type": "property"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "config", "name": "useBrowserConsole", "url": "config.html#property_useBrowserConsole", "type": "property"}, {"access": "", "host": "Object", "name": "values", "url": "Object.html#method_values", "type": "method"}, {"access": "", "host": "config", "name": "win", "url": "config.html#property_win", "type": "property"}, {"access": "", "host": "config", "name": "windowResizeDelay", "url": "config.html#property_windowResizeDelay", "type": "property"}];
 </script>
 </body>
 </html>

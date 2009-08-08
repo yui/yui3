@@ -11,8 +11,7 @@ YUI.add('loader', function(Y) {
  * this network to reduce the number of http connections required to download 
  * YUI files.
  *
- * @module yui
- * @submodule loader
+ * @module loader
  */
 
 /**
@@ -24,6 +23,11 @@ YUI.add('loader', function(Y) {
  * files from the Yahoo! CDN, and it can utilize the combo service provided on
  * this network to reduce the number of http connections required to download 
  * YUI files.
+ *
+ * While the loader can be instantiated by the end user, it normally is not.
+ * @see YUI.use for the normal use case.  The use function automatically will
+ * pull in missing dependencies.
+ *
  * @class Loader
  * @constructor
  * @param o an optional set of configuration options.  Valid options:
@@ -104,6 +108,7 @@ var NOT_FOUND = {},
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED,
     BASE = 'base', 
+    BASEBASE = 'base-base',
     CSS = 'css',
     JS = 'js',
     CSSRESET = 'cssreset',
@@ -127,6 +132,7 @@ var NOT_FOUND = {},
     DUMP = 'dump',
     GET = 'get',
     EVENT = 'event',
+    EVENTBASE = 'event-base',
     EVENTCUSTOM = 'event-custom',
     IOBASE = 'io-base',
     NODE = 'node',
@@ -204,7 +210,7 @@ var NOT_FOUND = {},
 
             submodules: {
                 'node-base': {
-                    requires: [DOMBASE, BASE, SELECTORCSS2, EVENT]
+                    requires: [DOMBASE, BASE, SELECTORCSS2, EVENTBASE]
                 },
 
                 'node-style': {
@@ -269,7 +275,11 @@ var NOT_FOUND = {},
                 },
 
                 'base-build': {
-                    requires: ['base-base']
+                    requires: [BASEBASE]
+                },
+
+                'base-pluginhost': {
+                    requires: [BASEBASE, 'pluginhost']
                 }
             }
         },
@@ -415,8 +425,31 @@ var NOT_FOUND = {},
         },
 
         event: { 
-            expound: NODEBASE,
-            requires: [EVENTCUSTOM]
+            expound: NODE,
+            submodules: {
+                'event-base': {
+                    expound: NODEBASE,
+                    requires: [EVENTCUSTOM]
+                },
+                'event-delegate': {
+                    requires: [EVENTBASE]
+                },
+                'event-focus': {
+                    requires: [EVENTBASE]
+                },
+                'event-key': {
+                    requires: [EVENTBASE]
+                },
+                'event-mouseenter': {
+                    requires: [EVENTBASE]
+                },
+                'event-mousewheel': {
+                    requires: [EVENTBASE]
+                },
+                'event-resize': {
+                    requires: [EVENTBASE]
+                }
+            }
         },
 
         'event-custom': { 
@@ -424,7 +457,7 @@ var NOT_FOUND = {},
         },
 
         'event-simulate': { 
-            requires: [EVENT]
+            requires: [EVENTBASE]
         },
 
         'node-focusmanager': { 
@@ -502,6 +535,10 @@ var NOT_FOUND = {},
             requires: [BASE]
         },
 
+        pluginhost: { 
+            requires: [YUIBASE]
+        },
+
         profiler: { 
             requires: [YUIBASE]
         },
@@ -549,7 +586,7 @@ var NOT_FOUND = {},
         },
 
         yui: {
-            supersedes: [YUIBASE, GET, 'loader', 'queue-base']
+            supersedes: [YUIBASE, GET, 'queue-base']
         },
 
         'yui-base': { },
@@ -2061,4 +2098,4 @@ Y.Loader.prototype = {
 
 
 
-}, '@VERSION@' ,{requires:['queue-base']});
+}, '@VERSION@' );

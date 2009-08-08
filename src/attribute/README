@@ -1,3 +1,8 @@
+3.0.0
+
+* set/get can now be called for ad-hoc attributes (attributes which 
+  have not been added/configured). 
+
 3.0.0 beta 1
 
 * Removed Attribute.CLONE support in the interests of simplicity.

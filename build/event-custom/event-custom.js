@@ -1464,7 +1464,6 @@ var L = Y.Lang,
 
     ET = function(opts) {
 
-        // console.log('EventTarget constructor executed: ' + this._yuid);
 
         var o = (L.isObject(opts)) ? opts : {};
 
@@ -1507,7 +1506,7 @@ ET.prototype = {
 
         var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
-            Node = Y.Node, n;
+            Node = Y.Node, n, domevent;
 
         if (L.isObject(type, true)) {
 
@@ -1557,43 +1556,42 @@ ET.prototype = {
             adapt = Y.Env.evt.plugins[type];
             args  = Y.Array(arguments, 0, true);
             args[0] = shorttype;
-            // check for the existance of an event adaptor
-            if (adapt && adapt.on) {
+
+            if (Node) {
                 n = args[2];
-                if (Node && n && (n instanceof Node)) {
-                    args[2] = Node.getDOMNode(n);
+
+                if (n instanceof Y.NodeList) {
+                    n = Y.NodeList.getDOMNodes(n);
+                } else if (n instanceof Node) {
+                    n = Node.getDOMNode(n);
                 }
+
+                domevent = (shorttype in Node.DOM_EVENTS);
+
+                // Captures both DOM events and event plugins.
+                if (domevent) {
+                    args[2] = n;
+                }
+            }
+
+            // check for the existance of an event adaptor
+            if (adapt) {
                 handle = adapt.on.apply(Y, args);
-            // check to see if the target is an EventTarget.  If so,
-            // delegate to it (the EventTarget should handle whether
-            // or not the prefix was included);
-            // } else if (o && !(o instanceof YUI) && o.getEvent) {
-            //     a = Y.Array(arguments, 0, true);
-            //     a.splice(2, 1);
-            //     return o.on.apply(o, a);
-            // } else if ((!type) || (!adapt && type.indexOf(':') == -1)) {
-            } else if ((!type) || (!adapt && Node && (shorttype in Node.DOM_EVENTS))) {
+            } else if ((!type) || domevent) {
                 handle = Y.Event._attach(args);
             }
 
         } 
 
         if (!handle) {
-
-            ce     = this._yuievt.events[type] || this.publish(type);
-            // args   = Y.Array(arguments, 1, true);
-            // f = (after) ? ce.after : ce.on;
-            // handle = f.apply(ce, args);
-
+            ce = this._yuievt.events[type] || this.publish(type);
             handle = ce._on(fn, context, (arguments.length > 3) ? Y.Array(arguments, 3, true) : null, (after) ? 'after' : true);
         }
 
         if (detachcategory) {
-
             store[detachcategory] = store[detachcategory] || {};
             store[detachcategory][type] = store[detachcategory][type] || [];
             store[detachcategory][type].push(handle);
-
         }
 
         return (this._yuievt.chain) ? this : handle;
@@ -1871,11 +1869,20 @@ ET.prototype = {
      * if the intention is that a bubble target be notified, the event must 
      * be published on this object first.
      *
+     * The first argument is the event type, and any additional arguments are
+     * passed to the listeners as parameters.  If the first of these is an
+     * object literal, and the event is configured to emit an event facade,
+     * that object is mixed into the event facade and the facade is provided 
+     * in place of the original object.
+     *
      * @method fire
      * @param type {String|Object} The type of the event, or an object that contains
      * a 'type' property.
      * @param arguments {Object*} an arbitrary set of parameters to pass to 
-     * the handler.
+     * the handler.  If the first of these is an object literal and the event is
+     * configured to emit an event facade, the event facade will replace that
+     * parameter after the properties the object literal contains are copied to
+     * the event facade.
      * @return {Event.Target} the event host
      *                   
      */

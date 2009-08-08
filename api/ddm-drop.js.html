@@ -219,18 +219,25 @@
 <span class="c">        */</span>
         <span class="nx">isOverTarget</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">drop</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span> <span class="o">&amp;&amp;</span> <span class="nx">drop</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">mouseXY</span><span class="o">;</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">xy</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragMode&#39;</span><span class="o">)</span> <span class="o">==</span> <span class="k">this</span><span class="o">.</span><span class="nx">STRICT</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragNode&#39;</span><span class="o">).</span><span class="nx">inRegion</span><span class="o">(</span><span class="nx">drop</span><span class="o">.</span><span class="nx">region</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">region</span><span class="o">);</span>
+                <span class="k">var</span> <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">mouseXY</span><span class="o">,</span> <span class="nx">r</span><span class="o">,</span> <span class="nx">dMode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragMode&#39;</span><span class="o">),</span>
+                    <span class="nx">aRegion</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">xy</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">aRegion</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">region</span><span class="o">;</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">dMode</span> <span class="o">==</span> <span class="k">this</span><span class="o">.</span><span class="nx">STRICT</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragNode&#39;</span><span class="o">).</span><span class="nx">inRegion</span><span class="o">(</span><span class="nx">drop</span><span class="o">.</span><span class="nx">region</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">aRegion</span><span class="o">);</span>
                     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">drop</span> <span class="o">&amp;&amp;</span> <span class="nx">drop</span><span class="o">.</span><span class="nx">shim</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="k">return</span> <span class="nx">drop</span><span class="o">.</span><span class="nx">shim</span><span class="o">.</span><span class="nx">intersect</span><span class="o">({</span>
-                                <span class="nx">top</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
-                                <span class="nx">bottom</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
-                                <span class="nx">left</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> 
-                                <span class="nx">right</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span>
-                            <span class="o">},</span> <span class="nx">drop</span><span class="o">.</span><span class="nx">region</span><span class="o">).</span><span class="nx">inRegion</span><span class="o">;</span>
+                            <span class="k">if</span> <span class="o">((</span><span class="nx">dMode</span> <span class="o">==</span> <span class="k">this</span><span class="o">.</span><span class="nx">INTERSECT</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_noShim</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="nx">r</span> <span class="o">=</span> <span class="o">((</span><span class="nx">aRegion</span><span class="o">)</span> <span class="o">?</span> <span class="nx">aRegion</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">));</span>
+                                <span class="k">return</span> <span class="nx">drop</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">).</span><span class="nx">intersect</span><span class="o">(</span><span class="nx">r</span><span class="o">).</span><span class="nx">inRegion</span><span class="o">;</span>
+                            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                                <span class="k">return</span> <span class="nx">drop</span><span class="o">.</span><span class="nx">shim</span><span class="o">.</span><span class="nx">intersect</span><span class="o">({</span>
+                                    <span class="nx">top</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
+                                    <span class="nx">bottom</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
+                                    <span class="nx">left</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> 
+                                    <span class="nx">right</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span>
+                                <span class="o">},</span> <span class="nx">drop</span><span class="o">.</span><span class="nx">region</span><span class="o">).</span><span class="nx">inRegion</span><span class="o">;</span>
+                            <span class="o">}</span>
                         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                             <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
                         <span class="o">}</span>
@@ -447,7 +454,6 @@
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
-                                <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
@@ -460,7 +466,6 @@
                                 <li class="selected"><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
-                                <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>

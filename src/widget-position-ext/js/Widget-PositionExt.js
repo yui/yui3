@@ -87,6 +87,7 @@
                 setter: function(val) {
                     return this._setAlignCenter(val);
                 },
+                lazyAdd:false,
                 value:false
             }
         };
