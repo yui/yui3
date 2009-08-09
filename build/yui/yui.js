@@ -245,22 +245,18 @@ YUI.prototype = {
         // @todo may want to restore the build property
         // @todo fire moduleAvailable event
         
-        // if (this.Lang.isFunction(fn)) {
-
+        // if (typeof fn == 'function') {
             YUI.Env.mods[name] = {
                 name: name, 
                 fn: fn,
                 version: version,
                 details: details || {}
             };
-
-        // } else {
-        //     
-        //     var c = Y.config;
-        //     c.modules = c.modules || {};
-        //     c.modules[name] = c.modules[name] || fn;
-
         // }
+
+        // var c = this.config;
+        // c.modules = c.modules || {};
+        // c.modules[name] = c.modules[name] || details || fn;
 
         return this; // chain support
     },

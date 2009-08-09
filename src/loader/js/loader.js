@@ -902,15 +902,21 @@ Y.Loader = function(o) {
      */
      this.skin = Y.merge(Y.Env.meta.skin);
     
-    var defaults = Y.Env.meta.modules, i;
+    var defaults = Y.Env.meta.modules, i, onPage = YUI.Env.mods;
 
+    this._internal = true;
     for (i in defaults) {
         if (defaults.hasOwnProperty(i)) {
-            this._internal = true;
             this.addModule(defaults[i], i);
-            this._internal = false;
         }
     }
+
+    for (i in onPage) {
+        if (onPage.hasOwnProperty(i) && !this.moduleInfo[i] && onPage[i].details) {
+            this.addModule(onPage[i].details, i);
+        }
+    }
+    this._internal = false;
 
     /**
      * List of rollup files found in the library metadata
