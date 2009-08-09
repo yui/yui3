@@ -74,13 +74,17 @@
             s.push("{");
             for (i in o) {
                 if (o.hasOwnProperty(i)) {
-                    s.push(i + ARROW);
-                    if (L.isObject(o[i])) {
-                        s.push((d > 0) ? L.dump(o[i], d-1) : OBJ);
-                    } else {
-                        s.push(o[i]);
+                    try {
+                        s.push(i + ARROW);
+                        if (L.isObject(o[i])) {
+                            s.push((d > 0) ? L.dump(o[i], d-1) : OBJ);
+                        } else {
+                            s.push(o[i]);
+                        }
+                        s.push(COMMA);
+                    } catch(e) {
+                        s.push('Error: ' + e.message);
                     }
-                    s.push(COMMA);
                 }
             }
             if (s.length > 1) {

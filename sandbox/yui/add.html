@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            (function () {
+                YUI.add('mywidget', function(Y) {
+
+                    function MyWidget(config) {
+                        MyWidget.superclass.constructor.apply(this, arguments);
+                    }
+
+                    MyWidget.NAME = "mywidget";
+                    MyWidget.ATTRS = {};
+
+                    Y.extend(MyWidget, Y.Widget);
+
+                    Y.MyWidget = MyWidget;
+
+                }, '3.0.0b1', {requires:['widget']});
+            })();
+
+            var config1 = {
+                a: 1
+            },
+            config2 = {
+                a: 2,
+                b: 1
+            },
+            config3 = {
+                a: 3,
+                b: 2,
+                c: 1
+            };
+        </script>
+        
+        <div id="my"/>
+        
+        <script type="text/javascript">
+            // Works
+            // YUI().use('widget', function(Y) {
+            //     new Y.Widget().render();
+            //     Y.log("use 'widget' - No Exceptions");
+            // })
+
+            // Broken
+            YUI( { filter: 'debug' }, config1, config2, config3).use('dump', 'mywidget', function(Y) {
+                new Y.MyWidget().render();
+                Y.log("use 'mywidget', custom module - No Exceptions");
+                Y.log("config: " + Y.dump(Y.config, 0));
+            })
+
+        </script>
+
+    </body>
+</html>
