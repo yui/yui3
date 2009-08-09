@@ -33,15 +33,16 @@ if (typeof loadFirebugConsole == 'function') {
     loadFirebugConsole();
 }
 
-YUI().use('event', 'dump', 'substitute', function(Y) {
+YUI({
+    filter: 'debug'
+}).use('event', 'dump', 'substitute', function(Y) {
 
     Y.on('load', function(e) {
         Y.log('window load event');
     });
 
     Y.on('beforeunload', function(e) {
-        e.preventDefault('before unload');
-        return 'before unload';
+        e.returnValue = "let's do this";
     });
 
     Y.on('mousewheel', function(e, arg1) {
