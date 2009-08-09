@@ -82,8 +82,11 @@ var whitelist = {
         63235: 39, // right
         63276: 33, // page up
         63277: 34, // page down
-        25: 9      // SHIFT-TAB (Safari provides a different key code in
+        25:     9, // SHIFT-TAB (Safari provides a different key code in
                    // this case, even though the shiftKey modifier is set)
+		63272: 46, // delete
+		63273: 36, // home
+		63275: 35  // end
     },
 
     /**
@@ -277,13 +280,17 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     /**
      * Prevents the event's default behavior
      * @method preventDefault
+     * @param returnValue {string} sets the returnValue of the event to this value
+     * (rather than the default false value).  This can be used to add a customized 
+     * confirmation query to the beforeunload event).
      */
-    this.preventDefault = function() {
+    this.preventDefault = function(returnValue) {
+
         if (e.preventDefault) {
             e.preventDefault();
-        } else {
-            e.returnValue = false;
         }
+
+        e.returnValue = returnValue || false;
 
         if (wrapper) {
             wrapper.preventDefault();

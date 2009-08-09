@@ -428,7 +428,7 @@ var NOT_FOUND = {},
             expound: NODE,
             submodules: {
                 'event-base': {
-                    expound: NODEBASE,
+                    // expound: NODEBASE,
                     requires: [EVENTCUSTOM]
                 },
                 'event-delegate': {

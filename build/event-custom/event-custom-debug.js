@@ -1561,6 +1561,7 @@ ET.prototype = {
         type = parts[1];
 
         if (this instanceof YUI) {
+
             adapt = Y.Env.evt.plugins[type];
             args  = Y.Array(arguments, 0, true);
             args[0] = shorttype;
