@@ -27,6 +27,11 @@
 
 </form>
 
+    <form id="form2">
+        <input type="radio" id="radio1" name="radiocollection[]" />
+        <input type="radio" id="radio2" name="radiocollection[]" />
+    </form>
+
 <script>
 
 if (typeof loadFirebugConsole == 'function') {
@@ -34,7 +39,10 @@ if (typeof loadFirebugConsole == 'function') {
 }
 
 YUI({
-    filter: 'debug'
+    filter: 'debug',
+    logExclude: {
+        Selector: 1
+    }
 }).use('event', 'dump', 'substitute', function(Y) {
 
     Y.on('load', function(e) {
@@ -324,6 +332,11 @@ Y.on('windowresize', function(e) {
         // alert('resized');                                                                                                                                       
     // });  
 
+    var nodelist = Y.all('#form2 > input');
+    nodelist.on('click', function(e, arg1) {
+        console.log('click: ' + e.currentTarget + ', ' + arg1);
+    }, Y, 1);
+
 
 
 });
@@ -340,9 +353,6 @@ Y.on('windowresize', function(e) {
 <a href="http://developer.yahoo.com/yui" id="secondA">The YUI Library. (Link's default behavior is suppressed.)</a>
 </p>
 
-    <form>
-        <input type="radio" id="radio1" name="radiocollection[]" />
-    </form>
     <p>blah</p>
     <p>blah</p>
     <p>blah</p>
@@ -354,5 +364,8 @@ Y.on('windowresize', function(e) {
     <p>blah</p>
     <p>blah</p>
     <p id="lazy">Me</p>
+
+<script>
+</script>
 </body>
 </html>

@@ -1,4 +1,7 @@
-<html>
+<html debug="true">
+<head>
+<title>YUI 3.0</title>
+<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
     <head>
         <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
     </head>
@@ -22,16 +25,33 @@
             })();
 
             var config1 = {
-                a: 1
+                a: 1,
+                modules: {
+                    'yui2-yde': {
+                        fullpath: "http://yui.yahooapis.com/2.5.2/build/yahoo-dom-event/yahoo-dom-event.js"
+                    }
+                }
             },
             config2 = {
                 a: 2,
-                b: 1
+                b: 1,
+                modules: {
+                    'yui2-calendar': {
+                        fullpath: "http://yui.yahooapis.com/2.5.2/build/calendar/calendar-min.js",
+                        requires: ['yui2-yde', 'yui2-calendarcss']
+                    }
+                }
             },
             config3 = {
                 a: 3,
                 b: 2,
-                c: 1
+                c: 1,
+                modules: {
+                    'yui2-calendarcss': {
+                        fullpath: "http://yui.yahooapis.com/2.5.2/build/calendar/assets/skins/sam/calendar.css",
+                        type: 'css'
+                    }
+                }
             };
         </script>
         
@@ -48,7 +68,8 @@
             YUI( { filter: 'debug' }, config1, config2, config3).use('dump', 'mywidget', function(Y) {
                 new Y.MyWidget().render();
                 Y.log("use 'mywidget', custom module - No Exceptions");
-                Y.log("config: " + Y.dump(Y.config, 0));
+                Y.log("config: " + Y.dump(Y.config));
+                Y.log("modules: " + Y.dump(Y.config.modules, 0));
             })
 
         </script>

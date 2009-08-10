@@ -31,7 +31,7 @@ Y.EventFacade = function(e, currentTarget) {
                     }
                 } : val;
             } else {
-                console.log('missing ' + k);
+                Y.log('missing ' + k);
             }
         });
     }
