@@ -1452,11 +1452,11 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 Y.Node.prototype.delegate = function(type, fn, selector, context) {
     context = context || this;
     var args = Array.prototype.slice.call(arguments, 4),
-        a = ['delegate', fn, Y.Node.getDOMNode(this), type, selector, context];
+        a = [type, fn, Y.Node.getDOMNode(this), selector, context];
     a = a.concat(args);
-    return Y.on.apply(Y, a);
-};
 
+    return Y.delegate.apply(Y, a);
+};
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'event-custom', 'selector-css2']});
