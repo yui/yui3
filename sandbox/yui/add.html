@@ -1,8 +1,9 @@
 <html debug="true">
-<head>
-<title>YUI 3.0</title>
-<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
     <head>
+        <title>YUI 3.0</title>
+        <!--
+        <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+        -->
         <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
     </head>
     <body>
@@ -70,6 +71,8 @@
                 Y.log("use 'mywidget', custom module - No Exceptions");
                 Y.log("config: " + Y.dump(Y.config));
                 Y.log("modules: " + Y.dump(Y.config.modules, 0));
+                Y.log("DOM element: " + Y.dump(document.getElementById('my')));
+                Y.log("DOM element: " + Y.dump(document.location));
             })
 
         </script>

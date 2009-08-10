@@ -110,6 +110,9 @@ YUI.prototype = {
                         mods[j] = m[j];
                     }
                 }
+            } else if (i == 'win') {
+                c[i] = o[i].contentWindow || o[i];
+                c.doc = c[i].document;
             } else {
                 c[i] = o[i];
             }

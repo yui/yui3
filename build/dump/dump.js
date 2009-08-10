@@ -47,7 +47,7 @@ YUI.add('dump', function(Y) {
         } else if (type == "date") {
             return o;
         } else if (o.nodeType && o.tagName) {
-            return o.tagName + ' ' + o.id;
+            return o.tagName + '#' + o.id;
         } else if (o.document && o.navigator) {
             return 'window';
         } else if (o.location && o.body) {

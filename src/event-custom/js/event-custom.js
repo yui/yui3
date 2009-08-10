@@ -20,7 +20,6 @@ var AFTER = 'after',
         'bubbles',
         'context',
         'contextFn',
-        'configured',
         'currentTarget',
         'defaultFn',
         'details',
@@ -127,6 +126,14 @@ Y.CustomEvent = function(type, o) {
      */
     this.silent = this.logSystem;
 
+    /**
+     * Specifies whether this event should be queued when the host is actively
+     * processing an event.  This will effect exectution order of the callbacks
+     * for the various events.
+     * @property queuable
+     * @type boolean
+     * @default false
+     */
     // this.queuable = false;
 
     /**
@@ -135,14 +142,6 @@ Y.CustomEvent = function(type, o) {
      * @type Subscriber{}
      */
     this.subscribers = {};
-
-    /*
-     * The publisher has configured this event
-     * @property configured
-     * @type boolean
-     * @default true
-     */
-    // this.configured = true;
 
     /**
      * 'After' subscribers
@@ -518,7 +517,6 @@ Y.CustomEvent.prototype = {
         if (es) {
 
             // queue this event if the current item in the queue bubbles
-            // if (b && this.queuable && this.type != es.next.type) {
             if (this.queuable && this.type != es.next.type) {
 
                 this.log('queue ' + this.type);
