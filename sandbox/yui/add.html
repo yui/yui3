@@ -65,14 +65,14 @@
             //     Y.log("use 'widget' - No Exceptions");
             // })
 
-            // Broken
+            // *was* broken
             YUI( { filter: 'debug' }, config1, config2, config3).use('dump', 'mywidget', function(Y) {
                 new Y.MyWidget().render();
                 Y.log("use 'mywidget', custom module - No Exceptions");
                 Y.log("config: " + Y.dump(Y.config));
                 Y.log("modules: " + Y.dump(Y.config.modules, 0));
                 Y.log("DOM element: " + Y.dump(document.getElementById('my')));
-                Y.log("DOM element: " + Y.dump(document.location));
+                Y.log("document.location: " + Y.dump(document.location));
             })
 
         </script>
