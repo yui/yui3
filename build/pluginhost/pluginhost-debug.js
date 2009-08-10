@@ -286,4 +286,4 @@ YUI.add('pluginhost', function(Y) {
     Y.namespace("Plugin").Host = PluginHost;
 
 
-}, '@VERSION@' ,{requires:['lang']});
+}, '@VERSION@' ,{requires:['yuibase']});
