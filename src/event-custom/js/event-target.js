@@ -63,16 +63,8 @@ var L = Y.Lang,
             // Y.log(t);
         }
 
-        // parts = t.split(DETACH_PREFIX_SPLITTER);
-        // if (parts.length > 1) {
-        //     detachcategory = parts[0];
-        //     t = parts[1];
-        //     if (t == '*') {
-        //          t = null;
-        //     }
-        // }
-        
         i = t.indexOf(CATEGORY_DELIMITER);
+
         if (i > -1) {
             detachcategory = t.substr(0, (i));
             t = t.substr(i+1);
@@ -439,7 +431,6 @@ ET.prototype = {
         events = this._yuievt.events; 
         ce = events[type];
 
-        //if (ce && !ce.configured) {
         if (ce) {
 // ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
             if (opts) {
@@ -588,19 +579,6 @@ ET.prototype = {
                     // publish it with sensible default properties
                     if (!ce) {
 
-                        // publish the event on the bubble target using this event
-                        // for its configuration
-                        // ce = t.publish(type, evt);
-
-                        // set the host and context appropriately
-                        // ce.context = (evt.host === evt.context) ? t : evt.context;
-                        // ce.host = t;
-
-                        // clear handlers if specified on this event
-                        // ce.defaultFn = null;
-                        // ce.preventedFn = null;
-                        // ce.stoppedFn = null;
-
                         if (t._yuievt.hasTargets) {
                             t.bubble.call(t, evt, args, target);
                         }
@@ -660,10 +638,10 @@ ET.prototype = {
      * events, this is an alias for Y.on.
      *
      * For DOM and custom events:
-     * type, callback, context, 1-n arguments
+     * type, callback, context, 0-n arguments
      *  
      * For methods:
-     * callback, object (method host), methodName, context, 1-n arguments
+     * callback, object (method host), methodName, context, 0-n arguments
      *
      * @method before
      * @return detach handle

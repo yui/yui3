@@ -42,8 +42,14 @@
         // an element will cause an unhandled exception in FF 2.x
         if (!L.isObject(o)) {
             return o + "";
-        } else if (type == "date" || ("nodeType" in o && "tagName" in o)) {
+        } else if (type == "date") {
             return o;
+        } else if (o.nodeType && o.tagName) {
+            return o.tagName + '#' + o.id;
+        } else if (o.document && o.navigator) {
+            return 'window';
+        } else if (o.location && o.body) {
+            return 'document';
         } else if (type == "function") {
             return FUN;
         }
