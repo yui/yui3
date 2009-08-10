@@ -10,12 +10,47 @@
 <h1>DataSchema Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
 
+<div id="markup">
+    <table id="singletbody">
+        <thead>
+            <tr>
+                <th>Due Date</th>
+                <th>Account Number</th>
+                <th>Quantity</th>
+                <th>Amount Due</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr> <td>1/23/1999</td> <td>29e8548592d8c82</td> <td>12</td> <td>$150.00</td></tr><tr> <td>5/19/1999</td> <td>83849</td> <td>8</td> <td>$60.00</td></tr><tr> <td>8/9/1999</td> <td>11348</td> <td>1</td> <td>$34.99</td></tr><tr> <td>1/23/2000</td> <td>29e8548592d8c82</td> <td>10</td> <td>$1.00</td></tr><tr> <td>4/28/2000</td> <td>37892857482836437378273</td> <td>123</td> <td>$33.32</td></tr><tr> <td>1/23/2001</td> <td>83849</td> <td>5</td> <td>$15.00</td></tr><tr> <td>9/30/2001</td> <td>224747</td> <td>14</td> <td>$56.78</td></tr>
+        </tbody>
+    </table>
+    <table id="multipletbody">
+        <thead>
+            <tr>
+                <th>Due Date</th>
+                <th>Account Number</th>
+                <th>Quantity</th>
+                <th>Amount Due</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr> <td>1/23/1999</td> <td>29e8548592d8c82</td> <td>12</td> <td>$150.00</td></tr><tr> <td>5/19/1999</td> <td>83849</td> <td>8</td> <td>$60.00</td></tr><tr> <td>8/9/1999</td> <td>11348</td> <td>1</td> <td>$34.99</td></tr><tr> <td>1/23/2000</td> <td>29e8548592d8c82</td> <td>10</td> <td>$1.00</td></tr><tr> <td>4/28/2000</td> <td>37892857482836437378273</td> <td>123</td> <td>$33.32</td></tr><tr> <td>1/23/2001</td> <td>83849</td> <td>5</td> <td>$15.00</td></tr><tr> <td>9/30/2001</td> <td>224747</td> <td>44</td> <td>$56.78</td></tr>
+        </tbody>
+        <tbody>
+            <tr> <td>1/23/1999</td> <td>29e8548592d8c82</td> <td>1</td> <td>$150.00</td></tr><tr> <td>5/19/1999</td> <td>83849</td> <td>8</td> <td>$60.00</td></tr><tr> <td>8/9/1999</td> <td>11348</td> <td>1</td> <td>$34.99</td></tr><tr> <td>1/23/2000</td> <td>29e8548592d8c82</td> <td>10</td> <td>$1.00</td></tr><tr> <td>4/28/2000</td> <td>37892857482836437378273</td> <td>123</td> <td>$33.32</td></tr><tr> <td>1/23/2001</td> <td>83849</td> <td>5</td> <td>$15.00</td></tr><tr> <td>9/30/2001</td> <td>224747</td> <td>44</td> <td>$56.78</td></tr>
+        </tbody>
+        <tbody>
+            <tr> <td>1/23/1999</td> <td>29e8548592d8c82</td> <td>1</td> <td>$150.00</td></tr><tr> <td>5/19/1999</td> <td>83849</td> <td>8</td> <td>$60.00</td></tr><tr> <td>8/9/1999</td> <td>11348</td> <td>1</td> <td>$34.99</td></tr><tr> <td>1/23/2000</td> <td>29e8548592d8c82</td> <td>10</td> <td>$1.00</td></tr><tr> <td>4/28/2000</td> <td>37892857482836437378273</td> <td>123</td> <td>$33.32</td></tr><tr> <td>1/23/2001</td> <td>83849</td> <td>5</td> <td>$15.00</td></tr><tr> <td>9/30/2001</td> <td>224747</td> <td>14</td> <td>$56.78</td></tr>
+        </tbody>
+    </table>
+</div>
+
 <script type="text/javascript">
 
 (function() {
     YUI({
         base: "../../../build/",
-        //filter: "debug",
+        filter: "raw",
         logInclude:{"TestRunner":true},
         useConsole: true
     }).use("console", "test", "dump", "dataschema", "datatype", function(Y) {
@@ -296,6 +331,53 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
             }
         });
 
+        var testHTML = new Y.Test.Case({
+            name: "HTML Tests",
+
+            testSingleTbody: function() {
+                var schema = {
+                        resultListLocator: "tr",
+                        resultFields: [
+                            {key:"due-date", locator:"td[1]"},
+                            {key:"account-number", locator:"td[2]"},
+                            {key:"quantity", locator:"td[3]", parser:Y.DataType.Number.parse},
+                            {key:"amount-due", locator:"td[4]"}
+                        ]
+                    },
+                    data_in = Y.Node.getDOMNode(Y.get("#singletbody tbody")),
+                    data_out = Y.DataSchema.XML.apply(schema, data_in);
+
+                ASSERT.isArray(data_out.results, "Expected results property.");
+                ASSERT.areSame(7, data_out.results.length, "Expected 7 results.");
+                ASSERT.areSame(12, data_out.results[0]["quantity"], "Expected first result.");
+                ASSERT.areSame(14, data_out.results[data_out.results.length-1]["quantity"], "Expected last result.");
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+            },
+            
+            testMultipleTbody: function() {
+                var schema = {
+                        resultListLocator: "tr",
+                        resultFields: [
+                            {key:"due-date", locator:"td[1]"},
+                            {key:"account-number", locator:"td[2]"},
+                            {key:"quantity", locator:"td[3]", parser:Y.DataType.Number.parse},
+                            {key:"amount-due", locator:"td[4]"}
+                        ]
+                    },
+                    data_in = document.createDocumentFragment().appendChild(document.createElement("tbody"));
+                    Y.all("#multipletbody tbody tr").each(function(n){
+                        data_in.appendChild(Y.Node.getDOMNode(n).cloneNode(true));
+                    }),
+                    data_out = Y.DataSchema.XML.apply(schema, data_in);
+
+                ASSERT.isArray(data_out.results, "Expected results property.");
+                ASSERT.areSame(21, data_out.results.length, "Expected 21 results.");
+                ASSERT.areSame(12, data_out.results[0]["quantity"], "Expected first result.");
+                ASSERT.areSame(14, data_out.results[data_out.results.length-1]["quantity"], "Expected last result.");
+                ASSERT.isObject(data_out.meta, "Expected meta property.");
+            }
+        });
+
         var testArray = new Y.Test.Case({
             name: "Array Tests",
 
@@ -454,6 +536,7 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
 
         Y.Test.Runner.add(testJSON);
         Y.Test.Runner.add(testXML);
+        Y.Test.Runner.add(testHTML);
         Y.Test.Runner.add(testArray);
         Y.Test.Runner.add(testText);
         Y.Test.Runner.run();

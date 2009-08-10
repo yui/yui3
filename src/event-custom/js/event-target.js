@@ -63,16 +63,8 @@ var L = Y.Lang,
             // Y.log(t);
         }
 
-        // parts = t.split(DETACH_PREFIX_SPLITTER);
-        // if (parts.length > 1) {
-        //     detachcategory = parts[0];
-        //     t = parts[1];
-        //     if (t == '*') {
-        //          t = null;
-        //     }
-        // }
-        
         i = t.indexOf(CATEGORY_DELIMITER);
+
         if (i > -1) {
             detachcategory = t.substr(0, (i));
             t = t.substr(i+1);
@@ -179,6 +171,7 @@ ET.prototype = {
         type = parts[1];
 
         if (this instanceof YUI) {
+
             adapt = Y.Env.evt.plugins[type];
             args  = Y.Array(arguments, 0, true);
             args[0] = shorttype;
@@ -438,7 +431,6 @@ ET.prototype = {
         events = this._yuievt.events; 
         ce = events[type];
 
-        //if (ce && !ce.configured) {
         if (ce) {
 // ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
             if (opts) {
@@ -496,11 +488,20 @@ ET.prototype = {
      * if the intention is that a bubble target be notified, the event must 
      * be published on this object first.
      *
+     * The first argument is the event type, and any additional arguments are
+     * passed to the listeners as parameters.  If the first of these is an
+     * object literal, and the event is configured to emit an event facade,
+     * that object is mixed into the event facade and the facade is provided 
+     * in place of the original object.
+     *
      * @method fire
      * @param type {String|Object} The type of the event, or an object that contains
      * a 'type' property.
      * @param arguments {Object*} an arbitrary set of parameters to pass to 
-     * the handler.
+     * the handler.  If the first of these is an object literal and the event is
+     * configured to emit an event facade, the event facade will replace that
+     * parameter after the properties the object literal contains are copied to
+     * the event facade.
      * @return {Event.Target} the event host
      *                   
      */
@@ -578,19 +579,6 @@ ET.prototype = {
                     // publish it with sensible default properties
                     if (!ce) {
 
-                        // publish the event on the bubble target using this event
-                        // for its configuration
-                        // ce = t.publish(type, evt);
-
-                        // set the host and context appropriately
-                        // ce.context = (evt.host === evt.context) ? t : evt.context;
-                        // ce.host = t;
-
-                        // clear handlers if specified on this event
-                        // ce.defaultFn = null;
-                        // ce.preventedFn = null;
-                        // ce.stoppedFn = null;
-
                         if (t._yuievt.hasTargets) {
                             t.bubble.call(t, evt, args, target);
                         }
@@ -650,10 +638,10 @@ ET.prototype = {
      * events, this is an alias for Y.on.
      *
      * For DOM and custom events:
-     * type, callback, context, 1-n arguments
+     * type, callback, context, 0-n arguments
      *  
      * For methods:
-     * callback, object (method host), methodName, context, 1-n arguments
+     * callback, object (method host), methodName, context, 0-n arguments
      *
      * @method before
      * @return detach handle

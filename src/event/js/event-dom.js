@@ -2,6 +2,7 @@
 /**
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 /**
@@ -12,7 +13,6 @@
  * @class Event
  * @static
  */
-
 
 var add = YUI.Env.add,
 remove = YUI.Env.remove,
@@ -796,7 +796,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             });
 
             remove(window, "load", E._load);
-            remove(window, "unload", E._unload);
         },
 
         

@@ -136,8 +136,6 @@ Y.Do.Method = function(obj, sFn) {
     this.obj = obj;
     this.methodName = sFn;
     this.method = obj[sFn];
-    // this.before = [];
-    // this.after = [];
     this.before = {};
     this.after = {};
 };
@@ -151,10 +149,8 @@ Y.Do.Method = function(obj, sFn) {
  */
 Y.Do.Method.prototype.register = function (sid, fn, when) {
     if (when) {
-        // this.after.push(fn);
         this.after[sid] = fn;
     } else {
-        // this.before.push(fn);
         this.before[sid] = fn;
     }
 };

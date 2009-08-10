@@ -7,16 +7,6 @@
 <link type="text/css" rel="stylesheet" href="../../../../yui2/build/yuitest/assets/testlogger.css">     
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
-<script type="text/javascript" src="../../../build/event-simulate/event-simulate.js"></script>
-<script type="text/javascript" src="../../../build/event/event.js"></script>
-<script type="text/javascript" src="../../../build/oop/oop.js"></script>
-<script type="text/javascript" src="../../../build/dom/dom.js"></script>
-<script type="text/javascript" src="../../../build/dom/selector-css3.js"></script>
-<script type="text/javascript" src="../../../build/base/base.js"></script>
-<script type="text/javascript" src="../../../build/attribute/attribute.js"></script>
-<script type="text/javascript" src="../../../build/node/node-debug.js"></script>
-<script type="text/javascript" src="../../../build/anim/anim.js"></script>
 
 <script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
@@ -87,6 +77,7 @@ button {
     <div id="test-append"></div>
     <div id="test-xy"></div>
     <div id="test-remove"></div>
+    <div id="test-replace"><p>replace me</p></div>
     <div id="test-scroll">
         <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
     </div>
@@ -94,9 +85,10 @@ button {
         <a href="http://www.yahoo.com/foo" id="link-1">Yahoo!</a>
         <a href="foo.html" id="link-2" tabIndex="-1">foo</a>
         <form id="test-form" class="test-class" action="#">
+            <label for="test-text-value"><em>label</em></label>
             <input name="test-text-value" value="text value">
             <input name="test-text-novalue">
-
+    
             <textarea name="test-textarea-value" value="textarea value"></textarea>
             <textarea name="test-textarea-novalue"></textarea>
             <textarea name="test-textarea-textvalue">textarea text</textarea>
@@ -139,21 +131,15 @@ button {
 
 <iframe src="test-frame"></iframe>
 <div id="test-insert-html">foo</div>
+<div id="yui-log"></div>
 <script type="text/javascript">
-YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
+YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', function(Y) {
     var tool = YAHOO.tool,
     suite = new tool.TestSuite("yuisuite");
 
     var Assert = YAHOO.util.Assert;
     var ArrayAssert = YAHOO.util.ArrayAssert;
-    var logger = new tool.TestLogger(null, { height: '800px', fontSize: '100%' });
-
-    var handle = Y.get('html').on('click', function(e) {
-        alert('click');
-        Y.get('html').detach('click');
-        //handle.detach();
-    });
-
+    var logger = new tool.TestLogger('yui-log', { height: '800px', fontSize: '100%' });
 
     var byId = function(id) {
         return document.getElementById(id);
@@ -373,7 +359,7 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             node.set('foo', 'foo');
             Assert.isUndefined(node.get('foo'), 'node.get("foo")');
-
+            
             node.set('title', 'my title');
             Assert.areEqual('my title', Y.Node.getDOMNode(node).title, 'node.title)');
             Assert.areEqual('my title', node.get('title'), 'node.set("title")');
@@ -732,6 +718,20 @@ YUI({ base: '../build/', filter: 'debug' }).use('*', function(Y) {
 
             node.remove();
             Assert.isTrue(parent !== domNode.parentNode, 'node.remove()');
+        },
+
+        test_replace: function() {
+            var node = Y.get('#test-replace').get('firstChild'),
+                newNode = document.createElement('div');
+
+            node.replace(newNode);
+            Assert.areEqual(newNode, Y.get('#test-replace').get('firstChild')._node, 'node.replace()');
+        },
+
+        test_elements: function() {
+            var elements = Y.get('#test-form').get('elements');
+
+            ArrayAssert.itemsAreEqual(Y.DOM.byId('test-form').elements, elements._nodes, "Y.get('#test-form').get('elements')");
         },
 
         test_aria: function() {

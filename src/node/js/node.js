@@ -18,9 +18,7 @@
  */
 
 // "globals"
-var g_nodes = {},
-    g_nodelists = {},
-    g_slice = Array.prototype.slice,
+var g_slice = Array.prototype.slice,
 
     DOT = '.',
     NODE_NAME = 'nodeName',
@@ -29,16 +27,14 @@ var g_nodes = {},
     TAG_NAME = 'tagName',
     UID = '_yuid',
 
-    SuperConstr = Y.Base,
-    SuperConstrProto = Y.Base.prototype,
-
     Node = function(node) {
-        var config = null,
-            uid = node[UID];
+        var uid = node[UID];
 
-        if (uid && g_nodes[uid] && g_nodes[uid] !== node) {
+        if (uid && Node._instances[uid] && Node._instances[uid]._node !== node) {
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
+
+        this._initPlugins();
 
         uid = Y.stamp(node);
         if (!uid) { // stamp failed; likely IE non-HTMLElement
@@ -46,13 +42,11 @@ var g_nodes = {},
         }
 
         this[UID] = uid;
+        this._conf = {};
 
-        g_nodes[uid] = node;
+        this._node = node;
+        this._stateProxy = node;
         Node._instances[uid] = this;
-
-        this._lazyAttrInit = true;
-        this._silentInit = true;
-        SuperConstr.call(this, config);
     },
 
     // used with previous/next/ancestor tests
@@ -73,6 +67,8 @@ var g_nodes = {},
 // end "globals"
 
 Node.NAME = 'Node';
+
+Node.re_aria = /^(?:role$|aria-)/;
 
 Node.DOM_EVENTS = {
     abort: true,
@@ -135,7 +131,7 @@ Node._instances = {};
 Node.plug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
-    Y.Base.plug.apply(Y.Base, args);
+    Y.Plugin.Host.plug.apply(Y.Base, args);
     return Node;
 };
 
@@ -150,7 +146,7 @@ Node.plug = function() {
 Node.unplug = function() {
     var args = g_slice.call(arguments, 0);
     args.unshift(Node);
-    Y.Base.unplug.apply(Y.Base, args);
+    Y.Plugin.Host.unplug.apply(Y.Base, args);
     return Node;
 };
 
@@ -165,16 +161,12 @@ Node.unplug = function() {
  */
 Node.getDOMNode = function(node) {
     if (node) {
-        if (node instanceof Node) {
-            node = g_nodes[node[UID]];
-        } else if (!node[NODE_NAME] || Y.DOM.isWindow(node)) { // must already be a DOMNode 
-            node = null;
-        }
+        return (node.nodeType) ? node : node._node || null;
     }
-    return node || null;
+    return null;
 };
  
-Node.scrubVal = function(val, node, depth) {
+Node.scrubVal = function(val, node) {
     if (node && val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y.DOM.isWindow(val)) {// node || window
@@ -182,15 +174,6 @@ Node.scrubVal = function(val, node, depth) {
             } else if (val.item || // dom collection or Node instance
                     (val[0] && val[0][NODE_TYPE])) { // array of DOM Nodes
                 val = Y.all(val);
-            } else {
-                depth = (depth === undefined) ? 4 : depth;
-                if (depth > 0) {
-                    for (var i in val) { // TODO: test this and pull hasOwnProperty check if safe?
-                        if (val.hasOwnProperty && val.hasOwnProperty(i)) {
-                            val[i] = Node.scrubVal(val[i], node, --depth);
-                        }
-                    }
-                }
             }
         }
     } else if (val === undefined) {
@@ -208,13 +191,13 @@ Node.addMethod = function(name, fn, context) {
                 ret;
 
             if (args[0] && args[0] instanceof Node) {
-                args[0] = Node.getDOMNode(args[0]);
+                args[0] = args[0]._node;
             }
 
             if (args[1] && args[1] instanceof Node) {
-                args[1] = Node.getDOMNode(args[1]);
+                args[1] = args[1]._node;
             }
-            args.unshift(g_nodes[this[UID]]);
+            args.unshift(this._node);
             ret = Node.scrubVal(fn.apply(context, args), this);
             return ret;
         };
@@ -251,7 +234,7 @@ Node.get = function(node, doc) {
         if (typeof node === 'string') {
             if (node.indexOf('doc') === 0) { // doc OR document
                 node = Y.config.doc;
-            } else if (node.indexOf('win') === 0) { // doc OR document
+            } else if (node.indexOf('win') === 0) { // win OR window
                 node = Y.config.win;
             } else {
                 node = Y.Selector.query(node, doc, true);
@@ -264,8 +247,8 @@ Node.get = function(node, doc) {
         }
 
         uid = node._yuid;
-        cachedNode = g_nodes[uid];
         instance = Node._instances[uid]; // reuse exising instances
+        cachedNode = instance ? instance._node : null;
         if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
             instance = new Node(node);
         }
@@ -293,11 +276,11 @@ Node.ATTRS = {
      */
     text: {
         getter: function() {
-            return Y.DOM.getText(g_nodes[this[UID]]);
+            return Y.DOM.getText(this._node);
         },
 
         setter: function(content) {
-            Y.DOM.setText(g_nodes[this[UID]], content);
+            Y.DOM.setText(this._node, content);
             return content;
         }
     },
@@ -305,6 +288,15 @@ Node.ATTRS = {
     'options': {
         getter: function() {
             return this.getElementsByTagName('option');
+        }
+    },
+
+     // IE: elements collection is also FORM node which trips up scrubVal.
+     // preconverting to NodeList
+     // TODO: break out for IE only
+    'elements': {
+        getter: function() {
+            return Y.all(this._node.elements);
         }
     },
 
@@ -316,11 +308,11 @@ Node.ATTRS = {
      */
     'children': {
         getter: function() {
-            var node = g_nodes[this[UID]],
+            var node = this._node,
                 children = node.children,
                 childNodes, i, len;
 
-            if (children === undefined) {
+            if (!children) {
                 childNodes = node.childNodes;
                 children = [];
 
@@ -336,26 +328,36 @@ Node.ATTRS = {
 
     value: {
         getter: function() {
-            return Y.DOM.getValue(g_nodes[this[UID]]);
+            return Y.DOM.getValue(this._node);
         },
 
         setter: function(val) {
-            Y.DOM.setValue(g_nodes[this[UID]], val);
+            Y.DOM.setValue(this._node, val);
             return val;
         }
+    },
+
+    getter: function() {
+        return this._data;
+    },
+
+    setter: function(val) {
+        this._data = val;
+        return val;
     }
 };
 
 // call with instance context
 Node.DEFAULT_SETTER = function(name, val) {
-    var node = g_nodes[this[UID]],
+    var node = this._stateProxy,
         strPath;
 
     if (name.indexOf(DOT) > -1) {
         strPath = name;
         name = name.split(DOT);
+        // only allow when defined on node
         Y.Object.setValue(node, name, val);
-    } else if (node[name] !== undefined) { // only set DOM attributes
+    } else if (node[name] !== undefined) { // pass thru DOM properties 
         node[name] = val;
     }
 
@@ -364,25 +366,26 @@ Node.DEFAULT_SETTER = function(name, val) {
 
 // call with instance context
 Node.DEFAULT_GETTER = function(name) {
-    var node = g_nodes[this[UID]],
+    var node = this._stateProxy,
         val;
 
     if (name.indexOf && name.indexOf(DOT) > -1) {
         val = Y.Object.getValue(node, name.split(DOT));
-    } else {
+    } else if (node[name] !== undefined) { // pass thru from DOM
         val = node[name];
     }
 
     return val ? Y.Node.scrubVal(val, this) : val;
 };
 
-Y.extend(Node, Y.Base);
+Y.augment(Node, Y.Event.Target);
+Y.augment(Node, Y.Plugin.Host);
 
 Y.mix(Node.prototype, {
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to a node',
-            node = g_nodes[this[UID]];
+            node = this._node;
 
         if (node) {
             str += node[NODE_NAME];
@@ -400,50 +403,32 @@ Y.mix(Node.prototype, {
         return str || errorMsg;
     },
 
-    _addDOMAttr: function(attr) {
-        var domNode = g_nodes[this[UID]];
-
-        if (domNode && domNode[attr] !== undefined) {
-            this.addAttr(attr, {
-                getter: function() {
-                    return Node.DEFAULT_GETTER.call(this, attr);
-                },
-
-                setter: function(val) {
-                    return Node.DEFAULT_SETTER.call(this, attr, val);
-                }
-            });
-        } else {
-            Y.log('unable to add DOM attribute: ' + attr + ' to node: ' + this, 'warn', 'Node');
-        }
-    },
-
     get: function(attr) {
-        if (!this.attrAdded(attr)) { // use DEFAULT_GETTER for unconfigured attrs
-            if (Node.re_aria && Node.re_aria.test(attr)) { // except for aria
-                this._addAriaAttr(attr);
-            } else {
-                return Node.DEFAULT_GETTER.apply(this, arguments);
-            }
+        var attrConfig = Node.ATTRS[attr],
+            val;
+
+        if (attrConfig && attrConfig.getter) {
+            val = attrConfig.getter.call(this);
+        } else if (Node.re_aria.test(attr)) {
+            val = this._node.getAttribute(attr, 2); 
+        } else {
+            val = Node.DEFAULT_GETTER.apply(this, arguments);
         }
 
-        return SuperConstrProto.get.apply(this, arguments);
+        return val;
     },
 
     set: function(attr, val) {
-        if (!this.attrAdded(attr)) { // use DEFAULT_SETTER for unconfigured attrs
-            // except for aria
-            if (Node.re_aria && Node.re_aria.test(attr)) {
-                this._addAriaAttr(attr);
-            //  or chained properties or if no change listeners
-            } else if (attr.indexOf(DOT) < 0 && this._yuievt.events['Node:' + attr + 'Change']) {
-                this._addDOMAttr(attr);
-            } else {
-                Node.DEFAULT_SETTER.call(this, attr, val);
-                return this; // NOTE: return
-            }
+        var attrConfig = Node.ATTRS[attr];
+
+        if (attrConfig && attrConfig.setter) {
+            attrConfig.setter.call(this, val);
+        } else if (Node.re_aria.test(attr)) {
+            this._node.setAttribute(attr, val);
+        } else {
+            Node.DEFAULT_SETTER.apply(this, arguments);
         }
-        SuperConstrProto.set.apply(this, arguments);
+
         return this;
     },
 
@@ -463,9 +448,9 @@ Y.mix(Node.prototype, {
      * @return {Boolean} True if the nodes match, false if they do not. 
      */
     compareTo: function(refNode) {
-        var node = g_nodes[this[UID]];
+        var node = this._node;
         if (refNode instanceof Y.Node) { 
-            refNode = Y.Node.getDOMNode(refNode);
+            refNode = refNode._node;
         }
         return node === refNode;
     },
@@ -478,15 +463,15 @@ Y.mix(Node.prototype, {
      * @return {Boolean} Whether or not this node is appended to the document. 
      */
     inDoc: function(doc) {
-        var node = g_nodes[this[UID]];
-        doc = (doc) ? Node.getDOMNode(doc) : node[OWNER_DOCUMENT];
+        var node = this._node;
+        doc = (doc) ? doc._node || doc : node[OWNER_DOCUMENT];
         if (doc.documentElement) {
             return Y.DOM.contains(doc.documentElement, node);
         }
     },
 
     getById: function(id) {
-        var node = g_nodes[this[UID]],
+        var node = this._node,
             ret = Y.DOM.byId(id, node[OWNER_DOCUMENT]);
         if (ret && Y.DOM.contains(node, ret)) {
             ret = Y.get(ret);
@@ -504,7 +489,7 @@ Y.mix(Node.prototype, {
      * @return {Node} The matching Node instance or null if not found
      */
     ancestor: function(fn) {
-        return Node.get(Y.DOM.elementByAxis(g_nodes[this[UID]], 'parentNode', _wrapFn(fn)));
+        return Node.get(Y.DOM.elementByAxis(this._node, 'parentNode', _wrapFn(fn)));
     },
 
     /**
@@ -516,7 +501,7 @@ Y.mix(Node.prototype, {
      * @return {Node} Node instance or null if not found
      */
     previous: function(fn, all) {
-        return Node.get(Y.DOM.elementByAxis(g_nodes[this[UID]], 'previousSibling', _wrapFn(fn), all));
+        return Node.get(Y.DOM.elementByAxis(this._node, 'previousSibling', _wrapFn(fn), all));
     }, 
 
     /**
@@ -528,7 +513,7 @@ Y.mix(Node.prototype, {
      * @return {Node} Node instance or null if not found
      */
     next: function(node, fn, all) {
-        return Node.get(Y.DOM.elementByAxis(g_nodes[this[UID]], 'nextSibling', _wrapFn(fn), all));
+        return Node.get(Y.DOM.elementByAxis(this._node, 'nextSibling', _wrapFn(fn), all));
     },
         
     /**
@@ -539,7 +524,7 @@ Y.mix(Node.prototype, {
      * @return {Node} A Node instance for the matching HTMLElement.
      */
     query: function(selector) {
-        return Y.get(Y.Selector.query(selector, g_nodes[this[UID]], true));
+        return Y.get(Y.Selector.query(selector, this._node, true));
     },
 
     /**
@@ -550,7 +535,7 @@ Y.mix(Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     queryAll: function(selector) {
-        return Y.all(Y.Selector.query(selector, g_nodes[this[UID]]));
+        return Y.all(Y.Selector.query(selector, this._node));
     },
 
     // TODO: allow fn test
@@ -562,7 +547,7 @@ Y.mix(Node.prototype, {
      * @return {boolean} Whether or not the node matches the selector.
      */
     test: function(selector) {
-        return Y.Selector.test(g_nodes[this[UID]], selector);
+        return Y.Selector.test(this._node, selector);
     },
 
     /**
@@ -573,9 +558,36 @@ Y.mix(Node.prototype, {
      *
      */
     remove: function() {
-        var node = g_nodes[this[UID]];
+        var node = this._node;
         node.parentNode.removeChild(node);
         return this;
+    },
+
+    /**
+     * Replace the node with the other node. This is a DOM update only
+     * and does not change the node bound to the Node instance.
+     * Shortcut for myNode.get('parentNode').replaceChild(newNode, myNode);
+     * @method replace
+     * @chainable
+     *
+     */
+    replace: function(newNode) {
+        var node = this._node;
+        node.parentNode.replaceChild(newNode, node);
+        return this;
+    },
+
+    purge: function(recurse, type) {
+        Y.Event.purgeElement(this._node, recurse, type);
+    },
+
+    destroy: function(purge) {
+        delete Node._instances[this[UID]];
+        if (purge) {
+            this.purge(true);
+        }
+
+        this._node = null;
     },
 
     /**
@@ -589,27 +601,19 @@ Y.mix(Node.prototype, {
      *
      */
     invoke: function(method, a, b, c, d, e) {
-        var node = g_nodes[this[UID]],
+        var node = this._node,
             ret;
 
         if (a && a instanceof Y.Node) {
-            a = Node.getDOMNode(a);
+            a = a._node;
         }
 
         if (b && b instanceof Y.Node) {
-            b = Node.getDOMNode(b);
+            b = b._node;
         }
 
         ret = node[method](a, b, c, d, e);    
         return Y.Node.scrubVal(ret, this);
-    },
-
-    destructor: function() {
-        // TODO: What about shared instances?
-        //var uid = this[UID];
-
-        //delete g_nodes[uid];
-        //delete Node._instances[uid];
     },
 
     /**
@@ -648,7 +652,7 @@ Y.mix(Node.prototype, {
      */
     size: function() {
         Y.log('size is deprecated on Node', 'warn', 'Node');
-        return g_nodes[this[UID]] ? 1 : 0;
+        return this._node ? 1 : 0;
     },
 
     /**
@@ -661,12 +665,13 @@ Y.mix(Node.prototype, {
     insert: function(content, where) {
         if (content) {
             if (typeof where === 'number') { // allow index
-                where = g_nodes[this[UID]].childNodes[where];
+                where = this._node.childNodes[where];
             }
-            if (typeof content !== 'string') { // pass the DOM node
-                content = Y.Node.getDOMNode(content);
+
+            if (content._node) {
+                content = content._node;
             }
-            Y.DOM.addHTML(g_nodes[this[UID]], content, where);
+            Y.DOM.addHTML(this._node, content, where);
         }
         return this;
     },
@@ -698,16 +703,17 @@ Y.mix(Node.prototype, {
      * @chainable
      */
     setContent: function(content) {
-        Y.DOM.addHTML(g_nodes[this[UID]], content, 'replace');
+        Y.DOM.addHTML(this._node, content, 'replace');
         return this;
     },
 
     // TODO: need this?
     hasMethod: function(method) {
-        var node = g_nodes[this[UID]];
+        var node = this._node;
         return (node && (typeof node === 'function'));
     }
 }, true);
 
 Y.Node = Node;
 Y.get = Y.Node.get;
+Y.first = Y.Node.get;

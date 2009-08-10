@@ -1,6 +1,9 @@
 YUI dump
     Stringifies objects
 
+3.0.0
+  * Handles some permission denied errors better.
+
 3.0.0beta1
   * Added /regexp/ formatting
 

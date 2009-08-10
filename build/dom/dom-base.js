@@ -997,4 +997,4 @@ Y.mix(Y.DOM, {
 
 
 
-}, '@VERSION@' ,{requires:['event'], skinnable:false});
+}, '@VERSION@' ,{requires:['oop'], skinnable:false});

@@ -1,3 +1,10 @@
+YUI.add('pluginhost', function(Y) {
+
+    /**
+     * Provides the augmentable PluginHost interface, which can be added to any class.
+     * @module pluginhost
+     */
+
     /**
      * <p>
      * An augmentable class, which provides the augmented class with the ability to host plugins.
@@ -15,8 +22,7 @@
      * </p>
      * <p>
      * Plug.Host's protected <a href="#method_initPlugins">_initPlugins</a> and <a href="#method_destroyPlugins">_destroyPlugins</a> 
-     * methods should be invoked by the host class at the appropriate point in the host's lifecyle. This is done by default for 
-     * the Base class, so developers extending Base or Widget don't need to do anything to enable plugin support.
+     * methods should be invoked by the host class at the appropriate point in the host's lifecyle.  
      * </p>
      *
      * @class Plugin.Host
@@ -24,7 +30,7 @@
 
     var L = Y.Lang;
 
-    function PluginHost(config) {
+    function PluginHost() {
         this._plugins = {};
     }
 
@@ -108,6 +114,7 @@
          * @private
          */
         _initPlugins: function(config) {
+            this._plugins = this._plugins || {};
 
             // Class Configuration
             var classes = (this._getClasses) ? this._getClasses() : [this.constructor],
@@ -277,3 +284,6 @@
     };
 
     Y.namespace("Plugin").Host = PluginHost;
+
+
+}, '@VERSION@' ,{requires:['yuibase']});
