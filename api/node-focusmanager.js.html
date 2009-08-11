@@ -814,7 +814,7 @@
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">focusClass</span><span class="o">)</span> <span class="o">{</span>
 
-			<span class="k">if</span> <span class="o">(</span><span class="nx">oFocusedNode</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">oFocusedNode</span> <span class="o">!==</span> <span class="nx">oTarget</span> <span class="o">||</span> <span class="o">!</span><span class="nx">bFocused</span><span class="o">))</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">oFocusedNode</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">oFocusedNode</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">bFocused</span><span class="o">))</span> <span class="o">{</span>
 				<span class="k">this</span><span class="o">.</span><span class="nx">_removeFocusClass</span><span class="o">();</span>
 			<span class="o">}</span>
 
