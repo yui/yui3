@@ -765,7 +765,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 		if (focusClass) {
 
-			if (oFocusedNode && (oFocusedNode !== oTarget || !bFocused)) {
+			if (oFocusedNode && (!oFocusedNode.compareTo(oTarget) || !bFocused)) {
 				this._removeFocusClass();
 			}
 
