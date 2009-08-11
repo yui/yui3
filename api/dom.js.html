@@ -509,15 +509,33 @@
         <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span> <span class="c">// return single node, breaking parentNode ref from &quot;fragment&quot;</span>
 <span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// return multiple nodes as a fragment</span>
-<span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">createDocumentFragment</span><span class="o">();</span>
-            <span class="k">while</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ret</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span> 
-            <span class="o">}</span>
+<span class="c"></span>             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_nl2frag</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_cloneCache</span><span class="o">[</span><span class="nx">html</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
         <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
     <span class="o">},</span>
+
+    <span class="nx">_nl2frag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
+            <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">push</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">{</span>
+            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">ownerDocument</span><span class="o">;</span> 
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">createDocumentFragment</span><span class="o">();</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span> <span class="c">// convert live list to static array</span>
+<span class="c"></span>                <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="nx">ret</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span> 
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="c">// else inline with log for minification</span>
+<span class="c"></span>        <span class="k">else</span> <span class="o">{</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;unable to convert &#39;</span> <span class="o">+</span> <span class="nx">nodes</span> <span class="o">+</span> <span class="s1">&#39; to fragment&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dom&#39;</span><span class="o">);</span> <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+    <span class="o">},</span>
+
 
     <span class="nx">CUSTOM_ATTRIBUTES</span><span class="o">:</span> <span class="o">(!</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">hasAttribute</span><span class="o">)</span> <span class="o">?</span> <span class="o">{</span> <span class="c">// IE &lt; 8</span>
 <span class="c"></span>        <span class="s1">&#39;for&#39;</span><span class="o">:</span> <span class="s1">&#39;htmlFor&#39;</span><span class="o">,</span>

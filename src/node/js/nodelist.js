@@ -48,10 +48,11 @@ var NodeList = function(config) {
     if (typeof nodes === 'string') {
         this._query = nodes;
         nodes = Y.Selector.query(nodes, doc);
+    } else if (nodes.item) { // Live NodeList, copy to static Array
+        nodes = Y.Array(nodes, 0, true);
     }
 
-    Y.stamp(this);
-    NodeList._instances[this[UID]] = this;
+    NodeList._instances[Y.stamp(this)] = this;
     this._nodes = nodes;
 };
 // end "globals"
@@ -198,6 +199,15 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
+     * Creates a documenFragment from the nodes bound to the NodeList instance 
+     * @method toDocFrag
+     * @return Node a Node instance bound to the documentFragment
+     */
+    toFrag: function() {
+        return Y.get(Y.DOM._nl2frag(this._nodes));
+    },
+
+    /**
      * Returns the index of the node in the NodeList instance
      * or -1 if the node isn't found.
      * @method indexOf
@@ -284,7 +294,7 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     on: function(type, fn, context, etc) {
-        var args = g_slice(arguments);
+        var args = Y.Array(arguments);
         args[2] = context || this;
         this.batch(function(node) {
             node.on.apply(node, args);
@@ -304,7 +314,7 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     after: function(type, fn, context, etc) {
-        var args = g_slice(arguments);
+        var args = Y.Array(arguments);
         args[2] = context || this;
         this.batch(function(node) {
             node.after.apply(node, args);

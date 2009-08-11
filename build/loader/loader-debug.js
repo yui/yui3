@@ -461,7 +461,7 @@ var NOT_FOUND = {},
         },
 
         'node-focusmanager': { 
-            requires: [NODE, "event-focus", PLUGIN]
+            requires: [NODE, "event-key", "event-focus", PLUGIN]
         },
 
         get: { 

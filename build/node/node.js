@@ -20,9 +20,7 @@ YUI.add('node-base', function(Y) {
  */
 
 // "globals"
-var g_slice = Array.prototype.slice,
-
-    DOT = '.',
+var DOT = '.',
     NODE_NAME = 'nodeName',
     NODE_TYPE = 'nodeType',
     OWNER_DOCUMENT = 'ownerDocument',
@@ -131,7 +129,7 @@ Node._instances = {};
  * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
  */
 Node.plug = function() {
-    var args = g_slice.call(arguments, 0);
+    var args = Y.Array(arguments);
     args.unshift(Node);
     Y.Plugin.Host.plug.apply(Y.Base, args);
     return Node;
@@ -146,7 +144,7 @@ Node.plug = function() {
  * @param {Function | Array} plugin The plugin class, or an array of plugin classes
  */
 Node.unplug = function() {
-    var args = g_slice.call(arguments, 0);
+    var args = Y.Array(arguments);
     args.unshift(Node);
     Y.Plugin.Host.unplug.apply(Y.Base, args);
     return Node;
@@ -189,7 +187,7 @@ Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn === 'function') {
         Node.prototype[name] = function() {
             context = context || this;
-            var args = g_slice.call(arguments),
+            var args = Y.Array(arguments),
                 ret;
 
             if (args[0] && args[0] instanceof Node) {
@@ -661,15 +659,26 @@ Y.mix(Node.prototype, {
      * @chainable
      */
     insert: function(content, where) {
+        var node = this._node,
+            nodes; // in case we are inserting a NodeList/Array
+
         if (content) {
             if (typeof where === 'number') { // allow index
                 where = this._node.childNodes[where];
             }
 
-            if (content._node) {
-                content = content._node;
+            if (typeof content !== 'string') { // allow Node or NodeList/Array instances
+                if (content._node) { // Node
+                    content = content._node;
+                } else if (content._nodes || (!content.nodeType && content.length)) { // NodeList or Array
+                    Y.each(content._nodes, function(n) {
+                        Y.DOM.addHTML(node, n, where);
+                    });
+
+                    return this; // NOTE: early return
+                }
             }
-            Y.DOM.addHTML(this._node, content, where);
+            Y.DOM.addHTML(node, content, where);
         }
         return this;
     },
@@ -765,10 +774,11 @@ var NodeList = function(config) {
     if (typeof nodes === 'string') {
         this._query = nodes;
         nodes = Y.Selector.query(nodes, doc);
+    } else if (nodes.item) { // Live NodeList, copy to static Array
+        nodes = Y.Array(nodes, 0, true);
     }
 
-    Y.stamp(this);
-    NodeList._instances[this[UID]] = this;
+    NodeList._instances[Y.stamp(this)] = this;
     this._nodes = nodes;
 };
 // end "globals"
@@ -913,6 +923,15 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
+     * Creates a documenFragment from the nodes bound to the NodeList instance 
+     * @method toDocFrag
+     * @return Node a Node instance bound to the documentFragment
+     */
+    toFrag: function() {
+        return Y.get(Y.DOM._nl2frag(this._nodes));
+    },
+
+    /**
      * Returns the index of the node in the NodeList instance
      * or -1 if the node isn't found.
      * @method indexOf
@@ -999,7 +1018,7 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     on: function(type, fn, context, etc) {
-        var args = g_slice(arguments);
+        var args = Y.Array(arguments);
         args[2] = context || this;
         this.batch(function(node) {
             node.on.apply(node, args);
@@ -1019,7 +1038,7 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     after: function(type, fn, context, etc) {
-        var args = g_slice(arguments);
+        var args = Y.Array(arguments);
         args[2] = context || this;
         this.batch(function(node) {
             node.after.apply(node, args);
@@ -1765,5 +1784,5 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 }, '@VERSION@' ,{requires:['dom-screen']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom'], skinnable:false, use:['node-base', 'node-style', 'node-screen']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom'], use:['node-base', 'node-style', 'node-screen'], skinnable:false});
 
