@@ -330,7 +330,7 @@ var getActiveClass = function (node) {
 var handleMouseOverForNode = function (node, target) {
 
 	return node && !node[HANDLED_MOUSEOVER] && 
-		(node === target || node.contains(target));
+		(node.compareTo(target) || node.contains(target));
 
 };
 
@@ -338,7 +338,7 @@ var handleMouseOverForNode = function (node, target) {
 var handleMouseOutForNode = function (node, relatedTarget) {
 
 	return node && !node[HANDLED_MOUSEOUT] && 
-		(node !== relatedTarget && !node.contains(relatedTarget));
+		(!node.compareTo(relatedTarget) && !node.contains(relatedTarget));
 
 };
 
@@ -858,7 +858,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			oMenu = getParentMenu(item);
 			oItem = getItemAnchor(item);
 
-			if (menuNav._activeMenu !== oMenu) {
+			if (oMenu && !oMenu.compareTo(menuNav._activeMenu)) {
 				menuNav._activeMenu = oMenu;
 				menuNav._initFocusManager();
 			}
@@ -1236,7 +1236,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 		//	Menu in order to avoid the FocusManager thinking that 
 		//	it has lost focus
 		
-		if (menuNav._activeMenu !== menu) {
+		if (menu && !menu.compareTo(menuNav._activeMenu)) {
 			menuNav._activeMenu = menu;
 
 			if (menuNav._hasFocus) {
@@ -1417,7 +1417,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			}
 			else if (!menuNav._movingToSubmenu && oSubmenu && 
 				!oSubmenu.contains(oRelatedTarget) && 
-				oRelatedTarget !== oSubmenu) {
+				!oRelatedTarget.compareTo(oSubmenu)) {
 
 				//	If the mouse is not moving toward the submenu, cancel any 
 				//	submenus that might be in the process of being displayed 
@@ -1822,7 +1822,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			oSubmenu = oMenuLabel.next();
 
 			if (oSubmenu && 
-				(oRelatedTarget === oSubmenu || 
+				(oRelatedTarget.compareTo(oSubmenu) || 
 					oSubmenu.contains(oRelatedTarget))) {
 
 				bMovingToSubmenu = true;

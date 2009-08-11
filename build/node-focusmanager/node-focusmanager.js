@@ -691,15 +691,15 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 			(!bChildNode || (bChildNode && !this._isDescendant(oTarget)))) {
 
 			//	Fix for Webkit:
-
-			//	the goal is to force a blur if the user moused down on 
-			//	either: 1) a descendant node, but one that is not managed by 
-			//	the focus manager, or 2) an element outside of the 
-			//	focusmanager
 			
 			//	Document doesn't receive focus in Webkit when the user mouses 
 			//	down on it, so the "focused" attribute won't get set to the 
 			//	correct value.
+
+			//	The goal is to force a blur if the user moused down on 
+			//	either: 1) A descendant node, but not one that managed by 
+			//	the FocusManager, or 2) an element outside of the 
+			//	FocusManager
 
  			this._set(FOCUSED, false);
  			this._onDocFocus(event);
@@ -764,7 +764,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 		if (focusClass) {
 
-			if (oFocusedNode && (oFocusedNode !== oTarget || !bFocused)) {
+			if (oFocusedNode && (!oFocusedNode.compareTo(oTarget) || !bFocused)) {
 				this._removeFocusClass();
 			}
 
