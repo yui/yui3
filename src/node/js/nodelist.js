@@ -406,12 +406,6 @@ NodeList.importMethod(Y.Node.prototype, [
     'insert',
 
     /** Called on each Node instance
-      * @method plug
-      * @see Node.plug
-      */
-    'plug',
-
-    /** Called on each Node instance
       * @method prepend
       * @see Node.prepend
       */
@@ -433,13 +427,7 @@ NodeList.importMethod(Y.Node.prototype, [
       * @method setContent
       * @see Node.setContent
       */
-    'setContent',
-
-    /** Called on each Node instance
-      * @method unplug
-      * @see Node.unplug
-      */
-    'unplug'
+    'setContent'
 ]);
 
 Y.NodeList = NodeList;

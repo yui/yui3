@@ -137,7 +137,7 @@ button {
 <div id="test-insert-html">foo</div>
 <div id="yui-log"></div>
 <script type="text/javascript">
-YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', function(Y) {
+YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim', function(Y) {
     var tool = YAHOO.tool,
     suite = new tool.TestSuite("yuisuite");
 
@@ -788,10 +788,24 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', funct
         },
 
         test_plugin: function() {
+            console.log('node.plug: ' + Y.get('body').plug);
+            console.log('Node.plug: ' + Y.Node.plug);
+            console.log('Node.prototype.plug: ' + Y.Node.prototype.plug);
             Y.Node.plug(Y.Plugin.NodeFX);
             Assert.isTrue(!!Y.Node.create('<div></div>').fx, 'Node.plug()');
             Y.Node.unplug(Y.Plugin.NodeFX);
             Assert.isFalse(!!Y.Node.create('<div></div>').fx, 'Node.unplug()');
+
+            Y.all('input').plug(Y.Plugin.NodeFX);
+
+            Y.all('input').each(function(n) {
+                Assert.isObject(n.fx, "Y.all('input').plug(Y.Plugin.NodeFX)");
+            });
+
+            Y.all('input').unplug(Y.Plugin.NodeFX);
+            Y.all('input').each(function(n) {
+                Assert.areEqual(undefined, n.fx, "Y.all('input').unplug(Y.Plugin.NodeFX)");
+            });
         }
     }));
 
