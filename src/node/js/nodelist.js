@@ -294,7 +294,7 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     on: function(type, fn, context, etc) {
-        var args = g_slice(arguments);
+        var args = Y.Array(arguments);
         args[2] = context || this;
         this.batch(function(node) {
             node.on.apply(node, args);
@@ -314,7 +314,7 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     after: function(type, fn, context, etc) {
-        var args = g_slice(arguments);
+        var args = Y.Array(arguments);
         args[2] = context || this;
         this.batch(function(node) {
             node.after.apply(node, args);
