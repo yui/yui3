@@ -460,15 +460,32 @@ Y.DOM = {
         if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
             ret = nodes[0].parentNode.removeChild(nodes[0]);
         } else { // return multiple nodes as a fragment
-            ret = doc.createDocumentFragment();
-            while (nodes.length) {
-                ret.appendChild(nodes[0]); 
-            }
+             ret = Y.DOM._nl2frag(nodes, doc);
         }
 
         Y.DOM._cloneCache[html] = ret.cloneNode(true);
         return ret;
     },
+
+    _nl2frag: function(nodes, doc) {
+        var ret = null,
+            i, len;
+
+        if (nodes && nodes.push && nodes[0]) {
+            doc = doc || nodes[0].ownerDocument; 
+            ret = doc.createDocumentFragment();
+
+            if (nodes.item) { // convert live list to static array
+                nodes = Y.Array(nodes, 0, true);
+            }
+
+            for (i = 0, len = nodes.length; i < len; i++) {
+                ret.appendChild(nodes[i]); 
+            }
+        } // else inline with log for minification
+        return ret;
+    },
+
 
     CUSTOM_ATTRIBUTES: (!document.documentElement.hasAttribute) ? { // IE < 8
         'for': 'htmlFor',
@@ -1205,7 +1222,7 @@ Y.Color = {
                 Number(RE.$3).toString(16)
             ];
 
-            for (i = 0; i < val.length; i++) {
+            for (var i = 0; i < val.length; i++) {
                 if (val[i].length < 2) {
                     val[i] = val[i].replace(Y.Color.re_hex3, '$1$1');
                 }

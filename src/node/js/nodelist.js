@@ -48,10 +48,11 @@ var NodeList = function(config) {
     if (typeof nodes === 'string') {
         this._query = nodes;
         nodes = Y.Selector.query(nodes, doc);
+    } else if (nodes.item) { // Live NodeList, copy to static Array
+        nodes = Y.Array(nodes, 0, true);
     }
 
-    Y.stamp(this);
-    NodeList._instances[this[UID]] = this;
+    NodeList._instances[Y.stamp(this)] = this;
     this._nodes = nodes;
 };
 // end "globals"
@@ -195,6 +196,15 @@ Y.mix(NodeList.prototype, {
             context = context || node;
             return fn.call(context, node, index, instance);
         });
+    },
+
+    /**
+     * Creates a documenFragment from the nodes bound to the NodeList instance 
+     * @method toDocFrag
+     * @return Node a Node instance bound to the documentFragment
+     */
+    toFrag: function() {
+        return Y.get(Y.DOM._nl2frag(this._nodes));
     },
 
     /**

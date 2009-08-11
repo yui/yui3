@@ -663,15 +663,26 @@ Y.mix(Node.prototype, {
      * @chainable
      */
     insert: function(content, where) {
+        var node = this._node,
+            nodes; // in case we are inserting a NodeList/Array
+
         if (content) {
             if (typeof where === 'number') { // allow index
                 where = this._node.childNodes[where];
             }
 
-            if (content._node) {
-                content = content._node;
+            if (typeof content !== 'string') { // allow Node or NodeList/Array instances
+                if (content._node) { // Node
+                    content = content._node;
+                } else if (content._nodes || (!content.nodeType && content.length)) { // NodeList or Array
+                    Y.each(content._nodes, function(n) {
+                        Y.DOM.addHTML(node, n, where);
+                    });
+
+                    return this; // NOTE: early return
+                }
             }
-            Y.DOM.addHTML(this._node, content, where);
+            Y.DOM.addHTML(node, content, where);
         }
         return this;
     },
