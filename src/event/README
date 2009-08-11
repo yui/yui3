@@ -1,8 +1,16 @@
 YUI Event Utility
     DOM event utilities
 
-3.0.0GA
+3.0.0
     - Added onreadystatechange fork in domready to handle the event in IE when YUI is hosted in an iframe.
+    - Added mousewheel support.
+    - Added Y.delgate function that is a bit easier to use than Y.on('delegate'...
+    - All special DOM event handlers (focus/blur/mousewheel,resize,delegate,etc) are
+      broken down into submodules.  Core DOM event functionality is provided in event-base.js,
+      and all of the functionality is rolled into event.js.
+    - Additional Safari key remapping.
+    - Special DOM events can now be routed through delegate.
+    - Y.on can target Node and NodeList references correctly.
 
 3.0.0beta1
     - DOM event, custom event, and simulate event moved to separate modules.

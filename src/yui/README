@@ -6,16 +6,17 @@ The YUI Global
     The yui module is a rollup of the following modules:
         yui-base
         get
-        loader
         queue-base
 
-3.0.0 GA
+3.0.0
 
-* User agent detection is more granular.  e.g., FireFox 3.5 reports gecko 1.91 rather than 1.9.
-* Fixed UA.os.
 * Extracted the loader from the seed file.  Instead, if loader not included, 'get is included,
   and dependencies are missing, the loader will be fetched before continuing.
+* User agent detection is more granular.  e.g., FireFox 3.5 reports gecko 1.91 rather than 1.9.
+* Fixed UA.os.
 * Added additional mobile device detection.
+* Get utility attribute cleanup before purging nodes.
+* cached accepts a parameter to refresh a cached value.
 
 3.0.0 beta 1
 

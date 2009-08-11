@@ -3,6 +3,10 @@ YUI Collection Utilities
     for collection management.
 
 3.0.0b1
+  * Fixed load time fork assumptions.
+
+3.0.0b1
+  * No change.
 
 3.0.0pr1
   * Initial release

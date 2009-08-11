@@ -1,6 +1,5 @@
 (function() {
 
-    // var min = ['yui-base', 'log', 'lang', 'array', 'core'], core, C = Y.config;
     var min = ['yui-base'], core, C = Y.config;
 
     // apply the minimal required functionality
