@@ -1999,7 +1999,8 @@ Y.UA = function() {
  */
 (function() {
 
-    var min = ['yui-base'], core, C = Y.config, LOADER='loader';
+    var min = ['yui-base'], core, C = Y.config, mods = YUI.Env.mods,
+        extras, i;
 
     // apply the minimal required functionality
     Y.use.apply(Y, min);
@@ -2009,9 +2010,13 @@ Y.UA = function() {
     if (C.core) {
         core = C.core;
     } else {
-        core = ['queue-base', 'get'];
-        if (YUI.Env.mods[LOADER]) {
-            core.push(LOADER);
+        core = ['queue-base'];
+        extras = ['get', 'loader', 'yui-log', 'yui-later'];
+
+        for (i=0; i<extras.length; i++) {
+            if (mods[extras[i]]) {
+                core.push(extras[i]);
+            }
         }
     }
 
