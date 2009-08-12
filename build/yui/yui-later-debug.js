@@ -1,3 +1,5 @@
+YUI.add('yui-later', function(Y) {
+
 /**
  * Provides a setTimeout/setInterval wrapper
  * @module yui
@@ -63,3 +65,6 @@
     L.later = later;
 
 })();
+
+
+}, '@VERSION@' ,{requires:['yui-base']});

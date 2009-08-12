@@ -1,9 +1,11 @@
 
-/*
- * Provides information about the environment hosting YUI
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, the dynamic loader and metadata,
+ * the module registration system, and the core utilities for the library.
  * @module yui
- * @submodule UA
  */
+
 /**
  * YUI user agent detection.
  * Do not fork for a browser if it can be avoided.  Use feature detection when

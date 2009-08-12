@@ -469,7 +469,7 @@ var NOT_FOUND = {},
         'event-custom': { 
             submodules: {
                 'event-custom-base': {
-                    requires: [OOP]
+                    requires: [OOP, 'yui-later']
                 },
                 'event-custom-complex': {
                     requires: [EVENTCUSTOMBASE]
@@ -483,10 +483,6 @@ var NOT_FOUND = {},
 
         'node-focusmanager': { 
             requires: [NODE, "node-event-simulate", "event-key", "event-focus", PLUGIN]
-        },
-
-        get: { 
-            requires: [YUIBASE]
         },
 
         history: { 
@@ -607,10 +603,14 @@ var NOT_FOUND = {},
         },
 
         yui: {
-            supersedes: [YUIBASE, GET, 'queue-base']
+            submodules: {
+                'yui-base': {},
+                get: {},
+                'yui-log': {},
+                'yui-later': {}
+            },
+            supersedes: ['queue-base']
         },
-
-        'yui-base': { },
 
         test: {                                                                                                                                                        
             requires: [SUBSTITUTE, NODE, 'json', 'event-simulate']                                                                                                                     
@@ -1061,6 +1061,9 @@ Y.Loader.prototype = {
             f = f.toUpperCase();
             this.filterName = f;
             this.filter = this.FILTER_DEFS[f];
+            if (f == 'DEBUG') {
+                this.require('yui-log', 'dump');
+            }
         }
 
     },

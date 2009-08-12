@@ -1,3 +1,5 @@
+YUI.add('yui-log', function(Y) {
+
 /**
  * Provides console log capability and exposes a custom event for
  * console implementations.
@@ -101,3 +103,6 @@ INSTANCE.message = function() {
 };
 
 })();
+
+
+}, '@VERSION@' ,{requires:['yui-base']});
