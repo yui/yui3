@@ -75,6 +75,13 @@
                 Y.log("document.location: " + Y.dump(document.location));
             })
 
+YUI().add('bacon-dom', function(Y) {
+Y.log("Loading bacon-dom",'debug',"bacon-dom");
+}, '@VERSION@', { requires: ['event'] });
+
+YUI().use('bacon-dom', function(Y) {
+alert('usinghello' + Y.Event + ' - ' + Y.Selector);
+});
         </script>
 
     </body>

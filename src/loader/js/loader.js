@@ -129,9 +129,9 @@ var NOT_FOUND = {},
     DOMSTYLE = 'dom-style',
     DUMP = 'dump',
     GET = 'get',
-    EVENT = 'event',
     EVENTBASE = 'event-base',
     EVENTCUSTOM = 'event-custom',
+    EVENTCUSTOMBASE = 'event-custom-base',
     IOBASE = 'io-base',
     NODE = 'node',
     NODEBASE = 'node-base',
@@ -203,12 +203,12 @@ var NOT_FOUND = {},
         },
 
         node: {
-            requires: [DOM, BASE],
+            requires: [DOM, EVENTBASE],
             // expound: EVENT,
 
             submodules: {
                 'node-base': {
-                    requires: [DOMBASE, BASE, SELECTORCSS2, EVENTBASE]
+                    requires: [DOMBASE, SELECTORCSS2, EVENTBASE]
                 },
 
                 'node-style': {
@@ -220,7 +220,7 @@ var NOT_FOUND = {},
                 },
 
                 'node-pluginhost': {
-                    requires: ['node-base', 'pluginhost']
+                    requires: [NODEBASE, 'pluginhost']
                 }
             },
 
@@ -427,11 +427,11 @@ var NOT_FOUND = {},
         },
 
         event: { 
-            expound: NODE,
+            expound: NODEBASE,
             submodules: {
                 'event-base': {
-                    // expound: NODEBASE,
-                    requires: [EVENTCUSTOM]
+                    expound: NODEBASE,
+                    requires: [EVENTCUSTOMBASE]
                 },
                 'event-delegate': {
                     requires: [EVENTBASE]
@@ -455,7 +455,14 @@ var NOT_FOUND = {},
         },
 
         'event-custom': { 
-            requires: [OOP]
+            submodules: {
+                'event-custom-base': {
+                    requires: [OOP]
+                },
+                'event-custom-complex': {
+                    requires: [EVENTCUSTOMBASE]
+                }
+            }
         },
 
         'event-simulate': { 
@@ -463,7 +470,7 @@ var NOT_FOUND = {},
         },
 
         'node-focusmanager': { 
-            requires: [NODE, "event-key", "event-focus", PLUGIN]
+            requires: [NODE, "node-event-simulate", "event-key", "event-focus", PLUGIN]
         },
 
         get: { 
@@ -482,7 +489,7 @@ var NOT_FOUND = {},
             submodules: {
 
                 'io-base': {
-                    requires: [EVENTCUSTOM]
+                    requires: [EVENTCUSTOMBASE]
                 }, 
 
                 'io-xdr': {
@@ -1208,7 +1215,7 @@ Y.Loader.prototype = {
             }
 
             o.supersedes = sup;
-            o.rollup = Math.min(l-1, 4);
+            o.rollup = (l<4) ? l : Math.min(l-1, 4);
         }
 
         plugins = o.plugins;

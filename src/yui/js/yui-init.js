@@ -1,7 +1,6 @@
 (function() {
 
-    // var min = ['yui-base', 'log', 'lang', 'array', 'core'], core, C = Y.config;
-    var min = ['yui-base'], core, C = Y.config;
+    var min = ['yui-base'], core, C = Y.config, LOADER='loader';
 
     // apply the minimal required functionality
     Y.use.apply(Y, min);
@@ -12,10 +11,12 @@
         core = C.core;
     } else {
         core = ['queue-base', 'get'];
+        if (YUI.Env.mods[LOADER]) {
+            core.push(LOADER);
+        }
     }
 
     Y.use.apply(Y, core);
-
      
 })();
 

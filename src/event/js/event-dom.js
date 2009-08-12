@@ -437,7 +437,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             trimmedArgs.splice(2, 1);
 
             // set context to the Node if not specified
-            ret = cewrapper.subscribe.apply(cewrapper, trimmedArgs);
+            ret = cewrapper.on.apply(cewrapper, trimmedArgs);
 
             if (fireNow) {
                 cewrapper.fire();

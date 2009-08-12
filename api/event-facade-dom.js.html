@@ -169,6 +169,8 @@
 <span class="c"></span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">DOMEventFacade</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">,</span> <span class="nx">currentTarget</span><span class="o">,</span> <span class="nx">wrapper</span><span class="o">)</span> <span class="o">{</span>
 
+    <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">wrapper</span> <span class="o">||</span> <span class="o">{};</span>
+
     <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">ev</span><span class="o">,</span> <span class="nx">ot</span> <span class="o">=</span> <span class="nx">currentTarget</span><span class="o">,</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">,</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">body</span><span class="o">,</span>
         <span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">pageY</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">t</span><span class="o">;</span>
 
@@ -302,9 +304,7 @@
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="nx">e</span><span class="o">.</span><span class="nx">cancelBubble</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
         <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">wrapper</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">wrapper</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">();</span>
-        <span class="o">}</span>
+        <span class="nx">wrapper</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
     <span class="o">};</span>
 
     <span class="c">/**</span>
@@ -314,16 +314,12 @@
 <span class="c">     * @method stopImmediatePropagation</span>
 <span class="c">     */</span>
     <span class="k">this</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-
         <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">e</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">();</span>
         <span class="o">}</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">wrapper</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">wrapper</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>
-        <span class="o">}</span>
+        <span class="nx">wrapper</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">2</span><span class="o">;</span>
     <span class="o">};</span>
 
     <span class="c">/**</span>
@@ -334,16 +330,11 @@
 <span class="c">     * confirmation query to the beforeunload event).</span>
 <span class="c">     */</span>
     <span class="k">this</span><span class="o">.</span><span class="nx">preventDefault</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">returnValue</span><span class="o">)</span> <span class="o">{</span>
-
         <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">e</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
         <span class="o">}</span>
-
         <span class="nx">e</span><span class="o">.</span><span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">returnValue</span> <span class="o">||</span> <span class="kc">false</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">wrapper</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">wrapper</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
-        <span class="o">}</span>
+        <span class="nx">wrapper</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
     <span class="o">};</span>
 
     <span class="c">/**</span>

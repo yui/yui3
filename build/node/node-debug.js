@@ -1486,7 +1486,7 @@ Y.Node.prototype.delegate = function(type, fn, selector, context) {
 };
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'event-custom', 'selector-css2']});
+}, '@VERSION@' ,{requires:['dom-base', 'event-base', 'selector-css2']});
 YUI.add('node-style', function(Y) {
 
 (function(Y) {

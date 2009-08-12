@@ -2,8 +2,11 @@
 <html debug="true">
 <head>
 <title>YUI 3.0</title>
+<!--
 <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+-->
 <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
 <!--
 <script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
 <script type="text/javascript" src="../../build/event-custom/event-custom-debug.js"></script>
@@ -43,19 +46,19 @@ YUI({
     logExclude: {
         Selector: 1
     }
-}).use('event', 'dump', 'substitute', function(Y) {
+}).use('event-base', 'dump', 'substitute', function(Y) {
 
     Y.on('load', function(e) {
         Y.log('window load event');
     });
 
-    Y.on('beforeunload', function(e) {
-        e.returnValue = "let's do this";
-    });
+    // Y.on('beforeunload', function(e) {
+    //     e.returnValue = "let's do this";
+    // });
 
-    Y.on('mousewheel', function(e, arg1) {
-        Y.log('mousewheel: ' + e.wheelDelta + ', ' + arg1);
-    }, Y, 1);
+    // Y.on('mousewheel', function(e, arg1) {
+    //     Y.log('mousewheel: ' + e.wheelDelta + ', ' + arg1);
+    // }, Y, 1);
 
 
     // debugger;
@@ -145,7 +148,8 @@ YUI({
 
     var el = Y.get('#button1');
     Y.log("get got " + el);
-    el.setStyle('border', '3px solid red');
+
+    // el.setStyle('border', '3px solid red');
 
     var f = function(e) {
         Y.log("SUB1, " + this.get('id') + " click event facade: " + e.target);
@@ -336,8 +340,6 @@ Y.on('windowresize', function(e) {
     // nodelist.on('click', function(e, arg1) {
     //     console.log('click: ' + e.currentTarget + ', ' + arg1);
     // }, Y, 1);
-
-
 
 });
 

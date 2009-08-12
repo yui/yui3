@@ -1,3 +1,10 @@
+
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event-custom
+ * @submodule event-custom-base
+ */
 (function() {
 
 /**
@@ -300,7 +307,7 @@ ET.prototype = {
             if (adapt && adapt.detach) {
                 return adapt.detach.apply(Y, args);
             // DOM event fork
-            } else if (!type || (!adapt && type.indexOf(':') == -1)) {
+            } else if (!type || (!adapt && (type in Y.Node.DOM_EVENTS))) {
                 args[0] = type;
                 return Y.Event.detach.apply(Y.Event, args);
             }
@@ -517,12 +524,7 @@ ET.prototype = {
         // this event has not been published or subscribed to
         if (!ce) {
             
-            // if this object has bubble targets, we need to publish the
-            // event in order for it to bubble.
             if (this._yuievt.hasTargets) {
-                // ce = this.publish(t);
-                // ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
-                
                 a = (typeIncluded) ? arguments : Y.Array(arguments, 0, true).unshift(t);
                 return this.bubble(null, a, this);
             }
@@ -553,54 +555,6 @@ ET.prototype = {
         type = _getType(type, this._yuievt.config.prefix);
         var e = this._yuievt.events;
         return (e && type in e) ? e[type] : null;
-    },
-
-    /**
-     * Propagate an event
-     * @method bubble
-     * @param evt {Event.Custom} the custom event to propagate
-     * @return {boolean} the aggregated return value from Event.Custom.fire
-     */
-    bubble: function(evt, args, target) {
-
-        var targs = this._yuievt.targets, ret = true,
-            t, type, ce, i;
-
-        if (!evt || ((!evt.stopped) && targs)) {
-
-            // Y.log('Bubbling ' + evt.type);
-            for (i in targs) {
-                if (targs.hasOwnProperty(i)) {
-                    t = targs[i]; 
-                    type = evt && evt.type;
-                    ce = t.getEvent(type); 
-                        
-                    // if this event was not published on the bubble target,
-                    // publish it with sensible default properties
-                    if (!ce) {
-
-                        if (t._yuievt.hasTargets) {
-                            t.bubble.call(t, evt, args, target);
-                        }
-
-                    } else {
-
-                        ce.target = target || (evt && evt.target) || this;
-
-                        ce.currentTarget = t;
-
-                        ret = ret && ce.fire.apply(ce, args || evt.details);
-
-                        // stopPropagation() was called
-                        if (ce.stopped) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        return ret;
     },
 
     /**
