@@ -234,7 +234,6 @@ var NOT_FOUND = {},
         },
 
         anim: {
-            requires: [BASEBASE, NODE],
             submodules: {
 
                 'anim-base': {
@@ -268,7 +267,6 @@ var NOT_FOUND = {},
         },
 
         attribute: { 
-            requires: [EVENTCUSTOM],
             submodules: {
                 'attribute-base': {
                     requires: [EVENTCUSTOM]
@@ -313,7 +311,7 @@ var NOT_FOUND = {},
         },
 
         console: {
-            requires: [WIDGET, SUBSTITUTE],
+            requires: ['yui-log', WIDGET, SUBSTITUTE],
             skinnable: true,
             plugins: {
                 'console-filters': {
