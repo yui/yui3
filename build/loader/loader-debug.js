@@ -1217,7 +1217,7 @@ Y.Loader.prototype = {
             }
 
             o.supersedes = sup;
-            o.rollup = Math.min(l-1, 4);
+            o.rollup = Math.max(l-1, 3);
         }
 
         plugins = o.plugins;
