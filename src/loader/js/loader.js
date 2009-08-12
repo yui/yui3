@@ -217,6 +217,10 @@ var NOT_FOUND = {},
 
                 'node-screen': {
                     requires: ['dom-screen', NODEBASE]
+                },
+
+                'node-pluginhost': {
+                    requires: ['node-base', 'pluginhost']
                 }
             },
 

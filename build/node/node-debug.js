@@ -34,19 +34,20 @@ var DOT = '.',
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
 
-        this._initPlugins();
-
         uid = Y.stamp(node);
         if (!uid) { // stamp failed; likely IE non-HTMLElement
             uid = Y.guid();
         }
 
         this[UID] = uid;
-        this._conf = {};
 
         this._node = node;
-        this._stateProxy = node;
+        this._stateProxy = node; // for use when augmented with Attribute
         Node._instances[uid] = this;
+
+        if (this._initPlugins) {
+            this._initPlugins();
+        }
     },
 
     // used with previous/next/ancestor tests
@@ -117,38 +118,6 @@ Node.DOM_EVENTS = {
 Y.mix(Node.DOM_EVENTS, Y.Env.evt.plugins);
 
 Node._instances = {};
-
-/**
- * Registers plugins to be instantiated at the class level (plugins 
- * which should be plugged into every instance of Node by default).
- *
- * @method Node.plug
- * @static
- *
- * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
- * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
- */
-Node.plug = function() {
-    var args = Y.Array(arguments);
-    args.unshift(Node);
-    Y.Plugin.Host.plug.apply(Y.Base, args);
-    return Node;
-};
-
-/**
- * Unregisters any class level plugins which have been registered by the Node
- *
- * @method Node.unplug
- * @static
- *
- * @param {Function | Array} plugin The plugin class, or an array of plugin classes
- */
-Node.unplug = function() {
-    var args = Y.Array(arguments);
-    args.unshift(Node);
-    Y.Plugin.Host.unplug.apply(Y.Base, args);
-    return Node;
-};
 
 /**
  * Retrieves the DOM node bound to a Node instance
@@ -379,7 +348,6 @@ Node.DEFAULT_GETTER = function(name) {
 };
 
 Y.augment(Node, Y.Event.Target);
-Y.augment(Node, Y.Plugin.Host);
 
 Y.mix(Node.prototype, {
     toString: function() {
@@ -407,12 +375,16 @@ Y.mix(Node.prototype, {
         var attrConfig = Node.ATTRS[attr],
             val;
 
-        if (attrConfig && attrConfig.getter) {
-            val = attrConfig.getter.call(this);
-        } else if (Node.re_aria.test(attr)) {
-            val = this._node.getAttribute(attr, 2); 
-        } else {
-            val = Node.DEFAULT_GETTER.apply(this, arguments);
+        if (this._getAttr) { // use Attribute imple
+            val = this._getAttr(attr);
+        } else { // use getters inline
+            if (attrConfig && attrConfig.getter) {
+                val = attrConfig.getter.call(this);
+            } else if (Node.re_aria.test(attr)) {
+                val = this._node.getAttribute(attr, 2); 
+            } else {
+                val = Node.DEFAULT_GETTER.apply(this, arguments);
+            }
         }
 
         return val;
@@ -421,12 +393,16 @@ Y.mix(Node.prototype, {
     set: function(attr, val) {
         var attrConfig = Node.ATTRS[attr];
 
-        if (attrConfig && attrConfig.setter) {
-            attrConfig.setter.call(this, val);
-        } else if (Node.re_aria.test(attr)) {
-            this._node.setAttribute(attr, val);
-        } else {
-            Node.DEFAULT_SETTER.apply(this, arguments);
+        if (this._setAttr) { // use Attribute imple
+            this._setAttr(attr, val);
+        } else { // use setters inline
+            if (attrConfig && attrConfig.setter) {
+                attrConfig.setter.call(this, val);
+            } else if (Node.re_aria.test(attr)) { // special case Aria
+                this._node.setAttribute(attr, val);
+            } else {
+                Node.DEFAULT_SETTER.apply(this, arguments);
+            }
         }
 
         return this;
@@ -1136,12 +1112,6 @@ NodeList.importMethod(Y.Node.prototype, [
     'insert',
 
     /** Called on each Node instance
-      * @method plug
-      * @see Node.plug
-      */
-    'plug',
-
-    /** Called on each Node instance
       * @method prepend
       * @see Node.prepend
       */
@@ -1163,13 +1133,7 @@ NodeList.importMethod(Y.Node.prototype, [
       * @method setContent
       * @see Node.setContent
       */
-    'setContent',
-
-    /** Called on each Node instance
-      * @method unplug
-      * @see Node.unplug
-      */
-    'unplug'
+    'setContent'
 ]);
 
 Y.NodeList = NodeList;
@@ -1790,7 +1754,61 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 
 
 }, '@VERSION@' ,{requires:['dom-screen']});
+YUI.add('node-pluginhost', function(Y) {
+
+/**
+ * Registers plugins to be instantiated at the class level (plugins 
+ * which should be plugged into every instance of Node by default).
+ *
+ * @method Node.plug
+ * @static
+ *
+ * @param {Function | Array} plugin Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)
+ * @param {Object} config (Optional) If plugin is the plugin class, the configuration for the plugin
+ */
+Y.Node.plug = function() {
+    var args = Y.Array(arguments);
+    args.unshift(Y.Node);
+    Y.Plugin.Host.plug.apply(Y.Base, args);
+    return Y.Node;
+};
+
+/**
+ * Unregisters any class level plugins which have been registered by the Node
+ *
+ * @method Node.unplug
+ * @static
+ *
+ * @param {Function | Array} plugin The plugin class, or an array of plugin classes
+ */
+Y.Node.unplug = function() {
+    var args = Y.Array(arguments);
+    args.unshift(Y.Node);
+    Y.Plugin.Host.unplug.apply(Y.Base, args);
+    return Y.Node;
+};
+
+Y.mix(Y.Node, Y.Plugin.Host, false, null, 1);
+
+// allow batching of plug/unplug via NodeList
+// doesn't use NodeList.importMethod because we need real Nodes (not tmpNode)
+Y.NodeList.prototype.plug = function() {
+    var args = arguments;
+    Y.NodeList.each(this, function(node) {
+        Y.Node.prototype.plug.apply(Y.get(node), args);
+    });
+};
+
+Y.NodeList.prototype.unplug = function() {
+    var args = arguments;
+    Y.NodeList.each(this, function(node) {
+        Y.Node.prototype.unplug.apply(Y.get(node), args);
+    });
+};
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom'], use:['node-base', 'node-style', 'node-screen'], skinnable:false});
+}, '@VERSION@' ,{requires:['node-base', 'pluginhost']});
+
+
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], skinnable:false});
 
