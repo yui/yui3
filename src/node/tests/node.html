@@ -271,13 +271,13 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
 
             Assert.areEqual('DIV', node.get('nodeName'), 'nodeName === "DIV"');
             Assert.areEqual('UL', nodes.get('nodeName')[0], 'nodeName === "UL"');
-            Assert.areEqual('LI', nodes.get('nodeName')[nodes.size() - 1], 'nodeName === "UL"');
+            Assert.areEqual('LI', nodes.get('nodeName')[nodes.size() - 1], 'nodeName === "LI"');
 
             Assert.areEqual(element.firstChild.nextSibling.nodeName, node.get('firstChild').get('nextSibling').get('nodeName'), 'node.firstChild.nextSibling.nodeName"');
             Assert.areEqual(element.lastChild.nodeName, node.get('lastChild').get('nodeName'), 'lastChild.nodeName"');
             Assert.areEqual(9, node.get('ownerDocument').get('nodeType'), 'node.ownerDocument.nodeType ===  9');
 
-            Assert.areEqual('test-nodes', nodes.get('parentNode')[0].get('id'), 'nodes.get(parentNode)[0].get("id") === test-nodes');
+            Assert.areEqual('test-nodes', nodes.get('parentNode').get('id')[0], 'nodes.get(parentNode)[0].get("id") === test-nodes');
             Assert.areEqual(element.firstChild.nodeType, node.get('firstChild').get('nodeType'), 'firstChild.get("nodeType")');
             Assert.areEqual(element.offsetWidth, node.get('offsetWidth'), 'offsetWidth === node.offsetWidth');
             Assert.areEqual(element.offsetParent.tagName, node.get('offsetParent').get('tagName'), 'offsetParent.tagName === offsetParent.tagName');
@@ -319,6 +319,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.areEqual(byId('link-2').tabIndex, Y.get('#link-2').get('tabIndex'), 'Y.get("#link1".get("tabIndex"))');
 
             Assert.areEqual(undefined, Y.get('form').get('childNodes')._nodes.item, 'convert live list to static');
+            Assert.isTrue(Y.all('input').get('parentNode') instanceof Y.NodeList, "Y.all('input').get('parentNode')");
         },
             
         test_create: function() {
@@ -788,9 +789,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
         },
 
         test_plugin: function() {
-            console.log('node.plug: ' + Y.get('body').plug);
-            console.log('Node.plug: ' + Y.Node.plug);
-            console.log('Node.prototype.plug: ' + Y.Node.prototype.plug);
             Y.Node.plug(Y.Plugin.NodeFX);
             Assert.isTrue(!!Y.Node.create('<div></div>').fx, 'Node.plug()');
             Y.Node.unplug(Y.Plugin.NodeFX);

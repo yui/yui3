@@ -42,10 +42,11 @@ var DOT = '.',
         this[UID] = uid;
 
         this._node = node;
-        this._stateProxy = node; // for use when augmented with Attribute
         Node._instances[uid] = this;
 
-        if (this._initPlugins) {
+        this._stateProxy = node; // when augmented with Attribute
+
+        if (this._initPlugins) { // when augmented with Plugin.Host
             this._initPlugins();
         }
     },
@@ -140,7 +141,7 @@ Node.scrubVal = function(val, node) {
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y.DOM.isWindow(val)) {// node || window
                 val = Node.get(val);
-            } else if (val.item || // dom collection or Node instance
+            } else if ((val.item && !val._nodes) || // dom collection or Node instance
                     (val[0] && val[0][NODE_TYPE])) { // array of DOM Nodes
                 val = Y.all(val);
             }
@@ -256,7 +257,7 @@ Node.ATTRS = {
 
     'options': {
         getter: function() {
-            return this.getElementsByTagName('option');
+            return this._node.getElementsByTagName('option');
         }
     },
 
@@ -265,7 +266,7 @@ Node.ATTRS = {
      // TODO: break out for IE only
     'elements': {
         getter: function() {
-            return Y.all(this._node.elements);
+            return this._node.elements;
         }
     },
 
@@ -291,7 +292,7 @@ Node.ATTRS = {
                     }
                 }
             }
-            return Y.all(children);
+            return children;
         }
     },
 
@@ -306,13 +307,15 @@ Node.ATTRS = {
         }
     },
 
-    getter: function() {
-        return this._data;
-    },
+    data: {
+        getter: function() {
+            return this._data;
+        },
 
-    setter: function(val) {
-        this._data = val;
-        return val;
+        setter: function(val) {
+            this._data = val;
+            return val;
+        }
     }
 };
 
@@ -344,7 +347,7 @@ Node.DEFAULT_GETTER = function(name) {
         val = node[name];
     }
 
-    return val ? Y.Node.scrubVal(val, this) : val;
+    return val;
 };
 
 Y.augment(Node, Y.Event.Target);
@@ -372,6 +375,22 @@ Y.mix(Node.prototype, {
     },
 
     get: function(attr) {
+        var attrConfig = Node.ATTRS[attr],
+            val;
+
+        if (this._getAttr) { // use Attribute imple
+            val = this._getAttr(attr);
+        } else {
+            val = this._get(attr);
+        }
+
+        if (val) {
+            val = Y.Node.scrubVal(val, this);
+        }
+        return val;
+    },
+
+    _get: function(attr) {
         var attrConfig = Node.ATTRS[attr],
             val;
 
@@ -789,7 +808,6 @@ NodeList.each = function(instance, fn, context) {
 };
 
 NodeList.addMethod = function(name, fn, context) {
-    var tmp = NodeList._getTempNode();
     if (name && fn) {
         NodeList.prototype[name] = function() {
             var ret = [],
@@ -802,8 +820,7 @@ NodeList.addMethod = function(name, fn, context) {
                     result;
 
                 if (!instance) {
-                    instance = tmp;
-                    tmp._node = node;
+                    instance = NodeList._getTempNode(node);
                 }
                 ctx = context || instance;
                 result = fn.apply(ctx, args);
@@ -831,12 +848,15 @@ NodeList.importMethod = function(host, name, altName) {
     }
 };
 
-NodeList._getTempNode = function() {
+NodeList._getTempNode = function(node) {
     var tmp = NodeList._tempNode;
-        if (!tmp) {
-            tmp = Y.Node.create('<div></div>');
-            NodeList._tempNode = tmp;
-        }
+    if (!tmp) {
+        tmp = Y.Node.create('<div></div>');
+        NodeList._tempNode = tmp;
+    }
+
+    tmp._node = node;
+    tmp._stateProxy = node;
     return tmp;
 };
 
@@ -871,14 +891,12 @@ Y.mix(NodeList.prototype, {
     },
 
     batch: function(fn, context) {
-        var nodelist = this,
-            tmp = NodeList._getTempNode();
+        var nodelist = this;
 
         Y.Array.each(this._nodes, function(node, index) {
             var instance = Y.Node._instances[node[UID]];
             if (!instance) {
-                instance = tmp;
-                tmp._node = node;
+                instance = NodeList._getTempNode(node);
             }
 
             return fn.call(context || instance, instance, index, nodelist);
@@ -1036,27 +1054,6 @@ Y.mix(NodeList.prototype, {
         return this._nodes.length;
     },
 
-    /** Called on each Node instance
-      * @get
-      * @see Node
-      */
-    // one-off because we cant import from Node due to undefined return values
-    get: function(name) {
-        var ret = [],
-            tmp = NodeList._getTempNode();
-
-        NodeList.each(this, function(node) {
-            var instance = Y.Node._instances[node[UID]];
-            if (!instance) {
-                instance = tmp;
-                tmp._node = node;
-            }
-            ret[ret.length] = instance.get(name);
-        });
-
-        return ret;
-    },
-
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to any nodes',
@@ -1135,6 +1132,47 @@ NodeList.importMethod(Y.Node.prototype, [
       */
     'setContent'
 ]);
+
+// one-off implementation to convert array of Nodes to NodeList
+// e.g. Y.all('input').get('parentNode');
+
+/** Called on each Node instance
+  * @method get
+  * @see Node
+  */
+NodeList.prototype.get = function(attr) {
+    var ret = [],
+        nodes = this._nodes,
+        isNodeList = false,
+        getTemp = NodeList._getTempNode,
+        instance,
+        val;
+
+    if (nodes[0]) {
+        instance = Y.Node._instances[nodes[0]._yuid] || getTemp(nodes[0]);
+        val = instance._get(attr);
+        if (val && val.nodeType) {
+            isNodeList = true;
+        }
+    }
+
+    Y.Array.each(nodes, function(node) {
+        instance = Y.Node._instances[node._yuid];
+
+        if (!instance) {
+            instance = getTemp(node);
+        }
+
+        val = instance._get(attr);
+        if (!isNodeList) { // convert array of Nodes to NodeList
+            val = Y.Node.scrubVal(val, instance);
+        }
+
+        ret.push(val);
+    });
+
+    return (isNodeList) ? Y.all(ret) : ret;
+};
 
 Y.NodeList = NodeList;
 Y.all = function(nodes, doc, restrict) {

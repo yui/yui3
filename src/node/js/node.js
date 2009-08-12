@@ -40,10 +40,11 @@ var DOT = '.',
         this[UID] = uid;
 
         this._node = node;
-        this._stateProxy = node; // for use when augmented with Attribute
         Node._instances[uid] = this;
 
-        if (this._initPlugins) {
+        this._stateProxy = node; // when augmented with Attribute
+
+        if (this._initPlugins) { // when augmented with Plugin.Host
             this._initPlugins();
         }
     },
@@ -138,7 +139,7 @@ Node.scrubVal = function(val, node) {
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y.DOM.isWindow(val)) {// node || window
                 val = Node.get(val);
-            } else if (val.item || // dom collection or Node instance
+            } else if ((val.item && !val._nodes) || // dom collection or Node instance
                     (val[0] && val[0][NODE_TYPE])) { // array of DOM Nodes
                 val = Y.all(val);
             }
@@ -254,7 +255,7 @@ Node.ATTRS = {
 
     'options': {
         getter: function() {
-            return this.getElementsByTagName('option');
+            return this._node.getElementsByTagName('option');
         }
     },
 
@@ -263,7 +264,7 @@ Node.ATTRS = {
      // TODO: break out for IE only
     'elements': {
         getter: function() {
-            return Y.all(this._node.elements);
+            return this._node.elements;
         }
     },
 
@@ -289,7 +290,7 @@ Node.ATTRS = {
                     }
                 }
             }
-            return Y.all(children);
+            return children;
         }
     },
 
@@ -304,13 +305,15 @@ Node.ATTRS = {
         }
     },
 
-    getter: function() {
-        return this._data;
-    },
+    data: {
+        getter: function() {
+            return this._data;
+        },
 
-    setter: function(val) {
-        this._data = val;
-        return val;
+        setter: function(val) {
+            this._data = val;
+            return val;
+        }
     }
 };
 
@@ -342,7 +345,7 @@ Node.DEFAULT_GETTER = function(name) {
         val = node[name];
     }
 
-    return val ? Y.Node.scrubVal(val, this) : val;
+    return val;
 };
 
 Y.augment(Node, Y.Event.Target);
@@ -370,6 +373,22 @@ Y.mix(Node.prototype, {
     },
 
     get: function(attr) {
+        var attrConfig = Node.ATTRS[attr],
+            val;
+
+        if (this._getAttr) { // use Attribute imple
+            val = this._getAttr(attr);
+        } else {
+            val = this._get(attr);
+        }
+
+        if (val) {
+            val = Y.Node.scrubVal(val, this);
+        }
+        return val;
+    },
+
+    _get: function(attr) {
         var attrConfig = Node.ATTRS[attr],
             val;
 

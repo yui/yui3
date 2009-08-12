@@ -471,7 +471,7 @@ Y.DOM = {
         var ret = null,
             i, len;
 
-        if (nodes && nodes.push && nodes[0]) {
+        if (nodes && (nodes.push || nodes.item) && nodes[0]) {
             doc = doc || nodes[0].ownerDocument; 
             ret = doc.createDocumentFragment();
 
