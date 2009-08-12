@@ -470,7 +470,7 @@ var NOT_FOUND = {},
         },
 
         'node-focusmanager': { 
-            requires: [NODE, "event-key", "event-focus", PLUGIN]
+            requires: [NODE, "node-event-simulate", "event-key", "event-focus", PLUGIN]
         },
 
         get: { 
