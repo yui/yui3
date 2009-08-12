@@ -1,3 +1,5 @@
+YUI.add('yui-later', function(Y) {
+
 (function() {
     var L = Y.Lang,
 
@@ -32,7 +34,6 @@
         }
 
         if (!m) {
-            Y.log("method undefined");
         }
 
         f = function() {
@@ -58,3 +59,6 @@
     L.later = later;
 
 })();
+
+
+}, '@VERSION@' ,{requires:['yui-base']});

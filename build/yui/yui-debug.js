@@ -960,103 +960,6 @@ YUI.add('yui-base', function(Y) {
  * @submodule yui-base
  */
 (function() {
-
-var INSTANCE = Y,
-    LOGEVENT = 'yui:log',
-    UNDEFINED = 'undefined',
-    LEVELS = { debug: 1, info: 1, warn: 1, error: 1 },
-    _published;
-
-/**
- * If the 'debug' config is true, a 'yui:log' event will be
- * dispatched, which the Console widget and anything else
- * can consume.  If the 'useBrowserConsole' config is true, it will
- * write to the browser console if available.  YUI-specific log
- * messages will only be present in the -debug versions of the
- * JS files.  The build system is supposed to remove log statements
- * from the raw and minified versions of the files.
- *
- * @method log
- * @for YUI
- * @param  {String}  msg  The message to log.
- * @param  {String}  cat  The log category for the message.  Default
- *                        categories are "info", "warn", "error", time".
- *                        Custom categories can be used as well. (opt)
- * @param  {String}  src  The source of the the message (opt)
- * @param  {boolean} silent If true, the log event won't fire
- * @return {YUI}      YUI instance
- */
-INSTANCE.log = function(msg, cat, src, silent) {
-    var Y = INSTANCE, c = Y.config, bail = false, excl, incl, m, f;
-    // suppress log message if the config is off or the event stack
-    // or the event call stack contains a consumer of the yui:log event
-    if (c.debug) {
-        // apply source filters
-        if (src) {
-
-            excl = c.logExclude; 
-            incl = c.logInclude;
-
-            if (incl && !(src in incl)) {
-                bail = 1;
-            } else if (excl && (src in excl)) {
-                bail = 1;
-            }
-        }
-
-        if (!bail) {
-
-            if (c.useBrowserConsole) {
-                m = (src) ? src + ': ' + msg : msg;
-                if (typeof console != UNDEFINED && console.log) {
-                    f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
-                    console[f](m);
-                } else if (typeof opera != UNDEFINED) {
-                    opera.postError(m);
-                }
-            }
-
-            if (Y.fire && !bail && !silent) {
-                if (!_published) {
-                    Y.publish(LOGEVENT, {
-                        broadcast: 2,
-                        emitFacade: 1
-                    });
-
-                    _published = 1;
-
-                }
-                Y.fire(LOGEVENT, {
-                    msg: msg, 
-                    cat: cat, 
-                    src: src
-                });
-            }
-        }
-    }
-
-    return Y;
-};
-
-/**
- * Write a system message.  This message will be preserved in the
- * minified and raw versions of the YUI files, unlike log statements.
- * @method message
- * @for YUI
- * @param  {String}  msg  The message to log.
- * @param  {String}  cat  The log category for the message.  Default
- *                        categories are "info", "warn", "error", time".
- *                        Custom categories can be used as well. (opt)
- * @param  {String}  src  The source of the the message (opt)
- * @param  {boolean} silent If true, the log event won't fire
- * @return {YUI}      YUI instance
- */
-INSTANCE.message = function() {
-    return INSTANCE.log.apply(INSTANCE, arguments);
-};
-
-})();
-(function() {
 /**
  * Provides the language utilites and extensions used by the library
  * @class Lang
@@ -2053,70 +1956,6 @@ Y.UA = function() {
     return o;
 }();
 (function() {
-    var L = Y.Lang,
-
-    /**
-     * Executes the supplied function in the context of the supplied 
-     * object 'when' milliseconds later.  Executes the function a 
-     * single time unless periodic is set to true.
-     * @method later
-     * @for YUI
-     * @param when {int} the number of milliseconds to wait until the fn 
-     * is executed.
-     * @param o the context object.
-     * @param fn {Function|String} the function to execute or the name of 
-     * the method in the 'o' object to execute.
-     * @param data [Array] data that is provided to the function.  This accepts
-     * either a single item or an array.  If an array is provided, the
-     * function is executed with one parameter for each array item.  If
-     * you need to pass a single array parameter, it needs to be wrapped in
-     * an array [myarray].
-     * @param periodic {boolean} if true, executes continuously at supplied 
-     * interval until canceled.
-     * @return {object} a timer object. Call the cancel() method on this object to 
-     * stop the timer.
-     */
-    later = function(when, o, fn, data, periodic) {
-        when = when || 0; 
-        o = o || {};
-        var m=fn, d=data, f, r;
-
-        if (L.isString(fn)) {
-            m = o[fn];
-        }
-
-        if (!m) {
-            Y.error("method undefined");
-        }
-
-        if (!L.isArray(d)) {
-            d = [data];
-        }
-
-        f = function() {
-            m.apply(o, d);
-        };
-
-        r = (periodic) ? setInterval(f, when) : setTimeout(f, when);
-
-        return {
-            id: r,
-            interval: periodic,
-            cancel: function() {
-                if (this.interval) {
-                    clearInterval(r);
-                } else {
-                    clearTimeout(r);
-                }
-            }
-        };
-    };
-
-    Y.later = later;
-    L.later = later;
-
-})();
-(function() {
 
     var min = ['yui-base'], core, C = Y.config, LOADER='loader';
 
@@ -2974,7 +2813,174 @@ Y.Get = function() {
 
 
 }, '@VERSION@' );
+YUI.add('yui-log', function(Y) {
+
+(function() {
+
+var INSTANCE = Y,
+    LOGEVENT = 'yui:log',
+    UNDEFINED = 'undefined',
+    LEVELS = { debug: 1, info: 1, warn: 1, error: 1 },
+    _published;
+
+/**
+ * If the 'debug' config is true, a 'yui:log' event will be
+ * dispatched, which the Console widget and anything else
+ * can consume.  If the 'useBrowserConsole' config is true, it will
+ * write to the browser console if available.  YUI-specific log
+ * messages will only be present in the -debug versions of the
+ * JS files.  The build system is supposed to remove log statements
+ * from the raw and minified versions of the files.
+ *
+ * @method log
+ * @for YUI
+ * @param  {String}  msg  The message to log.
+ * @param  {String}  cat  The log category for the message.  Default
+ *                        categories are "info", "warn", "error", time".
+ *                        Custom categories can be used as well. (opt)
+ * @param  {String}  src  The source of the the message (opt)
+ * @param  {boolean} silent If true, the log event won't fire
+ * @return {YUI}      YUI instance
+ */
+INSTANCE.log = function(msg, cat, src, silent) {
+    var Y = INSTANCE, c = Y.config, bail = false, excl, incl, m, f;
+    // suppress log message if the config is off or the event stack
+    // or the event call stack contains a consumer of the yui:log event
+    if (c.debug) {
+        // apply source filters
+        if (src) {
+
+            excl = c.logExclude; 
+            incl = c.logInclude;
+
+            if (incl && !(src in incl)) {
+                bail = 1;
+            } else if (excl && (src in excl)) {
+                bail = 1;
+            }
+        }
+
+        if (!bail) {
+
+            if (c.useBrowserConsole) {
+                m = (src) ? src + ': ' + msg : msg;
+                if (typeof console != UNDEFINED && console.log) {
+                    f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
+                    console[f](m);
+                } else if (typeof opera != UNDEFINED) {
+                    opera.postError(m);
+                }
+            }
+
+            if (Y.fire && !bail && !silent) {
+                if (!_published) {
+                    Y.publish(LOGEVENT, {
+                        broadcast: 2,
+                        emitFacade: 1
+                    });
+
+                    _published = 1;
+
+                }
+                Y.fire(LOGEVENT, {
+                    msg: msg, 
+                    cat: cat, 
+                    src: src
+                });
+            }
+        }
+    }
+
+    return Y;
+};
+
+/**
+ * Write a system message.  This message will be preserved in the
+ * minified and raw versions of the YUI files, unlike log statements.
+ * @method message
+ * @for YUI
+ * @param  {String}  msg  The message to log.
+ * @param  {String}  cat  The log category for the message.  Default
+ *                        categories are "info", "warn", "error", time".
+ *                        Custom categories can be used as well. (opt)
+ * @param  {String}  src  The source of the the message (opt)
+ * @param  {boolean} silent If true, the log event won't fire
+ * @return {YUI}      YUI instance
+ */
+INSTANCE.message = function() {
+    return INSTANCE.log.apply(INSTANCE, arguments);
+};
+
+})();
 
 
-YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','queue-base','get']});
+}, '@VERSION@' ,{requires:['yui-base']});
+YUI.add('yui-later', function(Y) {
+
+(function() {
+    var L = Y.Lang,
+
+    /**
+     * Executes the supplied function in the context of the supplied 
+     * object 'when' milliseconds later.  Executes the function a 
+     * single time unless periodic is set to true.
+     * @method later
+     * @for YUI
+     * @param when {int} the number of milliseconds to wait until the fn 
+     * is executed.
+     * @param o the context object.
+     * @param fn {Function|String} the function to execute or the name of 
+     * the method in the 'o' object to execute.
+     * @param data [Array] data that is provided to the function.  This accepts
+     * either a single item or an array.  If an array is provided, the
+     * function is executed with one parameter for each array item.  If
+     * you need to pass a single array parameter, it needs to be wrapped in
+     * an array [myarray].
+     * @param periodic {boolean} if true, executes continuously at supplied 
+     * interval until canceled.
+     * @return {object} a timer object. Call the cancel() method on this object to 
+     * stop the timer.
+     */
+    later = function(when, o, fn, data, periodic) {
+        when = when || 0; 
+        o = o || {};
+        var m=fn, d=Y.Array(data), f, r;
+
+        if (L.isString(fn)) {
+            m = o[fn];
+        }
+
+        if (!m) {
+            Y.log("method undefined");
+        }
+
+        f = function() {
+            m.apply(o, d);
+        };
+
+        r = (periodic) ? setInterval(f, when) : setTimeout(f, when);
+
+        return {
+            id: r,
+            interval: periodic,
+            cancel: function() {
+                if (this.interval) {
+                    clearInterval(r);
+                } else {
+                    clearTimeout(r);
+                }
+            }
+        };
+    };
+
+    Y.later = later;
+    L.later = later;
+
+})();
+
+
+}, '@VERSION@' ,{requires:['yui-base']});
+
+
+YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','queue-base','get','yui-log','yui-later']});
 

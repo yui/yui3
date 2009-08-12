@@ -1,3 +1,5 @@
+YUI.add('yui-later', function(Y) {
+
 (function() {
     var L = Y.Lang,
 
@@ -58,3 +60,6 @@
     L.later = later;
 
 })();
+
+
+}, '@VERSION@' ,{requires:['yui-base']});
