@@ -228,6 +228,8 @@ var whitelist = {
 
 Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
+    wrapper = wrapper || {};
+
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
         x = e.pageX, y = e.pageY, c, t;
 
@@ -361,9 +363,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         } else {
             e.cancelBubble = true;
         }
-        if (wrapper) {
-            wrapper.stopPropagation();
-        }
+        wrapper.stopped = 1;
     };
 
     /**
@@ -373,16 +373,12 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
      * @method stopImmediatePropagation
      */
     this.stopImmediatePropagation = function() {
-
         if (e.stopImmediatePropagation) {
             e.stopImmediatePropagation();
         } else {
             this.stopPropagation();
         }
-
-        if (wrapper) {
-            wrapper.stopImmediatePropagation();
-        }
+        wrapper.stopped = 2;
     };
 
     /**
@@ -393,16 +389,11 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
      * confirmation query to the beforeunload event).
      */
     this.preventDefault = function(returnValue) {
-
         if (e.preventDefault) {
             e.preventDefault();
         }
-
         e.returnValue = returnValue || false;
-
-        if (wrapper) {
-            wrapper.preventDefault();
-        }
+        wrapper.prevented = 1;
     };
 
     /**
@@ -857,7 +848,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             trimmedArgs.splice(2, 1);
 
             // set context to the Node if not specified
-            ret = cewrapper.subscribe.apply(cewrapper, trimmedArgs);
+            ret = cewrapper.on.apply(cewrapper, trimmedArgs);
 
             if (fireNow) {
                 cewrapper.fire();

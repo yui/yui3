@@ -1,3 +1,5 @@
+YUI.add('event-custom-complex', function(Y) {
+
 (function() {
 
 var FACADE, FACADE_KEYS, CEProto = Y.CustomEvent.prototype;
@@ -301,7 +303,6 @@ Y.EventTarget.prototype.bubble = function(evt, args, target) {
 
     if (!evt || ((!evt.stopped) && targs)) {
 
-        // Y.log('Bubbling ' + evt.type);
         for (i in targs) {
             if (targs.hasOwnProperty(i)) {
                 t = targs[i]; 
@@ -340,3 +341,6 @@ FACADE = new Y.EventFacade();
 FACADE_KEYS = Y.Object.keys(FACADE);
 
 })();
+
+
+}, '@VERSION@' ,{requires:['event-custom-base']});

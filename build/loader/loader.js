@@ -131,9 +131,9 @@ var NOT_FOUND = {},
     DOMSTYLE = 'dom-style',
     DUMP = 'dump',
     GET = 'get',
-    EVENT = 'event',
     EVENTBASE = 'event-base',
     EVENTCUSTOM = 'event-custom',
+    EVENTCUSTOMBASE = 'event-custom-base',
     IOBASE = 'io-base',
     NODE = 'node',
     NODEBASE = 'node-base',
@@ -205,7 +205,7 @@ var NOT_FOUND = {},
         },
 
         node: {
-            requires: [DOM, BASE],
+            requires: ['event', DOM, BASE],
             // expound: EVENT,
 
             submodules: {
@@ -432,7 +432,7 @@ var NOT_FOUND = {},
             expound: NODE,
             submodules: {
                 'event-base': {
-                    // expound: NODEBASE,
+                    expound: NODEBASE,
                     requires: [EVENTCUSTOM]
                 },
                 'event-delegate': {
@@ -457,7 +457,14 @@ var NOT_FOUND = {},
         },
 
         'event-custom': { 
-            requires: [OOP]
+            submodules: {
+                'event-custom-base': {
+                    requires: [OOP]
+                },
+                'event-custom-complex': {
+                    requires: [EVENTCUSTOMBASE]
+                }
+            }
         },
 
         'event-simulate': { 

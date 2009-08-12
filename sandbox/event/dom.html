@@ -2,7 +2,9 @@
 <html debug="true">
 <head>
 <title>YUI 3.0</title>
+<!--
 <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+-->
 <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 <!--
 <script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
@@ -145,7 +147,8 @@ YUI({
 
     var el = Y.get('#button1');
     Y.log("get got " + el);
-    el.setStyle('border', '3px solid red');
+
+    // el.setStyle('border', '3px solid red');
 
     var f = function(e) {
         Y.log("SUB1, " + this.get('id') + " click event facade: " + e.target);
@@ -336,8 +339,6 @@ Y.on('windowresize', function(e) {
     // nodelist.on('click', function(e, arg1) {
     //     console.log('click: ' + e.currentTarget + ', ' + arg1);
     // }, Y, 1);
-
-
 
 });
 

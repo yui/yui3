@@ -1,6 +1,9 @@
 YUI Custom Events
     Custom event system
 
+3.0.0
+    - Broken into core base and complex modules.
+
 3.0.0beta1
     - Implemented the broadcast flag.  broadcast = 1: local, accessible
       via Y.on('prefix:event'). broadcast = 2: global, accessible

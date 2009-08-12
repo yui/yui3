@@ -1,3 +1,5 @@
+YUI.add('event-custom-complex', function(Y) {
+
 (function() {
 
 var FACADE, FACADE_KEYS, CEProto = Y.CustomEvent.prototype;
@@ -340,3 +342,6 @@ FACADE = new Y.EventFacade();
 FACADE_KEYS = Y.Object.keys(FACADE);
 
 })();
+
+
+}, '@VERSION@' ,{requires:['event-custom-base']});
