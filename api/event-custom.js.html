@@ -534,7 +534,9 @@
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
     <span class="o">},</span>
 
-    <span class="nx">fireComplex</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c">// Requires the event-custom-complex module for full funcitonality.</span>
+<span class="c"></span>    <span class="nx">fireComplex</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">||</span> <span class="o">{};</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">fireSimple</span><span class="o">(</span><span class="nx">args</span><span class="o">);</span>
     <span class="o">},</span>
 
@@ -559,12 +561,16 @@
 
     <span class="nx">_broadcast</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">broadcast</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">args</span><span class="o">);</span>
+            <span class="nx">a</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">type</span><span class="o">);</span>
+
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">host</span> <span class="o">!==</span> <span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">broadcast</span> <span class="o">==</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">Global</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Global</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">Global</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Global</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">},</span>

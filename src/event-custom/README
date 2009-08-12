@@ -3,6 +3,7 @@ YUI Custom Events
 
 3.0.0
     - Broken into core base and complex modules.
+    - broadcast works for simple events.
 
 3.0.0beta1
     - Implemented the broadcast flag.  broadcast = 1: local, accessible
