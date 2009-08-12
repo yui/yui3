@@ -486,7 +486,9 @@ Y.CustomEvent.prototype = {
         return this.stopped ? false : true;
     },
 
+    // Requires the event-custom-complex module for full funcitonality.
     fireComplex: function(args) {
+        args[0] = args[0] || {};
         return this.fireSimple(args);
     },
 
