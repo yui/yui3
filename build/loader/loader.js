@@ -1213,7 +1213,7 @@ Y.Loader.prototype = {
             }
 
             o.supersedes = sup;
-            o.rollup = Math.max(l-1, 4);
+            o.rollup = (l<4) ? l : Math.min(l-1, 4);
         }
 
         plugins = o.plugins;
