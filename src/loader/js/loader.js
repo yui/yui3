@@ -106,7 +106,6 @@ var NOT_FOUND = {},
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED,
     BASE = 'base', 
-    BASEBASE = 'base-base',
     CSS = 'css',
     JS = 'js',
     CSSRESET = 'cssreset',
@@ -121,6 +120,8 @@ var NOT_FOUND = {},
     CONTEXT = '-context',
 
     ANIMBASE = 'anim-base',
+    ATTRIBUTEBASE = 'attribute-base',
+    BASEBASE = 'base-base',
     DDDRAG = 'dd-drag',
     DOM = 'dom',
     DATASCHEMABASE = 'dataschema-base',
@@ -137,6 +138,7 @@ var NOT_FOUND = {},
     NODEBASE = 'node-base',
     NODESTYLE = 'node-style',
     OOP = 'oop',
+    PLUGINHOST = 'pluginhost',
     SELECTORCSS2 = 'selector-css2',
     SUBSTITUTE = 'substitute',
     WIDGET = 'widget',
@@ -220,7 +222,7 @@ var NOT_FOUND = {},
                 },
 
                 'node-pluginhost': {
-                    requires: [NODEBASE, 'pluginhost']
+                    requires: ['node-base', PLUGINHOST]
                 }
             },
 
@@ -232,19 +234,15 @@ var NOT_FOUND = {},
         },
 
         anim: {
-            requires: [BASE, NODE],
+            requires: [BASEBASE, NODE],
             submodules: {
 
                 'anim-base': {
-                    requires: [BASE, NODESTYLE]
+                    requires: [BASEBASE, NODESTYLE]
                 },
 
                 'anim-color': {
                     requires: [ANIMBASE]
-                },
-
-                'anim-curve': {
-                    requires: ['anim-xy']
                 },
 
                 'anim-easing': {
@@ -259,21 +257,33 @@ var NOT_FOUND = {},
                     requires: [ANIMBASE, 'node-screen']
                 },
 
+                'anim-curve': {
+                    requires: ['anim-xy']
+                },
+
                 'anim-node-plugin': {
-                     requires: [NODE, ANIMBASE]
+                     requires: ['node-pluginhost', ANIMBASE]
                 }
             }
         },
 
         attribute: { 
-            requires: [EVENTCUSTOM]
+            requires: [EVENTCUSTOM],
+            submodules: {
+                'attribute-base': {
+                    requires: [EVENTCUSTOM]
+                },
+
+                'base-complex': {
+                    requires: [ATTRIBUTEBASE]
+                }
+            }
         },
 
         base: {
             submodules: {
-
                 'base-base': {
-                    requires: ['attribute']
+                    requires: [ATTRIBUTEBASE]
                 },
 
                 'base-build': {
@@ -281,7 +291,7 @@ var NOT_FOUND = {},
                 },
 
                 'base-pluginhost': {
-                    requires: [BASEBASE, 'pluginhost']
+                    requires: [BASEBASE, PLUGINHOST]
                 }
             }
         },
@@ -541,7 +551,7 @@ var NOT_FOUND = {},
         },
 
         plugin: { 
-            requires: [BASE]
+            requires: [BASEBASE]
         },
 
         pluginhost: { 

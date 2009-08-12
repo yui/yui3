@@ -514,7 +514,7 @@ YUI.add('base-base', function(Y) {
     Base.prototype.constructor = Base;
 
 
-}, '@VERSION@' ,{requires:['attribute']});
+}, '@VERSION@' ,{requires:['attribute-base']});
 YUI.add('base-pluginhost', function(Y) {
 
     /**
