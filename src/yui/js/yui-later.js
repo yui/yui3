@@ -1,3 +1,8 @@
+/**
+ * Provides a setTimeout/setInterval wrapper
+ * @module yui
+ * @submodule yui-later
+ */
 (function() {
     var L = Y.Lang,
 

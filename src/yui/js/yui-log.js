@@ -1,3 +1,9 @@
+/**
+ * Provides console log capability and exposes a custom event for
+ * console implementations.
+ * @module yui
+ * @submodule yui-log
+ */
 (function() {
 
 var INSTANCE = Y,

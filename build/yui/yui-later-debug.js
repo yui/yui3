@@ -1,5 +1,10 @@
 YUI.add('yui-later', function(Y) {
 
+/**
+ * Provides a setTimeout/setInterval wrapper
+ * @module yui
+ * @submodule yui-later
+ */
 (function() {
     var L = Y.Lang,
 

@@ -1,3 +1,13 @@
+
+
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, the dynamic loader and metadata,
+ * the module registration system, and the core utilities for the library.
+ * @module yui
+ */
+
+
 (function() {
 
     var _instances = {}, 
@@ -959,6 +969,12 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, the dynamic loader and metadata,
+ * the module registration system, and the core utilities for the library.
+ * @module yui
+ */
 (function() {
 /**
  * Provides the language utilites and extensions used by the library
@@ -1164,10 +1180,11 @@ L.type = function (o) {
 
 })();
 
-/*
- * Provides information about the environment hosting YUI
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, the dynamic loader and metadata,
+ * the module registration system, and the core utilities for the library.
  * @module yui
- * @submodule Array
  */
 
 (function() {
@@ -1368,6 +1385,14 @@ YArray.numericSort = function(a, b) {
     };
 
 })();
+
+
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, the dynamic loader and metadata,
+ * the module registration system, and the core utilities for the library.
+ * @module yui
+ */
 (function() {
 
 var L = Y.Lang, 
@@ -1536,6 +1561,13 @@ Y.cached = function(source, cache, refetch){
 
 })();
 
+
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, the dynamic loader and metadata,
+ * the module registration system, and the core utilities for the library.
+ * @module yui
+ */
 (function() {
 
 /**
@@ -1748,11 +1780,13 @@ O.setValue = function(o, path, val) {
 
 })();
 
-/*
- * Provides information about the environment hosting YUI
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, the dynamic loader and metadata,
+ * the module registration system, and the core utilities for the library.
  * @module yui
- * @submodule UA
  */
+
 /**
  * YUI user agent detection.
  * Do not fork for a browser if it can be avoided.  Use feature detection when
@@ -1955,6 +1989,14 @@ Y.UA = function() {
     
     return o;
 }();
+
+
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, the dynamic loader and metadata,
+ * the module registration system, and the core utilities for the library.
+ * @module yui
+ */
 (function() {
 
     var min = ['yui-base'], core, C = Y.config, LOADER='loader';
