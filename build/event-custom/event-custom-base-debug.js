@@ -814,12 +814,16 @@ Y.CustomEvent.prototype = {
 
     _broadcast: function(args) {
         if (!this.stopped && this.broadcast) {
+
+            var a = Y.Array(args);
+            a.unshift(this.type);
+
             if (this.host !== Y) {
-                Y.fire.apply(Y, args);
+                Y.fire.apply(Y, a);
             }
 
             if (this.broadcast == 2) {
-                Y.Global.fire.apply(Y.Global, args);
+                Y.Global.fire.apply(Y.Global, a);
             }
         }
     },
