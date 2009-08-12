@@ -1,3 +1,11 @@
+
+/**
+ * Adds event facades, preventable default behavior, and bubbling.
+ * events.
+ * @module event-custom
+ * @submodule event-custom-complex
+ */
+
 (function() {
 
 var FACADE, FACADE_KEYS, CEProto = Y.CustomEvent.prototype;
@@ -240,6 +248,7 @@ CEProto._getFacade = function() {
 
 /**
  * Stop propagation to bubble targets
+ * @for CustomEvent
  * @method stopPropagation
  */
 CEProto.stopPropagation = function() {

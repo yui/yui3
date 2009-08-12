@@ -11,6 +11,13 @@ Y.Env.evt = {
     plugins: {}
 };
 
+
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event-custom
+ * @submodule event-custom-base
+ */
 (function() {
 
 /**
@@ -295,6 +302,7 @@ Y.Do.Error = Y.Do.Halt;
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
  * @module event-custom
+ * @submodule event-custom-base
  */
 
 /**
@@ -972,6 +980,13 @@ Y.Subscriber.prototype = {
     }
 
 };
+
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event-custom
+ * @submodule event-custom-base
+ */
 (function() {
 
 /**
@@ -1599,6 +1614,14 @@ Y.Global = YUI.Env.globalEvents;
 }, '@VERSION@' ,{requires:['oop']});
 YUI.add('event-custom-complex', function(Y) {
 
+
+/**
+ * Adds event facades, preventable default behavior, and bubbling.
+ * events.
+ * @module event-custom
+ * @submodule event-custom-complex
+ */
+
 (function() {
 
 var FACADE, FACADE_KEYS, CEProto = Y.CustomEvent.prototype;
@@ -1841,6 +1864,7 @@ CEProto._getFacade = function() {
 
 /**
  * Stop propagation to bubble targets
+ * @for CustomEvent
  * @method stopPropagation
  */
 CEProto.stopPropagation = function() {
