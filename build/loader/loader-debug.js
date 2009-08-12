@@ -276,7 +276,7 @@ var NOT_FOUND = {},
                     requires: [EVENTCUSTOM]
                 },
 
-                'base-complex': {
+                'attribute-complex': {
                     requires: [ATTRIBUTEBASE]
                 }
             }
@@ -592,7 +592,7 @@ var NOT_FOUND = {},
         },
 
         widget: {
-            requires: [BASE, NODE, 'classnamemanager'],
+            requires: ['attribute', BASE, NODE, 'classnamemanager'],
             plugins: {
                 'widget-position': { },
                 'widget-position-ext': {
