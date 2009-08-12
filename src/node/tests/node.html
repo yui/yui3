@@ -376,6 +376,15 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.areEqual('foo', nodes.item(nodes.size() - 2).get('className'),
                     'nodes.item(nodes.size - 2).get("className")');
 
+            Y.get('#test-select').set('selectedIndex', 2);
+            Assert.areEqual(2, Y.get('#test-select')._node.selectedIndex,
+                    "Y.get('#test-select').set('selectedIndex', 2)");
+
+            var index = Y.get('#test-select').query('option[value=1]').set('selected', true);
+
+            Assert.areEqual(1, Y.get('#test-select')._node.selectedIndex,
+                    "Y.get('#test-select').set('selectedIndex', 1)");
+
             /* // chains attrs currently broken
             Y.get('body > form').set('test-select.selectedIndex', 2);
             Assert.areEqual(2, byId('test-select').selectedIndex,
