@@ -731,6 +731,15 @@ YUI.add('attribute-base', function(Y) {
             }
         },
 
+        /**
+         * Gets the stored value for the attribute, from either the 
+         * internal state object, or the state proxy if it exits
+         * 
+         * @method _getStateVal
+         * @private
+         * @param {String} name The name of the attribute
+         * @return {Any} The stored value of the attribute
+         */
         _getStateVal : function(name) {
             var stateProxy = this._stateProxy;
             if (!stateProxy || this.attrAdded(name)) {
@@ -740,6 +749,15 @@ YUI.add('attribute-base', function(Y) {
             }
         },
 
+        /**
+         * Sets the stored value for the attribute, in either the 
+         * internal state object, or the state proxy if it exits
+         *
+         * @method _setStateVal
+         * @private
+         * @param {String} name The name of the attribute
+         * @param {Any} value The value of the attribute
+         */
         _setStateVal : function(name, value) {
             var stateProxy = this._stateProxy;
             if (!stateProxy || this.attrAdded(name)) {
