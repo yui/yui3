@@ -222,7 +222,7 @@ var NOT_FOUND = {},
                 },
 
                 'node-pluginhost': {
-                    requires: ['node-base', 'pluginhost']
+                    requires: [NODEBASE, 'pluginhost']
                 }
             },
 
