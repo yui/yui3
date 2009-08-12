@@ -520,7 +520,7 @@
         <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
             <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">push</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">push</span> <span class="o">||</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">item</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">{</span>
             <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">ownerDocument</span><span class="o">;</span> 
             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">createDocumentFragment</span><span class="o">();</span>
 
