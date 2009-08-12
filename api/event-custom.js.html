@@ -534,6 +534,10 @@
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
     <span class="o">},</span>
 
+    <span class="nx">fireComplex</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">fireSimple</span><span class="o">(</span><span class="nx">args</span><span class="o">);</span>
+    <span class="o">},</span>
+
     <span class="nx">_procSubs</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">subs</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">ef</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
         <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="o">)</span> <span class="o">{</span>
