@@ -10,6 +10,9 @@ Queue
 
     See the user guide and API docs for more detail.
 
+3.0.0
+    * queue-base is now part of yui, queue-run and queue-promote are independent modules
+
 3.0.0 beta 1
     * Overhaul.  Broken into queue-base, queue-promote, and queue-run.
 

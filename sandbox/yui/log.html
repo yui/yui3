@@ -1,0 +1,22 @@
+<html debug="true">
+    <head>
+        <title>YUI 3.0</title>
+        <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            YUI({
+                filter: 'debug'
+            // }).use('event-custom-base', function(Y) {
+            }).use('event-custom', function(Y) {
+
+                Y.Global.on('yui:log', function(e) {
+                    console.log("GLOBAL: " + e);
+                });
+
+                Y.log("use 'widget' - No Exceptions");
+            })
+        </script>
+
+    </body>
+</html>

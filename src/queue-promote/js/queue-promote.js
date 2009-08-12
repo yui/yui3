@@ -1,8 +1,7 @@
 /**
  * Adds methods promote, remove, and indexOf to Queue instances.
  *
- * @module queue
- * @submodule queue-promote
+ * @module queue-promote
  * @for Queue
  */
 

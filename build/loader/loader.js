@@ -558,18 +558,12 @@ var NOT_FOUND = {},
             requires: [YUIBASE]
         },
 
-        queue: {
-            submodules: {
-                'queue-base': {
-                    requires: [YUIBASE]
-                },
-                'queue-run': {
-                    requires: ['queue-base', EVENTCUSTOM]
-                }
-            },
-            plugins: {
-                'queue-promote': { }
-            }
+        'queue-promote': {
+            requires: [YUIBASE]
+        },
+
+        'queue-run': {
+            requires: [EVENTCUSTOM]
         },
 
         slider: {
@@ -606,8 +600,7 @@ var NOT_FOUND = {},
                 get: {},
                 'yui-log': {},
                 'yui-later': {}
-            },
-            supersedes: ['queue-base']
+            }
         },
 
         test: {                                                                                                                                                        

@@ -1,11 +1,10 @@
-
-
 /**
  * The YUI module contains the components required for building the YUI seed file.
- * This includes the script loading mechanism, the dynamic loader and metadata,
- * the module registration system, and the core utilities for the library.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
  * @module yui
+ * @submodule yui-base
  */
+
 (function() {
 
     var min = ['yui-base'], core, C = Y.config, mods = YUI.Env.mods,

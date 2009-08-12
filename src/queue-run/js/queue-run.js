@@ -4,8 +4,7 @@
  * iterations, and a run() method that can execute queued callbacks in order,
  * even across configured timeouts.</p>
  *
- * @module queue
- * @submodule queue-run
+ * @module queue-run
  */
 
 /**

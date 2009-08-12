@@ -6,7 +6,6 @@ The YUI Global
     The yui module is a rollup of the following modules:
         yui-base
         get
-        queue-base
 
 3.0.0
 
@@ -17,6 +16,9 @@ The YUI Global
 * Added additional mobile device detection.
 * Get utility attribute cleanup before purging nodes.
 * cached accepts a parameter to refresh a cached value.
+* yui-log and yui-later are now optional modules that are included with yui.js.
+* queue-base is no longer a submodule of queue -- it is part of yui-base.
+* All YUI submodules end up in the yui build directory.
 
 3.0.0 beta 1
 
