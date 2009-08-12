@@ -486,7 +486,7 @@
 <span class="c"></span>            <span class="nx">trimmedArgs</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
 
             <span class="c">// set context to the Node if not specified</span>
-<span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">cewrapper</span><span class="o">,</span> <span class="nx">trimmedArgs</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">cewrapper</span><span class="o">,</span> <span class="nx">trimmedArgs</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">fireNow</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fire</span><span class="o">();</span>
