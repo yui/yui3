@@ -45,19 +45,19 @@ YUI({
     logExclude: {
         Selector: 1
     }
-}).use('event', 'dump', 'substitute', function(Y) {
+}).use('event-base', 'dump', 'substitute', function(Y) {
 
     Y.on('load', function(e) {
         Y.log('window load event');
     });
 
-    Y.on('beforeunload', function(e) {
-        e.returnValue = "let's do this";
-    });
+    // Y.on('beforeunload', function(e) {
+    //     e.returnValue = "let's do this";
+    // });
 
-    Y.on('mousewheel', function(e, arg1) {
-        Y.log('mousewheel: ' + e.wheelDelta + ', ' + arg1);
-    }, Y, 1);
+    // Y.on('mousewheel', function(e, arg1) {
+    //     Y.log('mousewheel: ' + e.wheelDelta + ', ' + arg1);
+    // }, Y, 1);
 
 
     // debugger;

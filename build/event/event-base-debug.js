@@ -1320,4 +1320,4 @@ Y.Env.evt.plugins.contentready = {
 };
 
 
-}, '@VERSION@' ,{requires:['event-custom']});
+}, '@VERSION@' ,{requires:['event-custom-base']});

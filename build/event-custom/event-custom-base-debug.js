@@ -787,6 +787,10 @@ Y.CustomEvent.prototype = {
         return this.stopped ? false : true;
     },
 
+    fireComplex: function(args) {
+        return this.fireSimple(args);
+    },
+
     _procSubs: function(subs, args, ef) {
         var s, i;
         for (i in subs) {

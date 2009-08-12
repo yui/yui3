@@ -205,12 +205,12 @@ var NOT_FOUND = {},
         },
 
         node: {
-            requires: ['event', DOM, BASE],
+            requires: [DOM, EVENTBASE],
             // expound: EVENT,
 
             submodules: {
                 'node-base': {
-                    requires: [DOMBASE, BASE, SELECTORCSS2, EVENTBASE]
+                    requires: [DOMBASE, SELECTORCSS2, EVENTBASE]
                 },
 
                 'node-style': {
@@ -429,11 +429,11 @@ var NOT_FOUND = {},
         },
 
         event: { 
-            expound: NODE,
+            expound: NODEBASE,
             submodules: {
                 'event-base': {
                     expound: NODEBASE,
-                    requires: [EVENTCUSTOM]
+                    requires: [EVENTCUSTOMBASE]
                 },
                 'event-delegate': {
                     requires: [EVENTBASE]
@@ -491,7 +491,7 @@ var NOT_FOUND = {},
             submodules: {
 
                 'io-base': {
-                    requires: [EVENTCUSTOM]
+                    requires: [EVENTCUSTOMBASE]
                 }, 
 
                 'io-xdr': {
