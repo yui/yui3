@@ -3470,7 +3470,7 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag', 'event-mouseenter'], skinnable:false});
 YUI.add('dd-drop-plugin', function(Y) {
 
 
