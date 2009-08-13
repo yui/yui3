@@ -18,7 +18,7 @@
     if (C.core) {
         core = C.core;
     } else {
-        core = ['queue-base'];
+        core = [];
         extras = ['get', 'loader', 'yui-log', 'yui-later'];
 
         for (i=0; i<extras.length; i++) {

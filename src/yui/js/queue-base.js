@@ -9,8 +9,6 @@
  * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and
  * removed using next().
  *
- * @module queue
- * @submodule queue-base
  * @class Queue
  * @param item* {MIXED} 0..n items to seed the queue
  */
