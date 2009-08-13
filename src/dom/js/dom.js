@@ -43,14 +43,23 @@ Y.DOM = {
         return doc.getElementById(id);
     },
 
+    // @deprecated
     children: function(node, tag) {
-        tag = tag || '*';
-        return Y.Selector.query('> ' + tag); 
+        var ret = [];
+        if (node) {
+            tag = tag || '*';
+            ret = Y.Selector.query('> ' + tag, node); 
+        }
+        return ret;
     },
 
+    // @deprecated
     firstByTag: function(node, tag) {
-        tag = tag || '*';
-        return Y.Selector.query(tag, true); 
+        ret = null;
+        if (node) {
+            tag = tag || '*';
+            ret = Y.Selector.query(tag, node, true); 
+        }
     },
 
     /**
@@ -596,8 +605,10 @@ Y.DOM = {
 
             tbody: function(html, doc) {
                 return create(TABLE_OPEN + html + TABLE_CLOSE, doc);
-            },
+            }
+        });
 
+        Y.mix(creators, {
             legend: 'fieldset',
             th: creators.td,
             thead: creators.tbody,
