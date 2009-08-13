@@ -29,19 +29,30 @@ var PARENT_NODE = 'parentNode',
 
     SelectorCSS2 = {
         SORT_RESULTS: true,
-        _children: function(node) {
+        _children: function(node, tag) {
             var ret = node.children || node._children,
-                i, n;
+                i,
+                children = [],
+                childNodes,
+                child;
 
-            if (!ret && node[TAG_NAME]) { // only HTMLElements have children
+            if ((!ret && node[TAG_NAME]) || (ret && tag)) { // only HTMLElements have children
+                childNodes = ret || node.childNodes;
                 ret = [];
-                for (i = 0, n; n = node.childNodes[i++];) {
-                    if (n.tagName) {
-                        ret[ret.length] = n;
+                for (i = 0, child; child = childNodes[i++];) {
+                    if (child.tagName) {
+                        if (!tag || tag === child.tagName) {
+                            ret.push(child);
+                        }
+                        if (!node.children) {
+                            children.push(child);
+                        }
                     }
                 }
-                node._children = ret;
-                g_childCache.push(node);
+                if (!node.children && !node._children) {
+                    node._children = children;
+                    g_childCache.push(node);
+                }
             }
 
             return ret || [];
