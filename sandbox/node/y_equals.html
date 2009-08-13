@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>FIXME</title>
+<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../build/oop/oop-min.js"></script>
+<script type="text/javascript" src="../../build/event-base/event-base-min.js"></script>
+<script type="text/javascript" src="../../build/event-custom-base/event-custom-min.js"></script>
+<script type="text/javascript" src="../../build/dom/dom-base-min.js"></script>
+<script type="text/javascript" src="../../build/dom/selector-native-min.js"></script>
+<script type="text/javascript" src="../../build/dom/selector-css2-min.js"></script>
+<script type="text/javascript" src="../../build/node/node-base-min.js"></script>
+
+<style>
+.loading {
+    background: red;
+}
+
+.loaded {
+    background: green;
+}
+</style>
+</head>
+<body>
+<h1 id="title">Selectors</h1>
+<form id="demo" class="test-form">
+</form>
+<div>
+</div>
+</body>
+<script type="text/javascript">
+var Y = YUI().use('*');
+Y.get('h1').addClass('loaded');
+</script>
+</html>
