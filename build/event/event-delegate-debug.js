@@ -36,45 +36,77 @@ var Event = Y.Event,
             tests  = delegates[delegateKey],
             spec, 
 			ename,
-			elements,
-			nElements,
 			matched,
+			selector,
 			fn,
-			ev,
-			i;
+			ev;
+
+
+		var getMatch = function(el, selector, container) {
+			
+			var returnVal;
+			
+			if (el === container) {
+				returnVal = false;
+			}
+			else {
+				returnVal = Y.Selector.test(el, selector) ? el: getMatch(el.parentNode, selector);
+			}
+			
+			return returnVal;
+			
+		};
+
 
         for (spec in tests) {
+
             if (tests.hasOwnProperty(spec)) {
+
                 ename  = tests[spec];
 				fn	= tests.fn;
-				elements = Y.Selector.query(spec, el);
-				nElements = elements.length;
-				if (nElements > 0) {
-					i = elements.length - 1;
-					do {
-						matched = elements[i];
-	                    if (matched === target || Y.DOM.contains(matched, target)) {
+				matched = null;
 
-                            if (!ev) {
-                                ev = new Y.DOMEventFacade(e, el);
-	                            ev.container = ev.currentTarget;
-                            }
-
-	                        ev.currentTarget = Y.Node.get(matched);
-
-							if (fn) {
-								fn(ev, ename);
-							}
-							else {
-	                        	Y.fire(ename, ev);								
-							}
-
-	                    }
-					}
-					while (i--);
+				if (!el.id) {
+					el.id = Y.guid();
 				}
+
+				selector = ("#" + el.id + " " + spec);
+
+				if (Y.Selector.test(target, selector)) {
+					matched = target;
+				}
+				else if (Y.Selector.test(target, (selector + " *"))) {
+						
+					//	The target is a descendant of an element matching 
+					//	the selector, so crawl up to find the ancestor that 
+					//	matches the selector
+					
+					matched = getMatch(target.parentNode, selector, el);
+					
+				}
+
+
+				if (matched) {
+
+                    if (!ev) {
+                        ev = new Y.DOMEventFacade(e, el);
+                        ev.container = ev.currentTarget;
+                    }
+
+                    ev.currentTarget = Y.Node.get(matched);
+
+					if (fn) {
+						fn(ev, ename);
+					}
+					else {
+                    	Y.fire(ename, ev);								
+					}
+					
+				}
+
             }
         }
+
     },
 
 	attach = function (type, key, element) {
@@ -139,7 +171,7 @@ Y.Env.evt.plugins.delegate = {
 		
 		args[0] = delegateType;
 
-		Y.delegate.apply(Y, args);
+		return Y.delegate.apply(Y, args);
 
     }
 
