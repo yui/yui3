@@ -7,14 +7,6 @@
 <link type="text/css" rel="stylesheet" href="../../../../yui2/build/yuitest/assets/testlogger.css">     
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
-<script type="text/javascript" src="../../../build/event/event.js"></script>
-<script type="text/javascript" src="../../../build/oop/oop.js"></script>
-<script type="text/javascript" src="../../../build/dom/dom.js"></script>
-<script type="text/javascript" src="../../../build/attribute/attribute.js"></script>
-<script type="text/javascript" src="../../../build/base/base.js"></script>
-<script type="text/javascript" src="../../../build/node/node-debug.js"></script>
-
 <script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/event/event.js"></script>
@@ -127,7 +119,7 @@ form {
         </div>
     </div>
 <script type="text/javascript">
-    YUI({ base: '../build/', filter: 'debug' }).use('node', function(Y) {
+    YUI({ base: '../../../build/', filter: 'debug' }).use('node', function(Y) {
         tool = YAHOO.tool,
         Assert = YAHOO.util.Assert,
         ArrayAssert = YAHOO.util.ArrayAssert,
@@ -149,8 +141,6 @@ form {
             search_p = document.getElementById('search-p'),
             foo = document.getElementById('foo'),
             tmp = document.createElement('div');
-
-        Y.DOM.getStyle(foo, 'float');
 
         suite.add( new tool.TestCase({
             name: 'DOM',

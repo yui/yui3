@@ -1,3 +1,22 @@
+3.0.0
+
+* Fixed hasImpl method on built classes, to look up the class
+  hierarchy for applied extensions.
+
+* Plugin.Host removed from base-base module and delivered as it's 
+  own module - "pluginhost"
+
+* base broken up into..
+
+     base-base: Provides class hierarchy support for ATTRS and 
+     initialization
+
+     base-build: Provides Extension support in the form of 
+     Base.build
+
+     base-pluginhost: Augments Plugin.Host to Base, adding plugin
+     support
+
 3.0.0 beta 1
 
 * Config argument for init event now merged into the event facade, 

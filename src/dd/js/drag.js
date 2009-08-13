@@ -126,11 +126,14 @@
         * @type {Event.Custom}
         */
     
-    Drag = function() {
+    Drag = function(o) {
         this._lazyAddAttrs = false;
         Drag.superclass.constructor.apply(this, arguments);
 
-        DDM._regDrag(this);
+        var valid = DDM._regDrag(this);
+        if (!valid) {
+            Y.error('Failed to register node, already in use: ' + o.node);
+        }
     };
 
     Drag.NAME = 'drag';
@@ -512,7 +515,7 @@
         * @description A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true}
         * @type {Object}
         */
-        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true},
+        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true },
         /**
         * @private
         * @property _dragThreshMet
@@ -838,8 +841,11 @@
             if (!this.get(DRAG_NODE)) {
                 this.set(DRAG_NODE, this.get(NODE));
             }
-            this._prep();
-            this._dragThreshMet = false;
+
+            //Fix for #2528096
+            //Don't prep the DD instance until all plugins are loaded.
+            this.on('initializedChange', Y.bind(this._prep, this));
+
             //Shouldn't have to do this..
             this.set('groups', this.get('groups'));
         },
@@ -849,6 +855,7 @@
         * @description Attach event listners and add classname
         */
         _prep: function() {
+            this._dragThreshMet = false;
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
             node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this));
@@ -876,7 +883,7 @@
                 var node = this.get(NODE), ow = node.get(OFFSET_WIDTH), oh = node.get(OFFSET_HEIGHT);
                 this._startTime = (new Date()).getTime();
 
-                DDM._start(this.deltaXY, [oh, ow]);
+                DDM._start();
                 node.addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, {
                     pageX: this.nodeXY[0],

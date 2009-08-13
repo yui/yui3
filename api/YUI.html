@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>yui&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>yui&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_yui.html" title="yui">yui</a>
                  &gt; YUI 
@@ -83,17 +83,17 @@ namespaces are preserved.
   
                                         
                                                 
-                                                o
+                                                o*
                                     )
                                 </code>
                                 <div class="description">
                                         <dl rel="yui:parameters">
                                             <dt>Parameters:</dt>
                                                 <dd rel="yui:parameter">
-                                                    <code><span property="yui:name">o</span>
+                                                    <code><span property="yui:name">o*</span>
                                                     &lt;<span property="yui:type">object</span>&gt;
                                                     </code>
-                                                    <span property="yui:description"> Optional configuration object.  This object is stored
+                                                    <span property="yui:description"> Up to five optional configuration objects.  This object is stored
 in YUI.config.  See config for the list of supported properties.</span>
                                                 </dd>
                                         </dl>
@@ -448,6 +448,121 @@ value.  If the values are equal, the wrapped function is executed again.</span>
                                                         Function
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the wrapped function</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_delegate">
+                                    <h4>
+                                        <a name="method_delegate">delegate</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        EventHandle
+                                            <strong property="yui:name">delegate</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         el
+                                                    
+                                                
+                                                        , 
+                                                         spec
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets up event delegation on a container element.  The delegated event
+will use a supplied selector to test if the target or one of the
+descendants of the target match it.  The supplied callback function 
+will only be executed if a match was encountered, and, in fact, 
+will be executed for each element that matches if you supply an 
+ambiguous selector.
+The event object for the delegated event is supplied to the callback
+function.  It is modified slightly in order to support all properties
+that may be needed for event delegation.  'currentTarget' is set to
+the element that matched the delegation specifcation.  'container' is
+set to the element that the listener is bound to (this normally would
+be the 'currentTarget').
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the event type to delegate</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the callback function to execute.  This function
+will be provided the event object for the delegated event.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">el</span>
+                                                        &lt;<span property="yui:type">string|node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the element that is the delegation container</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">spec</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  a selector that must match the target of the
+event.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional argument that specifies what 'this' refers to.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n additional arguments to pass on to the callback function.
+These arguments will be added after the event object.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        EventHandle
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the detach handle</dd>
                                                 </dl>
 
 
@@ -1081,6 +1196,119 @@ This fails because "long" is a future reserved word in ECMAScript
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_Node.plug">
+                                    <h4>
+                                        <a name="method_Node.plug">Node.plug</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">Node.plug</strong>
+                                           (
+                                                
+                                                        
+                                                         plugin
+                                                    
+                                                
+                                                        , 
+                                                         config
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Registers plugins to be instantiated at the class level (plugins 
+which should be plugged into every instance of Node by default).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">plugin</span>
+                                                        &lt;<span property="yui:type">Function | Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Either the plugin class, an array of plugin classes or an array of objects (with fn and cfg properties defined)</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">config</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) If plugin is the plugin class, the configuration for the plugin</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Node.unplug">
+                                    <h4>
+                                        <a name="method_Node.unplug">Node.unplug</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">Node.unplug</strong>
+                                           (
+                                                
+                                                        
+                                                         plugin
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Unregisters any class level plugins which have been registered by the Node
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">plugin</span>
+                                                        &lt;<span property="yui:type">Function | Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The plugin class, or an array of plugin classes</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_simulate">
                                     <h4>
                                         <a name="method_simulate">simulate</a></h4>
@@ -1356,6 +1584,27 @@ must be the last parameter.</span>
                                             <strong property="yui:name">available</strong>
 
                                             (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         el
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -1368,6 +1617,45 @@ is detected in the DOM.
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">type</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  'available'</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">fn</span>
+                                                                &lt;<span property="yui:type">function</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  the callback function to execute.</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">el</span>
+                                                                &lt;<span property="yui:type">string|HTMLElement|collection</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  the element(s) to attach</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">context</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> optional argument that specifies what 'this' refers to.</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">args*</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> 0..n additional arguments to pass on to the callback function.
+These arguments will be added after the event object.</span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
 
                                         </div>
@@ -1434,14 +1722,14 @@ at the time of registration in order for it to work in Opera.
                                                         
                                                         <dd rel="yui:parameter">
                                                             <code><span property="yui:name">fn</span>
-                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                                &lt;<span property="yui:type">function</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  the function to execute</span>
+                                                            <span property="yui:description">  the callback function to execute</span>
                                                         </dd>
                                                         
                                                         <dd rel="yui:parameter">
                                                             <code><span property="yui:name">o</span>
-                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                                &lt;<span property="yui:type">string|HTMLElement|collection</span>&gt;
                                                             </code>
                                                             <span property="yui:description">  the element(s) to bind</span>
                                                         </dd>
@@ -1457,8 +1745,7 @@ at the time of registration in order for it to work in Opera.
                                                             <code><span property="yui:name">args</span>
                                                                 &lt;<span property="yui:type">object</span>&gt;
                                                             </code>
-                                                            <span property="yui:description"> 0..n additional arguments that should be provided 
-to the listener.</span>
+                                                            <span property="yui:description"> 0..n additional arguments to provide to the listener.</span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -1480,6 +1767,27 @@ to the listener.</span>
                                             <strong property="yui:name">contentready</strong>
 
                                             (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         el
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -1493,6 +1801,45 @@ is detected in the DOM with a nextSibling property
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">type</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  'contentready'</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">fn</span>
+                                                                &lt;<span property="yui:type">function</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  the callback function to execute.</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">el</span>
+                                                                &lt;<span property="yui:type">string|HTMLElement|collection</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  the element(s) to attach</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">context</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> optional argument that specifies what 'this' refers to.</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">args*</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> 0..n additional arguments to pass on to the callback function.
+These arguments will be added after the event object.</span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
 
                                         </div>
@@ -1532,12 +1879,31 @@ is detected in the DOM with a nextSibling property
                                                          spec
                                                     
                                                 
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
                                             )
 
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Sets up a delegated listener container.
+                                            Sets up event delegation on a container element.  The delegated event
+will use a supplied selector to test if the target or one of the
+descendants of the target match it.  The supplied callback function 
+will only be executed if a match was encountered, and, in fact, 
+will be executed for each element that matches if you supply an 
+ambiguous selector.
+The event object for the delegated event is supplied to the callback
+function.  It is modified slightly in order to support all properties
+that may be needed for event delegation.  'currentTarget' is set to
+the element that matched the delegation specifcation.  'container' is
+set to the element that the listener is bound to (this normally would
+be the 'currentTarget').
                                         </div>
 
                                         <div class="description">
@@ -1554,9 +1920,10 @@ is detected in the DOM with a nextSibling property
                                                         
                                                         <dd rel="yui:parameter">
                                                             <code><span property="yui:name">fn</span>
-                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                                &lt;<span property="yui:type">function</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  the function to execute</span>
+                                                            <span property="yui:description">  the callback function to execute.  This function
+will be provided the event object for the delegated event.</span>
                                                         </dd>
                                                         
                                                         <dd rel="yui:parameter">
@@ -1581,101 +1948,24 @@ is detected in the DOM with a nextSibling property
 event.</span>
                                                         </dd>
                                                         
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:event" resource="#event_domready">
-                                    <h4>
-                                        <a name="event_domready">domready</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">domready</strong>
-
-                                            (
-                                                
-                                                        
-                                                         fn
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Executes the supplied callback when the DOM is first usable.  This
-will execute immediately if called after the DOMReady event has
-fired.   @todo the DOMContentReady event does not fire when the
-script is dynamically injected into the page.  This means the
-DOMReady custom event will never fire in FireFox or Opera when the
-library is injected.  It _will_ fire in Safari, and the IE 
-implementation would allow for us to fire it if the defered script
-is not available.  We want this to behave the same in all browsers.
-Is there a way to identify when the script has been injected 
-instead of included inline?  Is there a way to know whether the 
-window onload event has fired without having had a listener attached 
-to it when it did so?
-<p>The callback is a Event.Custom, so the signature is:</p>
-<p>type &lt;string&gt;, args &lt;array&gt;, customobject &lt;object&gt;</p>
-<p>For DOMReady events, there are no fire argments, so the
-signature is:</p>
-<p>"DOMReady", [], obj</p>
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">fn</span>
-                                                                &lt;<span property="yui:type">function</span>&gt;
+                                                            <code><span property="yui:name">context</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
                                                             </code>
-                                                            <span property="yui:description"> what to execute when the element is found.</span>
+                                                            <span property="yui:description"> optional argument that specifies what 'this' refers to.</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">args*</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> 0..n additional arguments to pass on to the callback function.
+These arguments will be added after the event object.</span>
                                                         </dd>
                                                         
                                                 </dl>
 
 
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class=" deprecated" rel="yui:event" resource="#event_event:ready">
-                                    <h4>
-                                        <a name="event_event:ready">event:ready</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">event:ready</strong>
-
-                                            (
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Use domready event instead. @see domready
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-                                            <div class="deprecated">
-                                                <strong>Deprecated</strong> use 'domready' instead
-                                            </div>        
                                         </div>
 
                                     </div>
@@ -1740,14 +2030,14 @@ order for it to work in Opera.
                                                         
                                                         <dd rel="yui:parameter">
                                                             <code><span property="yui:name">fn</span>
-                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                                &lt;<span property="yui:type">function</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  the function to execute</span>
+                                                            <span property="yui:description">  the callback function to execute</span>
                                                         </dd>
                                                         
                                                         <dd rel="yui:parameter">
                                                             <code><span property="yui:name">o</span>
-                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                                &lt;<span property="yui:type">string|HTMLElement|collection</span>&gt;
                                                             </code>
                                                             <span property="yui:description">  the element(s) to bind</span>
                                                         </dd>
@@ -1763,8 +2053,7 @@ order for it to work in Opera.
                                                             <code><span property="yui:name">args</span>
                                                                 &lt;<span property="yui:type">object</span>&gt;
                                                             </code>
-                                                            <span property="yui:description"> 0..n additional arguments that should be provided 
-to the listener.</span>
+                                                            <span property="yui:description"> 0..n additional arguments to provide to the listener.</span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -1838,14 +2127,14 @@ press:12,65+shift+ctrl
                                                         
                                                         <dd rel="yui:parameter">
                                                             <code><span property="yui:name">fn</span>
-                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                                &lt;<span property="yui:type">function</span>&gt;
                                                             </code>
                                                             <span property="yui:description">  the function to execute</span>
                                                         </dd>
                                                         
                                                         <dd rel="yui:parameter">
                                                             <code><span property="yui:name">id</span>
-                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                                &lt;<span property="yui:type">string|HTMLElement|collection</span>&gt;
                                                             </code>
                                                             <span property="yui:description">  the element(s) to bind</span>
                                                         </dd>
@@ -1868,8 +2157,7 @@ press:12,65+shift+ctrl
                                                             <code><span property="yui:name">args</span>
                                                                 &lt;<span property="yui:type">object</span>&gt;
                                                             </code>
-                                                            <span property="yui:description"> 0..n additional arguments that should be provided 
-to the listener.</span>
+                                                            <span property="yui:description"> 0..n additional arguments to provide to the listener.</span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -1933,7 +2221,7 @@ event listener.
                                                         
                                                         <dd rel="yui:parameter">
                                                             <code><span property="yui:name">fn</span>
-                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                                &lt;<span property="yui:type">function</span>&gt;
                                                             </code>
                                                             <span property="yui:description">  The method the event invokes.</span>
                                                         </dd>
@@ -2014,7 +2302,7 @@ event listener.
                                                         
                                                         <dd rel="yui:parameter">
                                                             <code><span property="yui:name">fn</span>
-                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                                &lt;<span property="yui:type">function</span>&gt;
                                                             </code>
                                                             <span property="yui:description">  The method the event invokes.</span>
                                                         </dd>
@@ -2032,6 +2320,85 @@ event listener.
                                                             </code>
                                                             <span property="yui:description">  Optional.  String representing a selector that must 
 match the target of the event in order for the listener to be called.</span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_mousewheel">
+                                    <h4>
+                                        <a name="event_mousewheel">mousewheel</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">mousewheel</strong>
+
+                                            (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Mousewheel event.  This listener is automatically attached to the
+correct target, so one should not be supplied.  Mouse wheel 
+direction and velocity is stored in the 'mouseDelta' field.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">type</span>
+                                                                &lt;<span property="yui:type">string</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  'mousewheel'</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">fn</span>
+                                                                &lt;<span property="yui:type">function</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">  the callback to execute</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">context</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> optional context object</span>
+                                                        </dd>
+                                                        
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">args</span>
+                                                                &lt;<span property="yui:type">object</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> 0..n additional arguments to provide to the listener.</span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -2121,7 +2488,8 @@ behavior in other browsers.
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -2142,8 +2510,8 @@ behavior in other browsers.
                                 <li class=""><a href="config.html" title="config">config</a></li>
                                 <li class=""><a href="Get.html" title="Get">Get</a></li>
                                 <li class=""><a href="Lang.html" title="Lang">Lang</a></li>
-                                <li class=""><a href="Loader.html" title="Loader">Loader</a></li>
                                 <li class=""><a href="Object.html" title="Object">Object</a></li>
+                                <li class=""><a href="Queue.html" title="Queue">Queue</a></li>
                                 <li class=""><a href="UA.html" title="UA">UA</a></li>
                                 <li class="selected"><a href="YUI.html" title="YUI">YUI</a></li>
                         </ul>
@@ -2154,7 +2522,7 @@ behavior in other browsers.
                         <ul class="content">        
                                 <li class=""><a href="_module.js.html" title="_module.js">_module.js</a></li>
                                 <li class=""><a href="get.js.html" title="get.js">get.js</a></li>
-                                <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
+                                <li class=""><a href="queue-base.js.html" title="queue-base.js">queue-base.js</a></li>
                                 <li class=""><a href="yui-array.js.html" title="yui-array.js">yui-array.js</a></li>
                                 <li class=""><a href="yui-base.js.html" title="yui-base.js">yui-base.js</a></li>
                                 <li class=""><a href="yui-core.js.html" title="yui-core.js">yui-core.js</a></li>
@@ -2183,6 +2551,7 @@ behavior in other browsers.
                                 <li class=""><a href="#method_add" title="add">add</a></li>
                                 <li class=""><a href="#method_applyTo" title="applyTo">applyTo</a></li>
                                 <li class=""><a href="#method_cached" title="cached">cached</a></li>
+                                <li class=""><a href="#method_delegate" title="delegate">delegate</a></li>
                                 <li class=""><a href="#method_error" title="error">error</a></li>
                                 <li class=""><a href="#method_guid" title="guid">guid</a></li>
                                 <li class=""><a href="#method_later" title="later">later</a></li>
@@ -2191,6 +2560,8 @@ behavior in other browsers.
                                 <li class=""><a href="#method_message" title="message">message</a></li>
                                 <li class=""><a href="#method_mix" title="mix">mix</a></li>
                                 <li class=""><a href="#method_namespace" title="namespace">namespace</a></li>
+                                <li class=""><a href="#method_Node.plug" title="Node.plug">Node.plug</a></li>
+                                <li class=""><a href="#method_Node.unplug" title="Node.unplug">Node.unplug</a></li>
                                 <li class=""><a href="#method_simulate" title="simulate">simulate</a></li>
                                 <li class=""><a href="#method_stamp" title="stamp">stamp</a></li>
                                 <li class=""><a href="#method_use" title="use">use</a></li>
@@ -2204,12 +2575,11 @@ behavior in other browsers.
                                 <li class=""><a href="#event_blur" title="blur">blur</a></li>
                                 <li class=""><a href="#event_contentready" title="contentready">contentready</a></li>
                                 <li class=""><a href="#event_delegate" title="delegate">delegate</a></li>
-                                <li class=""><a href="#event_domready" title="domready">domready</a></li>
-                                <li class=" deprecated"><a href="#event_event:ready" title="event:ready">event:ready</a></li>
                                 <li class=""><a href="#event_focus" title="focus">focus</a></li>
                                 <li class=""><a href="#event_key" title="key">key</a></li>
                                 <li class=""><a href="#event_mouseenter" title="mouseenter">mouseenter</a></li>
                                 <li class=""><a href="#event_mouseleave" title="mouseleave">mouseleave</a></li>
+                                <li class=""><a href="#event_mousewheel" title="mousewheel">mousewheel</a></li>
                                 <li class=""><a href="#event_windowresize" title="windowresize">windowresize</a></li>
                         </ul>
                     </div>
@@ -2224,7 +2594,7 @@ behavior in other browsers.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Object", "name": "()", "url": "Object.html#method_()", "type": "method"}, {"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "cached", "url": "YUI.html#method_cached", "type": "method"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#event_delegate", "type": "event"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "Object", "name": "each", "url": "Object.html#method_each", "type": "method"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "", "host": "YUI", "name": "event:ready", "url": "YUI.html#event_event:ready", "type": "event"}, {"access": "private", "host": "Object", "name": "_extract", "url": "Object.html#method__extract", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "Object", "name": "getValue", "url": "Object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "Global", "url": "YUI.html#property_Global", "type": "property"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "", "host": "Object", "name": "hasKey", "url": "Object.html#method_hasKey", "type": "method"}, {"access": "", "host": "Object", "name": "hasValue", "url": "Object.html#method_hasValue", "type": "method"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "Object", "name": "keys", "url": "Object.html#method_keys", "type": "method"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "YUI", "name": "mouseenter", "url": "YUI.html#event_mouseenter", "type": "event"}, {"access": "", "host": "YUI", "name": "mouseleave", "url": "YUI.html#event_mouseleave", "type": "event"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "", "host": "Object", "name": "owns", "url": "Object.html#method_owns", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "Object", "name": "setValue", "url": "Object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "Object", "name": "size", "url": "Object.html#method_size", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "Object", "name": "values", "url": "Object.html#method_values", "type": "method"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Object", "name": "()", "url": "Object.html#method_()", "type": "method"}, {"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "cached", "url": "YUI.html#method_cached", "type": "method"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#method_delegate", "type": "method"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#event_delegate", "type": "event"}, {"access": "", "host": "Object", "name": "each", "url": "Object.html#method_each", "type": "method"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "private", "host": "Object", "name": "_extract", "url": "Object.html#method__extract", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "Object", "name": "getValue", "url": "Object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "Global", "url": "YUI.html#property_Global", "type": "property"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "", "host": "Object", "name": "hasKey", "url": "Object.html#method_hasKey", "type": "method"}, {"access": "", "host": "Object", "name": "hasValue", "url": "Object.html#method_hasValue", "type": "method"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "Object", "name": "keys", "url": "Object.html#method_keys", "type": "method"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "YUI", "name": "mouseenter", "url": "YUI.html#event_mouseenter", "type": "event"}, {"access": "", "host": "YUI", "name": "mouseleave", "url": "YUI.html#event_mouseleave", "type": "event"}, {"access": "", "host": "YUI", "name": "mousewheel", "url": "YUI.html#event_mousewheel", "type": "event"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "", "host": "YUI", "name": "Node.plug", "url": "YUI.html#method_Node.plug", "type": "method"}, {"access": "", "host": "YUI", "name": "Node.unplug", "url": "YUI.html#method_Node.unplug", "type": "method"}, {"access": "", "host": "Object", "name": "owns", "url": "Object.html#method_owns", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "Object", "name": "setValue", "url": "Object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "Object", "name": "size", "url": "Object.html#method_size", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "Object", "name": "values", "url": "Object.html#method_values", "type": "method"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}];
 </script>
 </body>
 </html>

@@ -155,12 +155,6 @@ Node.importMethod(Y.DOM, [
     'getAttribute'
 ]);
 
-if (!document.documentElement.hasAttribute) { // IE < 8
-    Y.Node.prototype.hasAttribute = function(attr) {
-        return Y.DOM.getAttribute(Y.Node.getDOMNode(this), attr) !== '';
-    };
-}
-
 /**
  * Allows setting attributes on DOM nodes, normalizing in some cases.
  * This passes through to the DOM node, allowing for custom attributes.

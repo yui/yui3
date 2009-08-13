@@ -134,7 +134,7 @@
         },
         /**
         * @attribute constrain2node
-        * @description Will attempt to constrain the drag node to the bounderies of this node.
+        * @description Will attempt to constrain the drag node to the boundaries of this node.
         * @type Object
         */
         constrain2node: {
@@ -152,7 +152,7 @@
         },
         /**
         * @attribute constrain2view
-        * @description Will attempt to constrain the drag node to the bounderies of the viewport region.
+        * @description Will attempt to constrain the drag node to the boundaries of the viewport region.
         * @type Object
         */
         constrain2view: {

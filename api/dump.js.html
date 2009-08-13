@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dump&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>dump&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dump.html" title="dump">dump</a>
                 
@@ -91,8 +91,14 @@
 <span class="c"></span>        <span class="c">// an element will cause an unhandled exception in FF 2.x</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">o</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;date&quot;</span> <span class="o">||</span> <span class="o">(</span><span class="s2">&quot;nodeType&quot;</span> <span class="k">in</span> <span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="s2">&quot;tagName&quot;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;date&quot;</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">tagName</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">o</span><span class="o">.</span><span class="nx">tagName</span> <span class="o">+</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nb">document</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">navigator</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="s1">&#39;window&#39;</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">location</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">body</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="s1">&#39;document&#39;</span><span class="o">;</span>
         <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;function&quot;</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">FUN</span><span class="o">;</span>
         <span class="o">}</span>
@@ -123,13 +129,17 @@
             <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="s2">&quot;{&quot;</span><span class="o">);</span>
             <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="nx">ARROW</span><span class="o">);</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
-                        <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">((</span><span class="nx">d</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">?</span> <span class="nx">L</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">d</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">:</span> <span class="nx">OBJ</span><span class="o">);</span>
-                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                        <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
+                    <span class="k">try</span> <span class="o">{</span>
+                        <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="nx">ARROW</span><span class="o">);</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
+                            <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">((</span><span class="nx">d</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">?</span> <span class="nx">L</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">d</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">:</span> <span class="nx">OBJ</span><span class="o">);</span>
+                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
+                        <span class="o">}</span>
+                        <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">COMMA</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="s1">&#39;Error: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">message</span><span class="o">);</span>
                     <span class="o">}</span>
-                    <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">COMMA</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">s</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
@@ -183,7 +193,8 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

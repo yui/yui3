@@ -1,6 +1,7 @@
-/**
+/*
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 (function() {

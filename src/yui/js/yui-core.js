@@ -1,3 +1,12 @@
+
+
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
+ */
+
 (function() {
 
 var L = Y.Lang, 
@@ -80,14 +89,14 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     if (mode) {
         switch (mode) {
             case 1: // proto to proto
-                return Y.mix(r.prototype, s.prototype);
+                return Y.mix(r.prototype, s.prototype, ov, wl, 0, merge);
             case 2: // object to object and proto to proto
-                Y.mix(r.prototype, s.prototype);
+                Y.mix(r.prototype, s.prototype, ov, wl, 0, merge);
                 break; // pass through 
             case 3: // proto to static
-                return Y.mix(r, s.prototype);
+                return Y.mix(r, s.prototype, ov, wl, 0, merge);
             case 4: // static to proto
-                return Y.mix(r.prototype, s);
+                return Y.mix(r.prototype, s, ov, wl, 0, merge);
             default:  // object to object is what happens below
         }
     }

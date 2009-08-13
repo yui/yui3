@@ -1,3 +1,10 @@
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
+ */
+
 (function() {
 
     var _instances = {}, 
@@ -42,10 +49,8 @@
 // @TODO: this needs to be created at build time from module metadata
 
         _APPLY_TO_WHITE_LIST = {
-            'io.xdrReady': 1,
-            'io.start': 1,
-            'io.success': 1,
-            'io.failure': 1
+          'io.xdrReady': 1,
+          'io.xdrResponse':1
         },
 
         SLICE = Array.prototype.slice;
@@ -62,22 +67,26 @@ if (typeof YUI === 'undefined' || !YUI) {
      * @constructor
      * @global
      * @uses EventTarget
-     * @param o Optional configuration object.  This object is stored
+     * @param o* Up to five optional configuration objects.  This object is stored
      * in YUI.config.  See config for the list of supported properties.
      */
 
     /*global YUI*/
     // Make a function, disallow direct instantiation
-    YUI = function(o) {
+    YUI = function(o1, o2, o3, o4, o5) {
 
-        var Y = this;
+        var Y = this, a = arguments, i, l = a.length;
 
         // Allow instantiation without the new operator
         if (!(Y instanceof YUI)) {
-            return new YUI(o);
+            return new YUI(o1, o2, o3, o4, o5);
         } else {
             // set up the core environment
-            Y._init(o);
+            Y._init();
+
+            for (i=0; i<l; i++) {
+                Y._config(a[i]);
+            }
 
             // bind the specified additional modules for this instance
             Y._setup();
@@ -91,6 +100,30 @@ if (typeof YUI === 'undefined' || !YUI) {
 // modules to be registered and for the instance to be initialized.
 YUI.prototype = {
 
+    _config: function(o) {
+
+        o = o || {};
+
+        var c = this.config, i, j, m, mods;
+
+        mods = c.modules;
+        for (i in o) {
+            if (mods && i == 'modules') {
+                m = o[i];
+                for (j in m) {
+                    if (m.hasOwnProperty(j)) {
+                        mods[j] = m[j];
+                    }
+                }
+            } else if (i == 'win') {
+                c[i] = o[i].contentWindow || o[i];
+                c.doc = c[i].document;
+            } else {
+                c[i] = o[i];
+            }
+        }
+    },
+
     /**
      * Initialize this YUI instance
      * @param o config options
@@ -98,25 +131,21 @@ YUI.prototype = {
      */
     _init: function(o) {
 
-        o = o || {};
-
         // find targeted window/frame
         // @TODO create facades
         var v = '@VERSION@', Y = this;
-        o.win = o.win || window || {};
-        o.win = o.win.contentWindow || o.win;
-        o.doc = o.win.document;
-        o.debug = ('debug' in o) ? o.debug : true;
-        o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
-        o.throwFail = ('throwFail' in o) ? o.throwFail : true;
-    
-        // add a reference to o for anything that needs it
-        // before _setup is called.
-        Y.config = o;
+
+        if (v.indexOf('@') > -1) {
+            v = 'test';
+        }
+
+        Y.version = v;
 
         Y.Env = {
             // @todo expand the new module metadata
             mods: {},
+            cdn: 'http://yui.yahooapis.com/' + v + '/build/',
+            bootstrapped: false,
             _idx: 0,
             _used: {},
             _attached: {},
@@ -125,26 +154,48 @@ YUI.prototype = {
             _loaded: {}
         };
 
-
-        if (v.indexOf('@') > -1) {
-            v = 'test';
-        }
-
-        Y.version = v;
-
         Y.Env._loaded[v] = {};
 
         if (YUI.Env) {
             Y.Env._yidx = (++YUI.Env._yidx);
-            Y.Env._guidp = ('yui_' + this.version + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
+            Y.Env._guidp = ('yui_' + v + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
             Y.id = Y.stamp(Y);
             _instances[Y.id] = Y;
         }
 
         Y.constructor = YUI;
 
+        // configuration defaults
+        Y.config = {
 
-        // this.log(this.id + ') init ');
+            win: window || {},
+            doc: document,
+            debug: true,
+            useBrowserConsole: true,
+            throwFail: true,
+        
+            base: function() {
+                var b, nodes, i, match;
+
+                // get from querystring
+                nodes = document.getElementsByTagName('script');
+
+                for (i=0; i<nodes.length; i=i+1) {
+                    match = nodes[i].src.match(/^(.*)yui\/yui[\.\-].*js(\?.*)?$/);
+                    b = match && match[1];
+                    if (b) {
+                        break;
+                    }
+                }
+
+                // use CDN default
+                return b || this.Env.cdn;
+
+            }(),
+
+            loaderPath: 'loader/loader-min.js'
+        };
+
     },
     
     /**
@@ -155,8 +206,6 @@ YUI.prototype = {
      */
     _setup: function(o) {
         this.use("yui-base");
-        // @TODO eval the need to copy the config
-        this.config = this.merge(this.config);
     },
 
     /**
@@ -216,25 +265,17 @@ YUI.prototype = {
      *
      */
     add: function(name, fn, version, details) {
-
         // this.log('Adding a new component ' + name);
-
         // @todo expand this to include version mapping
-        
-        // @todo allow requires/supersedes
-
         // @todo may want to restore the build property
-        
         // @todo fire moduleAvailable event
         
-        var m = {
+        YUI.Env.mods[name] = {
             name: name, 
             fn: fn,
             version: version,
             details: details || {}
         };
-
-        YUI.Env.mods[name] = m;
 
         return this; // chain support
     },
@@ -302,6 +343,7 @@ YUI.prototype = {
     use: function() {
 
         if (this._loading) {
+            this._useQueue = this._useQueue || new this.Queue();
             this._useQueue.add(SLICE.call(arguments, 0));
             return this;
         }
@@ -387,9 +429,9 @@ YUI.prototype = {
 
                 // process queued use requests as long until done 
                 // or dynamic load happens again.
-                this._loading = false;
-                while (this._useQueue && this._useQueue.size() && !this._loading) {
-                    Y.use.apply(Y, this._useQueue.next());
+                Y._loading = false;
+                while (Y._useQueue && Y._useQueue.size() && !Y._loading) {
+                    Y.use.apply(Y, Y._useQueue.next());
                 }
             };
 
@@ -412,10 +454,7 @@ YUI.prototype = {
                 }
             }
 
-            // Y.log('Use *: ' + a);
-
             return Y.use.apply(Y, a);
-
         }
         
         // Y.log('loader before: ' + a.join(','));
@@ -424,7 +463,6 @@ YUI.prototype = {
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
-            this._useQueue = this._useQueue || new Y.Queue();
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.ignoreRegistered = true;
@@ -448,14 +486,33 @@ YUI.prototype = {
         // dynamic load
         if (Y.Loader && missing.length) {
             Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'yui');
-            this._loading = true;
+            Y._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
             loader.onTimeout = onComplete;
+            loader.context = Y;
             loader.attaching = a;
             loader.require(missing);
             loader.insert();
+        } else if (Y.Get && missing.length && !Y.Env.bootstrapped) {
+            Y.log('fetching loader: ' + Y.config.base + Y.config.loaderPath, 'info', 'yui');
+            Y._loading = true;
+
+            a = Y.Array(arguments, 0, true);
+            // a.unshift('loader');
+
+            Y.Get.script(Y.config.base + Y.config.loaderPath, {
+                onEnd: function() {
+                    Y._loading = false;
+                    Y.Env.bootstrapped = true;
+                    Y._attach(['loader']);
+                    Y.use.apply(Y, a);
+                }
+            });
+
+            return Y;
+
         } else {
             Y._attach(r);
             onComplete();
@@ -579,9 +636,9 @@ YUI.prototype = {
 
     // inheritance utilities are not available yet
     for (i in p) {
-        if (true) {
-            YUI[i] = p[i];
-        }
+        // if (1) { // intenionally ignoring hasOwnProperty check
+        YUI[i] = p[i];
+        // }
     }
 
     // set up the environment
@@ -617,12 +674,14 @@ YUI.prototype = {
  * the YUI instance.  This object is supplied by the implementer 
  * when instantiating a YUI instance.  Some properties have default
  * values if they are not supplied by the implementer.
+ *
  * @class config
  * @static
  */
 
 /**
- * Turn debug statements on or off
+ * Turn debug statements on or off.
+ *
  * @property debug
  * @type boolean
  * @default true
@@ -630,7 +689,8 @@ YUI.prototype = {
 
 /**
  * Log to the browser console if debug is on and the browser has a
- * supported console
+ * supported console.
+ *
  * @property useBrowserConsole
  * @type boolean
  * @default true
@@ -638,12 +698,14 @@ YUI.prototype = {
 
 /**
  * A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.
+ *
  * @property logInclude
  * @type object
  */
 
 /**
- * A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+ * A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.
+ *
  * @property logExclude
  * @type object
  */
@@ -651,52 +713,60 @@ YUI.prototype = {
 /**
  * Set to true if the yui seed file was dynamically loaded in 
  * order to bootstrap components relying on the window load event 
- * and onDOMReady.
+ * and the 'domready' custom event.
+ *
  * @property injected
  * @type object
  */
 
 /**
  * If throwFail is set, Y.fail will generate or re-throw a JS Error.  Otherwise the failure is logged.
+ *
  * @property throwFail
  * @type boolean
  * @default true
  */
 
 /**
- * The window/frame that this instance should operate in
+ * The window/frame that this instance should operate in.
+ *
  * @property win
  * @type Window
  * @default the window hosting YUI
  */
 
 /**
- * The document associated with the 'win' configuration
+ * The document associated with the 'win' configuration.
+ *
  * @property doc
  * @type Document
  * @default the document hosting YUI
  */
 
 /**
- * A list of modules that defines the YUI core (overrides the default)</li>
+ * A list of modules that defines the YUI core (overrides the default).
+ *
  * @property core
  * @type string[]
  */
 
 /**
  * The default date format
+ *
  * @property dateFormat
  * @type string
  */
 
 /**
  * The default locale
+ *
  * @property locale
  * @type string
  */
 
 /**
  * The default interval when polling in milliseconds.
+ *
  * @property pollInterval
  * @type int
  * @default 20
@@ -708,6 +778,7 @@ YUI.prototype = {
  * because remove the node will not make the evaluated script
  * unavailable.  Dynamic CSS is not auto purged, because removing
  * a linked style sheet will also remove the style definitions.
+ *
  * @property purgethreshold
  * @type int
  * @default 20
@@ -715,6 +786,7 @@ YUI.prototype = {
 
 /**
  * The default interval when polling in milliseconds.
+ *
  * @property windowResizeDelay
  * @type int
  * @default 40
@@ -722,27 +794,34 @@ YUI.prototype = {
 
 /**
  * Base directory for dynamic loading
+ *
  * @property base
  * @type string
  */
 
 /**
  * The secure base dir (not implemented)
+ *
  * For dynamic loading.
+ *
  * @property secureBase
  * @type string
  */
 
 /**
  * The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?
+ *
  * For dynamic loading.
+ *
  * @property comboBase
  * @type string
  */
 
 /**
  * The root path to prepend to module names for the combo service. Ex: 3.0.0b1/build/
+ *
  * For dynamic loading.
+ *
  * @property root
  * @type string
  */
@@ -768,7 +847,9 @@ YUI.prototype = {
  *      'replaceStr': "-debug.js"
  *  &#125;
  * </pre>
+ *
  * For dynamic loading.
+ *
  * @property filter
  * @type string|object
  */
@@ -776,15 +857,19 @@ YUI.prototype = {
 /**
  * Hash of per-component filter specification.  If specified for a given component, 
  * this overrides the filter config
+ *
  * For dynamic loading.
+ *
  * @property filters
  * @type object
  */
 
 /**
  * Use the YUI combo service to reduce the number of http connections 
- * required to load your dependencies
+ * required to load your dependencies.
+ *
  * For dynamic loading.
+ *
  * @property combine
  * @type boolean
  * @default true if 'base' is not supplied, false if it is.
@@ -792,6 +877,7 @@ YUI.prototype = {
 
 /**
  * A list of modules that should never be dynamically loaded
+ *
  * @property ignore
  * @type string[]
  */
@@ -799,6 +885,7 @@ YUI.prototype = {
 /**
  * A list of modules that should always be loaded when required, even if already 
  * present on the page.
+ *
  * @property force
  * @type string[]
  */
@@ -806,24 +893,29 @@ YUI.prototype = {
 /**
  * Node or id for a node that should be used as the insertion point for new nodes
  * For dynamic loading.
+ *
  * @property insertBefore
  * @type string
  */
 
 /**
  * charset for dynamic nodes
+ *
  * @property charset
  * @type string
+ * @deprecated use jsAttributes cssAttributes
  */
 
 /**
  * Object literal containing attributes to add to dynamically loaded script nodes.
+ *
  * @property jsAttributes
  * @type string
  */
 
 /**
  * Object literal containing attributes to add to dynamically loaded link nodes.
+ *
  * @property cssAttributes
  * @type string
  */
@@ -831,6 +923,7 @@ YUI.prototype = {
 /**
  * Number of milliseconds before a timeout occurs when dynamically 
  * loading nodes. If not set, there is no timeout.
+ *
  * @property timeout
  * @type int
  */
@@ -841,6 +934,7 @@ YUI.prototype = {
  * loading but script loading is still ongoing.  This provides an
  * opportunity to enhance the presentation of a loading page a little
  * bit before the entire loading process is done.
+ *
  * @property onCSS
  * @type function
  */
@@ -850,7 +944,16 @@ YUI.prototype = {
  * These components can then be dynamically loaded side by side with
  * YUI via the use() method.See Loader.addModule for the supported
  * module metadata.
+ *
  * @property modules
  * @type function
  */
  
+/**
+ * The loader 'path' attribute to the loader itself.  This is combined
+ * with the 'base' attribute to dynamically load the loader component
+ * when boostrapping with the get utility alone.
+ *
+ * @property loaderPath
+ * @default loader/loader-min.js
+ */

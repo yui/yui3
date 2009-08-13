@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: queue-run   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>queue-run&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_queue-run.html" title="queue-run">queue-run</a>
+                
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                   
+                    <h3>Module: queue-run
+                    
+
+
+                    </h3>
+                    <div class="description summary">
+                        <p>Adds a new class AsyncQueue that is restricted to function callbacks, but
+includes a host of additional features, including events, callback
+iterations, and a run() method that can execute queued callbacks in order,
+even across configured timeouts.</p>
+                    </div>
+
+
+
+                <div class="yui-gc">
+                    <div class="yui-u first">
+
+                            <p>This module contains the following classes:</p>
+                            <script>
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"EventTarget": "EventTarget"}, "events": {}, "configs": {}, "properties": {}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": true, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}]}}, "description": "<p>A specialized queue class that supports scheduling callbacks to execute\nsequentially, iteratively, even asynchronously.</p>\n<p>Callbacks can be function refs or objects with the following keys.  Only\nthe <code>fn</code> key is required.</p>\n<ul>\n<li><code>fn</code> -- The callback function</li>\n<li><code>context</code> -- The execution context for the callbackFn.</li>\n<li><code>args</code> -- Arguments to pass to callbackFn.</li>\n<li><code>timeout</code> -- Millisecond delay before executing callbackFn.\n(Applies to each iterative execution of callback)</li>\n<li><code>iterations</code> -- Number of times to repeat the callback.\n<li><code>until</code> -- Repeat the callback until this function returns\ntrue.  This setting trumps iterations.</li>\n<li><code>autoContinue</code> -- Set to false to prevent the AsyncQueue from\nexecuting the next callback in the Queue after\nthe callback completes.</li>\n<li><code>id</code> -- Name that can be used to get, promote, get the\nindexOf, or delete this callback.</li>\n</ul>", "guessedname": "AsyncQueue", "name": "AsyncQueue"}];
+                            </script>
+                            <div id="splash_classList">
+                                <ul>
+                                    <li><a href="AsyncQueue.html" title="AsyncQueue" id="class_0">AsyncQueue</a></li>
+                                </ul>
+                            </div>
+                    </div>
+                    <div class="yui-u">
+
+                        </div>
+                </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class="selected"><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="AsyncQueue.html" title="AsyncQueue">AsyncQueue</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="queue-run.js.html" title="queue-run.js">queue-run.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "AsyncQueue", "name": "add", "url": "AsyncQueue.html#method_add", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "AsyncQueue.defaults", "url": "AsyncQueue.html#property_AsyncQueue.defaults", "type": "property"}, {"access": "", "host": "AsyncQueue", "name": "complete", "url": "AsyncQueue.html#event_complete", "type": "event"}, {"access": "protected", "host": "AsyncQueue", "name": "_defAddFn", "url": "AsyncQueue.html#method__defAddFn", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "defaults", "url": "AsyncQueue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "AsyncQueue", "name": "_defExecFn", "url": "AsyncQueue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defPromoteFn", "url": "AsyncQueue.html#method__defPromoteFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defRemoveFn", "url": "AsyncQueue.html#method__defRemoveFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defShiftFn", "url": "AsyncQueue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_execute", "url": "AsyncQueue.html#method__execute", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "getCallback", "url": "AsyncQueue.html#method_getCallback", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "indexOf", "url": "AsyncQueue.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_init", "url": "AsyncQueue.html#method__init", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_initEvents", "url": "AsyncQueue.html#method__initEvents", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "isRunning", "url": "AsyncQueue.html#method_isRunning", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "next", "url": "AsyncQueue.html#method_next", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "pause", "url": "AsyncQueue.html#method_pause", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_prepare", "url": "AsyncQueue.html#method__prepare", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "promote", "url": "AsyncQueue.html#method_promote", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "remove", "url": "AsyncQueue.html#method_remove", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "run", "url": "AsyncQueue.html#method_run", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_running", "url": "AsyncQueue.html#property__running", "type": "property"}, {"access": "protected", "host": "AsyncQueue", "name": "_schedule", "url": "AsyncQueue.html#method__schedule", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "size", "url": "AsyncQueue.html#method_size", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "stop", "url": "AsyncQueue.html#method_stop", "type": "method"}];
+</script>
+</body>
+</html>

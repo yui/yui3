@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>event&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
                 
@@ -51,6 +51,7 @@
 <span class="c">/**</span>
 <span class="c"> * DOM event listener abstraction layer</span>
 <span class="c"> * @module event</span>
+<span class="c"> * @submodule event-base</span>
 <span class="c"> */</span>
 
 <span class="c">/**</span>
@@ -61,7 +62,6 @@
 <span class="c"> * @class Event</span>
 <span class="c"> * @static</span>
 <span class="c"> */</span>
-
 
 <span class="k">var</span> <span class="nx">add</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">add</span><span class="o">,</span>
 <span class="nx">remove</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">remove</span><span class="o">,</span>
@@ -83,19 +83,12 @@
 
 <span class="nx">shouldIterate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">try</span> <span class="o">{</span>
-         
-        <span class="c">// Y.log(&#39;node? &#39; + (o instanceof Y.Node) + &#39;, &#39; + ((o.size) ? o.size() : &#39; no size&#39;));</span>
-<span class="c"></span>        <span class="c">// if (o instanceof Y.Node) {</span>
-<span class="c"></span>            <span class="c">// o.tagName =&quot;adsf&quot;;</span>
-<span class="c"></span>        <span class="c">// }</span>
-<span class="c"></span>
-        <span class="k">return</span> <span class="o">(</span> <span class="nx">o</span>                     <span class="o">&amp;&amp;</span> <span class="c">// o is something</span>
+        <span class="k">return</span> <span class="o">(</span> <span class="o">(</span><span class="nx">o</span>                    <span class="o">&amp;&amp;</span> <span class="c">// o is something</span>
 <span class="c"></span>                 <span class="k">typeof</span> <span class="nx">o</span> <span class="o">!==</span> <span class="s2">&quot;string&quot;</span> <span class="o">&amp;&amp;</span> <span class="c">// o is not a string</span>
-<span class="c"></span>                 <span class="c">// o.length  &amp;&amp; // o is indexed</span>
-<span class="c"></span>                 <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="o">((!</span><span class="nx">o</span><span class="o">.</span><span class="nx">size</span><span class="o">)</span> <span class="o">||</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)))</span>  <span class="o">&amp;&amp;</span> <span class="c">// o is indexed</span>
+<span class="c"></span>                 <span class="nx">o</span><span class="o">.</span><span class="nx">length</span>              <span class="o">&amp;&amp;</span> <span class="c">// o is indexed</span>
 <span class="c"></span>                 <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">tagName</span>            <span class="o">&amp;&amp;</span> <span class="c">// o is not an HTML element</span>
 <span class="c"></span>                 <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">alert</span>              <span class="o">&amp;&amp;</span> <span class="c">// o is not a window</span>
-<span class="c"></span>                 <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">item</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">o</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">!==</span> <span class="s2">&quot;undefined&quot;</span><span class="o">)</span> <span class="o">);</span>
+<span class="c"></span>                 <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">item</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">o</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">!==</span> <span class="s2">&quot;undefined&quot;</span><span class="o">))</span> <span class="o">);</span>
     <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">ex</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;collection check failure&quot;</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;event&quot;</span><span class="o">);</span>
         <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
@@ -303,9 +296,8 @@
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">p_obj</span><span class="o">,</span> <span class="nx">p_override</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">compat</span><span class="o">);</span>
         <span class="o">},</span>
 
-
         <span class="c">/**</span>
-<span class="c">         * Appends an event handler</span>
+<span class="c">         * Adds an event listener</span>
 <span class="c">         *</span>
 <span class="c">         * @method attach</span>
 <span class="c">         *</span>
@@ -314,17 +306,14 @@
 <span class="c">         * @param {String|HTMLElement|Array|NodeList} el An id, an element </span>
 <span class="c">         *  reference, or a collection of ids and/or elements to assign the </span>
 <span class="c">         *  listener to.</span>
-<span class="c">         * @param {Object}   obj    An arbitrary object that will be </span>
-<span class="c">         *                             passed as a parameter to the handler</span>
+<span class="c">         * @param {Object}   context optional context object</span>
 <span class="c">         * @param {Boolean|object}  args 0..n arguments to pass to the callback</span>
-<span class="c">         * @return {Boolean} True if the action was successful or defered,</span>
-<span class="c">         *                        false if one or more of the elements </span>
-<span class="c">         *                        could not have the listener attached,</span>
-<span class="c">         *                        or if the operation throws an exception.</span>
+<span class="c">         * @return {EventHandle} an object to that can be used to detach the listener</span>
+<span class="c">         *                     </span>
 <span class="c">         * @static</span>
 <span class="c">         */</span>
 
-        <span class="nx">attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
         <span class="o">},</span>
 
@@ -405,11 +394,11 @@
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
 
+
             <span class="c">// The el argument can be an array of elements or element ids.</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">shouldIterate</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
 
-                <span class="c">// Y.log(&#39;collection: &#39; + el);</span>
-<span class="c"></span>                <span class="c">// Y.log(&#39;collection: &#39; + el.item(0) + &#39;, &#39; + el.item(1));</span>
+                <span class="c">// Y.log(&#39;collection: &#39; + el.item(0) + &#39;, &#39; + el.item(1));</span>
 <span class="c"></span>
                 <span class="nx">handles</span><span class="o">=[];</span>
                 
@@ -427,51 +416,51 @@
 <span class="c"></span>            <span class="c">// ready</span>
 <span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
 
-                <span class="c">// @TODO switch to using DOM directly here</span>
-<span class="c"></span>                <span class="c">// oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);</span>
-<span class="c"></span>                <span class="nx">oEl</span> <span class="o">=</span> <span class="o">(</span><span class="nx">compat</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">byId</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
+                <span class="c">// oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);</span>
+<span class="c"></span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">compat</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">oEl</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">byId</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+
+                    <span class="nx">oEl</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
+
+                    <span class="nx">switch</span> <span class="o">(</span><span class="nx">oEl</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">case</span> <span class="m">0</span><span class="o">:</span>
+                            <span class="nx">oEl</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                            <span class="k">break</span><span class="o">;</span>
+                        <span class="nx">case</span> <span class="m">1</span><span class="o">:</span>
+                            <span class="nx">oEl</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+                            <span class="k">break</span><span class="o">;</span>
+                        <span class="nx">default</span><span class="o">:</span>
+                            <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">;</span>
+                            <span class="k">return</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">oEl</span><span class="o">)</span> <span class="o">{</span>
 
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">oEl</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">oEl</span><span class="o">.</span><span class="nx">length</span> <span class="o">==</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">el</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
-                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                            <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">;</span>
-                            <span class="k">return</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
-                        <span class="o">}</span>
-
-                    <span class="c">// HTMLElement</span>
-<span class="c"></span>                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                        <span class="c">// Y.log(&#39;no size: &#39; + oEl + &#39;, &#39; + type);</span>
-<span class="c"></span>                        <span class="nx">el</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">;</span>
-                    <span class="o">}</span>
+                    <span class="nx">el</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">;</span>
 
                 <span class="c">// Not found = defer adding the event until the element is available</span>
 <span class="c"></span>                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 
                     <span class="c">// Y.log(el + &#39; not found&#39;);</span>
-<span class="c"></span>
-                    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+<span class="c"></span>                    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                         <span class="c">// Y.log(&#39;lazy attach: &#39; + args);</span>
 <span class="c"></span>                        <span class="nx">E</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
                     <span class="o">},</span> <span class="nx">E</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">compat</span><span class="o">);</span>
+
                 <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="c">// Element should be an html element or an array if we get here.</span>
+            <span class="c">// Element should be an html element or node</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;unable to attach event &quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;event&quot;</span><span class="o">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="c">// the custom event key is the uid for the element + type</span>
-<span class="c"></span>
-            <span class="c">// allow a node reference to Y.on to work with load time addEventListener check</span>
-<span class="c"></span>            <span class="c">// (Node currently only has the addEventListener interface and that may be</span>
-<span class="c"></span>            <span class="c">// removed).</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">el</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">el</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
             <span class="o">}</span>
 
  			<span class="nx">cewrapper</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_createWrapper</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">capture</span><span class="o">,</span> <span class="nx">compat</span><span class="o">,</span> <span class="nx">facade</span><span class="o">);</span>
@@ -497,7 +486,7 @@
 <span class="c"></span>            <span class="nx">trimmedArgs</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
 
             <span class="c">// set context to the Node if not specified</span>
-<span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">cewrapper</span><span class="o">,</span> <span class="nx">trimmedArgs</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">cewrapper</span><span class="o">,</span> <span class="nx">trimmedArgs</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">fireNow</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fire</span><span class="o">();</span>
@@ -514,13 +503,14 @@
 <span class="c">         *</span>
 <span class="c">         * @method detach</span>
 <span class="c">         *</span>
-<span class="c">         * @param {String|HTMLElement|Array|NodeList} el An id, an element </span>
-<span class="c">         *  reference, or a collection of ids and/or elements to remove</span>
-<span class="c">         *  the listener from.</span>
 <span class="c">         * @param {String} type the type of event to remove.</span>
 <span class="c">         * @param {Function} fn the method the event invokes.  If fn is</span>
-<span class="c">         *  undefined, then all event handlers for the type of event are *  removed.</span>
-<span class="c">         * @return {boolean} true if the unbind was successful, false *  otherwise.</span>
+<span class="c">         * undefined, then all event handlers for the type of event are </span>
+<span class="c">         * removed.</span>
+<span class="c">         * @param {String|HTMLElement|Array|NodeList|EventHandle} el An </span>
+<span class="c">         * event handle, an id, an element reference, or a collection </span>
+<span class="c">         * of ids and/or elements to remove the listener from.</span>
+<span class="c">         * @return {boolean} true if the unbind was successful, false otherwise.</span>
 <span class="c">         * @static</span>
 <span class="c">         */</span>
         <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
@@ -855,7 +845,6 @@
             <span class="o">});</span>
 
             <span class="nx">remove</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s2">&quot;load&quot;</span><span class="o">,</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_load</span><span class="o">);</span>
-            <span class="nx">remove</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s2">&quot;unload&quot;</span><span class="o">,</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_unload</span><span class="o">);</span>
         <span class="o">},</span>
 
         
@@ -953,7 +942,8 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -987,6 +977,7 @@
                                 <li class=""><a href="focusblur.js.html" title="focusblur.js">focusblur.js</a></li>
                                 <li class=""><a href="key.js.html" title="key.js">key.js</a></li>
                                 <li class=""><a href="mouseentermouseleave.js.html" title="mouseentermouseleave.js">mouseentermouseleave.js</a></li>
+                                <li class=""><a href="mousewheel.js.html" title="mousewheel.js">mousewheel.js</a></li>
                                 <li class=""><a href="resize-window.js.html" title="resize-window.js">resize-window.js</a></li>
                         </ul>
                     </div>
@@ -1004,7 +995,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "currentTarget", "url": "DOMEventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "relatedTarget", "url": "DOMEventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "target", "url": "DOMEventFacade.html#property_target", "type": "property"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "currentTarget", "url": "DOMEventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "relatedTarget", "url": "DOMEventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "target", "url": "DOMEventFacade.html#property_target", "type": "property"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "wheelDelta", "url": "DOMEventFacade.html#property_wheelDelta", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
 </script>
 </body>
 </html>

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>node-menunav&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>node-menunav&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_node-menunav.html" title="node-menunav">node-menunav</a>
                 
@@ -377,7 +377,7 @@
 <span class="k">var</span> <span class="nx">handleMouseOverForNode</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">target</span><span class="o">)</span> <span class="o">{</span>
 
 	<span class="k">return</span> <span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOVER</span><span class="o">]</span> <span class="o">&amp;&amp;</span> 
-		<span class="o">(</span><span class="nx">node</span> <span class="o">===</span> <span class="nx">target</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">target</span><span class="o">));</span>
+		<span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">target</span><span class="o">)</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">target</span><span class="o">));</span>
 
 <span class="o">};</span>
 
@@ -385,7 +385,7 @@
 <span class="k">var</span> <span class="nx">handleMouseOutForNode</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">relatedTarget</span><span class="o">)</span> <span class="o">{</span>
 
 	<span class="k">return</span> <span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="o">[</span><span class="nx">HANDLED_MOUSEOUT</span><span class="o">]</span> <span class="o">&amp;&amp;</span> 
-		<span class="o">(</span><span class="nx">node</span> <span class="o">!==</span> <span class="nx">relatedTarget</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">relatedTarget</span><span class="o">));</span>
+		<span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">relatedTarget</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">relatedTarget</span><span class="o">));</span>
 
 <span class="o">};</span>
 
@@ -905,7 +905,7 @@
 			<span class="nx">oMenu</span> <span class="o">=</span> <span class="nx">getParentMenu</span><span class="o">(</span><span class="nx">item</span><span class="o">);</span>
 			<span class="nx">oItem</span> <span class="o">=</span> <span class="nx">getItemAnchor</span><span class="o">(</span><span class="nx">item</span><span class="o">);</span>
 
-			<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">!==</span> <span class="nx">oMenu</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">oMenu</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">oMenu</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">))</span> <span class="o">{</span>
 				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">=</span> <span class="nx">oMenu</span><span class="o">;</span>
 				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_initFocusManager</span><span class="o">();</span>
 			<span class="o">}</span>
@@ -1283,7 +1283,7 @@
 <span class="c"></span>		<span class="c">//	Menu in order to avoid the FocusManager thinking that </span>
 <span class="c"></span>		<span class="c">//	it has lost focus</span>
 <span class="c"></span>		
-		<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">!==</span> <span class="nx">menu</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="nx">menu</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">menu</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">))</span> <span class="o">{</span>
 			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">;</span>
 
 			<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span><span class="o">)</span> <span class="o">{</span>
@@ -1464,7 +1464,7 @@
 			<span class="o">}</span>
 			<span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_movingToSubmenu</span> <span class="o">&amp;&amp;</span> <span class="nx">oSubmenu</span> <span class="o">&amp;&amp;</span> 
 				<span class="o">!</span><span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oRelatedTarget</span><span class="o">)</span> <span class="o">&amp;&amp;</span> 
-				<span class="nx">oRelatedTarget</span> <span class="o">!==</span> <span class="nx">oSubmenu</span><span class="o">)</span> <span class="o">{</span>
+				<span class="o">!</span><span class="nx">oRelatedTarget</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">))</span> <span class="o">{</span>
 
 				<span class="c">//	If the mouse is not moving toward the submenu, cancel any </span>
 <span class="c"></span>				<span class="c">//	submenus that might be in the process of being displayed </span>
@@ -1869,7 +1869,7 @@
 			<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
 
 			<span class="k">if</span> <span class="o">(</span><span class="nx">oSubmenu</span> <span class="o">&amp;&amp;</span> 
-				<span class="o">(</span><span class="nx">oRelatedTarget</span> <span class="o">===</span> <span class="nx">oSubmenu</span> <span class="o">||</span> 
+				<span class="o">(</span><span class="nx">oRelatedTarget</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">)</span> <span class="o">||</span> 
 					<span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oRelatedTarget</span><span class="o">)))</span> <span class="o">{</span>
 
 				<span class="nx">bMovingToSubmenu</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
@@ -2201,7 +2201,8 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

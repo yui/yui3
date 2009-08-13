@@ -1,6 +1,9 @@
 YUI dump
     Stringifies objects
 
+3.0.0
+  * Better handling of HTML elements.
+
 3.0.0beta1
   * Added /regexp/ formatting
 

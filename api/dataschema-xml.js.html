@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dataschema&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>dataschema&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dataschema.html" title="dataschema">dataschema</a>
                 
@@ -81,7 +81,7 @@
             <span class="k">var</span> <span class="nx">xmldoc</span> <span class="o">=</span> <span class="nx">data</span><span class="o">,</span>
                 <span class="nx">data_out</span> <span class="o">=</span> <span class="o">{</span><span class="nx">results</span><span class="o">:[],</span><span class="nx">meta</span><span class="o">:{}};</span>
 
-            <span class="k">if</span><span class="o">(</span><span class="nx">xmldoc</span> <span class="o">&amp;&amp;</span> <span class="nx">xmldoc</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">&amp;&amp;</span> <span class="nx">xmldoc</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span> <span class="o">&amp;&amp;</span> <span class="nx">schema</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span><span class="o">(</span><span class="nx">xmldoc</span> <span class="o">&amp;&amp;</span> <span class="nx">xmldoc</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">xmldoc</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span> <span class="o">||</span> <span class="nx">xmldoc</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">1</span> <span class="o">||</span> <span class="nx">xmldoc</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">11</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">schema</span><span class="o">)</span> <span class="o">{</span>
                 <span class="c">// Parse results data</span>
 <span class="c"></span>                <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaXML</span><span class="o">.</span><span class="nx">_parseResults</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">xmldoc</span><span class="o">,</span> <span class="nx">data_out</span><span class="o">);</span>
 
@@ -239,7 +239,8 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

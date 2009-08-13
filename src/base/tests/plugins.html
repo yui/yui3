@@ -4,6 +4,12 @@
     <title>Base.build</title>
 
     <style type="text/css">
+        #console .yui-console-entry {
+            padding:2px;
+            margin:0px;
+            min-height:0;
+        }
+        
         #console .yui-console-entry-fail .yui-console-entry-cat {
             background-color:red;
         }
@@ -29,7 +35,7 @@
     <div id="console"></div>
     <script type="text/javascript" src="../../../build/yui/yui.js"></script>
     <script type="text/javascript">
-        YUI({base:"../../../build/", filter:"raw", useBrowserConsole:false}).use("base", "console", "plugin", "test", function(Y) {
+        YUI({base:"../../../build/", filter:"raw", useBrowserConsole:false}).use("basebase", "base-pluginhost", "console", "plugin", "test", function(Y) {
 
             function PluginOne() {
                 PluginOne.superclass.constructor.apply(this, arguments);

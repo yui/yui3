@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dom&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>dom&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dom.html" title="dom">dom</a>
                 
@@ -509,15 +509,33 @@
         <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span> <span class="c">// return single node, breaking parentNode ref from &quot;fragment&quot;</span>
 <span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// return multiple nodes as a fragment</span>
-<span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">createDocumentFragment</span><span class="o">();</span>
-            <span class="k">while</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ret</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span> 
-            <span class="o">}</span>
+<span class="c"></span>             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_nl2frag</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_cloneCache</span><span class="o">[</span><span class="nx">html</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
         <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
     <span class="o">},</span>
+
+    <span class="nx">_nl2frag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
+            <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">push</span> <span class="o">||</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">item</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">{</span>
+            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">ownerDocument</span><span class="o">;</span> 
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">createDocumentFragment</span><span class="o">();</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span> <span class="c">// convert live list to static array</span>
+<span class="c"></span>                <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="nx">ret</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span> 
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="c">// else inline with log for minification</span>
+<span class="c"></span>        <span class="k">else</span> <span class="o">{</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;unable to convert &#39;</span> <span class="o">+</span> <span class="nx">nodes</span> <span class="o">+</span> <span class="s1">&#39; to fragment&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dom&#39;</span><span class="o">);</span> <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+    <span class="o">},</span>
+
 
     <span class="nx">CUSTOM_ATTRIBUTES</span><span class="o">:</span> <span class="o">(!</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">hasAttribute</span><span class="o">)</span> <span class="o">?</span> <span class="o">{</span> <span class="c">// IE &lt; 8</span>
 <span class="c"></span>        <span class="s1">&#39;for&#39;</span><span class="o">:</span> <span class="s1">&#39;htmlFor&#39;</span><span class="o">,</span>
@@ -1015,7 +1033,8 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

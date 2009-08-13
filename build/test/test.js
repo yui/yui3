@@ -176,6 +176,7 @@ YUI.add('test', function(Y) {
             if (testObject instanceof Y.Test.Suite || testObject instanceof Y.Test.Case) {
                 this.items.push(testObject);
             }
+            return this;
         },
         
         //-------------------------------------------------------------------------
@@ -501,7 +502,7 @@ YUI.add('test', function(Y) {
                         break;
                         
                     case this.TEST_FAIL_EVENT:
-                        message = event.testName + ": " + event.error.getMessage();
+                        message = event.testName + ": failed.\n" + event.error.getMessage();
                         messageType = "fail";
                         break;
                         
@@ -1002,6 +1003,7 @@ YUI.add('test', function(Y) {
              */
             add : function (testObject) {
                 this.masterSuite.add(testObject);
+                return this;
             },
             
             /**
@@ -1610,7 +1612,7 @@ YUI.add('test', function(Y) {
          */
         getMessage : function () {
             return this.message + "\nExpected: " + this.expected + " (" + (typeof this.expected) + ")"  +
-                "\nActual:" + this.actual + " (" + (typeof this.actual) + ")";
+                "\nActual: " + this.actual + " (" + (typeof this.actual) + ")";
         }
     
     });
@@ -1832,7 +1834,7 @@ YUI.add('test', function(Y) {
                 throw new TypeError("ArrayAssert.containsMatch(): First argument must be a function.");
             }
             
-            if (!Y.Array.some(matcher)){
+            if (!Y.Array.some(haystack, matcher)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
             }
         },
@@ -1899,7 +1901,7 @@ YUI.add('test', function(Y) {
                 throw new TypeError("ArrayAssert.doesNotContainMatch(): First argument must be a function.");
             }
             
-            if (Y.Array.some(matcher)){
+            if (Y.Array.some(haystack, matcher)){
                 Y.Assert.fail(Y.Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
             }
         },

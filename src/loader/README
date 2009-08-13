@@ -1,0 +1,7 @@
+YUI Loader
+    Processes dependencies and dynamically loads script and css for YUI and external modules.
+
+3.0.0
+  * Extracted from the YUI seed.  Now fetched dynamically if
+    there are missing dependencies if not included.
+  * Reads metadata from on-page modules registered via Y.add if the module is not already known.

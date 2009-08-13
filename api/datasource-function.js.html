@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>datasource&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>datasource&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_datasource.html" title="datasource">datasource</a>
                 
@@ -129,8 +129,14 @@
             <span class="nx">response</span><span class="o">;</span>
             
             <span class="k">if</span><span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">response</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
+                <span class="k">try</span> <span class="o">{</span>
+                    <span class="nx">response</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
+                <span class="o">}</span>
+                <span class="k">catch</span><span class="o">(</span><span class="nx">error</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="nx">error</span><span class="o">;</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+                <span class="o">}</span>
             <span class="o">}</span>
             <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;Function data failure&quot;</span><span class="o">);</span>
@@ -183,7 +189,8 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

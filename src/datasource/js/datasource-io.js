@@ -106,24 +106,35 @@ Y.extend(DSIO, Y.DataSource.Local, {
      */
     _defRequestFn: function(e) {
         var uri = this.get("source"),
+            io = this.get("io"),
+            request = e.request,
             cfg = Y.mix(e.cfg, {
                 on: {
                     success: function (id, response, e) {
                         this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received IO data response for \"" + e.request + "\"", "info", "datasource-io");
+                        Y.log("Received IO data response for \"" + request + "\"", "info", "datasource-io");
                     },
                     failure: function (id, response, e) {
                         e.error = new Error("IO data failure");
                         this.fire("error", Y.mix({data:response}, e));
                         this.fire("data", Y.mix({data:response}, e));
-                        Y.log("Received IO data failure for \"" + e.request + "\"", "info", "datasource-io");
+                        Y.log("Received IO data failure for \"" + request + "\"", "info", "datasource-io");
                     }
                 },
                 context: this,
                 arguments: e
             });
         
-        this.get("io")(uri, cfg);
+        // Support for POST transactions
+        if(Y.Lang.isString(request)) {
+            if(cfg.method && (cfg.method.toUpperCase() === "POST")) {
+                cfg.data = cfg.data ? cfg.data+request : request;
+            }
+            else {
+                uri += request;
+            }
+        }
+        io(uri, cfg);
         return e.tId;
     }
 });

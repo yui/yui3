@@ -15,6 +15,7 @@
      * @submodule base-base
      */
     var O = Y.Object,
+        L = Y.Lang,
         DOT = ".",
         DESTROY = "destroy",
         INIT = "init",
@@ -24,8 +25,9 @@
         OBJECT_CONSTRUCTOR = Object.prototype.constructor,
         DEEP = "deep",
         SHALLOW = "shallow",
-        VALUE = "value",
-        DESTRUCTOR = "destructor";
+        DESTRUCTOR = "destructor",
+
+        Attribute = Y.Attribute;
 
     /**
      * <p>
@@ -51,10 +53,8 @@
     function Base() {
         Y.log('constructor called', 'life', 'base');
 
-        Y.Attribute.call(this);
-        Y.Plugin.Host.call(this);
+        Attribute.call(this);
 
-        this._silentInit = this._silentInit || false;
         if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
 
         this.init.apply(this, arguments);
@@ -69,7 +69,7 @@
      * @static
      * @private
      */
-    Base._ATTR_CFG = Y.Attribute._ATTR_CFG.concat("cloneDefaultValue");
+    Base._ATTR_CFG = Attribute._ATTR_CFG.concat("cloneDefaultValue");
 
     /**
      * <p>
@@ -85,7 +85,7 @@
      * @type String
      * @static
      */
-    Base.NAME = 'base';
+    Base.NAME = "base";
 
     /**
      * The default set of attributes which will be available for instances of this class, and 
@@ -173,12 +173,10 @@
              * @param {EventFacade} e Event object, with a cfg property which 
              * refers to the configuration object passed to the constructor.
              */
-            if (!this._silentInit) {
-                this.publish(INIT, {
-                    queuable:false,
-                    defaultFn:this._defInitFn
-                });
-            }
+            this.publish(INIT, {
+                queuable:false,
+                defaultFn:this._defInitFn
+            });
 
             if (config) {
                 if (config.on) {
@@ -189,11 +187,7 @@
                 }
             }
 
-            if (!this._silentInit) {
-                this.fire(INIT, {cfg: config});
-            } else {
-                this._defInitFn({cfg: config});
-            }
+            this.fire(INIT, {cfg: config});
 
             return this;
         },
@@ -251,13 +245,11 @@
          */
         _defInitFn : function(e) {
             this._initHierarchy(e.cfg);
-            this._initPlugins(e.cfg);
-
-            if (!this._silentInit) {
-                this._set(INITIALIZED, true);
-            } else {
-                this._conf.add(INITIALIZED, VALUE, true);
+            if (this._initPlugins) {
+                // Need to initPlugins manually, to handle constructor parsing, static Plug parsing
+                this._initPlugins(e.cfg);
             }
+            this._set(INITIALIZED, true);
         },
 
         /**
@@ -269,7 +261,9 @@
          */
         _defDestroyFn : function(e) {
             this._destroyHierarchy();
-            this._destroyPlugins();
+            if (this._destroyPlugins) {
+                this._destroyPlugins();
+            }
             this._set(DESTROYED, true);
         },
 
@@ -380,11 +374,11 @@
          * @return {Object} The aggregate set of ATTRS definitions for the instance
          */
         _aggregateAttrs : function(allAttrs) {
-            var attr, 
-                attrs, 
-                cfg, 
-                val, 
-                path, 
+            var attr,
+                attrs,
+                cfg,
+                val,
+                path,
                 i, 
                 clone, 
                 cfgProps = Base._ATTR_CFG,
@@ -512,28 +506,12 @@
     };
 
     // Straightup augment, no wrapper functions
-    Y.mix(Base, Y.Attribute, false, null, 1);
-    Y.mix(Base, PluginHost, false, null, 1);
-
-    /**
-     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.plug">Plugin.Host.plug</a>. See aliased 
-     * method for argument and return value details.
-     *
-     * @method Base.plug
-     * @static
-     */
-    Base.plug = PluginHost.plug;
-
-    /**
-     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.unplug">Plugin.Host.unplug</a>. See the 
-     * aliased method for argument and return value details.
-     *
-     * @method Base.unplug
-     * @static
-     */
-    Base.unplug = PluginHost.unplug;
+    Y.mix(Base, Attribute, false, null, 1);
 
     // Fix constructor
     Base.prototype.constructor = Base;
 
     Y.Base = Base;
+
+    // Fix constructor
+    Base.prototype.constructor = Base;

@@ -462,15 +462,33 @@ Y.DOM = {
         if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
             ret = nodes[0].parentNode.removeChild(nodes[0]);
         } else { // return multiple nodes as a fragment
-            ret = doc.createDocumentFragment();
-            while (nodes.length) {
-                ret.appendChild(nodes[0]); 
-            }
+             ret = Y.DOM._nl2frag(nodes, doc);
         }
 
         Y.DOM._cloneCache[html] = ret.cloneNode(true);
         return ret;
     },
+
+    _nl2frag: function(nodes, doc) {
+        var ret = null,
+            i, len;
+
+        if (nodes && (nodes.push || nodes.item) && nodes[0]) {
+            doc = doc || nodes[0].ownerDocument; 
+            ret = doc.createDocumentFragment();
+
+            if (nodes.item) { // convert live list to static array
+                nodes = Y.Array(nodes, 0, true);
+            }
+
+            for (i = 0, len = nodes.length; i < len; i++) {
+                ret.appendChild(nodes[i]); 
+            }
+        } // else inline with log for minification
+        else { Y.log('unable to convert ' + nodes + ' to fragment', 'warn', 'dom'); }
+        return ret;
+    },
+
 
     CUSTOM_ATTRIBUTES: (!document.documentElement.hasAttribute) ? { // IE < 8
         'for': 'htmlFor',
@@ -1001,7 +1019,7 @@ Y.mix(Y.DOM, {
 
 
 
-}, '@VERSION@' ,{requires:['event'], skinnable:false});
+}, '@VERSION@' ,{requires:['oop'], skinnable:false});
 YUI.add('dom-style', function(Y) {
 
 (function(Y) {
@@ -1203,15 +1221,19 @@ Y.Color = {
     toHex: function(val) {
         val = Y.Color.KEYWORDS[val] || val;
         if (Y.Color.re_RGB.exec(val)) {
-            var r = (RE.$1.length === 1) ? '0' + RE.$1 : Number(RE.$1),
-                g = (RE.$2.length === 1) ? '0' + RE.$2 : Number(RE.$2),
-                b = (RE.$3.length === 1) ? '0' + RE.$3 : Number(RE.$3);
-
             val = [
-                r[TO_STRING](16),
-                g[TO_STRING](16),
-                b[TO_STRING](16)
-            ].join('');
+                Number(RE.$1).toString(16),
+                Number(RE.$2).toString(16),
+                Number(RE.$3).toString(16)
+            ];
+
+            for (var i = 0; i < val.length; i++) {
+                if (val[i].length < 2) {
+                    val[i] = val[i].replace(Y.Color.re_hex3, '$1$1');
+                }
+            }
+
+            val = '#' + val.join('');
         }
 
         if (val.length < 6) {
@@ -1236,6 +1258,8 @@ var CLIENT_TOP = 'clientTop',
     FILTERS = 'filters',
     OPACITY = 'opacity',
     AUTO = 'auto',
+
+    BORDER_WIDTH = 'borderWidth',
     BORDER_TOP_WIDTH = 'borderTopWidth',
     BORDER_RIGHT_WIDTH = 'borderRightWidth',
     BORDER_BOTTOM_WIDTH = 'borderBottomWidth',
@@ -1282,66 +1306,67 @@ var CLIENT_TOP = 'clientTop',
             return value;
         },
 
+        sizeOffsets: {
+            width: ['Left', 'Right'],
+            height: ['Top', 'Bottom'],
+            top: ['Top'],
+            bottom: ['Bottom']
+        },
+
         getOffset: function(el, prop) {
             var current = _getStyleObj(el)[prop],                     // value of "width", "top", etc.
                 capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
                 offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
                 pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
-                actual,
+                sizeOffsets = ComputedStyle.sizeOffsets[prop], 
                 value = '';
 
-            if (current === AUTO) {
-                actual = el[offset]; // offsetHeight/Top etc.
-                if (actual === UNDEFINED) { // likely "right" or "bottom"
-                    value = 0;
+            // IE pixelWidth incorrect for percent
+            // manually compute by subtracting padding and border from offset size
+            // NOTE: clientWidth/Height (size minus border) is 0 when current === AUTO so offsetHeight is used
+            // reverting to auto from auto causes position stacking issues (old impl)
+            if (current === AUTO || current.indexOf('%') > -1) {
+                value = el['offset' + capped];
+
+                if (sizeOffsets[0]) {
+                    value -= ComputedStyle.getPixel(el, 'padding' + sizeOffsets[0]);
+                    value -= ComputedStyle.getBorderWidth(el, 'border' + sizeOffsets[0] + 'Width', 1);
                 }
 
-                value = actual;
-                if (re_size.test(prop)) { // account for box model diff 
-                    el.style[prop] = actual;
-                    if (el[offset] > actual) {
-                        // the difference is padding + border (works in Standards & Quirks modes)
-                        value = actual - (el[offset] - actual);
-                    }
-                    el.style[prop] = AUTO; // revert to auto
+                if (sizeOffsets[1]) {
+                    value -= ComputedStyle.getPixel(el, 'padding' + sizeOffsets[1]);
+                    value -= ComputedStyle.getBorderWidth(el, 'border' + sizeOffsets[1] + 'Width', 1);
                 }
-            } else { // convert units to px
-                if (current.indexOf('%') > -1) { // IE pixelWidth incorrect for percent; manually compute 
-                    current = el.clientWidth - // offsetWidth - borderWidth
-                            ComputedStyle.getPixel(el, 'paddingRight') -
-                            ComputedStyle.getPixel(el, 'paddingLeft');
-                }
-                if (!el.style[pixel] && !el.style[prop]) { // need to map style.width to currentStyle (no currentStyle.pixelWidth)
-                    el.style[prop] = current;              // no style.pixelWidth if no style.width
+
+            } else { // use style.pixelWidth, etc. to convert to pixels
+                // need to map style.width to currentStyle (no currentStyle.pixelWidth)
+                if (!el.style[pixel] && !el.style[prop]) {
+                    el.style[prop] = current;
                 }
                 value = el.style[pixel];
+                
             }
             return value + PX;
         },
 
-        getBorderWidth: function(el, property) {
-            // clientHeight/Width = paddingBox (e.g. offsetWidth - borderWidth)
-            // clientTop/Left = borderWidth
-            var value = null;
-            if (!el.currentStyle || !el.currentStyle[HAS_LAYOUT]) { // TODO: unset layout?
-                el.style.zoom = 1; // need layout to measure client
-            }
+        borderMap: {
+            thin: '2px', 
+            medium: '4px', 
+            thick: '6px'
+        },
 
-            switch(property) {
-                case BORDER_TOP_WIDTH:
-                    value = el[CLIENT_TOP];
-                    break;
-                case BORDER_BOTTOM_WIDTH:
-                    value = el.offsetHeight - el.clientHeight - el[CLIENT_TOP];
-                    break;
-                case BORDER_LEFT_WIDTH:
-                    value = el[CLIENT_LEFT];
-                    break;
-                case BORDER_RIGHT_WIDTH:
-                    value = el.offsetWidth - el.clientWidth - el[CLIENT_LEFT];
-                    break;
+        getBorderWidth: function(el, property, omitUnit) {
+            var unit = omitUnit ? '' : PX,
+                current = el.currentStyle[property];
+
+            if (current.indexOf(PX) < 0) { // look up keywords
+                if (ComputedStyle.borderMap[current]) {
+                    current = ComputedStyle.borderMap[current];
+                } else {
+                    Y.log('borderWidth computing not implemented', 'warn', 'dom-ie-style');
+                }
             }
-            return value + PX;
+            return (omitUnit) ? parseFloat(current) : current;
         },
 
         getPixel: function(node, att) {
@@ -1475,7 +1500,7 @@ IEComputed[WIDTH] = IEComputed[HEIGHT] = ComputedStyle.getOffset;
 
 IEComputed.color = IEComputed.backgroundColor = ComputedStyle.getColor;
 
-IEComputed[BORDER_TOP_WIDTH] = IEComputed[BORDER_RIGHT_WIDTH] =
+IEComputed[BORDER_WIDTH] = IEComputed[BORDER_TOP_WIDTH] = IEComputed[BORDER_RIGHT_WIDTH] =
         IEComputed[BORDER_BOTTOM_WIDTH] = IEComputed[BORDER_LEFT_WIDTH] =
         ComputedStyle.getBorderWidth;
 

@@ -1,6 +1,9 @@
 YUI OOP Utilities
     Provides inheritance and object modification utilities
 
+3.0.0
+  * No functional change.
+
 3.0.0beta1
 
   * bind() now adds the arguments supplied to bind before the

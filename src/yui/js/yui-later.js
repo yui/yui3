@@ -1,3 +1,8 @@
+/**
+ * Provides a setTimeout/setInterval wrapper
+ * @module yui
+ * @submodule yui-later
+ */
 (function() {
     var L = Y.Lang,
 
@@ -25,18 +30,14 @@
     later = function(when, o, fn, data, periodic) {
         when = when || 0; 
         o = o || {};
-        var m=fn, d=data, f, r;
+        var m=fn, d=Y.Array(data), f, r;
 
         if (L.isString(fn)) {
             m = o[fn];
         }
 
         if (!m) {
-            Y.error("method undefined");
-        }
-
-        if (!L.isArray(d)) {
-            d = [data];
+            Y.log("method undefined");
         }
 
         f = function() {
