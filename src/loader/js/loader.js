@@ -497,7 +497,7 @@ var NOT_FOUND = {},
                 }, 
 
                 'io-xdr': {
-                    requires: [IOBASE]
+                    requires: [IOBASE, 'datatype-xml']
                 }, 
 
                 'io-form': {
