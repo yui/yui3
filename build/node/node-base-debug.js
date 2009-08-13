@@ -552,9 +552,12 @@ Y.mix(Node.prototype, {
      * @chainable
      *
      */
-    remove: function() {
+    remove: function(destroy) {
         var node = this._node;
         node.parentNode.removeChild(node);
+        if (destroy) {
+            this.destroy(true);
+        }
         return this;
     },
 
@@ -582,7 +585,13 @@ Y.mix(Node.prototype, {
             this.purge(true);
         }
 
+        if (this.unplug) {
+            this.unplug();
+        }
+
+        this._node._yuid = null;
         this._node = null;
+        this._stateProxy = null;
     },
 
     /**
