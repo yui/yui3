@@ -580,7 +580,7 @@ var NOT_FOUND = {},
         },
 
         widget: {
-            requires: ['attribute', BASE, NODE, 'classnamemanager'],
+            requires: ['attribute', 'event-focus', BASE, NODE, 'classnamemanager'],
             plugins: {
                 'widget-position': { },
                 'widget-position-ext': {
