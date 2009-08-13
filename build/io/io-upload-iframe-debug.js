@@ -77,7 +77,7 @@ YUI.add('io-upload-iframe', function(Y) {
 		// The transaction is complete, so call _destroy to remove
 		// the event listener bound to the iframe transport, and then
 		// destroy the iframe.
-		setTimeout( function() { _destroy(o.id); }, 0);
+		w.setTimeout( function() { _destroy(o.id); }, 0);
 	}
 
    /**
@@ -130,6 +130,7 @@ YUI.add('io-upload-iframe', function(Y) {
 		*/
 		_upload: function(o, uri, c) {
 			var f = (typeof c.form.id === 'string') ? document.getElementById(c.form.id) : c.form.id,
+				ie8 = (document.documentMode && document.documentMode === 8) ? true : false,
 				e, fields, i, p, attr;
 
 			_create(o, c);
@@ -144,7 +145,7 @@ YUI.add('io-upload-iframe', function(Y) {
 			f.setAttribute('action', uri);
 			f.setAttribute('method', 'POST');
 			f.setAttribute('target', 'ioupload' + o.id );
-			f.setAttribute((Y.UA.ie && !document.documentMode) ? 'encoding' : 'enctype', 'multipart/form-data');
+			f.setAttribute((Y.UA.ie && !ie8) ? 'encoding' : 'enctype', 'multipart/form-data');
 
 			if (c.data) {
 				fields = _addData(f, c.data);

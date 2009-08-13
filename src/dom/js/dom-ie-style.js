@@ -1,7 +1,5 @@
 (function(Y) {
-var CLIENT_TOP = 'clientTop',
-    CLIENT_LEFT = 'clientLeft',
-    HAS_LAYOUT = 'hasLayout',
+var HAS_LAYOUT = 'hasLayout',
     PX = 'px',
     FILTER = 'filter',
     FILTERS = 'filters',
@@ -22,7 +20,6 @@ var CLIENT_TOP = 'clientTop',
     documentElement = document.documentElement,
 
     // TODO: unit-less lineHeight (e.g. 1.22)
-    re_size = /^width|height$/,
     re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i,
 
     _getStyleObj = function(node) {

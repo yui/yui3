@@ -1,6 +1,5 @@
 (function(Y) {
-var TO_STRING = 'toString',
-    PARSE_INT = parseInt,
+var PARSE_INT = parseInt,
     RE = RegExp;
 
 Y.Color = {

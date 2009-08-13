@@ -409,7 +409,7 @@ var NOT_FOUND = {},
                     requires: ['dd-ddm-base']
                 }, 
                 'dd-drop':{
-                    requires: ['dd-ddm-drop']
+                    requires: ['dd-ddm-drop', 'event-mouseenter']
                 }, 
                 'dd-proxy':{
                     requires: [DDDRAG]

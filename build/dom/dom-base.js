@@ -17,17 +17,17 @@ YUI.add('dom-base', function(Y) {
  */
 var NODE_TYPE = 'nodeType',
     OWNER_DOCUMENT = 'ownerDocument',
-    DOCUMENT_ELEMENT = 'documentElement',
     DEFAULT_VIEW = 'defaultView',
     PARENT_WINDOW = 'parentWindow',
     TAG_NAME = 'tagName',
     PARENT_NODE = 'parentNode',
     FIRST_CHILD = 'firstChild',
-    LAST_CHILD = 'lastChild',
     PREVIOUS_SIBLING = 'previousSibling',
     NEXT_SIBLING = 'nextSibling',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
+
+    documentElement = document.documentElement,
 
     re_tag = /<([a-z]+)/i;
 
@@ -45,13 +45,32 @@ Y.DOM = {
         return doc.getElementById(id);
     },
 
+    // @deprecated
+    children: function(node, tag) {
+        var ret = [];
+        if (node) {
+            tag = tag || '*';
+            ret = Y.Selector.query('> ' + tag, node); 
+        }
+        return ret;
+    },
+
+    // @deprecated
+    firstByTag: function(node, tag) {
+        ret = null;
+        if (node) {
+            tag = tag || '*';
+            ret = Y.Selector.query(tag, node, true); 
+        }
+    },
+
     /**
      * Returns the text content of the HTMLElement. 
      * @method getText         
      * @param {HTMLElement} element The html element. 
      * @return {String} The text content of the element (includes text of any descending elements).
      */
-    getText: (document.documentElement.textContent !== undefined) ?
+    getText: (documentElement.textContent !== undefined) ?
         function(element) {
             var ret = '';
             if (element) {
@@ -72,7 +91,7 @@ Y.DOM = {
      * @param {HTMLElement} element The html element. 
      * @param {String} content The content to add. 
      */
-    setText: (document.documentElement.textContent !== undefined) ?
+    setText: (documentElement.textContent !== undefined) ?
         function(element, content) {
             if (element) {
                 element.textContent = content;
@@ -82,116 +101,6 @@ Y.DOM = {
                 element.innerText = content;
             }
         },
-
-// TODO: pull out sugar (rely on _childBy, byAxis, etc)?
-    /*
-     * Finds the firstChild of the given HTMLElement. 
-     * @method firstChild
-     * @deprecated Use _childBy
-     * @param {HTMLElement} element The html element. 
-     * @param {Function} fn optional An optional boolean test to apply.
-     * The optional function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, the first found is returned.
-     * @return {HTMLElement | null} The first matching child html element.
-     */
-    firstChild: function(element, fn) {
-        return Y.DOM._childBy(element, null, fn);
-    },
-
-    // @deprecated Use _childBy
-    firstChildByTag: function(element, tag, fn) {
-        return Y.DOM._childBy(element, tag, fn);
-    },
-
-    /*
-     * Finds the lastChild of the given HTMLElement.
-     * @method lastChild
-     * @deprecated Use _childBy
-     * @param {HTMLElement} element The html element.
-     * @param {String} tag The tag to search for.
-     * @param {Function} fn optional An optional boolean test to apply.
-     * The optional function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, the first found is returned.
-     * @return {HTMLElement | null} The first matching child html element.
-     */
-    lastChild: function(element, fn) {
-        return Y.DOM._childBy(element, null, fn, true);
-    },
-
-    // @deprecated Use _childBy
-    lastChildByTag: function(element, tag, fn) {
-        return Y.DOM._childBy(element, tag, fn, true);
-    },
-
-    /*
-     * Finds all HTMLElement childNodes matching the given tag.
-     * @method childrenByTag
-     * @deprecated Use Selector
-     * @param {HTMLElement} element The html element.
-     * @param {String} tag The tag to search for.
-     * @param {Function} fn optional An optional boolean test to apply.
-     * The optional function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, all children with the given tag are collected.
-     * @return {Array} The collection of child elements.
-     * TODO: Webkit children.tags() returns grandchildren
-     */
-    _childrenByTag: function() {
-        if (document[DOCUMENT_ELEMENT].children) {
-            return function(element, tag, fn, toArray) { // TODO: keep toArray option?
-                tag = (tag && tag !== '*') ? tag.toUpperCase() : null;
-                var elements = [],
-                    wrapFn = fn;
-                if (element) {
-                    if (tag && !Y.UA.webkit) { // children.tags() broken in safari
-                        elements = element.children.tags(tag);
-                    } else {
-                        elements = element.children;
-                        if (tag) {
-                            wrapFn = function(el) {
-                                return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
-                            };
-                        }
-                    }
-
-                    elements = Y.DOM.filterElementsBy(elements, wrapFn);
-                }
-
-                return elements;
-            };
-        } else {
-            return function(element, tag, fn) {
-                tag = (tag && tag !== '*') ? tag.toUpperCase() : null;
-                var elements = [],
-                    wrapFn = fn;
-
-                if (element) {
-                    elements = element.childNodes; 
-                    if (tag) { // wrap fn and add tag test TODO: allow tag in filterElementsBy?
-                        wrapFn = function(el) {
-                            return el[TAG_NAME].toUpperCase() === tag && (!fn || fn(el));
-                        };
-                    }
-
-                    elements = Y.DOM.filterElementsBy(elements, wrapFn);
-                }
-                return elements;
-            };
-        }
-    }(),
-
-    /*
-     * Finds all HTMLElement childNodes.
-     * @method children
-     * @deprecated Use Selector
-     * @param {HTMLElement} element The html element.
-     * @param {Function} fn optional An optional boolean test to apply.
-     * The optional function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, all children are collected.
-     * @return {Array} The collection of child elements.
-     */
-    children: function(element, fn) {
-        return Y.DOM._childrenByTag(element, null, fn);
-    },
 
     /*
      * Finds the previous sibling of the element.
@@ -259,85 +168,6 @@ Y.DOM = {
         return null;
     },
 
-    /*
-     * Finds all elements with the given tag.
-     * @method byTag
-     * @deprecated Use Selector
-     * @param {String} tag The tag being search for. 
-     * @param {HTMLElement} root optional An optional root element to start from.
-     * @param {Function} fn optional An optional boolean test to apply.
-     * The optional function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, all elements with the given tag are returned.
-     * @return {Array} The collection of matching elements.
-     */
-    byTag: function(tag, root, fn) {
-        root = root || Y.config.doc;
-
-        var elements = root.getElementsByTagName(tag),
-            retNodes = [],
-            i, len;
-
-        for (i = 0, len = elements.length; i < len; ++i) {
-            if ( !fn || fn(elements[i]) ) {
-                retNodes[retNodes.length] = elements[i];
-            }
-        }
-        return retNodes;
-    },
-
-    /*
-     * Finds the first element with the given tag.
-     * @method firstByTag
-     * @deprecated Use Selector
-     * @param {String} tag The tag being search for. 
-     * @param {HTMLElement} root optional An optional root element to start from.
-     * @param {Function} fn optional An optional boolean test to apply.
-     * The optional function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, the first match is returned. 
-     * @return {HTMLElement} The matching element.
-     */
-    firstByTag: function(tag, root, fn) {
-        root = root || Y.config.doc;
-
-        var elements = root.getElementsByTagName(tag),
-            ret = null,
-            i, len;
-
-        for (i = 0, len = elements.length; i < len; ++i) {
-            if ( !fn || fn(elements[i]) ) {
-                ret = elements[i];
-                break;
-            }
-        }
-        return ret;
-    },
-
-    /*
-     * Filters a collection of HTMLElements by the given attributes.
-     * @method filterElementsBy
-     * @param {Array} elements The collection of HTMLElements to filter.
-     * @param {Function} fn A boolean test to apply.
-     * The function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, all HTMLElements are kept.
-     * @return {Array} The filtered collection of HTMLElements.
-     */
-    filterElementsBy: function(elements, fn, firstOnly) {
-        var ret = (firstOnly) ? null : [],
-            i, len;
-        for (i = 0, len = elements.length; i < len; ++i) {
-            if (elements[i][TAG_NAME] && (!fn || fn(elements[i]))) {
-                if (firstOnly) {
-                    ret = elements[i];
-                    break;
-                } else {
-                    ret[ret.length] = elements[i];
-                }
-            }
-        }
-
-        return ret;
-    },
-
     /**
      * Determines whether or not one HTMLElement is or contains another HTMLElement.
      * @method contains
@@ -380,49 +210,6 @@ Y.DOM = {
         }
 
         return !! (doc.getElementById(id));
-    },
-
-    /**
-     * Inserts the new node as the previous sibling of the reference node 
-     * @method insertBefore
-     * @param {String | HTMLElement} newNode The node to be inserted
-     * @param {String | HTMLElement} referenceNode The node to insert the new node before 
-     * @return {HTMLElement} The node that was inserted (or null if insert fails) 
-     */
-    insertBefore: function(newNode, referenceNode) {
-        var ret = null,
-            parent;
-        if (newNode && referenceNode && (parent = referenceNode.parentNode)) { // NOTE: assignment
-            if (typeof newNode === 'string') {
-                newNode = Y.DOM.create(newNode);
-            }
-            ret = parent.insertBefore(newNode, referenceNode);
-        } else {
-        }
-        return ret;
-    },
-
-    /**
-     * Inserts the new node as the next sibling of the reference node 
-     * @method insertAfter
-     * @param {String | HTMLElement} newNode The node to be inserted
-     * @param {String | HTMLElement} referenceNode The node to insert the new node after 
-     * @return {HTMLElement} The node that was inserted (or null if insert fails) 
-     */
-    insertAfter: function(newNode, referenceNode) {
-        if (!newNode || !referenceNode || !referenceNode[PARENT_NODE]) {
-            return null;
-        }       
-
-        if (typeof newNode === 'string') {
-            newNode = Y.DOM.create(newNode);
-        }
-
-        if (referenceNode[NEXT_SIBLING]) {
-            return referenceNode[PARENT_NODE].insertBefore(newNode, referenceNode[NEXT_SIBLING]); 
-        } else {
-            return referenceNode[PARENT_NODE].appendChild(newNode);
-        }
     },
 
     /**
@@ -487,7 +274,7 @@ Y.DOM = {
     },
 
 
-    CUSTOM_ATTRIBUTES: (!document.documentElement.hasAttribute) ? { // IE < 8
+    CUSTOM_ATTRIBUTES: (!documentElement.hasAttribute) ? { // IE < 8
         'for': 'htmlFor',
         'class': 'className'
     } : { // w3c
@@ -531,17 +318,6 @@ Y.DOM = {
         return ret;
     },
 
-    // @deprecated
-    srcIndex: (document.documentElement.sourceIndex) ?
-        function(node) {
-            return (node && node.sourceIndex) ? node.sourceIndex : null;
-        } :
-        function(node) {
-            return (node && node[OWNER_DOCUMENT]) ? 
-                    [].indexOf.call(node[OWNER_DOCUMENT].
-                            getElementsByTagName('*'), node) : null;
-        },
-
     isWindow: function(obj) {
         return obj.alert && obj.document;
     },
@@ -583,7 +359,8 @@ Y.DOM = {
             content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
         }
 
-        var newNode = Y.DOM._cloneCache[content];
+        var newNode = Y.DOM._cloneCache[content],
+            nodeParent = node.parentNode;
             
         if (newNode) {
             newNode = newNode.cloneNode(true);
@@ -608,13 +385,13 @@ Y.DOM = {
                         node.appendChild(newNode);
                         break;
                     case 'before':
-                        node.parentNode.insertBefore(newNode, node);
+                        nodeParent.insertBefore(newNode, node);
                         break;
                     case 'after':
                         if (node.nextSibling) { // IE errors if refNode is null
-                            node.parentNode.insertBefore(newNode, node.nextSibling);
+                            nodeParent.insertBefore(newNode, node.nextSibling);
                         } else {
-                            node.parentNode.appendChild(newNode);
+                            nodeParent.appendChild(newNode);
                         }
                         break;
                     default:
@@ -659,52 +436,6 @@ Y.DOM = {
                 setter(node, val);
             } else {
                 node.value = val;
-            }
-        }
-    },
-
-    _stripScripts: function(node) {
-        var scripts = node.getElementsByTagName('script'),
-            i, script;
-
-        for (i = 0, script; script = scripts[i++];) {
-            script.parentNode.removeChild(script);
-        }
-    },
-
-    _execScripts: function(scripts, startIndex) {
-        var newScript,
-            i, script;
-
-        startIndex = startIndex || 0;
-
-        for (i = startIndex, script; script = scripts[i++];) {
-            newScript = script.ownerDocument.createElement('script');
-            script.parentNode.replaceChild(newScript, script);
-            if (script.text) {
-                newScript.text = script.text;
-            } else if (script.src) {
-                newScript.src = script.src;
-
-                 // "pause" while loading to ensure exec order 
-                // FF reports typeof onload as "undefined", so try IE first
-                if (typeof newScript.onreadystatechange !== 'undefined') {
-                    newScript.onreadystatechange = function() {
-                        if (/loaded|complete/.test(script.readyState)) {
-                            event.srcElement.onreadystatechange = null; 
-                            // timer to help ensure exec order
-                            setTimeout(function() {
-                                Y.DOM._execScripts(scripts, i++);
-                            }, 0);
-                        }
-                    };
-                } else {
-                    newScript.onload = function(e) {
-                        e.target.onload = null; 
-                        Y.DOM._execScripts(scripts, i++);
-                    };
-                }
-                return; // NOTE: early return to chain async loading
             }
         }
     },
@@ -775,30 +506,6 @@ Y.DOM = {
         return doc[DEFAULT_VIEW] || doc[PARENT_WINDOW] || Y.config.win;
     },
 
-    // @deprecated, use Selector 
-    _childBy: function(element, tag, fn, rev) {
-        var ret = null,
-            root, axis;
-
-        if (element) {
-            if (rev) {
-                root = element[LAST_CHILD];
-                axis = PREVIOUS_SIBLING;
-            } else {
-                root = element[FIRST_CHILD];
-                axis = NEXT_SIBLING;
-            }
-
-            if (Y.DOM._testElement(root, tag, fn)) { // is the matching element
-                ret = root;
-            } else { // need to scan nextSibling axis of firstChild to find matching element
-                ret = Y.DOM.elementByAxis(root, axis, fn);
-            }
-        }
-        return ret;
-
-    },
-
     _batch: function(nodes, fn, arg1, arg2, arg3, etc) {
         fn = (typeof name === 'string') ? Y.DOM[fn] : fn;
         var result,
@@ -838,30 +545,6 @@ Y.DOM = {
 
         TABLE_OPEN = '<table>',
         TABLE_CLOSE = '</table>';
-
-    if (Y.UA.gecko || Y.UA.ie) { // require custom creation code for certain element types
-        Y.mix(creators, {
-            option: function(html, doc) {
-                return create('<select>' + html + '</select>', doc);
-            },
-
-            tr: function(html, doc) {
-                return create('<tbody>' + html + '</tbody>', doc);
-            },
-
-            td: function(html, doc) {
-                return create('<tr>' + html + '</tr>', doc);
-            }, 
-
-            tbody: function(html, doc) {
-                return create(TABLE_OPEN + html + TABLE_CLOSE, doc);
-            },
-
-            legend: 'fieldset'
-        });
-
-        creators.col = creators.tbody; // IE wraps in colgroup
-    }
 
     if (Y.UA.ie) {
         Y.mix(creators, {
@@ -909,13 +592,32 @@ Y.DOM = {
 
     if (Y.UA.gecko || Y.UA.ie) {
         Y.mix(creators, {
-                th: creators.td,
-                thead: creators.tbody,
-                tfoot: creators.tbody,
-                caption: creators.tbody,
-                colgroup: creators.tbody,
-                col: creators.tbody,
-                optgroup: creators.option
+            option: function(html, doc) {
+                return create('<select>' + html + '</select>', doc);
+            },
+
+            tr: function(html, doc) {
+                return create('<tbody>' + html + '</tbody>', doc);
+            },
+
+            td: function(html, doc) {
+                return create('<tr>' + html + '</tr>', doc);
+            }, 
+
+            tbody: function(html, doc) {
+                return create(TABLE_OPEN + html + TABLE_CLOSE, doc);
+            }
+        });
+
+        Y.mix(creators, {
+            legend: 'fieldset',
+            th: creators.td,
+            thead: creators.tbody,
+            tfoot: creators.tbody,
+            caption: creators.tbody,
+            colgroup: creators.tbody,
+            col: creators.tbody,
+            optgroup: creators.option
         });
     }
 
@@ -942,6 +644,8 @@ Y.DOM = {
 })(Y);
 
 })(Y);
+var addClass, hasClass, removeClass;
+
 Y.mix(Y.DOM, {
     /**
      * Determines whether a DOM element has the given className.
@@ -974,12 +678,12 @@ Y.mix(Y.DOM, {
      * @param {String} className the class name to remove from the class attribute
      */
     removeClass: function(node, className) {
-        if (className && Y.DOM.hasClass(node, className)) {
+        if (className && hasClass(node, className)) {
             node.className = Y.Lang.trim(node.className.replace(Y.DOM._getRegExp('(?:^|\\s+)' +
                             className + '(?:\\s+|$)'), ' '));
 
-            if ( Y.DOM.hasClass(node, className) ) { // in case of multiple adjacent
-                Y.DOM.removeClass(node, className);
+            if ( hasClass(node, className) ) { // in case of multiple adjacent
+                removeClass(node, className);
             }
         }                 
     },
@@ -993,8 +697,8 @@ Y.mix(Y.DOM, {
      * @param {String} newClassName the class name that will be replacing the old class name
      */
     replaceClass: function(node, oldC, newC) {
-        Y.DOM.addClass(node, newC);
-        Y.DOM.removeClass(node, oldC);
+        addClass(node, newC);
+        removeClass(node, oldC);
     },
 
     /**
@@ -1004,13 +708,17 @@ Y.mix(Y.DOM, {
      * @param {String} className the class name to be toggled
      */
     toggleClass: function(node, className) {
-        if (Y.DOM.hasClass(node, className)) {
-            Y.DOM.removeClass(node, className);
+        if (hasClass(node, className)) {
+            removeClass(node, className);
         } else {
-            Y.DOM.addClass(node, className);
+            addClass(node, className);
         }
     }
 });
+
+hasClass = Y.DOM.hasClass;
+removeClass = Y.DOM.removeClass;
+addClass = Y.DOM.addClass;
 
 
 

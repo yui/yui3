@@ -63,7 +63,6 @@ package com.yui.util
 			addListeners(loader, timer);
 			loader.load(request);
 			ioStart(d);
-
 			if (timer) {
 				timer.start();
 			}
@@ -72,7 +71,6 @@ package com.yui.util
 		private function defineListeners(d:Object, timer:Timer):void {
 			httpComplete = function(e:Event):void { ioSuccess(e, d, timer); };
 			httpError = function(e:IOErrorEvent):void { ioFailure(e, d, timer); };
-
 			if (timer) {
 				httpTimeout = function(e:TimerEvent):void { ioTimeout(e, d); };
 			}
@@ -81,7 +79,6 @@ package com.yui.util
 		private function addListeners(loader:IEventDispatcher, timer:IEventDispatcher):void  {
 			loader.addEventListener(Event.COMPLETE, httpComplete);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, httpError);
-
 			if (timer) {
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, httpTimeout);
 			}
@@ -90,77 +87,80 @@ package com.yui.util
 		private function removeListeners(id:uint):void  {
 			loaderMap[id].c.removeEventListener(Event.COMPLETE, httpComplete);
 			loaderMap[id].c.removeEventListener(IOErrorEvent.IO_ERROR, httpError);
-
 			if (loaderMap[id].t) {
 				loaderMap[id].t.removeEventListener(TimerEvent.TIMER_COMPLETE, httpTimeout);
 			}
 		}
 
 		private function ioStart(d:Object):void {
-			var a:Array = [d.id, d.cfg];
+			var a:Array = [{ id: d.id }, d.cfg, 'start'];
 
 			loaderMap[d.id].readyState = 2;
-			ExternalInterface.call('YUI.applyTo', yId, 'io.start', a);
+			dispatch(a);
+			trace('start');
 		}
 
 		private function ioSuccess(e:Event, d:Object, timer:Timer):void {
-			var data:String = encodeURI(e.target.data),
-				response:Object = { id: d.id, c: { responseText: data } },
-				a:Array = [response, d.cfg];
+			var response:Object = { id: d.id, c: { responseText: encodeURI(e.target.data) } },
+				a:Array = [response, d.cfg, 'success'];
 
 			loaderMap[d.id].readyState = 4;
-
 			if (timer && timer.running) {
 				timer.stop();
 			}
 
-			ExternalInterface.call('YUI.applyTo', yId, 'io.success', a);
+			dispatch(a);
+			trace('success');
 			destroy(d.id);
 		}
 
 		private function ioFailure(e:Event, d:Object, timer:Timer):void {
-			var data:String,
-				response:Object = { id: d.id, c: {} },
-				a:Array = [response, d.cfg];
+			var	response:Object = { id: d.id },
+				s:String = 'failure',
+				a:Array;
 
 			if (e is IOErrorEvent) {
-				response.c.responseText = encodeURI(e.target.data);
+				response.c = { responseText: encodeURI(e.target.data) };
 			}
 			else if (e is TimerEvent) {
-				response.status = 'timeout';
+				s = 'timeout';
 			}
 
 			loaderMap[d.id].readyState = 4;
-
 			if (timer && timer.running) {
 				timer.stop();
 			}
 
-			ExternalInterface.call('YUI.applyTo', yId, 'io.failure', a);
+			a = [response, d.cfg, s];
+			dispatch(a);
+			trace('failure');
 			destroy(d.id);
 		}
 
-		private function ioTimeout(e:TimerEvent, d:Object):void {
-			loaderMap[d.id].c.close();
-			ioFailure(e, d, null);
-		}
-
 		public function ioAbort(id:uint, c:Object):void {
-			var response:Object = { id: id, c: { statusText: 'abort' } },
-				a:Array = [response, c];
+			var response:Object = { id: id, status: 'abort' },
+				a:Array = [response, c, 'abort'];
 
 			loaderMap[id].c.close();
-
 			if (loaderMap[id].t && loaderMap[id].t.running) {
-				loaderMap[id].t;
+				loaderMap[id].t.stop();
 			}
 
-			ExternalInterface.call('YUI.applyTo', yId, 'io.failure', a);
+			dispatch(a);
 			destroy(id);
 		}
 
+		private function dispatch(a:Object):void {
+			ExternalInterface.call('YUI.applyTo', yId, 'io.xdrResponse', a);
+		}
+
 		public function isInProgress(id:uint):Boolean {
-			return loaderMap[id].readyState !== 4;
+			if (loaderMap[id]) {
+				return loaderMap[id].readyState !== 4;
+			}
+			else {
+				return false;
+			}
 		}
 
 		private function setRequestHeaders(request:URLRequest, headers:Object):void {
@@ -173,6 +173,11 @@ package com.yui.util
  			}
 		}
 
+		private function ioTimeout(e:TimerEvent, d:Object):void {
+			loaderMap[d.id].c.close();
+			ioFailure(e, d, null);
+		}
+
 		private function serializeData(request:URLRequest, d:Object):void {
 			var prop:String;
 			request.data = new URLVariables();
@@ -180,7 +185,6 @@ package com.yui.util
 			for (prop in d) {
 				request.data[prop] = d[prop];
 			}
-
 		}
 
 		private function destroy(id:uint):void {
