@@ -196,10 +196,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
 
             var firstChild = Y.get('body :first-child');
             Y.get('body').insertBefore(Y.Node.create('<div>foo</div>'), firstChild);
-            Assert.isFalse(Y.Node.getDOMNode(firstChild) === Y.Node.getDOMNode(Y.get('body :first-child')), "wrong node: Y.get('body :first-child')");
+            Assert.isFalse(firstChild._node === Y.get('body :first-child')._node, "wrong node: Y.get('body :first-child')");
 
             Y.get('body').removeChild(Y.get('body :first-child'));
-            Assert.areEqual(Y.Selector.query('body :firstChild', null, true), Y.Node.getDOMNode(Y.get('body : first-child')), "body :first-child === #test-append");
+            Assert.areEqual(Y.Selector.query('body :first-child', null, true), Y.get('body :first-child')._node, "body :first-child === #test-append");
 
             // return more than 1
             ArrayAssert.itemsAreEqual($('#test-select option'), Y.NodeList.getDOMNodes(Y.all('#test-select option')), 'Y.get("#test-select option")');

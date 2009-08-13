@@ -2374,7 +2374,7 @@ var PARENT_NODE = 'parentNode',
     SelectorCSS2 = {
         SORT_RESULTS: true,
         _children: function(node) {
-            var ret = node.children,
+            var ret = node.children || node._children,
                 i, n;
 
             if (!ret && node[TAG_NAME]) { // only HTMLElements have children
@@ -2384,8 +2384,8 @@ var PARENT_NODE = 'parentNode',
                         ret[ret.length] = n;
                     }
                 }
-                node.children = ret;
-                g_childCache.push(ret);
+                node._children = ret;
+                g_childCache.push(node);
             }
 
             return ret || [];
@@ -2459,15 +2459,18 @@ var PARENT_NODE = 'parentNode',
 
         // TODO: make extensible? events?
         _cleanup: function() {
-            for (var i = 0, node; node = g_idCache[i++];) {
+            for (var i = 0, node; node = g_childCache[i++];) {
+                delete node._children;
+            }
+        /*
+            for (i = 0, node; node = g_idCache[i++];) {
                 node.removeAttribute('id');
             }
+        */
 
-            for (i = 0, node; node = g_childCache[i++];) {
-                delete node.children;
-            }
-            g_idCache = [];
-            g_passCache = {};
+            g_childCache = [];
+            //g_passCache = {};
+            //g_idCache = [];
         },
 
         _query: function(selector, root, firstOnly, deDupe) {
@@ -2507,7 +2510,7 @@ var PARENT_NODE = 'parentNode',
                 }
 
                 // if we have an initial ID, set to root when in document
-                if (rootDoc === root &&  
+                if (tokens[0] && rootDoc === root &&  
                         (id = tokens[0].id) &&
                         rootDoc.getElementById(id)) {
                     root = rootDoc.getElementById(id);
@@ -2718,10 +2721,10 @@ var PARENT_NODE = 'parentNode',
                 name: PSEUDOS,
                 re: /^:([\-\w]+)(?:\(['"]?(.+)['"]?\))*/i,
                 fn: function(match, token) {
-                    return [ // reorder match array
-                        match[2],
-                        Selector[PSEUDOS][match[1]]
-                    ];
+                    var test = Selector[PSEUDOS][match[1]];
+                    if (test) { // reorder match array
+                        return [match[2], test];
+                    }
                 }
             }
             ],
