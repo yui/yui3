@@ -1343,12 +1343,6 @@ Node.importMethod(Y.DOM, [
     'getAttribute'
 ]);
 
-if (!document.documentElement.hasAttribute) { // IE < 8
-    Y.Node.prototype.hasAttribute = function(attr) {
-        return Y.DOM.getAttribute(Y.Node.getDOMNode(this), attr) !== '';
-    };
-}
-
 /**
  * Allows setting attributes on DOM nodes, normalizing in some cases.
  * This passes through to the DOM node, allowing for custom attributes.
@@ -1483,6 +1477,27 @@ Y.Node.prototype.delegate = function(type, fn, selector, context) {
     a = a.concat(args);
 
     return Y.delegate.apply(Y, a);
+};
+
+if (!document.documentElement.hasAttribute) { // IE < 8
+    Y.Node.prototype.hasAttribute = function(attr) {
+        return Y.DOM.getAttribute(this._node, attr) !== '';
+    };
+}
+
+// IE throws error when setting input.type = 'hidden',
+// input.setAttribute('type', 'hidden') and input.attributes.type.value = 'hidden'
+Y.Node.ATTRS.type = {
+    setter: function(val) {
+        if (val === 'hidden') {
+            try {
+                this._node.type = 'hidden';
+            } catch(e) {
+                this._node.style.display = 'none';
+            }
+        }
+        return val;
+    }
 };
 
 
