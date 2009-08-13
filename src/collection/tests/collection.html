@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<title>Collection Unit Tests</title>	
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Collection Unit Tests</title>    
   <link type="text/css" rel="stylesheet" href="../../../build/cssfonts/fonts-min.css" />
   <script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
 </head>
@@ -171,13 +171,14 @@
           
             testPartition: function () {
                 var data = this.data;
+                console.log(data);
                 var results = A.partition(data, function (item) {
                     return item % 2 == 0;
                 });
                 Assert.isArray(results.matches);
-                ArrayAssert.itemsAreEqual([2, 4], results);
+                ArrayAssert.itemsAreEqual([2, 4], results.matches);
                 Assert.isArray(results.rejects);
-                ArrayAssert.itemsAreEqual([1, 3, 5], results);
+                ArrayAssert.itemsAreEqual([1, 3, 5], results.rejects);
             },
           
             testZip: function () {
@@ -211,7 +212,8 @@
             testUniqueWithSort: function() {
                 var data = [2, 1, 2, 3, 5, 4, 4];
                 var expect = [1, 2, 3, 4, 5];
-                var actual = A.unique(data);
+                var actual = A.unique(data, true);
+                console.log(actual);
                 Assert.areEqual(expect.length, actual.length);
                 for (var i = 0 ; i < expect.length ; i += 1) {
                     Assert.areEqual(expect[i], actual[i]);
@@ -229,7 +231,7 @@
             }
         }); 
           
-        // var r = new Y.Console({ verbose: true, newestOnTop: false });
+        var r = new Y.Console({ verbose: true, newestOnTop: false });
         r.render('#logger');
         TestRunner.add(method_test); 
         TestRunner.run();
