@@ -213,7 +213,6 @@
                 var data = [2, 1, 2, 3, 5, 4, 4];
                 var expect = [1, 2, 3, 4, 5];
                 var actual = A.unique(data, true);
-                console.log(actual);
                 Assert.areEqual(expect.length, actual.length);
                 for (var i = 0 ; i < expect.length ; i += 1) {
                     Assert.areEqual(expect[i], actual[i]);
