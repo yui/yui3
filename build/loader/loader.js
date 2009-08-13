@@ -662,15 +662,7 @@ Y.Loader = function(o) {
      * @property _internalCallback
      * @private
      */
-    this._internalCallback = null;
-
-    /**
-     * Use the YUI environment listener to detect script load.  This
-     * is only switched on for Safari 2.x and below.
-     * @property _useYahooListener
-     * @private
-     */
-    this._useYahooListener = false;
+    // this._internalCallback = null;
 
     /**
      * Callback that will be executed when the loader is finished
@@ -678,14 +670,14 @@ Y.Loader = function(o) {
      * @method onSuccess
      * @type function
      */
-    this.onSuccess = null;
+    // this.onSuccess = null;
 
     /**
      * Callback that will be executed if there is a failure
      * @method onFailure
      * @type function
      */
-    this.onFailure = null;
+    // this.onFailure = null;
 
     /**
      * Callback for the 'CSSComplete' event.  When loading YUI components with CSS
@@ -694,21 +686,21 @@ Y.Loader = function(o) {
      * @method onCSS
      * @type function
      */
-    this.onCSS = null;
+    // this.onCSS = null;
 
     /**
      * Callback executed each time a script or css file is loaded
      * @method onProgress
      * @type function
      */
-    this.onProgress = null;
+    // this.onProgress = null;
 
     /**
      * Callback that will be executed if a timeout occurs
      * @method onTimeout
      * @type function
      */
-    this.onTimeout = null;
+    // this.onTimeout = null;
 
     /**
      * The execution context for all callbacks
@@ -721,14 +713,14 @@ Y.Loader = function(o) {
      * Data that is passed to all callbacks
      * @property data
      */
-    this.data = null;
+    // this.data = null;
 
     /**
      * Node reference or id where new nodes should be inserted before
      * @property insertBefore
      * @type string|HTMLElement
      */
-    this.insertBefore = null;
+    // this.insertBefore = null;
 
     /**
      * The charset attribute for inserted nodes
@@ -736,21 +728,21 @@ Y.Loader = function(o) {
      * @type string
      * @deprecated, use cssAttributes or jsAttributes
      */
-    this.charset = null;
+    // this.charset = null;
 
     /**
      * An object literal containing attributes to add to link nodes
      * @property cssAttributes
      * @type object
      */
-    this.cssAttributes = null;
+    // this.cssAttributes = null;
 
     /**
      * An object literal containing attributes to add to script nodes
      * @property jsAttributes
      * @type object
      */
-    this.jsAttributes = null;
+    // this.jsAttributes = null;
 
     /**
      * The base directory.
@@ -782,7 +774,7 @@ Y.Loader = function(o) {
      * @property ignoreRegistered
      * @default false
      */
-    this.ignoreRegistered = false;
+    // this.ignoreRegistered = false;
 
     /**
      * Root path to prepend to module path for the combo
@@ -808,7 +800,7 @@ Y.Loader = function(o) {
      * @property ignore
      * @type string[]
      */
-    this.ignore = null;
+    // this.ignore = null;
 
     /**
      * A list of modules that should always be loaded, even
@@ -816,7 +808,7 @@ Y.Loader = function(o) {
      * @property force
      * @type string[]
      */
-    this.force = null;
+    // this.force = null;
 
     this.forceMap = {};
 
@@ -826,7 +818,7 @@ Y.Loader = function(o) {
      * @type boolean
      * @default true
      */
-    this.allowRollup = true;
+    // this.allowRollup = true;
 
     /**
      * A filter to apply to result urls.  This filter will modify the default
@@ -852,7 +844,7 @@ Y.Loader = function(o) {
      * @property filter
      * @type string|{searchExp: string, replaceStr: string}
      */
-    this.filter = null;
+    // this.filter = null;
 
     /**
      * per-component filter specification.  If specified for a given component, this 
@@ -936,7 +928,7 @@ Y.Loader = function(o) {
      * List of rollup files found in the library metadata
      * @property rollups
      */
-    this.rollups = null;
+    // this.rollups = null;
 
     /**
      * Whether or not to load optional dependencies for 
@@ -945,7 +937,7 @@ Y.Loader = function(o) {
      * @type boolean
      * @default false
      */
-    this.loadOptional = false;
+    // this.loadOptional = false;
 
     /**
      * All of the derived dependencies in sorted order, which
@@ -971,7 +963,7 @@ Y.Loader = function(o) {
      * If not supplied, the sorted list of dependencies are applied.
      * @property attaching
      */
-    this.attaching = null;
+    // this.attaching = null;
 
     /**
      * Flag to indicate the dependency tree needs to be recomputed
