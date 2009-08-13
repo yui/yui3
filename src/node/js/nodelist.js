@@ -42,21 +42,18 @@ Y.Array.diff = function(a, b) {
 };
 
 var NodeList = function(config) {
-    var doc = config.doc || Y.config.doc,
-        nodes = config.nodes || [];
+    var nodes = config.nodes || [],
+        doc = config.doc || Y.config.doc;
 
     if (typeof nodes === 'string') {
         this._query = nodes;
         nodes = Y.Selector.query(nodes, doc);
+    } else if (nodes.item) { // Live NodeList, copy to static Array
+        nodes = Y.Array(nodes, 0, true);
     }
 
-    Y.stamp(this);
-    NodeList._instances[this[UID]] = this;
-    g_nodelists[this[UID]] = nodes;
-
-    if (config.restricted) {
-        g_restrict = this[UID];
-    }
+    NodeList._instances[Y.stamp(this)] = this;
+    this._nodes = nodes;
 };
 // end "globals"
 
@@ -71,13 +68,13 @@ NodeList.NAME = 'NodeList';
  * @return {Array} The array of DOM nodes bound to the NodeList
  */
 NodeList.getDOMNodes = function(nodeList) {
-    return g_nodelists[nodeList[UID]];
+    return nodeList._nodes;
 };
 
 NodeList._instances = [];
 
 NodeList.each = function(instance, fn, context) {
-    var nodes = g_nodelists[instance[UID]];
+    var nodes = instance._nodes;
     if (nodes && nodes.length) {
         Y.Array.each(nodes, fn, context || instance);
     } else {
@@ -86,21 +83,19 @@ NodeList.each = function(instance, fn, context) {
 };
 
 NodeList.addMethod = function(name, fn, context) {
-    var tmp = NodeList._getTempNode();
     if (name && fn) {
         NodeList.prototype[name] = function() {
             var ret = [],
                 args = arguments;
 
-            Y.Array.each(g_nodelists[this[UID]], function(node) {
+            Y.Array.each(this._nodes, function(node) {
                 var UID = '_yuid',
                     instance = Y.Node._instances[node[UID]],
                     ctx,
                     result;
 
                 if (!instance) {
-                    g_nodes[tmp[UID]] = node;
-                    instance = tmp;
+                    instance = NodeList._getTempNode(node);
                 }
                 ctx = context || instance;
                 result = fn.apply(ctx, args);
@@ -128,12 +123,15 @@ NodeList.importMethod = function(host, name, altName) {
     }
 };
 
-NodeList._getTempNode = function() {
+NodeList._getTempNode = function(node) {
     var tmp = NodeList._tempNode;
-        if (!tmp) {
-            tmp = Y.Node.create('<div></div>');
-            NodeList._tempNode = tmp;
-        }
+    if (!tmp) {
+        tmp = Y.Node.create('<div></div>');
+        NodeList._tempNode = tmp;
+    }
+
+    tmp._node = node;
+    tmp._stateProxy = node;
     return tmp;
 };
 
@@ -146,7 +144,7 @@ Y.mix(NodeList.prototype, {
      * @return {Node} The Node instance at the given index.
      */
     item: function(index) {
-        return Y.get((g_nodelists[this[UID]] || [])[index]);
+        return Y.get((this._nodes || [])[index]);
     },
 
     /**
@@ -160,7 +158,7 @@ Y.mix(NodeList.prototype, {
      */
     each: function(fn, context) {
         var instance = this;
-        Y.Array.each(g_nodelists[this[UID]], function(node, index) {
+        Y.Array.each(this._nodes, function(node, index) {
             node = Y.get(node);
             return fn.call(context || node, node, index, instance);
         });
@@ -168,14 +166,12 @@ Y.mix(NodeList.prototype, {
     },
 
     batch: function(fn, context) {
-        var nodelist = this,
-            tmp = NodeList._getTempNode();
+        var nodelist = this;
 
-        Y.Array.each(g_nodelists[this[UID]], function(node, index) {
+        Y.Array.each(this._nodes, function(node, index) {
             var instance = Y.Node._instances[node[UID]];
             if (!instance) {
-                g_nodes[tmp[UID]] = node;
-                instance = tmp;
+                instance = NodeList._getTempNode(node);
             }
 
             return fn.call(context || instance, instance, index, nodelist);
@@ -194,11 +190,20 @@ Y.mix(NodeList.prototype, {
      */
     some: function(fn, context) {
         var instance = this;
-        return Y.Array.some(g_nodelists[this[UID]], function(node, index) {
+        return Y.Array.some(this._nodes, function(node, index) {
             node = Y.get(node);
             context = context || node;
             return fn.call(context, node, index, instance);
         });
+    },
+
+    /**
+     * Creates a documenFragment from the nodes bound to the NodeList instance 
+     * @method toDocFrag
+     * @return Node a Node instance bound to the documentFragment
+     */
+    toFrag: function() {
+        return Y.get(Y.DOM._nl2frag(this._nodes));
     },
 
     /**
@@ -209,7 +214,7 @@ Y.mix(NodeList.prototype, {
      * @return {Int} the index of the node value or -1 if not found
      */
     indexOf: function(node) {
-        return Y.Array.indexOf(g_nodelists[this[UID]], Y.Node.getDOMNode(node));
+        return Y.Array.indexOf(this._nodes, Y.Node.getDOMNode(node));
     },
 
     /**
@@ -220,7 +225,7 @@ Y.mix(NodeList.prototype, {
      * @see Selector
      */
     filter: function(selector) {
-        return Y.all(Y.Selector.filter(g_nodelists[this[UID]], selector));
+        return Y.all(Y.Selector.filter(this._nodes, selector));
     },
 
     modulus: function(n, r) {
@@ -262,16 +267,14 @@ Y.mix(NodeList.prototype, {
     refresh: function() {
         var doc,
             diff,
-            oldList = g_nodelists[this[UID]];
+            oldList = this._nodes;
         if (this._query) {
-            if (g_nodelists[this[UID]] &&
-                    g_nodelists[this[UID]][0] && 
-                    g_nodelists[this[UID]][0].ownerDocument) {
-                doc = g_nodelists[this[UID]][0].ownerDocument;
+            if (oldList && oldList[0] && oldList[0].ownerDocument) {
+                doc = oldList[0].ownerDocument;
             }
 
-            g_nodelists[this[UID]] = Y.Selector.query(this._query, doc || Y.config.doc);        
-            diff = Y.Array.diff(oldList, g_nodelists[this[UID]]); 
+            this._nodes = Y.Selector.query(this._query, doc || Y.config.doc);        
+            diff = Y.Array.diff(oldList, this._nodes); 
             diff.added = diff.added ? Y.all(diff.added) : null;
             diff.removed = diff.removed ? Y.all(diff.removed) : null;
             this.fire('refresh', diff);
@@ -280,7 +283,7 @@ Y.mix(NodeList.prototype, {
     },
 
     /**
-     * Applies an event listens to each Node bound to the NodeList. 
+     * Applies an event listener to each Node bound to the NodeList. 
      * @method on
      * @param {String} type The event being listened for
      * @param {Function} fn The handler to call when the event fires
@@ -289,15 +292,16 @@ Y.mix(NodeList.prototype, {
      * @return {Object} Returns an event handle that can later be use to detach(). 
      * @see Event.on
      */
-    on: function(type, fn, context) {
-        context = context || this;
+    on: function(type, fn, context, etc) {
+        var args = Y.Array(arguments);
+        args[2] = context || this;
         this.batch(function(node) {
-            node.on.call(node, type, fn, context);
+            node.on.apply(node, args);
         });
     },
 
     /**
-     * Applies an event listens to each Node bound to the NodeList. 
+     * Applies an event listener to each Node bound to the NodeList. 
      * The handler is called only after all on() handlers are called
      * and the event is not prevented.
      * @method after
@@ -308,10 +312,11 @@ Y.mix(NodeList.prototype, {
      * @return {Object} Returns an event handle that can later be use to detach(). 
      * @see Event.on
      */
-    after: function(type, fn, context) {
-        context = context || this;
+    after: function(type, fn, context, etc) {
+        var args = Y.Array(arguments);
+        args[2] = context || this;
         this.batch(function(node) {
-            node.after.call(node, type, fn, context);
+            node.after.apply(node, args);
         });
     },
 
@@ -321,34 +326,13 @@ Y.mix(NodeList.prototype, {
      * @return {Int} The number of items in the NodeList. 
      */
     size: function() {
-        return g_nodelists[this[UID]].length;
-    },
-
-    /** Called on each Node instance
-      * @get
-      * @see Node
-      */
-    // one-off because we cant import from Node due to undefined return values
-    get: function(name) {
-        var ret = [],
-            tmp = NodeList._getTempNode();
-
-        NodeList.each(this, function(node) {
-            var instance = Y.Node._instances[node[UID]];
-            if (!instance) {
-                g_nodes[tmp[UID]] = node;
-                instance = tmp;
-            }
-            ret[ret.length] = instance.get(name);
-        });
-
-        return ret;
+        return this._nodes.length;
     },
 
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to any nodes',
-            nodes = g_nodelists[this[UID]],
+            nodes = this._nodes,
             node;
 
         if (nodes && nodes[0]) {
@@ -400,12 +384,6 @@ NodeList.importMethod(Y.Node.prototype, [
     'insert',
 
     /** Called on each Node instance
-      * @method plug
-      * @see Node.plug
-      */
-    'plug',
-
-    /** Called on each Node instance
       * @method prepend
       * @see Node.prepend
       */
@@ -427,22 +405,56 @@ NodeList.importMethod(Y.Node.prototype, [
       * @method setContent
       * @see Node.setContent
       */
-    'setContent',
-
-    /** Called on each Node instance
-      * @method unplug
-      * @see Node.unplug
-      */
-    'unplug'
+    'setContent'
 ]);
+
+// one-off implementation to convert array of Nodes to NodeList
+// e.g. Y.all('input').get('parentNode');
+
+/** Called on each Node instance
+  * @method get
+  * @see Node
+  */
+NodeList.prototype.get = function(attr) {
+    var ret = [],
+        nodes = this._nodes,
+        isNodeList = false,
+        getTemp = NodeList._getTempNode,
+        instance,
+        val;
+
+    if (nodes[0]) {
+        instance = Y.Node._instances[nodes[0]._yuid] || getTemp(nodes[0]);
+        val = instance._get(attr);
+        if (val && val.nodeType) {
+            isNodeList = true;
+        }
+    }
+
+    Y.Array.each(nodes, function(node) {
+        instance = Y.Node._instances[node._yuid];
+
+        if (!instance) {
+            instance = getTemp(node);
+        }
+
+        val = instance._get(attr);
+        if (!isNodeList) { // convert array of Nodes to NodeList
+            val = Y.Node.scrubVal(val, instance);
+        }
+
+        ret.push(val);
+    });
+
+    return (isNodeList) ? Y.all(ret) : ret;
+};
 
 Y.NodeList = NodeList;
 Y.all = function(nodes, doc, restrict) {
     // TODO: propagate restricted to nodes?
     var nodeList = new NodeList({
         nodes: nodes,
-        doc: doc,
-        restricted: restrict
+        doc: doc
     });
 
     // zero-length result returns null

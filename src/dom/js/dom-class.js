@@ -1,3 +1,5 @@
+var addClass, hasClass, removeClass;
+
 Y.mix(Y.DOM, {
     /**
      * Determines whether a DOM element has the given className.
@@ -30,12 +32,12 @@ Y.mix(Y.DOM, {
      * @param {String} className the class name to remove from the class attribute
      */
     removeClass: function(node, className) {
-        if (className && Y.DOM.hasClass(node, className)) {
+        if (className && hasClass(node, className)) {
             node.className = Y.Lang.trim(node.className.replace(Y.DOM._getRegExp('(?:^|\\s+)' +
                             className + '(?:\\s+|$)'), ' '));
 
-            if ( Y.DOM.hasClass(node, className) ) { // in case of multiple adjacent
-                Y.DOM.removeClass(node, className);
+            if ( hasClass(node, className) ) { // in case of multiple adjacent
+                removeClass(node, className);
             }
         }                 
     },
@@ -50,8 +52,8 @@ Y.mix(Y.DOM, {
      */
     replaceClass: function(node, oldC, newC) {
         //Y.log('replaceClass replacing ' + oldC + ' with ' + newC, 'info', 'Node');
-        Y.DOM.addClass(node, newC);
-        Y.DOM.removeClass(node, oldC);
+        addClass(node, newC);
+        removeClass(node, oldC);
     },
 
     /**
@@ -61,11 +63,15 @@ Y.mix(Y.DOM, {
      * @param {String} className the class name to be toggled
      */
     toggleClass: function(node, className) {
-        if (Y.DOM.hasClass(node, className)) {
-            Y.DOM.removeClass(node, className);
+        if (hasClass(node, className)) {
+            removeClass(node, className);
         } else {
-            Y.DOM.addClass(node, className);
+            addClass(node, className);
         }
     }
 });
+
+hasClass = Y.DOM.hasClass;
+removeClass = Y.DOM.removeClass;
+addClass = Y.DOM.addClass;
 

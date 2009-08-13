@@ -1,0 +1,7 @@
+3.0.0
+
+* Split out of "base" as a standalone module, for use by Node.
+
+Module Name: "pluginhost"
+
+Provides the augmentable Plugin.Host class which adds plugin support to the augmented class or object.

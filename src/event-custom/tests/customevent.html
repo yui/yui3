@@ -15,7 +15,6 @@
 (function() {
     //YUI.add("selector-native", function(){});
     YUI({
-        base: "../../../build/",
         filter: "debug",
         // combine: false,
         useConsole: true,
@@ -24,16 +23,20 @@
         },
         // logInclude: ['event', 'test']
         logExclude: {
+            get: true,
             Dom: true, 
             Selector: true, 
             Node: true, 
             yui: true,
-            get: true,
-            attribute: true, base: true, event: true, widget: true},
+            attribute: true, 
+            base: true, 
+            loader: true, 
+            widget: true
+        },
 
         filters: {
             base: 'raw',
-            dom: null,
+            // dom: null,
             attribute: 'min'
         }
     }).use("dump", "test", "console", function(Y) {
@@ -52,7 +55,7 @@
         }, button);
 
 
-        var myConsole = new Y.Console().render();
+        // var myConsole = new Y.Console().render();
         Y.log('{}');
  
         var testEventTarget = new Y.Test.Case({
@@ -366,7 +369,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                     count++;
                 });
 
-                ret = b.fire('test:foo');
+                ret = b.fire('test:foo', {}, b);
 
                 Y.Assert.areEqual(1, count);
                 Y.Assert.isTrue(ret);
@@ -375,7 +378,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                     e.stopPropagation();
                 });
 
-                ret = b.fire('test:foo');
+                ret = b.fire('test:foo', {}, b);
 
                 Y.Assert.areEqual(1, count);
                 Y.Assert.isFalse(ret);
@@ -407,7 +410,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
             testDetachHandle: function() {
                 var count = 0, handle, handle2;
                 Y.publish('y:foo', {
-                    emitFacade: true,
+                    emitFacade: true
                 });
 
                 Y.on('y:foo', function(e) {
@@ -508,15 +511,15 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
         Y.Test.Runner.run();
     });
 
-    YUI({
-        base: "../../../build/",
-        filter: "debug",
-        combine: false,
-        useConsole: true,
-        logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
-    }).use("datasource", function(Y) {
-        Y.log('loaded datasource: ' + Y.DataSource);
-    });
+   //  YUI({
+   //      base: "../../../build/",
+   //      filter: "debug",
+   //      combine: false,
+   //      useConsole: true,
+   //      logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, loader: true, get: true, widget: true}
+   //  }).use("datasource", function(Y) {
+   //      Y.log('loaded datasource: ' + Y.DataSource);
+   //  });
 
 
 })();

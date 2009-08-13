@@ -345,5 +345,4 @@ Y.Easing = {
 };
 
 
-
 }, '@VERSION@' ,{requires:['anim-base']});

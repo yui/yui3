@@ -21,9 +21,9 @@ Y.Selector._getNth = function(node, expr, tag, reverse) {
         oddeven = RegExp.$3, // "odd" or "even"
         b = parseInt(RegExp.$4, 10) || 0, // start scan from element _b_
         result = [],
+        siblings = Y.Selector._children(node.parentNode, tag),
         op;
 
-    var siblings = node.parentNode.children || Y.Selector._children(node.parentNode); 
     if (oddeven) {
         a = 2; // always every other
         op = '+';
@@ -70,56 +70,57 @@ Y.mix(Y.Selector.pseudos, {
         return node === node.ownerDocument.documentElement;
     },
 
-    'nth-child': function(node, m) {
-        return Y.Selector._getNth(node, m[1]);
+    'nth-child': function(node, expr) {
+        return Y.Selector._getNth(node, expr);
     },
 
-    'nth-last-child': function(node, m) {
-        return Y.Selector._getNth(node, m[1], null, true);
+    'nth-last-child': function(node, expr) {
+        return Y.Selector._getNth(node, expr, null, true);
     },
 
-    'nth-of-type': function(node, m) {
-        return Y.Selector._getNth(node, m[1], node.tagName);
+    'nth-of-type': function(node, expr) {
+        return Y.Selector._getNth(node, expr, node.tagName);
     },
      
-    'nth-last-of-type': function(node, m) {
-        return Y.Selector._getNth(node, m[1], node.tagName, true);
+    'nth-last-of-type': function(node) {
+        return Y.Selector._getNth(node, expr, node.tagName, true);
     },
      
     'last-child': function(node) {
-        var children = node.parentNode.children || Y.Selector._children(node.parentNode);
+        var children = Y.Selector._children(node.parentNode, node.tagName);
         return children[children.length - 1] === node;
     },
 
     'first-of-type': function(node) {
-        return Y.DOM._childrenByTag(node.parentNode, node.tagName)[0];
+        return Y.Selector._children(node.parentNode, node.tagName)[0] === node;
     },
      
     'last-of-type': function(node) {
-        var children = Y.DOM._childrenByTag(node.parentNode, node.tagName);
-        return children[children.length - 1];
+        var children = Y.Selector._children(node.parentNode, node.tagName);
+        return children[children.length - 1] === node;
     },
      
     'only-child': function(node) {
-        var children = node.parentNode.children || Y.Selector._children(node.parentNode);
+        var children = Y.Selector._children(node.parentNode);
         return children.length === 1 && children[0] === node;
     },
 
     'only-of-type': function(node) {
-        return Y.DOM._childrenByTag(node.parentNode, node.tagName).length === 1;
+        var children = Y.Selector._children(node.parentNode, node.tagName);
+        return children.length === 1 && children[0] === node;
     },
 
     'empty': function(node) {
         return node.childNodes.length === 0;
     },
 
-    'not': function(node, m) {
-        return !Y.Selector.test(node, m[1]);
+    'not': function(node, expr) {
+        return !Y.Selector.test(node, expr);
     },
 
-    'contains': function(node, m) {
+    'contains': function(node, expr) {
         var text = node.innerText || node.textContent || '';
-        return text.indexOf(m[1]) > -1;
+        return text.indexOf(expr) > -1;
     },
 
     'checked': function(node) {
@@ -133,14 +134,6 @@ Y.mix(Y.Selector.operators, {
     '*=': '{val}' // Match contains value as substring 
 });
 
-Y.Selector.combinators['~'] = function(node, token) {
-    var sib = node.previousSibling;
-    while (sib) {
-        if (sib.nodeType === 1 && Y.Selector._testToken(sib, null, null, token.previous)) {
-            return true;
-        }
-        sib = sib.previousSibling;
-    }
-
-    return false;
-}
+Y.Selector.combinators['~'] = {
+    axis: 'previousSibling'
+};

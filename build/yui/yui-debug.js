@@ -1,3 +1,10 @@
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
+ */
+
 (function() {
 
     var _instances = {}, 
@@ -42,10 +49,8 @@
 // @TODO: this needs to be created at build time from module metadata
 
         _APPLY_TO_WHITE_LIST = {
-            'io.xdrReady': 1,
-            'io.start': 1,
-            'io.success': 1,
-            'io.failure': 1
+          'io.xdrReady': 1,
+          'io.xdrResponse':1
         },
 
         SLICE = Array.prototype.slice;
@@ -62,22 +67,26 @@ if (typeof YUI === 'undefined' || !YUI) {
      * @constructor
      * @global
      * @uses EventTarget
-     * @param o Optional configuration object.  This object is stored
+     * @param o* Up to five optional configuration objects.  This object is stored
      * in YUI.config.  See config for the list of supported properties.
      */
 
     /*global YUI*/
     // Make a function, disallow direct instantiation
-    YUI = function(o) {
+    YUI = function(o1, o2, o3, o4, o5) {
 
-        var Y = this;
+        var Y = this, a = arguments, i, l = a.length;
 
         // Allow instantiation without the new operator
         if (!(Y instanceof YUI)) {
-            return new YUI(o);
+            return new YUI(o1, o2, o3, o4, o5);
         } else {
             // set up the core environment
-            Y._init(o);
+            Y._init();
+
+            for (i=0; i<l; i++) {
+                Y._config(a[i]);
+            }
 
             // bind the specified additional modules for this instance
             Y._setup();
@@ -91,14 +100,36 @@ if (typeof YUI === 'undefined' || !YUI) {
 // modules to be registered and for the instance to be initialized.
 YUI.prototype = {
 
+    _config: function(o) {
+
+        o = o || {};
+
+        var c = this.config, i, j, m, mods;
+
+        mods = c.modules;
+        for (i in o) {
+            if (mods && i == 'modules') {
+                m = o[i];
+                for (j in m) {
+                    if (m.hasOwnProperty(j)) {
+                        mods[j] = m[j];
+                    }
+                }
+            } else if (i == 'win') {
+                c[i] = o[i].contentWindow || o[i];
+                c.doc = c[i].document;
+            } else {
+                c[i] = o[i];
+            }
+        }
+    },
+
     /**
      * Initialize this YUI instance
      * @param o config options
      * @private
      */
     _init: function(o) {
-
-        o = o || {};
 
         // find targeted window/frame
         // @TODO create facades
@@ -123,38 +154,6 @@ YUI.prototype = {
             _loaded: {}
         };
 
-        o.win = o.win || window || {};
-        o.win = o.win.contentWindow || o.win;
-        o.doc = o.win.document;
-        o.debug = ('debug' in o) ? o.debug : true;
-        o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
-        o.throwFail = ('throwFail' in o) ? o.throwFail : true;
-    
-        o.base = o.base || function() {
-            var b, nodes, i, match;
-
-            // get from querystring
-            nodes = document.getElementsByTagName('script');
-
-            for (i=0; i<nodes.length; i=i+1) {
-                match = nodes[i].src.match(/^(.*)yui\/yui[\.\-].*js(\?.*)?$/);
-                b = match && match[1];
-                if (b) {
-                    break;
-                }
-            }
-
-            // use CDN default
-            return b || Y.Env.cdn;
-
-        }();
-
-        o.loaderPath = o.loaderPath || 'loader/loader-min.js';
-
-        // add a reference to o for anything that needs it
-        // before _setup is called.
-        Y.config = o;
-
         Y.Env._loaded[v] = {};
 
         if (YUI.Env) {
@@ -166,7 +165,37 @@ YUI.prototype = {
 
         Y.constructor = YUI;
 
-        // this.log(this.id + ') init ');
+        // configuration defaults
+        Y.config = {
+
+            win: window || {},
+            doc: document,
+            debug: true,
+            useBrowserConsole: true,
+            throwFail: true,
+        
+            base: function() {
+                var b, nodes, i, match;
+
+                // get from querystring
+                nodes = document.getElementsByTagName('script');
+
+                for (i=0; i<nodes.length; i=i+1) {
+                    match = nodes[i].src.match(/^(.*)yui\/yui[\.\-].*js(\?.*)?$/);
+                    b = match && match[1];
+                    if (b) {
+                        break;
+                    }
+                }
+
+                // use CDN default
+                return b || this.Env.cdn;
+
+            }(),
+
+            loaderPath: 'loader/loader-min.js'
+        };
+
     },
     
     /**
@@ -177,8 +206,6 @@ YUI.prototype = {
      */
     _setup: function(o) {
         this.use("yui-base");
-        // @TODO eval the need to copy the config
-        this.config = this.merge(this.config);
     },
 
     /**
@@ -238,29 +265,17 @@ YUI.prototype = {
      *
      */
     add: function(name, fn, version, details) {
-
         // this.log('Adding a new component ' + name);
-
         // @todo expand this to include version mapping
         // @todo may want to restore the build property
         // @todo fire moduleAvailable event
         
-        // if (this.Lang.isFunction(fn)) {
-
-            YUI.Env.mods[name] = {
-                name: name, 
-                fn: fn,
-                version: version,
-                details: details || {}
-            };
-
-        // } else {
-        //     
-        //     var c = Y.config;
-        //     c.modules = c.modules || {};
-        //     c.modules[name] = c.modules[name] || fn;
-
-        // }
+        YUI.Env.mods[name] = {
+            name: name, 
+            fn: fn,
+            version: version,
+            details: details || {}
+        };
 
         return this; // chain support
     },
@@ -328,6 +343,7 @@ YUI.prototype = {
     use: function() {
 
         if (this._loading) {
+            this._useQueue = this._useQueue || new this.Queue();
             this._useQueue.add(SLICE.call(arguments, 0));
             return this;
         }
@@ -413,9 +429,9 @@ YUI.prototype = {
 
                 // process queued use requests as long until done 
                 // or dynamic load happens again.
-                this._loading = false;
-                while (this._useQueue && this._useQueue.size() && !this._loading) {
-                    Y.use.apply(Y, this._useQueue.next());
+                Y._loading = false;
+                while (Y._useQueue && Y._useQueue.size() && !Y._loading) {
+                    Y.use.apply(Y, Y._useQueue.next());
                 }
             };
 
@@ -438,10 +454,7 @@ YUI.prototype = {
                 }
             }
 
-            // Y.log('Use *: ' + a);
-
             return Y.use.apply(Y, a);
-
         }
         
         // Y.log('loader before: ' + a.join(','));
@@ -450,7 +463,6 @@ YUI.prototype = {
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
-            this._useQueue = this._useQueue || new Y.Queue();
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.ignoreRegistered = true;
@@ -474,22 +486,25 @@ YUI.prototype = {
         // dynamic load
         if (Y.Loader && missing.length) {
             Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'yui');
-            this._loading = true;
+            Y._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
             loader.onTimeout = onComplete;
+            loader.context = Y;
             loader.attaching = a;
             loader.require(missing);
             loader.insert();
         } else if (Y.Get && missing.length && !Y.Env.bootstrapped) {
-            Y.log('fetching loader: ' + Y.config.base + Y.config.loaderPath);
+            Y.log('fetching loader: ' + Y.config.base + Y.config.loaderPath, 'info', 'yui');
+            Y._loading = true;
 
             a = Y.Array(arguments, 0, true);
             // a.unshift('loader');
 
             Y.Get.script(Y.config.base + Y.config.loaderPath, {
                 onEnd: function() {
+                    Y._loading = false;
                     Y.Env.bootstrapped = true;
                     Y._attach(['loader']);
                     Y.use.apply(Y, a);
@@ -949,100 +964,85 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
-(function() {
-
-var INSTANCE = Y,
-    LOGEVENT = 'yui:log',
-    UNDEFINED = 'undefined',
-    _published;
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
+ */
 
 /**
- * If the 'debug' config is true, a 'yui:log' event will be
- * dispatched, which the Console widget and anything else
- * can consume.  If the 'useBrowserConsole' config is true, it will
- * write to the browser console if available.  YUI-specific log
- * messages will only be present in the -debug versions of the
- * JS files.  The build system is supposed to remove log statements
- * from the raw and minified versions of the files.
+ * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and
+ * removed using next().
  *
- * @method log
- * @for YUI
- * @param  {String}  msg  The message to log.
- * @param  {String}  cat  The log category for the message.  Default
- *                        categories are "info", "warn", "error", time".
- *                        Custom categories can be used as well. (opt)
- * @param  {String}  src  The source of the the message (opt)
- * @param  {boolean} silent If true, the log event won't fire
- * @return {YUI}      YUI instance
+ * @class Queue
+ * @param item* {MIXED} 0..n items to seed the queue
  */
-INSTANCE.log = function(msg, cat, src, silent) {
-    var c = Y.config, bail, excl, incl, m, f;
-    // suppress log message if the config is off or the event stack
-    // or the event call stack contains a consumer of the yui:log event
-    if (c.debug) {
-        // apply source filters
-        if (src) {
+function Queue() {
+    this._init();
+    this.add.apply(this, arguments);
+}
 
-            excl = c.logExclude; 
-            incl = c.logInclude;
+Queue.prototype = {
+    /**
+     * Initialize the queue
+     *
+     * @method _init
+     * @protected
+     */
+    _init : function () {
+        /**
+         * The collection of enqueued items
+         *
+         * @property _q
+         * @type {Array}
+         * @protected
+         */
+        this._q = [];
+    },
 
-            if (incl && !(src in incl)) {
-                bail = 1;
-            } else if (excl && (src in excl)) {
-                bail = 1;
-            }
-        }
+    /**
+     * Get the next item in the queue.
+     *
+     * @method next
+     * @return {MIXED} the next item in the queue
+     */
+    next : function () {
+        return this._q.shift();
+    },
 
-        if (!bail) {
-            if (c.useBrowserConsole) {
-                m = (src) ? src + ': ' + msg : msg;
-                if (typeof console != UNDEFINED) {
-                    f = (cat && console[cat]) ? cat : 'log';
-                    console[f](m);
-                } else if (typeof opera != UNDEFINED) {
-                    opera.postError(m);
-                }
-            }
+    /**
+     * Add 0..n items to the end of the queue
+     *
+     * @method add
+     * @param item* {MIXED} 0..n items
+     */
+    add : function () {
+        Y.Array.each(Y.Array(arguments,0,true),function (fn) {
+            this._q.push(fn);
+        },this);
 
-            if (Y.fire && !bail && !silent) {
-                if (!_published) {
-                    Y.publish(LOGEVENT, {
-                        broadcast: 2,
-                        emitFacade: 1
-                    });
-                    _published = true;
-                }
+        return this;
+    },
 
-                Y.fire(LOGEVENT, {
-                    msg: msg, 
-                    cat: cat, 
-                    src: src
-                });
-            }
-        }
+    /**
+     * Returns the current number of queued items
+     *
+     * @method size
+     * @return {Number}
+     */
+    size : function () {
+        return this._q.length;
     }
-
-    return Y;
 };
 
+Y.Queue = Queue;
 /**
- * Write a system message.  This message will be preserved in the
- * minified and raw versions of the YUI files, unlike log statements.
- * @method message
- * @for YUI
- * @param  {String}  msg  The message to log.
- * @param  {String}  cat  The log category for the message.  Default
- *                        categories are "info", "warn", "error", time".
- *                        Custom categories can be used as well. (opt)
- * @param  {String}  src  The source of the the message (opt)
- * @param  {boolean} silent If true, the log event won't fire
- * @return {YUI}      YUI instance
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
  */
-INSTANCE.message = function() {
-    return INSTANCE.log.apply(INSTANCE, arguments);
-};
-
-})();
 (function() {
 /**
  * Provides the language utilites and extensions used by the library
@@ -1248,10 +1248,11 @@ L.type = function (o) {
 
 })();
 
-/*
- * Provides information about the environment hosting YUI
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
  * @module yui
- * @submodule Array
+ * @submodule yui-base
  */
 
 (function() {
@@ -1452,6 +1453,15 @@ YArray.numericSort = function(a, b) {
     };
 
 })();
+
+
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
+ */
+
 (function() {
 
 var L = Y.Lang, 
@@ -1534,14 +1544,14 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     if (mode) {
         switch (mode) {
             case 1: // proto to proto
-                return Y.mix(r.prototype, s.prototype);
+                return Y.mix(r.prototype, s.prototype, ov, wl, 0, merge);
             case 2: // object to object and proto to proto
-                Y.mix(r.prototype, s.prototype);
+                Y.mix(r.prototype, s.prototype, ov, wl, 0, merge);
                 break; // pass through 
             case 3: // proto to static
-                return Y.mix(r, s.prototype);
+                return Y.mix(r, s.prototype, ov, wl, 0, merge);
             case 4: // static to proto
-                return Y.mix(r.prototype, s);
+                return Y.mix(r.prototype, s, ov, wl, 0, merge);
             default:  // object to object is what happens below
         }
     }
@@ -1620,6 +1630,12 @@ Y.cached = function(source, cache, refetch){
 
 })();
 
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
+ */
 (function() {
 
 /**
@@ -1832,11 +1848,13 @@ O.setValue = function(o, path, val) {
 
 })();
 
-/*
- * Provides information about the environment hosting YUI
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
  * @module yui
- * @submodule UA
+ * @submodule yui-base
  */
+
 /**
  * YUI user agent detection.
  * Do not fork for a browser if it can be avoided.  Use feature detection when
@@ -1997,9 +2015,9 @@ Y.UA = function() {
             if (/ Mobile\//.test(ua)) {
                 o.mobile = "Apple"; // iPhone or iPod Touch
             } else {
-                m=ua.match(/NokiaN[^\/]*/);
+                m=ua.match(/NokiaN[^\/]*|Android \d\.\d|webOS\/\d\.\d/);
                 if (m) {
-                    o.mobile = m[0]; // Nokia N-series, ex: NokiaN95
+                    o.mobile = m[0]; // Nokia N-series, Android, webOS, ex: NokiaN95
                 }
             }
 
@@ -2039,74 +2057,17 @@ Y.UA = function() {
     
     return o;
 }();
-(function() {
-    var L = Y.Lang,
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
+ */
 
-    /**
-     * Executes the supplied function in the context of the supplied 
-     * object 'when' milliseconds later.  Executes the function a 
-     * single time unless periodic is set to true.
-     * @method later
-     * @for YUI
-     * @param when {int} the number of milliseconds to wait until the fn 
-     * is executed.
-     * @param o the context object.
-     * @param fn {Function|String} the function to execute or the name of 
-     * the method in the 'o' object to execute.
-     * @param data [Array] data that is provided to the function.  This accepts
-     * either a single item or an array.  If an array is provided, the
-     * function is executed with one parameter for each array item.  If
-     * you need to pass a single array parameter, it needs to be wrapped in
-     * an array [myarray].
-     * @param periodic {boolean} if true, executes continuously at supplied 
-     * interval until canceled.
-     * @return {object} a timer object. Call the cancel() method on this object to 
-     * stop the timer.
-     */
-    later = function(when, o, fn, data, periodic) {
-        when = when || 0; 
-        o = o || {};
-        var m=fn, d=data, f, r;
-
-        if (L.isString(fn)) {
-            m = o[fn];
-        }
-
-        if (!m) {
-            Y.error("method undefined");
-        }
-
-        if (!L.isArray(d)) {
-            d = [data];
-        }
-
-        f = function() {
-            m.apply(o, d);
-        };
-
-        r = (periodic) ? setInterval(f, when) : setTimeout(f, when);
-
-        return {
-            id: r,
-            interval: periodic,
-            cancel: function() {
-                if (this.interval) {
-                    clearInterval(r);
-                } else {
-                    clearTimeout(r);
-                }
-            }
-        };
-    };
-
-    Y.later = later;
-    L.later = later;
-
-})();
 (function() {
 
-    // var min = ['yui-base', 'log', 'lang', 'array', 'core'], core, C = Y.config;
-    var min = ['yui-base'], core, C = Y.config;
+    var min = ['yui-base'], core, C = Y.config, mods = YUI.Env.mods,
+        extras, i;
 
     // apply the minimal required functionality
     Y.use.apply(Y, min);
@@ -2116,100 +2077,20 @@ Y.UA = function() {
     if (C.core) {
         core = C.core;
     } else {
-        core = ['queue-base', 'get'];
+        core = [];
+        extras = ['get', 'loader', 'yui-log', 'yui-later'];
+
+        for (i=0; i<extras.length; i++) {
+            if (mods[extras[i]]) {
+                core.push(extras[i]);
+            }
+        }
     }
 
     Y.use.apply(Y, core);
-
      
 })();
 
-
-
-}, '@VERSION@' );
-YUI.add('queue-base', function(Y) {
-
-/**
- * <p>The Queue module adds a common data structure for FIFO operations. In its
- * simplest form, it is little more than an array wrapper. Additional
- * submodules introduce more functionality such as promotion and removal of
- * queued items.</p>
- *
- * <p>An AsyncQueue class is provided in the queue-run submodule.  This class
- * affords a mechanism to do complex sequential and iterative callback
- * execution across configured timeouts.
- *
- * @module queue
- */
-
-/**
- * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and
- * removed using next().
- *
- * @module queue
- * @submodule queue-base
- * @class Queue
- * @param item* {MIXED} 0..n items to seed the queue
- */
-function Queue() {
-    this._init();
-    this.add.apply(this, arguments);
-}
-
-Queue.prototype = {
-    /**
-     * Initialize the queue
-     *
-     * @method _init
-     * @protected
-     */
-    _init : function () {
-        /**
-         * The collection of enqueued items
-         *
-         * @property _q
-         * @type {Array}
-         * @protected
-         */
-        this._q = [];
-    },
-
-    /**
-     * Get the next item in the queue.
-     *
-     * @method next
-     * @return {MIXED} the next item in the queue
-     */
-    next : function () {
-        return this._q.shift();
-    },
-
-    /**
-     * Add 0..n items to the end of the queue
-     *
-     * @method add
-     * @param item* {MIXED} 0..n items
-     */
-    add : function () {
-        Y.Array.each(Y.Array(arguments,0,true),function (fn) {
-            this._q.push(fn);
-        },this);
-
-        return this;
-    },
-
-    /**
-     * Returns the current number of queued items
-     *
-     * @method size
-     * @return {Number}
-     */
-    size : function () {
-        return this._q.length;
-    }
-};
-
-Y.Queue = Queue;
 
 
 }, '@VERSION@' );
@@ -2960,7 +2841,185 @@ Y.Get = function() {
 
 
 }, '@VERSION@' );
+YUI.add('yui-log', function(Y) {
+
+/**
+ * Provides console log capability and exposes a custom event for
+ * console implementations.
+ * @module yui
+ * @submodule yui-log
+ */
+(function() {
+
+var INSTANCE = Y,
+    LOGEVENT = 'yui:log',
+    UNDEFINED = 'undefined',
+    LEVELS = { debug: 1, info: 1, warn: 1, error: 1 },
+    _published;
+
+/**
+ * If the 'debug' config is true, a 'yui:log' event will be
+ * dispatched, which the Console widget and anything else
+ * can consume.  If the 'useBrowserConsole' config is true, it will
+ * write to the browser console if available.  YUI-specific log
+ * messages will only be present in the -debug versions of the
+ * JS files.  The build system is supposed to remove log statements
+ * from the raw and minified versions of the files.
+ *
+ * @method log
+ * @for YUI
+ * @param  {String}  msg  The message to log.
+ * @param  {String}  cat  The log category for the message.  Default
+ *                        categories are "info", "warn", "error", time".
+ *                        Custom categories can be used as well. (opt)
+ * @param  {String}  src  The source of the the message (opt)
+ * @param  {boolean} silent If true, the log event won't fire
+ * @return {YUI}      YUI instance
+ */
+INSTANCE.log = function(msg, cat, src, silent) {
+    var Y = INSTANCE, c = Y.config, bail = false, excl, incl, m, f;
+    // suppress log message if the config is off or the event stack
+    // or the event call stack contains a consumer of the yui:log event
+    if (c.debug) {
+        // apply source filters
+        if (src) {
+
+            excl = c.logExclude; 
+            incl = c.logInclude;
+
+            if (incl && !(src in incl)) {
+                bail = 1;
+            } else if (excl && (src in excl)) {
+                bail = 1;
+            }
+        }
+
+        if (!bail) {
+
+            if (c.useBrowserConsole) {
+                m = (src) ? src + ': ' + msg : msg;
+                if (typeof console != UNDEFINED && console.log) {
+                    f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
+                    console[f](m);
+                } else if (typeof opera != UNDEFINED) {
+                    opera.postError(m);
+                }
+            }
+
+            if (Y.fire && !bail && !silent) {
+                if (!_published) {
+                    Y.publish(LOGEVENT, {
+                        broadcast: 2,
+                        emitFacade: 1
+                    });
+
+                    _published = 1;
+
+                }
+                Y.fire(LOGEVENT, {
+                    msg: msg, 
+                    cat: cat, 
+                    src: src
+                });
+            }
+        }
+    }
+
+    return Y;
+};
+
+/**
+ * Write a system message.  This message will be preserved in the
+ * minified and raw versions of the YUI files, unlike log statements.
+ * @method message
+ * @for YUI
+ * @param  {String}  msg  The message to log.
+ * @param  {String}  cat  The log category for the message.  Default
+ *                        categories are "info", "warn", "error", time".
+ *                        Custom categories can be used as well. (opt)
+ * @param  {String}  src  The source of the the message (opt)
+ * @param  {boolean} silent If true, the log event won't fire
+ * @return {YUI}      YUI instance
+ */
+INSTANCE.message = function() {
+    return INSTANCE.log.apply(INSTANCE, arguments);
+};
+
+})();
 
 
-YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','queue-base','get']});
+}, '@VERSION@' ,{requires:['yui-base']});
+YUI.add('yui-later', function(Y) {
+
+/**
+ * Provides a setTimeout/setInterval wrapper
+ * @module yui
+ * @submodule yui-later
+ */
+(function() {
+    var L = Y.Lang,
+
+    /**
+     * Executes the supplied function in the context of the supplied 
+     * object 'when' milliseconds later.  Executes the function a 
+     * single time unless periodic is set to true.
+     * @method later
+     * @for YUI
+     * @param when {int} the number of milliseconds to wait until the fn 
+     * is executed.
+     * @param o the context object.
+     * @param fn {Function|String} the function to execute or the name of 
+     * the method in the 'o' object to execute.
+     * @param data [Array] data that is provided to the function.  This accepts
+     * either a single item or an array.  If an array is provided, the
+     * function is executed with one parameter for each array item.  If
+     * you need to pass a single array parameter, it needs to be wrapped in
+     * an array [myarray].
+     * @param periodic {boolean} if true, executes continuously at supplied 
+     * interval until canceled.
+     * @return {object} a timer object. Call the cancel() method on this object to 
+     * stop the timer.
+     */
+    later = function(when, o, fn, data, periodic) {
+        when = when || 0; 
+        o = o || {};
+        var m=fn, d=Y.Array(data), f, r;
+
+        if (L.isString(fn)) {
+            m = o[fn];
+        }
+
+        if (!m) {
+            Y.log("method undefined");
+        }
+
+        f = function() {
+            m.apply(o, d);
+        };
+
+        r = (periodic) ? setInterval(f, when) : setTimeout(f, when);
+
+        return {
+            id: r,
+            interval: periodic,
+            cancel: function() {
+                if (this.interval) {
+                    clearInterval(r);
+                } else {
+                    clearTimeout(r);
+                }
+            }
+        };
+    };
+
+    Y.later = later;
+    L.later = later;
+
+})();
+
+
+}, '@VERSION@' ,{requires:['yui-base']});
+
+
+YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','yui-log','yui-later']});
 

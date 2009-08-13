@@ -10,10 +10,6 @@
         }
         .yui-skin-sam .yui-console .yui-console-content {
             font-size: 10px;
-            width: 32em;
-        }
-        .yui-skin-sam .yui-console .yui-console-bd {
-            height: 50em;
         }
         .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
             background: #070;
@@ -146,6 +142,8 @@ JSON_STRING = '[\
 /*****************************/
 /*     Tests begin here      */
 /*****************************/
+// wrapped in a function to allow repeating tests with native behavior disabled
+function addTests() {
 suite.add(new Y.Test.Case({
     name : "parse",
 
@@ -500,9 +498,11 @@ suite.add(new Y.Test.Case({
     },
 
     test_stringifyDate : function () {
-        // This assumes Pacific Time Zone (GMT -7:00)
-        Y.Assert.areSame('{"dt":"1946-07-06T07:00:00Z"}',
-            Y.JSON.stringify({dt : new Date(1946,6,6)}));
+        // native toJSON method should be called if available
+        var d = new Date(Date.UTC(1946,6,6)),
+            ref = d.toJSON ? d.toJSON() : "1946-07-06T00:00:00Z";
+
+        Y.Assert.areSame('{"dt":"'+ref+'"}', Y.JSON.stringify({dt : d}));
     },
 
     test_stringifyFormValue : function () {
@@ -519,10 +519,12 @@ suite.add(new Y.Test.Case({
             textarea                : $('textarea').value,
             select                  : $('select').value,
             multiple_select         : $('multiple_select').value,
-            button                  : $('button').value,
-            button_with_value       : $('button_with_value').value,
-            button_submit           : $('button_submit').value,
-            button_submit_with_value: $('button_submit_with_value').value,
+            // Buttons commented out for now because IE reports values
+            // differently
+            //button                  : $('button').value,
+            //button_with_value       : $('button_with_value').value,
+            //button_submit           : $('button_submit').value,
+            //button_submit_with_value: $('button_submit_with_value').value,
             input_button            : $('input_button').value,
             input_submit            : $('input_submit').value,
             input_image             : $('input_image').value
@@ -539,10 +541,10 @@ suite.add(new Y.Test.Case({
             '"textarea":"textarea",'+
             '"select":"selected",'+
             '"multiple_select":"selected",'+
-            '"button":"",'+
-            '"button_with_value":"button value",'+
-            '"button_submit":"",'+
-            '"button_submit_with_value":"submit button value",'+
+            //'"button":"",'+
+            //'"button_with_value":"button value",'+
+            //'"button_submit":"",'+
+            //'"button_submit_with_value":"submit button value",'+
             '"input_button":"input button",'+
             '"input_submit":"input submit",'+
             '"input_image":"input image"}',
@@ -638,6 +640,8 @@ suite.add(new Y.Test.Case({
                 }]
             },null,0));
 
+        /* Commented out because FF3.5 has infinite loop bug for neg indents
+         * Fixed in FF for next version.
         Y.Assert.areSame('{"foo-4":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
             Y.JSON.stringify({
                 "foo-4" : [ 2, {
@@ -648,6 +652,7 @@ suite.add(new Y.Test.Case({
                     }]
                 }]
             },null,-4));
+        */
 
         Y.Assert.areSame('{"foo_false":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
             Y.JSON.stringify({
@@ -775,6 +780,34 @@ suite.add(new Y.Test.Case({
 }));
 
 suite.add(new Y.Test.Case({
+    name : "toJSON",
+
+    test_toJSON_on_object: function () {
+        Y.Assert.areSame('"toJSON"',
+            Y.JSON.stringify({ toJSON: function () { return "toJSON" } }));
+
+        // TODO: complex object with toJSON
+    },
+
+    test_toJSON_on_proto: function () {
+        function A() {}
+        A.prototype.toJSON = function () { return "A" };
+        
+        function B() {}
+        B.prototype = new A();
+
+        function C() {
+            this.x = "X";
+            this.y = "Y";
+            this.z = "Z";
+        }
+        C.prototype = new B();
+
+        Y.Assert.areSame('"A"', Y.JSON.stringify(new C()));
+    }
+}));
+
+suite.add(new Y.Test.Case({
     name : "replacer",
 
     test_replacer : function () {
@@ -861,6 +894,32 @@ suite.add(new Y.Test.Case({
                         return v;
                     }
                 },'_'));
+    },
+
+    test_replacer_after_toJSON : function () {
+        Y.Assert.areSame('{"a":"ABC"}',
+            Y.JSON.stringify({a:{ toJSON: function () { return "abc"; } } },
+                function (k,v) {
+                    return typeof v === 'string' ? v.toUpperCase() : v;
+                }));
+
+        // Date instances in ES5 have toJSON that outputs toISOString, which
+        // means the replacer should never receive a Date instance
+        var str = Y.JSON.stringify([new Date()], function (k,v) {
+            return (v instanceof Date) ? "X" : v;
+        });
+        Y.Assert.areSame(-1, str.indexOf("X"), "Date incorrectly received by replacer");
+    },
+
+    test_replacer_returning_Date : function () {
+        var d = new Date(),
+            ref = Y.JSON.stringify(d);
+
+        Y.Assert.areSame('{"dt":'+ref+',"date_from_replacer":{}}',
+            Y.JSON.stringify({ dt: d, date_from_replacer: 1 },
+                function (k,v) {
+                    return typeof v === 'number' ? d : v;
+                }));
     }
 }));
 
@@ -873,17 +932,27 @@ suite.add(new Y.Test.Case({
     },
 }));
 */
+}
 
 var yconsole = new Y.Console({
     contentBox:"log",
     newestOnTop: false,
-    height: '600px'
+    height: '580px'
 }).render();
 
 //yconsole.hideCategory('info');
 
-if (Object.prototype.toString.call(window.JSON) === '[object JSON]') {
-    Y.log("Browser has native JSON implementation","info","TestRunner");
+addTests();
+// If native JSON is available, run the tests again without native calls
+if (Y.JSON.useNativeParse) {
+    suite.add(new Y.Test.Case({
+        test_disableNative : function () {
+            Y.JSON.useNativeParse = false;
+            Y.JSON.useNativeStringify = false;
+            Y.log("Rerunning tests without native JSON API","section","TestRunner");
+        }
+    }));
+    addTests();
 }
 
 Y.Test.Runner.add(suite);

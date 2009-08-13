@@ -522,7 +522,7 @@ provided and the attribute is not read-only.
                                                         <code><span property="yui:name">initValues</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The object with simple and complex attribute name/value pairs returned from _splitAttrVals</span>
+                                                        <span property="yui:description"> The object with simple and complex attribute name/value pairs returned from _normAttrVals</span>
                                                         </dd>
                                                 </dl>
 
@@ -532,6 +532,58 @@ provided and the attribute is not read-only.
                                                         Any
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">The initial value of the attribute.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__getStateVal">
+                                    <h4>
+                                        <a name="method__getStateVal">_getStateVal</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Any
+                                            <strong property="yui:name">_getStateVal</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Gets the stored value for the attribute, from either the 
+internal state object, or the state proxy if it exits
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Any
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The stored value of the attribute</dd>
                                                 </dl>
 
 
@@ -584,6 +636,61 @@ added lazily and still requires initialization.
                                                         boolean
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">true if it's a lazily added attribute, false otherwise.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__normAttrVals">
+                                    <h4>
+                                        <a name="method__normAttrVals">_normAttrVals</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">_normAttrVals</strong>
+                                           (
+                                                
+                                                        
+                                                         valueHash
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Utility method to split out simple attribute name/value pairs ("x") 
+from complex attribute name/value pairs ("x.y.z"), so that complex
+attributes can be keyed by the top level attribute name.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">valueHash</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object with attribute name/value pairs</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">An object literal with 2 properties - "simple" and "complex",
+containing simple and complex attribute values respectively keyed 
+by the top level attribute name, or null, if valueHash is falsey.</dd>
                                                 </dl>
 
 
@@ -838,29 +945,32 @@ if validation and setter passes.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method__splitAttrVals">
+                                    <div class="private" rel="yui:method" resource="#method__setStateVal">
                                     <h4>
-                                        <a name="method__splitAttrVals">_splitAttrVals</a></h4>
+                                        <a name="method__setStateVal">_setStateVal</a></h4>
                                     <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
-                                        Object
-                                            <strong property="yui:name">_splitAttrVals</strong>
+                                        void
+                                            <strong property="yui:name">_setStateVal</strong>
                                            (
                                                 
                                                         
-                                                         valueHash
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         value
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Utility method to split out simple attribute name/value pairs ("x") 
-from complex attribute name/value pairs ("x.y.z"), so that complex
-attributes can be keyed by the top level attribute name.
+                                            Sets the stored value for the attribute, in either the 
+internal state object, or the state proxy if it exits
                                         </div>
 
                                         <div class="description">
@@ -868,21 +978,25 @@ attributes can be keyed by the top level attribute name.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">valueHash</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> An object with attribute name/value pairs</span>
+                                                        <span property="yui:description"> The name of the attribute</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">value</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value of the attribute</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                        void
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">An object literal with 2 properties - "simple" and "complex",
-containing simple and complex attribute values respectively keyed 
-by the top level attribute name, or null, if valueHash is falsey.</dd>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -1666,7 +1780,8 @@ set called externally by the application developer.</span>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -1692,6 +1807,7 @@ set called externally by the application developer.</span>
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="Attribute.js.html" title="Attribute.js">Attribute.js</a></li>
+                                <li class=""><a href="ComplexAttribute.js.html" title="ComplexAttribute.js">ComplexAttribute.js</a></li>
                                 <li class=""><a href="State.js.html" title="State.js">State.js</a></li>
                         </ul>
                     </div>
@@ -1713,11 +1829,13 @@ set called externally by the application developer.</span>
                                 <li class="private"><a href="#method__fireAttrChange" title="_fireAttrChange">_fireAttrChange</a></li>
                                 <li class="protected"><a href="#method__getAttr" title="_getAttr">_getAttr</a></li>
                                 <li class="private"><a href="#method__getAttrInitVal" title="_getAttrInitVal">_getAttrInitVal</a></li>
+                                <li class="private"><a href="#method__getStateVal" title="_getStateVal">_getStateVal</a></li>
                                 <li class="private"><a href="#method__isLazyAttr" title="_isLazyAttr">_isLazyAttr</a></li>
+                                <li class="private"><a href="#method__normAttrVals" title="_normAttrVals">_normAttrVals</a></li>
                                 <li class="protected"><a href="#method__set" title="_set">_set</a></li>
                                 <li class="protected"><a href="#method__setAttr" title="_setAttr">_setAttr</a></li>
                                 <li class="private"><a href="#method__setAttrVal" title="_setAttrVal">_setAttrVal</a></li>
-                                <li class="private"><a href="#method__splitAttrVals" title="_splitAttrVals">_splitAttrVals</a></li>
+                                <li class="private"><a href="#method__setStateVal" title="_setStateVal">_setStateVal</a></li>
                                 <li class=""><a href="#method_addAttr" title="addAttr">addAttr</a></li>
                                 <li class=""><a href="#method_addAttrs" title="addAttrs">addAttrs</a></li>
                                 <li class=""><a href="#method_attrAdded" title="attrAdded">attrAdded</a></li>
@@ -1742,7 +1860,7 @@ set called externally by the application developer.</span>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addAttrs", "url": "Attribute.html#method__addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addLazyAttr", "url": "Attribute.html#method__addLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "Attribute._ATTR_CFG", "url": "Attribute.html#property_Attribute._ATTR_CFG", "type": "property"}, {"access": "", "host": "Attribute", "name": "Attribute.INVALID_VALUE", "url": "Attribute.html#property_Attribute.INVALID_VALUE", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_getAttr", "url": "Attribute.html#method__getAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_isLazyAttr", "url": "Attribute.html#method__isLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "modifyAttr", "url": "Attribute.html#method_modifyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_splitAttrVals", "url": "Attribute.html#method__splitAttrVals", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addAttrs", "url": "Attribute.html#method__addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addLazyAttr", "url": "Attribute.html#method__addLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "Attribute._ATTR_CFG", "url": "Attribute.html#property_Attribute._ATTR_CFG", "type": "property"}, {"access": "", "host": "Attribute", "name": "Attribute.INVALID_VALUE", "url": "Attribute.html#property_Attribute.INVALID_VALUE", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_getAttr", "url": "Attribute.html#method__getAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getStateVal", "url": "Attribute.html#method__getStateVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_isLazyAttr", "url": "Attribute.html#method__isLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "modifyAttr", "url": "Attribute.html#method_modifyAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_normAttrVals", "url": "Attribute.html#method__normAttrVals", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setStateVal", "url": "Attribute.html#method__setStateVal", "type": "method"}];
 </script>
 </body>
 </html>

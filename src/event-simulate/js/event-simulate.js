@@ -2,6 +2,7 @@
 /**
  * Synthetic DOM events
  * @module event-simulate
+ * @requires event
  */
 
 //shortcuts

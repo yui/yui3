@@ -129,6 +129,19 @@ onload = function() {
                 var four3 = Y.Dom.getElementsByClassName('four-3', 'li', 'nth-test');
                 var four4 = Y.Dom.getElementsByClassName('four-4', 'li', 'nth-test');
                 ArrayAssert.itemsAreEqual(odd, $('li:nth-of-type(odd)'), 'odd');
+
+                all = Y.Dom.get('nth-type-test').getElementsByTagName('div');
+                even = Y.Dom.getElementsByClassName('even', 'div', 'nth-type-test');
+
+                ArrayAssert.itemsAreEqual(all[2], $('#nth-type-test div:nth-of-type(3)'),
+                    "$('#nth-type-test div:nth-of-type(3)')");
+
+                ArrayAssert.itemsAreEqual(even, $('#nth-type-test div:nth-of-type(even)'),
+                    "$('#nth-type-test div:nth-of-type(even)')");
+
+                ArrayAssert.itemsAreEqual(even, $('#nth-type-test div:nth-of-type(2n)'),
+                    "$('#nth-type-test div:nth-of-type(2n)')");
+
             },
             testNthChild: function() {
                 var all = Y.Dom.get('nth-test').getElementsByTagName('li');
@@ -290,15 +303,12 @@ onload = function() {
             // $('+ p', myNode) === ('#my-node-id + p');
             // $('~ p', myNode) === ('#my-node-id ~ p');
             testScoped: function() {
-                var paraChildren = Y.DOM._childrenByTag(Y.DOM.byId('demo'), 'p');
-
-                var someChildren = Y.DOM.children(Y.DOM.byId('demo'), function(child) {
-                    return (child.tagName === 'P' &&
-                            Y.DOM.firstChild(child.parentNode) !== child);
-                });
-
-                var bodyDivs = Y.DOM.children(document.body, function(child) {
-                    return (child.tagName === 'DIV' && child.id != 'demo'); 
+                var demo = Y.DOM.byId('demo'),
+                    paraChildren = [];
+                Y.each(demo.getElementsByTagName('p'), function(el) {
+                    if (el.parentNode === demo) {
+                        paraChildren.push(el);
+                    }
                 });
 
                 ArrayAssert.itemsAreEqual(paraChildren, $('> p', Y.DOM.byId('demo')), '#demo > p');
@@ -306,9 +316,6 @@ onload = function() {
 
                 //ArrayAssert.itemsAreEqual([Y.Dom.get('demo2')], $('+ div', Y.DOM.byId('demo')), '#demo + div');
                 //ArrayAssert.itemsAreEqual($('#demo-first-child ~ p'), $('~ p', Y.DOM.byId('demo-first-child')), '#demo-first-child ~ div');
-                //ArrayAssert.itemsAreEqual($('#demo-first-child ~ p'), someChildren, 'someChildren');
-                //ArrayAssert.itemsAreEqual(someChildren, $('~ p', Y.DOM.byId('demo-first-child')), '~ p');
-                //ArrayAssert.itemsAreEqual(bodyDivs, $('~ div', Y.DOM.byId('demo')), '#demo ~ div');
             }
 
         });
@@ -357,6 +364,15 @@ onload = function() {
             <li class="odd four-1" lang="en-US" id="test-lang-en-us">foo</li>
             <li class="even three-1 four-2 last-four-1" lang="en" id="test-lang-en">foo</li>
         </ol>
+    </div>
+    <div id="nth-type-test">
+        <span>span</span>
+        <div>first div</div>
+        <span>span</span>
+        <div class="even">second div</div>
+        <div>third div</div>
+        <div class="even">fourth div</div> 
+        <span>span</span>
     </div>
     <a id="href-test" href="foo.html">foo</a>
     <form id="test-inputs">

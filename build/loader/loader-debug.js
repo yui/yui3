@@ -122,6 +122,8 @@ var NOT_FOUND = {},
     CONTEXT = '-context',
 
     ANIMBASE = 'anim-base',
+    ATTRIBUTEBASE = 'attribute-base',
+    BASEBASE = 'base-base',
     DDDRAG = 'dd-drag',
     DOM = 'dom',
     DATASCHEMABASE = 'dataschema-base',
@@ -130,13 +132,15 @@ var NOT_FOUND = {},
     DOMSTYLE = 'dom-style',
     DUMP = 'dump',
     GET = 'get',
-    EVENT = 'event',
+    EVENTBASE = 'event-base',
     EVENTCUSTOM = 'event-custom',
+    EVENTCUSTOMBASE = 'event-custom-base',
     IOBASE = 'io-base',
     NODE = 'node',
     NODEBASE = 'node-base',
     NODESTYLE = 'node-style',
     OOP = 'oop',
+    PLUGINHOST = 'pluginhost',
     SELECTORCSS2 = 'selector-css2',
     SUBSTITUTE = 'substitute',
     WIDGET = 'widget',
@@ -203,12 +207,12 @@ var NOT_FOUND = {},
         },
 
         node: {
-            requires: [DOM, BASE],
+            requires: [DOM, EVENTBASE],
             // expound: EVENT,
 
             submodules: {
                 'node-base': {
-                    requires: [DOMBASE, BASE, SELECTORCSS2, EVENT]
+                    requires: [DOMBASE, SELECTORCSS2, EVENTBASE]
                 },
 
                 'node-style': {
@@ -217,6 +221,10 @@ var NOT_FOUND = {},
 
                 'node-screen': {
                     requires: ['dom-screen', NODEBASE]
+                },
+
+                'node-pluginhost': {
+                    requires: ['node-base', PLUGINHOST]
                 }
             },
 
@@ -228,19 +236,14 @@ var NOT_FOUND = {},
         },
 
         anim: {
-            requires: [BASE, NODE],
             submodules: {
 
                 'anim-base': {
-                    requires: [BASE, NODESTYLE]
+                    requires: [BASEBASE, NODESTYLE]
                 },
 
                 'anim-color': {
                     requires: [ANIMBASE]
-                },
-
-                'anim-curve': {
-                    requires: ['anim-xy']
                 },
 
                 'anim-easing': {
@@ -255,25 +258,40 @@ var NOT_FOUND = {},
                     requires: [ANIMBASE, 'node-screen']
                 },
 
+                'anim-curve': {
+                    requires: ['anim-xy']
+                },
+
                 'anim-node-plugin': {
-                     requires: [NODE, ANIMBASE]
+                     requires: ['node-pluginhost', ANIMBASE]
                 }
             }
         },
 
         attribute: { 
-            requires: [EVENTCUSTOM]
+            submodules: {
+                'attribute-base': {
+                    requires: [EVENTCUSTOM]
+                },
+
+                'attribute-complex': {
+                    requires: [ATTRIBUTEBASE]
+                }
+            }
         },
 
         base: {
             submodules: {
-
                 'base-base': {
-                    requires: ['attribute']
+                    requires: [ATTRIBUTEBASE]
                 },
 
                 'base-build': {
-                    requires: ['base-base']
+                    requires: [BASEBASE]
+                },
+
+                'base-pluginhost': {
+                    requires: [BASEBASE, PLUGINHOST]
                 }
             }
         },
@@ -295,7 +313,7 @@ var NOT_FOUND = {},
         },
 
         console: {
-            requires: [WIDGET, SUBSTITUTE],
+            requires: ['yui-log', WIDGET, SUBSTITUTE],
             skinnable: true,
             plugins: {
                 'console-filters': {
@@ -393,7 +411,7 @@ var NOT_FOUND = {},
                     requires: ['dd-ddm-base']
                 }, 
                 'dd-drop':{
-                    requires: ['dd-ddm-drop']
+                    requires: ['dd-ddm-drop', 'event-mouseenter']
                 }, 
                 'dd-proxy':{
                     requires: [DDDRAG]
@@ -420,23 +438,49 @@ var NOT_FOUND = {},
 
         event: { 
             expound: NODEBASE,
-            requires: [EVENTCUSTOM]
+            submodules: {
+                'event-base': {
+                    expound: NODEBASE,
+                    requires: [EVENTCUSTOMBASE]
+                },
+                'event-delegate': {
+                    requires: [EVENTBASE]
+                },
+                'event-focus': {
+                    requires: [EVENTBASE]
+                },
+                'event-key': {
+                    requires: [EVENTBASE]
+                },
+                'event-mouseenter': {
+                    requires: [EVENTBASE]
+                },
+                'event-mousewheel': {
+                    requires: [EVENTBASE]
+                },
+                'event-resize': {
+                    requires: [EVENTBASE]
+                }
+            }
         },
 
         'event-custom': { 
-            requires: [OOP]
+            submodules: {
+                'event-custom-base': {
+                    requires: [OOP, 'yui-later']
+                },
+                'event-custom-complex': {
+                    requires: [EVENTCUSTOMBASE]
+                }
+            }
         },
 
         'event-simulate': { 
-            requires: [EVENT]
+            requires: [EVENTBASE]
         },
 
         'node-focusmanager': { 
-            requires: [NODE, PLUGIN]
-        },
-
-        get: { 
-            requires: [YUIBASE]
+            requires: [NODE, "node-event-simulate", "event-key", "event-focus", PLUGIN]
         },
 
         history: { 
@@ -451,7 +495,7 @@ var NOT_FOUND = {},
             submodules: {
 
                 'io-base': {
-                    requires: [EVENTCUSTOM]
+                    requires: [EVENTCUSTOMBASE]
                 }, 
 
                 'io-xdr': {
@@ -503,25 +547,23 @@ var NOT_FOUND = {},
         },
 
         plugin: { 
-            requires: [BASE]
+            requires: [BASEBASE]
+        },
+
+        pluginhost: { 
+            requires: [YUIBASE]
         },
 
         profiler: { 
             requires: [YUIBASE]
         },
 
-        queue: {
-            submodules: {
-                'queue-base': {
-                    requires: [YUIBASE]
-                },
-                'queue-run': {
-                    requires: ['queue-base', EVENTCUSTOM]
-                }
-            },
-            plugins: {
-                'queue-promote': { }
-            }
+        'queue-promote': {
+            requires: [YUIBASE]
+        },
+
+        'queue-run': {
+            requires: [EVENTCUSTOM]
         },
 
         slider: {
@@ -538,7 +580,7 @@ var NOT_FOUND = {},
         },
 
         widget: {
-            requires: [BASE, NODE, 'classnamemanager'],
+            requires: ['attribute', BASE, NODE, 'classnamemanager'],
             plugins: {
                 'widget-position': { },
                 'widget-position-ext': {
@@ -553,10 +595,13 @@ var NOT_FOUND = {},
         },
 
         yui: {
-            supersedes: [YUIBASE, GET, 'queue-base']
+            submodules: {
+                'yui-base': {},
+                get: {},
+                'yui-log': {},
+                'yui-later': {}
+            }
         },
-
-        'yui-base': { },
 
         test: {                                                                                                                                                        
             requires: [SUBSTITUTE, NODE, 'json', 'event-simulate']                                                                                                                     
@@ -871,15 +916,21 @@ Y.Loader = function(o) {
      */
      this.skin = Y.merge(Y.Env.meta.skin);
     
-    var defaults = Y.Env.meta.modules, i;
+    var defaults = Y.Env.meta.modules, i, onPage = YUI.Env.mods;
 
+    this._internal = true;
     for (i in defaults) {
         if (defaults.hasOwnProperty(i)) {
-            this._internal = true;
             this.addModule(defaults[i], i);
-            this._internal = false;
         }
     }
+
+    for (i in onPage) {
+        if (onPage.hasOwnProperty(i) && !this.moduleInfo[i] && onPage[i].details) {
+            this.addModule(onPage[i].details, i);
+        }
+    }
+    this._internal = false;
 
     /**
      * List of rollup files found in the library metadata
@@ -1001,6 +1052,9 @@ Y.Loader.prototype = {
             f = f.toUpperCase();
             this.filterName = f;
             this.filter = this.FILTER_DEFS[f];
+            if (f == 'DEBUG') {
+                this.require('yui-log', 'dump');
+            }
         }
 
     },
@@ -1167,7 +1221,7 @@ Y.Loader.prototype = {
             }
 
             o.supersedes = sup;
-            o.rollup = Math.min(l-1, 4);
+            o.rollup = (l<4) ? l : Math.min(l-1, 4);
         }
 
         plugins = o.plugins;

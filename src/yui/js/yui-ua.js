@@ -1,9 +1,11 @@
 
-/*
- * Provides information about the environment hosting YUI
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
  * @module yui
- * @submodule UA
+ * @submodule yui-base
  */
+
 /**
  * YUI user agent detection.
  * Do not fork for a browser if it can be avoided.  Use feature detection when
@@ -164,9 +166,9 @@ Y.UA = function() {
             if (/ Mobile\//.test(ua)) {
                 o.mobile = "Apple"; // iPhone or iPod Touch
             } else {
-                m=ua.match(/NokiaN[^\/]*/);
+                m=ua.match(/NokiaN[^\/]*|Android \d\.\d|webOS\/\d\.\d/);
                 if (m) {
-                    o.mobile = m[0]; // Nokia N-series, ex: NokiaN95
+                    o.mobile = m[0]; // Nokia N-series, Android, webOS, ex: NokiaN95
                 }
             }
 

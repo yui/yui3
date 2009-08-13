@@ -62,22 +62,26 @@ if (typeof YUI === 'undefined' || !YUI) {
      * @constructor
      * @global
      * @uses EventTarget
-     * @param o Optional configuration object.  This object is stored
+     * @param o* Up to five optional configuration objects.  This object is stored
      * in YUI.config.  See config for the list of supported properties.
      */
 
     /*global YUI*/
     // Make a function, disallow direct instantiation
-    YUI = function(o) {
+    YUI = function(o1, o2, o3, o4, o5) {
 
-        var Y = this;
+        var Y = this, a = arguments, i, l = a.length;
 
         // Allow instantiation without the new operator
         if (!(Y instanceof YUI)) {
-            return new YUI(o);
+            return new YUI(o1, o2, o3, o4, o5);
         } else {
             // set up the core environment
-            Y._init(o);
+            Y._init();
+
+            for (i=0; i<l; i++) {
+                Y._config(a[i]);
+            }
 
             // bind the specified additional modules for this instance
             Y._setup();
@@ -91,14 +95,36 @@ if (typeof YUI === 'undefined' || !YUI) {
 // modules to be registered and for the instance to be initialized.
 YUI.prototype = {
 
+    _config: function(o) {
+
+        o = o || {};
+
+        var c = this.config, i, j, m, mods;
+
+        mods = c.modules;
+        for (i in o) {
+            if (mods && i == 'modules') {
+                m = o[i];
+                for (j in m) {
+                    if (m.hasOwnProperty(j)) {
+                        mods[j] = m[j];
+                    }
+                }
+            } else if (i == 'win') {
+                c[i] = o[i].contentWindow || o[i];
+                c.doc = c[i].document;
+            } else {
+                c[i] = o[i];
+            }
+        }
+    },
+
     /**
      * Initialize this YUI instance
      * @param o config options
      * @private
      */
     _init: function(o) {
-
-        o = o || {};
 
         // find targeted window/frame
         // @TODO create facades
@@ -123,38 +149,6 @@ YUI.prototype = {
             _loaded: {}
         };
 
-        o.win = o.win || window || {};
-        o.win = o.win.contentWindow || o.win;
-        o.doc = o.win.document;
-        o.debug = ('debug' in o) ? o.debug : true;
-        o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
-        o.throwFail = ('throwFail' in o) ? o.throwFail : true;
-    
-        o.base = o.base || function() {
-            var b, nodes, i, match;
-
-            // get from querystring
-            nodes = document.getElementsByTagName('script');
-
-            for (i=0; i<nodes.length; i=i+1) {
-                match = nodes[i].src.match(/^(.*)yui\/yui[\.\-].*js(\?.*)?$/);
-                b = match && match[1];
-                if (b) {
-                    break;
-                }
-            }
-
-            // use CDN default
-            return b || Y.Env.cdn;
-
-        }();
-
-        o.loaderPath = o.loaderPath || 'loader/loader-min.js';
-
-        // add a reference to o for anything that needs it
-        // before _setup is called.
-        Y.config = o;
-
         Y.Env._loaded[v] = {};
 
         if (YUI.Env) {
@@ -166,7 +160,37 @@ YUI.prototype = {
 
         Y.constructor = YUI;
 
-        // this.log(this.id + ') init ');
+        // configuration defaults
+        Y.config = {
+
+            win: window || {},
+            doc: document,
+            debug: true,
+            useBrowserConsole: true,
+            throwFail: true,
+        
+            base: function() {
+                var b, nodes, i, match;
+
+                // get from querystring
+                nodes = document.getElementsByTagName('script');
+
+                for (i=0; i<nodes.length; i=i+1) {
+                    match = nodes[i].src.match(/^(.*)yui\/yui[\.\-].*js(\?.*)?$/);
+                    b = match && match[1];
+                    if (b) {
+                        break;
+                    }
+                }
+
+                // use CDN default
+                return b || this.Env.cdn;
+
+            }(),
+
+            loaderPath: 'loader/loader-min.js'
+        };
+
     },
     
     /**
@@ -177,8 +201,6 @@ YUI.prototype = {
      */
     _setup: function(o) {
         this.use("yui-base");
-        // @TODO eval the need to copy the config
-        this.config = this.merge(this.config);
     },
 
     /**
@@ -238,29 +260,17 @@ YUI.prototype = {
      *
      */
     add: function(name, fn, version, details) {
-
         // this.log('Adding a new component ' + name);
-
         // @todo expand this to include version mapping
         // @todo may want to restore the build property
         // @todo fire moduleAvailable event
         
-        // if (this.Lang.isFunction(fn)) {
-
-            YUI.Env.mods[name] = {
-                name: name, 
-                fn: fn,
-                version: version,
-                details: details || {}
-            };
-
-        // } else {
-        //     
-        //     var c = Y.config;
-        //     c.modules = c.modules || {};
-        //     c.modules[name] = c.modules[name] || fn;
-
-        // }
+        YUI.Env.mods[name] = {
+            name: name, 
+            fn: fn,
+            version: version,
+            details: details || {}
+        };
 
         return this; // chain support
     },
@@ -328,6 +338,7 @@ YUI.prototype = {
     use: function() {
 
         if (this._loading) {
+            this._useQueue = this._useQueue || new this.Queue();
             this._useQueue.add(SLICE.call(arguments, 0));
             return this;
         }
@@ -413,9 +424,9 @@ YUI.prototype = {
 
                 // process queued use requests as long until done 
                 // or dynamic load happens again.
-                this._loading = false;
-                while (this._useQueue && this._useQueue.size() && !this._loading) {
-                    Y.use.apply(Y, this._useQueue.next());
+                Y._loading = false;
+                while (Y._useQueue && Y._useQueue.size() && !Y._loading) {
+                    Y.use.apply(Y, Y._useQueue.next());
                 }
             };
 
@@ -438,10 +449,7 @@ YUI.prototype = {
                 }
             }
 
-            // Y.log('Use *: ' + a);
-
             return Y.use.apply(Y, a);
-
         }
         
         // Y.log('loader before: ' + a.join(','));
@@ -450,7 +458,6 @@ YUI.prototype = {
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
-            this._useQueue = this._useQueue || new Y.Queue();
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.ignoreRegistered = true;
@@ -474,22 +481,25 @@ YUI.prototype = {
         // dynamic load
         if (Y.Loader && missing.length) {
             Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'yui');
-            this._loading = true;
+            Y._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
             loader.onTimeout = onComplete;
+            loader.context = Y;
             loader.attaching = a;
             loader.require(missing);
             loader.insert();
         } else if (Y.Get && missing.length && !Y.Env.bootstrapped) {
-            Y.log('fetching loader: ' + Y.config.base + Y.config.loaderPath);
+            Y.log('fetching loader: ' + Y.config.base + Y.config.loaderPath, 'info', 'yui');
+            Y._loading = true;
 
             a = Y.Array(arguments, 0, true);
             // a.unshift('loader');
 
             Y.Get.script(Y.config.base + Y.config.loaderPath, {
                 onEnd: function() {
+                    Y._loading = false;
                     Y.Env.bootstrapped = true;
                     Y._attach(['loader']);
                     Y.use.apply(Y, a);
@@ -954,6 +964,7 @@ YUI.add('yui-base', function(Y) {
 var INSTANCE = Y,
     LOGEVENT = 'yui:log',
     UNDEFINED = 'undefined',
+    LEVELS = { debug: 1, info: 1, warn: 1, error: 1 },
     _published;
 
 /**
@@ -976,7 +987,7 @@ var INSTANCE = Y,
  * @return {YUI}      YUI instance
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var c = Y.config, bail, excl, incl, m, f;
+    var Y = INSTANCE, c = Y.config, bail = false, excl, incl, m, f;
     // suppress log message if the config is off or the event stack
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
@@ -994,10 +1005,11 @@ INSTANCE.log = function(msg, cat, src, silent) {
         }
 
         if (!bail) {
+
             if (c.useBrowserConsole) {
                 m = (src) ? src + ': ' + msg : msg;
-                if (typeof console != UNDEFINED) {
-                    f = (cat && console[cat]) ? cat : 'log';
+                if (typeof console != UNDEFINED && console.log) {
+                    f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
                     console[f](m);
                 } else if (typeof opera != UNDEFINED) {
                     opera.postError(m);
@@ -1010,9 +1022,10 @@ INSTANCE.log = function(msg, cat, src, silent) {
                         broadcast: 2,
                         emitFacade: 1
                     });
-                    _published = true;
-                }
 
+                    _published = 1;
+
+                }
                 Y.fire(LOGEVENT, {
                     msg: msg, 
                     cat: cat, 
@@ -1534,14 +1547,14 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     if (mode) {
         switch (mode) {
             case 1: // proto to proto
-                return Y.mix(r.prototype, s.prototype);
+                return Y.mix(r.prototype, s.prototype, ov, wl, 0, merge);
             case 2: // object to object and proto to proto
-                Y.mix(r.prototype, s.prototype);
+                Y.mix(r.prototype, s.prototype, ov, wl, 0, merge);
                 break; // pass through 
             case 3: // proto to static
-                return Y.mix(r, s.prototype);
+                return Y.mix(r, s.prototype, ov, wl, 0, merge);
             case 4: // static to proto
-                return Y.mix(r.prototype, s);
+                return Y.mix(r.prototype, s, ov, wl, 0, merge);
             default:  // object to object is what happens below
         }
     }
@@ -1997,9 +2010,9 @@ Y.UA = function() {
             if (/ Mobile\//.test(ua)) {
                 o.mobile = "Apple"; // iPhone or iPod Touch
             } else {
-                m=ua.match(/NokiaN[^\/]*/);
+                m=ua.match(/NokiaN[^\/]*|Android \d\.\d|webOS\/\d\.\d/);
                 if (m) {
-                    o.mobile = m[0]; // Nokia N-series, ex: NokiaN95
+                    o.mobile = m[0]; // Nokia N-series, Android, webOS, ex: NokiaN95
                 }
             }
 
@@ -2105,8 +2118,7 @@ Y.UA = function() {
 })();
 (function() {
 
-    // var min = ['yui-base', 'log', 'lang', 'array', 'core'], core, C = Y.config;
-    var min = ['yui-base'], core, C = Y.config;
+    var min = ['yui-base'], core, C = Y.config, LOADER='loader';
 
     // apply the minimal required functionality
     Y.use.apply(Y, min);
@@ -2117,10 +2129,12 @@ Y.UA = function() {
         core = C.core;
     } else {
         core = ['queue-base', 'get'];
+        if (YUI.Env.mods[LOADER]) {
+            core.push(LOADER);
+        }
     }
 
     Y.use.apply(Y, core);
-
      
 })();
 

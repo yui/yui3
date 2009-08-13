@@ -435,7 +435,7 @@ automatically during the unload event.
                                         
                                          static 
                                         
-                                        Boolean
+                                        EventHandle
                                             <strong property="yui:name">attach</strong>
                                            (
                                                 
@@ -452,7 +452,7 @@ automatically during the unload event.
                                                     
                                                 
                                                         , 
-                                                         obj
+                                                         context
                                                     
                                                 
                                                         , 
@@ -463,7 +463,7 @@ automatically during the unload event.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Appends an event handler
+                                            Adds an event listener
                                         </div>
 
                                         <div class="description">
@@ -491,11 +491,10 @@ reference, or a collection of ids and/or elements to assign the
 listener to.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">obj</span>
+                                                        <code><span property="yui:name">context</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">    An arbitrary object that will be 
-passed as a parameter to the handler</span>
+                                                        <span property="yui:description"> optional context object</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">args</span>
@@ -508,12 +507,9 @@ passed as a parameter to the handler</span>
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Boolean
+                                                        EventHandle
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">True if the action was successful or defered,
-false if one or more of the elements 
-could not have the listener attached,
-or if the operation throws an exception.</dd>
+                                                    <dd property="yui:returnInfo">an object to that can be used to detach the listener</dd>
                                                 </dl>
 
 
@@ -537,15 +533,15 @@ or if the operation throws an exception.</dd>
                                            (
                                                 
                                                         
-                                                         el
-                                                    
-                                                
-                                                        , 
                                                          type
                                                     
                                                 
                                                         , 
                                                          fn
+                                                    
+                                                
+                                                        , 
+                                                         el
                                                     
                                                 
                                             )
@@ -562,14 +558,6 @@ that is returned when using Y.on
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">el</span>
-                                                        &lt;<span property="yui:type">String|HTMLElement|Array|NodeList</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> An id, an element 
-reference, or a collection of ids and/or elements to remove
-the listener from.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
                                                         <code><span property="yui:name">type</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
@@ -580,7 +568,16 @@ the listener from.</span>
                                                         &lt;<span property="yui:type">Function</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> the method the event invokes.  If fn is
-undefined, then all event handlers for the type of event are *  removed.</span>
+undefined, then all event handlers for the type of event are 
+removed.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">el</span>
+                                                        &lt;<span property="yui:type">String|HTMLElement|Array|NodeList|EventHandle</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An 
+event handle, an id, an element reference, or a collection 
+of ids and/or elements to remove the listener from.</span>
                                                         </dd>
                                                 </dl>
 
@@ -589,7 +586,7 @@ undefined, then all event handlers for the type of event are *  removed.</span>
                                                     <code property="yui:return">
                                                         boolean
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">true if the unbind was successful, false *  otherwise.</dd>
+                                                    <dd property="yui:returnInfo">true if the unbind was successful, false otherwise.</dd>
                                                 </dl>
 
 
@@ -1301,7 +1298,8 @@ left out, all listeners will be removed</span>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -1335,6 +1333,7 @@ left out, all listeners will be removed</span>
                                 <li class=""><a href="focusblur.js.html" title="focusblur.js">focusblur.js</a></li>
                                 <li class=""><a href="key.js.html" title="key.js">key.js</a></li>
                                 <li class=""><a href="mouseentermouseleave.js.html" title="mouseentermouseleave.js">mouseentermouseleave.js</a></li>
+                                <li class=""><a href="mousewheel.js.html" title="mousewheel.js">mousewheel.js</a></li>
                                 <li class=""><a href="resize-window.js.html" title="resize-window.js">resize-window.js</a></li>
                         </ul>
                     </div>

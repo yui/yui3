@@ -2,18 +2,21 @@
 <html debug="true">
 <head>
 <title>YUI 3.0</title>
+<!--
 <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+-->
 <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
+<!--
 <script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
-<script type="text/javascript" src="../../build/event-custom/event-custom.js"></script>
+<script type="text/javascript" src="../../build/event-custom/event-custom-debug.js"></script>
 <script type="text/javascript" src="../../build/event/event-debug.js"></script>
 <script type="text/javascript" src="../../build/event-simulate/event-simulate.js"></script>
-<!--
 <script type="text/javascript" src="../../build/dom/dom.js"></script>
--->
 <script type="text/javascript" src="../../build/node/node.js"></script>
 <script type="text/javascript" src="../../build/dump/dump.js"></script>
 <script type="text/javascript" src="../../build/substitute/substitute.js"></script>
+-->
 
 <body>
 
@@ -27,6 +30,11 @@
 
 </form>
 
+    <form id="form2">
+        <input type="radio" id="radio1" name="radiocollection[]" />
+        <input type="radio" id="radio2" name="radiocollection[]" />
+    </form>
+
 <script>
 
 if (typeof loadFirebugConsole == 'function') {
@@ -34,25 +42,30 @@ if (typeof loadFirebugConsole == 'function') {
 }
 
 YUI({
-
-    base: '../../build/'
-
-}).use('node', 'dump', 'substitute', function(Y) {
+    filter: 'debug',
+    logExclude: {
+        Selector: 1
+    }
+}).use('event-base', 'dump', 'substitute', function(Y) {
 
     Y.on('load', function(e) {
         Y.log('window load event');
     });
+
+    // Y.on('beforeunload', function(e) {
+    //     e.returnValue = "let's do this";
+    // });
+
+    // Y.on('mousewheel', function(e, arg1) {
+    //     Y.log('mousewheel: ' + e.wheelDelta + ', ' + arg1);
+    // }, Y, 1);
+
 
     // debugger;
 
     // alert('starting JS');
 
     Y.log('asdf');
-
-
-    Y.on('event:ready', function() {
-        Y.log('event:ready SUBSCRIBER');
-    });
 
     Y.on('domready', function() {
         Y.log('domready SUBSCRIBER');
@@ -70,14 +83,14 @@ YUI({
     }, document);
     */
 
-    Y.on('asdasdafdsf|yui:log', function(e) {
-        var d=document, b=d.body, n=d.createElement("div");
-        if (b) {
-            n.appendChild(d.createTextNode(e.msg));
-            b.appendChild(n);
-        }
+    // Y.on('asdasdafdsf|yui:log', function(e) {
+    //     var d=document, b=d.body, n=d.createElement("div");
+    //     if (b) {
+    //         n.appendChild(d.createTextNode(e.msg));
+    //         b.appendChild(n);
+    //     }
 
-    });
+    // });
 
 /*
     Y.on('event:ready', function() {
@@ -93,6 +106,14 @@ YUI({
             e.stopPropagation();
         }, false);
     */
+
+    Y.on('click', function() {
+        Y.log("never should happen");
+    }, '#neverwillbehere');
+
+    Y.on('click', function() {
+        Y.log("lazy element worked");
+    }, '#lazy');
 
 
     Y.on('focus', function() {
@@ -127,7 +148,8 @@ YUI({
 
     var el = Y.get('#button1');
     Y.log("get got " + el);
-    el.setStyle('border', '3px solid red');
+
+    // el.setStyle('border', '3px solid red');
 
     var f = function(e) {
         Y.log("SUB1, " + this.get('id') + " click event facade: " + e.target);
@@ -314,6 +336,11 @@ Y.on('windowresize', function(e) {
         // alert('resized');                                                                                                                                       
     // });  
 
+    // var nodelist = Y.all('#form2 > input');
+    // nodelist.on('click', function(e, arg1) {
+    //     console.log('click: ' + e.currentTarget + ', ' + arg1);
+    // }, Y, 1);
+
 });
 
 </script>
@@ -328,8 +355,19 @@ Y.on('windowresize', function(e) {
 <a href="http://developer.yahoo.com/yui" id="secondA">The YUI Library. (Link's default behavior is suppressed.)</a>
 </p>
 
-    <form>
-        <input type="radio" id="radio1" name="radiocollection[]" />
-    </form>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p>blah</p>
+    <p id="lazy">Me</p>
+
+<script>
+</script>
 </body>
 </html>

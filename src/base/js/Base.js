@@ -15,6 +15,7 @@
      * @submodule base-base
      */
     var O = Y.Object,
+        L = Y.Lang,
         DOT = ".",
         DESTROY = "destroy",
         INIT = "init",
@@ -24,7 +25,6 @@
         OBJECT_CONSTRUCTOR = Object.prototype.constructor,
         DEEP = "deep",
         SHALLOW = "shallow",
-        VALUE = "value",
         DESTRUCTOR = "destructor",
 
         Attribute = Y.Attribute;
@@ -54,7 +54,6 @@
         Y.log('constructor called', 'life', 'base');
 
         Attribute.call(this);
-        PluginHost.call(this);
 
         if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
 
@@ -246,7 +245,10 @@
          */
         _defInitFn : function(e) {
             this._initHierarchy(e.cfg);
-            this._initPlugins(e.cfg);
+            if (this._initPlugins) {
+                // Need to initPlugins manually, to handle constructor parsing, static Plug parsing
+                this._initPlugins(e.cfg);
+            }
             this._set(INITIALIZED, true);
         },
 
@@ -259,7 +261,9 @@
          */
         _defDestroyFn : function(e) {
             this._destroyHierarchy();
-            this._destroyPlugins();
+            if (this._destroyPlugins) {
+                this._destroyPlugins();
+            }
             this._set(DESTROYED, true);
         },
 
@@ -503,27 +507,11 @@
 
     // Straightup augment, no wrapper functions
     Y.mix(Base, Attribute, false, null, 1);
-    Y.mix(Base, PluginHost, false, null, 1);
-
-    /**
-     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.plug">Plugin.Host.plug</a>. See aliased 
-     * method for argument and return value details.
-     *
-     * @method Base.plug
-     * @static
-     */
-    Base.plug = PluginHost.plug;
-
-    /**
-     * Alias for <a href="Plugin.Host.html#method_Plugin.Host.unplug">Plugin.Host.unplug</a>. See the 
-     * aliased method for argument and return value details.
-     *
-     * @method Base.unplug
-     * @static
-     */
-    Base.unplug = PluginHost.unplug;
 
     // Fix constructor
     Base.prototype.constructor = Base;
 
     Y.Base = Base;
+
+    // Fix constructor
+    Base.prototype.constructor = Base;
