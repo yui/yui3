@@ -64,17 +64,17 @@
 <span class="c"> */</span>
 <span class="k">var</span> <span class="nx">NODE_TYPE</span> <span class="o">=</span> <span class="s1">&#39;nodeType&#39;</span><span class="o">,</span>
     <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s1">&#39;ownerDocument&#39;</span><span class="o">,</span>
-    <span class="nx">DOCUMENT_ELEMENT</span> <span class="o">=</span> <span class="s1">&#39;documentElement&#39;</span><span class="o">,</span>
     <span class="nx">DEFAULT_VIEW</span> <span class="o">=</span> <span class="s1">&#39;defaultView&#39;</span><span class="o">,</span>
     <span class="nx">PARENT_WINDOW</span> <span class="o">=</span> <span class="s1">&#39;parentWindow&#39;</span><span class="o">,</span>
     <span class="nx">TAG_NAME</span> <span class="o">=</span> <span class="s1">&#39;tagName&#39;</span><span class="o">,</span>
     <span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s1">&#39;parentNode&#39;</span><span class="o">,</span>
     <span class="nx">FIRST_CHILD</span> <span class="o">=</span> <span class="s1">&#39;firstChild&#39;</span><span class="o">,</span>
-    <span class="nx">LAST_CHILD</span> <span class="o">=</span> <span class="s1">&#39;lastChild&#39;</span><span class="o">,</span>
     <span class="nx">PREVIOUS_SIBLING</span> <span class="o">=</span> <span class="s1">&#39;previousSibling&#39;</span><span class="o">,</span>
     <span class="nx">NEXT_SIBLING</span> <span class="o">=</span> <span class="s1">&#39;nextSibling&#39;</span><span class="o">,</span>
     <span class="nx">CONTAINS</span> <span class="o">=</span> <span class="s1">&#39;contains&#39;</span><span class="o">,</span>
     <span class="nx">COMPARE_DOCUMENT_POSITION</span> <span class="o">=</span> <span class="s1">&#39;compareDocumentPosition&#39;</span><span class="o">,</span>
+
+    <span class="nx">documentElement</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">,</span>
 
     <span class="nx">re_tag</span> <span class="o">=</span> <span class="sr">/&lt;([a-z]+)/i</span><span class="o">;</span>
 
@@ -92,13 +92,23 @@
 <span class="c"></span>        <span class="k">return</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
     <span class="o">},</span>
 
+    <span class="nx">children</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">tag</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">tag</span> <span class="o">=</span> <span class="nx">tag</span> <span class="o">||</span> <span class="s1">&#39;*&#39;</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="s1">&#39;&gt; &#39;</span> <span class="o">+</span> <span class="nx">tag</span><span class="o">);</span> 
+    <span class="o">},</span>
+
+    <span class="nx">firstByTag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">tag</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">tag</span> <span class="o">=</span> <span class="nx">tag</span> <span class="o">||</span> <span class="s1">&#39;*&#39;</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">tag</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span> 
+    <span class="o">},</span>
+
     <span class="c">/**</span>
 <span class="c">     * Returns the text content of the HTMLElement. </span>
 <span class="c">     * @method getText         </span>
 <span class="c">     * @param {HTMLElement} element The html element. </span>
 <span class="c">     * @return {String} The text content of the element (includes text of any descending elements).</span>
 <span class="c">     */</span>
-    <span class="nx">getText</span><span class="o">:</span> <span class="o">(</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">textContent</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">?</span>
+    <span class="nx">getText</span><span class="o">:</span> <span class="o">(</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">textContent</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">?</span>
         <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
@@ -119,7 +129,7 @@
 <span class="c">     * @param {HTMLElement} element The html element. </span>
 <span class="c">     * @param {String} content The content to add. </span>
 <span class="c">     */</span>
-    <span class="nx">setText</span><span class="o">:</span> <span class="o">(</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">textContent</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">?</span>
+    <span class="nx">setText</span><span class="o">:</span> <span class="o">(</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">textContent</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">?</span>
         <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">content</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">element</span><span class="o">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="nx">content</span><span class="o">;</span>
@@ -129,116 +139,6 @@
                 <span class="nx">element</span><span class="o">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="nx">content</span><span class="o">;</span>
             <span class="o">}</span>
         <span class="o">},</span>
-
-<span class="c">// TODO: pull out sugar (rely on _childBy, byAxis, etc)?</span>
-<span class="c"></span>    <span class="c">/*</span>
-<span class="c">     * Finds the firstChild of the given HTMLElement. </span>
-<span class="c">     * @method firstChild</span>
-<span class="c">     * @deprecated Use _childBy</span>
-<span class="c">     * @param {HTMLElement} element The html element. </span>
-<span class="c">     * @param {Function} fn optional An optional boolean test to apply.</span>
-<span class="c">     * The optional function is passed the current HTMLElement being tested as its only argument.</span>
-<span class="c">     * If no function is given, the first found is returned.</span>
-<span class="c">     * @return {HTMLElement | null} The first matching child html element.</span>
-<span class="c">     */</span>
-    <span class="nx">firstChild</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_childBy</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
-    <span class="o">},</span>
-
-    <span class="c">// @deprecated Use _childBy</span>
-<span class="c"></span>    <span class="nx">firstChildByTag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_childBy</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
-    <span class="o">},</span>
-
-    <span class="c">/*</span>
-<span class="c">     * Finds the lastChild of the given HTMLElement.</span>
-<span class="c">     * @method lastChild</span>
-<span class="c">     * @deprecated Use _childBy</span>
-<span class="c">     * @param {HTMLElement} element The html element.</span>
-<span class="c">     * @param {String} tag The tag to search for.</span>
-<span class="c">     * @param {Function} fn optional An optional boolean test to apply.</span>
-<span class="c">     * The optional function is passed the current HTMLElement being tested as its only argument.</span>
-<span class="c">     * If no function is given, the first found is returned.</span>
-<span class="c">     * @return {HTMLElement | null} The first matching child html element.</span>
-<span class="c">     */</span>
-    <span class="nx">lastChild</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_childBy</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-    <span class="o">},</span>
-
-    <span class="c">// @deprecated Use _childBy</span>
-<span class="c"></span>    <span class="nx">lastChildByTag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_childBy</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-    <span class="o">},</span>
-
-    <span class="c">/*</span>
-<span class="c">     * Finds all HTMLElement childNodes matching the given tag.</span>
-<span class="c">     * @method childrenByTag</span>
-<span class="c">     * @deprecated Use Selector</span>
-<span class="c">     * @param {HTMLElement} element The html element.</span>
-<span class="c">     * @param {String} tag The tag to search for.</span>
-<span class="c">     * @param {Function} fn optional An optional boolean test to apply.</span>
-<span class="c">     * The optional function is passed the current HTMLElement being tested as its only argument.</span>
-<span class="c">     * If no function is given, all children with the given tag are collected.</span>
-<span class="c">     * @return {Array} The collection of child elements.</span>
-<span class="c">     * TODO: Webkit children.tags() returns grandchildren</span>
-<span class="c">     */</span>
-    <span class="nx">_childrenByTag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nb">document</span><span class="o">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="o">].</span><span class="nx">children</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">toArray</span><span class="o">)</span> <span class="o">{</span> <span class="c">// TODO: keep toArray option?</span>
-<span class="c"></span>                <span class="nx">tag</span> <span class="o">=</span> <span class="o">(</span><span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="nx">tag</span> <span class="o">!==</span> <span class="s1">&#39;*&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">tag</span><span class="o">.</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-                <span class="k">var</span> <span class="nx">elements</span> <span class="o">=</span> <span class="o">[],</span>
-                    <span class="nx">wrapFn</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">;</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span> <span class="c">// children.tags() broken in safari</span>
-<span class="c"></span>                        <span class="nx">elements</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">children</span><span class="o">.</span><span class="nx">tags</span><span class="o">(</span><span class="nx">tag</span><span class="o">);</span>
-                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                        <span class="nx">elements</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">children</span><span class="o">;</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">tag</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">wrapFn</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
-                                <span class="k">return</span> <span class="nx">el</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">].</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">===</span> <span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">el</span><span class="o">));</span>
-                            <span class="o">};</span>
-                        <span class="o">}</span>
-                    <span class="o">}</span>
-
-                    <span class="nx">elements</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">filterElementsBy</span><span class="o">(</span><span class="nx">elements</span><span class="o">,</span> <span class="nx">wrapFn</span><span class="o">);</span>
-                <span class="o">}</span>
-
-                <span class="k">return</span> <span class="nx">elements</span><span class="o">;</span>
-            <span class="o">};</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">tag</span> <span class="o">=</span> <span class="o">(</span><span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="nx">tag</span> <span class="o">!==</span> <span class="s1">&#39;*&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">tag</span><span class="o">.</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-                <span class="k">var</span> <span class="nx">elements</span> <span class="o">=</span> <span class="o">[],</span>
-                    <span class="nx">wrapFn</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">;</span>
-
-                <span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">elements</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">childNodes</span><span class="o">;</span> 
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">tag</span><span class="o">)</span> <span class="o">{</span> <span class="c">// wrap fn and add tag test TODO: allow tag in filterElementsBy?</span>
-<span class="c"></span>                        <span class="nx">wrapFn</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="k">return</span> <span class="nx">el</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">].</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">===</span> <span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">el</span><span class="o">));</span>
-                        <span class="o">};</span>
-                    <span class="o">}</span>
-
-                    <span class="nx">elements</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">filterElementsBy</span><span class="o">(</span><span class="nx">elements</span><span class="o">,</span> <span class="nx">wrapFn</span><span class="o">);</span>
-                <span class="o">}</span>
-                <span class="k">return</span> <span class="nx">elements</span><span class="o">;</span>
-            <span class="o">};</span>
-        <span class="o">}</span>
-    <span class="o">}(),</span>
-
-    <span class="c">/*</span>
-<span class="c">     * Finds all HTMLElement childNodes.</span>
-<span class="c">     * @method children</span>
-<span class="c">     * @deprecated Use Selector</span>
-<span class="c">     * @param {HTMLElement} element The html element.</span>
-<span class="c">     * @param {Function} fn optional An optional boolean test to apply.</span>
-<span class="c">     * The optional function is passed the current HTMLElement being tested as its only argument.</span>
-<span class="c">     * If no function is given, all children are collected.</span>
-<span class="c">     * @return {Array} The collection of child elements.</span>
-<span class="c">     */</span>
-    <span class="nx">children</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_childrenByTag</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
-    <span class="o">},</span>
 
     <span class="c">/*</span>
 <span class="c">     * Finds the previous sibling of the element.</span>
@@ -306,85 +206,6 @@
         <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
     <span class="o">},</span>
 
-    <span class="c">/*</span>
-<span class="c">     * Finds all elements with the given tag.</span>
-<span class="c">     * @method byTag</span>
-<span class="c">     * @deprecated Use Selector</span>
-<span class="c">     * @param {String} tag The tag being search for. </span>
-<span class="c">     * @param {HTMLElement} root optional An optional root element to start from.</span>
-<span class="c">     * @param {Function} fn optional An optional boolean test to apply.</span>
-<span class="c">     * The optional function is passed the current HTMLElement being tested as its only argument.</span>
-<span class="c">     * If no function is given, all elements with the given tag are returned.</span>
-<span class="c">     * @return {Array} The collection of matching elements.</span>
-<span class="c">     */</span>
-    <span class="nx">byTag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">tag</span><span class="o">,</span> <span class="nx">root</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
-
-        <span class="k">var</span> <span class="nx">elements</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="nx">tag</span><span class="o">),</span>
-            <span class="nx">retNodes</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">elements</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span> <span class="o">!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">elements</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">)</span> <span class="o">{</span>
-                <span class="nx">retNodes</span><span class="o">[</span><span class="nx">retNodes</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">elements</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">retNodes</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/*</span>
-<span class="c">     * Finds the first element with the given tag.</span>
-<span class="c">     * @method firstByTag</span>
-<span class="c">     * @deprecated Use Selector</span>
-<span class="c">     * @param {String} tag The tag being search for. </span>
-<span class="c">     * @param {HTMLElement} root optional An optional root element to start from.</span>
-<span class="c">     * @param {Function} fn optional An optional boolean test to apply.</span>
-<span class="c">     * The optional function is passed the current HTMLElement being tested as its only argument.</span>
-<span class="c">     * If no function is given, the first match is returned. </span>
-<span class="c">     * @return {HTMLElement} The matching element.</span>
-<span class="c">     */</span>
-    <span class="nx">firstByTag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">tag</span><span class="o">,</span> <span class="nx">root</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
-
-        <span class="k">var</span> <span class="nx">elements</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="nx">tag</span><span class="o">),</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">elements</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span> <span class="o">!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">elements</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">elements</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/*</span>
-<span class="c">     * Filters a collection of HTMLElements by the given attributes.</span>
-<span class="c">     * @method filterElementsBy</span>
-<span class="c">     * @param {Array} elements The collection of HTMLElements to filter.</span>
-<span class="c">     * @param {Function} fn A boolean test to apply.</span>
-<span class="c">     * The function is passed the current HTMLElement being tested as its only argument.</span>
-<span class="c">     * If no function is given, all HTMLElements are kept.</span>
-<span class="c">     * @return {Array} The filtered collection of HTMLElements.</span>
-<span class="c">     */</span>
-    <span class="nx">filterElementsBy</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">elements</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">firstOnly</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="o">(</span><span class="nx">firstOnly</span><span class="o">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="o">[],</span>
-            <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">elements</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">elements</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="nx">TAG_NAME</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">elements</span><span class="o">[</span><span class="nx">i</span><span class="o">])))</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">firstOnly</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">elements</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">ret</span><span class="o">[</span><span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">elements</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-    <span class="o">},</span>
-
     <span class="c">/**</span>
 <span class="c">     * Determines whether or not one HTMLElement is or contains another HTMLElement.</span>
 <span class="c">     * @method contains</span>
@@ -427,51 +248,6 @@
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="o">!!</span> <span class="o">(</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">));</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Inserts the new node as the previous sibling of the reference node </span>
-<span class="c">     * @method insertBefore</span>
-<span class="c">     * @param {String | HTMLElement} newNode The node to be inserted</span>
-<span class="c">     * @param {String | HTMLElement} referenceNode The node to insert the new node before </span>
-<span class="c">     * @return {HTMLElement} The node that was inserted (or null if insert fails) </span>
-<span class="c">     */</span>
-    <span class="nx">insertBefore</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">referenceNode</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">parent</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">newNode</span> <span class="o">&amp;&amp;</span> <span class="nx">referenceNode</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">parent</span> <span class="o">=</span> <span class="nx">referenceNode</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">))</span> <span class="o">{</span> <span class="c">// NOTE: assignment</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">newNode</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">parent</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">referenceNode</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;insertBefore failed: missing or invalid arg(s)&#39;</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;dom&#39;</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Inserts the new node as the next sibling of the reference node </span>
-<span class="c">     * @method insertAfter</span>
-<span class="c">     * @param {String | HTMLElement} newNode The node to be inserted</span>
-<span class="c">     * @param {String | HTMLElement} referenceNode The node to insert the new node after </span>
-<span class="c">     * @return {HTMLElement} The node that was inserted (or null if insert fails) </span>
-<span class="c">     */</span>
-    <span class="nx">insertAfter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">referenceNode</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">newNode</span> <span class="o">||</span> <span class="o">!</span><span class="nx">referenceNode</span> <span class="o">||</span> <span class="o">!</span><span class="nx">referenceNode</span><span class="o">[</span><span class="nx">PARENT_NODE</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;insertAfter failed: missing or invalid arg(s)&#39;</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;DOM&#39;</span><span class="o">);</span>
-            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="o">}</span>       
-
-        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">newNode</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">referenceNode</span><span class="o">[</span><span class="nx">NEXT_SIBLING</span><span class="o">])</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">referenceNode</span><span class="o">[</span><span class="nx">PARENT_NODE</span><span class="o">].</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">referenceNode</span><span class="o">[</span><span class="nx">NEXT_SIBLING</span><span class="o">]);</span> 
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">referenceNode</span><span class="o">[</span><span class="nx">PARENT_NODE</span><span class="o">].</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
-        <span class="o">}</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -537,7 +313,7 @@
     <span class="o">},</span>
 
 
-    <span class="nx">CUSTOM_ATTRIBUTES</span><span class="o">:</span> <span class="o">(!</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">hasAttribute</span><span class="o">)</span> <span class="o">?</span> <span class="o">{</span> <span class="c">// IE &lt; 8</span>
+    <span class="nx">CUSTOM_ATTRIBUTES</span><span class="o">:</span> <span class="o">(!</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">hasAttribute</span><span class="o">)</span> <span class="o">?</span> <span class="o">{</span> <span class="c">// IE &lt; 8</span>
 <span class="c"></span>        <span class="s1">&#39;for&#39;</span><span class="o">:</span> <span class="s1">&#39;htmlFor&#39;</span><span class="o">,</span>
         <span class="s1">&#39;class&#39;</span><span class="o">:</span> <span class="s1">&#39;className&#39;</span>
     <span class="o">}</span> <span class="o">:</span> <span class="o">{</span> <span class="c">// w3c</span>
@@ -581,17 +357,6 @@
         <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
     <span class="o">},</span>
 
-    <span class="c">// @deprecated</span>
-<span class="c"></span>    <span class="nx">srcIndex</span><span class="o">:</span> <span class="o">(</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">sourceIndex</span><span class="o">)</span> <span class="o">?</span>
-        <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">.</span><span class="nx">sourceIndex</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span><span class="o">.</span><span class="nx">sourceIndex</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="o">}</span> <span class="o">:</span>
-        <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">])</span> <span class="o">?</span> 
-                    <span class="o">[].</span><span class="nx">indexOf</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">node</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">].</span>
-                            <span class="nx">getElementsByTagName</span><span class="o">(</span><span class="s1">&#39;*&#39;</span><span class="o">),</span> <span class="nx">node</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="o">},</span>
-
     <span class="nx">isWindow</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">obj</span><span class="o">.</span><span class="nx">alert</span> <span class="o">&amp;&amp;</span> <span class="nx">obj</span><span class="o">.</span><span class="nb">document</span><span class="o">;</span>
     <span class="o">},</span>
@@ -633,7 +398,8 @@
             <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">content</span><span class="o">);</span> <span class="c">// match IE which trims whitespace from innerHTML</span>
 <span class="c"></span>        <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_cloneCache</span><span class="o">[</span><span class="nx">content</span><span class="o">];</span>
+        <span class="k">var</span> <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_cloneCache</span><span class="o">[</span><span class="nx">content</span><span class="o">],</span>
+            <span class="nx">nodeParent</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
             
         <span class="k">if</span> <span class="o">(</span><span class="nx">newNode</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">newNode</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
@@ -658,13 +424,13 @@
                         <span class="nx">node</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
                         <span class="k">break</span><span class="o">;</span>
                     <span class="nx">case</span> <span class="s1">&#39;before&#39;</span><span class="o">:</span>
-                        <span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">);</span>
+                        <span class="nx">nodeParent</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">);</span>
                         <span class="k">break</span><span class="o">;</span>
                     <span class="nx">case</span> <span class="s1">&#39;after&#39;</span><span class="o">:</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">nextSibling</span><span class="o">)</span> <span class="o">{</span> <span class="c">// IE errors if refNode is null</span>
-<span class="c"></span>                            <span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">nextSibling</span><span class="o">);</span>
+<span class="c"></span>                            <span class="nx">nodeParent</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">nextSibling</span><span class="o">);</span>
                         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                            <span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
+                            <span class="nx">nodeParent</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
                         <span class="o">}</span>
                         <span class="k">break</span><span class="o">;</span>
                     <span class="nx">default</span><span class="o">:</span>
@@ -710,52 +476,6 @@
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">node</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
             <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
-
-    <span class="nx">_stripScripts</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">scripts</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="s1">&#39;script&#39;</span><span class="o">),</span>
-            <span class="nx">i</span><span class="o">,</span> <span class="nx">script</span><span class="o">;</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">script</span><span class="o">;</span> <span class="nx">script</span> <span class="o">=</span> <span class="nx">scripts</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span>
-            <span class="nx">script</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">script</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
-
-    <span class="nx">_execScripts</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">scripts</span><span class="o">,</span> <span class="nx">startIndex</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">newScript</span><span class="o">,</span>
-            <span class="nx">i</span><span class="o">,</span> <span class="nx">script</span><span class="o">;</span>
-
-        <span class="nx">startIndex</span> <span class="o">=</span> <span class="nx">startIndex</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">startIndex</span><span class="o">,</span> <span class="nx">script</span><span class="o">;</span> <span class="nx">script</span> <span class="o">=</span> <span class="nx">scripts</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span>
-            <span class="nx">newScript</span> <span class="o">=</span> <span class="nx">script</span><span class="o">.</span><span class="nx">ownerDocument</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s1">&#39;script&#39;</span><span class="o">);</span>
-            <span class="nx">script</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">replaceChild</span><span class="o">(</span><span class="nx">newScript</span><span class="o">,</span> <span class="nx">script</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">script</span><span class="o">.</span><span class="nx">text</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">newScript</span><span class="o">.</span><span class="nx">text</span> <span class="o">=</span> <span class="nx">script</span><span class="o">.</span><span class="nx">text</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">script</span><span class="o">.</span><span class="nx">src</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">newScript</span><span class="o">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">script</span><span class="o">.</span><span class="nx">src</span><span class="o">;</span>
-
-                 <span class="c">// &quot;pause&quot; while loading to ensure exec order </span>
-<span class="c"></span>                <span class="c">// FF reports typeof onload as &quot;undefined&quot;, so try IE first</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">newScript</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">newScript</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="sr">/loaded|complete/</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">script</span><span class="o">.</span><span class="nx">readyState</span><span class="o">))</span> <span class="o">{</span>
-                            <span class="nx">event</span><span class="o">.</span><span class="nx">srcElement</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span> 
-                            <span class="c">// timer to help ensure exec order</span>
-<span class="c"></span>                            <span class="nx">setTimeout</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                                <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_execScripts</span><span class="o">(</span><span class="nx">scripts</span><span class="o">,</span> <span class="nx">i</span><span class="o">++);</span>
-                            <span class="o">},</span> <span class="m">0</span><span class="o">);</span>
-                        <span class="o">}</span>
-                    <span class="o">};</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">newScript</span><span class="o">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">e</span><span class="o">.</span><span class="nx">target</span><span class="o">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span> 
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_execScripts</span><span class="o">(</span><span class="nx">scripts</span><span class="o">,</span> <span class="nx">i</span><span class="o">++);</span>
-                    <span class="o">};</span>
-                <span class="o">}</span>
-                <span class="k">return</span><span class="o">;</span> <span class="c">// NOTE: early return to chain async loading</span>
-<span class="c"></span>            <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">},</span>
 
@@ -825,30 +545,6 @@
         <span class="k">return</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">DEFAULT_VIEW</span><span class="o">]</span> <span class="o">||</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">PARENT_WINDOW</span><span class="o">]</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
     <span class="o">},</span>
 
-    <span class="c">// @deprecated, use Selector </span>
-<span class="c"></span>    <span class="nx">_childBy</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">rev</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">root</span><span class="o">,</span> <span class="nx">axis</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">rev</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">root</span> <span class="o">=</span> <span class="nx">element</span><span class="o">[</span><span class="nx">LAST_CHILD</span><span class="o">];</span>
-                <span class="nx">axis</span> <span class="o">=</span> <span class="nx">PREVIOUS_SIBLING</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">root</span> <span class="o">=</span> <span class="nx">element</span><span class="o">[</span><span class="nx">FIRST_CHILD</span><span class="o">];</span>
-                <span class="nx">axis</span> <span class="o">=</span> <span class="nx">NEXT_SIBLING</span><span class="o">;</span>
-            <span class="o">}</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_testElement</span><span class="o">(</span><span class="nx">root</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">fn</span><span class="o">))</span> <span class="o">{</span> <span class="c">// is the matching element</span>
-<span class="c"></span>                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">root</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// need to scan nextSibling axis of firstChild to find matching element</span>
-<span class="c"></span>                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">root</span><span class="o">,</span> <span class="nx">axis</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-
-    <span class="o">},</span>
-
     <span class="nx">_batch</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">arg1</span><span class="o">,</span> <span class="nx">arg2</span><span class="o">,</span> <span class="nx">arg3</span><span class="o">,</span> <span class="nx">etc</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">fn</span> <span class="o">=</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">name</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">[</span><span class="nx">fn</span><span class="o">]</span> <span class="o">:</span> <span class="nx">fn</span><span class="o">;</span>
         <span class="k">var</span> <span class="nx">result</span><span class="o">,</span>
@@ -888,30 +584,6 @@
 
         <span class="nx">TABLE_OPEN</span> <span class="o">=</span> <span class="s1">&#39;&lt;table&gt;&#39;</span><span class="o">,</span>
         <span class="nx">TABLE_CLOSE</span> <span class="o">=</span> <span class="s1">&#39;&lt;/table&gt;&#39;</span><span class="o">;</span>
-
-    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span> <span class="c">// require custom creation code for certain element types</span>
-<span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">creators</span><span class="o">,</span> <span class="o">{</span>
-            <span class="nx">option</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;select&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/select&gt;&#39;</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
-            <span class="o">},</span>
-
-            <span class="nx">tr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;tbody&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/tbody&gt;&#39;</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
-            <span class="o">},</span>
-
-            <span class="nx">td</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;tr&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
-            <span class="o">},</span> 
-
-            <span class="nx">tbody</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="nx">TABLE_OPEN</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="nx">TABLE_CLOSE</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
-            <span class="o">},</span>
-
-            <span class="nx">legend</span><span class="o">:</span> <span class="s1">&#39;fieldset&#39;</span>
-        <span class="o">});</span>
-
-        <span class="nx">creators</span><span class="o">.</span><span class="nx">col</span> <span class="o">=</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">;</span> <span class="c">// IE wraps in colgroup</span>
-<span class="c"></span>    <span class="o">}</span>
 
     <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">creators</span><span class="o">,</span> <span class="o">{</span>
@@ -959,13 +631,30 @@
 
     <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">creators</span><span class="o">,</span> <span class="o">{</span>
-                <span class="nx">th</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">td</span><span class="o">,</span>
-                <span class="nx">thead</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
-                <span class="nx">tfoot</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
-                <span class="nx">caption</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
-                <span class="nx">colgroup</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
-                <span class="nx">col</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
-                <span class="nx">optgroup</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">option</span>
+            <span class="nx">option</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;select&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/select&gt;&#39;</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
+            <span class="o">},</span>
+
+            <span class="nx">tr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;tbody&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/tbody&gt;&#39;</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
+            <span class="o">},</span>
+
+            <span class="nx">td</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;tr&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
+            <span class="o">},</span> 
+
+            <span class="nx">tbody</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="nx">TABLE_OPEN</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="nx">TABLE_CLOSE</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
+            <span class="o">},</span>
+
+            <span class="nx">legend</span><span class="o">:</span> <span class="s1">&#39;fieldset&#39;</span><span class="o">,</span>
+            <span class="nx">th</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">td</span><span class="o">,</span>
+            <span class="nx">thead</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
+            <span class="nx">tfoot</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
+            <span class="nx">caption</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
+            <span class="nx">colgroup</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
+            <span class="nx">col</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
+            <span class="nx">optgroup</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">option</span>
         <span class="o">});</span>
     <span class="o">}</span>
 
@@ -1085,7 +774,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addClass", "url": "DOM.html#method_addClass", "type": "method"}, {"access": "", "host": "DOM", "name": "addHTML", "url": "DOM.html#method_addHTML", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "hasClass", "url": "DOM.html#method_hasClass", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "Selector", "name": "inRegion", "url": "Selector.html#method_inRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "insertAfter", "url": "DOM.html#method_insertAfter", "type": "method"}, {"access": "", "host": "DOM", "name": "insertBefore", "url": "DOM.html#method_insertBefore", "type": "method"}, {"access": "", "host": "Selector", "name": "intersect", "url": "Selector.html#method_intersect", "type": "method"}, {"access": "", "host": "Selector", "name": "inViewportRegion", "url": "Selector.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "PARENT_NODE", "url": "Selector.html#property_PARENT_NODE", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "Selector", "name": "region", "url": "Selector.html#method_region", "type": "method"}, {"access": "", "host": "DOM", "name": "removeClass", "url": "DOM.html#method_removeClass", "type": "method"}, {"access": "", "host": "DOM", "name": "replaceClass", "url": "DOM.html#method_replaceClass", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "DOM", "name": "toggleClass", "url": "DOM.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "Selector", "name": "viewportRegion", "url": "Selector.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addClass", "url": "DOM.html#method_addClass", "type": "method"}, {"access": "", "host": "DOM", "name": "addHTML", "url": "DOM.html#method_addHTML", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "hasClass", "url": "DOM.html#method_hasClass", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "Selector", "name": "inRegion", "url": "Selector.html#method_inRegion", "type": "method"}, {"access": "", "host": "Selector", "name": "intersect", "url": "Selector.html#method_intersect", "type": "method"}, {"access": "", "host": "Selector", "name": "inViewportRegion", "url": "Selector.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "PARENT_NODE", "url": "Selector.html#property_PARENT_NODE", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "Selector", "name": "region", "url": "Selector.html#method_region", "type": "method"}, {"access": "", "host": "DOM", "name": "removeClass", "url": "DOM.html#method_removeClass", "type": "method"}, {"access": "", "host": "DOM", "name": "replaceClass", "url": "DOM.html#method_replaceClass", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "DOM", "name": "toggleClass", "url": "DOM.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "Selector", "name": "viewportRegion", "url": "Selector.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
 </script>
 </body>
 </html>
