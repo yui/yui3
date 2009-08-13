@@ -171,29 +171,20 @@ YUI.add('io-base', function(Y) {
    	* @static
 	* @param {string} uri - qualified path to transaction resource.
 	* @param {object} c - configuration object for the transaction.
+	* @param {number} i - transaction id, if already set by queue.
 	* @return object
    	*/
-   	function _io(uri, c) {
-   		var u, f,
-   			// Set default value of argument c to Object if
-   			// configuration object "c" does not exist.
-   			c = c || {},
-   			o = _create((arguments.length === 3) ? arguments[2] : null, c),
-   			m = (c.method) ? c.method.toUpperCase() : 'GET',
-   			d = (c.data) ? c.data : null;
-
-   		o.abort = function () {
-   			c.xdr ? o.c.abort(o.id, c) : _ioCancel(o, 'abort');
-   		};
-   		o.isInProgress = function() {
-   			var s = (c.xdr) ? _isInProgress(o) : (o.c.readyState !== 4 && o.c.readyState !== 0);
-   			return s;
-   		};
+   	function _io(uri, c, i) {
+   		var u, f, o, m, d;
+   			c = c || {};
+   			i = i || null;
+   			o = _create(c.xdr, i);
+   			m = c.method ? c.method.toUpperCase() : 'GET';
+   			d = c.data ? c.data : '';
 
    		/* Determine configuration properties */
    		// If config.form is defined, perform data operations.
    		if (c.form) {
-
    			if (c.form.upload) {
    				u = Y.io._upload(o, uri, c);
    				return u;
@@ -204,7 +195,6 @@ YUI.add('io-base', function(Y) {
    			// If config.data is defined, concatenate the data to the form string.
    			if (d) {
    				f += "&" + d;
-   				Y.log('Configuration object.data added to serialized HTML form data. The string is: ' + f, 'info', 'io');
    			}
 
    			if (m === 'POST') {
@@ -213,7 +203,6 @@ YUI.add('io-base', function(Y) {
    			}
    			else if (m === 'GET') {
    				uri = _concat(uri, f);
-   				Y.log('Configuration object.data added to serialized HTML form data. The querystring is: ' + uri, 'info', 'io');
    			}
    		}
    		else if (d && m === 'POST') {
@@ -221,8 +210,12 @@ YUI.add('io-base', function(Y) {
    		}
 
    		if (c.xdr) {
-   			Y.io._xdr(uri, o, c);
-   			return o;
+			if (c.xdr.use === 'native' && window.XDomainRequest || c.xdr.use === 'flash') {
+   				return Y.io._xdr(uri, o, c);
+			}
+			if (c.xdr.credentials) {
+				o.c.withCredentials = true;
+			}
    		}
 
    		// If config.timeout is defined, and the request is standard XHR,
@@ -233,21 +226,29 @@ YUI.add('io-base', function(Y) {
    		/* End Configuration Properties */
 
    		o.c.onreadystatechange = function() { _readyState(o, c); };
-   		try { _open(o.c, m, uri); } catch(e0) {}
-   		_setHeaders(o.c, (c.headers || {}));
+   		try { _open(o.c, m, uri); } catch(e) {}
+   		if (c.header) {
+   			_setHeaders(o.c, c.headers);
+		}
 
    		// Do not pass null, in the absence of data, as this
    		// will result in a POST request with no Content-Length
    		// defined.
-   		_async(o, (d || ''), c);
+   		_async(o, d, c);
 
-   		return o;
+		return {
+			id: o.id,
+			abort: function() { _ioCancel(o, 'abort'); },
+			isInProgress: function() {
+				o.c.readyState !== 4 && o.c.readyState !== 0;
+	   		}
+		}
    	}
 
    /**
    	* @description Method for creating and subscribing transaction events.
    	*
-   	* @method _tPubSub
+   	* @method _subscribe
    	* @private
    	* @static
    	* @param {string} e - event to be published
@@ -255,11 +256,11 @@ YUI.add('io-base', function(Y) {
    	*
 	* @return void
    	*/
-   	function _tPubSub(e, c){
-   			var event = new Y.EventTarget().publish('transaction:' + e);
-   			event.subscribe(c.on[e], (c.context || this), c.arguments);
+   	function _subscribe(e, c){
+   		var evt = new Y.EventTarget().publish('transaction:' + e);
+		evt.subscribe(c.on[e], (c.context || Y), c.arguments);
 
-   			return event;
+   		return evt;
    	}
 
    /**
@@ -276,24 +277,16 @@ YUI.add('io-base', function(Y) {
     * @return void
    	*/
    	function _ioStart(id, c) {
-   		var m = Y.io._fn || {},
-   			fn = (m && m[id]) ? m[id] : null,
-   			event;
+   		var evt;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-   		if (fn) {
-   			c.on.start = fn.start;
-   		}
-
    		Y.fire(E_START, id);
-
    		if (c.on.start) {
-   			event = _tPubSub('start', c);
-   			event.fire(id);
+   			evt = _subscribe('start', c);
+   			evt.fire(id);
    		}
-   		Y.log('Transaction ' + id + ' started.', 'info', 'io');
    	}
 
 
@@ -311,19 +304,17 @@ YUI.add('io-base', function(Y) {
     * @return void
    	*/
    	function _ioComplete(o, c) {
-   		var r, event;
+   		var r, evt;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-		r = (o.status) ? _response(o.status) : o.c;
+		r = o.status ? _response(o.status) : o.c;
    		Y.fire(E_COMPLETE, o.id, r);
-
    		if (c.on.complete) {
-   			event = _tPubSub('complete', c);
-   			event.fire(o.id, r);
+   			evt = _subscribe('complete', c);
+   			evt.fire(o.id, r);
    		}
-   		Y.log('Transaction ' + o.id + ' completed.', 'info', 'io');
    	}
 
    /**
@@ -340,27 +331,17 @@ YUI.add('io-base', function(Y) {
     * @return void
    	*/
    	function _ioSuccess(o, c) {
-   		var m = Y.io._fn || {},
-   			fn = (m && m[o.id]) ? m[o.id] : null,
-   			event;
+   		var evt;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-   		if (fn) {
-   			c.on.success = fn.success;
-   			//Decode the response from IO.swf
-   			o.c.responseText = decodeURI(o.c.responseText);
-   		}
-
    		Y.fire(E_SUCCESS, o.id, o.c);
-
    		if (c.on.success) {
-   			event = _tPubSub('success', c);
-   			event.fire(o.id, o.c);
+   			evt = _subscribe('success', c);
+   			evt.fire(o.id, o.c);
    		}
 
-   		Y.log('HTTP Status evaluates to Success. The transaction is: ' + o.id, 'info', 'io');
    		_ioEnd(o, c);
    	}
 
@@ -378,28 +359,18 @@ YUI.add('io-base', function(Y) {
     * @return void
    	*/
    	function _ioFailure(o, c) {
-   		var m = Y.io._fn || {},
-   			fn = (m && m[o.id]) ? m[o.id] : null,
-   			r, event;
+   		var r = o.status ? _response(o.status) : o.c,
+   			evt;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-   		if (fn) {
-   			c.on.failure = fn.failure;
-   			//Decode the response from IO.swf
-   			o.c.responseText = decodeURI(o.c.responseText);
-   		}
-
-		r = (o.status) ? _response(o.status) : o.c;
    		Y.fire(E_FAILURE, o.id, r);
-
    		if (c.on.failure) {
-   			event = _tPubSub('failure', c);
-   			event.fire(o.id, r);
+   			evt = _subscribe('failure', c);
+   			evt.fire(o.id, r);
    		}
 
-   		Y.log('HTTP Status evaluates to Failure. The transaction is: ' + o.id, 'info', 'io');
    		_ioEnd(o, c);
    	}
 
@@ -417,27 +388,18 @@ YUI.add('io-base', function(Y) {
     * @return void
    	*/
    	function _ioEnd(o, c) {
-   		var m = Y.io._fn || {},
-   			fn = (m && m[o.id]) ? m[o.id] : null,
-   			event;
+   		var evt;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-   		if (fn) {
-   			c.on.end = fn.end;
-   			delete m[o.id];
-   		}
-
    		Y.fire(E_END, o.id);
-
    		if (c.on.end) {
-   			event = _tPubSub('end', c);
-   			event.fire(o.id);
+   			evt = _subscribe('end', c);
+   			evt.fire(o.id);
    		}
 
-   		_destroy(o, (c.xdr) ? true : false );
-   		Y.log('Transaction ' + o.id + ' ended.', 'info', 'io');
+   		_destroy(o, c.xdr ? true : false );
    	}
 
    /**
@@ -448,7 +410,6 @@ YUI.add('io-base', function(Y) {
    	* @private
    	* @static
 	* @param {object} o - Transaction object generated by _create().
-	* @param {object} c - Configuration object passed to YUI.io().
 	* @param {string} s - Identifies timed out or aborted transaction.
    	*
     * @return void
@@ -458,23 +419,7 @@ YUI.add('io-base', function(Y) {
    			o.status = s;
    			o.c.abort();
    		}
-   		Y.log('Transaction cancelled due to time out or explicitly aborted. The transaction is: ' + o.id, 'info', 'io');
    	}
-
-   /**
-   	* @description Determines if a cross-domain transaction is still
-   	* in progress.
-   	*
-   	* @method _isInProgress
-   	* @private
-   	* @static
-	* @param {object} o - Transaction object generated by _create().
-   	*
-    * @return boolean
-   	*/
-	function _isInProgress(o) {
-		return o.c.isInProgress(o.id);
-	}
 
 	function _response(s) {
 		return { status:0, statusText:s };
@@ -492,7 +437,6 @@ YUI.add('io-base', function(Y) {
    		var id = transactionId;
    		transactionId++;
 
-   		Y.log('Transaction id generated. The id is: ' + id, 'info', 'io');
    		return id;
    	}
 
@@ -503,22 +447,30 @@ YUI.add('io-base', function(Y) {
    	* @method _create
    	* @private
    	* @static
-	* @param {number} s - URI or root data.
-	* @param {number} c - configuration object
+	* @param {number} xdr - XDR configuration object
+	* @param {number} i - transaction id
 	* @return object
    	*/
-   	function _create(i, c) {
+   	function _create(xdr, i) {
    		var o = {};
-   		o.id = Y.Lang.isNumber(i) ? i : _id();
+	   		o.id = Y.Lang.isNumber(i) ? i : _id();
 
-   		if (c.xdr) {
-   			o.c = Y.io._transport[c.xdr.use];
-   		}
-   		else if (c.form && c.form.upload) {
-   			o.c = {};
+		if (!xdr) {
+   			o.c = _xhr();
+		}
+   		else if (xdr) {
+			if (xdr.use === 'flash') {
+   				o.c = Y.io._transport[xdr.use];
+			}
+			else if (xdr.use === 'native' && window.XDomainRequest) {
+				o.c = new XDomainRequest();
+			}
+			else {
+				o.c = _xhr();
+			}
    		}
    		else {
-   			o.c = _xhr();
+   			o.c = {};
    		}
 
    		return o;
@@ -533,7 +485,7 @@ YUI.add('io-base', function(Y) {
 	* @return object
    	*/
    	function _xhr() {
-   		return (w.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+   		return w.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
    	}
 
    /**
@@ -590,12 +542,10 @@ YUI.add('io-base', function(Y) {
    				if (h[p]) {
    					// Configuration headers will supersede IO preset headers,
    					// if headers match.
-   					Y.log('Matching configuration HTTP header: ' + p + ' found with value of ' + _headers[p], 'info', 'io');
    					break;
    				}
    				else {
    					h[p] = _headers[p];
-   					Y.log('HTTP header ' + p + ' found with value of ' + _headers[p], 'info', 'io');
    				}
    			}
    		}
@@ -603,7 +553,6 @@ YUI.add('io-base', function(Y) {
    		for (p in h) {
    			if (h.hasOwnProperty(p)) {
    				o.setRequestHeader(p, h[p]);
-   				Y.log('HTTP Header ' + p + ' set with value of ' + h[p], 'info', 'io');
    			}
    		}
    	}
@@ -703,13 +652,11 @@ YUI.add('io-base', function(Y) {
    				status = 0;
    			}
    		}
-   		catch(e1) {
+   		catch(e) {
    			status = 0;
-   			Y.log('HTTP status unreadable. The transaction is: ' + o.id, 'warn', 'io');
    		}
 
    		// IE reports HTTP 204 as HTTP 1223.
-   		// But, the response data are still available.
    		if (status >= 200 && status < 300 || status === 1223) {
    			_ioSuccess(o, c);
    		}
@@ -735,7 +682,6 @@ YUI.add('io-base', function(Y) {
 	_io.complete = _ioComplete;
    	_io.success = _ioSuccess;
    	_io.failure = _ioFailure;
-   	_io.isInProgress = _isInProgress;
    	_io._id = _id;
 
 	//--------------------------------------
@@ -771,7 +717,7 @@ YUI.add('io-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['event-custom']});
+}, '@VERSION@' ,{requires:['event-custom-base']});
 
 YUI.add('io-form', function(Y) {
 
@@ -866,7 +812,7 @@ YUI.add('io-form', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['io-base', 'node-base']});
+}, '@VERSION@' ,{requires:['io-base','node-base']});
 
 YUI.add('io-xdr', function(Y) {
 
@@ -891,27 +837,56 @@ YUI.add('io-xdr', function(Y) {
 	* @method _swf
 	* @private
 	* @static
-	* @param {string} uri - location of IO.swf.
+	* @param {string} uri - location of io.swf.
 	* @param {string} yid - YUI instance id.
 	* @return void
 	*/
 	function _swf(uri, yid) {
 		var o = '<object id="yuiIoSwf" type="application/x-shockwave-flash" data="' +
-		          uri + '" width="0" height="0">' +
-		     	  '<param name="movie" value="' + uri + '">' +
-		     	  '<param name="FlashVars" value="yid=' + yid + '">' +
-                  '<param name="allowScriptAccess" value="sameDomain">' +
-		    	  '</object>',
+		        uri + '" width="0" height="0">' +
+		     	'<param name="movie" value="' + uri + '">' +
+		     	'<param name="FlashVars" value="yid=' + yid + '">' +
+                '<param name="allowScriptAccess" value="always">' +
+		    	'</object>',
 		    c = document.createElement('div');
 
 		document.body.appendChild(c);
 		c.innerHTML = o;
 	}
 
+	function _ie(o, c) {
+		//o.c.onprogress
+		o.c.onload = function() { Y.io.xdrResponse(o, c, 'success'); };
+		o.c.onerror = function() { Y.io.xdrResponse(o, c, 'failure'); };
+		if (c.timeout) {
+			o.c.ontimeout = function() { Y.io.xdrResponse(o, c, 'timeout') };
+			o.c.timeout = c.timeout;
+		}
+	}
+
+	function _data(o, isFlash, isXML) {
+		var text = isFlash ? decodeURI(o.c.responseText) : o.c.responseText,
+			xml = isXML ? Y.DataType.XML.parse(text) : null,
+			r = o.status ? { status: o.status } : {
+				id: o.id,
+				c: { responseText: text, responseXML: xml }
+			};
+
+		return r;
+	}
+
+	function _abort(o, c) {
+		o.c.abort(o.id, c);
+	}
+
+	function _isInProgress(o, t) {
+		return o.c.isInProgress(o.id);
+	}
+
     Y.mix(Y.io, {
 
 	   /**
-		* @description Map of IO transports.
+		* @description Map of io transports.
 		*
 		* @property _transport
 		* @private
@@ -941,17 +916,79 @@ YUI.add('io-xdr', function(Y) {
 		* @param {string} uri - qualified path to transaction resource.
     	* @param {object} o - Transaction object generated by _create() in io-base.
 		* @param {object} c - configuration object for the transaction.
-		* @return object
 		*/
 		_xdr: function(uri, o, c) {
-			if (c.on) {
-				this._fn[o.id] = c.on;
-			}
-			o.c.send(uri, c, o.id);
+			var t = c.xdr.use;
 
-			return o;
+			if (c.on && t === 'flash') {
+				this._fn[o.id] = { on: c.on, arguments: c.arguments };
+				o.c.send(uri, c, o.id);
+			}
+			else if (window.XDomainRequest) {
+				_ie(o, c);
+				o.c.open(c.method || 'GET', uri);
+				o.c.send(c.data);
+			}
+
+			return {
+				id: o.id,
+				abort: function() { _abort(o, c); },
+				isInProgress: function() { _isInProgress(o, t); }
+			}
 		},
 
+	   /**
+	   	* @description Response controller for cross-domain requests when using the
+	   	* Flash transport or IE8's XDomainRequest object.
+	   	*
+		* @method xdrResponse
+		* @private
+		* @static
+    	* @param {object} o - Transaction object generated by _create() in io-base.
+		* @param {object} c - configuration object for the transaction.
+		* @param {string} e - Event name
+		* @return object
+		*/
+		xdrResponse: function(o, c, e) {
+   			var m, fn,
+   				isFlash = c.xdr.use === 'flash' ? true : false,
+   				isXML = c.xdr.dataType === 'xml' ? true : false;
+   				c.on = c.on || {};
+
+   			if (isFlash) {
+   				m = Y.io._fn || {};
+   				fn = m[o.id] ? m[o.id] : null;
+   				if (fn) {
+	   				c.on = fn.on;
+	   				c.arguments = fn.arguments;
+				}
+			}
+			if (e === ('abort' || 'timeout')) {
+				o.status = e;
+			}
+
+			switch (e) {
+				case 'start':
+					Y.io.start(o.id, c);
+					break;
+				case 'success':
+					Y.io.success(_data(o, isFlash, isXML), c);
+					if (isFlash) {
+						delete m[o.id];
+					}
+
+					break;
+				case 'timeout':
+				case 'abort':
+				case 'failure':
+					Y.io.failure(_data(o, isFlash, isXML), c);
+					if (isFlash) {
+						delete m[o.id];
+					}
+
+					break;
+			}
+		},
 
 	   /**
 		* @description Fires event "io:xdrReady"
@@ -978,18 +1015,16 @@ YUI.add('io-xdr', function(Y) {
 		* @return void
 		*/
 		transport: function(o) {
-			switch (o.id) {
-				case 'flash':
-					_swf(o.src, o.yid);
-					this._transport.flash = Y.config.doc.getElementById('yuiIoSwf');
-					break;
-			}
+			var id = o.yid ? o.yid : Y.id;
+
+			_swf(o.src, id);
+			this._transport.flash = document.getElementById('yuiIoSwf');
 		}
 	});
 
 
 
-}, '@VERSION@' ,{requires:['io-base']});
+}, '@VERSION@' ,{requires:['io-base','datatype-xml']});
 
 YUI.add('io-upload-iframe', function(Y) {
 
@@ -1070,7 +1105,7 @@ YUI.add('io-upload-iframe', function(Y) {
 		// The transaction is complete, so call _destroy to remove
 		// the event listener bound to the iframe transport, and then
 		// destroy the iframe.
-		setTimeout( function() { _destroy(o.id); }, 0);
+		w.setTimeout( function() { _destroy(o.id); }, 0);
 	}
 
    /**
@@ -1379,9 +1414,9 @@ YUI.add('io-queue', function(Y) {
 
    /**
 	* @description Method for removing a specific, pending transaction from
-	* the queue. This is the interface for _purge().
+	* the queue. This is the interface for _remove().
 	*
-	* @method purge
+	* @method remove
 	* @public
 	* @static
 	* @param {Object} o - Reference to queued transaction.
@@ -1395,7 +1430,7 @@ YUI.add('io-queue', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['io-base']});
+}, '@VERSION@' ,{requires:['io-base','queue-promote']});
 
 
 

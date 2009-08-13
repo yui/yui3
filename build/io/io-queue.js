@@ -196,9 +196,9 @@ YUI.add('io-queue', function(Y) {
 
    /**
 	* @description Method for removing a specific, pending transaction from
-	* the queue. This is the interface for _purge().
+	* the queue. This is the interface for _remove().
 	*
-	* @method purge
+	* @method remove
 	* @public
 	* @static
 	* @param {Object} o - Reference to queued transaction.
@@ -212,4 +212,4 @@ YUI.add('io-queue', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['io-base']});
+}, '@VERSION@' ,{requires:['io-base','queue-promote']});
