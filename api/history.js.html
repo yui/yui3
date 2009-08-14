@@ -68,7 +68,7 @@
 <span class="c"> * @constructor</span>
 <span class="c"> */</span>
 
-        <span class="c">// SHortcuts...</span>
+        <span class="c">// SHortcuts, etc.</span>
 <span class="c"></span>    <span class="k">var</span> <span class="nx">L</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
         <span class="nx">A</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">,</span>
         <span class="nx">ET</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">,</span>
@@ -83,17 +83,21 @@
         <span class="nx">H</span><span class="o">,</span> <span class="nx">G</span><span class="o">,</span>
 
         <span class="c">// YUI Compressor helper...</span>
-<span class="c"></span>        <span class="nx">E_MISSING_OR_INVALID_ARG</span> <span class="o">=</span> <span class="s2">&quot;Missing or invalid argument&quot;</span><span class="o">,</span>
+<span class="c"></span>        <span class="nx">E_MISSING_OR_INVALID_ARG</span> <span class="o">=</span> <span class="s1">&#39;Missing or invalid argument&#39;</span><span class="o">,</span>
 
         <span class="c">// Regular expression used to parse query strings and such.</span>
 <span class="c"></span>        <span class="nx">REGEXP</span> <span class="o">=</span> <span class="sr">/([^=&amp;]+)=([^&amp;]*)/g</span><span class="o">,</span>
+
+        <span class="c">// A few private variables...</span>
+<span class="c"></span>        <span class="nx">_useIFrame</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
+        <span class="nx">_getHash</span><span class="o">,</span>
 
         <span class="c">/**</span>
 <span class="c">         * @event history:ready</span>
 <span class="c">         * @description Fires when the browser history utility is ready</span>
 <span class="c">         * @type Event.Custom</span>
 <span class="c">         */</span>
-        <span class="nx">EV_HISTORY_READY</span> <span class="o">=</span> <span class="s2">&quot;history:ready&quot;</span><span class="o">,</span>
+        <span class="nx">EV_HISTORY_READY</span> <span class="o">=</span> <span class="s1">&#39;history:ready&#39;</span><span class="o">,</span>
 
         <span class="c">/**</span>
 <span class="c">         * @event history:globalStateChange</span>
@@ -101,14 +105,14 @@
 <span class="c">         *     when the state of at least one browser history module has changed)</span>
 <span class="c">         * @type Event.Custom</span>
 <span class="c">         */</span>
-        <span class="nx">EV_HISTORY_GLOBAL_STATE_CHANGE</span> <span class="o">=</span> <span class="s2">&quot;history:globalStateChange&quot;</span><span class="o">,</span>
+        <span class="nx">EV_HISTORY_GLOBAL_STATE_CHANGE</span> <span class="o">=</span> <span class="s1">&#39;history:globalStateChange&#39;</span><span class="o">,</span>
 
         <span class="c">/**</span>
 <span class="c">         * @event history:moduleStateChange</span>
 <span class="c">         * @description Fires when the state of a history module object has changed</span>
 <span class="c">         * @type Event.Custom</span>
 <span class="c">         */</span>
-        <span class="nx">EV_HISTORY_MODULE_STATE_CHANGE</span> <span class="o">=</span> <span class="s2">&quot;history:moduleStateChange&quot;</span><span class="o">;</span>
+        <span class="nx">EV_HISTORY_MODULE_STATE_CHANGE</span> <span class="o">=</span> <span class="s1">&#39;history:moduleStateChange&#39;</span><span class="o">;</span>
 
 
     <span class="k">if</span> <span class="o">(!</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">history</span><span class="o">)</span> <span class="o">{</span>
@@ -120,9 +124,6 @@
 
             <span class="c">// List of registered modules.</span>
 <span class="c"></span>            <span class="nx">_modules</span><span class="o">:</span> <span class="o">[],</span>
-
-            <span class="c">// List of fully qualified states. This is used only by Safari.</span>
-<span class="c"></span>            <span class="nx">_fqstates</span><span class="o">:</span> <span class="o">[],</span>
 
             <span class="c">// INPUT field (with type=&quot;hidden&quot; or type=&quot;text&quot;) or TEXTAREA.</span>
 <span class="c"></span>            <span class="c">// This field keeps the value of the initial state, current state</span>
@@ -141,8 +142,17 @@
 <span class="c">     * @return {string} The hash portion of the document&#39;s location</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
-    <span class="k">function</span> <span class="nx">_getHash</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">WL</span><span class="o">.</span><span class="nx">hash</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">1</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">gecko</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c">// We branch at runtime for Gecko since window.location.hash in Gecko</span>
+<span class="c"></span>        <span class="c">// returns a decoded string, and we want all encoding untouched.</span>
+<span class="c"></span>        <span class="nx">_getHash</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="sr">/#(.*)$/</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">WL</span><span class="o">.</span><span class="nx">href</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
+        <span class="o">};</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="nx">_getHash</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">WL</span><span class="o">.</span><span class="nx">hash</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">1</span><span class="o">);</span>
+        <span class="o">};</span>
     <span class="o">}</span>
 
     <span class="c">/**</span>
@@ -154,21 +164,14 @@
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="k">function</span> <span class="nx">_storeStates</span><span class="o">()</span> <span class="o">{</span>
-
-        <span class="k">var</span> <span class="nx">initialStates</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">currentStates</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">s</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">initialStates</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">currentStates</span> <span class="o">=</span> <span class="o">[];</span>
 
         <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">G</span><span class="o">.</span><span class="nx">_modules</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">module</span><span class="o">,</span> <span class="nx">moduleId</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">initialStates</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">moduleId</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="nx">module</span><span class="o">.</span><span class="nx">initialState</span><span class="o">);</span>
-            <span class="nx">currentStates</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">moduleId</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span><span class="o">);</span>
+            <span class="nx">initialStates</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">moduleId</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">module</span><span class="o">.</span><span class="nx">initialState</span><span class="o">);</span>
+            <span class="nx">currentStates</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">moduleId</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span><span class="o">);</span>
         <span class="o">});</span>
 
-        <span class="nx">s</span> <span class="o">=</span> <span class="nx">initialStates</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s2">&quot;&amp;&quot;</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="nx">currentStates</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s2">&quot;&amp;&quot;</span><span class="o">);</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">s</span> <span class="o">+=</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="nx">G</span><span class="o">.</span><span class="nx">_fqstates</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s2">&quot;,&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="nx">G</span><span class="o">.</span><span class="nx">_stateField</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;value&quot;</span><span class="o">,</span> <span class="nx">s</span><span class="o">);</span>
+        <span class="nx">G</span><span class="o">.</span><span class="nx">_stateField</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;value&#39;</span><span class="o">,</span> <span class="nx">initialStates</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&amp;&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="o">+</span> <span class="nx">currentStates</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&amp;&#39;</span><span class="o">));</span>
     <span class="o">}</span>
 
     <span class="c">/**</span>
@@ -179,42 +182,35 @@
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="k">function</span> <span class="nx">_handleFQStateChange</span><span class="o">(</span><span class="nx">fqstate</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">states</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">globalStateChanged</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
-        <span class="k">var</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">modules</span><span class="o">,</span> <span class="nx">globalStateChanged</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">fqstate</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">fqstate</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">REGEXP</span><span class="o">.</span><span class="nx">lastIndex</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+            <span class="k">while</span> <span class="o">((</span><span class="nx">m</span> <span class="o">=</span> <span class="nx">REGEXP</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">fqstate</span><span class="o">)))</span> <span class="o">{</span>
+                <span class="nx">states</span><span class="o">[</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="m">2</span><span class="o">];</span>
+            <span class="o">}</span>
 
             <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">G</span><span class="o">.</span><span class="nx">_modules</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">module</span><span class="o">,</span> <span class="nx">moduleId</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span> <span class="o">!==</span> <span class="nx">module</span><span class="o">.</span><span class="nx">initialState</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span> <span class="o">=</span> <span class="nx">module</span><span class="o">.</span><span class="nx">initialState</span><span class="o">;</span>
-                    <span class="nx">module</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_HISTORY_MODULE_STATE_CHANGE</span><span class="o">,</span> <span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span><span class="o">);</span>
+                <span class="k">var</span> <span class="nx">currentState</span> <span class="o">=</span> <span class="nx">states</span><span class="o">[</span><span class="nx">moduleId</span><span class="o">];</span>
+
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">currentState</span> <span class="o">||</span> <span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span> <span class="o">!==</span> <span class="nx">currentState</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span> <span class="o">=</span> <span class="nx">currentState</span> <span class="o">||</span> <span class="nx">module</span><span class="o">.</span><span class="nx">initialState</span><span class="o">;</span>
+                    <span class="nx">module</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_HISTORY_MODULE_STATE_CHANGE</span><span class="o">,</span> <span class="nx">decode</span><span class="o">(</span><span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span><span class="o">));</span>
                     <span class="nx">globalStateChanged</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                 <span class="o">}</span>
             <span class="o">});</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">globalStateChanged</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">H</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_HISTORY_GLOBAL_STATE_CHANGE</span><span class="o">);</span>
-            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 
-            <span class="k">return</span><span class="o">;</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">G</span><span class="o">.</span><span class="nx">_modules</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">module</span><span class="o">,</span> <span class="nx">moduleId</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span> <span class="o">!==</span> <span class="nx">module</span><span class="o">.</span><span class="nx">initialState</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span> <span class="o">=</span> <span class="nx">module</span><span class="o">.</span><span class="nx">initialState</span><span class="o">;</span>
+                    <span class="nx">module</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_HISTORY_MODULE_STATE_CHANGE</span><span class="o">,</span> <span class="nx">decode</span><span class="o">(</span><span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span><span class="o">));</span>
+                    <span class="nx">globalStateChanged</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
         <span class="o">}</span>
-
-        <span class="nx">modules</span> <span class="o">=</span> <span class="o">[];</span>
-        <span class="nx">REGEXP</span><span class="o">.</span><span class="nx">lastIndex</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-        <span class="k">while</span> <span class="o">((</span><span class="nx">m</span> <span class="o">=</span> <span class="nx">REGEXP</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">fqstate</span><span class="o">)))</span> <span class="o">{</span>
-            <span class="nx">modules</span><span class="o">[</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="m">2</span><span class="o">];</span>
-        <span class="o">}</span>
-
-        <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">G</span><span class="o">.</span><span class="nx">_modules</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">module</span><span class="o">,</span> <span class="nx">moduleId</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="k">var</span> <span class="nx">currentState</span> <span class="o">=</span> <span class="nx">modules</span><span class="o">[</span><span class="nx">moduleId</span><span class="o">];</span>
-
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">currentState</span> <span class="o">||</span> <span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span> <span class="o">!==</span> <span class="nx">currentState</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span> <span class="o">=</span> <span class="nx">currentState</span> <span class="o">||</span> <span class="nx">module</span><span class="o">.</span><span class="nx">initialState</span><span class="o">;</span>
-                <span class="nx">module</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_HISTORY_MODULE_STATE_CHANGE</span><span class="o">,</span> <span class="nx">module</span><span class="o">.</span><span class="nx">currentState</span><span class="o">);</span>
-                <span class="nx">globalStateChanged</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">globalStateChanged</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">H</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_HISTORY_GLOBAL_STATE_CHANGE</span><span class="o">);</span>
@@ -228,20 +224,18 @@
 <span class="c">     * @return {boolean} true if successful. false otherwise.</span>
 <span class="c">     */</span>
     <span class="k">function</span> <span class="nx">_updateIFrame</span><span class="o">(</span><span class="nx">fqstate</span><span class="o">)</span> <span class="o">{</span>
-
         <span class="k">var</span> <span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">;</span>
 
         <span class="nx">html</span> <span class="o">=</span> <span class="s1">&#39;&lt;html&gt;&lt;body&gt;&#39;</span> <span class="o">+</span> <span class="nx">fqstate</span> <span class="o">+</span> <span class="s1">&#39;&lt;/body&gt;&lt;/html&gt;&#39;</span><span class="o">;</span>
 
         <span class="k">try</span> <span class="o">{</span>
-            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">G</span><span class="o">.</span><span class="nx">_historyIFrame</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;contentWindow.document&quot;</span><span class="o">);</span>
+            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">G</span><span class="o">.</span><span class="nx">_historyIFrame</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;contentWindow.document&#39;</span><span class="o">);</span>
             <span class="c">// TODO: The Node API should expose these methods in the very near future...</span>
 <span class="c"></span>            <span class="nx">doc</span><span class="o">.</span><span class="nx">invoke</span><span class="o">(</span><span class="s1">&#39;open&#39;</span><span class="o">);</span>
             <span class="nx">doc</span><span class="o">.</span><span class="nx">invoke</span><span class="o">(</span><span class="s1">&#39;write&#39;</span><span class="o">,</span> <span class="nx">html</span><span class="o">,</span> <span class="s1">&#39;&#39;</span><span class="o">,</span> <span class="s1">&#39;&#39;</span><span class="o">,</span> <span class="s1">&#39;&#39;</span><span class="o">,</span> <span class="s1">&#39;&#39;</span><span class="o">);</span> <span class="c">// see bug #2447937</span>
 <span class="c"></span>            <span class="nx">doc</span><span class="o">.</span><span class="nx">invoke</span><span class="o">(</span><span class="s1">&#39;close&#39;</span><span class="o">);</span>
             <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
         <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Exception while storing a new browser history entry: &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;history&quot;</span><span class="o">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">}</span>
@@ -252,10 +246,9 @@
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="k">function</span> <span class="nx">_checkIframeLoaded</span><span class="o">()</span> <span class="o">{</span>
-
         <span class="k">var</span> <span class="nx">elem</span><span class="o">,</span> <span class="nx">fqstate</span><span class="o">,</span> <span class="nx">hash</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">G</span><span class="o">.</span><span class="nx">_historyIFrame</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;contentWindow.document&quot;</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">G</span><span class="o">.</span><span class="nx">_historyIFrame</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;contentWindow.document&#39;</span><span class="o">))</span> <span class="o">{</span>
             <span class="c">// Check again in 10 msec...</span>
 <span class="c"></span>            <span class="nx">setTimeout</span><span class="o">(</span><span class="nx">_checkIframeLoaded</span><span class="o">,</span> <span class="m">10</span><span class="o">);</span>
             <span class="k">return</span><span class="o">;</span>
@@ -270,17 +263,16 @@
         <span class="c">// We must use innerText, and not innerHTML because our string contains</span>
 <span class="c"></span>        <span class="c">// the &quot;&amp;&quot; character (which would end up being escaped as &quot;&amp;amp;&quot;) and</span>
 <span class="c"></span>        <span class="c">// the string comparison would fail...</span>
-<span class="c"></span>        <span class="nx">fqstate</span> <span class="o">=</span> <span class="nx">elem</span> <span class="o">?</span> <span class="nx">elem</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;innerText&quot;</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+<span class="c"></span>        <span class="nx">fqstate</span> <span class="o">=</span> <span class="nx">elem</span> <span class="o">?</span> <span class="nx">elem</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;innerText&#39;</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
 
         <span class="nx">hash</span> <span class="o">=</span> <span class="nx">_getHash</span><span class="o">();</span>
 
         <span class="nx">setInterval</span><span class="o">(</span><span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-
             <span class="k">var</span> <span class="nx">newfqstate</span><span class="o">,</span> <span class="nx">states</span><span class="o">,</span> <span class="nx">newHash</span><span class="o">;</span>
 
             <span class="nx">elem</span> <span class="o">=</span> <span class="nx">G</span><span class="o">.</span><span class="nx">_historyIFrame</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;contentWindow.document.body&#39;</span><span class="o">);</span>
             <span class="c">// See my comment above about using innerText instead of innerHTML...</span>
-<span class="c"></span>            <span class="nx">newfqstate</span> <span class="o">=</span> <span class="nx">elem</span> <span class="o">?</span> <span class="nx">elem</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;innerText&quot;</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+<span class="c"></span>            <span class="nx">newfqstate</span> <span class="o">=</span> <span class="nx">elem</span> <span class="o">?</span> <span class="nx">elem</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;innerText&#39;</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
 
             <span class="nx">newHash</span> <span class="o">=</span> <span class="nx">_getHash</span><span class="o">();</span>
 
@@ -292,9 +284,9 @@
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">fqstate</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">states</span> <span class="o">=</span> <span class="o">[];</span>
                     <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">G</span><span class="o">.</span><span class="nx">_modules</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">module</span><span class="o">,</span> <span class="nx">moduleId</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">states</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">moduleId</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="nx">module</span><span class="o">.</span><span class="nx">initialState</span><span class="o">);</span>
+                        <span class="nx">states</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">moduleId</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">module</span><span class="o">.</span><span class="nx">initialState</span><span class="o">);</span>
                     <span class="o">});</span>
-                    <span class="nx">newHash</span> <span class="o">=</span> <span class="nx">states</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s2">&quot;&amp;&quot;</span><span class="o">);</span>
+                    <span class="nx">newHash</span> <span class="o">=</span> <span class="nx">states</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&amp;&#39;</span><span class="o">);</span>
                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                     <span class="nx">newHash</span> <span class="o">=</span> <span class="nx">fqstate</span><span class="o">;</span>
                 <span class="o">}</span>
@@ -340,11 +332,10 @@
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="k">function</span> <span class="nx">_initialize</span><span class="o">()</span> <span class="o">{</span>
-
-        <span class="k">var</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">parts</span><span class="o">,</span> <span class="nx">moduleId</span><span class="o">,</span> <span class="nx">module</span><span class="o">,</span> <span class="nx">initialState</span><span class="o">,</span> <span class="nx">currentState</span><span class="o">,</span> <span class="nx">counter</span><span class="o">,</span> <span class="nx">hash</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">parts</span><span class="o">,</span> <span class="nx">moduleId</span><span class="o">,</span> <span class="nx">module</span><span class="o">,</span> <span class="nx">initialState</span><span class="o">,</span> <span class="nx">currentState</span><span class="o">,</span> <span class="nx">hash</span><span class="o">;</span>
 
         <span class="c">// Decode the content of our storage field...</span>
-<span class="c"></span>        <span class="nx">parts</span> <span class="o">=</span> <span class="nx">G</span><span class="o">.</span><span class="nx">_stateField</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;value&quot;</span><span class="o">).</span><span class="nx">split</span><span class="o">(</span><span class="s2">&quot;|&quot;</span><span class="o">);</span>
+<span class="c"></span>        <span class="nx">parts</span> <span class="o">=</span> <span class="nx">G</span><span class="o">.</span><span class="nx">_stateField</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;value&#39;</span><span class="o">).</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;|&#39;</span><span class="o">);</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">parts</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
 
@@ -369,29 +360,22 @@
             <span class="o">}</span>
         <span class="o">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">parts</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">G</span><span class="o">.</span><span class="nx">_fqstates</span> <span class="o">=</span> <span class="nx">parts</span><span class="o">[</span><span class="m">2</span><span class="o">].</span><span class="nx">split</span><span class="o">(</span><span class="s2">&quot;,&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">C</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">onhashchange</span><span class="o">))</span> <span class="o">{</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// The HTML5 way of handling DHTML history...</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;hashchange&#39;</span><span class="o">,</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nx">_getHash</span><span class="o">();</span>
+                <span class="nx">_handleFQStateChange</span><span class="o">(</span><span class="nx">hash</span><span class="o">);</span>
+                <span class="nx">_storeStates</span><span class="o">();</span>
+            <span class="o">},</span> <span class="nb">window</span><span class="o">);</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">DM</span><span class="o">)</span> <span class="o">||</span> <span class="nx">DM</span> <span class="o">&lt;</span> <span class="m">8</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">G</span><span class="o">.</span><span class="nx">ready</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="nx">H</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_HISTORY_READY</span><span class="o">);</span>
 
-                <span class="c">// IE &lt; 8 or IE8 in quirks mode or IE7 standards mode</span>
-<span class="c"></span>                <span class="nx">_checkIframeLoaded</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">_useIFrame</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-
-                <span class="c">// IE8 in IE8 standards mode</span>
-<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;hashchange&quot;</span><span class="o">,</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-                    <span class="k">var</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nx">_getHash</span><span class="o">();</span>
-                    <span class="nx">_handleFQStateChange</span><span class="o">(</span><span class="nx">hash</span><span class="o">);</span>
-                    <span class="nx">_storeStates</span><span class="o">();</span>
-                <span class="o">},</span> <span class="nb">window</span><span class="o">);</span>
-
-                <span class="nx">G</span><span class="o">.</span><span class="nx">ready</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                <span class="nx">H</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_HISTORY_READY</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="c">// IE &lt; 8 or IE8 in quirks mode or IE7 standards mode</span>
+<span class="c"></span>            <span class="nx">_checkIframeLoaded</span><span class="o">();</span>
 
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 
@@ -401,38 +385,16 @@
 <span class="c"></span>            <span class="c">// YAHOO.util.History.navigate has been called or after</span>
 <span class="c"></span>            <span class="c">// the user has hit the back/forward button.</span>
 <span class="c"></span>
-            <span class="c">// On Safari 1.x and 2.0, the only way to catch a back/forward</span>
-<span class="c"></span>            <span class="c">// operation is to watch history.length... We basically exploit</span>
-<span class="c"></span>            <span class="c">// what I consider to be a bug (history.length is not supposed</span>
-<span class="c"></span>            <span class="c">// to change when going back/forward in the history...) This is</span>
-<span class="c"></span>            <span class="c">// why, in the following thread, we first compare the hash,</span>
-<span class="c"></span>            <span class="c">// because the hash thing will be fixed in the next major</span>
-<span class="c"></span>            <span class="c">// version of Safari. So even if they fix the history.length</span>
-<span class="c"></span>            <span class="c">// bug, all this will still work!</span>
-<span class="c"></span>            <span class="nx">counter</span> <span class="o">=</span> <span class="nx">WH</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
-
             <span class="c">// On Gecko and Opera, we just need to watch the hash...</span>
 <span class="c"></span>            <span class="nx">hash</span> <span class="o">=</span> <span class="nx">_getHash</span><span class="o">();</span>
 
             <span class="nx">setInterval</span><span class="o">(</span><span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-
-                <span class="k">var</span> <span class="nx">state</span><span class="o">,</span> <span class="nx">newHash</span><span class="o">,</span> <span class="nx">newCounter</span><span class="o">;</span>
-
-                <span class="nx">newHash</span> <span class="o">=</span> <span class="nx">_getHash</span><span class="o">();</span>
-                <span class="nx">newCounter</span> <span class="o">=</span> <span class="nx">WH</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
+                <span class="k">var</span> <span class="nx">newHash</span> <span class="o">=</span> <span class="nx">_getHash</span><span class="o">();</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">newHash</span> <span class="o">!==</span> <span class="nx">hash</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">hash</span> <span class="o">=</span> <span class="nx">newHash</span><span class="o">;</span>
-                    <span class="nx">counter</span> <span class="o">=</span> <span class="nx">newCounter</span><span class="o">;</span>
                     <span class="nx">_handleFQStateChange</span><span class="o">(</span><span class="nx">hash</span><span class="o">);</span>
                     <span class="nx">_storeStates</span><span class="o">();</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">newCounter</span> <span class="o">!==</span> <span class="nx">counter</span> <span class="o">&amp;&amp;</span> <span class="nx">A</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">hash</span> <span class="o">=</span> <span class="nx">newHash</span><span class="o">;</span>
-                    <span class="nx">counter</span> <span class="o">=</span> <span class="nx">newCounter</span><span class="o">;</span>
-                    <span class="nx">state</span> <span class="o">=</span> <span class="nx">G</span><span class="o">.</span><span class="nx">_fqstates</span><span class="o">[</span><span class="nx">counter</span> <span class="o">-</span> <span class="m">1</span><span class="o">];</span>
-                    <span class="nx">_handleFQStateChange</span><span class="o">(</span><span class="nx">state</span><span class="o">);</span>
-                    <span class="nx">_storeStates</span><span class="o">();</span>
                 <span class="o">}</span>
-
             <span class="o">},</span> <span class="m">50</span><span class="o">);</span>
 
             <span class="nx">G</span><span class="o">.</span><span class="nx">ready</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
@@ -453,10 +415,9 @@
 <span class="c">         * @return {History.Module} The newly registered module</span>
 <span class="c">         */</span>
         <span class="nx">register</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">moduleId</span><span class="o">,</span> <span class="nx">initialState</span><span class="o">)</span> <span class="o">{</span>
-
             <span class="k">var</span> <span class="nx">module</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">||</span> <span class="nx">L</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">===</span> <span class="s2">&quot;&quot;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">initialState</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">||</span> <span class="nx">L</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">initialState</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">E_MISSING_OR_INVALID_ARG</span><span class="o">);</span>
             <span class="o">}</span>
 
@@ -470,7 +431,6 @@
 <span class="c"></span>            <span class="c">// but that would mean that some states may be lost once the user</span>
 <span class="c"></span>            <span class="c">// leaves the page and then comes back to it.</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">G</span><span class="o">.</span><span class="nx">ready</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;All modules must be registered before initializing the browser history utility&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;history&quot;</span><span class="o">);</span>
                 <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
             <span class="o">}</span>
 
@@ -494,7 +454,6 @@
 <span class="c">         * @public</span>
 <span class="c">         */</span>
         <span class="nx">initialize</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">stateField</span><span class="o">,</span> <span class="nx">historyIFrame</span><span class="o">)</span> <span class="o">{</span>
-
             <span class="k">var</span> <span class="nx">tagName</span><span class="o">,</span> <span class="nx">type</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">G</span><span class="o">.</span><span class="nx">ready</span><span class="o">)</span> <span class="o">{</span>
@@ -507,36 +466,35 @@
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">E_MISSING_OR_INVALID_ARG</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="nx">tagName</span> <span class="o">=</span> <span class="nx">stateField</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;tagName&quot;</span><span class="o">).</span><span class="nx">toUpperCase</span><span class="o">();</span>
-            <span class="nx">type</span> <span class="o">=</span> <span class="nx">stateField</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;type&quot;</span><span class="o">);</span>
+            <span class="nx">tagName</span> <span class="o">=</span> <span class="nx">stateField</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;tagName&#39;</span><span class="o">).</span><span class="nx">toUpperCase</span><span class="o">();</span>
+            <span class="nx">type</span> <span class="o">=</span> <span class="nx">stateField</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;type&#39;</span><span class="o">);</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">tagName</span> <span class="o">!==</span> <span class="s2">&quot;TEXTAREA&quot;</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">tagName</span> <span class="o">!==</span> <span class="s2">&quot;INPUT&quot;</span> <span class="o">||</span> <span class="nx">type</span> <span class="o">!==</span> <span class="s2">&quot;hidden&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">!==</span> <span class="s2">&quot;text&quot;</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">tagName</span> <span class="o">!==</span> <span class="s1">&#39;TEXTAREA&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">tagName</span> <span class="o">!==</span> <span class="s1">&#39;INPUT&#39;</span> <span class="o">||</span> <span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;hidden&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;text&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">E_MISSING_OR_INVALID_ARG</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="c">// IE &lt; 8 or IE8 in quirks mode or IE7 standards mode</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">DM</span><span class="o">)</span> <span class="o">||</span> <span class="nx">DM</span> <span class="o">&lt;</span> <span class="m">8</span><span class="o">))</span> <span class="o">{</span>
-
+                <span class="nx">_useIFrame</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                 <span class="nx">historyIFrame</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">historyIFrame</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">historyIFrame</span> <span class="o">||</span> <span class="nx">historyIFrame</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;tagName&#39;</span><span class="o">).</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">!==</span> <span class="s2">&quot;IFRAME&quot;</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">historyIFrame</span> <span class="o">||</span> <span class="nx">historyIFrame</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;tagName&#39;</span><span class="o">).</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">!==</span> <span class="s1">&#39;IFRAME&#39;</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">E_MISSING_OR_INVALID_ARG</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">opera</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">WH</span><span class="o">.</span><span class="nx">navigationMode</span><span class="o">))</span> <span class="o">{</span>
-
-                <span class="c">// Disable Opera&#39;s fast back/forward navigation mode and puts</span>
+                <span class="c">// Disable Opera&#39;s fast back/forward navigation mode and put</span>
 <span class="c"></span>                <span class="c">// it in compatible mode. This makes anchor-based history</span>
 <span class="c"></span>                <span class="c">// navigation work after the page has been navigated away</span>
 <span class="c"></span>                <span class="c">// from and re-activated, at the cost of slowing down</span>
 <span class="c"></span>                <span class="c">// back/forward navigation to and from that page.</span>
-<span class="c"></span>                <span class="nx">WH</span><span class="o">.</span><span class="nx">navigationMode</span> <span class="o">=</span> <span class="s2">&quot;compatible&quot;</span><span class="o">;</span>
+<span class="c"></span>                <span class="nx">WH</span><span class="o">.</span><span class="nx">navigationMode</span> <span class="o">=</span> <span class="s1">&#39;compatible&#39;</span><span class="o">;</span>
             <span class="o">}</span>
 
             <span class="nx">G</span><span class="o">.</span><span class="nx">_stateField</span> <span class="o">=</span> <span class="nx">stateField</span><span class="o">;</span>
             <span class="nx">G</span><span class="o">.</span><span class="nx">_historyIFrame</span> <span class="o">=</span> <span class="nx">historyIFrame</span><span class="o">;</span>
 
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;domready&quot;</span><span class="o">,</span> <span class="nx">_initialize</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;domready&#39;</span><span class="o">,</span> <span class="nx">_initialize</span><span class="o">);</span>
             <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
         <span class="o">},</span>
 
@@ -549,7 +507,6 @@
 <span class="c">         * @public</span>
 <span class="c">         */</span>
         <span class="nx">navigate</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">moduleId</span><span class="o">,</span> <span class="nx">state</span><span class="o">)</span> <span class="o">{</span>
-
             <span class="k">var</span> <span class="nx">states</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">state</span><span class="o">))</span> <span class="o">{</span>
@@ -571,16 +528,13 @@
 <span class="c">         * @public</span>
 <span class="c">         */</span>
         <span class="nx">multiNavigate</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">states</span><span class="o">)</span> <span class="o">{</span>
-
             <span class="k">var</span> <span class="nx">newStates</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">fqstate</span><span class="o">,</span> <span class="nx">globalStateChanged</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">G</span><span class="o">.</span><span class="nx">ready</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;The browser history utility has not been initialized&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;history&quot;</span><span class="o">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
 
             <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">G</span><span class="o">.</span><span class="nx">_modules</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">module</span><span class="o">,</span> <span class="nx">moduleId</span><span class="o">)</span> <span class="o">{</span>
-
                 <span class="k">var</span> <span class="nx">state</span><span class="o">,</span> <span class="nx">decodedModuleId</span> <span class="o">=</span> <span class="nx">decode</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">);</span>
 
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">states</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">decodedModuleId</span><span class="o">))</span> <span class="o">{</span>
@@ -595,7 +549,7 @@
                     <span class="o">}</span>
                 <span class="o">}</span>
 
-                <span class="nx">newStates</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">moduleId</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="nx">state</span><span class="o">);</span>
+                <span class="nx">newStates</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">moduleId</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">state</span><span class="o">);</span>
             <span class="o">});</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">globalStateChanged</span><span class="o">)</span> <span class="o">{</span>
@@ -603,36 +557,13 @@
 <span class="c"></span>                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="nx">fqstate</span> <span class="o">=</span> <span class="nx">newStates</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s2">&quot;&amp;&quot;</span><span class="o">);</span>
+            <span class="nx">fqstate</span> <span class="o">=</span> <span class="nx">newStates</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&amp;&#39;</span><span class="o">);</span>
 
-            <span class="c">// IE &lt; 8 or IE8 in quirks mode or IE7 standards mode</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">DM</span><span class="o">)</span> <span class="o">||</span> <span class="nx">DM</span> <span class="o">&lt;</span> <span class="m">8</span><span class="o">))</span> <span class="o">{</span>
-
+            <span class="k">if</span> <span class="o">(</span><span class="nx">_useIFrame</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="nx">_updateIFrame</span><span class="o">(</span><span class="nx">fqstate</span><span class="o">);</span>
-
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-
-                <span class="c">// Known bug: On Safari 1.x and 2.0, if you have tab browsing</span>
-<span class="c"></span>                <span class="c">// enabled, Safari will show an endless loading icon in the</span>
-<span class="c"></span>                <span class="c">// tab. This has apparently been fixed in recent WebKit builds.</span>
-<span class="c"></span>                <span class="c">// One work around found by Dav Glass is to submit a form that</span>
-<span class="c"></span>                <span class="c">// points to the same document. This indeed works on Safari 1.x</span>
-<span class="c"></span>                <span class="c">// and 2.0 but creates bigger problems on WebKit. So for now,</span>
-<span class="c"></span>                <span class="c">// we&#39;ll consider this an acceptable bug, and hope that Apple</span>
-<span class="c"></span>                <span class="c">// comes out with their next version of Safari very soon.</span>
-<span class="c"></span>                <span class="nx">WL</span><span class="o">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">fqstate</span><span class="o">;</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c">// The following two lines are only useful for Safari 1.x</span>
-<span class="c"></span>                    <span class="c">// and 2.0. Recent nightly builds of WebKit do not require</span>
-<span class="c"></span>                    <span class="c">// that, but unfortunately, it is not easy to differentiate</span>
-<span class="c"></span>                    <span class="c">// between the two. Once Safari 2.0 departs the A-grade</span>
-<span class="c"></span>                    <span class="c">// list, we can remove the following two lines...</span>
-<span class="c"></span>                    <span class="nx">G</span><span class="o">.</span><span class="nx">_fqstates</span><span class="o">[</span><span class="nx">WH</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">fqstate</span><span class="o">;</span>
-                    <span class="nx">_storeStates</span><span class="o">();</span>
-                <span class="o">}</span>
-
+                <span class="nx">WL</span><span class="o">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">fqstate</span><span class="o">;</span>
                 <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-
             <span class="o">}</span>
         <span class="o">},</span>
 
@@ -644,7 +575,6 @@
 <span class="c">         * @public</span>
 <span class="c">         */</span>
         <span class="nx">getCurrentState</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">{</span>
-
             <span class="k">var</span> <span class="nx">module</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">))</span> <span class="o">{</span>
@@ -652,13 +582,11 @@
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">G</span><span class="o">.</span><span class="nx">ready</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;The browser history utility has not been initialized&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;history&quot;</span><span class="o">);</span>
                 <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
             <span class="o">}</span>
 
             <span class="nx">module</span> <span class="o">=</span> <span class="nx">G</span><span class="o">.</span><span class="nx">_modules</span><span class="o">[</span><span class="nx">moduleId</span><span class="o">];</span>
             <span class="k">if</span> <span class="o">(!</span><span class="nx">module</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;No such registered module: &quot;</span> <span class="o">+</span> <span class="nx">moduleId</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;history&quot;</span><span class="o">);</span>
                 <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
             <span class="o">}</span>
 
@@ -675,7 +603,6 @@
 <span class="c">         * @public</span>
 <span class="c">         */</span>
         <span class="nx">getBookmarkedState</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">{</span>
-
             <span class="k">var</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">h</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">))</span> <span class="o">{</span>
@@ -686,7 +613,7 @@
 <span class="c"></span>            <span class="c">// URL-decoded, which creates problems if the state value</span>
 <span class="c"></span>            <span class="c">// contained special characters...</span>
 <span class="c"></span>            <span class="nx">h</span> <span class="o">=</span> <span class="nx">WL</span><span class="o">.</span><span class="nx">href</span><span class="o">;</span>
-            <span class="nx">i</span> <span class="o">=</span> <span class="nx">h</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s2">&quot;#&quot;</span><span class="o">);</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="nx">h</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;#&#39;</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">h</span> <span class="o">=</span> <span class="nx">h</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">);</span>
@@ -715,16 +642,15 @@
 <span class="c">         * @public</span>
 <span class="c">         */</span>
         <span class="nx">getQueryStringParameter</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">paramName</span><span class="o">,</span> <span class="nx">url</span><span class="o">)</span> <span class="o">{</span>
-
             <span class="k">var</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">q</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
             <span class="nx">url</span> <span class="o">=</span> <span class="nx">url</span> <span class="o">||</span> <span class="nx">WL</span><span class="o">.</span><span class="nx">href</span><span class="o">;</span>
 
-            <span class="nx">i</span> <span class="o">=</span> <span class="nx">url</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s2">&quot;?&quot;</span><span class="o">);</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="nx">url</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;?&#39;</span><span class="o">);</span>
             <span class="nx">q</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span> <span class="o">?</span> <span class="nx">url</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">:</span> <span class="nx">url</span><span class="o">;</span>
 
             <span class="c">// Remove the hash if any</span>
-<span class="c"></span>            <span class="nx">i</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="s2">&quot;#&quot;</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">i</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="s1">&#39;#&#39;</span><span class="o">);</span>
             <span class="nx">q</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span> <span class="o">?</span> <span class="nx">q</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">:</span> <span class="nx">q</span><span class="o">;</span>
 
             <span class="nx">REGEXP</span><span class="o">.</span><span class="nx">lastIndex</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
