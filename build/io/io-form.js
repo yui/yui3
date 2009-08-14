@@ -90,4 +90,4 @@ YUI.add('io-form', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['io-base','node-base']});
+}, '@VERSION@' ,{requires:['io-base','node-base','node-style']});
