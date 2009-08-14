@@ -396,7 +396,7 @@ YUI.add('dd-ddm', function(Y) {
             this._pg.on('mousemove', Y.bind(this._move, this));
             
             var win = Y.get(window);
-            win.on('resize', Y.bind(this._pg_size, this));
+            Y.on('window:resize', Y.bind(this._pg_size, this));
             win.on('scroll', Y.bind(this._pg_size, this));
         }   
     }, true);
@@ -407,7 +407,7 @@ YUI.add('dd-ddm', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-ddm-base', 'event-resize'], skinnable:false});
 YUI.add('dd-ddm-drop', function(Y) {
 
 
@@ -3391,8 +3391,8 @@ YUI.add('dd-drop', function(Y) {
             DDM._pg.appendChild(s);
             this.shim = s;
 
-            s.on('mouseenter', Y.bind(this._handleOverEvent, this));
-            s.on('mouseleave', Y.bind(this._handleOutEvent, this));
+            s.on('mouseover', Y.bind(this._handleOverEvent, this));
+            s.on('mouseout', Y.bind(this._handleOutEvent, this));
         },
         /**
         * @private
@@ -3470,7 +3470,7 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag', 'event-mouseenter'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});
 YUI.add('dd-drop-plugin', function(Y) {
 
 

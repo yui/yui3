@@ -394,8 +394,8 @@
             DDM._pg.appendChild(s);
             this.shim = s;
 
-            s.on('mouseenter', Y.bind(this._handleOverEvent, this));
-            s.on('mouseleave', Y.bind(this._handleOutEvent, this));
+            s.on('mouseover', Y.bind(this._handleOverEvent, this));
+            s.on('mouseout', Y.bind(this._handleOutEvent, this));
         },
         /**
         * @private

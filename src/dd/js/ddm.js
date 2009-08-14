@@ -112,7 +112,7 @@
             this._pg.on('mousemove', Y.bind(this._move, this));
             
             var win = Y.get(window);
-            win.on('resize', Y.bind(this._pg_size, this));
+            Y.on('window:resize', Y.bind(this._pg_size, this));
             win.on('scroll', Y.bind(this._pg_size, this));
         }   
     }, true);
