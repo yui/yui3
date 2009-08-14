@@ -21,7 +21,7 @@ YUI.add('history', function(Y) {
  * @constructor
  */
 
-        // SHortcuts...
+        // SHortcuts, etc.
     var L  = Y.Lang,
         A  = Y.UA,
         ET = Y.Event.Target,
@@ -36,17 +36,21 @@ YUI.add('history', function(Y) {
         H, G,
 
         // YUI Compressor helper...
-        E_MISSING_OR_INVALID_ARG = "Missing or invalid argument",
+        E_MISSING_OR_INVALID_ARG = 'Missing or invalid argument',
 
         // Regular expression used to parse query strings and such.
         REGEXP = /([^=&]+)=([^&]*)/g,
+
+        // A few private variables...
+        _useIFrame = false,
+        _getHash,
 
         /**
          * @event history:ready
          * @description Fires when the browser history utility is ready
          * @type Event.Custom
          */
-        EV_HISTORY_READY = "history:ready",
+        EV_HISTORY_READY = 'history:ready',
 
         /**
          * @event history:globalStateChange
@@ -54,14 +58,14 @@ YUI.add('history', function(Y) {
          *     when the state of at least one browser history module has changed)
          * @type Event.Custom
          */
-        EV_HISTORY_GLOBAL_STATE_CHANGE = "history:globalStateChange",
+        EV_HISTORY_GLOBAL_STATE_CHANGE = 'history:globalStateChange',
 
         /**
          * @event history:moduleStateChange
          * @description Fires when the state of a history module object has changed
          * @type Event.Custom
          */
-        EV_HISTORY_MODULE_STATE_CHANGE = "history:moduleStateChange";
+        EV_HISTORY_MODULE_STATE_CHANGE = 'history:moduleStateChange';
 
 
     if (!YUI.Env.history) {
@@ -73,9 +77,6 @@ YUI.add('history', function(Y) {
 
             // List of registered modules.
             _modules: [],
-
-            // List of fully qualified states. This is used only by Safari.
-            _fqstates: [],
 
             // INPUT field (with type="hidden" or type="text") or TEXTAREA.
             // This field keeps the value of the initial state, current state
@@ -94,8 +95,17 @@ YUI.add('history', function(Y) {
      * @return {string} The hash portion of the document's location
      * @private
      */
-    function _getHash() {
-        return WL.hash.substr(1);
+    if (A.gecko) {
+        // We branch at runtime for Gecko since window.location.hash in Gecko
+        // returns a decoded string, and we want all encoding untouched.
+        _getHash = function () {
+            var m = /#(.*)$/.exec(WL.href);
+            return m && m[1] ? m[1] : '';
+        };
+    } else {
+        _getHash = function () {
+            return WL.hash.substr(1);
+        };
     }
 
     /**
@@ -107,21 +117,14 @@ YUI.add('history', function(Y) {
      * @private
      */
     function _storeStates() {
-
-        var initialStates = [], currentStates = [], s;
+        var initialStates = [], currentStates = [];
 
         Y.Object.each(G._modules, function (module, moduleId) {
-            initialStates.push(moduleId + "=" + module.initialState);
-            currentStates.push(moduleId + "=" + module.currentState);
+            initialStates.push(moduleId + '=' + module.initialState);
+            currentStates.push(moduleId + '=' + module.currentState);
         });
 
-        s = initialStates.join("&") + "|" + currentStates.join("&");
-
-        if (A.webkit) {
-            s += "|" + G._fqstates.join(",");
-        }
-
-        G._stateField.set("value", s);
+        G._stateField.set('value', initialStates.join('&') + '|' + currentStates.join('&'));
     }
 
     /**
@@ -132,42 +135,35 @@ YUI.add('history', function(Y) {
      * @private
      */
     function _handleFQStateChange(fqstate) {
+        var m, states = [], globalStateChanged = false;
 
-        var m, modules, globalStateChanged = false;
+        if (fqstate) {
 
-        if (!fqstate) {
+            REGEXP.lastIndex = 0;
+            while ((m = REGEXP.exec(fqstate))) {
+                states[m[1]] = m[2];
+            }
 
             Y.Object.each(G._modules, function (module, moduleId) {
-                if (module.currentState !== module.initialState) {
-                    module.currentState = module.initialState;
-                    module.fire(EV_HISTORY_MODULE_STATE_CHANGE, module.currentState);
+                var currentState = states[moduleId];
+
+                if (!currentState || module.currentState !== currentState) {
+                    module.currentState = currentState || module.initialState;
+                    module.fire(EV_HISTORY_MODULE_STATE_CHANGE, decode(module.currentState));
                     globalStateChanged = true;
                 }
             });
 
-            if (globalStateChanged) {
-                H.fire(EV_HISTORY_GLOBAL_STATE_CHANGE);
-            }
+        } else {
 
-            return;
+            Y.Object.each(G._modules, function (module, moduleId) {
+                if (module.currentState !== module.initialState) {
+                    module.currentState = module.initialState;
+                    module.fire(EV_HISTORY_MODULE_STATE_CHANGE, decode(module.currentState));
+                    globalStateChanged = true;
+                }
+            });
         }
-
-        modules = [];
-        REGEXP.lastIndex = 0;
-        while ((m = REGEXP.exec(fqstate))) {
-            modules[m[1]] = m[2];
-        }
-
-        Y.Object.each(G._modules, function (module, moduleId) {
-
-            var currentState = modules[moduleId];
-
-            if (!currentState || module.currentState !== currentState) {
-                module.currentState = currentState || module.initialState;
-                module.fire(EV_HISTORY_MODULE_STATE_CHANGE, module.currentState);
-                globalStateChanged = true;
-            }
-        });
 
         if (globalStateChanged) {
             H.fire(EV_HISTORY_GLOBAL_STATE_CHANGE);
@@ -181,20 +177,18 @@ YUI.add('history', function(Y) {
      * @return {boolean} true if successful. false otherwise.
      */
     function _updateIFrame(fqstate) {
-
         var html, doc;
 
         html = '<html><body>' + fqstate + '</body></html>';
 
         try {
-            doc = G._historyIFrame.get("contentWindow.document");
+            doc = G._historyIFrame.get('contentWindow.document');
             // TODO: The Node API should expose these methods in the very near future...
             doc.invoke('open');
             doc.invoke('write', html, '', '', '', ''); // see bug #2447937
             doc.invoke('close');
             return true;
         } catch (e) {
-            Y.log("Exception while storing a new browser history entry: " + e, "info", "history");
             return false;
         }
     }
@@ -205,10 +199,9 @@ YUI.add('history', function(Y) {
      * @private
      */
     function _checkIframeLoaded() {
-
         var elem, fqstate, hash;
 
-        if (!G._historyIFrame.get("contentWindow.document")) {
+        if (!G._historyIFrame.get('contentWindow.document')) {
             // Check again in 10 msec...
             setTimeout(_checkIframeLoaded, 10);
             return;
@@ -223,17 +216,16 @@ YUI.add('history', function(Y) {
         // We must use innerText, and not innerHTML because our string contains
         // the "&" character (which would end up being escaped as "&amp;") and
         // the string comparison would fail...
-        fqstate = elem ? elem.get("innerText") : null;
+        fqstate = elem ? elem.get('innerText') : null;
 
         hash = _getHash();
 
         setInterval(function () {
-
             var newfqstate, states, newHash;
 
             elem = G._historyIFrame.get('contentWindow.document.body');
             // See my comment above about using innerText instead of innerHTML...
-            newfqstate = elem ? elem.get("innerText") : null;
+            newfqstate = elem ? elem.get('innerText') : null;
 
             newHash = _getHash();
 
@@ -245,9 +237,9 @@ YUI.add('history', function(Y) {
                 if (!fqstate) {
                     states = [];
                     Y.Object.each(G._modules, function (module, moduleId) {
-                        states.push(moduleId + "=" + module.initialState);
+                        states.push(moduleId + '=' + module.initialState);
                     });
-                    newHash = states.join("&");
+                    newHash = states.join('&');
                 } else {
                     newHash = fqstate;
                 }
@@ -293,11 +285,10 @@ YUI.add('history', function(Y) {
      * @private
      */
     function _initialize() {
-
-        var m, parts, moduleId, module, initialState, currentState, counter, hash;
+        var m, parts, moduleId, module, initialState, currentState, hash;
 
         // Decode the content of our storage field...
-        parts = G._stateField.get("value").split("|");
+        parts = G._stateField.get('value').split('|');
 
         if (parts.length > 1) {
 
@@ -322,29 +313,22 @@ YUI.add('history', function(Y) {
             }
         }
 
-        if (parts.length > 2) {
-            G._fqstates = parts[2].split(",");
-        }
+        if (!L.isUndefined(C.win.onhashchange)) {
 
-        if (A.ie) {
+            // The HTML5 way of handling DHTML history...
+            Y.on('hashchange', function () {
+                var hash = _getHash();
+                _handleFQStateChange(hash);
+                _storeStates();
+            }, window);
 
-            if (L.isUndefined(DM) || DM < 8) {
+            G.ready = true;
+            H.fire(EV_HISTORY_READY);
 
-                // IE < 8 or IE8 in quirks mode or IE7 standards mode
-                _checkIframeLoaded();
+        } else if (_useIFrame) {
 
-            } else {
-
-                // IE8 in IE8 standards mode
-                Y.on("hashchange", function () {
-                    var hash = _getHash();
-                    _handleFQStateChange(hash);
-                    _storeStates();
-                }, window);
-
-                G.ready = true;
-                H.fire(EV_HISTORY_READY);
-            }
+            // IE < 8 or IE8 in quirks mode or IE7 standards mode
+            _checkIframeLoaded();
 
         } else {
 
@@ -354,38 +338,16 @@ YUI.add('history', function(Y) {
             // YAHOO.util.History.navigate has been called or after
             // the user has hit the back/forward button.
 
-            // On Safari 1.x and 2.0, the only way to catch a back/forward
-            // operation is to watch history.length... We basically exploit
-            // what I consider to be a bug (history.length is not supposed
-            // to change when going back/forward in the history...) This is
-            // why, in the following thread, we first compare the hash,
-            // because the hash thing will be fixed in the next major
-            // version of Safari. So even if they fix the history.length
-            // bug, all this will still work!
-            counter = WH.length;
-
             // On Gecko and Opera, we just need to watch the hash...
             hash = _getHash();
 
             setInterval(function () {
-
-                var state, newHash, newCounter;
-
-                newHash = _getHash();
-                newCounter = WH.length;
+                var newHash = _getHash();
                 if (newHash !== hash) {
                     hash = newHash;
-                    counter = newCounter;
                     _handleFQStateChange(hash);
                     _storeStates();
-                } else if (newCounter !== counter && A.webkit) {
-                    hash = newHash;
-                    counter = newCounter;
-                    state = G._fqstates[counter - 1];
-                    _handleFQStateChange(state);
-                    _storeStates();
                 }
-
             }, 50);
 
             G.ready = true;
@@ -406,10 +368,9 @@ YUI.add('history', function(Y) {
          * @return {History.Module} The newly registered module
          */
         register: function (moduleId, initialState) {
-
             var module;
 
-            if (!L.isString(moduleId) || L.trim(moduleId) === "" || !L.isString(initialState)) {
+            if (!L.isString(moduleId) || L.trim(moduleId) === '' || !L.isString(initialState)) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
@@ -423,7 +384,6 @@ YUI.add('history', function(Y) {
             // but that would mean that some states may be lost once the user
             // leaves the page and then comes back to it.
             if (G.ready) {
-                Y.log("All modules must be registered before initializing the browser history utility", "info", "history");
                 return null;
             }
 
@@ -447,7 +407,6 @@ YUI.add('history', function(Y) {
          * @public
          */
         initialize: function (stateField, historyIFrame) {
-
             var tagName, type;
 
             if (G.ready) {
@@ -460,36 +419,35 @@ YUI.add('history', function(Y) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
-            tagName = stateField.get("tagName").toUpperCase();
-            type = stateField.get("type");
+            tagName = stateField.get('tagName').toUpperCase();
+            type = stateField.get('type');
 
-            if (tagName !== "TEXTAREA" && (tagName !== "INPUT" || type !== "hidden" && type !== "text")) {
+            if (tagName !== 'TEXTAREA' && (tagName !== 'INPUT' || type !== 'hidden' && type !== 'text')) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
             // IE < 8 or IE8 in quirks mode or IE7 standards mode
             if (A.ie && (L.isUndefined(DM) || DM < 8)) {
-
+                _useIFrame = true;
                 historyIFrame = Y.get(historyIFrame);
-                if (!historyIFrame || historyIFrame.get('tagName').toUpperCase() !== "IFRAME") {
+                if (!historyIFrame || historyIFrame.get('tagName').toUpperCase() !== 'IFRAME') {
                     throw new Error(E_MISSING_OR_INVALID_ARG);
                 }
             }
 
             if (A.opera && !L.isUndefined(WH.navigationMode)) {
-
-                // Disable Opera's fast back/forward navigation mode and puts
+                // Disable Opera's fast back/forward navigation mode and put
                 // it in compatible mode. This makes anchor-based history
                 // navigation work after the page has been navigated away
                 // from and re-activated, at the cost of slowing down
                 // back/forward navigation to and from that page.
-                WH.navigationMode = "compatible";
+                WH.navigationMode = 'compatible';
             }
 
             G._stateField = stateField;
             G._historyIFrame = historyIFrame;
 
-            Y.on("domready", _initialize);
+            Y.on('domready', _initialize);
             return true;
         },
 
@@ -502,7 +460,6 @@ YUI.add('history', function(Y) {
          * @public
          */
         navigate: function (moduleId, state) {
-
             var states;
 
             if (!L.isString(moduleId) || !L.isString(state)) {
@@ -524,16 +481,13 @@ YUI.add('history', function(Y) {
          * @public
          */
         multiNavigate: function (states) {
-
             var newStates = [], fqstate, globalStateChanged = false;
 
             if (!G.ready) {
-                Y.log("The browser history utility has not been initialized", "info", "history");
                 return false;
             }
 
             Y.Object.each(G._modules, function (module, moduleId) {
-
                 var state, decodedModuleId = decode(moduleId);
 
                 if (!states.hasOwnProperty(decodedModuleId)) {
@@ -548,7 +502,7 @@ YUI.add('history', function(Y) {
                     }
                 }
 
-                newStates.push(moduleId + "=" + state);
+                newStates.push(moduleId + '=' + state);
             });
 
             if (!globalStateChanged) {
@@ -556,36 +510,13 @@ YUI.add('history', function(Y) {
                 return false;
             }
 
-            fqstate = newStates.join("&");
+            fqstate = newStates.join('&');
 
-            // IE < 8 or IE8 in quirks mode or IE7 standards mode
-            if (A.ie && (L.isUndefined(DM) || DM < 8)) {
-
+            if (_useIFrame) {
                 return _updateIFrame(fqstate);
-
             } else {
-
-                // Known bug: On Safari 1.x and 2.0, if you have tab browsing
-                // enabled, Safari will show an endless loading icon in the
-                // tab. This has apparently been fixed in recent WebKit builds.
-                // One work around found by Dav Glass is to submit a form that
-                // points to the same document. This indeed works on Safari 1.x
-                // and 2.0 but creates bigger problems on WebKit. So for now,
-                // we'll consider this an acceptable bug, and hope that Apple
-                // comes out with their next version of Safari very soon.
                 WL.hash = fqstate;
-                if (A.webkit) {
-                    // The following two lines are only useful for Safari 1.x
-                    // and 2.0. Recent nightly builds of WebKit do not require
-                    // that, but unfortunately, it is not easy to differentiate
-                    // between the two. Once Safari 2.0 departs the A-grade
-                    // list, we can remove the following two lines...
-                    G._fqstates[WH.length] = fqstate;
-                    _storeStates();
-                }
-
                 return true;
-
             }
         },
 
@@ -597,7 +528,6 @@ YUI.add('history', function(Y) {
          * @public
          */
         getCurrentState: function (moduleId) {
-
             var module;
 
             if (!L.isString(moduleId)) {
@@ -605,13 +535,11 @@ YUI.add('history', function(Y) {
             }
 
             if (!G.ready) {
-                Y.log("The browser history utility has not been initialized", "info", "history");
                 return null;
             }
 
             module = G._modules[moduleId];
             if (!module) {
-                Y.log("No such registered module: " + moduleId, "info", "history");
                 return null;
             }
 
@@ -628,7 +556,6 @@ YUI.add('history', function(Y) {
          * @public
          */
         getBookmarkedState: function (moduleId) {
-
             var m, i, h;
 
             if (!L.isString(moduleId)) {
@@ -639,7 +566,7 @@ YUI.add('history', function(Y) {
             // URL-decoded, which creates problems if the state value
             // contained special characters...
             h = WL.href;
-            i = h.indexOf("#");
+            i = h.indexOf('#');
 
             if (i >= 0) {
                 h = h.substr(i + 1);
@@ -668,16 +595,15 @@ YUI.add('history', function(Y) {
          * @public
          */
         getQueryStringParameter: function (paramName, url) {
-
             var m, q, i;
 
             url = url || WL.href;
 
-            i = url.indexOf("?");
+            i = url.indexOf('?');
             q = i >= 0 ? url.substr(i + 1) : url;
 
             // Remove the hash if any
-            i = q.lastIndexOf("#");
+            i = q.lastIndexOf('#');
             q = i >= 0 ? q.substr(0, i) : q;
 
             REGEXP.lastIndex = 0;
