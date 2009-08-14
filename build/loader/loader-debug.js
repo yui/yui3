@@ -402,7 +402,7 @@ var NOT_FOUND = {},
                     requires: [NODE, BASE]
                 }, 
                 'dd-ddm':{
-                    requires: ['dd-ddm-base']
+                    requires: ['dd-ddm-base', 'event-resize']
                 }, 
                 'dd-ddm-drop':{
                     requires: ['dd-ddm']
@@ -411,7 +411,7 @@ var NOT_FOUND = {},
                     requires: ['dd-ddm-base']
                 }, 
                 'dd-drop':{
-                    requires: ['dd-ddm-drop', 'event-mouseenter']
+                    requires: ['dd-ddm-drop']
                 }, 
                 'dd-proxy':{
                     requires: [DDDRAG]
