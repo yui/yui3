@@ -47,7 +47,8 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/*global YUI*/</span>
+                        <div class="highlight" ><pre><span class="c">/*global YUI */</span>
+
 
 <span class="c">/**</span>
 <span class="c"> * The Browser History Utility provides the ability to use the back/forward</span>
@@ -68,14 +69,9 @@
 <span class="c"> * @constructor</span>
 <span class="c"> */</span>
 
-        <span class="c">// SHortcuts, etc.</span>
-<span class="c"></span>    <span class="k">var</span> <span class="nx">L</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
-        <span class="nx">A</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">,</span>
-        <span class="nx">ET</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">,</span>
-        <span class="nx">C</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">,</span>
-        <span class="nx">WH</span> <span class="o">=</span> <span class="nx">C</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">history</span><span class="o">,</span>
-        <span class="nx">WL</span> <span class="o">=</span> <span class="nx">C</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">location</span><span class="o">,</span>
-        <span class="nx">DM</span> <span class="o">=</span> <span class="nx">C</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">documentMode</span><span class="o">,</span>
+        <span class="c">// Shortcuts, etc.</span>
+<span class="c"></span>    <span class="k">var</span> <span class="nx">win</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">,</span>
+        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">,</span>
 
         <span class="nx">encode</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="o">,</span>
         <span class="nx">decode</span> <span class="o">=</span> <span class="nb">decodeURIComponent</span><span class="o">,</span>
@@ -142,16 +138,16 @@
 <span class="c">     * @return {string} The hash portion of the document&#39;s location</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
-    <span class="k">if</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">gecko</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span><span class="o">)</span> <span class="o">{</span>
         <span class="c">// We branch at runtime for Gecko since window.location.hash in Gecko</span>
 <span class="c"></span>        <span class="c">// returns a decoded string, and we want all encoding untouched.</span>
 <span class="c"></span>        <span class="nx">_getHash</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="sr">/#(.*)$/</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">WL</span><span class="o">.</span><span class="nx">href</span><span class="o">);</span>
+            <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="sr">/#(.*)$/</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">win</span><span class="o">.</span><span class="nx">location</span><span class="o">.</span><span class="nx">href</span><span class="o">);</span>
             <span class="k">return</span> <span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
         <span class="o">};</span>
     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
         <span class="nx">_getHash</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">WL</span><span class="o">.</span><span class="nx">hash</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">1</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">win</span><span class="o">.</span><span class="nx">location</span><span class="o">.</span><span class="nx">hash</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">1</span><span class="o">);</span>
         <span class="o">};</span>
     <span class="o">}</span>
 
@@ -295,7 +291,7 @@
 <span class="c"></span>                <span class="c">// URL fragment identifier. Note that here, we are on IE &lt; 8</span>
 <span class="c"></span>                <span class="c">// which does not touch the browser history when changing the</span>
 <span class="c"></span>                <span class="c">// hash (unlike all the other browsers).</span>
-<span class="c"></span>                <span class="nx">WL</span><span class="o">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nx">newHash</span><span class="o">;</span>
+<span class="c"></span>                <span class="nx">win</span><span class="o">.</span><span class="nx">location</span><span class="o">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nx">newHash</span><span class="o">;</span>
 
                 <span class="nx">_storeStates</span><span class="o">();</span>
 
@@ -360,7 +356,7 @@
             <span class="o">}</span>
         <span class="o">}</span>
 
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">C</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nx">onhashchange</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">win</span><span class="o">.</span><span class="nx">onhashchange</span><span class="o">))</span> <span class="o">{</span>
 
             <span class="c">// The HTML5 way of handling DHTML history...</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;hashchange&#39;</span><span class="o">,</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
@@ -417,7 +413,7 @@
         <span class="nx">register</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">moduleId</span><span class="o">,</span> <span class="nx">initialState</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">module</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">||</span> <span class="nx">L</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">initialState</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">initialState</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">E_MISSING_OR_INVALID_ARG</span><span class="o">);</span>
             <span class="o">}</span>
 
@@ -474,7 +470,7 @@
             <span class="o">}</span>
 
             <span class="c">// IE &lt; 8 or IE8 in quirks mode or IE7 standards mode</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">DM</span><span class="o">)</span> <span class="o">||</span> <span class="nx">DM</span> <span class="o">&lt;</span> <span class="m">8</span><span class="o">))</span> <span class="o">{</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">doc</span><span class="o">.</span><span class="nx">documentMode</span><span class="o">)</span> <span class="o">||</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">documentMode</span> <span class="o">&lt;</span> <span class="m">8</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">_useIFrame</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                 <span class="nx">historyIFrame</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">historyIFrame</span><span class="o">);</span>
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">historyIFrame</span> <span class="o">||</span> <span class="nx">historyIFrame</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;tagName&#39;</span><span class="o">).</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">!==</span> <span class="s1">&#39;IFRAME&#39;</span><span class="o">)</span> <span class="o">{</span>
@@ -482,13 +478,13 @@
                 <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">opera</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">WH</span><span class="o">.</span><span class="nx">navigationMode</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">win</span><span class="o">.</span><span class="nx">history</span><span class="o">.</span><span class="nx">navigationMode</span><span class="o">))</span> <span class="o">{</span>
                 <span class="c">// Disable Opera&#39;s fast back/forward navigation mode and put</span>
 <span class="c"></span>                <span class="c">// it in compatible mode. This makes anchor-based history</span>
 <span class="c"></span>                <span class="c">// navigation work after the page has been navigated away</span>
 <span class="c"></span>                <span class="c">// from and re-activated, at the cost of slowing down</span>
 <span class="c"></span>                <span class="c">// back/forward navigation to and from that page.</span>
-<span class="c"></span>                <span class="nx">WH</span><span class="o">.</span><span class="nx">navigationMode</span> <span class="o">=</span> <span class="s1">&#39;compatible&#39;</span><span class="o">;</span>
+<span class="c"></span>                <span class="nx">win</span><span class="o">.</span><span class="nx">history</span><span class="o">.</span><span class="nx">navigationMode</span> <span class="o">=</span> <span class="s1">&#39;compatible&#39;</span><span class="o">;</span>
             <span class="o">}</span>
 
             <span class="nx">G</span><span class="o">.</span><span class="nx">_stateField</span> <span class="o">=</span> <span class="nx">stateField</span><span class="o">;</span>
@@ -509,7 +505,7 @@
         <span class="nx">navigate</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">moduleId</span><span class="o">,</span> <span class="nx">state</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">states</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">state</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">state</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">E_MISSING_OR_INVALID_ARG</span><span class="o">);</span>
             <span class="o">}</span>
 
@@ -562,7 +558,7 @@
             <span class="k">if</span> <span class="o">(</span><span class="nx">_useIFrame</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="nx">_updateIFrame</span><span class="o">(</span><span class="nx">fqstate</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">WL</span><span class="o">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">fqstate</span><span class="o">;</span>
+                <span class="nx">win</span><span class="o">.</span><span class="nx">location</span><span class="o">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">fqstate</span><span class="o">;</span>
                 <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -577,7 +573,7 @@
         <span class="nx">getCurrentState</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">module</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">E_MISSING_OR_INVALID_ARG</span><span class="o">);</span>
             <span class="o">}</span>
 
@@ -605,14 +601,14 @@
         <span class="nx">getBookmarkedState</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">moduleId</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">h</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">E_MISSING_OR_INVALID_ARG</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="c">// Use location.href instead of location.hash which is already</span>
 <span class="c"></span>            <span class="c">// URL-decoded, which creates problems if the state value</span>
 <span class="c"></span>            <span class="c">// contained special characters...</span>
-<span class="c"></span>            <span class="nx">h</span> <span class="o">=</span> <span class="nx">WL</span><span class="o">.</span><span class="nx">href</span><span class="o">;</span>
+<span class="c"></span>            <span class="nx">h</span> <span class="o">=</span> <span class="nx">win</span><span class="o">.</span><span class="nx">location</span><span class="o">.</span><span class="nx">href</span><span class="o">;</span>
             <span class="nx">i</span> <span class="o">=</span> <span class="nx">h</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;#&#39;</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
@@ -644,7 +640,7 @@
         <span class="nx">getQueryStringParameter</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">paramName</span><span class="o">,</span> <span class="nx">url</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">q</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
-            <span class="nx">url</span> <span class="o">=</span> <span class="nx">url</span> <span class="o">||</span> <span class="nx">WL</span><span class="o">.</span><span class="nx">href</span><span class="o">;</span>
+            <span class="nx">url</span> <span class="o">=</span> <span class="nx">url</span> <span class="o">||</span> <span class="nx">win</span><span class="o">.</span><span class="nx">location</span><span class="o">.</span><span class="nx">href</span><span class="o">;</span>
 
             <span class="nx">i</span> <span class="o">=</span> <span class="nx">url</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;?&#39;</span><span class="o">);</span>
             <span class="nx">q</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span> <span class="o">?</span> <span class="nx">url</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">:</span> <span class="nx">url</span><span class="o">;</span>
@@ -666,8 +662,8 @@
 
 
     <span class="c">// Make Y.History an event target</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">H</span><span class="o">,</span> <span class="nx">ET</span><span class="o">.</span><span class="nx">prototype</span><span class="o">);</span>
-    <span class="nx">ET</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">H</span><span class="o">);</span>
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">H</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">.</span><span class="nx">prototype</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">H</span><span class="o">);</span>
 
 
     <span class="c">/**</span>
@@ -679,7 +675,7 @@
 <span class="c">     */</span>
     <span class="nx">H</span><span class="o">.</span><span class="nx">Module</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">initialState</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="nx">ET</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
 
         <span class="c">/**</span>
 <span class="c">         * The module identifier</span>
@@ -714,7 +710,7 @@
         <span class="k">this</span><span class="o">.</span><span class="nx">upcomingState</span> <span class="o">=</span> <span class="nx">initialState</span><span class="o">;</span>
     <span class="o">};</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">H</span><span class="o">.</span><span class="nx">Module</span><span class="o">,</span> <span class="nx">ET</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">H</span><span class="o">.</span><span class="nx">Module</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
 
     <span class="nx">Y</span><span class="o">.</span><span class="nx">History</span> <span class="o">=</span> <span class="nx">H</span><span class="o">;</span>
 </pre></div>
