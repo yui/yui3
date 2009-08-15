@@ -1,6 +1,7 @@
 YUI.add('history', function(Y) {
 
-/*global YUI*/
+/*global YUI */
+
 
 /**
  * The Browser History Utility provides the ability to use the back/forward
@@ -21,14 +22,9 @@ YUI.add('history', function(Y) {
  * @constructor
  */
 
-        // SHortcuts, etc.
-    var L  = Y.Lang,
-        A  = Y.UA,
-        ET = Y.Event.Target,
-        C  = Y.config,
-        WH = C.win.history,
-        WL = C.win.location,
-        DM = C.doc.documentMode,
+        // Shortcuts, etc.
+    var win = Y.config.win,
+        doc = Y.config.doc,
 
         encode = encodeURIComponent,
         decode = decodeURIComponent,
@@ -95,16 +91,16 @@ YUI.add('history', function(Y) {
      * @return {string} The hash portion of the document's location
      * @private
      */
-    if (A.gecko) {
+    if (Y.UA.gecko) {
         // We branch at runtime for Gecko since window.location.hash in Gecko
         // returns a decoded string, and we want all encoding untouched.
         _getHash = function () {
-            var m = /#(.*)$/.exec(WL.href);
+            var m = /#(.*)$/.exec(win.location.href);
             return m && m[1] ? m[1] : '';
         };
     } else {
         _getHash = function () {
-            return WL.hash.substr(1);
+            return win.location.hash.substr(1);
         };
     }
 
@@ -248,7 +244,7 @@ YUI.add('history', function(Y) {
                 // URL fragment identifier. Note that here, we are on IE < 8
                 // which does not touch the browser history when changing the
                 // hash (unlike all the other browsers).
-                WL.hash = hash = newHash;
+                win.location.hash = hash = newHash;
 
                 _storeStates();
 
@@ -313,7 +309,7 @@ YUI.add('history', function(Y) {
             }
         }
 
-        if (!L.isUndefined(C.win.onhashchange)) {
+        if (!Y.Lang.isUndefined(win.onhashchange)) {
 
             // The HTML5 way of handling DHTML history...
             Y.on('hashchange', function () {
@@ -370,7 +366,7 @@ YUI.add('history', function(Y) {
         register: function (moduleId, initialState) {
             var module;
 
-            if (!L.isString(moduleId) || L.trim(moduleId) === '' || !L.isString(initialState)) {
+            if (!Y.Lang.isString(moduleId) || Y.Lang.trim(moduleId) === '' || !Y.Lang.isString(initialState)) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
@@ -427,7 +423,7 @@ YUI.add('history', function(Y) {
             }
 
             // IE < 8 or IE8 in quirks mode or IE7 standards mode
-            if (A.ie && (L.isUndefined(DM) || DM < 8)) {
+            if (Y.UA.ie && (Y.Lang.isUndefined(doc.documentMode) || doc.documentMode < 8)) {
                 _useIFrame = true;
                 historyIFrame = Y.get(historyIFrame);
                 if (!historyIFrame || historyIFrame.get('tagName').toUpperCase() !== 'IFRAME') {
@@ -435,13 +431,13 @@ YUI.add('history', function(Y) {
                 }
             }
 
-            if (A.opera && !L.isUndefined(WH.navigationMode)) {
+            if (Y.UA.opera && !Y.Lang.isUndefined(win.history.navigationMode)) {
                 // Disable Opera's fast back/forward navigation mode and put
                 // it in compatible mode. This makes anchor-based history
                 // navigation work after the page has been navigated away
                 // from and re-activated, at the cost of slowing down
                 // back/forward navigation to and from that page.
-                WH.navigationMode = 'compatible';
+                win.history.navigationMode = 'compatible';
             }
 
             G._stateField = stateField;
@@ -462,7 +458,7 @@ YUI.add('history', function(Y) {
         navigate: function (moduleId, state) {
             var states;
 
-            if (!L.isString(moduleId) || !L.isString(state)) {
+            if (!Y.Lang.isString(moduleId) || !Y.Lang.isString(state)) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
@@ -515,7 +511,7 @@ YUI.add('history', function(Y) {
             if (_useIFrame) {
                 return _updateIFrame(fqstate);
             } else {
-                WL.hash = fqstate;
+                win.location.hash = fqstate;
                 return true;
             }
         },
@@ -530,7 +526,7 @@ YUI.add('history', function(Y) {
         getCurrentState: function (moduleId) {
             var module;
 
-            if (!L.isString(moduleId)) {
+            if (!Y.Lang.isString(moduleId)) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
@@ -558,14 +554,14 @@ YUI.add('history', function(Y) {
         getBookmarkedState: function (moduleId) {
             var m, i, h;
 
-            if (!L.isString(moduleId)) {
+            if (!Y.Lang.isString(moduleId)) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
             // Use location.href instead of location.hash which is already
             // URL-decoded, which creates problems if the state value
             // contained special characters...
-            h = WL.href;
+            h = win.location.href;
             i = h.indexOf('#');
 
             if (i >= 0) {
@@ -597,7 +593,7 @@ YUI.add('history', function(Y) {
         getQueryStringParameter: function (paramName, url) {
             var m, q, i;
 
-            url = url || WL.href;
+            url = url || win.location.href;
 
             i = url.indexOf('?');
             q = i >= 0 ? url.substr(i + 1) : url;
@@ -619,8 +615,8 @@ YUI.add('history', function(Y) {
 
 
     // Make Y.History an event target
-    Y.mix(H, ET.prototype);
-    ET.call(H);
+    Y.mix(H, Y.Event.Target.prototype);
+    Y.Event.Target.call(H);
 
 
     /**
@@ -632,7 +628,7 @@ YUI.add('history', function(Y) {
      */
     H.Module = function (id, initialState) {
 
-        ET.call(this);
+        Y.Event.Target.call(this);
 
         /**
          * The module identifier
@@ -667,7 +663,7 @@ YUI.add('history', function(Y) {
         this.upcomingState = initialState;
     };
 
-    Y.mix(H.Module, ET, false, null, 1);
+    Y.mix(H.Module, Y.Event.Target, false, null, 1);
 
     Y.History = H;
 
