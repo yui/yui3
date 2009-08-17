@@ -38,6 +38,9 @@ var Event = Y.Event,
 			ename,
 			matched,
 			selector,
+			container,
+			sIDSelector,
+			sID,
 			fn,
 			ev;
 
@@ -46,16 +49,29 @@ var Event = Y.Event,
 			
 			var returnVal;
 			
-			if (el === container) {
+			if (!el || el === container) {
 				returnVal = false;
 			}
 			else {
-				returnVal = Y.Selector.test(el, selector) ? el: getMatch(el.parentNode, selector);
+				returnVal = Y.Selector.test(el, selector) ? el: getMatch(el.parentNode, selector, container);
 			}
 			
 			return returnVal;
 			
 		};
+
+		//	The user might have specified the document element
+		//	as the delegation container, in which case it is 
+		//	nessary to crawl up to the documentElement (<HTML />)
+
+		container = el.nodeType === 9 ? el.documentElement : el;
+		
+		sID = container.id;
+
+		if (!sID) {
+			sID = Y.guid();
+			container.id = sID;
+		}
 
 
         for (spec in tests) {
@@ -66,22 +82,21 @@ var Event = Y.Event,
 				fn	= tests.fn;
 				matched = null;
 
-				if (!el.id) {
-					el.id = Y.guid();
-				}
+				//	Scope all selectors to the container
 
-				selector = ("#" + el.id + " " + spec);
+				sIDSelector = ("#" + sID + " ");
+				selector = (sIDSelector + spec).replace(/,/gi, ("," + sIDSelector));
 
 				if (Y.Selector.test(target, selector)) {
 					matched = target;
 				}
-				else if (Y.Selector.test(target, (selector + " *"))) {
+				else if (Y.Selector.test(target, ((selector.replace(/,/gi, " *,")) + " *"))) {
 						
 					//	The target is a descendant of an element matching 
 					//	the selector, so crawl up to find the ancestor that 
 					//	matches the selector
 					
-					matched = getMatch(target.parentNode, selector, el);
+					matched = getMatch(target, selector, container);
 					
 				}
 
