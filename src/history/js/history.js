@@ -103,10 +103,8 @@
     }
 
     /**
-     * Stores the initial state and current state for all registered modules.
-     * On Safari, we also store all the fully qualified states visited by
-     * the application within a single browser session. The storage takes
-     * place in the form field specified during initialization.
+     * Stores the initial state and current state for all registered modules
+     * in the (hidden) form field specified during initialization.
      * @method _storeStates
      * @private
      */
@@ -201,11 +199,10 @@
             return;
         }
 
-        // Start the thread that will have the responsibility to
-        // periodically check whether a navigate operation has been
+        // Periodically check whether a navigate operation has been
         // requested on the main window. This will happen when
-        // History.navigate has been called or after the user has
-        // hit the back/forward button.
+        // History.navigate has been called or after the user
+        // has hit the back/forward button.
         elem = G._historyIFrame.get('contentWindow.document.body');
         // We must use innerText, and not innerHTML because our string contains
         // the "&" character (which would end up being escaped as "&amp;") and
@@ -326,11 +323,10 @@
 
         } else {
 
-            // Start the thread that will have the responsibility to
-            // periodically check whether a navigate operation has been
+            // Periodically check whether a navigate operation has been
             // requested on the main window. This will happen when
-            // YAHOO.util.History.navigate has been called or after
-            // the user has hit the back/forward button.
+            // History.navigate has been called, or after the user
+            // has hit the back/forward button.
 
             // On Gecko and Opera, we just need to watch the hash...
             hash = _getHash();
@@ -368,22 +364,22 @@
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
+            moduleId = encode(moduleId);
+            initialState = encode(initialState);
+
             if (G._modules[moduleId]) {
                 // The module seems to have already been registered.
                 return;
             }
 
             // Note: A module CANNOT be registered once the browser history
-            // utility has been initialized. We could relax this in the future,
-            // but that would mean that some states may be lost once the user
-            // leaves the page and then comes back to it.
+            // utility has been initialized. This is related to reading and
+            // writing state values from/to the input field. Relaxing this
+            // rule would potentially create situations rather complicated
+            // to deal with.
             if (G.ready) {
                 return null;
             }
-
-            // Make sure the strings passed in do not contain our separators "," and "|"
-            moduleId = encode(moduleId);
-            initialState = encode(initialState);
 
             module = new H.Module(moduleId, initialState);
             G._modules[moduleId] = module;
@@ -460,6 +456,7 @@
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
 
+            // The ncoding of module id and state takes place in mutiNavigate.
             states = {};
             states[moduleId] = state;
 
@@ -532,6 +529,7 @@
                 return null;
             }
 
+            moduleId = encode(moduleId);
             module = G._modules[moduleId];
             if (!module) {
                 return null;
@@ -555,6 +553,8 @@
             if (!Y.Lang.isString(moduleId)) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
+
+            moduleId = encode(moduleId);
 
             // Use location.href instead of location.hash which is already
             // URL-decoded, which creates problems if the state value
