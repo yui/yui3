@@ -148,6 +148,12 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     this._yuifacade = true;
 
     /**
+     * The native event
+     * @property _event
+     */
+    this._event = e;
+
+    /**
      * The X location of the event on the page (including scroll)
      * @property pageX
      * @type int
