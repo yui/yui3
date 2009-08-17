@@ -85,6 +85,9 @@
 			<span class="nx">ename</span><span class="o">,</span>
 			<span class="nx">matched</span><span class="o">,</span>
 			<span class="nx">selector</span><span class="o">,</span>
+			<span class="nx">container</span><span class="o">,</span>
+			<span class="nx">sIDSelector</span><span class="o">,</span>
+			<span class="nx">sID</span><span class="o">,</span>
 			<span class="nx">fn</span><span class="o">,</span>
 			<span class="nx">ev</span><span class="o">;</span>
 
@@ -93,16 +96,29 @@
 			
 			<span class="k">var</span> <span class="nx">returnVal</span><span class="o">;</span>
 			
-			<span class="k">if</span> <span class="o">(</span><span class="nx">el</span> <span class="o">===</span> <span class="nx">container</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(!</span><span class="nx">el</span> <span class="o">||</span> <span class="nx">el</span> <span class="o">===</span> <span class="nx">container</span><span class="o">)</span> <span class="o">{</span>
 				<span class="nx">returnVal</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 			<span class="o">}</span>
 			<span class="k">else</span> <span class="o">{</span>
-				<span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">selector</span><span class="o">)</span> <span class="o">?</span> <span class="nx">el</span><span class="o">:</span> <span class="nx">getMatch</span><span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span> <span class="nx">selector</span><span class="o">);</span>
+				<span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">selector</span><span class="o">)</span> <span class="o">?</span> <span class="nx">el</span><span class="o">:</span> <span class="nx">getMatch</span><span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span> <span class="nx">selector</span><span class="o">,</span> <span class="nx">container</span><span class="o">);</span>
 			<span class="o">}</span>
 			
 			<span class="k">return</span> <span class="nx">returnVal</span><span class="o">;</span>
 			
 		<span class="o">};</span>
+
+		<span class="c">//	The user might have specified the document element</span>
+<span class="c"></span>		<span class="c">//	as the delegation container, in which case it is </span>
+<span class="c"></span>		<span class="c">//	nessary to crawl up to the documentElement (&lt;HTML /&gt;)</span>
+<span class="c"></span>
+		<span class="nx">container</span> <span class="o">=</span> <span class="nx">el</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span> <span class="o">?</span> <span class="nx">el</span><span class="o">.</span><span class="nx">documentElement</span> <span class="o">:</span> <span class="nx">el</span><span class="o">;</span>
+		
+		<span class="nx">sID</span> <span class="o">=</span> <span class="nx">container</span><span class="o">.</span><span class="nx">id</span><span class="o">;</span>
+
+		<span class="k">if</span> <span class="o">(!</span><span class="nx">sID</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">sID</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
+			<span class="nx">container</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">sID</span><span class="o">;</span>
+		<span class="o">}</span>
 
 
         <span class="k">for</span> <span class="o">(</span><span class="nx">spec</span> <span class="k">in</span> <span class="nx">tests</span><span class="o">)</span> <span class="o">{</span>
@@ -113,22 +129,21 @@
 				<span class="nx">fn</span>	<span class="o">=</span> <span class="nx">tests</span><span class="o">.</span><span class="nx">fn</span><span class="o">;</span>
 				<span class="nx">matched</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
-				<span class="k">if</span> <span class="o">(!</span><span class="nx">el</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-					<span class="nx">el</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
-				<span class="o">}</span>
-
-				<span class="nx">selector</span> <span class="o">=</span> <span class="o">(</span><span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="nx">el</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">spec</span><span class="o">);</span>
+				<span class="c">//	Scope all selectors to the container</span>
+<span class="c"></span>
+				<span class="nx">sIDSelector</span> <span class="o">=</span> <span class="o">(</span><span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="nx">sID</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">);</span>
+				<span class="nx">selector</span> <span class="o">=</span> <span class="o">(</span><span class="nx">sIDSelector</span> <span class="o">+</span> <span class="nx">spec</span><span class="o">).</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/,/gi</span><span class="o">,</span> <span class="o">(</span><span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nx">sIDSelector</span><span class="o">));</span>
 
 				<span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">target</span><span class="o">,</span> <span class="nx">selector</span><span class="o">))</span> <span class="o">{</span>
 					<span class="nx">matched</span> <span class="o">=</span> <span class="nx">target</span><span class="o">;</span>
 				<span class="o">}</span>
-				<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">target</span><span class="o">,</span> <span class="o">(</span><span class="nx">selector</span> <span class="o">+</span> <span class="s2">&quot; *&quot;</span><span class="o">)))</span> <span class="o">{</span>
+				<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">target</span><span class="o">,</span> <span class="o">((</span><span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/,/gi</span><span class="o">,</span> <span class="s2">&quot; *,&quot;</span><span class="o">))</span> <span class="o">+</span> <span class="s2">&quot; *&quot;</span><span class="o">)))</span> <span class="o">{</span>
 						
 					<span class="c">//	The target is a descendant of an element matching </span>
 <span class="c"></span>					<span class="c">//	the selector, so crawl up to find the ancestor that </span>
 <span class="c"></span>					<span class="c">//	matches the selector</span>
 <span class="c"></span>					
-					<span class="nx">matched</span> <span class="o">=</span> <span class="nx">getMatch</span><span class="o">(</span><span class="nx">target</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span> <span class="nx">selector</span><span class="o">,</span> <span class="nx">el</span><span class="o">);</span>
+					<span class="nx">matched</span> <span class="o">=</span> <span class="nx">getMatch</span><span class="o">(</span><span class="nx">target</span><span class="o">,</span> <span class="nx">selector</span><span class="o">,</span> <span class="nx">container</span><span class="o">);</span>
 					
 				<span class="o">}</span>
 
