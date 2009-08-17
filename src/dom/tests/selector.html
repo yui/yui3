@@ -80,6 +80,17 @@ onload = function() {
                 Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[0], 'dd'), 'dd (dd1)');
                 Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[1], 'dd'), 'dd (dd2)');
 
+                // with optional root arg
+                var form = Y.DOM.byId('form-root');
+                var input = form.getElementsByTagName('input')[0];
+                Assert.isTrue(Selector.test(input, 'input', form));
+                Assert.isFalse(Selector.test(Y.DOM.byId('foo-bar'), 'input#foo-bar', form));
+
+                var form = Y.DOM.byId('test-inputs');
+                Assert.isFalse(Selector.test(input, 'input', form));
+                Assert.isFalse(Selector.test(form, 'form', form));
+                Assert.isTrue(Selector.test(form, 'form', form.parentNode));
+                Assert.isTrue(Selector.test(Y.DOM.byId('foo-bar'), 'input#foo-bar', form));
             },
 
             testRootQuery: function() {
@@ -384,6 +395,11 @@ onload = function() {
         <input type="radio" checked="true" id="radio-checked" class="not-button">
         <input type="button" value="foo">
         <input id="foo-bar" name="foo.bar" class="not-button">
+    </form>
+
+    <form id="form-root">
+        <input type="button" value="foo">
+        <input name="foo" class="text-input">
     </form>
 
     <div id="mod1">
