@@ -152,10 +152,8 @@
     <span class="o">}</span>
 
     <span class="c">/**</span>
-<span class="c">     * Stores the initial state and current state for all registered modules.</span>
-<span class="c">     * On Safari, we also store all the fully qualified states visited by</span>
-<span class="c">     * the application within a single browser session. The storage takes</span>
-<span class="c">     * place in the form field specified during initialization.</span>
+<span class="c">     * Stores the initial state and current state for all registered modules</span>
+<span class="c">     * in the (hidden) form field specified during initialization.</span>
 <span class="c">     * @method _storeStates</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
@@ -250,11 +248,10 @@
             <span class="k">return</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="c">// Start the thread that will have the responsibility to</span>
-<span class="c"></span>        <span class="c">// periodically check whether a navigate operation has been</span>
+        <span class="c">// Periodically check whether a navigate operation has been</span>
 <span class="c"></span>        <span class="c">// requested on the main window. This will happen when</span>
-<span class="c"></span>        <span class="c">// History.navigate has been called or after the user has</span>
-<span class="c"></span>        <span class="c">// hit the back/forward button.</span>
+<span class="c"></span>        <span class="c">// History.navigate has been called or after the user</span>
+<span class="c"></span>        <span class="c">// has hit the back/forward button.</span>
 <span class="c"></span>        <span class="nx">elem</span> <span class="o">=</span> <span class="nx">G</span><span class="o">.</span><span class="nx">_historyIFrame</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;contentWindow.document.body&#39;</span><span class="o">);</span>
         <span class="c">// We must use innerText, and not innerHTML because our string contains</span>
 <span class="c"></span>        <span class="c">// the &quot;&amp;&quot; character (which would end up being escaped as &quot;&amp;amp;&quot;) and</span>
@@ -375,11 +372,10 @@
 
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 
-            <span class="c">// Start the thread that will have the responsibility to</span>
-<span class="c"></span>            <span class="c">// periodically check whether a navigate operation has been</span>
+            <span class="c">// Periodically check whether a navigate operation has been</span>
 <span class="c"></span>            <span class="c">// requested on the main window. This will happen when</span>
-<span class="c"></span>            <span class="c">// YAHOO.util.History.navigate has been called or after</span>
-<span class="c"></span>            <span class="c">// the user has hit the back/forward button.</span>
+<span class="c"></span>            <span class="c">// History.navigate has been called, or after the user</span>
+<span class="c"></span>            <span class="c">// has hit the back/forward button.</span>
 <span class="c"></span>
             <span class="c">// On Gecko and Opera, we just need to watch the hash...</span>
 <span class="c"></span>            <span class="nx">hash</span> <span class="o">=</span> <span class="nx">_getHash</span><span class="o">();</span>
@@ -417,22 +413,22 @@
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">E_MISSING_OR_INVALID_ARG</span><span class="o">);</span>
             <span class="o">}</span>
 
+            <span class="nx">moduleId</span> <span class="o">=</span> <span class="nx">encode</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">);</span>
+            <span class="nx">initialState</span> <span class="o">=</span> <span class="nx">encode</span><span class="o">(</span><span class="nx">initialState</span><span class="o">);</span>
+
             <span class="k">if</span> <span class="o">(</span><span class="nx">G</span><span class="o">.</span><span class="nx">_modules</span><span class="o">[</span><span class="nx">moduleId</span><span class="o">])</span> <span class="o">{</span>
                 <span class="c">// The module seems to have already been registered.</span>
 <span class="c"></span>                <span class="k">return</span><span class="o">;</span>
             <span class="o">}</span>
 
             <span class="c">// Note: A module CANNOT be registered once the browser history</span>
-<span class="c"></span>            <span class="c">// utility has been initialized. We could relax this in the future,</span>
-<span class="c"></span>            <span class="c">// but that would mean that some states may be lost once the user</span>
-<span class="c"></span>            <span class="c">// leaves the page and then comes back to it.</span>
+<span class="c"></span>            <span class="c">// utility has been initialized. This is related to reading and</span>
+<span class="c"></span>            <span class="c">// writing state values from/to the input field. Relaxing this</span>
+<span class="c"></span>            <span class="c">// rule would potentially create situations rather complicated</span>
+<span class="c"></span>            <span class="c">// to deal with.</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">G</span><span class="o">.</span><span class="nx">ready</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
             <span class="o">}</span>
-
-            <span class="c">// Make sure the strings passed in do not contain our separators &quot;,&quot; and &quot;|&quot;</span>
-<span class="c"></span>            <span class="nx">moduleId</span> <span class="o">=</span> <span class="nx">encode</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">);</span>
-            <span class="nx">initialState</span> <span class="o">=</span> <span class="nx">encode</span><span class="o">(</span><span class="nx">initialState</span><span class="o">);</span>
 
             <span class="nx">module</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">H</span><span class="o">.</span><span class="nx">Module</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">,</span> <span class="nx">initialState</span><span class="o">);</span>
             <span class="nx">G</span><span class="o">.</span><span class="nx">_modules</span><span class="o">[</span><span class="nx">moduleId</span><span class="o">]</span> <span class="o">=</span> <span class="nx">module</span><span class="o">;</span>
@@ -509,7 +505,8 @@
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">E_MISSING_OR_INVALID_ARG</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="nx">states</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="c">// The ncoding of module id and state takes place in mutiNavigate.</span>
+<span class="c"></span>            <span class="nx">states</span> <span class="o">=</span> <span class="o">{};</span>
             <span class="nx">states</span><span class="o">[</span><span class="nx">moduleId</span><span class="o">]</span> <span class="o">=</span> <span class="nx">state</span><span class="o">;</span>
 
             <span class="k">return</span> <span class="nx">H</span><span class="o">.</span><span class="nx">multiNavigate</span><span class="o">(</span><span class="nx">states</span><span class="o">);</span>
@@ -581,6 +578,7 @@
                 <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
             <span class="o">}</span>
 
+            <span class="nx">moduleId</span> <span class="o">=</span> <span class="nx">encode</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">);</span>
             <span class="nx">module</span> <span class="o">=</span> <span class="nx">G</span><span class="o">.</span><span class="nx">_modules</span><span class="o">[</span><span class="nx">moduleId</span><span class="o">];</span>
             <span class="k">if</span> <span class="o">(!</span><span class="nx">module</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
@@ -604,6 +602,8 @@
             <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">E_MISSING_OR_INVALID_ARG</span><span class="o">);</span>
             <span class="o">}</span>
+
+            <span class="nx">moduleId</span> <span class="o">=</span> <span class="nx">encode</span><span class="o">(</span><span class="nx">moduleId</span><span class="o">);</span>
 
             <span class="c">// Use location.href instead of location.hash which is already</span>
 <span class="c"></span>            <span class="c">// URL-decoded, which creates problems if the state value</span>
