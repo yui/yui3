@@ -1690,15 +1690,14 @@ Y.Loader.prototype = {
         // directly or by means of modules it supersedes.
             requires = Y.cached(function(mod1, mod2) {
 
-                var m = info[mod1], i, r, after, other, s;
+                var m = info[mod1], i, r, after, other = info[mod2], s;
 
-                if (loaded[mod2] || !m) {
+                if (loaded[mod2] || !m || !other) {
                     return false;
                 }
 
                 r     = m.expanded;
                 after = m.after; 
-                other = info[mod2];
 
                 // check if this module requires the other directly
                 if (r && Y.Array.indexOf(r, mod2) > -1) {

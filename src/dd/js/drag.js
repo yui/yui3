@@ -512,7 +512,7 @@
         /**
         * @private
         * @property _invalidsDefault
-        * @description A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true}
+        * @description A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true}
         * @type {Object}
         */
         _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true, 'select': true },

@@ -126,10 +126,9 @@ YUI.prototype = {
 
     /**
      * Initialize this YUI instance
-     * @param o config options
      * @private
      */
-    _init: function(o) {
+    _init: function() {
 
         // find targeted window/frame
         // @TODO create facades
