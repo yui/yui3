@@ -222,39 +222,29 @@
 <span class="c">	* @return object</span>
 <span class="c">   	*/</span>
    	<span class="k">function</span> <span class="nx">_io</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-   		<span class="k">var</span> <span class="nx">u</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">d</span><span class="o">;</span>
+   		<span class="k">var</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">m</span><span class="o">;</span>
    			<span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="o">{};</span>
-   			<span class="nx">i</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">||</span> <span class="kc">null</span><span class="o">;</span>
-   			<span class="nx">o</span> <span class="o">=</span> <span class="nx">_create</span><span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">,</span> <span class="nx">i</span><span class="o">);</span>
+   			<span class="nx">o</span> <span class="o">=</span> <span class="nx">_create</span><span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">,</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">i</span><span class="o">));</span>
    			<span class="nx">m</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">method</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">method</span><span class="o">.</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">:</span> <span class="s1">&#39;GET&#39;</span><span class="o">;</span>
-   			<span class="nx">d</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">data</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">data</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
 
-   		<span class="c">/* Determine configuration properties */</span>
-   		<span class="c">// If config.form is defined, perform data operations.</span>
-<span class="c"></span>   		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">form</span><span class="o">)</span> <span class="o">{</span>
+   		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">form</span><span class="o">)</span> <span class="o">{</span>
    			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">form</span><span class="o">.</span><span class="nx">upload</span><span class="o">)</span> <span class="o">{</span>
-   				<span class="nx">u</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_upload</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-   				<span class="k">return</span> <span class="nx">u</span><span class="o">;</span>
+   				<span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_upload</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
    			<span class="o">}</span>
-
-   			<span class="c">// Serialize the HTML form into a string of name-value pairs.</span>
-<span class="c"></span>   			<span class="nx">f</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_serialize</span><span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">form</span><span class="o">);</span>
-   			<span class="c">// If config.data is defined, concatenate the data to the form string.</span>
-<span class="c"></span>   			<span class="k">if</span> <span class="o">(</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-   				<span class="nx">f</span> <span class="o">+=</span> <span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span> <span class="nx">d</span><span class="o">;</span>
-   			<span class="o">}</span>
-
-   			<span class="k">if</span> <span class="o">(</span><span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;POST&#39;</span><span class="o">)</span> <span class="o">{</span>
-   				<span class="nx">d</span> <span class="o">=</span> <span class="nx">f</span><span class="o">;</span>
-   				<span class="nx">_setHeader</span><span class="o">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="o">,</span> <span class="s1">&#39;application/x-www-form-urlencoded&#39;</span><span class="o">);</span>
-   			<span class="o">}</span>
-   			<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;GET&#39;</span><span class="o">)</span> <span class="o">{</span>
-   				<span class="nx">uri</span> <span class="o">=</span> <span class="nx">_concat</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">f</span><span class="o">);</span>
-   			<span class="o">}</span>
-   		<span class="o">}</span>
-   		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">d</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;POST&#39;</span><span class="o">)</span> <span class="o">{</span>
-   			<span class="nx">_setHeader</span><span class="o">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="o">,</span> <span class="s1">&#39;application/x-www-form-urlencoded; charset=UTF-8&#39;</span><span class="o">);</span>
-   		<span class="o">}</span>
+   			<span class="k">else</span> <span class="o">{</span>
+				<span class="nx">f</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_serialize</span><span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">form</span><span class="o">,</span> <span class="nx">c</span><span class="o">.</span><span class="nx">data</span><span class="o">);</span>
+				<span class="k">if</span> <span class="o">(</span><span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;POST&#39;</span><span class="o">)</span> <span class="o">{</span>
+					<span class="nx">c</span><span class="o">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">f</span><span class="o">;</span>
+					<span class="nx">_setHeader</span><span class="o">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="o">,</span> <span class="s1">&#39;application/x-www-form-urlencoded&#39;</span><span class="o">);</span>
+				<span class="o">}</span>
+				<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;GET&#39;</span><span class="o">)</span> <span class="o">{</span>
+					<span class="nx">uri</span> <span class="o">=</span> <span class="nx">_concat</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">f</span><span class="o">);</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;GET&#39;</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">uri</span> <span class="o">=</span> <span class="nx">_concat</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">f</span><span class="o">);</span>
+		<span class="o">}</span>
 
    		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">{</span>
 			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;native&#39;</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="o">.</span><span class="nx">XDomainRequest</span> <span class="o">||</span> <span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;flash&#39;</span><span class="o">)</span> <span class="o">{</span>
@@ -265,23 +255,42 @@
 			<span class="o">}</span>
    		<span class="o">}</span>
 
+   		<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="nx">_readyState</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span> <span class="o">};</span>
+   		<span class="k">try</span> <span class="o">{</span>
+			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">open</span><span class="o">(</span><span class="nx">m</span><span class="o">,</span> <span class="nx">uri</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+   		<span class="o">}</span>
+   		<span class="k">catch</span><span class="o">(</span><span class="nx">e0</span><span class="o">){</span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">{</span>
+				<span class="c">// This exception is usually thrown by browsers</span>
+<span class="c"></span>				<span class="c">// that do not support native XDR transactions.</span>
+<span class="c"></span>				<span class="k">return</span> <span class="nx">_resend</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+
+   		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;POST&#39;</span><span class="o">)</span> <span class="o">{</span>
+   			<span class="nx">_setHeader</span><span class="o">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="o">,</span> <span class="s1">&#39;application/x-www-form-urlencoded; charset=UTF-8&#39;</span><span class="o">);</span>
+   		<span class="o">}</span>
+
+   		<span class="nx">_setHeaders</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span> <span class="nx">c</span><span class="o">.</span><span class="nx">headers</span> <span class="o">||</span> <span class="o">{});</span>
+		<span class="k">try</span> <span class="o">{</span>
+			<span class="c">// Using &quot;null&quot; will result in a POST request with</span>
+<span class="c"></span>			<span class="c">// no Content-Length defined.</span>
+<span class="c"></span>	   		<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">send</span><span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">data</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">);</span>
+		<span class="o">}</span>
+   		<span class="k">catch</span><span class="o">(</span><span class="nx">e1</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">{</span>
+				<span class="c">// This exception is usually thrown by browsers</span>
+<span class="c"></span>				<span class="c">// that do not support native XDR transactions.</span>
+<span class="c"></span>				<span class="k">return</span> <span class="nx">_resend</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+
+   		<span class="nx">_ioStart</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
    		<span class="c">// If config.timeout is defined, and the request is standard XHR,</span>
 <span class="c"></span>   		<span class="c">// initialize timeout polling.</span>
 <span class="c"></span>   		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span><span class="o">)</span> <span class="o">{</span>
    			<span class="nx">_startTimeout</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span><span class="o">);</span>
    		<span class="o">}</span>
-   		<span class="c">/* End Configuration Properties */</span>
-
-   		<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="nx">_readyState</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span> <span class="o">};</span>
-   		<span class="k">try</span> <span class="o">{</span> <span class="nx">_open</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">uri</span><span class="o">);</span> <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{}</span>
-   		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">header</span><span class="o">)</span> <span class="o">{</span>
-   			<span class="nx">_setHeaders</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span> <span class="nx">c</span><span class="o">.</span><span class="nx">headers</span><span class="o">);</span>
-		<span class="o">}</span>
-
-   		<span class="c">// Do not pass null, in the absence of data, as this</span>
-<span class="c"></span>   		<span class="c">// will result in a POST request with no Content-Length</span>
-<span class="c"></span>   		<span class="c">// defined.</span>
-<span class="c"></span>   		<span class="nx">_async</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
 
 		<span class="k">return</span> <span class="o">{</span>
 			<span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span>
@@ -473,6 +482,29 @@
 	<span class="o">}</span>
 
    <span class="c">/**</span>
+<span class="c">   	* @description Resends an XDR transaction, using the Flash tranport,</span>
+<span class="c">   	* if the native transport fails.</span>
+<span class="c">   	*</span>
+<span class="c">   	* @method _resend</span>
+<span class="c">   	* @private</span>
+<span class="c">   	* @static</span>
+<span class="c"></span>
+<span class="c">	* @param {object} o - Transaction object generated by _create().</span>
+<span class="c">	* @param {string} uri - qualified path to transaction resource.</span>
+<span class="c">   	* @param {object} c - configuration object for the transaction.</span>
+<span class="c">   	*</span>
+<span class="c">    * @return void</span>
+<span class="c">   	*/</span>
+	<span class="k">function</span> <span class="nx">_resend</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
+
+		<span class="nx">_destroy</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+		<span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">.</span><span class="nx">use</span> <span class="o">=</span> <span class="s1">&#39;flash&#39;</span><span class="o">;</span>
+
+		<span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
+	<span class="o">}</span>
+
+   <span class="c">/**</span>
 <span class="c">   	* @description Method that increments _transactionId for each transaction.</span>
 <span class="c">   	*</span>
 <span class="c">   	* @method _id</span>
@@ -604,26 +636,6 @@
    		<span class="o">}</span>
    	<span class="o">}</span>
 
-   	<span class="k">function</span> <span class="nx">_open</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">uri</span><span class="o">)</span> <span class="o">{</span>
-   		<span class="nx">o</span><span class="o">.</span><span class="nx">open</span><span class="o">(</span><span class="nx">m</span><span class="o">,</span> <span class="nx">uri</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-   	<span class="o">}</span>
-
-   <span class="c">/**</span>
-<span class="c">   	* @description Method that sends the transaction request.</span>
-<span class="c">   	*</span>
-<span class="c">   	* @method _async</span>
-<span class="c">   	* @private</span>
-<span class="c">   	* @static</span>
-<span class="c">	* @param {object} o - Transaction object generated by _create().</span>
-<span class="c">	* @param {string} d - Transaction data.</span>
-<span class="c">	* @param {object} c - Configuration object passed to YUI.io().</span>
-<span class="c">	* @return void</span>
-<span class="c">   	*/</span>
-   	<span class="k">function</span> <span class="nx">_async</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-   		<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">send</span><span class="o">(</span><span class="nx">d</span><span class="o">);</span>
-   		<span class="nx">_ioStart</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-   	<span class="o">}</span>
-
    <span class="c">/**</span>
 <span class="c">   	* @description Starts timeout count if the configuration object</span>
 <span class="c">   	* has a defined timeout property.</span>
@@ -712,10 +724,10 @@
    		<span class="o">}</span>
    	<span class="o">}</span>
 
-   	<span class="k">function</span> <span class="nx">_destroy</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">isTransport</span><span class="o">)</span> <span class="o">{</span>
+   	<span class="k">function</span> <span class="nx">_destroy</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">transport</span><span class="o">)</span> <span class="o">{</span>
    		<span class="c">// IE, when using XMLHttpRequest as an ActiveX Object, will throw</span>
 <span class="c"></span>   		<span class="c">// a &quot;Type Mismatch&quot; error if the event handler is set to &quot;null&quot;.</span>
-<span class="c"></span>   		<span class="k">if</span><span class="o">(</span><span class="nx">w</span><span class="o">.</span><span class="nx">XMLHttpRequest</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">isTransport</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>   		<span class="k">if</span><span class="o">(</span><span class="nx">w</span><span class="o">.</span><span class="nx">XMLHttpRequest</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">transport</span><span class="o">)</span> <span class="o">{</span>
    			<span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
    				<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
    			<span class="o">}</span>
@@ -847,7 +859,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_async", "url": "io.html#method__async", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_e", "url": "io.html#property__e", "type": "property"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:end", "url": "io.html#event_io:end", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioCancel", "url": "io.html#method__ioCancel", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioEnd", "url": "io.html#method__ioEnd", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_remove", "url": "io.html#method__remove", "type": "method"}, {"access": "", "host": "io", "name": "remove", "url": "io.html#method_remove", "type": "method"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_subscribe", "url": "io.html#method__subscribe", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_timeOut", "url": "io.html#property__timeOut", "type": "property"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "xdrResponse", "url": "io.html#method_xdrResponse", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}, {"access": "private", "host": "io", "name": "_yQ", "url": "io.html#property__yQ", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_e", "url": "io.html#property__e", "type": "property"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:end", "url": "io.html#event_io:end", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioCancel", "url": "io.html#method__ioCancel", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioEnd", "url": "io.html#method__ioEnd", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_remove", "url": "io.html#method__remove", "type": "method"}, {"access": "", "host": "io", "name": "remove", "url": "io.html#method_remove", "type": "method"}, {"access": "private", "host": "io", "name": "_resend", "url": "io.html#method__resend", "type": "method"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_subscribe", "url": "io.html#method__subscribe", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_timeOut", "url": "io.html#property__timeOut", "type": "property"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "xdrResponse", "url": "io.html#method_xdrResponse", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}, {"access": "private", "host": "io", "name": "_yQ", "url": "io.html#property__yQ", "type": "property"}];
 </script>
 </body>
 </html>
