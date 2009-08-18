@@ -1418,6 +1418,12 @@ var Event = Y.Event,
 
                     ev.currentTarget = Y.Node.get(matched);
 
+					Y.publish(ename, {
+			               contextFn: function() {
+			                   return ev.currentTarget;
+			               }
+			           });
+
 					if (fn) {
 						fn(ev, ename);
 					}
@@ -1661,6 +1667,12 @@ Y.Event._fireMouseEnter = function (e, eventName) {
 
 	if (!currentTarget.compareTo(relatedTarget) && 
 		!currentTarget.contains(relatedTarget)) {
+
+		Y.publish(eventName, {
+               contextFn: function() {
+                   return currentTarget;
+               }
+           });
 
 		Y.fire(eventName, e);
 

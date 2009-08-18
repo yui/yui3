@@ -87,6 +87,12 @@ var Event = Y.Event,
 
                     ev.currentTarget = Y.Node.get(matched);
 
+					Y.publish(ename, {
+			               contextFn: function() {
+			                   return ev.currentTarget;
+			               }
+			           });
+
 					if (fn) {
 						fn(ev, ename);
 					}
