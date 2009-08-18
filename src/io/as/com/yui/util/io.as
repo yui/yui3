@@ -46,7 +46,7 @@ package com.yui.util
 						}
 						break;
 					case "data":
-						serializeData(request, cfg.data);
+						request.data = cfg.data;
 						break;
 					case "headers":
 						setRequestHeaders(request, cfg.headers);
@@ -97,7 +97,6 @@ package com.yui.util
 
 			loaderMap[d.id].readyState = 2;
 			dispatch(a);
-			trace('start');
 		}
 
 		private function ioSuccess(e:Event, d:Object, timer:Timer):void {
@@ -110,7 +109,6 @@ package com.yui.util
 			}
 
 			dispatch(a);
-			trace('success');
 			destroy(d.id);
 		}
 
@@ -133,7 +131,6 @@ package com.yui.util
 
 			a = [response, d.cfg, s];
 			dispatch(a);
-			trace('failure');
 			destroy(d.id);
 		}
 
@@ -176,15 +173,6 @@ package com.yui.util
 		private function ioTimeout(e:TimerEvent, d:Object):void {
 			loaderMap[d.id].c.close();
 			ioFailure(e, d, null);
-		}
-
-		private function serializeData(request:URLRequest, d:Object):void {
-			var prop:String;
-			request.data = new URLVariables();
-
-			for (prop in d) {
-				request.data[prop] = d[prop];
-			}
 		}
 
 		private function destroy(id:uint):void {

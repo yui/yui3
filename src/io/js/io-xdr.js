@@ -100,10 +100,21 @@
 		* @param {object} c - configuration object for the transaction.
 		*/
 		_xdr: function(uri, o, c) {
-			var t = c.xdr.use;
+			if (c.on && c.xdr.use === 'flash') {
+				this._fn[o.id] = {
+					on: c.on,
+					context: c.context,
+					arguments: c.arguments
+				};
 
-			if (c.on && t === 'flash') {
-				this._fn[o.id] = { on: c.on, arguments: c.arguments };
+				if (c.context) {
+					c.context = null;
+				}
+
+				if (c.form) {
+					c.context = null;
+				}
+
 				o.c.send(uri, c, o.id);
 			}
 			else if (window.XDomainRequest) {
@@ -115,7 +126,7 @@
 			return {
 				id: o.id,
 				abort: function() { _abort(o, c); },
-				isInProgress: function() { _isInProgress(o, t); }
+				isInProgress: function() { _isInProgress(o, c.xdr.use); }
 			}
 		},
 
@@ -142,6 +153,7 @@
    				fn = m[o.id] ? m[o.id] : null;
    				if (fn) {
 	   				c.on = fn.on;
+	   				c.context = fn.context;
 	   				c.arguments = fn.arguments;
 				}
 			}
