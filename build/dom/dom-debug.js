@@ -2003,19 +2003,21 @@ var Selector = {
         return ret;
     },
 
-    test: function(node, selector) {
+    test: function(node, selector, root) {
         var ret = false,
             groups = selector.split(','),
             item,
             i, group;
 
         if (node && node.tagName) { // only test HTMLElements
+            root = root || node.ownerDocument;
+
             if (!node.id) {
                 node.id = TMP_PREFIX + g_counter++;
             }
             for (i = 0, group; group = groups[i++];) { // TODO: off-dom test
                 group += '#' + node.id; // add ID for uniqueness
-                item = Y.Selector.query(group, node.ownerDocument, true);
+                item = Y.Selector.query(group, root, true);
                 ret = (item === node);
                 if (ret) {
                     break;

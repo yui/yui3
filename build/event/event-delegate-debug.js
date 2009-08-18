@@ -37,10 +37,6 @@ var Event = Y.Event,
             spec, 
 			ename,
 			matched,
-			selector,
-			container,
-			sIDSelector,
-			sID,
 			fn,
 			ev;
 
@@ -60,19 +56,6 @@ var Event = Y.Event,
 			
 		};
 
-		//	The user might have specified the document element
-		//	as the delegation container, in which case it is 
-		//	nessary to crawl up to the documentElement (<HTML />)
-
-		container = el.nodeType === 9 ? el.documentElement : el;
-		
-		sID = container.id;
-
-		if (!sID) {
-			sID = Y.guid();
-			container.id = sID;
-		}
-
 
         for (spec in tests) {
 
@@ -82,21 +65,17 @@ var Event = Y.Event,
 				fn	= tests.fn;
 				matched = null;
 
-				//	Scope all selectors to the container
 
-				sIDSelector = ("#" + sID + " ");
-				selector = (sIDSelector + spec).replace(/,/gi, ("," + sIDSelector));
-
-				if (Y.Selector.test(target, selector)) {
+				if (Y.Selector.test(target, spec, el)) {
 					matched = target;
 				}
-				else if (Y.Selector.test(target, ((selector.replace(/,/gi, " *,")) + " *"))) {
+				else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {
 						
 					//	The target is a descendant of an element matching 
 					//	the selector, so crawl up to find the ancestor that 
 					//	matches the selector
 					
-					matched = getMatch(target, selector, container);
+					matched = getMatch(target, spec, el);
 					
 				}
 
@@ -175,6 +154,7 @@ var Event = Y.Event,
  * These arguments will be added after the event object.
  * @return {EventHandle} the detach handle
  * @for YUI
+ * @deprecated use Y.delegate
  */
 Y.Env.evt.plugins.delegate = {
 
