@@ -46,7 +46,7 @@ var GLOBAL_ENV = YUI.Env,
         // it is safe to do so.
         if (navigator.userAgent.match(/MSIE/)) {
 
-            if (window !== window.top) {
+            if (self !== self.top) {
                 document.onreadystatechange = function() {
                     if (document.readyState == 'complete') {
                         document.onreadystatechange = null;
@@ -1418,6 +1418,12 @@ var Event = Y.Event,
 
                     ev.currentTarget = Y.Node.get(matched);
 
+					Y.publish(ename, {
+			               contextFn: function() {
+			                   return ev.currentTarget;
+			               }
+			           });
+
 					if (fn) {
 						fn(ev, ename);
 					}
@@ -1661,6 +1667,12 @@ Y.Event._fireMouseEnter = function (e, eventName) {
 
 	if (!currentTarget.compareTo(relatedTarget) && 
 		!currentTarget.contains(relatedTarget)) {
+
+		Y.publish(eventName, {
+               contextFn: function() {
+                   return currentTarget;
+               }
+           });
 
 		Y.fire(eventName, e);
 

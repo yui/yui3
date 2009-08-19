@@ -199,7 +199,7 @@
 
    		if (c.xdr) {
 			if (c.xdr.use === 'native' && window.XDomainRequest || c.xdr.use === 'flash') {
-   				return Y.io._xdr(uri, o, c);
+   				return Y.io.xdr(uri, o, c);
 			}
 			if (c.xdr.credentials) {
 				o.c.withCredentials = true;
@@ -245,9 +245,11 @@
 
 		return {
 			id: o.id,
-			abort: function() { _ioCancel(o, 'abort'); },
+			abort: function() {
+				return o.c ? _ioCancel(o, 'abort') : false;
+			},
 			isInProgress: function() {
-				o.c.readyState !== 4 && o.c.readyState !== 0;
+				return o.c ? o.c.readyState !== 4 && o.c.readyState !== 0 : false;
 	   		}
 		}
    	}

@@ -349,8 +349,8 @@ Y.CustomEvent.prototype = {
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed
      * @param {Object}   context The context object passed to subscribe.
-     * @return {boolean|EventTarget} returns a chainable event target
-     * or a boolean for legacy detach support.
+     * @return {int|EventTarget} returns a chainable event target
+     * or the number of subscribers unsubscribed.
      */
     detach: function(fn, context) {
         // unsubscribe handle
@@ -358,18 +358,14 @@ Y.CustomEvent.prototype = {
             return fn.detach();
         }
 
-        if (!fn) {
-            return this.unsubscribeAll();
-        }
-
-        var found = false, subs = this.subscribers, i, s;
+        var found = 0, subs = this.subscribers, i, s;
 
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {
                 s = subs[i];
-                if (s && fn === this.fn) {
+                if (s && (!fn || fn === this.fn)) {
                     this._delete(s);
-                    found = true;
+                    found++;
                 }
             }
         }
@@ -401,26 +397,9 @@ Y.CustomEvent.prototype = {
      */
     _notify: function(s, args, ef) {
 
-        this.log(this.type + "->" + ": " +  s);
+        this.log(this.type + "->" + "sub: " +  s.id);
 
         var ret;
-
-        // emit an EventFacade if this is that sort of event
-        // if (this.emitFacade) {
-
-        //     // @TODO object literal support to fire makes it possible for
-        //     // config info to be passed if we wish.
-        //     
-        //     if (!ef) {
-        //         ef = this._getFacade(args);
-
-        //         if (Y.Lang.isObject(args[0])) {
-        //             args[0] = ef;
-        //         } else {
-        //             args.unshift(ef);
-        //         }
-        //     }
-        // }
 
         ret = s.notify(args, this);
 
@@ -543,17 +522,7 @@ Y.CustomEvent.prototype = {
      * @return {int} The number of listeners unsubscribed
      */
     detachAll: function() {
-        var subs = this.subscribers, i, l=0;
-        for (i in subs) {
-            if (subs.hasOwnProperty(i)) {
-                this._delete(subs[i]);
-                l++;
-            }
-        }
-
-        this.subscribers={};
-
-        return l;
+        return this.detach();
     },
 
     /**

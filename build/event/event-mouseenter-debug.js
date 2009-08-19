@@ -14,6 +14,12 @@ Y.Event._fireMouseEnter = function (e, eventName) {
 	if (!currentTarget.compareTo(relatedTarget) && 
 		!currentTarget.contains(relatedTarget)) {
 
+		Y.publish(eventName, {
+               contextFn: function() {
+                   return currentTarget;
+               }
+           });
+
 		Y.fire(eventName, e);
 
 	}
