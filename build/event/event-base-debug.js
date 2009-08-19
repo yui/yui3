@@ -713,8 +713,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             if (!cewrapper) {
                 // create CE wrapper
                 cewrapper = Y.publish(key, {
-                    //silent: true,
-                    // host: this,
+                    silent: true,
                     bubbles: false,
                     contextFn: function() {
                         cewrapper.nodeRef = cewrapper.nodeRef || Y.get(cewrapper.el);
