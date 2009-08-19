@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>autocomplete exploration</title>
+</head>
+<body>
+
+<form>
+    <label for="ac">
+        INPUT!
+    </label>
+    <input name="ac" id="ac" type="text">
+    <input type="submit">
+</form>
+
+<script>
+YUI().use('autocomplete', function (Y) {
+    
+    // same server, will use xhr
+    Y.get("#ac").autocomplete("/path/to/data/{query}");
+    
+    // will use jsonp
+    Y.get("#ac").autocomplete("http://example.com/data/{query}");
+    
+    // direct array of things to use.
+    // can perhaps also supply any object with filter/map/forEach functions?
+    Y.get("#ac").autocomplete([
+        { name : "Syracuse", data : "/foo/sy" },
+        { name : "Schlueter", data : "/isaac" },
+        { name : "Simple", data : "/" },
+        { name : "Super", data : "http://example.com" }
+    ]);
+    
+    // all of these return an autocomplete instance, like a Y.Node, but
+    // with some decorations.
+    Y.get("#ac").autocomplete(...)
+        .on("select", ...)
+        .set("filter", ...);
+    
+});
+</script>
+</body>
+</html>
