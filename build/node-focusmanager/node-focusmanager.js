@@ -1043,4 +1043,4 @@ Y.namespace("Plugin");
 Y.Plugin.NodeFocusManager = NodeFocusManager;
 
 
-}, '@VERSION@' ,{requires:['node', 'plugin']});
+}, '@VERSION@' ,{requires:['attribute', 'node', 'plugin']});
