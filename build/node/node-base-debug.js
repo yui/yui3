@@ -1510,4 +1510,4 @@ Y.Node.ATTRS.type = {
 };
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'event-base', 'selector-css2']});
+}, '@VERSION@' ,{requires:['dom-base', 'selector-css2', 'event-base']});

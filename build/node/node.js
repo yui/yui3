@@ -1504,7 +1504,7 @@ Y.Node.ATTRS.type = {
 };
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'event-base', 'selector-css2']});
+}, '@VERSION@' ,{requires:['dom-base', 'selector-css2', 'event-base']});
 YUI.add('node-style', function(Y) {
 
 (function(Y) {
@@ -1864,5 +1864,5 @@ Y.NodeList.prototype.unplug = function() {
 }, '@VERSION@' ,{requires:['node-base', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], skinnable:false, requires:['dom', 'event', 'pluginhost']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], skinnable:false});
 
