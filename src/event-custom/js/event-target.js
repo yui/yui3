@@ -251,12 +251,23 @@ ET.prototype = {
      * @return {EventTarget} the host
      */
     detach: function(type, fn, context) {
+        var evts = this._yuievt.events, i, ret;
+
+        // detachAll disabled on the Y instance.
+        if (!type && (this !== Y)) {
+            for (i in evts) {
+                if (evts.hasOwnProperty(i)) {
+                    ret = evts[i].detach(fn, context);
+                }
+            }
+            return ret;
+        }
 
         var parts = _parseType(type, this._yuievt.config.prefix), 
         detachcategory = L.isArray(parts) ? parts[0] : null,
         shorttype = (parts) ? parts[3] : null,
         handle, adapt, store = Y.Env.evt.handles, cat, args,
-        evts = this._yuievt.events, ce, i, ret = true,
+        ce,
 
         keyDetacher = function(lcat, ltype) {
             var handles = lcat[ltype];
@@ -290,7 +301,7 @@ ET.prototype = {
         // If this is an event handle, use it to detach
         } else if (L.isObject(type) && type.detach) {
             ret = type.detach();
-            return (this._yuievt.chain) ? this : true;
+            return (this._yuievt.chain) ? this : ret;
         // extra redirection so we catch adaptor events too.  take a look at this.
         } else if (Y.Node && (this instanceof Y.Node) && ((!shorttype) || (shorttype in Y.Node.DOM_EVENTS))) {
             args = Y.Array(arguments, 0, true);
@@ -313,21 +324,12 @@ ET.prototype = {
             }
         }
 
-        if (type) {
-            ce = evts[type];
-            if (ce) {
-                return ce.detach(fn, context);
-            }
-        } else {
-            for (i in evts) {
-                if (evts.hasOwnProperty(i)) {
-                    ret = ret && evts[i].detach(fn, context);
-                }
-            }
-            return ret;
+        ce = evts[type];
+        if (ce) {
+            ret = ce.detach(fn, context);
         }
 
-        return (this._yuievt.chain) ? this : false;
+        return (this._yuievt.chain) ? this : ret;
     },
 
     /**
@@ -347,7 +349,6 @@ ET.prototype = {
      * @param type {string}   The type, or name of the event
      */
     detachAll: function(type) {
-        type = _getType(type, this._yuievt.config.prefix);
         return this.detach(type);
     },
 
