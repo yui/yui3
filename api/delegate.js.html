@@ -213,6 +213,8 @@
 
     <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">delegateType</span><span class="o">,</span> <span class="nx">spec</span><span class="o">)</span> <span class="o">{</span>
 
+		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;delegate event is deprecated, use delegate()&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
+
 		<span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 		
 		<span class="nx">args</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">3</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
@@ -283,6 +285,12 @@
 		<span class="nx">element</span> <span class="o">=</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">specialTypes</span><span class="o">[</span><span class="nx">type</span><span class="o">])</span> <span class="o">{</span>
+			
+			<span class="k">if</span> <span class="o">(!</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_fireMouseEnter</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Delegating a &quot;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot; event requires the event-mouseenter submodule.&quot;</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;Event&quot;</span><span class="o">);</span>
+				<span class="k">return</span> <span class="kc">false</span><span class="o">;</span>				
+			<span class="o">}</span>
+			
 			<span class="nx">type</span> <span class="o">=</span> <span class="nx">specialTypes</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
 			<span class="nx">delegate</span><span class="o">.</span><span class="nx">fn</span> <span class="o">=</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">_fireMouseEnter</span><span class="o">;</span>
 		<span class="o">}</span>
