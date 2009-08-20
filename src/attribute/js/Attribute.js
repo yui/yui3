@@ -725,7 +725,11 @@
          * @return {Object} A reference to the host object.
          * @chainable
          */
-        setAttrs : function(attrs) {
+        setAttrs : function(attrs, opts) {
+            return this._setAttrs(attrs, opts);
+        },
+        
+        _setAttrs : function(attrs, opts) {
             for (var attr in attrs) {
                 if ( attrs.hasOwnProperty(attr) ) {
                     this.set(attr, attrs[attr]);
@@ -743,6 +747,10 @@
          * @return {Object} An object with attribute name/value pairs.
          */
         getAttrs : function(attrs) {
+            return this._getAttrs(attrs);
+        },
+
+        _getAttrs : function(attrs) {
             var host = this,
                 o = {}, 
                 i, l, attr, val,
