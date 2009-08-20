@@ -313,6 +313,7 @@ Y.CustomEvent.prototype = {
      * @deprecated use on
      */
     subscribe: function(fn, context) {
+        Y.log('ce.subscribe deprecated, use "on"', 'warn', 'deprecated');
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
         return this._on(fn, context, a, true);
     },
