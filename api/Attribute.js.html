@@ -580,7 +580,10 @@
                 <span class="o">}</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">allowSet</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">currVal</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+                    <span class="c">// Don&#39;t need currVal if initialSet (might fail in custom getter)</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(!</span><span class="nx">initialSet</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">currVal</span> <span class="o">=</span>  <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+                    <span class="o">}</span>
 
                     <span class="k">if</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">{</span>
                        <span class="nx">val</span> <span class="o">=</span> <span class="nx">O</span><span class="o">.</span><span class="nx">setValue</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">currVal</span><span class="o">),</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
