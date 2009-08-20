@@ -189,12 +189,12 @@ Node.importMethod = function(host, name, altName) {
 /**
  * Returns a single Node instance bound to the node or the
  * first element matching the given selector.
- * @method Y.get
+ * @method Y.one
  * @static
  * @param {String | HTMLElement} node a node or Selector 
  * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
  */
-Node.get = function(node, doc) {
+Node.one = function(node, doc) {
     var instance = null,
         cachedNode,
         uid;
@@ -223,6 +223,19 @@ Node.get = function(node, doc) {
         }
     }
     return instance;
+};
+
+/**
+ * Returns a single Node instance bound to the node or the
+ * first element matching the given selector.
+ * @method Y.get
+ * @deprecated Use Y.one
+ * @static
+ * @param {String | HTMLElement} node a node or Selector 
+ * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
+ */
+Node.get = function() {
+    return Node.one.apply(Node, arguments);
 };
 
 /**
@@ -374,8 +387,7 @@ Y.mix(Node.prototype, {
     },
 
     get: function(attr) {
-        var attrConfig = Node.ATTRS[attr],
-            val;
+        var val;
 
         if (this._getAttr) { // use Attribute imple
             val = this._getAttr(attr);
@@ -512,24 +524,46 @@ Y.mix(Node.prototype, {
         
     /**
      * Retrieves a Node instance of nodes based on the given CSS selector. 
-     * @method query
+     * @method one
      *
      * @param {string} selector The CSS selector to test against.
      * @return {Node} A Node instance for the matching HTMLElement.
      */
-    query: function(selector) {
+    one: function(selector) {
         return Y.get(Y.Selector.query(selector, this._node, true));
+    },
+
+    /**
+     * Retrieves a Node instance of nodes based on the given CSS selector. 
+     * @method query
+     * @deprecated Use one()
+     * @param {string} selector The CSS selector to test against.
+     * @return {Node} A Node instance for the matching HTMLElement.
+     */
+    query: function(selector) {
+        return this.one(selector);
+    },
+
+    /**
+     * Retrieves a nodeList based on the given CSS selector. 
+     * @method all
+     *
+     * @param {string} selector The CSS selector to test against.
+     * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
+     */
+    all: function(selector) {
+        return Y.all(Y.Selector.query(selector, this._node));
     },
 
     /**
      * Retrieves a nodeList based on the given CSS selector. 
      * @method queryAll
-     *
+     * @deprecated Use all()
      * @param {string} selector The CSS selector to test against.
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     queryAll: function(selector) {
-        return Y.all(Y.Selector.query(selector, this._node));
+        return this.all(selector);
     },
 
     // TODO: allow fn test
@@ -663,8 +697,7 @@ Y.mix(Node.prototype, {
      * @chainable
      */
     insert: function(content, where) {
-        var node = this._node,
-            nodes; // in case we are inserting a NodeList/Array
+        var node = this._node;
 
         if (content) {
             if (typeof where === 'number') { // allow index
@@ -727,7 +760,7 @@ Y.mix(Node.prototype, {
 
 Y.Node = Node;
 Y.get = Y.Node.get;
-Y.first = Y.Node.get;
+Y.one = Y.Node.one;
 /**
  * The NodeList module provides support for managing collections of Nodes.
  * @module node
@@ -1504,4 +1537,4 @@ Y.Node.ATTRS.type = {
 };
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'event-base', 'selector-css2']});
+}, '@VERSION@' ,{requires:['dom-base', 'selector-css2', 'event-base']});

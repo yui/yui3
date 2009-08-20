@@ -188,7 +188,7 @@ YUI.prototype = {
                 }
 
                 // use CDN default
-                return b || this.Env.cdn;
+                return b || Y.Env.cdn;
 
             }(),
 

@@ -107,7 +107,7 @@ NodeFocusManager.ATTRS = {
 
 		getter: function (value) {
 
-			return this.get(HOST).queryAll(value);
+			return this.get(HOST).all(value);
 			
 		}
 
