@@ -360,6 +360,7 @@ YUI.prototype = {
             boot = Y.config.bootstrap,
             k, i, l, missing = [], 
             r = [], 
+            css = Y.config.fetchCSS,
             f = function(name) {
 
                 // only attach a module once
@@ -460,7 +461,7 @@ YUI.prototype = {
             loader.require(a);
             loader.ignoreRegistered = true;
             loader.allowRollup = false;
-            loader.calculate(null, 'js');
+            loader.calculate(null, (css && css == 'force') ? null : 'js');
             a = loader.sorted;
         }
 
@@ -491,7 +492,7 @@ YUI.prototype = {
             loader.attaching = a;
             // loader.require(missing);
             loader.require(a);
-            loader.insert(null, (Y.config.fetchCSS) ? null : 'js');
+            loader.insert(null, (css) ? null : 'js');
         } else if (boot && l && Y.Get && !Y.Env.bootstrapped) {
             Y._loading = true;
 
@@ -960,7 +961,9 @@ YUI.prototype = {
 /**
  * 
  * Specifies whether or not YUI().use(...) will attempt to load CSS
- * resources at all.  
+ * resources at all.  Any truthy value will cause CSS dependencies
+ * to load when fetching script.  The special value 'force' will 
+ * cause CSS dependencies to be loaded even if no script is needed.
  *
  * @property fetchCSS
  * @default true
