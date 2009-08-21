@@ -1479,6 +1479,7 @@ Y.Env.evt.plugins.delegate = {
 
     on: function(type, fn, el, delegateType, spec) {
 
+
 		var args = Y.Array(arguments, 0, true);
 		
 		args.splice(3, 1);
@@ -1548,6 +1549,11 @@ Y.Event.delegate = function (type, fn, el, spec) {
 		element = Lang.isString(el) ? Y.Selector.query(el) : Y.Node.getDOMNode(el);
 
 		if (specialTypes[type]) {
+			
+			if (!Event._fireMouseEnter) {
+				return false;				
+			}
+			
 			type = specialTypes[type];
 			delegate.fn = Event._fireMouseEnter;
 		}
@@ -1653,7 +1659,7 @@ Y.Event._fireMouseEnter = function (e, eventName) {
 
 		Y.publish(eventName, {
                contextFn: function() {
-                   return currentTarget;
+                   return e.currentTarget;
                }
            });
 

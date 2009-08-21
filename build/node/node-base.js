@@ -1506,34 +1506,13 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
  * @return {Event.Handle} the detach handle
  * @for Node
  */
-Y.Node.prototype.delegate = function(type, fn, selector, context) {
-    context = context || this;
-    var args = Array.prototype.slice.call(arguments, 4),
-        a = [type, fn, Y.Node.getDOMNode(this), selector, context];
+Y.Node.prototype.delegate = function(type, fn, selector) {
+
+    var args = Array.prototype.slice.call(arguments, 3),
+        a = [type, fn, Y.Node.getDOMNode(this), selector];
     a = a.concat(args);
 
     return Y.delegate.apply(Y, a);
-};
-
-if (!document.documentElement.hasAttribute) { // IE < 8
-    Y.Node.prototype.hasAttribute = function(attr) {
-        return Y.DOM.getAttribute(this._node, attr) !== '';
-    };
-}
-
-// IE throws error when setting input.type = 'hidden',
-// input.setAttribute('type', 'hidden') and input.attributes.type.value = 'hidden'
-Y.Node.ATTRS.type = {
-    setter: function(val) {
-        if (val === 'hidden') {
-            try {
-                this._node.type = 'hidden';
-            } catch(e) {
-                this._node.style.display = 'none';
-            }
-        }
-        return val;
-    }
 };
 
 

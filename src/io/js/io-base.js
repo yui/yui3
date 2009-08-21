@@ -232,7 +232,7 @@
 			if (c.xdr) {
 				// This exception is usually thrown by browsers
 				// that do not support native XDR transactions.
-				return _resend(o, c);
+				return _resend(o, uri, c);
 			}
 		}
 

@@ -281,7 +281,7 @@
 			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">{</span>
 				<span class="c">// This exception is usually thrown by browsers</span>
 <span class="c"></span>				<span class="c">// that do not support native XDR transactions.</span>
-<span class="c"></span>				<span class="k">return</span> <span class="nx">_resend</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
+<span class="c"></span>				<span class="k">return</span> <span class="nx">_resend</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
 			<span class="o">}</span>
 		<span class="o">}</span>
 

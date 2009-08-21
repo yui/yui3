@@ -109,7 +109,7 @@ NodeFocusManager.ATTRS = {
 
 		getter: function (value) {
 
-			return this.get(HOST).queryAll(value);
+			return this.get(HOST).all(value);
 			
 		}
 
@@ -1043,4 +1043,4 @@ Y.namespace("Plugin");
 Y.Plugin.NodeFocusManager = NodeFocusManager;
 
 
-}, '@VERSION@' ,{requires:['node', 'plugin']});
+}, '@VERSION@' ,{requires:['attribute', 'node', 'plugin', 'node-event-simulate', 'event-key', 'event-focus']});

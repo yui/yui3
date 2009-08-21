@@ -3,8 +3,11 @@
 * set/get can now be called for ad-hoc attributes (attributes which 
   have not been added/configured).
 
+* Fixed issue where custom getters were being called with undefined values,
+  for the initial set.
+
 * Attribute broken up into attribute-base and attribute-complex submodules.
-  
+
   attribute-complex adds support for complex attributes ({x.y.z : 5}) to
   addAttrs. 
 
