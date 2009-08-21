@@ -502,7 +502,8 @@ YUI.prototype = {
             loader.onTimeout = onComplete;
             loader.context = Y;
             loader.attaching = a;
-            loader.require(missing);
+            // loader.require(missing);
+            loader.require(a);
             loader.insert(null, (Y.config.fetchCSS) ? null : 'js');
         } else if (boot && l && Y.Get && !Y.Env.bootstrapped) {
             Y.log('Fetching loader: ' + Y.config.base + Y.config.loaderPath, 'info', 'yui');
