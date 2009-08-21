@@ -269,7 +269,7 @@
     <span class="nx">applyTo</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">method</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">if</span> <span class="o">(!(</span><span class="nx">method</span> <span class="k">in</span> <span class="nx">_APPLY_TO_WHITE_LIST</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: applyTo not allowed&#39;</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: applyTo not allowed&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
             <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
         <span class="o">}</span>
 
@@ -285,7 +285,7 @@
                 <span class="nx">m</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="nx">nest</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
 
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s1">&#39;applyTo not found: &#39;</span> <span class="o">+</span> <span class="nx">method</span><span class="o">);</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;applyTo not found: &#39;</span> <span class="o">+</span> <span class="nx">method</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
 
