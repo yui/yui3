@@ -93,6 +93,7 @@ Node.DOM_EVENTS = {
     keypress: true,
     keyup: true,
     load: true,
+    message: true,
     mousedown: true,
     mousemove: true,
     mouseout: true, 
