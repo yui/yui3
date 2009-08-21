@@ -1048,6 +1048,16 @@ Y.mix(NodeList.prototype, {
         return Y.all(Y.Selector.filter(this._nodes, selector));
     },
 
+
+    /**
+     * Creates a new NodeList containing all nodes at every n indices, where 
+     * remainder n % index equals r.
+     * (zero-based index).
+     * @method modulus
+     * @param {Int} n The offset to use (return every nth node)
+     * @param {Int} r An optional remainder to use with the modulus operation (defaults to zero) 
+     * @return {NodeList} NodeList containing the updated collection 
+     */
     modulus: function(n, r) {
         r = r || 0;
         var nodes = [];
@@ -1958,5 +1968,5 @@ Y.NodeList.prototype.unplug = function() {
 }, '@VERSION@' ,{requires:['node-base', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], skinnable:false, requires:['dom', 'event-base', 'pluginhost']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], skinnable:false});
 
