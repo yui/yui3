@@ -2,6 +2,27 @@
 
 <html lang="en">
 <head>
+    <style>
+    script {
+        clear:left;
+        white-space:pre;
+        display:block;
+        font-family:monospace;
+        background:#eef;
+    }
+    script::before, script::after {
+        content:"<script>";
+        float:left;
+        display:block;
+        background:#fff;
+    }
+    script::after { content:"</script>"; }
+    script[src]::before {
+        content:"<script src=\"" attr(src) "\">";
+        white-space:nowrap;
+    }
+    </style>
+    
     <title>autocomplete exploration</title>
 </head>
 <body>
@@ -13,7 +34,7 @@
     <input name="ac" id="ac" type="text">
     <input type="submit">
 </form>
-
+<script src="http://yui.yahooapis.com/3.0.0b1/build/yui/yui-min.js"></script>
 <script>
 YUI().use('autocomplete', function (Y) {
     
