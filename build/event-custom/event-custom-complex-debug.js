@@ -308,7 +308,7 @@ CEProto.halt = function(immediate) {
 Y.EventTarget.prototype.bubble = function(evt, args, target) {
 
     var targs = this._yuievt.targets, ret = true,
-        t, type, ce, i;
+        t, type, ce, i, bc;
 
     if (!evt || ((!evt.stopped) && targs)) {
 
@@ -317,7 +317,7 @@ Y.EventTarget.prototype.bubble = function(evt, args, target) {
             if (targs.hasOwnProperty(i)) {
                 t = targs[i]; 
                 type = evt && evt.type;
-                ce = t.getEvent(type); 
+                ce = t.getEvent(type, true); 
                     
                 // if this event was not published on the bubble target,
                 // publish it with sensible default properties
@@ -328,12 +328,13 @@ Y.EventTarget.prototype.bubble = function(evt, args, target) {
                     }
 
                 } else {
-
                     ce.target = target || (evt && evt.target) || this;
-
                     ce.currentTarget = t;
 
+                    bc = ce.broadcast;
+                    ce.broadcast = false;
                     ret = ret && ce.fire.apply(ce, args || evt.details);
+                    ce.broadcast = bc;
 
                     // stopPropagation() was called
                     if (ce.stopped) {

@@ -14,7 +14,7 @@ Y.Event._fireMouseEnter = function (e, eventName) {
 
 		Y.publish(eventName, {
                contextFn: function() {
-                   return currentTarget;
+                   return e.currentTarget;
                }
            });
 

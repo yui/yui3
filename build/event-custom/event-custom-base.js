@@ -1017,7 +1017,7 @@ var L = Y.Lang,
      */
     _parseType = Y.cached(function(type, pre) {
 
-        var t = type, detachcategory, after, i, full_t;
+        var t = type, detachcategory, after, i;
 
         if (!L.isString(t)) {
             return t;
@@ -1040,9 +1040,8 @@ var L = Y.Lang,
             }
         }
 
-        full_t = _getType(t, pre);
-
-        return [detachcategory, full_t, after, t];
+        // detach category, full type with instance prefix, is this an after listener, short type
+        return [detachcategory, (pre) ? _getType(t, pre) : t, after, t];
     }),
 
     ET = function(opts) {
@@ -1050,7 +1049,7 @@ var L = Y.Lang,
 
         var o = (L.isObject(opts)) ? opts : {};
 
-        this._yuievt = {
+        this._yuievt = this._yuievt || {
 
             id: Y.guid(),
 
@@ -1091,7 +1090,11 @@ ET.prototype = {
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n, domevent;
 
-        if (L.isObject(type, true)) {
+        if (L.isObject(type)) {
+
+            if (L.isFunction(type)) {
+                return Y.Do.before.apply(Y.Do, arguments);
+            }
 
             f = fn; 
             c = context; 
@@ -1117,14 +1120,11 @@ ET.prototype = {
 
             return (this._yuievt.chain) ? this : ret;
 
-        } else if (L.isFunction(type)) {
-            return Y.Do.before.apply(Y.Do, arguments);
         }
-
+        
         detachcategory = parts[0];
         after = parts[2];
         shorttype = parts[3];
-
 
         // extra redirection so we catch adaptor events too.  take a look at this.
         if (Node && (this instanceof Node) && (shorttype in Node.DOM_EVENTS)) {
@@ -1378,11 +1378,10 @@ ET.prototype = {
      *
      */
     publish: function(type, opts) {
-        // this._yuievt.config.prefix
+        var events, ce, ret, pre = this._yuievt.config.prefix;
 
-        type = _getType(type, this._yuievt.config.prefix);
+        type = (pre) ? _getType(type, pre) : type;
 
-        var events, ce, ret, o;
 
         if (L.isObject(type)) {
             ret = {};
@@ -1401,22 +1400,17 @@ ET.prototype = {
             if (opts) {
                 ce.applyConfig(opts, true);
             }
-
         } else {
-            o = (opts) ?  Y.mix(opts, this._yuievt.defaults) : this._yuievt.defaults;
             // apply defaults
-
-            ce = new Y.CustomEvent(type, o);
-
+            ce = new Y.CustomEvent(type, (opts) ? Y.mix(opts, this._yuievt.defaults) : this._yuievt.defaults);
             events[type] = ce;
-
         }
 
         // make sure we turn the broadcast flag off if this
         // event was published as a result of bubbling
-        if (opts instanceof Y.CustomEvent) {
-            events[type].broadcast = false;
-        }
+        // if (opts instanceof Y.CustomEvent) {
+          //   events[type].broadcast = false;
+        // }
 
         return events[type];
     },
@@ -1474,10 +1468,10 @@ ET.prototype = {
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, a, ret;
+            ce, a, ret, pre=this._yuievt.config.prefix;
 
-        t = _getType(t, this._yuievt.config.prefix);
-        ce = this.getEvent(t);
+        t = (pre) ? _getType(t, pre) : t;
+        ce = this.getEvent(t, true);
 
         // this event has not been published or subscribed to
         if (!ce) {
@@ -1507,11 +1501,16 @@ ET.prototype = {
      * falsy value otherwise
      * @method getEvent
      * @param type {string} the type, or name of the event
+     * @param prefixed {string} if true, the type is prefixed already
      * @return {Event.Custom} the custom event or null
      */
-    getEvent: function(type) {
-        type = _getType(type, this._yuievt.config.prefix);
-        var e = this._yuievt.events;
+    getEvent: function(type, prefixed) {
+        var pre, e;
+        if (!prefixed) {
+            pre = this._yuievt.config.prefix;
+            type = (pre) ? _getType(type, pre) : type;
+        }
+        e = this._yuievt.events;
         return (e && type in e) ? e[type] : null;
     },
 

@@ -1271,7 +1271,7 @@ Y.all = function(nodes, doc, restrict) {
     // zero-length result returns null
     return nodeList;
 };
-Y.Node.all = Y.all; // TODO: deprecated
+Y.Node.all = Y.all;
 Y.Array.each([
     /**
      * Passes through to DOM method.
@@ -1556,10 +1556,10 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
  * @return {Event.Handle} the detach handle
  * @for Node
  */
-Y.Node.prototype.delegate = function(type, fn, selector, context) {
-    context = context || this;
-    var args = Array.prototype.slice.call(arguments, 4),
-        a = [type, fn, Y.Node.getDOMNode(this), selector, context];
+Y.Node.prototype.delegate = function(type, fn, selector) {
+
+    var args = Array.prototype.slice.call(arguments, 3),
+        a = [type, fn, Y.Node.getDOMNode(this), selector];
     a = a.concat(args);
 
     return Y.delegate.apply(Y, a);

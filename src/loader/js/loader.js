@@ -120,7 +120,8 @@ var NOT_FOUND = {},
     CONTEXT = '-context',
 
     ANIMBASE = 'anim-base',
-    ATTRIBUTEBASE = 'attribute-base',
+	ATTRIBUTE = 'attribute',
+    ATTRIBUTEBASE = ATTRIBUTE + '-base',
     BASEBASE = 'base-base',
     DDDRAG = 'dd-drag',
     DOM = 'dom',
@@ -478,7 +479,7 @@ var NOT_FOUND = {},
         },
 
         'node-focusmanager': { 
-            requires: [NODE, "node-event-simulate", "event-key", "event-focus", PLUGIN]
+            requires: [ATTRIBUTE, NODE, PLUGIN, 'node-event-simulate', 'event-key', 'event-focus']
         },
 
         history: { 
@@ -578,7 +579,7 @@ var NOT_FOUND = {},
         },
 
         widget: {
-            requires: ['attribute', 'event-focus', BASE, NODE, 'classnamemanager'],
+            requires: [ATTRIBUTE, 'event-focus', BASE, NODE, 'classnamemanager'],
             plugins: {
                 'widget-position': { },
                 'widget-position-ext': {

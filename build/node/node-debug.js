@@ -236,7 +236,7 @@ Node.one = function(node, doc) {
  * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
  */
 Node.get = function() {
-    Y.log('Y.get is deprecated, use Y.one', 'warn', 'node');
+    Y.log('Y.get is deprecated, use Y.one', 'warn', 'deprecated');
     return Node.one.apply(Node, arguments);
 };
 
@@ -593,7 +593,7 @@ Y.mix(Node.prototype, {
      * @return {Node} A Node instance for the matching HTMLElement.
      */
     query: function(selector) {
-        Y.log('query() is deprecated, use one()', 'warn', 'node');
+        Y.log('query() is deprecated, use one()', 'warn', 'deprecated');
         return this.one(selector);
     },
 
@@ -616,7 +616,7 @@ Y.mix(Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     queryAll: function(selector) {
-        Y.log('queryAll() is deprecated, use all()', 'warn', 'node');
+        Y.log('queryAll() is deprecated, use all()', 'warn', 'deprecated');
         return this.all(selector);
     },
 
@@ -718,7 +718,7 @@ Y.mix(Node.prototype, {
      */
     each: function(fn, context) {
         context = context || this;
-        Y.log('each is deprecated on Node', 'warn', 'Node');
+        Y.log('each is deprecated on Node', 'warn', 'deprecated');
         return fn.call(context, this);
     },
 
@@ -731,7 +731,7 @@ Y.mix(Node.prototype, {
      * @return {Node} The Node instance at the given index.
      */
     item: function(index) {
-        Y.log('item is deprecated on Node', 'warn', 'Node');
+        Y.log('item is deprecated on Node', 'warn', 'deprecated');
         return this;
     },
 
@@ -742,7 +742,7 @@ Y.mix(Node.prototype, {
      * @return {Int} The number of items in the Node. 
      */
     size: function() {
-        Y.log('size is deprecated on Node', 'warn', 'Node');
+        Y.log('size is deprecated on Node', 'warn', 'deprecated');
         return this._node ? 1 : 0;
     },
 
@@ -1280,7 +1280,7 @@ Y.all = function(nodes, doc, restrict) {
     // zero-length result returns null
     return nodeList;
 };
-Y.Node.all = Y.all; // TODO: deprecated
+Y.Node.all = Y.all;
 Y.Array.each([
     /**
      * Passes through to DOM method.
@@ -1565,10 +1565,10 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
  * @return {Event.Handle} the detach handle
  * @for Node
  */
-Y.Node.prototype.delegate = function(type, fn, selector, context) {
-    context = context || this;
-    var args = Array.prototype.slice.call(arguments, 4),
-        a = [type, fn, Y.Node.getDOMNode(this), selector, context];
+Y.Node.prototype.delegate = function(type, fn, selector) {
+
+    var args = Array.prototype.slice.call(arguments, 3),
+        a = [type, fn, Y.Node.getDOMNode(this), selector];
     a = a.concat(args);
 
     return Y.delegate.apply(Y, a);
@@ -1958,5 +1958,5 @@ Y.NodeList.prototype.unplug = function() {
 }, '@VERSION@' ,{requires:['node-base', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], skinnable:false});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], skinnable:false, requires:['dom', 'event-base', 'pluginhost']});
 

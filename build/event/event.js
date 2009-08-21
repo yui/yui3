@@ -714,7 +714,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     silent: true,
                     bubbles: false,
                     contextFn: function() {
-                        cewrapper.nodeRef = cewrapper.nodeRef || Y.get(cewrapper.el);
+                        cewrapper.nodeRef = cewrapper.nodeRef || Y.one(cewrapper.el);
                         return cewrapper.nodeRef;
                     }
                 });
@@ -745,8 +745,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
         _attach: function(args, config) {
 
-            var trimmedArgs=args.slice(1),
-                compat, E=Y.Event,
+            var compat, E=Y.Event,
                 handles, oEl, cewrapper, context, 
                 fireNow = false, ret,
                 type = args[0],
@@ -755,9 +754,9 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 facade = config && config.facade,
                 capture = config && config.capture;
 
-            if (trimmedArgs[trimmedArgs.length-1] === COMPAT_ARG) {
+            if (args[args.length-1] === COMPAT_ARG) {
                 compat = true;
-                trimmedArgs.pop();
+                // trimmedArgs.pop();
             }
 
             if (!fn || !fn.call) {
@@ -842,18 +841,15 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 }
             }
 
-            // switched from obj to trimmedArgs[2] to deal with appened compat param
-            // context = trimmedArgs[2] || ((compat) ? el : Y.get(el));
-            context = trimmedArgs[2];
-            
-            // set the context as the second arg to subscribe
-            trimmedArgs[1] = context;
+            if (compat) {
+                args.pop();
+            }
 
-            // remove the 'obj' param
-            trimmedArgs.splice(2, 1);
+            context = args[3];
 
             // set context to the Node if not specified
-            ret = cewrapper.on.apply(cewrapper, trimmedArgs);
+            // ret = cewrapper.on.apply(cewrapper, trimmedArgs);
+            ret = cewrapper._on(fn, context, (args.length > 4) ? args.slice(4) : null);
 
             if (fireNow) {
                 cewrapper.fire();
@@ -1069,7 +1065,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     item.fn.call(context, item.obj);
 
                 } else {
-                    context = item.obj || Y.get(el);
+                    context = item.obj || Y.one(el);
                     item.fn.apply(context, (Y.Lang.isArray(ov)) ? ov : []);
                 }
 
@@ -1081,7 +1077,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 item = _avail[i];
                 if (item && !item.checkReady) {
 
-                    // el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);
+                    // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
                     el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
@@ -1098,7 +1094,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 item = _avail[i];
                 if (item && item.checkReady) {
 
-                    // el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);
+                    // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
                     el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
@@ -1143,7 +1139,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * @static
          */
         purgeElement: function(el, recurse, type) {
-            // var oEl = (Y.Lang.isString(el)) ? Y.get(el) : el,
+            // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
             var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
                 lis = this.getListeners(oEl, type), i, len;
             if (lis) {
@@ -1483,6 +1479,7 @@ Y.Env.evt.plugins.delegate = {
 
     on: function(type, fn, el, delegateType, spec) {
 
+
 		var args = Y.Array(arguments, 0, true);
 		
 		args.splice(3, 1);
@@ -1552,6 +1549,11 @@ Y.Event.delegate = function (type, fn, el, spec) {
 		element = Lang.isString(el) ? Y.Selector.query(el) : Y.Node.getDOMNode(el);
 
 		if (specialTypes[type]) {
+			
+			if (!Event._fireMouseEnter) {
+				return false;				
+			}
+			
 			type = specialTypes[type];
 			delegate.fn = Event._fireMouseEnter;
 		}
@@ -1657,7 +1659,7 @@ Y.Event._fireMouseEnter = function (e, eventName) {
 
 		Y.publish(eventName, {
                contextFn: function() {
-                   return currentTarget;
+                   return e.currentTarget;
                }
            });
 
