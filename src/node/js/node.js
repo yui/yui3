@@ -234,7 +234,7 @@ Node.one = function(node, doc) {
  * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
  */
 Node.get = function() {
-    Y.log('Y.get is deprecated, use Y.one', 'warn', 'node');
+    Y.log('Y.get is deprecated, use Y.one', 'warn', 'deprecated');
     return Node.one.apply(Node, arguments);
 };
 
@@ -386,6 +386,12 @@ Y.mix(Node.prototype, {
         return str || errorMsg;
     },
 
+    /**
+     * Returns an attribute value on the Node instance
+     * @method get
+     * @param {String} attr The attribute to be set
+     * @return {any} The current value of the attribute
+     */
     get: function(attr) {
         var val;
 
@@ -420,6 +426,13 @@ Y.mix(Node.prototype, {
         return val;
     },
 
+    /**
+     * Sets an attribute on the Node instance.
+     * @method set
+     * @param {String} attr The attribute to be set.  
+     * @param {any} val The value to set the attribute to.  
+     * @chainable
+     */
     set: function(attr, val) {
         var attrConfig = Node.ATTRS[attr];
 
@@ -436,6 +449,43 @@ Y.mix(Node.prototype, {
         }
 
         return this;
+    },
+
+    /**
+     * Sets multiple attributes. 
+     * @method setAttrs
+     * @param {Object} attrMap an object of name/value pairs to set  
+     * @chainable
+     */
+    setAttrs: function(attrMap) {
+        if (this._setAttrs) { // use Attribute imple
+            this._setAttrs(attrMap);
+        } else { // use setters inline
+            Y.Object.each(attrMap, function(v, n) {
+                this.set(n, v); 
+            }, this);
+        }
+
+        return this;
+    },
+
+    /**
+     * Returns an object containing the values for the requested attributes. 
+     * @method getAttrs
+     * @param {Array} attrs an array of attributes to get values  
+     * @return {Object} An object with attribute name/value pairs.
+     */
+    getAttrs: function(attrs) {
+        var ret = {};
+        if (this._getAttrs) { // use Attribute imple
+            this._getAttrs(attrs);
+        } else { // use setters inline
+            Y.Array.each(attrs, function(v, n) {
+                ret[v] = this.get(v); 
+            }, this);
+        }
+
+        return ret;
     },
 
     /**
@@ -541,7 +591,7 @@ Y.mix(Node.prototype, {
      * @return {Node} A Node instance for the matching HTMLElement.
      */
     query: function(selector) {
-        Y.log('query() is deprecated, use one()', 'warn', 'node');
+        Y.log('query() is deprecated, use one()', 'warn', 'deprecated');
         return this.one(selector);
     },
 
@@ -564,7 +614,7 @@ Y.mix(Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     queryAll: function(selector) {
-        Y.log('queryAll() is deprecated, use all()', 'warn', 'node');
+        Y.log('queryAll() is deprecated, use all()', 'warn', 'deprecated');
         return this.all(selector);
     },
 
@@ -666,7 +716,7 @@ Y.mix(Node.prototype, {
      */
     each: function(fn, context) {
         context = context || this;
-        Y.log('each is deprecated on Node', 'warn', 'Node');
+        Y.log('each is deprecated on Node', 'warn', 'deprecated');
         return fn.call(context, this);
     },
 
@@ -679,7 +729,7 @@ Y.mix(Node.prototype, {
      * @return {Node} The Node instance at the given index.
      */
     item: function(index) {
-        Y.log('item is deprecated on Node', 'warn', 'Node');
+        Y.log('item is deprecated on Node', 'warn', 'deprecated');
         return this;
     },
 
@@ -690,7 +740,7 @@ Y.mix(Node.prototype, {
      * @return {Int} The number of items in the Node. 
      */
     size: function() {
-        Y.log('size is deprecated on Node', 'warn', 'Node');
+        Y.log('size is deprecated on Node', 'warn', 'deprecated');
         return this._node ? 1 : 0;
     },
 

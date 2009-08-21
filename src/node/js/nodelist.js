@@ -460,4 +460,4 @@ Y.all = function(nodes, doc, restrict) {
     // zero-length result returns null
     return nodeList;
 };
-Y.Node.all = Y.all; // TODO: deprecated
+Y.Node.all = Y.all;

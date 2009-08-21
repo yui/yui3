@@ -386,6 +386,12 @@ Y.mix(Node.prototype, {
         return str || errorMsg;
     },
 
+    /**
+     * Returns an attribute value on the Node instance
+     * @method get
+     * @param {String} attr The attribute to be set
+     * @return {any} The current value of the attribute
+     */
     get: function(attr) {
         var val;
 
@@ -420,6 +426,13 @@ Y.mix(Node.prototype, {
         return val;
     },
 
+    /**
+     * Sets an attribute on the Node instance.
+     * @method set
+     * @param {String} attr The attribute to be set.  
+     * @param {any} val The value to set the attribute to.  
+     * @chainable
+     */
     set: function(attr, val) {
         var attrConfig = Node.ATTRS[attr];
 
@@ -436,6 +449,43 @@ Y.mix(Node.prototype, {
         }
 
         return this;
+    },
+
+    /**
+     * Sets multiple attributes. 
+     * @method setAttrs
+     * @param {Object} attrMap an object of name/value pairs to set  
+     * @chainable
+     */
+    setAttrs: function(attrMap) {
+        if (this._setAttrs) { // use Attribute imple
+            this._setAttrs(attrMap);
+        } else { // use setters inline
+            Y.Object.each(attrMap, function(v, n) {
+                this.set(n, v); 
+            }, this);
+        }
+
+        return this;
+    },
+
+    /**
+     * Returns an object containing the values for the requested attributes. 
+     * @method getAttrs
+     * @param {Array} attrs an array of attributes to get values  
+     * @return {Object} An object with attribute name/value pairs.
+     */
+    getAttrs: function(attrs) {
+        var ret = {};
+        if (this._getAttrs) { // use Attribute imple
+            this._getAttrs(attrs);
+        } else { // use setters inline
+            Y.Array.each(attrs, function(v, n) {
+                ret[v] = this.get(v); 
+            }, this);
+        }
+
+        return ret;
     },
 
     /**
@@ -1897,5 +1947,5 @@ Y.NodeList.prototype.unplug = function() {
 }, '@VERSION@' ,{requires:['node-base', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], skinnable:false, requires:['dom', 'event-base', 'pluginhost']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], skinnable:false});
 
