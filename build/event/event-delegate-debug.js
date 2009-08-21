@@ -166,7 +166,7 @@ Y.Env.evt.plugins.delegate = {
 
     on: function(type, fn, el, delegateType, spec) {
 
-		Y.log('delegate event is deprecated, use delegate()', 'warn', 'event');
+        Y.log('delegate event is deprecated, use Y.delegate()', 'warn', 'deprecated');
 
 		var args = Y.Array(arguments, 0, true);
 		

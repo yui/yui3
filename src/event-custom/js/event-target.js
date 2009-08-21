@@ -231,7 +231,7 @@ ET.prototype = {
      * @deprecated use on
      */
     subscribe: function() {
-        Y.log('EventTarget subscribe deprecated, use "on"', 'warn', 'deprecated');
+        Y.log('EventTarget subscribe() is deprecated, use on()', 'warn', 'deprecated');
         return this.on.apply(this, arguments);
     },
 

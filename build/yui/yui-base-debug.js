@@ -172,6 +172,8 @@ YUI.prototype = {
             debug: true,
             useBrowserConsole: true,
             throwFail: true,
+            bootstrap: true,
+            fetchCSS: true,
         
             base: function() {
                 var b, nodes, i, match;
@@ -220,7 +222,7 @@ YUI.prototype = {
     applyTo: function(id, method, args) {
 
         if (!(method in _APPLY_TO_WHITE_LIST)) {
-            this.error(method + ': applyTo not allowed');
+            this.log(method + ': applyTo not allowed', 'warn', 'yui');
             return null;
         }
 
@@ -236,7 +238,7 @@ YUI.prototype = {
                 m = m[nest[i]];
 
                 if (!m) {
-                    this.error('applyTo not found: ' + method);
+                    this.log('applyTo not found: ' + method, 'warn', 'yui');
                 }
             }
 
@@ -355,6 +357,7 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
+            boot = Y.config.bootstrap,
             k, i, l, missing = [], 
             r = [], 
             f = function(name) {
@@ -379,7 +382,7 @@ YUI.prototype = {
 
                     // CSS files don't register themselves, see if it has been loaded
                     if (!YUI.Env._loaded[Y.version][name]) {
-                        Y.log('module not found: ' + name, 'info', 'yui');
+                        // Y.log('module not found: ' + name, 'info', 'yui');
                         missing.push(name);
                     } else {
                         // probably css
@@ -466,7 +469,7 @@ YUI.prototype = {
             loader.require(a);
             loader.ignoreRegistered = true;
             loader.allowRollup = false;
-            loader.calculate();
+            loader.calculate(null, 'js');
             a = loader.sorted;
         }
 
@@ -480,11 +483,18 @@ YUI.prototype = {
             f(a[i]);
         }
 
-        // Y.log('all reqs: ' + r + ' --- missing: ' + missing + ', l: ' + l + ', ' + r[0]);
+        l = missing.length;
+
+        Y.log('Module requirements: ' + a, 'info', 'yui');
+
+        if (l) {
+            missing = Y.Object.keys(Y.Array.hash(missing));
+            Y.log('Modules missing: ' + missing, 'info', 'yui');
+        }
 
         // dynamic load
-        if (Y.Loader && missing.length) {
-            Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'yui');
+        if (boot && l && Y.Loader) {
+            Y.log('Using loader to fetch missing dependencies.', 'info', 'yui');
             Y._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
@@ -493,9 +503,9 @@ YUI.prototype = {
             loader.context = Y;
             loader.attaching = a;
             loader.require(missing);
-            loader.insert();
-        } else if (Y.Get && missing.length && !Y.Env.bootstrapped) {
-            Y.log('fetching loader: ' + Y.config.base + Y.config.loaderPath, 'info', 'yui');
+            loader.insert(null, (Y.config.fetchCSS) ? null : 'js');
+        } else if (boot && l && Y.Get && !Y.Env.bootstrapped) {
+            Y.log('Fetching loader: ' + Y.config.base + Y.config.loaderPath, 'info', 'yui');
             Y._loading = true;
 
             a = Y.Array(arguments, 0, true);
@@ -513,6 +523,10 @@ YUI.prototype = {
             return Y;
 
         } else {
+            if (l) {
+                Y.log('Unable or not configured to fetch missing modules.', 'info', 'yui');
+            }
+            Y.log('Attaching available dependencies.', 'info', 'yui');
             Y._attach(r);
             onComplete();
         }
@@ -679,9 +693,10 @@ YUI.prototype = {
  */
 
 /**
- * Turn debug statements on or off.
+ * Allows the YUI seed file to fetch the loader component and library
+ * metadata to dynamically load additional dependencies.
  *
- * @property debug
+ * @property bootstrap
  * @type boolean
  * @default true
  */
@@ -955,6 +970,15 @@ YUI.prototype = {
  *
  * @property loaderPath
  * @default loader/loader-min.js
+ */
+
+/**
+ * 
+ * Specifies whether or not YUI().use(...) will attempt to load CSS
+ * resources at all.  
+ *
+ * @property fetchCSS
+ * @default true
  */
 YUI.add('yui-base', function(Y) {
 
