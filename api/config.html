@@ -228,7 +228,9 @@ For dynamic loading.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Specifies whether or not YUI().use(...) will attempt to load CSS
-resources at all.
+resources at all.  Any truthy value will cause CSS dependencies
+to load when fetching script.  The special value 'force' will 
+cause CSS dependencies to be loaded even if no script is needed.
                                         </div>
                                     </div>
      

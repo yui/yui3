@@ -409,6 +409,7 @@
             <span class="nx">boot</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">bootstrap</span><span class="o">,</span>
             <span class="nx">k</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">missing</span> <span class="o">=</span> <span class="o">[],</span> 
             <span class="nx">r</span> <span class="o">=</span> <span class="o">[],</span> 
+            <span class="nx">css</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">fetchCSS</span><span class="o">,</span>
             <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="c">// only attach a module once</span>
@@ -518,7 +519,7 @@
             <span class="nx">loader</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">a</span><span class="o">);</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">ignoreRegistered</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">allowRollup</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-            <span class="nx">loader</span><span class="o">.</span><span class="nx">calculate</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="s1">&#39;js&#39;</span><span class="o">);</span>
+            <span class="nx">loader</span><span class="o">.</span><span class="nx">calculate</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="o">(</span><span class="nx">css</span> <span class="o">&amp;&amp;</span> <span class="nx">css</span> <span class="o">==</span> <span class="s1">&#39;force&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="o">);</span>
             <span class="nx">a</span> <span class="o">=</span> <span class="nx">loader</span><span class="o">.</span><span class="nx">sorted</span><span class="o">;</span>
         <span class="o">}</span>
 
@@ -553,7 +554,7 @@
             <span class="nx">loader</span><span class="o">.</span><span class="nx">attaching</span> <span class="o">=</span> <span class="nx">a</span><span class="o">;</span>
             <span class="c">// loader.require(missing);</span>
 <span class="c"></span>            <span class="nx">loader</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">a</span><span class="o">);</span>
-            <span class="nx">loader</span><span class="o">.</span><span class="nx">insert</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">fetchCSS</span><span class="o">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="o">);</span>
+            <span class="nx">loader</span><span class="o">.</span><span class="nx">insert</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="o">(</span><span class="nx">css</span><span class="o">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">boot</span> <span class="o">&amp;&amp;</span> <span class="nx">l</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">bootstrapped</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Fetching loader: &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">base</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">loaderPath</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
@@ -1025,7 +1026,9 @@
 <span class="c">/**</span>
 <span class="c"> * </span>
 <span class="c"> * Specifies whether or not YUI().use(...) will attempt to load CSS</span>
-<span class="c"> * resources at all.  </span>
+<span class="c"> * resources at all.  Any truthy value will cause CSS dependencies</span>
+<span class="c"> * to load when fetching script.  The special value &#39;force&#39; will </span>
+<span class="c"> * cause CSS dependencies to be loaded even if no script is needed.</span>
 <span class="c"> *</span>
 <span class="c"> * @property fetchCSS</span>
 <span class="c"> * @default true</span>
