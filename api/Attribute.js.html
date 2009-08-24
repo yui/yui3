@@ -580,7 +580,10 @@
                 <span class="o">}</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">allowSet</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">currVal</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+                    <span class="c">// Don&#39;t need currVal if initialSet (might fail in custom getter)</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(!</span><span class="nx">initialSet</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">currVal</span> <span class="o">=</span>  <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+                    <span class="o">}</span>
 
                     <span class="k">if</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">{</span>
                        <span class="nx">val</span> <span class="o">=</span> <span class="nx">O</span><span class="o">.</span><span class="nx">setValue</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">currVal</span><span class="o">),</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
@@ -774,7 +777,11 @@
 <span class="c">         * @return {Object} A reference to the host object.</span>
 <span class="c">         * @chainable</span>
 <span class="c">         */</span>
-        <span class="nx">setAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">setAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrs</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setAttrs</span><span class="o">(</span><span class="nx">attrs</span><span class="o">,</span> <span class="nx">opts</span><span class="o">);</span>
+        <span class="o">},</span>
+        
+        <span class="nx">_setAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrs</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">attr</span> <span class="k">in</span> <span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span> <span class="nx">attrs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">)</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="nx">attrs</span><span class="o">[</span><span class="nx">attr</span><span class="o">]);</span>
@@ -792,6 +799,10 @@
 <span class="c">         * @return {Object} An object with attribute name/value pairs.</span>
 <span class="c">         */</span>
         <span class="nx">getAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getAttrs</span><span class="o">(</span><span class="nx">attrs</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="nx">_getAttrs</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
                 <span class="nx">o</span> <span class="o">=</span> <span class="o">{},</span> 
                 <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span>

@@ -95,6 +95,7 @@ Node.DOM_EVENTS = {
     keypress: true,
     keyup: true,
     load: true,
+    message: true,
     mousedown: true,
     mousemove: true,
     mouseout: true, 
@@ -386,6 +387,12 @@ Y.mix(Node.prototype, {
         return str || errorMsg;
     },
 
+    /**
+     * Returns an attribute value on the Node instance
+     * @method get
+     * @param {String} attr The attribute to be set
+     * @return {any} The current value of the attribute
+     */
     get: function(attr) {
         var val;
 
@@ -420,6 +427,13 @@ Y.mix(Node.prototype, {
         return val;
     },
 
+    /**
+     * Sets an attribute on the Node instance.
+     * @method set
+     * @param {String} attr The attribute to be set.  
+     * @param {any} val The value to set the attribute to.  
+     * @chainable
+     */
     set: function(attr, val) {
         var attrConfig = Node.ATTRS[attr];
 
@@ -436,6 +450,43 @@ Y.mix(Node.prototype, {
         }
 
         return this;
+    },
+
+    /**
+     * Sets multiple attributes. 
+     * @method setAttrs
+     * @param {Object} attrMap an object of name/value pairs to set  
+     * @chainable
+     */
+    setAttrs: function(attrMap) {
+        if (this._setAttrs) { // use Attribute imple
+            this._setAttrs(attrMap);
+        } else { // use setters inline
+            Y.Object.each(attrMap, function(v, n) {
+                this.set(n, v); 
+            }, this);
+        }
+
+        return this;
+    },
+
+    /**
+     * Returns an object containing the values for the requested attributes. 
+     * @method getAttrs
+     * @param {Array} attrs an array of attributes to get values  
+     * @return {Object} An object with attribute name/value pairs.
+     */
+    getAttrs: function(attrs) {
+        var ret = {};
+        if (this._getAttrs) { // use Attribute imple
+            this._getAttrs(attrs);
+        } else { // use setters inline
+            Y.Array.each(attrs, function(v, n) {
+                ret[v] = this.get(v); 
+            }, this);
+        }
+
+        return ret;
     },
 
     /**
@@ -989,6 +1040,16 @@ Y.mix(NodeList.prototype, {
         return Y.all(Y.Selector.filter(this._nodes, selector));
     },
 
+
+    /**
+     * Creates a new NodeList containing all nodes at every n indices, where 
+     * remainder n % index equals r.
+     * (zero-based index).
+     * @method modulus
+     * @param {Int} n The offset to use (return every nth node)
+     * @param {Int} r An optional remainder to use with the modulus operation (defaults to zero) 
+     * @return {NodeList} NodeList containing the updated collection 
+     */
     modulus: function(n, r) {
         r = r || 0;
         var nodes = [];
@@ -1221,7 +1282,7 @@ Y.all = function(nodes, doc, restrict) {
     // zero-length result returns null
     return nodeList;
 };
-Y.Node.all = Y.all; // TODO: deprecated
+Y.Node.all = Y.all;
 Y.Array.each([
     /**
      * Passes through to DOM method.
@@ -1506,34 +1567,13 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
  * @return {Event.Handle} the detach handle
  * @for Node
  */
-Y.Node.prototype.delegate = function(type, fn, selector, context) {
-    context = context || this;
-    var args = Array.prototype.slice.call(arguments, 4),
-        a = [type, fn, Y.Node.getDOMNode(this), selector, context];
+Y.Node.prototype.delegate = function(type, fn, selector) {
+
+    var args = Array.prototype.slice.call(arguments, 3),
+        a = [type, fn, Y.Node.getDOMNode(this), selector];
     a = a.concat(args);
 
     return Y.delegate.apply(Y, a);
-};
-
-if (!document.documentElement.hasAttribute) { // IE < 8
-    Y.Node.prototype.hasAttribute = function(attr) {
-        return Y.DOM.getAttribute(this._node, attr) !== '';
-    };
-}
-
-// IE throws error when setting input.type = 'hidden',
-// input.setAttribute('type', 'hidden') and input.attributes.type.value = 'hidden'
-Y.Node.ATTRS.type = {
-    setter: function(val) {
-        if (val === 'hidden') {
-            try {
-                this._node.type = 'hidden';
-            } catch(e) {
-                this._node.style.display = 'none';
-            }
-        }
-        return val;
-    }
 };
 
 

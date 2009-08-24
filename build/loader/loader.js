@@ -1337,9 +1337,11 @@ Y.Loader.prototype = {
      * property
      * @method calculate
      * @param o optional options object
+     * @param type optional argument to prune modules 
      */
-    calculate: function(o) {
-        if (o || this.dirty) {
+    calculate: function(o, type) {
+        this.loadType = type;
+        if (o || type || this.dirty) {
             this._config(o);
             this._setup();
             this._explode();
@@ -1563,15 +1565,16 @@ Y.Loader.prototype = {
      * @private
      */
     _reduce: function() {
-        var i, j, s, m, r=this.required;
+        var i, j, s, m, r=this.required, type = this.loadType;
         for (i in r) {
             if (r.hasOwnProperty(i)) {
+                m = this.getModule(i);
                 // remove if already loaded
-                if (this.loaded[i] && (!this.forceMap[i]) && !this.ignoreRegistered) { 
+                if ((this.loaded[i] && (!this.forceMap[i]) && !this.ignoreRegistered) || (type && m.type != type)) { 
                     delete r[i];
                 // remove anything this module supersedes
                 } else {
-                    m = this.getModule(i);
+                    
                     s = m && m.supersedes;
                     if (s) {
                         for (j=0; j<s.length; j=j+1) {
@@ -1788,7 +1791,7 @@ Y.Loader.prototype = {
         }
 
         // build the dependency list
-        this.calculate(o);
+        this.calculate(o); // don't include type
 
         if (!type) {
 
@@ -1818,8 +1821,6 @@ Y.Loader.prototype = {
         // individually
         this._combineComplete = {};
 
-        // keep the loadType (js, css or undefined) cached
-        this.loadType = type;
 
         // start the load
         this.loadNext();
@@ -1901,10 +1902,11 @@ Y.Loader.prototype = {
             len=s.length;
             url=this.comboBase;
 
+
             for (i=0; i<len; i=i+1) {
                 m = this.getModule(s[i]);
                 // Do not try to combine non-yui JS
-                if (m && m.type === this.loadType && !m.ext) {
+                if (m && m.type === type && !m.ext) {
                     url += this.root + m.path;
                     if (i < len-1) {
                         url += '&';
@@ -1918,7 +1920,7 @@ Y.Loader.prototype = {
 
 
                 // if (m.type === CSS) {
-                if (this.loadType === CSS) {
+                if (type === CSS) {
                     fn = Y.Get.css;
                     attr = this.cssAttributes;
                 } else {

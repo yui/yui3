@@ -57,7 +57,7 @@ Y.DOM = {
 
     // @deprecated
     firstByTag: function(node, tag) {
-        ret = null;
+        var ret = null;
         if (node) {
             tag = tag || '*';
             ret = Y.Selector.query(tag, node, true); 

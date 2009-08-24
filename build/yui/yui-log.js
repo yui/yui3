@@ -40,7 +40,6 @@ INSTANCE.log = function(msg, cat, src, silent) {
     if (c.debug) {
         // apply source filters
         if (src) {
-
             excl = c.logExclude; 
             incl = c.logInclude;
 
@@ -63,7 +62,7 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 }
             }
 
-            if (Y.fire && !bail && !silent) {
+            if (Y.fire && !silent) {
                 if (!_published) {
                     Y.publish(LOGEVENT, {
                         broadcast: 2,

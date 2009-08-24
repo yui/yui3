@@ -57,7 +57,7 @@ Y.DOM = {
 
     // @deprecated
     firstByTag: function(node, tag) {
-        ret = null;
+        var ret = null;
         if (node) {
             tag = tag || '*';
             ret = Y.Selector.query(tag, node, true); 
@@ -1812,7 +1812,7 @@ var Selector = {
     _supportsNative: function() {
         // whitelist and feature detection to manage
         // future implementations manually
-        return ( (Y.UA.ie >= 8 || Y.UA.webkit > 525) &&
+        return ( (Y.UA.ie >= 8 || Y.UA.webkit > 525) && // || Y.UA.gecko >= 1.9) &&
             document.querySelectorAll);
     },
 
