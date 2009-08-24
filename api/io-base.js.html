@@ -243,7 +243,7 @@
 			<span class="o">}</span>
 		<span class="o">}</span>
 		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;GET&#39;</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">uri</span> <span class="o">=</span> <span class="nx">_concat</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">f</span><span class="o">);</span>
+			<span class="nx">uri</span> <span class="o">=</span> <span class="nx">_concat</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">.</span><span class="nx">data</span><span class="o">);</span>
 		<span class="o">}</span>
 
    		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">{</span>
@@ -565,7 +565,7 @@
 <span class="c">	* @return object</span>
 <span class="c">   	*/</span>
    	<span class="k">function</span> <span class="nx">_xhr</span><span class="o">()</span> <span class="o">{</span>
-   		<span class="k">return</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="o">()</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">ActiveXObject</span><span class="o">(</span><span class="s1">&#39;Microsoft.XMLHTTP&#39;</span><span class="o">);</span>
+   		<span class="k">return</span> <span class="nx">w</span><span class="o">.</span><span class="nx">XMLHttpRequest</span> <span class="o">?</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="o">()</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">ActiveXObject</span><span class="o">(</span><span class="s1">&#39;Microsoft.XMLHTTP&#39;</span><span class="o">);</span>
    	<span class="o">}</span>
 
    <span class="c">/**</span>
