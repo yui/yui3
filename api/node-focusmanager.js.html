@@ -156,7 +156,7 @@
 
 		<span class="nx">getter</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
 
-			<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">).</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">value</span><span class="o">);</span>
+			<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">).</span><span class="nx">all</span><span class="o">(</span><span class="nx">value</span><span class="o">);</span>
 			
 		<span class="o">}</span>
 
@@ -692,8 +692,10 @@
 				<span class="k">var</span> <span class="nx">returnVal</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
 				<span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oHost</span><span class="o">))</span> <span class="o">{</span>
-					<span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">))</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> 
-									<span class="nx">getFocusable</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;parentNode&quot;</span><span class="o">));</span>
+					
+					<span class="nx">returnVal</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_isDescendant</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> 
+									<span class="nx">getFocusable</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;parentNode&quot;</span><span class="o">));</span>
+
 				<span class="o">}</span>
 		
 				<span class="k">return</span> <span class="nx">returnVal</span><span class="o">;</span>
@@ -706,7 +708,7 @@
 			<span class="c">//	Check to make sure that the target isn&#39;t a child node of one </span>
 <span class="c"></span>			<span class="c">//	of the focusable descendants.</span>
 <span class="c"></span>
-			<span class="nx">node</span> <span class="o">=</span> <span class="nx">getFocusable</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">);</span>
+			<span class="nx">node</span> <span class="o">=</span> <span class="nx">getFocusable</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">oTarget</span><span class="o">);</span>
 
 			<span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
 				<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
@@ -739,9 +741,15 @@
 			<span class="o">(!</span><span class="nx">bChildNode</span> <span class="o">||</span> <span class="o">(</span><span class="nx">bChildNode</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_isDescendant</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">))))</span> <span class="o">{</span>
 
 			<span class="c">//	Fix for Webkit:</span>
-<span class="c"></span>			<span class="c">//	Document doesn&#39;t receive focus in Webkit when the user mouses </span>
+<span class="c"></span>			
+			<span class="c">//	Document doesn&#39;t receive focus in Webkit when the user mouses </span>
 <span class="c"></span>			<span class="c">//	down on it, so the &quot;focused&quot; attribute won&#39;t get set to the </span>
 <span class="c"></span>			<span class="c">//	correct value.</span>
+<span class="c"></span>
+			<span class="c">//	The goal is to force a blur if the user moused down on </span>
+<span class="c"></span>			<span class="c">//	either: 1) A descendant node, but not one that managed by </span>
+<span class="c"></span>			<span class="c">//	the FocusManager, or 2) an element outside of the </span>
+<span class="c"></span>			<span class="c">//	FocusManager</span>
 <span class="c"></span>
  			<span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">FOCUSED</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
  			<span class="k">this</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">(</span><span class="nx">event</span><span class="o">);</span>
@@ -806,7 +814,7 @@
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">focusClass</span><span class="o">)</span> <span class="o">{</span>
 
-			<span class="k">if</span> <span class="o">(</span><span class="nx">oFocusedNode</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">oFocusedNode</span> <span class="o">!==</span> <span class="nx">oTarget</span> <span class="o">||</span> <span class="o">!</span><span class="nx">bFocused</span><span class="o">))</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">oFocusedNode</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">oFocusedNode</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">bFocused</span><span class="o">))</span> <span class="o">{</span>
 				<span class="k">this</span><span class="o">.</span><span class="nx">_removeFocusClass</span><span class="o">();</span>
 			<span class="o">}</span>
 
@@ -1096,6 +1104,7 @@
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
@@ -1122,7 +1131,8 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

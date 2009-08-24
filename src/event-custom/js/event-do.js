@@ -1,3 +1,10 @@
+
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event-custom
+ * @submodule event-custom-base
+ */
 (function() {
 
 /**
@@ -136,8 +143,6 @@ Y.Do.Method = function(obj, sFn) {
     this.obj = obj;
     this.methodName = sFn;
     this.method = obj[sFn];
-    // this.before = [];
-    // this.after = [];
     this.before = {};
     this.after = {};
 };
@@ -151,10 +156,8 @@ Y.Do.Method = function(obj, sFn) {
  */
 Y.Do.Method.prototype.register = function (sid, fn, when) {
     if (when) {
-        // this.after.push(fn);
         this.after[sid] = fn;
     } else {
-        // this.before.push(fn);
         this.before[sid] = fn;
     }
 };

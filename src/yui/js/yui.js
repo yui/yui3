@@ -1,3 +1,10 @@
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
+ */
+
 (function() {
 
     var _instances = {}, 
@@ -42,10 +49,8 @@
 // @TODO: this needs to be created at build time from module metadata
 
         _APPLY_TO_WHITE_LIST = {
-            'io.xdrReady': 1,
-            'io.start': 1,
-            'io.success': 1,
-            'io.failure': 1
+          'io.xdrReady': 1,
+          'io.xdrResponse':1
         },
 
         SLICE = Array.prototype.slice;
@@ -62,22 +67,26 @@ if (typeof YUI === 'undefined' || !YUI) {
      * @constructor
      * @global
      * @uses EventTarget
-     * @param o Optional configuration object.  This object is stored
+     * @param o* Up to five optional configuration objects.  This object is stored
      * in YUI.config.  See config for the list of supported properties.
      */
 
     /*global YUI*/
     // Make a function, disallow direct instantiation
-    YUI = function(o) {
+    YUI = function(o1, o2, o3, o4, o5) {
 
-        var Y = this;
+        var Y = this, a = arguments, i, l = a.length;
 
         // Allow instantiation without the new operator
         if (!(Y instanceof YUI)) {
-            return new YUI(o);
+            return new YUI(o1, o2, o3, o4, o5);
         } else {
             // set up the core environment
-            Y._init(o);
+            Y._init();
+
+            for (i=0; i<l; i++) {
+                Y._config(a[i]);
+            }
 
             // bind the specified additional modules for this instance
             Y._setup();
@@ -91,14 +100,35 @@ if (typeof YUI === 'undefined' || !YUI) {
 // modules to be registered and for the instance to be initialized.
 YUI.prototype = {
 
-    /**
-     * Initialize this YUI instance
-     * @param o config options
-     * @private
-     */
-    _init: function(o) {
+    _config: function(o) {
 
         o = o || {};
+
+        var c = this.config, i, j, m, mods;
+
+        mods = c.modules;
+        for (i in o) {
+            if (mods && i == 'modules') {
+                m = o[i];
+                for (j in m) {
+                    if (m.hasOwnProperty(j)) {
+                        mods[j] = m[j];
+                    }
+                }
+            } else if (i == 'win') {
+                c[i] = o[i].contentWindow || o[i];
+                c.doc = c[i].document;
+            } else {
+                c[i] = o[i];
+            }
+        }
+    },
+
+    /**
+     * Initialize this YUI instance
+     * @private
+     */
+    _init: function() {
 
         // find targeted window/frame
         // @TODO create facades
@@ -123,38 +153,6 @@ YUI.prototype = {
             _loaded: {}
         };
 
-        o.win = o.win || window || {};
-        o.win = o.win.contentWindow || o.win;
-        o.doc = o.win.document;
-        o.debug = ('debug' in o) ? o.debug : true;
-        o.useBrowserConsole = ('useBrowserConsole' in o) ? o.useBrowserConsole : true;
-        o.throwFail = ('throwFail' in o) ? o.throwFail : true;
-    
-        o.base = o.base || function() {
-            var b, nodes, i, match;
-
-            // get from querystring
-            nodes = document.getElementsByTagName('script');
-
-            for (i=0; i<nodes.length; i=i+1) {
-                match = nodes[i].src.match(/^(.*)yui\/yui[\.\-].*js(\?.*)?$/);
-                b = match && match[1];
-                if (b) {
-                    break;
-                }
-            }
-
-            // use CDN default
-            return b || Y.Env.cdn;
-
-        }();
-
-        o.loaderPath = o.loaderPath || 'loader/loader-min.js';
-
-        // add a reference to o for anything that needs it
-        // before _setup is called.
-        Y.config = o;
-
         Y.Env._loaded[v] = {};
 
         if (YUI.Env) {
@@ -166,7 +164,39 @@ YUI.prototype = {
 
         Y.constructor = YUI;
 
-        // this.log(this.id + ') init ');
+        // configuration defaults
+        Y.config = {
+
+            win: window || {},
+            doc: document,
+            debug: true,
+            useBrowserConsole: true,
+            throwFail: true,
+            bootstrap: true,
+            fetchCSS: true,
+        
+            base: function() {
+                var b, nodes, i, match;
+
+                // get from querystring
+                nodes = document.getElementsByTagName('script');
+
+                for (i=0; i<nodes.length; i=i+1) {
+                    match = nodes[i].src.match(/^(.*)yui\/yui[\.\-].*js(\?.*)?$/);
+                    b = match && match[1];
+                    if (b) {
+                        break;
+                    }
+                }
+
+                // use CDN default
+                return b || Y.Env.cdn;
+
+            }(),
+
+            loaderPath: 'loader/loader-min.js'
+        };
+
     },
     
     /**
@@ -177,8 +207,6 @@ YUI.prototype = {
      */
     _setup: function(o) {
         this.use("yui-base");
-        // @TODO eval the need to copy the config
-        this.config = this.merge(this.config);
     },
 
     /**
@@ -194,7 +222,7 @@ YUI.prototype = {
     applyTo: function(id, method, args) {
 
         if (!(method in _APPLY_TO_WHITE_LIST)) {
-            this.error(method + ': applyTo not allowed');
+            this.log(method + ': applyTo not allowed', 'warn', 'yui');
             return null;
         }
 
@@ -210,7 +238,7 @@ YUI.prototype = {
                 m = m[nest[i]];
 
                 if (!m) {
-                    this.error('applyTo not found: ' + method);
+                    this.log('applyTo not found: ' + method, 'warn', 'yui');
                 }
             }
 
@@ -238,29 +266,17 @@ YUI.prototype = {
      *
      */
     add: function(name, fn, version, details) {
-
         // this.log('Adding a new component ' + name);
-
         // @todo expand this to include version mapping
         // @todo may want to restore the build property
         // @todo fire moduleAvailable event
         
-        // if (this.Lang.isFunction(fn)) {
-
-            YUI.Env.mods[name] = {
-                name: name, 
-                fn: fn,
-                version: version,
-                details: details || {}
-            };
-
-        // } else {
-        //     
-        //     var c = Y.config;
-        //     c.modules = c.modules || {};
-        //     c.modules[name] = c.modules[name] || fn;
-
-        // }
+        YUI.Env.mods[name] = {
+            name: name, 
+            fn: fn,
+            version: version,
+            details: details || {}
+        };
 
         return this; // chain support
     },
@@ -328,6 +344,7 @@ YUI.prototype = {
     use: function() {
 
         if (this._loading) {
+            this._useQueue = this._useQueue || new this.Queue();
             this._useQueue.add(SLICE.call(arguments, 0));
             return this;
         }
@@ -340,8 +357,10 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
+            boot = Y.config.bootstrap,
             k, i, l, missing = [], 
             r = [], 
+            css = Y.config.fetchCSS,
             f = function(name) {
 
                 // only attach a module once
@@ -364,7 +383,7 @@ YUI.prototype = {
 
                     // CSS files don't register themselves, see if it has been loaded
                     if (!YUI.Env._loaded[Y.version][name]) {
-                        Y.log('module not found: ' + name, 'info', 'yui');
+                        // Y.log('module not found: ' + name, 'info', 'yui');
                         missing.push(name);
                     } else {
                         // probably css
@@ -438,10 +457,7 @@ YUI.prototype = {
                 }
             }
 
-            // Y.log('Use *: ' + a);
-
             return Y.use.apply(Y, a);
-
         }
         
         // Y.log('loader before: ' + a.join(','));
@@ -450,12 +466,11 @@ YUI.prototype = {
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
-            this._useQueue = this._useQueue || new Y.Queue();
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.ignoreRegistered = true;
             loader.allowRollup = false;
-            loader.calculate();
+            loader.calculate(null, (css && css == 'force') ? null : 'js');
             a = loader.sorted;
         }
 
@@ -469,28 +484,38 @@ YUI.prototype = {
             f(a[i]);
         }
 
-        // Y.log('all reqs: ' + r + ' --- missing: ' + missing + ', l: ' + l + ', ' + r[0]);
+        l = missing.length;
+
+        Y.log('Module requirements: ' + a, 'info', 'yui');
+
+        if (l) {
+            missing = Y.Object.keys(Y.Array.hash(missing));
+            Y.log('Modules missing: ' + missing, 'info', 'yui');
+        }
 
         // dynamic load
-        if (Y.Loader && missing.length) {
-            Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'yui');
-            this._loading = true;
+        if (boot && l && Y.Loader) {
+            Y.log('Using loader to fetch missing dependencies.', 'info', 'yui');
+            Y._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
             loader.onTimeout = onComplete;
             loader.context = Y;
             loader.attaching = a;
-            loader.require(missing);
-            loader.insert();
-        } else if (Y.Get && missing.length && !Y.Env.bootstrapped) {
-            Y.log('fetching loader: ' + Y.config.base + Y.config.loaderPath, 'info', 'yui');
+            // loader.require(missing);
+            loader.require(a);
+            loader.insert(null, (css) ? null : 'js');
+        } else if (boot && l && Y.Get && !Y.Env.bootstrapped) {
+            Y.log('Fetching loader: ' + Y.config.base + Y.config.loaderPath, 'info', 'yui');
+            Y._loading = true;
 
             a = Y.Array(arguments, 0, true);
             // a.unshift('loader');
 
             Y.Get.script(Y.config.base + Y.config.loaderPath, {
                 onEnd: function() {
+                    Y._loading = false;
                     Y.Env.bootstrapped = true;
                     Y._attach(['loader']);
                     Y.use.apply(Y, a);
@@ -500,6 +525,10 @@ YUI.prototype = {
             return Y;
 
         } else {
+            if (l) {
+                Y.log('Unable or not configured to fetch missing modules.', 'info', 'yui');
+            }
+            Y.log('Attaching available dependencies.', 'info', 'yui');
             Y._attach(r);
             onComplete();
         }
@@ -666,9 +695,10 @@ YUI.prototype = {
  */
 
 /**
- * Turn debug statements on or off.
+ * Allows the YUI seed file to fetch the loader component and library
+ * metadata to dynamically load additional dependencies.
  *
- * @property debug
+ * @property bootstrap
  * @type boolean
  * @default true
  */
@@ -942,4 +972,15 @@ YUI.prototype = {
  *
  * @property loaderPath
  * @default loader/loader-min.js
+ */
+
+/**
+ * 
+ * Specifies whether or not YUI().use(...) will attempt to load CSS
+ * resources at all.  Any truthy value will cause CSS dependencies
+ * to load when fetching script.  The special value 'force' will 
+ * cause CSS dependencies to be loaded even if no script is needed.
+ *
+ * @property fetchCSS
+ * @default true
  */

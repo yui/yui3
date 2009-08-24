@@ -15,27 +15,28 @@ YUI.add('io-form', function(Y) {
         * @method _serialize
         * @private
         * @static
-        * @param {object} o - YUI form node or HTML form id.
+        * @param {object} c - YUI form node or HTML form id.
+        * @param {string} s - Transaction data defined in the configuration.
         * @return string
         */
-        _serialize: function(o) {
+        _serialize: function(c, s) {
 			var eUC = encodeURIComponent,
             	data = [],
-            	useDf = o.useDisabled || false,
+            	useDf = c.useDisabled || false,
             	item = 0,
-            	e, f, n, v, d, i, ilen, j, jlen, o,
-            	id = (typeof o.id === 'string') ? o.id : o.id.getAttribute('id');
+            	id = (typeof c.id === 'string') ? c.id : c.id.getAttribute('id'),
+            	e, f, n, v, d, i, il, j, jl, o;
 
             	if (!id) {
 					id = Y.guid('io:');
-					o.id.setAttribute('id', id);
+					c.id.setAttribute('id', id);
 				}
 
             	f = Y.config.doc.getElementById(id);
 
             // Iterate over the form elements collection to construct the
             // label-value pairs.
-            for (i = 0, ilen = f.elements.length; i < ilen; ++i) {
+            for (i = 0, il = f.elements.length; i < il; ++i) {
                 e = f.elements[i];
                 d = e.disabled;
                 n = e.name;
@@ -55,7 +56,7 @@ YUI.add('io-form', function(Y) {
                             break;
                         case 'select-multiple':
                             if (e.selectedIndex > -1) {
-                                for (j = e.selectedIndex, jlen = e.options.length; j < jlen; ++j) {
+                                for (j = e.selectedIndex, jl = e.options.length; j < jl; ++j) {
                                     o = e.options[j];
                                     if (o.selected) {
                                       data[item++] = n + eUC((o.attributes.value && o.attributes.value.specified) ? o.value : o.text);
@@ -84,10 +85,10 @@ YUI.add('io-form', function(Y) {
                     }
                 }
             }
-            return data.join('&');
+            return s ? data.join('&') + "&" + s : data.join('&');
         }
     }, true);
 
 
 
-}, '@VERSION@' ,{requires:['io-base']});
+}, '@VERSION@' ,{requires:['io-base','node-base','node-style']});

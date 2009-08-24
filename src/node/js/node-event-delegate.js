@@ -13,11 +13,11 @@
  * @return {Event.Handle} the detach handle
  * @for Node
  */
-Y.Node.prototype.delegate = function(type, fn, selector, context) {
-    context = context || this;
-    var args = Array.prototype.slice.call(arguments, 4),
-        a = ['delegate', fn, Y.Node.getDOMNode(this), type, selector, context];
-    a = a.concat(args);
-    return Y.on.apply(Y, a);
-};
+Y.Node.prototype.delegate = function(type, fn, selector) {
 
+    var args = Array.prototype.slice.call(arguments, 3),
+        a = [type, fn, Y.Node.getDOMNode(this), selector];
+    a = a.concat(args);
+
+    return Y.delegate.apply(Y, a);
+};

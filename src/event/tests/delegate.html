@@ -7,8 +7,8 @@
     <div id="doc">
 
 		<div id="mod1">
-			<div class="hd"><h3 class="title">H3 - Title</h3></div>
-			<div class="bd">
+			<div id="mod-header" class="hd"><h3 class="title">H3 - Title</h3></div>
+			<div id="mod-body" class="bd">
 				<p>simple paragraph with a link <a href="#"id="firstlink">simple link</a></p>
 				<p>another paragraph with a complex link <a href="#" id="secondlink"><strong>strong within link</strong><img alt="fake image" id="fakeimage" /> - complex <span id="spanwithinlink">link</span></a></p>
 			</div>
@@ -24,11 +24,12 @@
 		    filter: 'debug',
 		    combine: false,
 	        useConsole: true,
-	        logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+	        logExclude: {deprecated: 1,
+            Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
 		}).use('console', 'test', 'event', 'event-simulate', function (Y) {
 			
 		    // creating the console...
-			(new Y.Console()).render();
+			// (new Y.Console()).render();
 			
 			// starting the testing process
 			
@@ -57,6 +58,48 @@
 					Y.Assert.areEqual(boundEl, Y.get('#mod1'), "event delegate works but the container property should be the bound element");
 					
 				},
+				
+				test_multiple_selectors: function () {
+
+					var foo = false, t, ct, boundEl;
+
+					Y.on('delegate', function(e) {
+						foo = true;
+						t = e.target;
+						ct = e.currentTarget;
+						boundEl = e.container;
+					}, '#mod1', 'click', '.hd,.bd');					
+					
+
+					Y.Event.simulate(document.getElementById('mod-header'), 'click');
+
+					Y.Assert.areEqual(ct, Y.get('#mod-header'), "event delegate works but the matched element is an incorrect node, should be the matching node");
+
+					Y.Event.simulate(document.getElementById('mod-body'), 'click');
+
+					Y.Assert.areEqual(ct, Y.get('#mod-body'), "event delegate works but the matched element is an incorrect node, should be the matching node");
+					
+				},
+
+				test_document_as_container: function () {
+
+					var foo = false, t, ct, boundEl;
+					
+					Y.on('delegate', function(e) {
+						foo = true;
+						t = e.target;
+						ct = e.currentTarget;
+						boundEl = e.container;
+					}, Y.get('#mod1').get('ownerDocument'), 'click', 'a');
+					
+					Y.Event.simulate (document.getElementById('firstlink'), 'click');
+					Y.Assert.isTrue(foo, "simple delegation fails, mod1 should pickup the event and test target [firstlink]");
+
+					Y.Assert.areEqual(ct, Y.get('#firstlink'), "event delegate works but the currentTarget is an incorrect node, should be the matching node");
+					Y.Assert.areEqual(t, Y.get('#firstlink'), "event delegate works but the target is an incorrect node, should be the actual click target");
+					Y.Assert.areEqual(boundEl, Y.get('#mod1').get('ownerDocument'), "event delegate works but the container property should be the bound element");
+					
+				},			
 				
 				test_checking_delegation_target: function(){
 					

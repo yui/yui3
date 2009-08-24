@@ -93,33 +93,29 @@
 <span class="c"> * @return {Array} a copy of the array with duplicate entries removed</span>
 <span class="c"> */</span>
 <span class="nx">A</span><span class="o">.</span><span class="nx">unique</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">sort</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isValue</span><span class="o">(</span><span class="nx">sort</span><span class="o">)</span> <span class="o">?</span> <span class="nx">sort</span> <span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
-        <span class="nx">b</span> <span class="o">=</span> <span class="nx">a</span><span class="o">.</span><span class="nx">slice</span><span class="o">(),</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">n</span> <span class="o">=</span> <span class="o">-</span><span class="m">1</span><span class="o">,</span> <span class="nx">item</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="k">if</span> <span class="o">(</span><span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">while</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">b</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">b</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">n</span> <span class="o">=</span> <span class="o">(</span><span class="nx">n</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span> <span class="o">?</span> <span class="nx">i</span> <span class="o">:</span> <span class="nx">n</span><span class="o">);</span>
-                <span class="nx">i</span> <span class="o">+=</span> <span class="m">1</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">n</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">b</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">n</span><span class="o">,</span> <span class="nx">i</span><span class="o">-</span><span class="nx">n</span><span class="o">);</span>
-                <span class="nx">i</span> <span class="o">=</span> <span class="nx">n</span><span class="o">;</span>                
-                <span class="nx">n</span> <span class="o">=</span> <span class="o">-</span><span class="m">1</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">item</span> <span class="o">=</span> <span class="nx">b</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                <span class="nx">i</span> <span class="o">+=</span> <span class="m">1</span><span class="o">;</span>
-            <span class="o">}</span>
+    <span class="k">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">a</span><span class="o">.</span><span class="nx">slice</span><span class="o">(),</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">n</span> <span class="o">=</span> <span class="o">-</span><span class="m">1</span><span class="o">,</span> <span class="nx">item</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+    <span class="k">while</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">b</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">item</span> <span class="o">=</span> <span class="nx">b</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+        <span class="k">while</span> <span class="o">((</span><span class="nx">n</span> <span class="o">=</span> <span class="nx">b</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">item</span><span class="o">))</span> <span class="o">!==</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">b</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">n</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
         <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="k">while</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">b</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">item</span> <span class="o">=</span> <span class="nx">b</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-            <span class="k">while</span> <span class="o">((</span><span class="nx">n</span> <span class="o">=</span> <span class="nx">b</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">item</span><span class="o">))</span> <span class="o">!==</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">b</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">n</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="nx">i</span> <span class="o">+=</span> <span class="m">1</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">b</span><span class="o">;</span>
+        <span class="nx">i</span> <span class="o">+=</span> <span class="m">1</span><span class="o">;</span>
     <span class="o">}</span>
+
+    <span class="c">// Note: the sort option doesn&#39;t really belong here... I think it was added</span>
+<span class="c"></span>    <span class="c">// because there was a way to fast path the two operations together.  That</span>
+<span class="c"></span>    <span class="c">// implementation was not working, so I replaced it with the following.</span>
+<span class="c"></span>    <span class="c">// Leaving it in so that the API doesn&#39;t get broken.</span>
+<span class="c"></span>    <span class="k">if</span> <span class="o">(</span><span class="nx">sort</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">b</span><span class="o">[</span><span class="m">0</span><span class="o">]))</span> <span class="o">{</span>
+            <span class="nx">b</span><span class="o">.</span><span class="nx">sort</span><span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">numericSort</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">b</span><span class="o">.</span><span class="nx">sort</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="k">return</span> <span class="nx">b</span><span class="o">;</span>
 <span class="o">};</span>
 
 <span class="c">/**</span>
@@ -346,6 +342,7 @@
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class="selected"><a href="module_collection.html" title="collection">collection</a></li>
@@ -372,7 +369,8 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

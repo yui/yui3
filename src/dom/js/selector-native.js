@@ -15,18 +15,25 @@
 
 Y.namespace('Selector'); // allow native module to standalone
 
-var NativeSelector = {
+var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
+    OWNER_DOCUMENT = 'ownerDocument',
+    TMP_PREFIX = 'yui-tmp-',
+    g_counter = 0;
+
+var Selector = {
     _reLead: /^\s*([>+~]|:self)/,
-    _reUnSupported: /!./,
+    _reUnSupported: /!./g,
 
     _foundCache: [],
 
     _supportsNative: function() {
         // whitelist and feature detection to manage
         // future implementations manually
-        return ( (Y.UA.ie >= 8 || Y.UA.webkit > 525) &&
+        return ( (Y.UA.ie >= 8 || Y.UA.webkit > 525) && // || Y.UA.gecko >= 1.9) &&
             document.querySelectorAll);
     },
+
+    useNative: true,
 
     _toArray: function(nodes) { // TODO: move to Y.Array
         var ret = nodes,
@@ -46,7 +53,7 @@ var NativeSelector = {
     },
 
     _clearFoundCache: function() {
-        var foundCache = NativeSelector._foundCache,
+        var foundCache = Selector._foundCache,
             i, len;
 
         for (i = 0, len = foundCache.length; i < len; ++i) {
@@ -59,13 +66,46 @@ var NativeSelector = {
         foundCache = [];
     },
 
+    _compare: ('sourceIndex' in document.documentElement) ?
+        function(nodeA, nodeB) {
+            var a = nodeA.sourceIndex,
+                b = nodeB.sourceIndex;
+
+            if (a === b) {
+                return 0;
+            } else if (a > b) {
+                return 1;
+            }
+
+            return -1;
+
+        } : (document.documentElement[COMPARE_DOCUMENT_POSITION] ?
+        function(nodeA, nodeB) {
+            if (nodeA[COMPARE_DOCUMENT_POSITION](nodeB) & 4) {
+                return -1;
+            } else {
+                return 1;
+            }
+        } :
+        function(nodeA, nodeB) {
+            var rangeA, rangeB, compare;
+            if (nodeA && nodeB) {
+                rangeA = nodeA[OWNER_DOCUMENT].createRange();
+                rangeA.setStart(nodeA, 0);
+                rangeB = nodeB[OWNER_DOCUMENT].createRange();
+                rangeB.setStart(nodeB, 0);
+                compare = rangeA.compareBoundaryPoints(Range.START_TO_END, rangeB);
+            }
+
+            return compare;
+        
+    }),
+
     _sort: function(nodes) {
         if (nodes) {
-            nodes = NativeSelector._toArray(nodes);
+            nodes = Selector._toArray(nodes);
             if (nodes.sort) {
-                nodes.sort(function(a, b) {
-                    return Y.DOM.srcIndex(a) - Y.DOM.srcIndex(b);
-                });
+                nodes.sort(Selector._compare);
             }
         }
 
@@ -74,7 +114,7 @@ var NativeSelector = {
 
     _deDupe: function(nodes) {
         var ret = [],
-            cache = NativeSelector._foundCache,
+            cache = Selector._foundCache,
             i, node;
 
         for (i = 0, node; node = nodes[i++];) {
@@ -83,7 +123,7 @@ var NativeSelector = {
                 node._found = true;
             }
         }
-        NativeSelector._clearFoundCache();
+        Selector._clearFoundCache();
         return ret;
     },
 
@@ -92,6 +132,7 @@ var NativeSelector = {
     _prepQuery: function(root, selector) {
         var groups = selector.split(','),
             queries = [],
+            inDoc = true,
             isDocRoot = (root && root.nodeType === 9),
             i, len;
 
@@ -101,7 +142,7 @@ var NativeSelector = {
                 // break into separate queries for element scoping
                 for (i = 0, len = groups.length; i < len; ++i) {
                     selector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
-                    queries.push({root: root.ownerDocument, selector: selector});
+                    queries.push({root: root, selector: selector});
                 }
             } else {
                 queries.push({root: root, selector: selector});
@@ -111,9 +152,9 @@ var NativeSelector = {
         return queries;
     },
 
-    _query: function(selector, root, firstOnly) {
-        if (NativeSelector._reUnSupported.test(selector)) {
-            return Y.Selector._brute.query(selector, root, firstOnly);
+    _nativeQuery: function(selector, root, firstOnly) {
+        if (Selector._reUnSupported.test(selector)) {
+            return Y.Selector.query(selector, root, firstOnly);
         }
 
         var ret = firstOnly ? null : [],
@@ -125,14 +166,14 @@ var NativeSelector = {
         root = root || Y.config.doc;
 
         if (selector) {
-            queries = NativeSelector._prepQuery(root, selector);
+            queries = Selector._prepQuery(root, selector);
             ret = [];
 
             for (i = 0, query; query = queries[i++];) {
                 try {
                     result = query.root[queryName](query.selector);
                     if (queryName === 'querySelectorAll') { // convert NodeList to Array
-                        result = NativeSelector._toArray(result);
+                        result = Selector._toArray(result);
                     }
                     ret = ret.concat(result);
                 } catch(e) {
@@ -141,20 +182,20 @@ var NativeSelector = {
             }
 
             if (queries.length > 1) { // remove dupes and sort by doc order 
-                ret = NativeSelector._sort(NativeSelector._deDupe(ret));
+                ret = Selector._sort(Selector._deDupe(ret));
             }
-            ret = (!firstOnly) ? ret : ret[0] || null;
+            ret = (firstOnly) ? (ret[0] || null) : ret;
         }
         return ret;
     },
 
-    _filter: function(nodes, selector) {
+    filter: function(nodes, selector) {
         var ret = [],
             i, node;
 
         if (nodes && selector) {
             for (i = 0, node; (node = nodes[i++]);) {
-                if (Y.Selector._test(node, selector)) {
+                if (Y.Selector.test(node, selector)) {
                     ret[ret.length] = node;
                 }
             }
@@ -166,17 +207,21 @@ var NativeSelector = {
         return ret;
     },
 
-    _test: function(node, selector) {
+    test: function(node, selector, root) {
         var ret = false,
             groups = selector.split(','),
             item,
             i, group;
 
         if (node && node.tagName) { // only test HTMLElements
-            node.id = node.id || Y.guid();
-            for (i = 0, group; group = groups[i++];) {
+            root = root || node.ownerDocument;
+
+            if (!node.id) {
+                node.id = TMP_PREFIX + g_counter++;
+            }
+            for (i = 0, group; group = groups[i++];) { // TODO: off-dom test
                 group += '#' + node.id; // add ID for uniqueness
-                item = Y.Selector.query(group, null, true);
+                item = Y.Selector.query(group, root, true);
                 ret = (item === node);
                 if (ret) {
                     break;
@@ -189,20 +234,14 @@ var NativeSelector = {
 };
 
 if (Y.UA.ie && Y.UA.ie <= 8) {
-    NativeSelector._reUnSupported = /:(?:nth|not|root|only|checked|first|last|empty)/;
+    Selector._reUnSupported = /:(?:nth|not|root|only|checked|first|last|empty)/;
 }
-
-
-
-Y.mix(Y.Selector, NativeSelector, true);
 
 // allow standalone selector-native module
-if (NativeSelector._supportsNative()) {
-    Y.Selector.query = NativeSelector._query;
-    //Y.Selector.filter = NativeSelector._filter;
-    //Y.Selector.test = NativeSelector._test;
+if (Selector._supportsNative() && Selector.useNative) {
+    Y.Selector.query = Y.Selector.query || Selector._nativeQuery;
 }
-Y.Selector.test = NativeSelector._test;
-Y.Selector.filter = NativeSelector._filter;
+
+Y.mix(Y.Selector, Selector, true);
 
 })(Y);

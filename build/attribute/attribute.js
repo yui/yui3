@@ -642,7 +642,10 @@ YUI.add('attribute-base', function(Y) {
                 }
 
                 if (allowSet) {
-                    currVal = this.get(name);
+                    // Don't need currVal if initialSet (might fail in custom getter)
+                    if (!initialSet) {
+                        currVal =  this.get(name);
+                    }
 
                     if (path) {
                        val = O.setValue(Y.clone(currVal), path, val);
@@ -720,6 +723,15 @@ YUI.add('attribute-base', function(Y) {
             }
         },
 
+        /**
+         * Gets the stored value for the attribute, from either the 
+         * internal state object, or the state proxy if it exits
+         * 
+         * @method _getStateVal
+         * @private
+         * @param {String} name The name of the attribute
+         * @return {Any} The stored value of the attribute
+         */
         _getStateVal : function(name) {
             var stateProxy = this._stateProxy;
             if (!stateProxy || this.attrAdded(name)) {
@@ -729,6 +741,15 @@ YUI.add('attribute-base', function(Y) {
             }
         },
 
+        /**
+         * Sets the stored value for the attribute, in either the 
+         * internal state object, or the state proxy if it exits
+         *
+         * @method _setStateVal
+         * @private
+         * @param {String} name The name of the attribute
+         * @param {Any} value The value of the attribute
+         */
         _setStateVal : function(name, value) {
             var stateProxy = this._stateProxy;
             if (!stateProxy || this.attrAdded(name)) {
@@ -812,7 +833,11 @@ YUI.add('attribute-base', function(Y) {
          * @return {Object} A reference to the host object.
          * @chainable
          */
-        setAttrs : function(attrs) {
+        setAttrs : function(attrs, opts) {
+            return this._setAttrs(attrs, opts);
+        },
+        
+        _setAttrs : function(attrs, opts) {
             for (var attr in attrs) {
                 if ( attrs.hasOwnProperty(attr) ) {
                     this.set(attr, attrs[attr]);
@@ -830,6 +855,10 @@ YUI.add('attribute-base', function(Y) {
          * @return {Object} An object with attribute name/value pairs.
          */
         getAttrs : function(attrs) {
+            return this._getAttrs(attrs);
+        },
+
+        _getAttrs : function(attrs) {
             var host = this,
                 o = {}, 
                 i, l, attr, val,
@@ -987,6 +1016,7 @@ YUI.add('attribute-complex', function(Y) {
      *
      * @module attribute
      * @submodule attribute-complex
+     * @for Attribute
      */
 
     var O = Y.Object,

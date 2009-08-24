@@ -171,7 +171,7 @@ Use Y.all() to retrieve NodeList instances.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Applies an event listens to each Node bound to the NodeList. 
+                                            Applies an event listener to each Node bound to the NodeList. 
 The handler is called only after all on() handlers are called
 and the event is not prevented.
                                         </div>
@@ -473,6 +473,43 @@ Default context is the current Node instance</span>
                                                         NodeList
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">NodeList containing the updated collection</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_get">
+                                    <h4>
+                                        <a name="method_get">get</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">get</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Called on each Node instance
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        void
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -828,6 +865,69 @@ or -1 if the node isn't found.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_modulus">
+                                    <h4>
+                                        <a name="method_modulus">modulus</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        NodeList
+                                            <strong property="yui:name">modulus</strong>
+                                           (
+                                                
+                                                        
+                                                         n
+                                                    
+                                                
+                                                        , 
+                                                         r
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates a new NodeList containing all nodes at every n indices, where 
+remainder n % index equals r.
+(zero-based index).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">n</span>
+                                                        &lt;<span property="yui:type">Int</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The offset to use (return every nth node)</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">r</span>
+                                                        &lt;<span property="yui:type">Int</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An optional remainder to use with the modulus operation (defaults to zero)</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                        NodeList
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">NodeList containing the updated collection</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_NodeList.getDOMNodes">
                                     <h4>
                                         <a name="method_NodeList.getDOMNodes">NodeList.getDOMNodes</a></h4>
@@ -945,7 +1045,7 @@ or -1 if the node isn't found.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Applies an event listens to each Node bound to the NodeList.
+                                            Applies an event listener to each Node bound to the NodeList.
                                         </div>
 
                                         <div class="description">
@@ -979,43 +1079,6 @@ Default is the NodeList instance.</span>
                                                         Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">Returns an event handle that can later be use to detach().</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_plug">
-                                    <h4>
-                                        <a name="method_plug">plug</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">plug</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Called on each Node instance
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
                                                 </dl>
 
 
@@ -1576,6 +1639,36 @@ Default context is the current Node instance</span>
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_toDocFrag">
+                                    <h4>
+                                        <a name="method_toDocFrag">toDocFrag</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">toDocFrag</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates a documenFragment from the nodes bound to the NodeList instance
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_toggleClass">
                                     <h4>
                                         <a name="method_toggleClass">toggleClass</a></h4>
@@ -1630,43 +1723,6 @@ Default context is the current Node instance</span>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_unplug">
-                                    <h4>
-                                        <a name="method_unplug">unplug</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">unplug</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Called on each Node instance
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                             </div>
                         </div>
 
@@ -1691,6 +1747,7 @@ Default context is the current Node instance</span>
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
@@ -1717,7 +1774,8 @@ Default context is the current Node instance</span>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -1742,11 +1800,11 @@ Default context is the current Node instance</span>
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="node-aria.js.html" title="node-aria.js">node-aria.js</a></li>
                                 <li class=""><a href="node-class.js.html" title="node-class.js">node-class.js</a></li>
                                 <li class=""><a href="node-event-delegate.js.html" title="node-event-delegate.js">node-event-delegate.js</a></li>
                                 <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
                                 <li class=""><a href="node-imports.js.html" title="node-imports.js">node-imports.js</a></li>
+                                <li class=""><a href="node-pluginhost.js.html" title="node-pluginhost.js">node-pluginhost.js</a></li>
                                 <li class=""><a href="node-region.js.html" title="node-region.js">node-region.js</a></li>
                                 <li class=""><a href="node-screen.js.html" title="node-screen.js">node-screen.js</a></li>
                                 <li class=""><a href="node-style.js.html" title="node-style.js">node-style.js</a></li>
@@ -1767,6 +1825,7 @@ Default context is the current Node instance</span>
                                 <li class=""><a href="#method_each" title="each">each</a></li>
                                 <li class=""><a href="#method_even" title="even">even</a></li>
                                 <li class=""><a href="#method_filter" title="filter">filter</a></li>
+                                <li class=""><a href="#method_get" title="get">get</a></li>
                                 <li class=""><a href="#method_getAttribute" title="getAttribute">getAttribute</a></li>
                                 <li class=""><a href="#method_getComputedStyle" title="getComputedStyle">getComputedStyle</a></li>
                                 <li class=""><a href="#method_getStyle" title="getStyle">getStyle</a></li>
@@ -1774,10 +1833,10 @@ Default context is the current Node instance</span>
                                 <li class=""><a href="#method_indexOf" title="indexOf">indexOf</a></li>
                                 <li class=""><a href="#method_insert" title="insert">insert</a></li>
                                 <li class=""><a href="#method_item" title="item">item</a></li>
+                                <li class=""><a href="#method_modulus" title="modulus">modulus</a></li>
                                 <li class=""><a href="#method_NodeList.getDOMNodes" title="NodeList.getDOMNodes">NodeList.getDOMNodes</a></li>
                                 <li class=""><a href="#method_odd" title="odd">odd</a></li>
                                 <li class=""><a href="#method_on" title="on">on</a></li>
-                                <li class=""><a href="#method_plug" title="plug">plug</a></li>
                                 <li class=""><a href="#method_prepend" title="prepend">prepend</a></li>
                                 <li class=""><a href="#method_remove" title="remove">remove</a></li>
                                 <li class=""><a href="#method_removeClass" title="removeClass">removeClass</a></li>
@@ -1789,8 +1848,8 @@ Default context is the current Node instance</span>
                                 <li class=""><a href="#method_setStyles" title="setStyles">setStyles</a></li>
                                 <li class=""><a href="#method_size" title="size">size</a></li>
                                 <li class=""><a href="#method_some" title="some">some</a></li>
+                                <li class=""><a href="#method_toDocFrag" title="toDocFrag">toDocFrag</a></li>
                                 <li class=""><a href="#method_toggleClass" title="toggleClass">toggleClass</a></li>
-                                <li class=""><a href="#method_unplug" title="unplug">unplug</a></li>
                         </ul>
                     </div>
 
@@ -1805,7 +1864,7 @@ Default context is the current Node instance</span>
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "NodeList", "name": "addClass", "url": "NodeList.html#method_addClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "after", "url": "NodeList.html#method_after", "type": "method"}, {"access": "", "host": "NodeList", "name": "append", "url": "NodeList.html#method_append", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "detachAll", "url": "NodeList.html#method_detachAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "even", "url": "NodeList.html#method_even", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getComputedStyle", "url": "NodeList.html#method_getComputedStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "getStyle", "url": "NodeList.html#method_getStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasClass", "url": "NodeList.html#method_hasClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "NodeList", "name": "insert", "url": "NodeList.html#method_insert", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "NodeList.getDOMNodes", "url": "NodeList.html#method_NodeList.getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "odd", "url": "NodeList.html#method_odd", "type": "method"}, {"access": "", "host": "NodeList", "name": "on", "url": "NodeList.html#method_on", "type": "method"}, {"access": "", "host": "NodeList", "name": "plug", "url": "NodeList.html#method_plug", "type": "method"}, {"access": "", "host": "NodeList", "name": "prepend", "url": "NodeList.html#method_prepend", "type": "method"}, {"access": "", "host": "NodeList", "name": "remove", "url": "NodeList.html#method_remove", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeClass", "url": "NodeList.html#method_removeClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceClass", "url": "NodeList.html#method_replaceClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "set", "url": "NodeList.html#method_set", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "setContent", "url": "NodeList.html#method_setContent", "type": "method"}, {"access": "", "host": "NodeList", "name": "setStyle", "url": "NodeList.html#method_setStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "setStyles", "url": "NodeList.html#method_setStyles", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "NodeList", "name": "toggleClass", "url": "NodeList.html#method_toggleClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "unplug", "url": "NodeList.html#method_unplug", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "NodeList", "name": "addClass", "url": "NodeList.html#method_addClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "after", "url": "NodeList.html#method_after", "type": "method"}, {"access": "", "host": "NodeList", "name": "append", "url": "NodeList.html#method_append", "type": "method"}, {"access": "", "host": "NodeList", "name": "detach", "url": "NodeList.html#method_detach", "type": "method"}, {"access": "", "host": "NodeList", "name": "detachAll", "url": "NodeList.html#method_detachAll", "type": "method"}, {"access": "", "host": "NodeList", "name": "each", "url": "NodeList.html#method_each", "type": "method"}, {"access": "", "host": "NodeList", "name": "even", "url": "NodeList.html#method_even", "type": "method"}, {"access": "", "host": "NodeList", "name": "filter", "url": "NodeList.html#method_filter", "type": "method"}, {"access": "", "host": "NodeList", "name": "get", "url": "NodeList.html#method_get", "type": "method"}, {"access": "", "host": "NodeList", "name": "getAttribute", "url": "NodeList.html#method_getAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "getComputedStyle", "url": "NodeList.html#method_getComputedStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "getStyle", "url": "NodeList.html#method_getStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "hasClass", "url": "NodeList.html#method_hasClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "indexOf", "url": "NodeList.html#method_indexOf", "type": "method"}, {"access": "", "host": "NodeList", "name": "insert", "url": "NodeList.html#method_insert", "type": "method"}, {"access": "", "host": "NodeList", "name": "item", "url": "NodeList.html#method_item", "type": "method"}, {"access": "", "host": "NodeList", "name": "modulus", "url": "NodeList.html#method_modulus", "type": "method"}, {"access": "", "host": "NodeList", "name": "NodeList.getDOMNodes", "url": "NodeList.html#method_NodeList.getDOMNodes", "type": "method"}, {"access": "", "host": "NodeList", "name": "odd", "url": "NodeList.html#method_odd", "type": "method"}, {"access": "", "host": "NodeList", "name": "on", "url": "NodeList.html#method_on", "type": "method"}, {"access": "", "host": "NodeList", "name": "prepend", "url": "NodeList.html#method_prepend", "type": "method"}, {"access": "", "host": "NodeList", "name": "remove", "url": "NodeList.html#method_remove", "type": "method"}, {"access": "", "host": "NodeList", "name": "removeClass", "url": "NodeList.html#method_removeClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "replaceClass", "url": "NodeList.html#method_replaceClass", "type": "method"}, {"access": "", "host": "NodeList", "name": "set", "url": "NodeList.html#method_set", "type": "method"}, {"access": "", "host": "NodeList", "name": "setAttribute", "url": "NodeList.html#method_setAttribute", "type": "method"}, {"access": "", "host": "NodeList", "name": "setContent", "url": "NodeList.html#method_setContent", "type": "method"}, {"access": "", "host": "NodeList", "name": "setStyle", "url": "NodeList.html#method_setStyle", "type": "method"}, {"access": "", "host": "NodeList", "name": "setStyles", "url": "NodeList.html#method_setStyles", "type": "method"}, {"access": "", "host": "NodeList", "name": "size", "url": "NodeList.html#method_size", "type": "method"}, {"access": "", "host": "NodeList", "name": "some", "url": "NodeList.html#method_some", "type": "method"}, {"access": "", "host": "NodeList", "name": "toDocFrag", "url": "NodeList.html#method_toDocFrag", "type": "method"}, {"access": "", "host": "NodeList", "name": "toggleClass", "url": "NodeList.html#method_toggleClass", "type": "method"}];
 </script>
 </body>
 </html>

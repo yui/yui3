@@ -1,10 +1,23 @@
-YUI.add('event-custom', function(Y) {
+YUI.add('event-custom-base', function(Y) {
+
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM
+ * events.
+ * @module event-custom
+ */
 
 Y.Env.evt = {
     handles: {},
     plugins: {}
 };
 
+
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event-custom
+ * @submodule event-custom-base
+ */
 (function() {
 
 /**
@@ -143,8 +156,6 @@ Y.Do.Method = function(obj, sFn) {
     this.obj = obj;
     this.methodName = sFn;
     this.method = obj[sFn];
-    // this.before = [];
-    // this.after = [];
     this.before = {};
     this.after = {};
 };
@@ -158,10 +169,8 @@ Y.Do.Method = function(obj, sFn) {
  */
 Y.Do.Method.prototype.register = function (sid, fn, when) {
     if (when) {
-        // this.after.push(fn);
         this.after[sid] = fn;
     } else {
-        // this.before.push(fn);
         this.before[sid] = fn;
     }
 };
@@ -290,132 +299,12 @@ Y.Do.Error = Y.Do.Halt;
 // Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
 
 })();
-(function() {
-
-/**
- * Wraps and protects a custom event for use when emitFacade is set to true.
- * @class EventFacade
- * @param e {Event} the custom event
- * @param currentTarget {HTMLElement} the element the listener was attached to
- */
-
-/*
-var PROPS = {
-    details: 1,
-    type: 1,
-    target: 1,
-    currentTarget: 1,
-    stopPropagation: 2,
-    stopImmediatePropagation: 2,
-    preventDefault: 2,
-    halt: 2
-};
-
-Y.EventFacade = function(e, currentTarget) {
-    if (e) {
-        Y.Object.each(PROPS, function(v, k) {
-            //this[k] = (v == 2) ? e[k].apply(e, arguments) : e[k];
-            var val = e[k];
-            if (val) {
-                this[k] = (v == 2) ? function() {
-                    if (val) {
-                        val.apply(e, arguments);
-                    }
-                } : val;
-            } else {
-                console.log('missing ' + k);
-            }
-        });
-    }
-};
-*/
-
-Y.EventFacade = function(e, currentTarget) {
-
-    e = e || {};
-
-    /**
-     * The arguments passed to fire 
-     * @property details
-     * @type Array
-     */
-    this.details = e.details;
-
-    /**
-     * The event type
-     * @property type
-     * @type string
-     */
-    this.type = e.type;
-
-    //////////////////////////////////////////////////////
-
-    /**
-     * Node reference for the targeted eventtarget
-     * @propery target
-     * @type Node
-     */
-    this.target = e.target;
-
-    /**
-     * Node reference for the element that the listener was attached to.
-     * @propery currentTarget
-     * @type Node
-     */
-    this.currentTarget = currentTarget;
-
-    /**
-     * Node reference to the relatedTarget
-     * @propery relatedTarget
-     * @type Node
-     */
-    this.relatedTarget = e.relatedTarget;
-    
-    /**
-     * Stops the propagation to the next bubble target
-     * @method stopPropagation
-     */
-    this.stopPropagation = function() {
-        e.stopPropagation();
-    };
-
-    /**
-     * Stops the propagation to the next bubble target and
-     * prevents any additional listeners from being exectued
-     * on the current target.
-     * @method stopImmediatePropagation
-     */
-    this.stopImmediatePropagation = function() {
-        e.stopImmediatePropagation();
-    };
-
-    /**
-     * Prevents the event's default behavior
-     * @method preventDefault
-     */
-    this.preventDefault = function() {
-        e.preventDefault();
-    };
-
-    /**
-     * Stops the event propagation and prevents the default
-     * event behavior.
-     * @method halt
-     * @param immediate {boolean} if true additional listeners
-     * on the current target will not be executed
-     */
-    this.halt = function(immediate) {
-        e.halt(immediate);
-    };
-
-};
-
-})();
 
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
  * @module event-custom
+ * @submodule event-custom-base
  */
 
 /**
@@ -433,7 +322,6 @@ var AFTER = 'after',
         'bubbles',
         'context',
         'contextFn',
-        'configured',
         'currentTarget',
         'defaultFn',
         'details',
@@ -449,9 +337,6 @@ var AFTER = 'after',
         'type'
     ],
 
-    FACADE = new Y.EventFacade(),
-
-    FACADE_KEYS = Y.Object.keys(FACADE),
 
     YUI3_SIGNATURE = 9,
     YUI_LOG = 'yui:log';
@@ -540,6 +425,14 @@ Y.CustomEvent = function(type, o) {
      */
     this.silent = this.logSystem;
 
+    /**
+     * Specifies whether this event should be queued when the host is actively
+     * processing an event.  This will effect exectution order of the callbacks
+     * for the various events.
+     * @property queuable
+     * @type boolean
+     * @default false
+     */
     // this.queuable = false;
 
     /**
@@ -548,14 +441,6 @@ Y.CustomEvent = function(type, o) {
      * @type Subscriber{}
      */
     this.subscribers = {};
-
-    /*
-     * The publisher has configured this event
-     * @property configured
-     * @type boolean
-     * @default true
-     */
-    // this.configured = true;
 
     /**
      * 'After' subscribers
@@ -683,8 +568,6 @@ Y.CustomEvent = function(type, o) {
 
 Y.CustomEvent.prototype = {
 
-    _YUI_EVENT: true,
-
     /**
      * Apply configuration properties.  Only applies the CONFIG whitelist
      * @method applyConfig
@@ -701,7 +584,7 @@ Y.CustomEvent.prototype = {
     _on: function(fn, context, args, when) {
 
         if (!fn) {
-            Y.error("Invalid callback for CE: " + this.type);
+            this.log("Invalid callback for CE: " + this.type);
         }
 
         var s = new Y.Subscriber(fn, context, args, when);
@@ -731,6 +614,7 @@ Y.CustomEvent.prototype = {
      * @deprecated use on
      */
     subscribe: function(fn, context) {
+        Y.log('ce.subscribe deprecated, use "on"', 'warn', 'deprecated');
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
         return this._on(fn, context, a, true);
     },
@@ -767,28 +651,23 @@ Y.CustomEvent.prototype = {
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed
      * @param {Object}   context The context object passed to subscribe.
-     * @return {boolean|EventTarget} returns a chainable event target
-     * or a boolean for legacy detach support.
+     * @return {int|EventTarget} returns a chainable event target
+     * or the number of subscribers unsubscribed.
      */
     detach: function(fn, context) {
-
-        // if arg[0] typeof unsubscribe handle
+        // unsubscribe handle
         if (fn && fn.detach) {
             return fn.detach();
         }
 
-        if (!fn) {
-            return this.unsubscribeAll();
-        }
-
-        var found = false, subs = this.subscribers, i, s;
+        var found = 0, subs = this.subscribers, i, s;
 
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {
                 s = subs[i];
-                if (s && s.contains(fn, context)) {
+                if (s && (!fn || fn === this.fn)) {
                     this._delete(s);
-                    found = true;
+                    found++;
                 }
             }
         }
@@ -810,44 +689,6 @@ Y.CustomEvent.prototype = {
         return this.detach.apply(this, arguments);
     },
 
-    _getFacade: function() {
-
-        var ef = this._facade, o, args = this.details, o2;
-
-        if (!ef) {
-            ef = new Y.EventFacade(this, this.currentTarget);
-        }
-
-        // if the first argument is an object literal, apply the
-        // properties to the event facade
-        o = args && args[0];
-
-        if (Y.Lang.isObject(o, true)) {
-
-            o2 = {};
-
-            // protect the event facade properties
-            Y.mix(o2, ef, true, FACADE_KEYS);
-
-            // mix the data
-            Y.mix(ef, o, true);
-
-            // restore ef
-            Y.mix(ef, o2, true, FACADE_KEYS);
-        }
-
-        // update the details field with the arguments
-        // ef.type = this.type;
-        ef.details = this.details;
-        ef.target = this.target;
-        ef.currentTarget = this.currentTarget;
-        ef.stopped = 0;
-        ef.prevented = 0;
-
-        this._facade = ef;
-
-        return this._facade;
-    },
 
     /**
      * Notify a single subscriber
@@ -858,26 +699,9 @@ Y.CustomEvent.prototype = {
      */
     _notify: function(s, args, ef) {
 
-        this.log(this.type + "->" + ": " +  s);
+        this.log(this.type + "->" + "sub: " +  s.id);
 
         var ret;
-
-        // emit an EventFacade if this is that sort of event
-        if (this.emitFacade) {
-
-            // @TODO object literal support to fire makes it possible for
-            // config info to be passed if we wish.
-            
-            if (!ef) {
-                ef = this._getFacade(args);
-
-                if (Y.Lang.isObject(args[0])) {
-                    args[0] = ef;
-                } else {
-                    args.unshift(ef);
-                }
-            }
-        }
 
         ret = s.notify(args, this);
 
@@ -916,220 +740,72 @@ Y.CustomEvent.prototype = {
      *                            the handler.
      * @return {boolean} false if one of the subscribers returned false, 
      *                   true otherwise
+     * 
      */
     fire: function() {
-
-        var es = Y.Env._eventstack,
-            subs, s, args, i, ef, q, queue, ce, hasSub,
-            ret = true, events;
-
-        // @TODO find a better way to short circuit this.  
-        // if (!this.broadcast && !this.defaultFn && !this.hasSubscribers && !this.hasAfters) {
-        //     return true;
-        // }
-
-        if (es) {
-
-            // queue this event if the current item in the queue bubbles
-            // if (b && this.queuable && this.type != es.next.type) {
-            if (this.queuable && this.type != es.next.type) {
-
-                this.log('queue ' + this.type);
-
-                es.queue.push([this, arguments]);
-                return true;
-            }
-
-        } else {
-
-            Y.Env._eventstack = {
-               // id of the first event in the stack
-               id: this.id,
-               next: this,
-               silent: this.silent,
-               logging: (this.type === YUI_LOG),
-               stopped: 0,
-               prevented: 0,
-               queue: []
-            };
-
-            es = Y.Env._eventstack;
-        }
-
         if (this.fireOnce && this.fired) {
-
             this.log('fireOnce event: ' + this.type + ' already fired');
-
+            return true;
         } else {
-
-            args = Y.Array(arguments, 0, true);
-
-            this.stopped = 0;
-            this.prevented = 0;
-            this.target = this.target || this.host;
-
-            events = new Y.EventTarget({
-                fireOnce: true,
-                context: this.host
-            });
-
-            this.events = events;
-
-            if (this.preventedFn) {
-                events.on('prevented', this.preventedFn);
-            }
-
-            if (this.stoppedFn) {
-                events.on('stopped', this.stoppedFn);
-            }
-
-            this.currentTarget = this.host || this.currentTarget;
 
             this.fired = true;
-            this.details = args.slice(); // original arguments in the details
 
-            // this.log("Firing " + this  + ", " + "args: " + args);
-            this.log("Firing " + this.type);
-
-            hasSub = false;
-            es.lastLogState = es.logging;
-            ef = null;
-
+            var args = Y.Array(arguments, 0, true);
             if (this.emitFacade) {
-
-                // this.fire({
-                //   foo: 1
-                //   bar: 2
-                // }
-                // this.fire({
-                //   bar: 2
-                // } // foo is still 1 unless we create a new facade
-                this._facade = null;
-
-                ef = this._getFacade(args);
-
-                if (Y.Lang.isObject(args[0])) {
-                    args[0] = ef;
-                } else {
-                    args.unshift(ef);
-                }
+                return this.fireComplex(args);
+            } else {
+                return this.fireSimple(args);
             }
+        }
+    },
 
-            if (this.hasSubscribers) {
-                subs = Y.merge(this.subscribers);
+    fireSimple: function(args) {
+        if (this.hasSubscribers || this.hasAfters) {
+            this._procSubs(Y.merge(this.subscribers, this.afters), args);
+        }
+        this._broadcast(args);
+        return this.stopped ? false : true;
+    },
 
-                for (i in subs) {
-                    if (subs.hasOwnProperty(i)) {
+    // Requires the event-custom-complex module for full funcitonality.
+    fireComplex: function(args) {
+        args[0] = args[0] || {};
+        return this.fireSimple(args);
+    },
 
-                        if (!hasSub) {
-                            es.logging = (es.logging || (this.type === YUI_LOG));
-                            hasSub = true;
-                        }
-
-                        // stopImmediatePropagation
-                        if (this.stopped == 2) {
-                            break;
-                        }
-
-                        s = subs[i];
-                        if (s && s.fn) {
-                            ret = this._notify(s, args, ef);
-                            if (false === ret) {
-                                this.stopped = 2;
-                            }
-                        }
+    _procSubs: function(subs, args, ef) {
+        var s, i;
+        for (i in subs) {
+            if (subs.hasOwnProperty(i)) {
+                s = subs[i];
+                if (s && s.fn) {
+                    if (false === this._notify(s, args, ef)) {
+                        this.stopped = 2;
                     }
-                }
-            }
-
-            es.logging = (es.lastLogState);
-
-            // bubble if this is hosted in an event target and propagation has not been stopped
-            if (this.bubbles && this.host && !this.stopped) {
-                es.stopped = 0;
-                es.prevented = 0;
-                ret = this.host.bubble(this);
-
-                this.stopped = Math.max(this.stopped, es.stopped);
-                this.prevented = Math.max(this.prevented, es.prevented);
-
-            }
-
-            // execute the default behavior if not prevented
-            if (this.defaultFn && !this.prevented) {
-                this.defaultFn.apply(this.host || this, args);
-            }
-
-            // broadcast listeners are fired as discreet events on the
-            // YUI instance and potentially the YUI global.
-            if (!this.stopped && this.broadcast) {
-
-                if (this.host !== Y) {
-                    Y.fire.apply(Y, args);
-                }
-
-                if (this.broadcast == 2) {
-                    Y.Global.fire.apply(Y.Global, args);
-                }
-            }
-
-            // process after listeners.  If the default behavior was
-            // prevented, the after events don't fire.
-            if (this.hasAfters && !this.prevented && this.stopped < 2) {
-                subs = Y.merge(this.afters);
-                for (i in subs) {
-                    if (subs.hasOwnProperty(i)) {
-
-                        if (!hasSub) {
-                            es.logging = (es.logging || (this.type === YUI_LOG));
-                            hasSub = true;
-                        }
-
-                        // stopImmediatePropagation
-                        if (this.stopped == 2) {
-                            break;
-                        }
-
-                        s = subs[i];
-                        if (s && s.fn) {
-                            ret = this._notify(s, args, ef);
-                            if (false === ret) {
-                                this.stopped = 2;
-                            }
-                        }
+                    if (this.stopped == 2) {
+                        return false;
                     }
                 }
             }
         }
 
-        if (es.id === this.id) {
-// console.log('clearing stack: ' + es.id + ', ' + this);
+        return true;
+    },
 
-// reset propragation properties while processing the rest of the queue
+    _broadcast: function(args) {
+        if (!this.stopped && this.broadcast) {
 
-// process queued events
-            queue = es.queue;
+            var a = Y.Array(args);
+            a.unshift(this.type);
 
-            while (queue.length) {
-                // q[0] = the event, q[1] = arguments to fire
-                q = queue.pop(); 
-                ce = q[0];
-
-// Y.log('firing queued event ' + ce.type + ', from ' + this);
-                es.stopped = 0;
-                es.prevented = 0;
-                
-// set up stack to allow the next item to be processed
-                es.next = ce;
-
-                ret = ce.fire.apply(ce, q[1]);
+            if (this.host !== Y) {
+                Y.fire.apply(Y, a);
             }
 
-            Y.Env._eventstack = null;
-        } 
-
-        // return (ret !== false);
-        return this.stopped ? false : true;
+            if (this.broadcast == 2) {
+                Y.Global.fire.apply(Y.Global, a);
+            }
+        }
     },
 
     /**
@@ -1148,17 +824,7 @@ Y.CustomEvent.prototype = {
      * @return {int} The number of listeners unsubscribed
      */
     detachAll: function() {
-        var subs = this.subscribers, i, l=0;
-        for (i in subs) {
-            if (subs.hasOwnProperty(i)) {
-                this._delete(subs[i]);
-                l++;
-            }
-        }
-
-        this.subscribers={};
-
-        return l;
+        return this.detach();
     },
 
     /**
@@ -1167,73 +833,13 @@ Y.CustomEvent.prototype = {
      * @private
      */
     _delete: function(s) {
-
         if (s) {
             delete s.fn;
             delete s.context;
             delete this.subscribers[s.id];
             delete this.afters[s.id];
         }
-
-    },
-
-    /**
-     * @method toString
-     */
-    toString: function() {
-         return this.type;
-    },
-
-    /**
-     * Stop propagation to bubble targets
-     * @method stopPropagation
-     */
-    stopPropagation: function() {
-        this.stopped = 1;
-        Y.Env._eventstack.stopped = 1;
-        this.events.fire('stopped', this);
-    },
-
-    /**
-     * Stops propagation to bubble targets, and prevents any remaining
-     * subscribers on the current target from executing.
-     * @method stopImmediatePropagation
-     */
-    stopImmediatePropagation: function() {
-        this.stopped = 2;
-        Y.Env._eventstack.stopped = 2;
-        this.events.fire('stopped', this);
-    },
-
-    /**
-     * Prevents the execution of this event's defaultFn
-     * @method preventDefault
-     */
-    preventDefault: function() {
-        if (this.preventable) {
-            this.prevented = 1;
-            Y.Env._eventstack.prevented = 1;
-
-            this.events.fire('prevented', this);
-        }
-    },
-
-    /**
-     * Stops the event propagation and prevents the default
-     * event behavior.
-     * @method halt
-     * @param immediate {boolean} if true additional listeners
-     * on the current target will not be executed
-     */
-    halt: function(immediate) {
-        if (immediate) {
-            this.stopImmediatePropagation();
-        } else {
-            this.stopPropagation();
-        }
-        this.preventDefault();
     }
-
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -1271,14 +877,6 @@ Y.Subscriber = function(fn, context, args) {
      */
     this.id = Y.stamp(this);
 
-    /*
-     * }
-     * fn bound to obj with additional arguments applied via Y.rbind
-     * @property wrappedFn
-     * @type Function
-     */
-    // this.wrappedFn = fn;
-
     /**
      * Additional arguments to propagate to the subscriber
      * @property args
@@ -1293,11 +891,6 @@ Y.Subscriber = function(fn, context, args) {
      */
     this.events = null;
     
-    // if (context) {
-    //     this.wrappedFn = Y.rbind.apply(Y, args);
-    // }
-    
-
 };
 
 Y.Subscriber.prototype = {
@@ -1338,8 +931,7 @@ Y.Subscriber.prototype = {
             c = (ce.contextFn) ? ce.contextFn() : ce.context;
         }
 
-        // Ease debugging by only catching errors if we will not re-throw
-        // them.
+        // only catch errors if we will not re-throw them.
         if (Y.config.throwFail) {
             ret = this._notify(c, args, ce);
         } else {
@@ -1369,17 +961,16 @@ Y.Subscriber.prototype = {
         } else {
             return (this.fn == fn);
         }
-    },
-
-    /**
-     * @method toString
-     */
-    toString: function() {
-        return "Subscriber " + this.id;
     }
+
 };
 
-// FACADE = new Y.EventFacade(new Y.CustomEvent('x'));
+/**
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
+ * events.
+ * @module event-custom
+ * @submodule event-custom-base
+ */
 (function() {
 
 /**
@@ -1431,7 +1022,7 @@ var L = Y.Lang,
      */
     _parseType = Y.cached(function(type, pre) {
 
-        var t = type, detachcategory, after, i, full_t;
+        var t = type, detachcategory, after, i;
 
         if (!L.isString(t)) {
             return t;
@@ -1445,16 +1036,8 @@ var L = Y.Lang,
             // Y.log(t);
         }
 
-        // parts = t.split(DETACH_PREFIX_SPLITTER);
-        // if (parts.length > 1) {
-        //     detachcategory = parts[0];
-        //     t = parts[1];
-        //     if (t == '*') {
-        //          t = null;
-        //     }
-        // }
-        
         i = t.indexOf(CATEGORY_DELIMITER);
+
         if (i > -1) {
             detachcategory = t.substr(0, (i));
             t = t.substr(i+1);
@@ -1463,9 +1046,8 @@ var L = Y.Lang,
             }
         }
 
-        full_t = _getType(t, pre);
-
-        return [detachcategory, full_t, after, t];
+        // detach category, full type with instance prefix, is this an after listener, short type
+        return [detachcategory, (pre) ? _getType(t, pre) : t, after, t];
     }),
 
     ET = function(opts) {
@@ -1474,7 +1056,7 @@ var L = Y.Lang,
 
         var o = (L.isObject(opts)) ? opts : {};
 
-        this._yuievt = {
+        this._yuievt = this._yuievt || {
 
             id: Y.guid(),
 
@@ -1515,7 +1097,11 @@ ET.prototype = {
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n, domevent;
 
-        if (L.isObject(type, true)) {
+        if (L.isObject(type)) {
+
+            if (L.isFunction(type)) {
+                return Y.Do.before.apply(Y.Do, arguments);
+            }
 
             f = fn; 
             c = context; 
@@ -1541,14 +1127,11 @@ ET.prototype = {
 
             return (this._yuievt.chain) ? this : ret;
 
-        } else if (L.isFunction(type)) {
-            return Y.Do.before.apply(Y.Do, arguments);
         }
-
+        
         detachcategory = parts[0];
         after = parts[2];
         shorttype = parts[3];
-
 
         // extra redirection so we catch adaptor events too.  take a look at this.
         if (Node && (this instanceof Node) && (shorttype in Node.DOM_EVENTS)) {
@@ -1561,6 +1144,7 @@ ET.prototype = {
         type = parts[1];
 
         if (this instanceof YUI) {
+
             adapt = Y.Env.evt.plugins[type];
             args  = Y.Array(arguments, 0, true);
             args[0] = shorttype;
@@ -1613,6 +1197,7 @@ ET.prototype = {
      * @deprecated use on
      */
     subscribe: function() {
+        Y.log('EventTarget subscribe() is deprecated, use on()', 'warn', 'deprecated');
         return this.on.apply(this, arguments);
     },
 
@@ -1633,12 +1218,23 @@ ET.prototype = {
      * @return {EventTarget} the host
      */
     detach: function(type, fn, context) {
+        var evts = this._yuievt.events, i, ret;
+
+        // detachAll disabled on the Y instance.
+        if (!type && (this !== Y)) {
+            for (i in evts) {
+                if (evts.hasOwnProperty(i)) {
+                    ret = evts[i].detach(fn, context);
+                }
+            }
+            return ret;
+        }
 
         var parts = _parseType(type, this._yuievt.config.prefix), 
         detachcategory = L.isArray(parts) ? parts[0] : null,
         shorttype = (parts) ? parts[3] : null,
         handle, adapt, store = Y.Env.evt.handles, cat, args,
-        evts = this._yuievt.events, ce, i, ret = true,
+        ce,
 
         keyDetacher = function(lcat, ltype) {
             var handles = lcat[ltype];
@@ -1672,7 +1268,7 @@ ET.prototype = {
         // If this is an event handle, use it to detach
         } else if (L.isObject(type) && type.detach) {
             ret = type.detach();
-            return (this._yuievt.chain) ? this : true;
+            return (this._yuievt.chain) ? this : ret;
         // extra redirection so we catch adaptor events too.  take a look at this.
         } else if (Y.Node && (this instanceof Y.Node) && ((!shorttype) || (shorttype in Y.Node.DOM_EVENTS))) {
             args = Y.Array(arguments, 0, true);
@@ -1689,27 +1285,18 @@ ET.prototype = {
             if (adapt && adapt.detach) {
                 return adapt.detach.apply(Y, args);
             // DOM event fork
-            } else if (!type || (!adapt && type.indexOf(':') == -1)) {
+            } else if (!type || (!adapt && (type in Y.Node.DOM_EVENTS))) {
                 args[0] = type;
                 return Y.Event.detach.apply(Y.Event, args);
             }
         }
 
-        if (type) {
-            ce = evts[type];
-            if (ce) {
-                return ce.detach(fn, context);
-            }
-        } else {
-            for (i in evts) {
-                if (evts.hasOwnProperty(i)) {
-                    ret = ret && evts[i].detach(fn, context);
-                }
-            }
-            return ret;
+        ce = evts[type];
+        if (ce) {
+            ret = ce.detach(fn, context);
         }
 
-        return (this._yuievt.chain) ? this : false;
+        return (this._yuievt.chain) ? this : ret;
     },
 
     /**
@@ -1729,7 +1316,6 @@ ET.prototype = {
      * @param type {string}   The type, or name of the event
      */
     detachAll: function(type) {
-        type = _getType(type, this._yuievt.config.prefix);
         return this.detach(type);
     },
 
@@ -1802,11 +1388,10 @@ ET.prototype = {
      *
      */
     publish: function(type, opts) {
-        // this._yuievt.config.prefix
+        var events, ce, ret, pre = this._yuievt.config.prefix;
 
-        type = _getType(type, this._yuievt.config.prefix);
+        type = (pre) ? _getType(type, pre) : type;
 
-        var events, ce, ret, o;
 
         if (L.isObject(type)) {
             ret = {};
@@ -1820,28 +1405,22 @@ ET.prototype = {
         events = this._yuievt.events; 
         ce = events[type];
 
-        //if (ce && !ce.configured) {
         if (ce) {
 // ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
             if (opts) {
                 ce.applyConfig(opts, true);
             }
-
         } else {
-            o = (opts) ?  Y.mix(opts, this._yuievt.defaults) : this._yuievt.defaults;
             // apply defaults
-
-            ce = new Y.CustomEvent(type, o);
-
+            ce = new Y.CustomEvent(type, (opts) ? Y.mix(opts, this._yuievt.defaults) : this._yuievt.defaults);
             events[type] = ce;
-
         }
 
         // make sure we turn the broadcast flag off if this
         // event was published as a result of bubbling
-        if (opts instanceof Y.CustomEvent) {
-            events[type].broadcast = false;
-        }
+        // if (opts instanceof Y.CustomEvent) {
+          //   events[type].broadcast = false;
+        // }
 
         return events[type];
     },
@@ -1878,11 +1457,20 @@ ET.prototype = {
      * if the intention is that a bubble target be notified, the event must 
      * be published on this object first.
      *
+     * The first argument is the event type, and any additional arguments are
+     * passed to the listeners as parameters.  If the first of these is an
+     * object literal, and the event is configured to emit an event facade,
+     * that object is mixed into the event facade and the facade is provided 
+     * in place of the original object.
+     *
      * @method fire
      * @param type {String|Object} The type of the event, or an object that contains
      * a 'type' property.
      * @param arguments {Object*} an arbitrary set of parameters to pass to 
-     * the handler.
+     * the handler.  If the first of these is an object literal and the event is
+     * configured to emit an event facade, the event facade will replace that
+     * parameter after the properties the object literal contains are copied to
+     * the event facade.
      * @return {Event.Target} the event host
      *                   
      */
@@ -1890,20 +1478,15 @@ ET.prototype = {
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, a, ret;
+            ce, a, ret, pre=this._yuievt.config.prefix;
 
-        t = _getType(t, this._yuievt.config.prefix);
-        ce = this.getEvent(t);
+        t = (pre) ? _getType(t, pre) : t;
+        ce = this.getEvent(t, true);
 
         // this event has not been published or subscribed to
         if (!ce) {
             
-            // if this object has bubble targets, we need to publish the
-            // event in order for it to bubble.
             if (this._yuievt.hasTargets) {
-                // ce = this.publish(t);
-                // ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
-                
                 a = (typeIncluded) ? arguments : Y.Array(arguments, 0, true).unshift(t);
                 return this.bubble(null, a, this);
             }
@@ -1928,73 +1511,17 @@ ET.prototype = {
      * falsy value otherwise
      * @method getEvent
      * @param type {string} the type, or name of the event
+     * @param prefixed {string} if true, the type is prefixed already
      * @return {Event.Custom} the custom event or null
      */
-    getEvent: function(type) {
-        type = _getType(type, this._yuievt.config.prefix);
-        var e = this._yuievt.events;
-        return (e && type in e) ? e[type] : null;
-    },
-
-    /**
-     * Propagate an event
-     * @method bubble
-     * @param evt {Event.Custom} the custom event to propagate
-     * @return {boolean} the aggregated return value from Event.Custom.fire
-     */
-    bubble: function(evt, args, target) {
-
-        var targs = this._yuievt.targets, ret = true,
-            t, type, ce, i;
-
-        if (!evt || ((!evt.stopped) && targs)) {
-
-            // Y.log('Bubbling ' + evt.type);
-            for (i in targs) {
-                if (targs.hasOwnProperty(i)) {
-                    t = targs[i]; 
-                    type = evt && evt.type;
-                    ce = t.getEvent(type); 
-                        
-                    // if this event was not published on the bubble target,
-                    // publish it with sensible default properties
-                    if (!ce) {
-
-                        // publish the event on the bubble target using this event
-                        // for its configuration
-                        // ce = t.publish(type, evt);
-
-                        // set the host and context appropriately
-                        // ce.context = (evt.host === evt.context) ? t : evt.context;
-                        // ce.host = t;
-
-                        // clear handlers if specified on this event
-                        // ce.defaultFn = null;
-                        // ce.preventedFn = null;
-                        // ce.stoppedFn = null;
-
-                        if (t._yuievt.hasTargets) {
-                            t.bubble.call(t, evt, args, target);
-                        }
-
-                    } else {
-
-                        ce.target = target || (evt && evt.target) || this;
-
-                        ce.currentTarget = t;
-
-                        ret = ret && ce.fire.apply(ce, args || evt.details);
-
-                        // stopPropagation() was called
-                        if (ce.stopped) {
-                            break;
-                        }
-                    }
-                }
-            }
+    getEvent: function(type, prefixed) {
+        var pre, e;
+        if (!prefixed) {
+            pre = this._yuievt.config.prefix;
+            type = (pre) ? _getType(type, pre) : type;
         }
-
-        return ret;
+        e = this._yuievt.events;
+        return (e && type in e) ? e[type] : null;
     },
 
     /**
@@ -2032,10 +1559,10 @@ ET.prototype = {
      * events, this is an alias for Y.on.
      *
      * For DOM and custom events:
-     * type, callback, context, 1-n arguments
+     * type, callback, context, 0-n arguments
      *  
      * For methods:
-     * callback, object (method host), methodName, context, 1-n arguments
+     * callback, object (method host), methodName, context, 0-n arguments
      *
      * @method before
      * @return detach handle
@@ -2074,3 +1601,364 @@ Y.Global = YUI.Env.globalEvents;
 
 
 }, '@VERSION@' ,{requires:['oop']});
+YUI.add('event-custom-complex', function(Y) {
+
+
+/**
+ * Adds event facades, preventable default behavior, and bubbling.
+ * events.
+ * @module event-custom
+ * @submodule event-custom-complex
+ */
+
+(function() {
+
+var FACADE, FACADE_KEYS, CEProto = Y.CustomEvent.prototype;
+
+/**
+ * Wraps and protects a custom event for use when emitFacade is set to true.
+ * Requires the event-custom-complex module
+ * @class EventFacade
+ * @param e {Event} the custom event
+ * @param currentTarget {HTMLElement} the element the listener was attached to
+ */
+
+Y.EventFacade = function(e, currentTarget) {
+
+    e = e || {};
+
+    /**
+     * The arguments passed to fire 
+     * @property details
+     * @type Array
+     */
+    this.details = e.details;
+
+    /**
+     * The event type
+     * @property type
+     * @type string
+     */
+    this.type = e.type;
+
+    //////////////////////////////////////////////////////
+
+    /**
+     * Node reference for the targeted eventtarget
+     * @propery target
+     * @type Node
+     */
+    this.target = e.target;
+
+    /**
+     * Node reference for the element that the listener was attached to.
+     * @propery currentTarget
+     * @type Node
+     */
+    this.currentTarget = currentTarget;
+
+    /**
+     * Node reference to the relatedTarget
+     * @propery relatedTarget
+     * @type Node
+     */
+    this.relatedTarget = e.relatedTarget;
+    
+    /**
+     * Stops the propagation to the next bubble target
+     * @method stopPropagation
+     */
+    this.stopPropagation = function() {
+        e.stopPropagation();
+    };
+
+    /**
+     * Stops the propagation to the next bubble target and
+     * prevents any additional listeners from being exectued
+     * on the current target.
+     * @method stopImmediatePropagation
+     */
+    this.stopImmediatePropagation = function() {
+        e.stopImmediatePropagation();
+    };
+
+    /**
+     * Prevents the event's default behavior
+     * @method preventDefault
+     */
+    this.preventDefault = function() {
+        e.preventDefault();
+    };
+
+    /**
+     * Stops the event propagation and prevents the default
+     * event behavior.
+     * @method halt
+     * @param immediate {boolean} if true additional listeners
+     * on the current target will not be executed
+     */
+    this.halt = function(immediate) {
+        e.halt(immediate);
+    };
+
+};
+
+CEProto.fireComplex = function(args) {
+    var es = Y.Env._eventstack, ef, q, queue, ce, ret, events;
+
+    if (es) {
+        // queue this event if the current item in the queue bubbles
+        if (this.queuable && this.type != es.next.type) {
+            this.log('queue ' + this.type);
+            es.queue.push([this, args]);
+            return true;
+        }
+    } else {
+        Y.Env._eventstack = {
+           // id of the first event in the stack
+           id: this.id,
+           next: this,
+           silent: this.silent,
+           stopped: 0,
+           prevented: 0,
+           queue: []
+        };
+        es = Y.Env._eventstack;
+    }
+
+    this.stopped = 0;
+    this.prevented = 0;
+    this.target = this.target || this.host;
+
+    events = new Y.EventTarget({
+        fireOnce: true,
+        context: this.host
+    });
+
+    this.events = events;
+
+    if (this.preventedFn) {
+        events.on('prevented', this.preventedFn);
+    }
+
+    if (this.stoppedFn) {
+        events.on('stopped', this.stoppedFn);
+    }
+
+    this.currentTarget = this.host || this.currentTarget;
+
+    this.details = args.slice(); // original arguments in the details
+
+    // this.log("Firing " + this  + ", " + "args: " + args);
+    this.log("Firing " + this.type);
+
+    this._facade = null; // kill facade to eliminate stale properties
+
+    ef = this._getFacade(args);
+
+    if (Y.Lang.isObject(args[0])) {
+        args[0] = ef;
+    } else {
+        args.unshift(ef);
+    }
+
+    if (this.hasSubscribers) {
+        this._procSubs(Y.merge(this.subscribers), args, ef);
+    }
+
+    // bubble if this is hosted in an event target and propagation has not been stopped
+    if (this.bubbles && this.host && this.host.bubble && !this.stopped) {
+        es.stopped = 0;
+        es.prevented = 0;
+        ret = this.host.bubble(this);
+
+        this.stopped = Math.max(this.stopped, es.stopped);
+        this.prevented = Math.max(this.prevented, es.prevented);
+
+    }
+
+    // execute the default behavior if not prevented
+    if (this.defaultFn && !this.prevented) {
+        this.defaultFn.apply(this.host || this, args);
+    }
+
+    // broadcast listeners are fired as discreet events on the
+    // YUI instance and potentially the YUI global.
+    this._broadcast(args);
+
+    // process after listeners.  If the default behavior was
+    // prevented, the after events don't fire.
+    if (this.hasAfters && !this.prevented && this.stopped < 2) {
+        this._procSubs(Y.merge(this.afters), args, ef);
+    }
+
+    if (es.id === this.id) {
+        queue = es.queue;
+
+        while (queue.length) {
+            q = queue.pop(); 
+            ce = q[0];
+            es.stopped = 0;
+            es.prevented = 0;
+            // set up stack to allow the next item to be processed
+            es.next = ce;
+            ce.fire.apply(ce, q[1]);
+        }
+
+        Y.Env._eventstack = null;
+    } 
+
+    return this.stopped ? false : true;
+};
+
+CEProto._getFacade = function() {
+
+    var ef = this._facade, o, o2,
+    args = this.details;
+
+    if (!ef) {
+        ef = new Y.EventFacade(this, this.currentTarget);
+    }
+
+    // if the first argument is an object literal, apply the
+    // properties to the event facade
+    o = args && args[0];
+
+    if (Y.Lang.isObject(o, true)) {
+
+        o2 = {};
+
+        // protect the event facade properties
+        Y.mix(o2, ef, true, FACADE_KEYS);
+
+        // mix the data
+        Y.mix(ef, o, true);
+
+        // restore ef
+        Y.mix(ef, o2, true, FACADE_KEYS);
+    }
+
+    // update the details field with the arguments
+    // ef.type = this.type;
+    ef.details = this.details;
+    ef.target = this.target;
+    ef.currentTarget = this.currentTarget;
+    ef.stopped = 0;
+    ef.prevented = 0;
+
+    this._facade = ef;
+
+    return this._facade;
+};
+
+/**
+ * Stop propagation to bubble targets
+ * @for CustomEvent
+ * @method stopPropagation
+ */
+CEProto.stopPropagation = function() {
+    this.stopped = 1;
+    Y.Env._eventstack.stopped = 1;
+    this.events.fire('stopped', this);
+};
+
+/**
+ * Stops propagation to bubble targets, and prevents any remaining
+ * subscribers on the current target from executing.
+ * @method stopImmediatePropagation
+ */
+CEProto.stopImmediatePropagation = function() {
+    this.stopped = 2;
+    Y.Env._eventstack.stopped = 2;
+    this.events.fire('stopped', this);
+};
+
+/**
+ * Prevents the execution of this event's defaultFn
+ * @method preventDefault
+ */
+CEProto.preventDefault = function() {
+    if (this.preventable) {
+        this.prevented = 1;
+        Y.Env._eventstack.prevented = 1;
+        this.events.fire('prevented', this);
+    }
+};
+
+/**
+ * Stops the event propagation and prevents the default
+ * event behavior.
+ * @method halt
+ * @param immediate {boolean} if true additional listeners
+ * on the current target will not be executed
+ */
+CEProto.halt = function(immediate) {
+    if (immediate) {
+        this.stopImmediatePropagation();
+    } else {
+        this.stopPropagation();
+    }
+    this.preventDefault();
+};
+
+/**
+ * Propagate an event.  Requires the event-custom-complex module.
+ * @method bubble
+ * @param evt {Event.Custom} the custom event to propagate
+ * @return {boolean} the aggregated return value from Event.Custom.fire
+ * @for EventTarget
+ */
+Y.EventTarget.prototype.bubble = function(evt, args, target) {
+
+    var targs = this._yuievt.targets, ret = true,
+        t, type, ce, i, bc;
+
+    if (!evt || ((!evt.stopped) && targs)) {
+
+        // Y.log('Bubbling ' + evt.type);
+        for (i in targs) {
+            if (targs.hasOwnProperty(i)) {
+                t = targs[i]; 
+                type = evt && evt.type;
+                ce = t.getEvent(type, true); 
+                    
+                // if this event was not published on the bubble target,
+                // publish it with sensible default properties
+                if (!ce) {
+
+                    if (t._yuievt.hasTargets) {
+                        t.bubble.call(t, evt, args, target);
+                    }
+
+                } else {
+                    ce.target = target || (evt && evt.target) || this;
+                    ce.currentTarget = t;
+
+                    bc = ce.broadcast;
+                    ce.broadcast = false;
+                    ret = ret && ce.fire.apply(ce, args || evt.details);
+                    ce.broadcast = bc;
+
+                    // stopPropagation() was called
+                    if (ce.stopped) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    return ret;
+};
+
+FACADE = new Y.EventFacade();
+FACADE_KEYS = Y.Object.keys(FACADE);
+
+})();
+
+
+}, '@VERSION@' ,{requires:['event-custom-base']});
+
+
+YUI.add('event-custom', function(Y){}, '@VERSION@' ,{use:['event-custom-base', 'event-custom-complex']});
+

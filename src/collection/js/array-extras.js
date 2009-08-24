@@ -44,33 +44,29 @@ A.lastIndexOf = (Native.lastIndexOf) ?
  * @return {Array} a copy of the array with duplicate entries removed
  */
 A.unique = function(a, sort) {
-    var s = L.isValue(sort) ? sort : false,
-        b = a.slice(), i = 0, n = -1, item = null;
-    if (s) {
-        while (i < b.length) {
-            if (b[i] === item) {
-                n = (n == -1 ? i : n);
-                i += 1;
-            } else if (n !== -1) {
-                b.splice(n, i-n);
-                i = n;                
-                n = -1;
-            } else {
-                item = b[i];
-                i += 1;
-            }
+    var b = a.slice(), i = 0, n = -1, item = null;
+
+    while (i < b.length) {
+        item = b[i];
+        while ((n = b.lastIndexOf(item)) !== i) {
+            b.splice(n, 1);
         }
-        return b;
-    } else {
-        while (i < b.length) {
-            item = b[i];
-            while ((n = b.lastIndexOf(item)) !== i) {
-                b.splice(n, 1);
-            }
-            i += 1;
-        }
-        return b;
+        i += 1;
     }
+
+    // Note: the sort option doesn't really belong here... I think it was added
+    // because there was a way to fast path the two operations together.  That
+    // implementation was not working, so I replaced it with the following.
+    // Leaving it in so that the API doesn't get broken.
+    if (sort) {
+        if (L.isNumber(b[0])) {
+            b.sort(A.numericSort);
+        } else {
+            b.sort();
+        }
+    }
+
+    return b;
 };
 
 /**

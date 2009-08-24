@@ -5,6 +5,7 @@ YUI.add('attribute-complex', function(Y) {
      *
      * @module attribute
      * @submodule attribute-complex
+     * @for Attribute
      */
 
     var O = Y.Object,

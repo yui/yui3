@@ -51,6 +51,7 @@
 <span class="c">/**</span>
 <span class="c"> * DOM event listener abstraction layer</span>
 <span class="c"> * @module event</span>
+<span class="c"> * @submodule event-base</span>
 <span class="c"> */</span>
 
 <span class="c">/**</span>
@@ -61,7 +62,6 @@
 <span class="c"> * @class Event</span>
 <span class="c"> * @static</span>
 <span class="c"> */</span>
-
 
 <span class="k">var</span> <span class="nx">add</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">add</span><span class="o">,</span>
 <span class="nx">remove</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">remove</span><span class="o">,</span>
@@ -338,11 +338,10 @@
             <span class="k">if</span> <span class="o">(!</span><span class="nx">cewrapper</span><span class="o">)</span> <span class="o">{</span>
                 <span class="c">// create CE wrapper</span>
 <span class="c"></span>                <span class="nx">cewrapper</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">key</span><span class="o">,</span> <span class="o">{</span>
-                    <span class="c">//silent: true,</span>
-<span class="c"></span>                    <span class="c">// host: this,</span>
-<span class="c"></span>                    <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
+                    <span class="nx">silent</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+                    <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
                     <span class="nx">contextFn</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">cewrapper</span><span class="o">.</span><span class="nx">el</span><span class="o">);</span>
+                        <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">cewrapper</span><span class="o">.</span><span class="nx">el</span><span class="o">);</span>
                         <span class="k">return</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span><span class="o">;</span>
                     <span class="o">}</span>
                 <span class="o">});</span>
@@ -373,8 +372,7 @@
 
         <span class="nx">_attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">var</span> <span class="nx">trimmedArgs</span><span class="o">=</span><span class="nx">args</span><span class="o">.</span><span class="nx">slice</span><span class="o">(</span><span class="m">1</span><span class="o">),</span>
-                <span class="nx">compat</span><span class="o">,</span> <span class="nx">E</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span>
+            <span class="k">var</span> <span class="nx">compat</span><span class="o">,</span> <span class="nx">E</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span>
                 <span class="nx">handles</span><span class="o">,</span> <span class="nx">oEl</span><span class="o">,</span> <span class="nx">cewrapper</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> 
                 <span class="nx">fireNow</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span>
                 <span class="nx">type</span> <span class="o">=</span> <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">],</span>
@@ -383,10 +381,10 @@
                 <span class="nx">facade</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="o">.</span><span class="nx">facade</span><span class="o">,</span>
                 <span class="nx">capture</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="o">.</span><span class="nx">capture</span><span class="o">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">trimmedArgs</span><span class="o">[</span><span class="nx">trimmedArgs</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">]</span> <span class="o">===</span> <span class="nx">COMPAT_ARG</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">args</span><span class="o">[</span><span class="nx">args</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">]</span> <span class="o">===</span> <span class="nx">COMPAT_ARG</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">compat</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                <span class="nx">trimmedArgs</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
-            <span class="o">}</span>
+                <span class="c">// trimmedArgs.pop();</span>
+<span class="c"></span>            <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">fn</span> <span class="o">||</span> <span class="o">!</span><span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">)</span> <span class="o">{</span>
 <span class="c">// throw new TypeError(type + &quot; attach call failed, callback undefined&quot;);</span>
@@ -475,18 +473,15 @@
                 <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="c">// switched from obj to trimmedArgs[2] to deal with appened compat param</span>
-<span class="c"></span>            <span class="c">// context = trimmedArgs[2] || ((compat) ? el : Y.get(el));</span>
-<span class="c"></span>            <span class="nx">context</span> <span class="o">=</span> <span class="nx">trimmedArgs</span><span class="o">[</span><span class="m">2</span><span class="o">];</span>
-            
-            <span class="c">// set the context as the second arg to subscribe</span>
-<span class="c"></span>            <span class="nx">trimmedArgs</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="nx">context</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">compat</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">args</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
+            <span class="o">}</span>
 
-            <span class="c">// remove the &#39;obj&#39; param</span>
-<span class="c"></span>            <span class="nx">trimmedArgs</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+            <span class="nx">context</span> <span class="o">=</span> <span class="nx">args</span><span class="o">[</span><span class="m">3</span><span class="o">];</span>
 
             <span class="c">// set context to the Node if not specified</span>
-<span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">cewrapper</span><span class="o">,</span> <span class="nx">trimmedArgs</span><span class="o">);</span>
+<span class="c"></span>            <span class="c">// ret = cewrapper.on.apply(cewrapper, trimmedArgs);</span>
+<span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">_on</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="o">(</span><span class="nx">args</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">4</span><span class="o">)</span> <span class="o">?</span> <span class="nx">args</span><span class="o">.</span><span class="nx">slice</span><span class="o">(</span><span class="m">4</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">fireNow</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fire</span><span class="o">();</span>
@@ -704,7 +699,7 @@
                     <span class="nx">item</span><span class="o">.</span><span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">context</span><span class="o">,</span> <span class="nx">item</span><span class="o">.</span><span class="nx">obj</span><span class="o">);</span>
 
                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">context</span> <span class="o">=</span> <span class="nx">item</span><span class="o">.</span><span class="nx">obj</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
+                    <span class="nx">context</span> <span class="o">=</span> <span class="nx">item</span><span class="o">.</span><span class="nx">obj</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
                     <span class="nx">item</span><span class="o">.</span><span class="nx">fn</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">context</span><span class="o">,</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">ov</span><span class="o">))</span> <span class="o">?</span> <span class="nx">ov</span> <span class="o">:</span> <span class="o">[]);</span>
                 <span class="o">}</span>
 
@@ -716,7 +711,7 @@
                 <span class="nx">item</span> <span class="o">=</span> <span class="nx">_avail</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">item</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">item</span><span class="o">.</span><span class="nx">checkReady</span><span class="o">)</span> <span class="o">{</span>
 
-                    <span class="c">// el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);</span>
+                    <span class="c">// el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);</span>
 <span class="c"></span>                    <span class="nx">el</span> <span class="o">=</span> <span class="o">(</span><span class="nx">item</span><span class="o">.</span><span class="nx">compat</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">byId</span><span class="o">(</span><span class="nx">item</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">item</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
                     <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
@@ -735,7 +730,7 @@
                 <span class="nx">item</span> <span class="o">=</span> <span class="nx">_avail</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">item</span> <span class="o">&amp;&amp;</span> <span class="nx">item</span><span class="o">.</span><span class="nx">checkReady</span><span class="o">)</span> <span class="o">{</span>
 
-                    <span class="c">// el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);</span>
+                    <span class="c">// el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);</span>
 <span class="c"></span>                    <span class="nx">el</span> <span class="o">=</span> <span class="o">(</span><span class="nx">item</span><span class="o">.</span><span class="nx">compat</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">byId</span><span class="o">(</span><span class="nx">item</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">item</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
                     <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
@@ -780,7 +775,7 @@
 <span class="c">         * @static</span>
 <span class="c">         */</span>
         <span class="nx">purgeElement</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">recurse</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// var oEl = (Y.Lang.isString(el)) ? Y.get(el) : el,</span>
+            <span class="c">// var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,</span>
 <span class="c"></span>            <span class="k">var</span> <span class="nx">oEl</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">?</span>  <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="o">:</span> <span class="nx">el</span><span class="o">,</span>
                 <span class="nx">lis</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getListeners</span><span class="o">(</span><span class="nx">oEl</span><span class="o">,</span> <span class="nx">type</span><span class="o">),</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">lis</span><span class="o">)</span> <span class="o">{</span>
@@ -845,7 +840,6 @@
             <span class="o">});</span>
 
             <span class="nx">remove</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s2">&quot;load&quot;</span><span class="o">,</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_load</span><span class="o">);</span>
-            <span class="nx">remove</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s2">&quot;unload&quot;</span><span class="o">,</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_unload</span><span class="o">);</span>
         <span class="o">},</span>
 
         
@@ -916,6 +910,7 @@
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
@@ -942,7 +937,8 @@
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -976,6 +972,7 @@
                                 <li class=""><a href="focusblur.js.html" title="focusblur.js">focusblur.js</a></li>
                                 <li class=""><a href="key.js.html" title="key.js">key.js</a></li>
                                 <li class=""><a href="mouseentermouseleave.js.html" title="mouseentermouseleave.js">mouseentermouseleave.js</a></li>
+                                <li class=""><a href="mousewheel.js.html" title="mousewheel.js">mousewheel.js</a></li>
                                 <li class=""><a href="resize-window.js.html" title="resize-window.js">resize-window.js</a></li>
                         </ul>
                     </div>
@@ -993,7 +990,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "currentTarget", "url": "DOMEventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "relatedTarget", "url": "DOMEventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "target", "url": "DOMEventFacade.html#property_target", "type": "property"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "currentTarget", "url": "DOMEventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "_event", "url": "DOMEventFacade.html#property__event", "type": "property"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "relatedTarget", "url": "DOMEventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "target", "url": "DOMEventFacade.html#property_target", "type": "property"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "wheelDelta", "url": "DOMEventFacade.html#property_wheelDelta", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
 </script>
 </body>
 </html>

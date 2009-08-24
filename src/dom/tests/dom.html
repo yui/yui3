@@ -7,14 +7,6 @@
 <link type="text/css" rel="stylesheet" href="../../../../yui2/build/yuitest/assets/testlogger.css">     
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
-<script type="text/javascript" src="../../../build/event/event.js"></script>
-<script type="text/javascript" src="../../../build/oop/oop.js"></script>
-<script type="text/javascript" src="../../../build/dom/dom.js"></script>
-<script type="text/javascript" src="../../../build/attribute/attribute.js"></script>
-<script type="text/javascript" src="../../../build/base/base.js"></script>
-<script type="text/javascript" src="../../../build/node/node-debug.js"></script>
-
 <script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/event/event.js"></script>
@@ -127,7 +119,7 @@ form {
         </div>
     </div>
 <script type="text/javascript">
-    YUI({ base: '../build/', filter: 'debug' }).use('node', function(Y) {
+    YUI({ base: '../../../build/', filter: 'debug' }).use('node', function(Y) {
         tool = YAHOO.tool,
         Assert = YAHOO.util.Assert,
         ArrayAssert = YAHOO.util.ArrayAssert,
@@ -149,8 +141,6 @@ form {
             search_p = document.getElementById('search-p'),
             foo = document.getElementById('foo'),
             tmp = document.createElement('div');
-
-        Y.DOM.getStyle(foo, 'float');
 
         suite.add( new tool.TestCase({
             name: 'DOM',
@@ -187,51 +177,18 @@ form {
                 Assert.areEqual(content, Y.DOM.getText(node, content), 'setText("' + content + '")');
             },
 
-            test_firstChild: function() {
-                Assert.isNull(Y.DOM.firstChild(tmp), 'firstChild(tmp)');
-                Assert.isNull(Y.DOM.firstChild(null), 'firstChild(null)');
-                Assert.isNull(Y.DOM.firstChild(), 'firstChild()');
-                Assert.isNull(Y.DOM.firstChild(1), 'firstChild(1)');
-                Assert.areEqual(hd, Y.DOM.firstChild(doc), 'firstChild(doc)');
-
-                Assert.areEqual(bd, Y.DOM.firstChild(doc,
-                    function(node) { return node.id === 'bd'; }
-                ), 'firstChild(doc, fn)');
-
-            },
-
-            test_lastChild: function() {
-                Assert.isNull(Y.DOM.lastChild(tmp), 'lastChild(tmp)');
-                Assert.areEqual(ft, Y.DOM.lastChild(doc), 'lastChild(doc)');
-
-                Assert.areEqual(bd, Y.DOM.lastChild(doc,
-                    function(node) { return node.id === 'bd'; }
-                ), 'lastChild(doc, fn)');
-
-            },
-
             test_children: function() {
                 ArrayAssert.itemsAreEqual([], Y.DOM.children(tmp), 'children(tmp)');
                 ArrayAssert.itemsAreEqual([], Y.DOM.children(null), 'children(null)');
                 ArrayAssert.itemsAreEqual([], Y.DOM.children(), 'children()');
                 ArrayAssert.itemsAreEqual([hd, bd, ft], Y.DOM.children(doc), 'children(doc)');
 
+/*
                 ArrayAssert.itemsAreEqual([mod1, mod2], Y.DOM.children(main, function(node) {
                     return node.className === 'mod';
                 }), 'children(main, fn)');
+*/
             },           
-
-            test_childrenByTag: function() {
-                ArrayAssert.itemsAreEqual([], Y.DOM._childrenByTag(tmp), '_childrenByTag(tmp)');
-                ArrayAssert.itemsAreEqual([], Y.DOM._childrenByTag(null), '_childrenByTag(null)');
-                ArrayAssert.itemsAreEqual([], Y.DOM._childrenByTag(null, null), '_childrenByTag(null, null)');
-                ArrayAssert.itemsAreEqual([], Y.DOM._childrenByTag(), '_childrenByTag()');
-
-                ArrayAssert.itemsAreEqual([lorem], Y.DOM._childrenByTag(main, 'em'), 'children(main, "em")');
-                ArrayAssert.itemsAreEqual([search_p], Y.DOM._childrenByTag(search_fields, 'input', function(node) {
-                    return node.type === 'text';
-                },'_childrenByTag(main, "input", fn)'));
-            },            
 
             test_getStyle: function() {
                 Assert.areEqual('left',

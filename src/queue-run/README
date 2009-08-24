@@ -1,0 +1,25 @@
+Queue
+    The Queue module in its simplest form is just that: a simple queuing mechanism.  Items added to the Queue are removed via next().  With all additional functionality included, it allows you to create a chain of function callbacks executed in order via setTimeout.  It also supports timeout chained iterations for each item in the Queue.
+
+    There are three submodules available for Queue:
+    * queue-base - a simple queue with add(..) and next()
+    * queue-promote - adds promote(c) and delete(c) to queue-base
+    * queue-run - Adds a new fully featured queue class AsyncQueue with autorun
+                  asynchronous callback execution, timeout chaining, event
+                  broadcasting
+
+    See the user guide and API docs for more detail.
+
+3.0.0
+    * queue-base is now part of yui, queue-run and queue-promote are independent modules
+
+3.0.0 beta 1
+    * Overhaul.  Broken into queue-base, queue-promote, and queue-run.
+
+    See the user guide and API docs for more detail.
+
+3.0.0 PR2
+    No changes
+
+3.0.0 PR1
+    Initial release

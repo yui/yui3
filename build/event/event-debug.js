@@ -1,6 +1,7 @@
-/**
+/*
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 (function() {
@@ -45,7 +46,7 @@ var GLOBAL_ENV = YUI.Env,
         // it is safe to do so.
         if (navigator.userAgent.match(/MSIE/)) {
 
-            if (window !== window.top) {
+            if (self !== self.top) {
                 document.onreadystatechange = function() {
                     if (document.readyState == 'complete') {
                         document.onreadystatechange = null;
@@ -76,12 +77,13 @@ var GLOBAL_ENV = YUI.Env,
     }
 
 })();
-YUI.add('event', function(Y) {
+YUI.add('event-base', function(Y) {
 
 (function() {
-/**
+/*
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 var GLOBAL_ENV = YUI.Env,
@@ -110,6 +112,7 @@ if (GLOBAL_ENV.DOMReady) {
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
  * @module event
+ * @submodule event-base
  */
 
 /**
@@ -187,8 +190,11 @@ var whitelist = {
         63235: 39, // right
         63276: 33, // page up
         63277: 34, // page down
-        25: 9      // SHIFT-TAB (Safari provides a different key code in
+        25:     9, // SHIFT-TAB (Safari provides a different key code in
                    // this case, even though the shiftKey modifier is set)
+		63272: 46, // delete
+		63273: 36, // home
+		63275: 35  // end
     },
 
     /**
@@ -222,6 +228,8 @@ var whitelist = {
 
 Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
+    wrapper = wrapper || {};
+
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
         x = e.pageX, y = e.pageY, c, t;
 
@@ -230,6 +238,8 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     this.metaKey  = e.metaKey;
     this.shiftKey = e.shiftKey;
     this.type     = e.type;
+    this.clientX  = e.clientX;
+    this.clientY  = e.clientY;
 
     //////////////////////////////////////////////////////
 
@@ -244,6 +254,12 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     }
 
     this._yuifacade = true;
+
+    /**
+     * The native event
+     * @property _event
+     */
+    this._event = e;
 
     /**
      * The X location of the event on the page (including scroll)
@@ -329,7 +345,17 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
      * @type Node
      */
     this.relatedTarget = resolve(t);
-    
+
+    /**
+     * Number representing the direction and velocity of the movement of the mousewheel.
+     * Negative is down, the higher the number, the faster.  Applies to the mousewheel event.
+     * @property wheelDelta
+     * @type int
+     */
+    if (e.type == "mousewheel" || e.type == "DOMMouseScroll") {
+        this.wheelDelta = (e.detail) ? (e.detail * -1) : Math.round(e.wheelDelta / 80) || ((e.wheelDelta < 0) ? -1 : 1);
+    }
+
     //////////////////////////////////////////////////////
     // methods
 
@@ -343,9 +369,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         } else {
             e.cancelBubble = true;
         }
-        if (wrapper) {
-            wrapper.stopPropagation();
-        }
+        wrapper.stopped = 1;
     };
 
     /**
@@ -355,32 +379,27 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
      * @method stopImmediatePropagation
      */
     this.stopImmediatePropagation = function() {
-
         if (e.stopImmediatePropagation) {
             e.stopImmediatePropagation();
         } else {
             this.stopPropagation();
         }
-
-        if (wrapper) {
-            wrapper.stopImmediatePropagation();
-        }
+        wrapper.stopped = 2;
     };
 
     /**
      * Prevents the event's default behavior
      * @method preventDefault
+     * @param returnValue {string} sets the returnValue of the event to this value
+     * (rather than the default false value).  This can be used to add a customized 
+     * confirmation query to the beforeunload event).
      */
-    this.preventDefault = function() {
+    this.preventDefault = function(returnValue) {
         if (e.preventDefault) {
             e.preventDefault();
-        } else {
-            e.returnValue = false;
         }
-
-        if (wrapper) {
-            wrapper.preventDefault();
-        }
+        e.returnValue = returnValue || false;
+        wrapper.prevented = 1;
     };
 
     /**
@@ -407,6 +426,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 /**
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 /**
@@ -417,7 +437,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
  * @class Event
  * @static
  */
-
 
 var add = YUI.Env.add,
 remove = YUI.Env.remove,
@@ -694,11 +713,10 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             if (!cewrapper) {
                 // create CE wrapper
                 cewrapper = Y.publish(key, {
-                    //silent: true,
-                    // host: this,
+                    silent: true,
                     bubbles: false,
                     contextFn: function() {
-                        cewrapper.nodeRef = cewrapper.nodeRef || Y.get(cewrapper.el);
+                        cewrapper.nodeRef = cewrapper.nodeRef || Y.one(cewrapper.el);
                         return cewrapper.nodeRef;
                     }
                 });
@@ -729,8 +747,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
         _attach: function(args, config) {
 
-            var trimmedArgs=args.slice(1),
-                compat, E=Y.Event,
+            var compat, E=Y.Event,
                 handles, oEl, cewrapper, context, 
                 fireNow = false, ret,
                 type = args[0],
@@ -739,9 +756,9 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 facade = config && config.facade,
                 capture = config && config.capture;
 
-            if (trimmedArgs[trimmedArgs.length-1] === COMPAT_ARG) {
+            if (args[args.length-1] === COMPAT_ARG) {
                 compat = true;
-                trimmedArgs.pop();
+                // trimmedArgs.pop();
             }
 
             if (!fn || !fn.call) {
@@ -831,18 +848,15 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 }
             }
 
-            // switched from obj to trimmedArgs[2] to deal with appened compat param
-            // context = trimmedArgs[2] || ((compat) ? el : Y.get(el));
-            context = trimmedArgs[2];
-            
-            // set the context as the second arg to subscribe
-            trimmedArgs[1] = context;
+            if (compat) {
+                args.pop();
+            }
 
-            // remove the 'obj' param
-            trimmedArgs.splice(2, 1);
+            context = args[3];
 
             // set context to the Node if not specified
-            ret = cewrapper.subscribe.apply(cewrapper, trimmedArgs);
+            // ret = cewrapper.on.apply(cewrapper, trimmedArgs);
+            ret = cewrapper._on(fn, context, (args.length > 4) ? args.slice(4) : null);
 
             if (fireNow) {
                 cewrapper.fire();
@@ -1060,7 +1074,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     item.fn.call(context, item.obj);
 
                 } else {
-                    context = item.obj || Y.get(el);
+                    context = item.obj || Y.one(el);
                     item.fn.apply(context, (Y.Lang.isArray(ov)) ? ov : []);
                 }
 
@@ -1072,7 +1086,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 item = _avail[i];
                 if (item && !item.checkReady) {
 
-                    // el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);
+                    // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
                     el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
@@ -1091,7 +1105,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 item = _avail[i];
                 if (item && item.checkReady) {
 
-                    // el = (item.compat) ? Y.DOM.byId(item.id) : Y.get(item.id);
+                    // el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);
                     el = (item.compat) ? Y.DOM.byId(item.id) : Y.Selector.query(item.id, null, true);
 
                     if (el) {
@@ -1136,7 +1150,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @static
          */
         purgeElement: function(el, recurse, type) {
-            // var oEl = (Y.Lang.isString(el)) ? Y.get(el) : el,
+            // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
             var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
                 lis = this.getListeners(oEl, type), i, len;
             if (lis) {
@@ -1201,7 +1215,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             });
 
             remove(window, "load", E._load);
-            remove(window, "unload", E._unload);
         },
 
         
@@ -1259,6 +1272,13 @@ Event.Facade = Y.EventFacade;
 Event._poll();
 
 })();
+
+/**
+ * DOM event listener abstraction layer
+ * @module event
+ * @submodule event-base
+ */
+
 /**
  * Executes the callback as soon as the specified element 
  * is detected in the DOM.
@@ -1299,91 +1319,446 @@ Y.Env.evt.plugins.contentready = {
         return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
     }
 };
-(function() {
 
-var adapt = Y.Env.evt.plugins,
-    CAPTURE_CONFIG = { capture: true },
-    NOOP  = function(){},
 
-    // Opera implents capture phase events per spec rather than
-    // the more useful way it is implemented in other browsers:
-    // The event doesn't fire on a target unless there is a
-    // listener on an element in the target's ancestry.  If a
-    // capture phase listener is added only to the element that 
-    // will be the target of the event, the listener won't fire.  
-    // To get around this, we register a NOOP listener on the
-    // element's parent.
-    _captureHack = function(type, o) {
-        var el = (Y.Lang.isString(o)) ? Y.Selector.query(o, null, true) : o,
-            p  = el && el.parentNode;
+}, '@VERSION@' ,{requires:['event-custom-base']});
+YUI.add('event-delegate', function(Y) {
 
-        if (p) {
-            Y.Event._attach([type, NOOP, p], CAPTURE_CONFIG);
+/**
+ * Adds event delegation support to the library.
+ * 
+ * @module event
+ * @submodule event-delegate
+ */
+
+var Event = Y.Event,
+	Lang = Y.Lang,
+
+	delegates = {},
+	
+	specialTypes = {
+		mouseenter: "mouseover",
+		mouseleave: "mouseout"
+	},
+
+	focusMethods = {
+		focus: Event._attachFocus,
+		blur: Event._attachBlur
+	},
+
+	resolveTextNode = function(n) {
+	    try {
+	        if (n && 3 == n.nodeType) {
+	            return n.parentNode;
+	        }
+	    } catch(e) { }
+	    return n;
+	},
+
+    delegateHandler = function(delegateKey, e, el) {
+        var target = resolveTextNode((e.target || e.srcElement)), 
+            tests  = delegates[delegateKey],
+            spec, 
+			ename,
+			matched,
+			fn,
+			ev;
+
+
+		var getMatch = function(el, selector, container) {
+			
+			var returnVal;
+			
+			if (!el || el === container) {
+				returnVal = false;
+			}
+			else {
+				returnVal = Y.Selector.test(el, selector) ? el: getMatch(el.parentNode, selector, container);
+			}
+			
+			return returnVal;
+			
+		};
+
+
+        for (spec in tests) {
+
+            if (tests.hasOwnProperty(spec)) {
+
+                ename  = tests[spec];
+				fn	= tests.fn;
+				matched = null;
+
+
+				if (Y.Selector.test(target, spec, el)) {
+					matched = target;
+				}
+				else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {
+						
+					//	The target is a descendant of an element matching 
+					//	the selector, so crawl up to find the ancestor that 
+					//	matches the selector
+					
+					matched = getMatch(target, spec, el);
+					
+				}
+
+
+				if (matched) {
+
+                    if (!ev) {
+                        ev = new Y.DOMEventFacade(e, el);
+                        ev.container = ev.currentTarget;
+                    }
+
+                    ev.currentTarget = Y.Node.get(matched);
+
+					Y.publish(ename, {
+			               contextFn: function() {
+			                   return ev.currentTarget;
+			               }
+			           });
+
+					if (fn) {
+						fn(ev, ename);
+					}
+					else {
+                    	Y.fire(ename, ev);								
+					}
+					
+				}
+
+            }
         }
+
+    },
+
+	attach = function (type, key, element) {
+
+		var attachFn = focusMethods[type],
+			args = [type, 
+			function (e) {
+	            delegateHandler(key, (e || window.event), element);
+			}, 
+			element];
+
+
+		if (attachFn) {
+			attachFn(args, { capture: true, facade: false });
+		}
+		else {
+			Event._attach(args, { facade: false });
+		}
+		
+	},
+
+    sanitize = Y.cached(function(str) {
+        return str.replace(/[|,:]/g, '~');
+    });
+
+/**
+ * Sets up event delegation on a container element.  The delegated event
+ * will use a supplied selector to test if the target or one of the
+ * descendants of the target match it.  The supplied callback function 
+ * will only be executed if a match was encountered, and, in fact, 
+ * will be executed for each element that matches if you supply an 
+ * ambiguous selector.
+ *
+ * The event object for the delegated event is supplied to the callback
+ * function.  It is modified slightly in order to support all properties
+ * that may be needed for event delegation.  'currentTarget' is set to
+ * the element that matched the delegation specifcation.  'container' is
+ * set to the element that the listener is bound to (this normally would
+ * be the 'currentTarget').
+ *
+ * @event delegate
+ * @param type {string} 'delegate'
+ * @param fn {function} the callback function to execute.  This function
+ * will be provided the event object for the delegated event.
+ * @param el {string|node} the element that is the delegation container
+ * @param delegateType {string} the event type to delegate
+ * @param spec {string} a selector that must match the target of the
+ * event.
+ * @param context optional argument that specifies what 'this' refers to.
+ * @param args* 0..n additional arguments to pass on to the callback function.
+ * These arguments will be added after the event object.
+ * @return {EventHandle} the detach handle
+ * @for YUI
+ * @deprecated use Y.delegate
+ */
+Y.Env.evt.plugins.delegate = {
+
+    on: function(type, fn, el, delegateType, spec) {
+
+        Y.log('delegate event is deprecated, use Y.delegate()', 'warn', 'deprecated');
+
+		var args = Y.Array(arguments, 0, true);
+		
+		args.splice(3, 1);
+		
+		args[0] = delegateType;
+
+		return Y.delegate.apply(Y, args);
+
+    }
+
+};
+
+
+/**
+ * Sets up event delegation on a container element.  The delegated event
+ * will use a supplied selector to test if the target or one of the
+ * descendants of the target match it.  The supplied callback function 
+ * will only be executed if a match was encountered, and, in fact, 
+ * will be executed for each element that matches if you supply an 
+ * ambiguous selector.
+ *
+ * The event object for the delegated event is supplied to the callback
+ * function.  It is modified slightly in order to support all properties
+ * that may be needed for event delegation.  'currentTarget' is set to
+ * the element that matched the delegation specifcation.  'container' is
+ * set to the element that the listener is bound to (this normally would
+ * be the 'currentTarget').
+ *
+ * @method delegate
+ * @param type {string} the event type to delegate
+ * @param fn {function} the callback function to execute.  This function
+ * will be provided the event object for the delegated event.
+ * @param el {string|node} the element that is the delegation container
+ * @param spec {string} a selector that must match the target of the
+ * event.
+ * @param context optional argument that specifies what 'this' refers to.
+ * @param args* 0..n additional arguments to pass on to the callback function.
+ * These arguments will be added after the event object.
+ * @return {EventHandle} the detach handle
+ * @for YUI
+ */
+Y.Event.delegate = function (type, fn, el, spec) {
+
+    if (!spec) {
+        Y.log('delegate: no spec, nothing to do', 'warn', 'event');
+        return false;
+    }
+
+    // identifier to target the container
+    var guid = (Lang.isString(el) ? el : Y.stamp(el)), 
+            
+        // the custom event for the delegation spec
+        ename = 'delegate:' + guid + type + sanitize(spec),
+
+        // the key to the listener for the event type and container
+        delegateKey = type + guid,
+
+		delegate = delegates[delegateKey],
+
+        args = Y.Array(arguments, 0, true),
+
+		element;
+	
+
+    if (!delegate) {
+
+		delegate = {};
+		element = Lang.isString(el) ? Y.Selector.query(el) : Y.Node.getDOMNode(el);
+
+		if (specialTypes[type]) {
+			
+			if (!Event._fireMouseEnter) {
+				Y.log("Delegating a " + type + " event requires the event-mouseenter submodule.", "error", "Event");
+				return false;				
+			}
+			
+			type = specialTypes[type];
+			delegate.fn = Event._fireMouseEnter;
+		}
+
+		//	Create the DOM Event wrapper that will fire the custom event
+
+		if (Lang.isArray(element)) {
+
+			Y.Array.each(element, function (v) {
+				attach(type, delegateKey, v);
+			});
+
+		}
+		else {
+			attach(type, delegateKey, element);
+		}
+
+        delegates[delegateKey] = delegate;
+
+    }
+
+    delegate[spec] = ename;
+
+    args[0] = ename;
+
+    // remove element, delegation spec
+    args.splice(2, 2);
+        
+    // subscribe to the custom event for the delegation spec
+    return Y.on.apply(Y, args);
+	
+};
+
+Y.delegate = Event.delegate;
+
+
+}, '@VERSION@' ,{requires:['event-base']});
+YUI.add('event-mousewheel', function(Y) {
+
+/**
+ * Adds mousewheel event support
+ * @module event
+ * @submodule event-mousewheel
+ */
+var DOM_MOUSE_SCROLL = 'DOMMouseScroll',
+    fixArgs = function(args) {
+        var a = Y.Array(args, 0, true), target;
+        if (Y.UA.gecko) {
+            a[0] = DOM_MOUSE_SCROLL;
+            target = Y.config.win;
+        } else {
+            target = Y.config.doc;
+        }
+
+        if (a.length < 3) {
+            a[2] = target;
+        } else {
+            a.splice(2, 0, target);
+        }
+
+        return a;
     };
 
-
 /**
- * Adds a DOM focus listener.  Uses the focusin event in IE,
- * and the capture phase otherwise so that
- * the event propagates in a way that enables event delegation.
- *
- * Note: if you are registering this event on the intended target
- * rather than an ancestor, the element must be in the DOM in
- * order for it to work in Opera.
- *
- * @for YUI
- * @event focus
- * @param type {string} 'focus'
- * @param fn {function} the callback function to execute
- * @param o {string|HTMLElement|collection} the element(s) to bind
+ * Mousewheel event.  This listener is automatically attached to the
+ * correct target, so one should not be supplied.  Mouse wheel 
+ * direction and velocity is stored in the 'mouseDelta' field.
+ * @event mousewheel
+ * @param type {string} 'mousewheel'
+ * @param fn {function} the callback to execute
  * @param context optional context object
  * @param args 0..n additional arguments to provide to the listener.
  * @return {EventHandle} the detach handle
+ * @for YUI
  */
-adapt.focus = {
-    on: function(type, fn, o) {
-        var a = Y.Array(arguments, 0, true);
-        if (Y.UA.ie) {
-            a[0] = a[0].replace(/focus/, 'focusin');
-        } else if (Y.UA.opera) {
-            _captureHack(type, o);
-        }
-        return Y.Event._attach(a, CAPTURE_CONFIG);
+Y.Env.evt.plugins.mousewheel = {
+    on: function() {
+        return Y.Event._attach(fixArgs(arguments));
+    },
+
+    detach: function() {
+        return Y.Event.detach.apply(Y.Event, fixArgs(arguments));
     }
 };
+
+
+}, '@VERSION@' ,{requires:['event-base']});
+YUI.add('event-mouseenter', function(Y) {
 
 /**
- * Adds a DOM blur listener.  Uses the focusout event in IE,
- * and the capture phase otherwise so that
- * the event propagates in a way that enables event delegation.
- *
- * Note: if you are registering this event on the intended target
- * rather than an ancestor, the element must be in the DOM 
- * at the time of registration in order for it to work in Opera.
- *
- * @for YUI
- * @event blur
- * @param type {string} 'focus'
- * @param fn {function} the callback function to execute
- * @param o {string|HTMLElement|collection} the element(s) to bind
- * @param context optional context object
- * @param args 0..n additional arguments to provide to the listener.
- * @return {EventHandle} the detach handle
+ * Adds support for mouseenter/mouseleave events
+ * @module event
+ * @submodule event-mouseenter
  */
-adapt.blur = {
-    on: function(type, fn, o) {
-        var a = Y.Array(arguments, 0, true);
-        if (Y.UA.ie) {
-            a[0] = a[0].replace(/blur/, 'focusout');
-        } else if (Y.UA.opera) {
-            _captureHack(type, o);
-        }
-        return Y.Event._attach(a, CAPTURE_CONFIG);
-    }
+
+Y.Event._fireMouseEnter = function (e, eventName) {
+
+	var relatedTarget = e.relatedTarget,
+		currentTarget = e.currentTarget;
+
+	if (!currentTarget.compareTo(relatedTarget) && 
+		!currentTarget.contains(relatedTarget)) {
+
+		Y.publish(eventName, {
+               contextFn: function() {
+                   return e.currentTarget;
+               }
+           });
+
+		Y.fire(eventName, e);
+
+	}
+
 };
 
-})();
+var plugins = Y.Env.evt.plugins,
+	isString = Y.Lang.isString,
+
+	eventConfig = {
+
+    	on: function(type, fn, el) {
+
+	        var sDOMEvent = (type === "mouseenter") ? "mouseover" : "mouseout",
+
+				//	The name of the custom event
+				sEventName = type + ":" + (isString(el) ? el : Y.stamp(el)) + sDOMEvent,
+
+	            args = Y.Array(arguments, 0, true);
+
+			//	Bind an actual DOM event listener that will call the 
+			//	the custom event
+	        if (!Y.getEvent(sEventName)) {
+				Y.on(sDOMEvent, Y.rbind(Y.Event._fireMouseEnter, Y, sEventName), el);
+	        }
+
+	        args[0] = sEventName;
+
+	        // Remove the element from the args
+			args.splice(2, 1);
+
+	        // Subscribe to the custom event
+	        return Y.on.apply(Y, args);
+
+	    }
+
+	};
+
+
+/**
+ * Sets up a "mouseenter" listener&#151;a listener that is called the first time 
+ * the user's mouse enters the specified element(s).  By passing a CSS selector 
+ * as the fourth argument, can also be used to delegate a "mouseenter" 
+ * event listener.
+ * 
+ * @event mouseenter
+ * @param type {string} "mouseenter"
+ * @param fn {function} The method the event invokes.
+ * @param el {string|node} The element(s) to assign the listener to.
+ * @param spec {string} Optional.  String representing a selector that must 
+ * match the target of the event in order for the listener to be called.
+ * @return {EventHandle} the detach handle
+ * @for YUI
+ */
+plugins.mouseenter = eventConfig;
+
+/**
+* Sets up a "mouseleave" listener&#151;a listener that is called the first time 
+* the user's mouse leaves the specified element(s).  By passing a CSS selector 
+* as the fourth argument, can also be used to delegate a "mouseleave" 
+* event listener.
+* 
+* @event mouseleave
+* @param type {string} "mouseleave"
+* @param fn {function} The method the event invokes.
+* @param el {string|node} The element(s) to assign the listener to.
+* @param spec {string} Optional.  String representing a selector that must 
+* match the target of the event in order for the listener to be called.
+* @return {EventHandle} the detach handle
+* @for YUI
+ */
+plugins.mouseleave = eventConfig;
+
+
+}, '@VERSION@' ,{requires:['event-base']});
+YUI.add('event-key', function(Y) {
+
+/**
+ * Functionality to listen for one or more specific key combinations.
+ * @module event
+ * @submodule event-key
+ */
 
 /**
  * Add a key listener.  The listener will only be notified if the
@@ -1407,14 +1782,13 @@ Y.Env.evt.plugins.key = {
     on: function(type, fn, id, spec, o) {
         var a = Y.Array(arguments, 0, true), parsed, etype, criteria, ename;
 
+        parsed = spec && spec.split(':');
 
-        if (!spec || spec.indexOf(':') == -1) {
+        if (!spec || spec.indexOf(':') == -1 || !parsed[1]) {
 Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info', 'event');
-            a[0] = 'keypress';
+            a[0] = 'key' + ((parsed && parsed[0]) || 'press');
             return Y.on.apply(Y, a);
         }
-
-        parsed = spec.split(':');
 
         // key event type: 'down', 'up', or 'press'
         etype = parsed[0];
@@ -1479,163 +1853,127 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
         return Y.on.apply(Y, a);
     }
 };
-(function() {
 
-var Lang = Y.Lang,
 
-	delegates = {},
-
-	resolveTextNode = function(n) {
-	    try {
-	        if (n && 3 == n.nodeType) {
-	            return n.parentNode;
-	        }
-	    } catch(e) { }
-	    return n;
-	},
-
-    _worker = function(delegateKey, e, el) {
-        var target = resolveTextNode((e.target || e.srcElement)), 
-            tests  = delegates[delegateKey],
-            spec, 
-			ename,
-			elements,
-			nElements,
-			matched,
-			ev,
-			i;
-
-        for (spec in tests) {
-            if (tests.hasOwnProperty(spec)) {
-                ename  = tests[spec];
-				elements = Y.Selector.query(spec, el);
-				nElements = elements.length;
-				if (nElements > 0) {
-					i = elements.length - 1;
-					do {
-						matched = elements[i];
-	                    if (matched === target || Y.DOM.contains(matched, target)) {
-
-                            if (!ev) {
-                                ev = new Y.DOMEventFacade(e, el);
-	                            ev.container = ev.currentTarget;
-                            }
-
-	                        ev.currentTarget = Y.Node.get(matched);
-	                        Y.fire(ename, ev);
-	                    }
-					}
-					while (i--);
-				}
-            }
-        }
-    },
-
-	attach = function (type, key, element) {
-
-        // @TODO this approach makes it so we can't delegate custom
-        // event types like focus and blur.  There isn't currently
-        // a way to make these events emit the native event payload,
-        // so trying to fix this might mean that the implementation
-        // needs to be prepared for both payloads.
-        
-		Y.Event._attach([type, function (e) {
-            _worker(key, (e || window.event), element);
-		}, element], { facade: false });
-	},
-
-    _sanitize = Y.cached(function(str) {
-        return str.replace(/[|,:]/g, '~');
-    });
+}, '@VERSION@' ,{requires:['event-base']});
+YUI.add('event-focus', function(Y) {
 
 /**
- * Sets up event delegation on a container element.  The delegated event
- * will use a supplied selector to test if the target or one of the
- * descendants of the target match it.  The supplied callback function 
- * will only be executed if a match was encountered, and, in fact, 
- * will be executed for each element that matches if you supply an 
- * ambiguous selector.
- *
- * The event object for the delegated event is supplied to the callback
- * function.  It is modified slightly in order to support all properties
- * that may be needed for event delegation.  'currentTarget' is set to
- * the element that matched the delegation specifcation.  'container' is
- * set to the element that the listener is bound to (this normally would
- * be the 'currentTarget').
- *
- * @event delegate
- * @param type {string} 'delegate'
- * @param fn {function} the callback function to execute.  This function
- * will be provided the event object for the delegated event.
- * @param el {string|node} the element that is the delegation container
- * @param delegateType {string} the event type to delegate
- * @param spec {string} a selector that must match the target of the
- * event.
- * @param context optional argument that specifies what 'this' refers to.
- * @param args* 0..n additional arguments to pass on to the callback function.
- * These arguments will be added after the event object.
- * @return {EventHandle} the detach handle
- * @for YUI
+ * Adds focus and blur event listener support.  These events normally
+ * do not bubble, so this adds support for that so these events
+ * can be used in event delegation scenarios.
+ * 
+ * @module event
+ * @submodule event-focus
  */
-Y.Env.evt.plugins.delegate = {
+(function() {
 
-    on: function(type, fn, el, delegateType, spec) {
+var adapt = Y.Env.evt.plugins,
+    CAPTURE_CONFIG = { capture: true },
+    NOOP  = function(){},
 
-        if (!spec) {
-            Y.log('delegate: no spec, nothing to do', 'warn', 'event');
-            return false;
+    // Opera implents capture phase events per spec rather than
+    // the more useful way it is implemented in other browsers:
+    // The event doesn't fire on a target unless there is a
+    // listener on an element in the target's ancestry.  If a
+    // capture phase listener is added only to the element that 
+    // will be the target of the event, the listener won't fire.  
+    // To get around this, we register a NOOP listener on the
+    // element's parent.
+    _captureHack = function(type, o) {
+        var el = (Y.Lang.isString(o)) ? Y.Selector.query(o, null, true) : o,
+            p  = el && el.parentNode;
+
+        if (p) {
+            Y.Event._attach([type, NOOP, p], CAPTURE_CONFIG);
         }
+    };
 
-        // identifier to target the container
-        var guid = (Lang.isString(el) ? el : Y.stamp(el)), 
-                
-            // the custom event for the delegation spec
-            ename = 'delegate:' + guid + delegateType + _sanitize(spec),
 
-            // the key to the listener for the event type and container
-            delegateKey = delegateType + guid,
+Y.Event._attachFocus = function (args, config) {
 
-            a = Y.Array(arguments, 0, true),
+    var a = Y.Array(args, 0, true);
+    if (Y.UA.ie) {
+        a[0] = a[0].replace(/focus/, 'focusin');
+    } else if (Y.UA.opera) {
+        _captureHack(a[0], a[2]);
+    }
+    return Y.Event._attach(a, config);
+	
+};
 
-			element;
-		
+Y.Event._attachBlur = function (args, config) {
 
-        if (!(delegateKey in delegates)) {
+    var a = Y.Array(args, 0, true);
+    if (Y.UA.ie) {
+        a[0] = a[0].replace(/blur/, 'focusout');
+    } else if (Y.UA.opera) {
+        _captureHack(a[0], a[2]);
+    }
+    return Y.Event._attach(a, config);
+	
+};
 
-			if (Lang.isString(el)) {	//	Selector
-				element = Y.Selector.query(el);				
-			}
-			else {	// Node instance
-				element = Y.Node.getDOMNode(el);
-			}
+/**
+ * Adds a DOM focus listener.  Uses the focusin event in IE,
+ * and the capture phase otherwise so that
+ * the event propagates in a way that enables event delegation.
+ *
+ * Note: if you are registering this event on the intended target
+ * rather than an ancestor, the element must be in the DOM in
+ * order for it to work in Opera.
+ *
+ * @for YUI
+ * @event focus
+ * @param type {string} 'focus'
+ * @param fn {function} the callback function to execute
+ * @param o {string|HTMLElement|collection} the element(s) to bind
+ * @param context optional context object
+ * @param args 0..n additional arguments to provide to the listener.
+ * @return {EventHandle} the detach handle
+ */
+adapt.focus = {
+    on: function() {
+		return Y.Event._attachFocus(arguments, CAPTURE_CONFIG);
+    }
+};
 
-			if (Lang.isArray(element)) {
-
-				Y.Array.each(element, function (v) {
-					attach(delegateType, delegateKey, v);
-				});
-
-			}
-			else {
-				attach(delegateType, delegateKey, element);
-			}
-
-            delegates[delegateKey] = {};
-        }
-
-        delegates[delegateKey][spec] = ename;
-
-        a[0] = ename;
-
-        // remove element, delegation spec and context object from the args
-        a.splice(2, 3);
-            
-        // subscribe to the custom event for the delegation spec
-        return Y.on.apply(Y, a);
+/**
+ * Adds a DOM blur listener.  Uses the focusout event in IE,
+ * and the capture phase otherwise so that
+ * the event propagates in a way that enables event delegation.
+ *
+ * Note: if you are registering this event on the intended target
+ * rather than an ancestor, the element must be in the DOM 
+ * at the time of registration in order for it to work in Opera.
+ *
+ * @for YUI
+ * @event blur
+ * @param type {string} 'focus'
+ * @param fn {function} the callback function to execute
+ * @param o {string|HTMLElement|collection} the element(s) to bind
+ * @param context optional context object
+ * @param args 0..n additional arguments to provide to the listener.
+ * @return {EventHandle} the detach handle
+ */
+adapt.blur = {
+    on: function() {
+		return Y.Event._attachBlur(arguments, CAPTURE_CONFIG);
     }
 };
 
 })();
+
+
+}, '@VERSION@' ,{requires:['event-base']});
+YUI.add('event-resize', function(Y) {
+
+/**
+ * Adds a window resize event that has its behavior normalized to fire at the
+ * end of the resize rather than constantly during the resize.
+ * @module event
+ * @submodule event-resize
+ */
 (function() {
 
 var detachHandle,
@@ -1689,132 +2027,10 @@ Y.Env.evt.plugins.windowresize = {
 };
 
 })();
-var isString = Y.Lang.isString,
-
-	fireMouseEventForNode = function (node, relatedTarget, eventName, e, spec) {
-
-		if (!node.compareTo(relatedTarget) && !node.contains(relatedTarget)) {
-
-			e.container = e.currentTarget;
-			e.currentTarget = node;
-
-			Y.fire(eventName, e);
-			
-		}
-
-	},
 
 
-	handleMouseEvent = function (e, eventName, spec) {
-
-		var relatedTarget = e.relatedTarget,
-			currentTarget = e.currentTarget,
-			target = e.target;
-
-		if (spec) {
-
-			currentTarget.queryAll(spec).some(function (v) {
-
-				var bReturnVal;
-
-				if (v.compareTo(target) || v.contains(target)) {
-					fireMouseEventForNode(v, relatedTarget, eventName, e, spec);
-					bReturnVal = true;
-				}
-				
-				return bReturnVal; 
-			
-			});
-		
-		}
-		else {
-			fireMouseEventForNode(currentTarget, relatedTarget, eventName, e);
-		}
-
-	},
-
-	sanitize = Y.cached(function (str) {
-
-    	return str.replace(/[|,:]/g, "~");
-
-	}),
-
-	eventConfig = {
-
-    	on: function(type, fn, el, spec) {
-
-	        var sDOMEvent = (type === "mouseenter") ? "mouseover" : "mouseout",
-				sEventName = type + ":" + (isString(el) ? el : Y.stamp(el)) + sDOMEvent,
-	            args = Y.Array(arguments, 0, true),
-				sSelector;
-
-			if (isString(spec)) {
-				sSelector = spec;
-				sEventName = sEventName + sanitize(sSelector);
-			}
-
-	        if (!Y.getEvent(sEventName)) {
-
-	            // Set up the listener on the container
-	            Y.on(sDOMEvent, function (e) {
-	
-					handleMouseEvent(e, sEventName, sSelector);
-
-				}, el);
-	        }
-
-	        args[0] = sEventName;
+}, '@VERSION@' ,{requires:['event-base']});
 
 
-	        // Remove the element (and the spec--if defined) from the args
-		
-			if (sSelector) {
-	        	args.splice(2, 2);
-			}
-			else {
-				args.splice(2, 1);
-			}
-            
-	        // Subscribe to the custom event for the delegation spec
-	        return Y.on.apply(Y, args);
+YUI.add('event', function(Y){}, '@VERSION@' ,{use:['event-base', 'event-delegate', 'event-mousewheel', 'event-mouseenter', 'event-key', 'event-focus', 'event-resize']});
 
-	    }
-
-	};
-
-/**
- * Sets up a "mouseenter" listener&#151;a listener that is called the first time 
- * the user's mouse enters the specified element(s).  By passing a CSS selector 
- * as the fourth argument, can also be used to delegate a "mouseenter" 
- * event listener.
- * 
- * @event mouseenter
- * @param type {string} "mouseenter"
- * @param fn {function} The method the event invokes.
- * @param el {string|node} The element(s) to assign the listener to.
- * @param spec {string} Optional.  String representing a selector that must 
- * match the target of the event in order for the listener to be called.
- * @return {EventHandle} the detach handle
- * @for YUI
- */
-Y.Env.evt.plugins.mouseenter = eventConfig;
-
-/**
-* Sets up a "mouseleave" listener&#151;a listener that is called the first time 
-* the user's mouse leaves the specified element(s).  By passing a CSS selector 
-* as the fourth argument, can also be used to delegate a "mouseleave" 
-* event listener.
-* 
-* @event mouseleave
-* @param type {string} "mouseleave"
-* @param fn {function} The method the event invokes.
-* @param el {string|node} The element(s) to assign the listener to.
-* @param spec {string} Optional.  String representing a selector that must 
-* match the target of the event in order for the listener to be called.
-* @return {EventHandle} the detach handle
-* @for YUI
- */
-Y.Env.evt.plugins.mouseleave = eventConfig;
-
-
-}, '@VERSION@' ,{requires:['event-custom']});

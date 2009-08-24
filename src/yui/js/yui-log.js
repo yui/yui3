@@ -1,8 +1,15 @@
+/**
+ * Provides console log capability and exposes a custom event for
+ * console implementations.
+ * @module yui
+ * @submodule yui-log
+ */
 (function() {
 
 var INSTANCE = Y,
     LOGEVENT = 'yui:log',
     UNDEFINED = 'undefined',
+    LEVELS = { debug: 1, info: 1, warn: 1, error: 1 },
     _published;
 
 /**
@@ -25,13 +32,12 @@ var INSTANCE = Y,
  * @return {YUI}      YUI instance
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var c = Y.config, bail, excl, incl, m, f;
+    var Y = INSTANCE, c = Y.config, bail = false, excl, incl, m, f;
     // suppress log message if the config is off or the event stack
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
         // apply source filters
         if (src) {
-
             excl = c.logExclude; 
             incl = c.logInclude;
 
@@ -43,25 +49,27 @@ INSTANCE.log = function(msg, cat, src, silent) {
         }
 
         if (!bail) {
+
             if (c.useBrowserConsole) {
                 m = (src) ? src + ': ' + msg : msg;
-                if (typeof console != UNDEFINED) {
-                    f = (cat && console[cat]) ? cat : 'log';
+                if (typeof console != UNDEFINED && console.log) {
+                    f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
                     console[f](m);
                 } else if (typeof opera != UNDEFINED) {
                     opera.postError(m);
                 }
             }
 
-            if (Y.fire && !bail && !silent) {
+            if (Y.fire && !silent) {
                 if (!_published) {
                     Y.publish(LOGEVENT, {
                         broadcast: 2,
                         emitFacade: 1
                     });
-                    _published = true;
-                }
 
+                    _published = 1;
+
+                }
                 Y.fire(LOGEVENT, {
                     msg: msg, 
                     cat: cat, 

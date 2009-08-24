@@ -1,6 +1,7 @@
-/**
+/*
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 (function() {
@@ -45,7 +46,7 @@ var GLOBAL_ENV = YUI.Env,
         // it is safe to do so.
         if (navigator.userAgent.match(/MSIE/)) {
 
-            if (window !== window.top) {
+            if (self !== self.top) {
                 document.onreadystatechange = function() {
                     if (document.readyState == 'complete') {
                         document.onreadystatechange = null;

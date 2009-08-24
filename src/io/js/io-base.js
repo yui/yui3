@@ -169,81 +169,95 @@
    	* @static
 	* @param {string} uri - qualified path to transaction resource.
 	* @param {object} c - configuration object for the transaction.
+	* @param {number} i - transaction id, if already set by queue.
 	* @return object
    	*/
-   	function _io(uri, c) {
-   		var u, f,
-   			// Set default value of argument c to Object if
-   			// configuration object "c" does not exist.
-   			c = c || {},
-   			o = _create((arguments.length === 3) ? arguments[2] : null, c),
-   			m = (c.method) ? c.method.toUpperCase() : 'GET',
-   			d = (c.data) ? c.data : null;
+   	function _io(uri, c, i) {
+   		var f, o, m;
+   			c = c || {};
+   			o = _create(c.xdr, parseInt(i));
+   			m = c.method ? c.method.toUpperCase() : 'GET';
 
-   		o.abort = function () {
-   			c.xdr ? o.c.abort(o.id, c) : _ioCancel(o, 'abort');
-   		};
-   		o.isInProgress = function() {
-   			var s = (c.xdr) ? _isInProgress(o) : (o.c.readyState !== 4 && o.c.readyState !== 0);
-   			return s;
-   		};
-
-   		/* Determine configuration properties */
-   		// If config.form is defined, perform data operations.
    		if (c.form) {
-
    			if (c.form.upload) {
-   				u = Y.io._upload(o, uri, c);
-   				return u;
+   				return Y.io._upload(o, uri, c);
    			}
+   			else {
+				f = Y.io._serialize(c.form, c.data);
+				if (m === 'POST') {
+					c.data = f;
+					_setHeader('Content-Type', 'application/x-www-form-urlencoded');
+				}
+				else if (m === 'GET') {
+					uri = _concat(uri, f);
+				}
+			}
+		}
+		else if (c.data && m === 'GET') {
+			uri = _concat(uri, f);
+		}
 
-   			// Serialize the HTML form into a string of name-value pairs.
-   			f = Y.io._serialize(c.form);
-   			// If config.data is defined, concatenate the data to the form string.
-   			if (d) {
-   				f += "&" + d;
-   			}
-
-   			if (m === 'POST') {
-   				d = f;
-   				_setHeader('Content-Type', 'application/x-www-form-urlencoded');
-   			}
-   			else if (m === 'GET') {
-   				uri = _concat(uri, f);
-   			}
+   		if (c.xdr) {
+			if (c.xdr.use === 'native' && window.XDomainRequest || c.xdr.use === 'flash') {
+   				return Y.io.xdr(uri, o, c);
+			}
+			if (c.xdr.credentials) {
+				o.c.withCredentials = true;
+			}
    		}
-   		else if (d && m === 'POST') {
+
+   		o.c.onreadystatechange = function() { _readyState(o, c); };
+   		try {
+			o.c.open(m, uri, true);
+   		}
+   		catch(e0){
+			if (c.xdr) {
+				// This exception is usually thrown by browsers
+				// that do not support native XDR transactions.
+				return _resend(o, uri, c);
+			}
+		}
+
+   		if (c.data && m === 'POST') {
    			_setHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
    		}
 
-   		if (c.xdr) {
-   			Y.io._xdr(uri, o, c);
-   			return o;
-   		}
+   		_setHeaders(o.c, c.headers || {});
+		try {
+			// Using "null" will result in a POST request with
+			// no Content-Length defined.
+	   		o.c.send(c.data || '');
+		}
+   		catch(e1) {
+			if (c.xdr) {
+				// This exception is usually thrown by browsers
+				// that do not support native XDR transactions.
+				return _resend(o, uri, c);
+			}
+		}
 
+   		_ioStart(o.id, c);
    		// If config.timeout is defined, and the request is standard XHR,
    		// initialize timeout polling.
    		if (c.timeout) {
    			_startTimeout(o, c.timeout);
    		}
-   		/* End Configuration Properties */
 
-   		o.c.onreadystatechange = function() { _readyState(o, c); };
-   		try { _open(o.c, m, uri); } catch(e0) {}
-   		_setHeaders(o.c, (c.headers || {}));
-
-   		// Do not pass null, in the absence of data, as this
-   		// will result in a POST request with no Content-Length
-   		// defined.
-   		_async(o, (d || ''), c);
-
-   		return o;
+		return {
+			id: o.id,
+			abort: function() {
+				return o.c ? _ioCancel(o, 'abort') : false;
+			},
+			isInProgress: function() {
+				return o.c ? o.c.readyState !== 4 && o.c.readyState !== 0 : false;
+	   		}
+		}
    	}
 
    /**
    	* @description Method for creating and subscribing transaction events.
    	*
-   	* @method _tPubSub
+   	* @method _subscribe
    	* @private
    	* @static
    	* @param {string} e - event to be published
@@ -251,11 +265,11 @@
    	*
 	* @return void
    	*/
-   	function _tPubSub(e, c){
-   			var event = new Y.EventTarget().publish('transaction:' + e);
-   			event.subscribe(c.on[e], (c.context || this), c.arguments);
+   	function _subscribe(e, c){
+   		var evt = new Y.EventTarget().publish('transaction:' + e);
+		evt.subscribe(c.on[e], (c.context || Y), c.arguments);
 
-   			return event;
+   		return evt;
    	}
 
    /**
@@ -272,23 +286,15 @@
     * @return void
    	*/
    	function _ioStart(id, c) {
-   		var m = Y.io._fn || {},
-   			fn = m[id] ? m[id] : null,
-   			event;
+   		var evt;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-   		if (fn) {
-   			c.on.start = fn.on.start;
-   			c.arguments = fn.arguments;
-   		}
-
    		Y.fire(E_START, id);
-
    		if (c.on.start) {
-   			event = _tPubSub('start', c);
-   			event.fire(id);
+   			evt = _subscribe('start', c);
+   			evt.fire(id);
    		}
    	}
 
@@ -307,17 +313,16 @@
     * @return void
    	*/
    	function _ioComplete(o, c) {
-   		var r, event;
+   		var r, evt;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-		r = (o.status) ? _response(o.status) : o.c;
+		r = o.status ? _response(o.status) : o.c;
    		Y.fire(E_COMPLETE, o.id, r);
-
    		if (c.on.complete) {
-   			event = _tPubSub('complete', c);
-   			event.fire(o.id, r);
+   			evt = _subscribe('complete', c);
+   			evt.fire(o.id, r);
    		}
    	}
 
@@ -335,25 +340,15 @@
     * @return void
    	*/
    	function _ioSuccess(o, c) {
-   		var m = Y.io._fn || {},
-   			fn = m[o.id] ? m[o.id] : null,
-   			event;
+   		var evt;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-   		if (fn) {
-   			c.on.success = fn.on.success;
-   			c.arguments = fn.arguments;
-   			//Decode the response from io.swf
-   			o.c.responseText = decodeURI(o.c.responseText);
-   		}
-
    		Y.fire(E_SUCCESS, o.id, o.c);
-
    		if (c.on.success) {
-   			event = _tPubSub('success', c);
-   			event.fire(o.id, o.c);
+   			evt = _subscribe('success', c);
+   			evt.fire(o.id, o.c);
    		}
 
    		_ioEnd(o, c);
@@ -373,26 +368,16 @@
     * @return void
    	*/
    	function _ioFailure(o, c) {
-   		var m = Y.io._fn || {},
-   			fn = m[o.id] ? m[o.id] : null,
-   			r, event;
+   		var r = o.status ? _response(o.status) : o.c,
+   			evt;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-   		if (fn) {
-   			c.on.failure = fn.on.failure;
-   			c.arguments = fn.arguments;
-   			//Decode the response from io.swf
-   			o.c.responseText = decodeURI(o.c.responseText);
-   		}
-
-		r = (o.status) ? _response(o.status) : o.c;
    		Y.fire(E_FAILURE, o.id, r);
-
    		if (c.on.failure) {
-   			event = _tPubSub('failure', c);
-   			event.fire(o.id, r);
+   			evt = _subscribe('failure', c);
+   			evt.fire(o.id, r);
    		}
 
    		_ioEnd(o, c);
@@ -412,27 +397,18 @@
     * @return void
    	*/
    	function _ioEnd(o, c) {
-   		var m = Y.io._fn || {},
-   			fn = m[o.id] ? m[o.id] : null,
-   			event;
+   		var evt;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-   		if (fn) {
-   			c.on.end = fn.on.end;
-   			c.arguments = fn.arguments;
-   			delete m[o.id];
-   		}
-
    		Y.fire(E_END, o.id);
-
    		if (c.on.end) {
-   			event = _tPubSub('end', c);
-   			event.fire(o.id);
+   			evt = _subscribe('end', c);
+   			evt.fire(o.id);
    		}
 
-   		_destroy(o, (c.xdr) ? true : false );
+   		_destroy(o, c.xdr ? true : false );
    	}
 
    /**
@@ -443,7 +419,6 @@
    	* @private
    	* @static
 	* @param {object} o - Transaction object generated by _create().
-	* @param {object} c - Configuration object passed to YUI.io().
 	* @param {string} s - Identifies timed out or aborted transaction.
    	*
     * @return void
@@ -455,23 +430,31 @@
    		}
    	}
 
-   /**
-   	* @description Determines if a cross-domain transaction is still
-   	* in progress.
-   	*
-   	* @method _isInProgress
-   	* @private
-   	* @static
-	* @param {object} o - Transaction object generated by _create().
-   	*
-    * @return boolean
-   	*/
-	function _isInProgress(o) {
-		return o.c.isInProgress(o.id);
-	}
-
 	function _response(s) {
 		return { status:0, statusText:s };
+	}
+
+   /**
+   	* @description Resends an XDR transaction, using the Flash tranport,
+   	* if the native transport fails.
+   	*
+   	* @method _resend
+   	* @private
+   	* @static
+
+	* @param {object} o - Transaction object generated by _create().
+	* @param {string} uri - qualified path to transaction resource.
+   	* @param {object} c - configuration object for the transaction.
+   	*
+    * @return void
+   	*/
+	function _resend(o, uri, c) {
+		var id = parseInt(o.id);
+
+		_destroy(o);
+		c.xdr.use = 'flash';
+
+		return Y.io(uri, c, id);
 	}
 
    /**
@@ -496,22 +479,30 @@
    	* @method _create
    	* @private
    	* @static
-	* @param {number} s - URI or root data.
-	* @param {number} c - configuration object
+	* @param {number} xdr - XDR configuration object
+	* @param {number} i - transaction id
 	* @return object
    	*/
-   	function _create(i, c) {
+   	function _create(xdr, i) {
    		var o = {};
-   		o.id = Y.Lang.isNumber(i) ? i : _id();
+	   		o.id = Y.Lang.isNumber(i) ? i : _id();
 
-   		if (c.xdr) {
-   			o.c = Y.io._transport[c.xdr.use];
-   		}
-   		else if (c.form && c.form.upload) {
-   			o.c = {};
+		if (!xdr) {
+   			o.c = _xhr();
+		}
+   		else if (xdr) {
+			if (xdr.use === 'flash') {
+   				o.c = Y.io._transport[xdr.use];
+			}
+			else if (xdr.use === 'native' && window.XDomainRequest) {
+				o.c = new XDomainRequest();
+			}
+			else {
+				o.c = _xhr();
+			}
    		}
    		else {
-   			o.c = _xhr();
+   			o.c = {};
    		}
 
    		return o;
@@ -526,7 +517,7 @@
 	* @return object
    	*/
    	function _xhr() {
-   		return (w.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+   		return w.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
    	}
 
    /**
@@ -596,26 +587,6 @@
    				o.setRequestHeader(p, h[p]);
    			}
    		}
-   	}
-
-   	function _open(o, m, uri) {
-   		o.open(m, uri, true);
-   	}
-
-   /**
-   	* @description Method that sends the transaction request.
-   	*
-   	* @method _async
-   	* @private
-   	* @static
-	* @param {object} o - Transaction object generated by _create().
-	* @param {string} d - Transaction data.
-	* @param {object} c - Configuration object passed to YUI.io().
-	* @return void
-   	*/
-   	function _async(o, d, c) {
-   		o.c.send(d);
-   		_ioStart(o.id, c);
    	}
 
    /**
@@ -693,12 +664,11 @@
    				status = 0;
    			}
    		}
-   		catch(e1) {
+   		catch(e) {
    			status = 0;
    		}
 
    		// IE reports HTTP 204 as HTTP 1223.
-   		// But, the response data are still available.
    		if (status >= 200 && status < 300 || status === 1223) {
    			_ioSuccess(o, c);
    		}
@@ -707,10 +677,10 @@
    		}
    	}
 
-   	function _destroy(o, isTransport) {
+   	function _destroy(o, transport) {
    		// IE, when using XMLHttpRequest as an ActiveX Object, will throw
    		// a "Type Mismatch" error if the event handler is set to "null".
-   		if(w.XMLHttpRequest && !isTransport) {
+   		if(w.XMLHttpRequest && !transport) {
    			if (o.c) {
    				o.c.onreadystatechange = null;
    			}
@@ -724,7 +694,6 @@
 	_io.complete = _ioComplete;
    	_io.success = _ioSuccess;
    	_io.failure = _ioFailure;
-   	_io.isInProgress = _isInProgress;
    	_io._id = _id;
 
 	//--------------------------------------

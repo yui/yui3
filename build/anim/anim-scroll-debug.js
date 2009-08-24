@@ -35,5 +35,4 @@ Y.Anim.behaviors.scroll = {
 
 
 
-
-}, '@VERSION@' ,{requires:['anim-base', 'node-base']});
+}, '@VERSION@' ,{requires:['anim-base']});

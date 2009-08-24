@@ -3,6 +3,7 @@
      *
      * @module attribute
      * @submodule attribute-complex
+     * @for Attribute
      */
 
     var O = Y.Object,

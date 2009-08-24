@@ -1,6 +1,5 @@
 (function(Y) {
-var TO_STRING = 'toString',
-    PARSE_INT = parseInt,
+var PARSE_INT = parseInt,
     RE = RegExp;
 
 Y.Color = {
@@ -51,7 +50,7 @@ Y.Color = {
                 Number(RE.$3).toString(16)
             ];
 
-            for (i = 0; i < val.length; i++) {
+            for (var i = 0; i < val.length; i++) {
                 if (val[i].length < 2) {
                     val[i] = val[i].replace(Y.Color.re_hex3, '$1$1');
                 }
