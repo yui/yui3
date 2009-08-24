@@ -14,7 +14,11 @@
  * @static
  */
 
-var add = YUI.Env.add,
+Y.Env.evt.dom_wrappers = {};
+Y.Env.evt.dom_map = {};
+
+var _eventenv = Y.Env.evt,
+add = YUI.Env.add,
 remove = YUI.Env.remove,
 
 onLoad = function() {
@@ -84,7 +88,7 @@ Event = function() {
      * @static
      * @private
      */
-    _wrappers = {},
+    _wrappers = _eventenv.dom_wrappers,
 
     _windowLoadKey = null,
 
@@ -97,7 +101,7 @@ Event = function() {
      * @static
      * @private
      */
-    _el_events = {};
+    _el_events = _eventenv.dom_map;
 
     return {
 
