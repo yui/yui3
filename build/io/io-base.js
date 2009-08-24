@@ -177,7 +177,7 @@ YUI.add('io-base', function(Y) {
    	function _io(uri, c, i) {
    		var f, o, m;
    			c = c || {};
-   			o = _create(c.xdr, parseInt(i));
+   			o = _create(c.xdr || c.form, parseInt(i));
    			m = c.method ? c.method.toUpperCase() : 'GET';
 
    		if (c.form) {
@@ -481,22 +481,24 @@ YUI.add('io-base', function(Y) {
    	* @method _create
    	* @private
    	* @static
-	* @param {number} xdr - XDR configuration object
+	* @param {number} c - configuration object subset to determine if
+	*                     the transaction is an XDR or file upload,
+	*                     requiring an anlternate transport.
 	* @param {number} i - transaction id
 	* @return object
    	*/
-   	function _create(xdr, i) {
+   	function _create(c, i) {
    		var o = {};
-	   		o.id = Y.Lang.isNumber(i) ? i : _id();
+	   		o.id = parseInt(i) || _id();
 
-		if (!xdr) {
+		if (!c.use && !c.upload) {
    			o.c = _xhr();
 		}
-   		else if (xdr) {
-			if (xdr.use === 'flash') {
-   				o.c = Y.io._transport[xdr.use];
+   		else if (c.use) {
+			if (c.use === 'flash') {
+   				o.c = Y.io._transport[c.use];
 			}
-			else if (xdr.use === 'native' && window.XDomainRequest) {
+			else if (c.use === 'native' && window.XDomainRequest) {
 				o.c = new XDomainRequest();
 			}
 			else {
@@ -519,7 +521,7 @@ YUI.add('io-base', function(Y) {
 	* @return object
    	*/
    	function _xhr() {
-   		return w.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+   		return new XMLHttpRequest() || new ActiveXObject('Microsoft.XMLHTTP');
    	}
 
    /**
