@@ -194,7 +194,7 @@
 			}
 		}
 		else if (c.data && m === 'GET') {
-			uri = _concat(uri, f);
+			uri = _concat(uri, c.data);
 		}
 
    		if (c.xdr) {
@@ -516,7 +516,7 @@
 	* @return object
    	*/
    	function _xhr() {
-   		return new XMLHttpRequest() || new ActiveXObject('Microsoft.XMLHTTP');
+   		return w.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
    	}
 
    /**
