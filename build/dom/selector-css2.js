@@ -392,6 +392,8 @@ var PARENT_NODE = 'parentNode',
                     var test = Selector[PSEUDOS][match[1]];
                     if (test) { // reorder match array
                         return [match[2], test];
+                    } else { // selector token not supported (possibly missing CSS3 module)
+                        return false;
                     }
                 }
             }
@@ -449,7 +451,10 @@ var PARENT_NODE = 'parentNode',
                         }
 
                         test = parser.fn(match, token);
-                        if (test) {
+                        if (test === false) { // selector not supported
+                            found = false;
+                            break outer;
+                        } else if (test) {
                             token.tests.push(test);
                         }
 
