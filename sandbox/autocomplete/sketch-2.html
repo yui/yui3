@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.0.0b1/build/cssfonts/fonts-min.css">
+    <style>
+    body {
+        font-size:16px;
+    }
+    script.mine {
+        clear:left;
+        white-space:pre;
+        display:block;
+        font-family:monospace;
+        background:#eef;
+    }
+    script::before, script::after {
+        content:"<script>";
+    }
+    script::after {
+        content:"</script>";
+    }
+    script[src]::before {
+        content:"<script src=\"" attr(src) "\">";
+        white-space:nowrap;
+    }
+    script[src] {
+        background:#fff;
+    }
+    </style>
+    
+    <title>autocomplete exploration</title>
+</head>
+<body class="yui-skin-sam">
+
+<form>
+    <label for="ac">
+        INPUT!
+    </label>
+    <input name="ac" id="ac" type="text">
+    <input type="submit">
+</form>
+<script class="mine" src="/yui/3/build/yui/yui.js"></script>
+<script class="mine">
+// watch typing events, log "fetch" signals
+YUI({
+    debug: true,
+    base: "/yui/3/build/",
+    filter: 'raw',
+    
+}).use('node', 'console', 'console-filters', 'log', 'event-key', function (Y) {
+
+    new Y.Console({
+        plugins: [ Y.Plugin.ConsoleFilters ],
+        newestOnTop: false
+    }).render();
+    
+    // new Y.Console()
+    //     .plug(Y.Plugin.ConsoleFilters)
+    //     .render();
+    
+    
+    var ac;
+    ac = (Y.one || Y.get)("#ac");
+    
+    
+    
+    ac.on("keypress", function (e) {
+        Y.log(e.type + ": " + e.keyCode, 'keypress');
+        
+        
+    });
+    
+});
+
+</script>
+</body>
+</html>
