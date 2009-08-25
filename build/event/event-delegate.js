@@ -260,6 +260,9 @@ Y.Event.delegate = function (type, fn, el, spec) {
 
         delegates[delegateKey] = delegate;
 
+        // el_map[guid] = el_map[guid] || {};
+        // el_map[guid][key] = delgate;
+
     }
 
     delegate[spec] = ename;

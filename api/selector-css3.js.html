@@ -61,7 +61,7 @@
 <span class="c">    an+0 = get every _a_th element, &quot;0&quot; may be omitted </span>
 <span class="c">*/</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_reNth</span> <span class="o">=</span> <span class="sr">/^(?:([-]?\d*)(n){1}|(odd|even)$)*([-+]?\d*)$/</span><span class="o">;</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_reNth</span> <span class="o">=</span> <span class="sr">/^(?:([\-]?\d*)(n){1}|(odd|even)$)*([\-+]?\d*)$/</span><span class="o">;</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">reverse</span><span class="o">)</span> <span class="o">{</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_reNth</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">expr</span><span class="o">);</span>
@@ -131,12 +131,12 @@
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">);</span>
     <span class="o">},</span>
      
-    <span class="s1">&#39;nth-last-of-type&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+    <span class="s1">&#39;nth-last-of-type&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
     <span class="o">},</span>
      
     <span class="s1">&#39;last-child&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_children</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">);</span>
+        <span class="k">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_children</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">);</span>
         <span class="k">return</span> <span class="nx">children</span><span class="o">[</span><span class="nx">children</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span><span class="o">;</span>
     <span class="o">},</span>
 

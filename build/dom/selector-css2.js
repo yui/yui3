@@ -16,14 +16,14 @@ var PARENT_NODE = 'parentNode',
     ATTRIBUTES = 'attributes',
     COMBINATOR = 'combinator',
     PSEUDOS = 'pseudos',
-    PREVIOUS = 'previous',
-    PREVIOUS_SIBLING = 'previousSibling',
+    //PREVIOUS = 'previous',
+    //PREVIOUS_SIBLING = 'previousSibling',
 
-    TMP_PREFIX = 'yui-tmp-',
+    //TMP_PREFIX = 'yui-tmp-',
 
-    g_counter = 0,
-    g_idCache = [],
-    g_passCache = {},
+    //g_counter = 0,
+    //g_idCache = [],
+    //g_passCache = {},
 
     g_childCache = [], // cache to cleanup expando node.children
 
@@ -226,7 +226,7 @@ var PARENT_NODE = 'parentNode',
                 token,
                 path,
                 pass,
-                FUNCTION = 'function',
+                //FUNCTION = 'function',
                 value,
                 tests,
                 test;
@@ -392,6 +392,8 @@ var PARENT_NODE = 'parentNode',
                     var test = Selector[PSEUDOS][match[1]];
                     if (test) { // reorder match array
                         return [match[2], test];
+                    } else { // selector token not supported (possibly missing CSS3 module)
+                        return false;
                     }
                 }
             }
@@ -449,7 +451,10 @@ var PARENT_NODE = 'parentNode',
                         }
 
                         test = parser.fn(match, token);
-                        if (test) {
+                        if (test === false) { // selector not supported
+                            found = false;
+                            break outer;
+                        } else if (test) {
                             token.tests.push(test);
                         }
 
@@ -518,6 +523,12 @@ var PARENT_NODE = 'parentNode',
 
 Y.mix(Y.Selector, SelectorCSS2, true);
 Y.Selector.getters.src = Y.Selector.getters.rel = Y.Selector.getters.href;
+
+// IE wants class with native queries
+if (Y.Selector.useNative && Y.Selector._supportsNative()) {
+    Y.Selector.shorthand['\\.(-?[_a-z]+[-\\w]*)'] = '[class~=$1]';
+}
+
 
 
 }, '@VERSION@' ,{requires:['selector-native'], skinnable:false});

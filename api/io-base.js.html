@@ -224,7 +224,7 @@
    	<span class="k">function</span> <span class="nx">_io</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
    		<span class="k">var</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">m</span><span class="o">;</span>
    			<span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="o">{};</span>
-   			<span class="nx">o</span> <span class="o">=</span> <span class="nx">_create</span><span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">,</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">i</span><span class="o">));</span>
+   			<span class="nx">o</span> <span class="o">=</span> <span class="nx">_create</span><span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span> <span class="o">||</span> <span class="nx">c</span><span class="o">.</span><span class="nx">form</span><span class="o">,</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">i</span><span class="o">));</span>
    			<span class="nx">m</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">method</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">method</span><span class="o">.</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">:</span> <span class="s1">&#39;GET&#39;</span><span class="o">;</span>
 
    		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">form</span><span class="o">)</span> <span class="o">{</span>
@@ -243,7 +243,7 @@
 			<span class="o">}</span>
 		<span class="o">}</span>
 		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;GET&#39;</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">uri</span> <span class="o">=</span> <span class="nx">_concat</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">f</span><span class="o">);</span>
+			<span class="nx">uri</span> <span class="o">=</span> <span class="nx">_concat</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">.</span><span class="nx">data</span><span class="o">);</span>
 		<span class="o">}</span>
 
    		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">{</span>
@@ -362,12 +362,12 @@
 <span class="c">    * @return void</span>
 <span class="c">   	*/</span>
    	<span class="k">function</span> <span class="nx">_ioComplete</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-   		<span class="k">var</span> <span class="nx">r</span><span class="o">,</span> <span class="nx">evt</span><span class="o">;</span>
+   		<span class="k">var</span> <span class="nx">evt</span><span class="o">,</span>
+			<span class="nx">r</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">status</span> <span class="o">?</span> <span class="o">{</span> <span class="nx">status</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span> <span class="nx">statusText</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">status</span> <span class="o">}</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">;</span>
    			<span class="c">// Set default value of argument c, property &quot;on&quot; to Object if</span>
 <span class="c"></span>   			<span class="c">// the property is null or undefined.</span>
 <span class="c"></span>   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">||</span> <span class="o">{};</span>
 
-		<span class="nx">r</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">status</span> <span class="o">?</span> <span class="nx">_response</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">status</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">;</span>
    		<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E_COMPLETE</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
    		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">complete</span><span class="o">)</span> <span class="o">{</span>
    			<span class="nx">evt</span> <span class="o">=</span> <span class="nx">_subscribe</span><span class="o">(</span><span class="s1">&#39;complete&#39;</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
@@ -417,8 +417,8 @@
 <span class="c">    * @return void</span>
 <span class="c">   	*/</span>
    	<span class="k">function</span> <span class="nx">_ioFailure</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-   		<span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">status</span> <span class="o">?</span> <span class="nx">_response</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">status</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">,</span>
-   			<span class="nx">evt</span><span class="o">;</span>
+   		<span class="k">var</span> <span class="nx">evt</span><span class="o">,</span>
+ 			<span class="nx">r</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">status</span> <span class="o">?</span> <span class="o">{</span> <span class="nx">status</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span> <span class="nx">statusText</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">status</span> <span class="o">}</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">;</span>
    			<span class="c">// Set default value of argument c, property &quot;on&quot; to Object if</span>
 <span class="c"></span>   			<span class="c">// the property is null or undefined.</span>
 <span class="c"></span>   			<span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">||</span> <span class="o">{};</span>
@@ -479,10 +479,6 @@
    		<span class="o">}</span>
    	<span class="o">}</span>
 
-	<span class="k">function</span> <span class="nx">_response</span><span class="o">(</span><span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="o">{</span> <span class="nx">status</span><span class="o">:</span><span class="m">0</span><span class="o">,</span> <span class="nx">statusText</span><span class="o">:</span><span class="nx">s</span> <span class="o">};</span>
-	<span class="o">}</span>
-
    <span class="c">/**</span>
 <span class="c">   	* @description Resends an XDR transaction, using the Flash tranport,</span>
 <span class="c">   	* if the native transport fails.</span>
@@ -528,22 +524,25 @@
 <span class="c">   	* @method _create</span>
 <span class="c">   	* @private</span>
 <span class="c">   	* @static</span>
-<span class="c">	* @param {number} xdr - XDR configuration object</span>
+<span class="c">	* @param {number} c - configuration object subset to determine if</span>
+<span class="c">	*                     the transaction is an XDR or file upload,</span>
+<span class="c">	*                     requiring an alternate transport.</span>
 <span class="c">	* @param {number} i - transaction id</span>
 <span class="c">	* @return object</span>
 <span class="c">   	*/</span>
-   	<span class="k">function</span> <span class="nx">_create</span><span class="o">(</span><span class="nx">xdr</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+   	<span class="k">function</span> <span class="nx">_create</span><span class="o">(</span><span class="nx">c</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
    		<span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{};</span>
-	   		<span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">i</span><span class="o">)</span> <span class="o">?</span> <span class="nx">i</span> <span class="o">:</span> <span class="nx">_id</span><span class="o">();</span>
+	   		<span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">i</span><span class="o">)</span> <span class="o">||</span> <span class="nx">_id</span><span class="o">();</span>
+	   		<span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="o">{};</span>
 
-		<span class="k">if</span> <span class="o">(!</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(!</span><span class="nx">c</span><span class="o">.</span><span class="nx">use</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">c</span><span class="o">.</span><span class="nx">upload</span><span class="o">)</span> <span class="o">{</span>
    			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span> <span class="o">=</span> <span class="nx">_xhr</span><span class="o">();</span>
 		<span class="o">}</span>
-   		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">xdr</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">if</span> <span class="o">(</span><span class="nx">xdr</span><span class="o">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;flash&#39;</span><span class="o">)</span> <span class="o">{</span>
-   				<span class="nx">o</span><span class="o">.</span><span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_transport</span><span class="o">[</span><span class="nx">xdr</span><span class="o">.</span><span class="nx">use</span><span class="o">];</span>
+   		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">use</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;flash&#39;</span><span class="o">)</span> <span class="o">{</span>
+   				<span class="nx">o</span><span class="o">.</span><span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_transport</span><span class="o">[</span><span class="nx">c</span><span class="o">.</span><span class="nx">use</span><span class="o">];</span>
 			<span class="o">}</span>
-			<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">xdr</span><span class="o">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;native&#39;</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="o">.</span><span class="nx">XDomainRequest</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;native&#39;</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="o">.</span><span class="nx">XDomainRequest</span><span class="o">)</span> <span class="o">{</span>
 				<span class="nx">o</span><span class="o">.</span><span class="nx">c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XDomainRequest</span><span class="o">();</span>
 			<span class="o">}</span>
 			<span class="k">else</span> <span class="o">{</span>

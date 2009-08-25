@@ -177,7 +177,7 @@ YUI.add('io-base', function(Y) {
    	function _io(uri, c, i) {
    		var f, o, m;
    			c = c || {};
-   			o = _create(c.xdr, parseInt(i));
+   			o = _create(c.xdr || c.form, parseInt(i));
    			m = c.method ? c.method.toUpperCase() : 'GET';
 
    		if (c.form) {
@@ -196,7 +196,7 @@ YUI.add('io-base', function(Y) {
 			}
 		}
 		else if (c.data && m === 'GET') {
-			uri = _concat(uri, f);
+			uri = _concat(uri, c.data);
 		}
 
    		if (c.xdr) {
@@ -315,12 +315,12 @@ YUI.add('io-base', function(Y) {
     * @return void
    	*/
    	function _ioComplete(o, c) {
-   		var r, evt;
+   		var evt,
+			r = o.status ? { status: 0, statusText: o.status } : o.c;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-		r = o.status ? _response(o.status) : o.c;
    		Y.fire(E_COMPLETE, o.id, r);
    		if (c.on.complete) {
    			evt = _subscribe('complete', c);
@@ -370,8 +370,8 @@ YUI.add('io-base', function(Y) {
     * @return void
    	*/
    	function _ioFailure(o, c) {
-   		var r = o.status ? _response(o.status) : o.c,
-   			evt;
+   		var evt,
+ 			r = o.status ? { status: 0, statusText: o.status } : o.c;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
@@ -432,10 +432,6 @@ YUI.add('io-base', function(Y) {
    		}
    	}
 
-	function _response(s) {
-		return { status:0, statusText:s };
-	}
-
    /**
    	* @description Resends an XDR transaction, using the Flash tranport,
    	* if the native transport fails.
@@ -481,22 +477,25 @@ YUI.add('io-base', function(Y) {
    	* @method _create
    	* @private
    	* @static
-	* @param {number} xdr - XDR configuration object
+	* @param {number} c - configuration object subset to determine if
+	*                     the transaction is an XDR or file upload,
+	*                     requiring an alternate transport.
 	* @param {number} i - transaction id
 	* @return object
    	*/
-   	function _create(xdr, i) {
+   	function _create(c, i) {
    		var o = {};
-	   		o.id = Y.Lang.isNumber(i) ? i : _id();
+	   		o.id = parseInt(i) || _id();
+	   		c = c || {};
 
-		if (!xdr) {
+		if (!c.use && !c.upload) {
    			o.c = _xhr();
 		}
-   		else if (xdr) {
-			if (xdr.use === 'flash') {
-   				o.c = Y.io._transport[xdr.use];
+   		else if (c.use) {
+			if (c.use === 'flash') {
+   				o.c = Y.io._transport[c.use];
 			}
-			else if (xdr.use === 'native' && window.XDomainRequest) {
+			else if (c.use === 'native' && window.XDomainRequest) {
 				o.c = new XDomainRequest();
 			}
 			else {
