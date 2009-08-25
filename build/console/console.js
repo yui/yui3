@@ -776,18 +776,19 @@ Y.extend(Console,Y.Widget,{
                 this._cancelPrintLoop();
             }
 
-            if (newestOnTop) {
-                entries.reverse();
+            if (entries.length) {
+                if (newestOnTop) {
+                    entries.reverse();
+                }
+
+                this._body.insertBefore(create(entries.join('')), anchor);
+
+                if (this.get('scrollIntoView')) {
+                    this.scrollToLatest();
+                }
+
+                this._trimOldEntries();
             }
-
-            this._body.insertBefore(create(entries.join('')), anchor);
-
-            if (this.get('scrollIntoView')) {
-                this.scrollToLatest();
-            }
-
-            this._trimOldEntries();
-
         }
 
         // restore logging system
