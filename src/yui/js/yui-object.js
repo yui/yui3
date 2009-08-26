@@ -144,7 +144,8 @@ O.owns = function(o, k) {
  * @method each
  * @static
  * @param o the object to iterate
- * @param f {function} the function to execute
+ * @param f {Function} the function to execute on each item. The function 
+ * receives three arguments: the value, the the key, the full object.
  * @param c the execution context
  * @param proto {boolean} include proto
  * @return {YUI} the YUI instance
