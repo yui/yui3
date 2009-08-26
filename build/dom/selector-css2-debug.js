@@ -533,4 +533,4 @@ if (Y.Selector.useNative && Y.Selector._supportsNative()) {
 
 
 
-}, '@VERSION@' ,{requires:['selector-native'], skinnable:false});
+}, '@VERSION@' ,{requires:['selector-native']});

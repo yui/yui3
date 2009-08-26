@@ -246,4 +246,4 @@ Y.mix(Y.Selector, Selector, true);
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+}, '@VERSION@' ,{requires:['dom-base']});
