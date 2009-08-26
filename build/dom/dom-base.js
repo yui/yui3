@@ -725,4 +725,4 @@ addClass = Y.DOM.addClass;
 
 
 
-}, '@VERSION@' ,{requires:['oop'], skinnable:false});
+}, '@VERSION@' ,{requires:['oop']});

@@ -2672,4 +2672,4 @@ YUI.add('test', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['substitute','event-simulate','event']});
+}, '@VERSION@' ,{requires:['substitute','event-base']});
