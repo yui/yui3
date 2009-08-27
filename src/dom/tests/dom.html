@@ -120,7 +120,7 @@ form {
         </div>
     </div>
 <script type="text/javascript">
-    YUI({ base: '../../../build/'}).use('dom', function(Y) {
+    YUI({ base: '../../../build/', filter: 'raw'}).use('dom', function(Y) {
         tool = YAHOO.tool,
         Assert = YAHOO.util.Assert,
         ArrayAssert = YAHOO.util.ArrayAssert,
@@ -243,6 +243,14 @@ form {
            },
 
             test_create: function() {
+                var html = '';
+                var el = Y.DOM.create(html);
+                Assert.isNull(el, html);
+
+                var html = null;
+                var el = Y.DOM.create(html);
+                Assert.isNull(el, html);
+
                 var html = '<div>fresh</div>';
                 var el = Y.DOM.create(html);
                 Assert.areEqual('DIV', el.tagName, html);

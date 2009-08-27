@@ -1557,29 +1557,6 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
      */
     Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
-/**
- * Functionality to make the node a delegated event container
- * @module node
- * @submodule node-event-delegate
- */
-
-/**
- * Functionality to make the node a delegated event container
- * @method delegate
- * @param type {String} the event type to delegate
- * @param fn {Function} the function to execute
- * @param selector {String} a selector that must match the target of the event.
- * @return {Event.Handle} the detach handle
- * @for Node
- */
-Y.Node.prototype.delegate = function(type, fn, selector) {
-
-    var args = Array.prototype.slice.call(arguments, 3),
-        a = [type, fn, Y.Node.getDOMNode(this), selector];
-    a = a.concat(args);
-
-    return Y.delegate.apply(Y, a);
-};
 
 if (!document.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
@@ -1963,7 +1940,35 @@ Y.NodeList.prototype.unplug = function() {
 
 
 }, '@VERSION@' ,{requires:['node-base', 'pluginhost']});
+YUI.add('node-event-delegate', function(Y) {
+
+/**
+ * Functionality to make the node a delegated event container
+ * @module node
+ * @submodule node-event-delegate
+ */
+
+/**
+ * Functionality to make the node a delegated event container
+ * @method delegate
+ * @param type {String} the event type to delegate
+ * @param fn {Function} the function to execute
+ * @param selector {String} a selector that must match the target of the event.
+ * @return {Event.Handle} the detach handle
+ * @for Node
+ */
+Y.Node.prototype.delegate = function(type, fn, selector) {
+
+    var args = Array.prototype.slice.call(arguments, 3),
+        a = [type, fn, Y.Node.getDOMNode(this), selector];
+    a = a.concat(args);
+
+    return Y.delegate.apply(Y, a);
+};
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], skinnable:false, requires:['dom', 'event-base', 'pluginhost']});
+}, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});
+
+
+YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
 

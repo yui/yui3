@@ -223,7 +223,12 @@ var NOT_FOUND = {},
                 },
 
                 'node-pluginhost': {
-                    requires: ['node-base', PLUGINHOST]
+                    requires: [NODEBASE, PLUGINHOST]
+                },
+
+
+                'node-event-delegate': {
+                    requires: [NODEBASE, 'event-delegate']
                 }
             },
 
