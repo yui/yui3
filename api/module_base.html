@@ -76,11 +76,11 @@ build custom classes using extensions.
                                         <h4>Submodules:</h4> 
                                         <dl>
                                             <dt><code>base-base</code></dt>
-                                            <dd>The base-base submodule provides the Base class and augmentable Plugin.Host implementation, 
-without the extension support provided by Base.build.</dd>
+                                            <dd>The base-base submodule provides the Base class without the Plugin support, provided by Plugin.Host, 
+and without the extension support provided by Base.build.</dd>
                                             <dt><code>base-pluginhost</code></dt>
-                                            <dd>The base-pluginhost submodule added Plugin support to Base, by augmenting Base with 
-Plugin.Host and setting up static Base.plug and Base.unplug methods.</dd>
+                                            <dd>The base-pluginhost submodule adds Plugin support to Base, by augmenting Base with 
+Plugin.Host and setting up static (class level) Base.plug and Base.unplug methods.</dd>
                                             <dt><code>base-build</code></dt>
                                             <dd>The base-build submodule provides Base.build functionality, which
 can be used to create custom classes, by aggregating extensions onto 
