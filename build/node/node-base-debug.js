@@ -281,7 +281,7 @@ Node.ATTRS = {
      // TODO: break out for IE only
     'elements': {
         getter: function() {
-            return this._node.elements;
+            return Y.all(this._node.elements);
         }
     },
 
@@ -414,16 +414,12 @@ Y.mix(Node.prototype, {
         var attrConfig = Node.ATTRS[attr],
             val;
 
-        if (this._getAttr) { // use Attribute imple
-            val = this._getAttr(attr);
-        } else { // use getters inline
-            if (attrConfig && attrConfig.getter) {
-                val = attrConfig.getter.call(this);
-            } else if (Node.re_aria.test(attr)) {
-                val = this._node.getAttribute(attr, 2); 
-            } else {
-                val = Node.DEFAULT_GETTER.apply(this, arguments);
-            }
+        if (attrConfig && attrConfig.getter) {
+            val = attrConfig.getter.call(this);
+        } else if (Node.re_aria.test(attr)) {
+            val = this._node.getAttribute(attr, 2); 
+        } else {
+            val = Node.DEFAULT_GETTER.apply(this, arguments);
         }
 
         return val;

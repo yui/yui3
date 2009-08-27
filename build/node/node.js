@@ -279,7 +279,7 @@ Node.ATTRS = {
      // TODO: break out for IE only
     'elements': {
         getter: function() {
-            return this._node.elements;
+            return Y.all(this._node.elements);
         }
     },
 
@@ -412,16 +412,12 @@ Y.mix(Node.prototype, {
         var attrConfig = Node.ATTRS[attr],
             val;
 
-        if (this._getAttr) { // use Attribute imple
-            val = this._getAttr(attr);
-        } else { // use getters inline
-            if (attrConfig && attrConfig.getter) {
-                val = attrConfig.getter.call(this);
-            } else if (Node.re_aria.test(attr)) {
-                val = this._node.getAttribute(attr, 2); 
-            } else {
-                val = Node.DEFAULT_GETTER.apply(this, arguments);
-            }
+        if (attrConfig && attrConfig.getter) {
+            val = attrConfig.getter.call(this);
+        } else if (Node.re_aria.test(attr)) {
+            val = this._node.getAttribute(attr, 2); 
+        } else {
+            val = Node.DEFAULT_GETTER.apply(this, arguments);
         }
 
         return val;
@@ -1958,5 +1954,5 @@ Y.NodeList.prototype.unplug = function() {
 }, '@VERSION@' ,{requires:['node-base', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], requires:['dom', 'event-base', 'pluginhost']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], skinnable:false, requires:['dom', 'event-base', 'pluginhost']});
 
