@@ -24,7 +24,7 @@
 
 <script>
 onload = function() {
-    YUI().use('*', function(Y) {
+    YUI({filter: 'raw'}).use('*', function(Y) {
         Y.Dom = YAHOO.util.Dom;
         var logger = new YAHOO.tool.TestLogger(null, {height:'2000px'});
         var suite = new YAHOO.tool.TestSuite("Selector Suite");
@@ -222,6 +222,9 @@ onload = function() {
 
                 ArrayAssert.itemsAreEqual([demoFirstChild, Y.DOM.next(demoFirstChild)], $('#demo > p:not(.last)'), '#demo > p:not(.last)');
                 Assert.areEqual(Y.DOM.byId('foo-bar'), $("[id^='foo-']", null, true), "[id^='foo-'], null, true");
+                Assert.areEqual(Y.DOM.byId('test-custom-attr'), $("#test-custom-attr[foo=bar]", null, true), "#test-custom-attr[foo=bar], null, true");
+                Assert.areEqual(Y.DOM.byId('test-custom-attr'), $("div[foo=bar]", null, true), "div[foo=bar], null, true");
+                Assert.areEqual(Y.DOM.byId('test-custom-attr'), $("div#test-custom-attr[foo=bar]", null, true), "div#test-custom-attr[foo=bar], null, true");
 
             }
 
@@ -421,6 +424,7 @@ onload = function() {
         <dd class="test-dd2">dd2</dd>
 
     </dl>
+    <div id="test-custom-attr" foo="bar">custom attribute</div>
 
 </body>
 </html>
