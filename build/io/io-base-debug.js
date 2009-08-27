@@ -85,7 +85,7 @@ YUI.add('io-base', function(Y) {
    	* @description Object that stores timeout values for any transaction with
    	* a defined "timeout" configuration property.
    	*
-   	* @property _timeOut
+   	* @property _timeout
    	* @private
    	* @static
    	* @type object
@@ -695,7 +695,9 @@ YUI.add('io-base', function(Y) {
 	_io.complete = _ioComplete;
    	_io.success = _ioSuccess;
    	_io.failure = _ioFailure;
+   	_io.end = _ioEnd;
    	_io._id = _id;
+   	_io._timeout = _timeout;
 
 	//--------------------------------------
 	//  Begin public interface definition
