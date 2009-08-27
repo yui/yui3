@@ -251,7 +251,9 @@ Y.DOM = {
              ret = Y.DOM._nl2frag(nodes, doc);
         }
 
-        Y.DOM._cloneCache[html] = ret.cloneNode(true);
+        if (ret) {
+            Y.DOM._cloneCache[html] = ret.cloneNode(true);
+        }
         return ret;
     },
 
