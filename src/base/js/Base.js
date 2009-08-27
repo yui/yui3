@@ -8,8 +8,8 @@
      */
 
     /**
-     * The base-base submodule provides the Base class and augmentable Plugin.Host implementation, 
-     * without the extension support provided by Base.build.
+     * The base-base submodule provides the Base class without the Plugin support, provided by Plugin.Host, 
+     * and without the extension support provided by Base.build.
      *
      * @module base
      * @submodule base-base
