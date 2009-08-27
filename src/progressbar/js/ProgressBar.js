@@ -1,5 +1,3 @@
-YUI.add('progressbar', function(Y) {
-
 /**
  * Create a sliding value range input visualized as a draggable thumb on a
  * background element.
@@ -68,6 +66,7 @@ var PB			= 'progressbar',
 	PX = 'px';
 
 var ProgressBar = function() {
+	Y.log('creating new instance');
 
 	ProgressBar.superclass.constructor.apply(this, arguments);
 };
@@ -158,6 +157,7 @@ Y.extend(ProgressBar, Y.Widget, {
 
 	initializer: function  (config) {
 	
+		Y.log('initializer');
 
 		this.publish(START);
 		// If animation is loaded, this one will trigger for each frame of the animation providing partial values
@@ -167,10 +167,12 @@ Y.extend(ProgressBar, Y.Widget, {
 	},
 	
 	renderer : function() {
+		Y.log('renderer');
 		ProgressBar.superclass.renderer.apply(this, arguments);
 	},
 
 	renderUI: function () {
+		Y.log('renderUI');
 		
 		if (this._rendered) { return; }
 		this._rendered = true;
@@ -207,6 +209,7 @@ Y.extend(ProgressBar, Y.Widget, {
 		this.on('animChange', this._onAnimChange);
 	},
 	syncUI: function() {
+		Y.log('syncUI');
 		this._fixEdges();
 		this._recalculateConstants();
 		this._valueChange(this.get(VALUE));
@@ -229,6 +232,7 @@ Y.extend(ProgressBar, Y.Widget, {
 		this._valueChange(ev.newVal);
 	},
 	_valueChange: function (value) {
+		Y.log('set value: ' + value);
 		this._setAriaText(value);
 		var pixelValue = Math.floor((value - this.get(MIN_VALUE)) * this._barFactor),
 			anim = this.get(ANIM);
@@ -239,6 +243,7 @@ Y.extend(ProgressBar, Y.Widget, {
 		this._barSizeFunction(value, pixelValue, this.get(BAR_EL), anim);
 	},
 	destructor: function() {
+		Y.log('destroy','info','ProgressBar');
 		this.set(ANIM,false);
 		this.unsubscribeAll();
 		var el = this.get(BOUNDING_BOX),
@@ -323,12 +328,14 @@ Y.extend(ProgressBar, Y.Widget, {
 		if (L.isNumber(value)) {
 			value += PX;
 		}
+		Y.log('Setting width: ' + value);
 		return value;
 	},
 	_setHeightAtt:function(value) {
 		if (L.isNumber(value)) {
 			value += PX;
 		}
+		Y.log('Setting height: ' + value);
 		return value;
 
 	},
@@ -353,11 +360,13 @@ Y.extend(ProgressBar, Y.Widget, {
 	},
 	_animChange: function(anim) {
 		if (anim) {
+			Y.log('Turning animation on','info','ProgressBar');
 			anim.set('node', this.get(BAR_EL));
 			anim.after('tween', Y.bind(this._animOnTween,this));
 			anim.after('complete', Y.bind(this._animComplete,this));
 
 		} else {
+			Y.log('Turning animation off','info','ProgressBar');
 			anim = this.get(ANIM);
 			if (anim) {
 				anim.detachAll();
@@ -368,6 +377,7 @@ Y.extend(ProgressBar, Y.Widget, {
 		return anim;
 	},
 	_animComplete: function() {
+		Y.log('Animation completed','info','ProgressBar');
 		var value = this.get(VALUE);
 		this._previousValue = value;
 		this.fire(PROGRESS,{newVal:value});
@@ -376,6 +386,8 @@ Y.extend(ProgressBar, Y.Widget, {
 	},
 	_animOnTween:function (name,oArgs) {
 		var value = Math.floor(this._tweenFactor * oArgs[0].currentFrame + this._previousValue);
+		// The following fills the logger window too fast
+		// Y.log('Animation onTween at: ' + value,'info','ProgressBar');
 		this.fire(PROGRESS,{newVal:value});
 	},
 
@@ -386,6 +398,8 @@ Y.extend(ProgressBar, Y.Widget, {
 	 * @private
 	 */
 	 _setAriaText: function(value) {
+		// When animated, this fills the logger window too fast
+		//Y.log('Show template','info','ProgressBar');
 
 		this.get(BOUNDING_BOX).setAttrs({
 			'aria-valuenow':value,
@@ -447,7 +461,3 @@ b[1][DIRECTION_BTT] =  b[1][DIRECTION_TTB];
 	
 Y.ProgressBar = ProgressBar;
 
-
-
-
-}, '@VERSION@' ,{requires:['widget','substitute']});
