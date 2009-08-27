@@ -175,7 +175,7 @@
    	function _io(uri, c, i) {
    		var f, o, m;
    			c = c || {};
-   			o = _create(c.xdr || c.form, parseInt(i));
+   			o = _create(c.xdr || c.form, i);
    			m = c.method ? c.method.toUpperCase() : 'GET';
 
    		if (c.form) {
@@ -463,6 +463,7 @@
    	*/
    	function _id() {
    		var id = transactionId;
+
    		transactionId++;
 
    		return id;
@@ -483,7 +484,7 @@
    	*/
    	function _create(c, i) {
    		var o = {};
-	   		o.id = parseInt(i) || _id();
+	   		o.id = Y.Lang.isNumber(i) ? i : _id();
 	   		c = c || {};
 
 		if (!c.use && !c.upload) {
