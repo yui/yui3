@@ -63,7 +63,11 @@
 <span class="c"> * @static</span>
 <span class="c"> */</span>
 
-<span class="k">var</span> <span class="nx">add</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">add</span><span class="o">,</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">dom_wrappers</span> <span class="o">=</span> <span class="o">{};</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">dom_map</span> <span class="o">=</span> <span class="o">{};</span>
+
+<span class="k">var</span> <span class="nx">_eventenv</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">,</span>
+<span class="nx">add</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">add</span><span class="o">,</span>
 <span class="nx">remove</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">remove</span><span class="o">,</span>
 
 <span class="nx">onLoad</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
@@ -133,7 +137,7 @@
 <span class="c">     * @static</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
-    <span class="nx">_wrappers</span> <span class="o">=</span> <span class="o">{},</span>
+    <span class="nx">_wrappers</span> <span class="o">=</span> <span class="nx">_eventenv</span><span class="o">.</span><span class="nx">dom_wrappers</span><span class="o">,</span>
 
     <span class="nx">_windowLoadKey</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
 
@@ -146,7 +150,7 @@
 <span class="c">     * @static</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
-    <span class="nx">_el_events</span> <span class="o">=</span> <span class="o">{};</span>
+    <span class="nx">_el_events</span> <span class="o">=</span> <span class="nx">_eventenv</span><span class="o">.</span><span class="nx">dom_map</span><span class="o">;</span>
 
     <span class="k">return</span> <span class="o">{</span>
 

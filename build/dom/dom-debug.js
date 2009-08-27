@@ -56,12 +56,15 @@ Y.DOM = {
     },
 
     // @deprecated
-    firstByTag: function(node, tag) {
-        var ret = null;
-        if (node) {
-            tag = tag || '*';
-            ret = Y.Selector.query(tag, node, true); 
+    firstByTag: function(tag, root) {
+        var ret;
+        root = root || Y.config.doc;
+
+        if (tag && root.getElementsByTagName) {
+            ret = root.getElementsByTagName(tag)[0];
         }
+
+        return ret || null;
     },
 
     /**
@@ -725,7 +728,7 @@ addClass = Y.DOM.addClass;
 
 
 
-}, '@VERSION@' ,{requires:['oop'], skinnable:false});
+}, '@VERSION@' ,{requires:['oop']});
 YUI.add('dom-style', function(Y) {
 
 (function(Y) {
@@ -1225,7 +1228,7 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 })(Y);
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});
+}, '@VERSION@' ,{requires:['dom-base']});
 YUI.add('dom-screen', function(Y) {
 
 (function(Y) {
@@ -1791,7 +1794,7 @@ Y.mix(DOM, {
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style'], skinnable:false});
+}, '@VERSION@' ,{requires:['dom-base', 'dom-style']});
 YUI.add('selector-native', function(Y) {
 
 (function(Y) {
@@ -2043,7 +2046,7 @@ Y.mix(Y.Selector, Selector, true);
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+}, '@VERSION@' ,{requires:['dom-base']});
 YUI.add('selector-css2', function(Y) {
 
 /**
@@ -2062,14 +2065,14 @@ var PARENT_NODE = 'parentNode',
     ATTRIBUTES = 'attributes',
     COMBINATOR = 'combinator',
     PSEUDOS = 'pseudos',
-    PREVIOUS = 'previous',
-    PREVIOUS_SIBLING = 'previousSibling',
+    //PREVIOUS = 'previous',
+    //PREVIOUS_SIBLING = 'previousSibling',
 
-    TMP_PREFIX = 'yui-tmp-',
+    //TMP_PREFIX = 'yui-tmp-',
 
-    g_counter = 0,
-    g_idCache = [],
-    g_passCache = {},
+    //g_counter = 0,
+    //g_idCache = [],
+    //g_passCache = {},
 
     g_childCache = [], // cache to cleanup expando node.children
 
@@ -2273,7 +2276,7 @@ var PARENT_NODE = 'parentNode',
                 token,
                 path,
                 pass,
-                FUNCTION = 'function',
+                //FUNCTION = 'function',
                 value,
                 tests,
                 test;
@@ -2439,6 +2442,8 @@ var PARENT_NODE = 'parentNode',
                     var test = Selector[PSEUDOS][match[1]];
                     if (test) { // reorder match array
                         return [match[2], test];
+                    } else { // selector token not supported (possibly missing CSS3 module)
+                        return false;
                     }
                 }
             }
@@ -2496,7 +2501,10 @@ var PARENT_NODE = 'parentNode',
                         }
 
                         test = parser.fn(match, token);
-                        if (test) {
+                        if (test === false) { // selector not supported
+                            found = false;
+                            break outer;
+                        } else if (test) {
                             token.tests.push(test);
                         }
 
@@ -2567,9 +2575,19 @@ var PARENT_NODE = 'parentNode',
 Y.mix(Y.Selector, SelectorCSS2, true);
 Y.Selector.getters.src = Y.Selector.getters.rel = Y.Selector.getters.href;
 
+// IE wants class with native queries
+if (Y.Selector.useNative && Y.Selector._supportsNative()) {
+    Y.Selector.shorthand['\\.(-?[_a-z]+[-\\w]*)'] = '[class~=$1]';
+}
 
-}, '@VERSION@' ,{requires:['selector-native'], skinnable:false});
 
 
-YUI.add('dom', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dom-base', 'dom-style', 'dom-screen', 'selector-native', 'selector-css2']});
+}, '@VERSION@' ,{requires:['selector-native']});
+
+
+YUI.add('selector', function(Y){}, '@VERSION@' ,{use:['selector-native', 'selector-css2']});
+
+
+
+YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-base', 'dom-style', 'dom-screen', 'selector']});
 

@@ -1589,7 +1589,7 @@ Y.Loader.prototype = {
             if (r.hasOwnProperty(i)) {
                 m = this.getModule(i);
                 // remove if already loaded
-                if ((this.loaded[i] && (!this.forceMap[i]) && !this.ignoreRegistered) || (type && m.type != type)) { 
+                if ((this.loaded[i] && (!this.forceMap[i]) && !this.ignoreRegistered) || (type && m && m.type != type)) { 
                     delete r[i];
                 // remove anything this module supersedes
                 } else {

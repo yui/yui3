@@ -6,7 +6,8 @@
 <link type="text/css" rel="stylesheet" href="../../../../yui2/build/logger/assets/logger.css">
 <link type="text/css" rel="stylesheet" href="../../../../yui2/build/yuitest/assets/testlogger.css">     
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
+
 <script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/event/event.js"></script>
@@ -119,7 +120,7 @@ form {
         </div>
     </div>
 <script type="text/javascript">
-    YUI({ base: '../../../build/', filter: 'debug' }).use('node', function(Y) {
+    YUI({ base: '../../../build/'}).use('dom', function(Y) {
         tool = YAHOO.tool,
         Assert = YAHOO.util.Assert,
         ArrayAssert = YAHOO.util.ArrayAssert,
@@ -655,7 +656,33 @@ form {
 
                 Y.DOM.addHTML(node, Y.DOM.create('<p>this is a <em>test</em></p>'));
                 Assert.areEqual('P', node.lastChild.nodeName, "Y.DOM.create('<p>this is a <em>test</em></p>')");
+            },
+
+            testFirstByTag: function() {
+                var tag = 'div',
+                    root = document;
+
+                Assert.areEqual(root.getElementsByTagName(tag)[0],
+                    Y.DOM.firstByTag(tag, root),
+                    "Y.DOM.firstByTag(" + tag + " , " + root + ")"
+                );
+
+                tag = 'input';
+                root = document.getElementById('test-form');
+
+                Assert.areEqual(root.getElementsByTagName(tag)[0],
+                    Y.DOM.firstByTag(tag, root),
+                    "Y.DOM.firstByTag(" + tag + " , " + root + ")"
+                );
+
+                tag = null;
+                root = null;
+
+                Assert.isNull(Y.DOM.firstByTag(tag, root),
+                    "Y.DOM.firstByTag(" + tag + " , " + root + ")"
+                );
             }
+
         })); 
         tool.TestRunner.add(suite);
 

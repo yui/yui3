@@ -1366,7 +1366,8 @@ YArray.test = function(o) {
  * Executes the supplied function on each item in the array.
  * @method each
  * @param a {Array} the array to iterate
- * @param f {Function} the function to execute on each item
+ * @param f {Function} the function to execute on each item.  The 
+ * function receives three arguments: the value, the index, the full array.
  * @param o Optional context object
  * @static
  * @return {YUI} the YUI instance
@@ -1443,7 +1444,8 @@ YArray.numericSort = function(a, b) {
  * items.
  * @method some
  * @param a {Array} the array to iterate
- * @param f {Function} the function to execute on each item
+ * @param f {Function} the function to execute on each item. The function 
+ * receives three arguments: the value, the index, the full array.
  * @param o Optional context object
  * @static
  * @return {boolean} true if the function returns true on
@@ -1787,7 +1789,8 @@ O.owns = function(o, k) {
  * @method each
  * @static
  * @param o the object to iterate
- * @param f {function} the function to execute
+ * @param f {Function} the function to execute on each item. The function 
+ * receives three arguments: the value, the the key, the full object.
  * @param c the execution context
  * @param proto {boolean} include proto
  * @return {YUI} the YUI instance

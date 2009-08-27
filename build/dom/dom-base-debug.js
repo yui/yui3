@@ -56,12 +56,15 @@ Y.DOM = {
     },
 
     // @deprecated
-    firstByTag: function(node, tag) {
-        var ret = null;
-        if (node) {
-            tag = tag || '*';
-            ret = Y.Selector.query(tag, node, true); 
+    firstByTag: function(tag, root) {
+        var ret;
+        root = root || Y.config.doc;
+
+        if (tag && root.getElementsByTagName) {
+            ret = root.getElementsByTagName(tag)[0];
         }
+
+        return ret || null;
     },
 
     /**
@@ -725,4 +728,4 @@ addClass = Y.DOM.addClass;
 
 
 
-}, '@VERSION@' ,{requires:['oop'], skinnable:false});
+}, '@VERSION@' ,{requires:['oop']});

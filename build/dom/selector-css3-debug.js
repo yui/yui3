@@ -14,7 +14,7 @@ YUI.add('selector-css3', function(Y) {
     an+0 = get every _a_th element, "0" may be omitted 
 */
 
-Y.Selector._reNth = /^(?:([-]?\d*)(n){1}|(odd|even)$)*([-+]?\d*)$/;
+Y.Selector._reNth = /^(?:([\-]?\d*)(n){1}|(odd|even)$)*([\-+]?\d*)$/;
 
 Y.Selector._getNth = function(node, expr, tag, reverse) {
     Y.Selector._reNth.test(expr);
@@ -84,12 +84,12 @@ Y.mix(Y.Selector.pseudos, {
         return Y.Selector._getNth(node, expr, node.tagName);
     },
      
-    'nth-last-of-type': function(node) {
+    'nth-last-of-type': function(node, expr) {
         return Y.Selector._getNth(node, expr, node.tagName, true);
     },
      
     'last-child': function(node) {
-        var children = Y.Selector._children(node.parentNode, node.tagName);
+        var children = Y.Selector._children(node.parentNode);
         return children[children.length - 1] === node;
     },
 
@@ -141,4 +141,4 @@ Y.Selector.combinators['~'] = {
 };
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'selector-native', 'selector-css2'], skinnable:false});
+}, '@VERSION@' ,{requires:['dom-base', 'selector-native', 'selector-css2']});

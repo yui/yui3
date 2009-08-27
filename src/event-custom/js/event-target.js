@@ -252,7 +252,8 @@ ET.prototype = {
      * @return {EventTarget} the host
      */
     detach: function(type, fn, context) {
-        var evts = this._yuievt.events, i, ret;
+        var evts = this._yuievt.events, i, ret,
+            Node = Y.Node;
 
         // detachAll disabled on the Y instance.
         if (!type && (this !== Y)) {
@@ -304,9 +305,9 @@ ET.prototype = {
             ret = type.detach();
             return (this._yuievt.chain) ? this : ret;
         // extra redirection so we catch adaptor events too.  take a look at this.
-        } else if (Y.Node && (this instanceof Y.Node) && ((!shorttype) || (shorttype in Y.Node.DOM_EVENTS))) {
+        } else if (Node && (this instanceof Node) && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
             args = Y.Array(arguments, 0, true);
-            args[2] = Y.Node.getDOMNode(this);
+            args[2] = Node.getDOMNode(this);
             return Y.detach.apply(Y, args);
         }
 
@@ -319,7 +320,7 @@ ET.prototype = {
             if (adapt && adapt.detach) {
                 return adapt.detach.apply(Y, args);
             // DOM event fork
-            } else if (!type || (!adapt && (type in Y.Node.DOM_EVENTS))) {
+            } else if (!type || (!adapt && Node && (type in Node.DOM_EVENTS))) {
                 args[0] = type;
                 return Y.Event.detach.apply(Y.Event, args);
             }
