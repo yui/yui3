@@ -464,7 +464,15 @@
                 testEventSameValue : function() {
                     var h = this.createHost({A:"MyAVal"});
 
-                    var expectedEvents = ["BeforeAChange", "BeforeAChange", "BeforeAChange", "AfterAChange", "BeforeComplexChange", "BeforeComplexChange", "AfterComplexChange", "BeforeComplexChange", "AfterComplexChange", "BeforeComplexChange", "AfterComplexChange"];
+                    var expectedEvents = ["BeforeAChange", 
+                                          "BeforeAChange", 
+                                          "BeforeAChange", "AfterAChange", 
+                                          "BeforeComplexChange", "AfterComplexChange", 
+                                          "BeforeComplexChange", "AfterComplexChange", 
+                                          "BeforeComplexChange", "AfterComplexChange", 
+                                          "BeforeComplexChange", "AfterComplexChange", 
+                                          "BeforeComplexChange", "AfterComplexChange", 
+                                          "BeforeComplexChange", "AfterComplexChange"];
                     var actualEvents = [];
 
                     h.on("AChange", function(e) {
@@ -489,12 +497,19 @@
 
                     h.set("A", h.get("A"));     // No Change
                     h.set("A", "MyAVal");       // No Change
-                    h.set("A", "MyNewAVal");    // Change
+                    
+                    h.set("A", "MyNewAVal");                     // Change
 
-                    h.set("complex", h.get("complex"));          // No Change
+                    h.set("complex", h.get("complex"));          // Change, we don't know if something changed inside the object
                     h.set("complex.Z.A", 3);                     // Change, even though value of complex is unchanged, we don't deep compare objects.
                     h.set("complex", Y.clone(h.get("complex"))); // Change, obj reference differs
                     h.set("complex", {A:1, B:2, C:3});           // Change, obj reference differs
+
+                    var a = ["A"];
+                    h.set("complex", a);                         // Change, value changed
+
+                    a.push("B");
+                    h.set("complex", a);                         // Change, same object ref, but we don't know if contents changed, so fire event
 
                     Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
                 },

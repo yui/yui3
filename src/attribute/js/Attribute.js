@@ -16,6 +16,7 @@
      * @submodule attribute-base
      */
     var O = Y.Object,
+        Lang = Y.Lang,
         EventTarget = Y.EventTarget,
 
         DOT = ".",
@@ -700,7 +701,7 @@
                 }
 
                 if (allowSet) {
-                    if(!subAttrName && newVal === prevVal) {
+                    if(!subAttrName && newVal === prevVal && !Lang.isObject(newVal)) {
                         Y.log('Attribute: ' + attrName + ', value unchanged:' + newVal, 'warn', 'attribute');
                         allowSet = false;
                     } else {

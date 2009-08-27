@@ -6,6 +6,14 @@
 * Fixed issue where custom getters were being called with undefined values,
   for the initial set.
 
+* Limited the case for which an attribute will not notify after listeners, 
+  if the value is unchanged after a set, to primitive values (values for 
+  which Lang.isObject(newVal) returns false).
+
+  This allows after listeners to be invoked, when resetting the value to 
+  the same object reference, which has properties updated, or arrays with
+  elements modified. 
+
 * Attribute broken up into attribute-base and attribute-complex submodules.
 
   attribute-complex adds support for complex attributes ({x.y.z : 5}) to

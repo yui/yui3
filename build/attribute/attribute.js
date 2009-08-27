@@ -136,6 +136,7 @@ YUI.add('attribute-base', function(Y) {
      * @submodule attribute-base
      */
     var O = Y.Object,
+        Lang = Y.Lang,
         EventTarget = Y.EventTarget,
 
         DOT = ".",
@@ -807,7 +808,7 @@ YUI.add('attribute-base', function(Y) {
                 }
 
                 if (allowSet) {
-                    if(!subAttrName && newVal === prevVal) {
+                    if(!subAttrName && newVal === prevVal && !Lang.isObject(newVal)) {
                         allowSet = false;
                     } else {
                         // Store value
