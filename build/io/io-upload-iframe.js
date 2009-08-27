@@ -75,12 +75,11 @@ YUI.add('io-upload-iframe', function(Y) {
    /**
 	* @description Sets the appropriate attributes and values to the HTML
 	* form, in preparation of a file upload transaction.
-	* @method _setAttrs
+	* @method _resetAttrs
 	* @private
 	* @static
 	* @param {object} f HTML form object.
-	* @param {object} id The Transaction ID.
-	* @param {object} uri Qualified path to transaction resource.
+	* @param {object} a Object of original attributes.
 	* @return {void}
 	*/
 	function _resetAttrs(f, a){
