@@ -328,7 +328,7 @@
 <span class="c"></span>     <span class="c">// TODO: break out for IE only</span>
 <span class="c"></span>    <span class="s1">&#39;elements&#39;</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">elements</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">elements</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">},</span>
 
@@ -461,16 +461,12 @@
         <span class="k">var</span> <span class="nx">attrConfig</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">[</span><span class="nx">attr</span><span class="o">],</span>
             <span class="nx">val</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_getAttr</span><span class="o">)</span> <span class="o">{</span> <span class="c">// use Attribute imple</span>
-<span class="c"></span>            <span class="nx">val</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getAttr</span><span class="o">(</span><span class="nx">attr</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// use getters inline</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">attrConfig</span> <span class="o">&amp;&amp;</span> <span class="nx">attrConfig</span><span class="o">.</span><span class="nx">getter</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="nx">attrConfig</span><span class="o">.</span><span class="nx">getter</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Node</span><span class="o">.</span><span class="nx">re_aria</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="m">2</span><span class="o">);</span> 
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DEFAULT_GETTER</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-            <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">attrConfig</span> <span class="o">&amp;&amp;</span> <span class="nx">attrConfig</span><span class="o">.</span><span class="nx">getter</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">attrConfig</span><span class="o">.</span><span class="nx">getter</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Node</span><span class="o">.</span><span class="nx">re_aria</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="m">2</span><span class="o">);</span> 
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DEFAULT_GETTER</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
@@ -935,6 +931,7 @@
                                 <li class=""><a href="node-class.js.html" title="node-class.js">node-class.js</a></li>
                                 <li class=""><a href="node-event-delegate.js.html" title="node-event-delegate.js">node-event-delegate.js</a></li>
                                 <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
+                                <li class=""><a href="node-ie.js.html" title="node-ie.js">node-ie.js</a></li>
                                 <li class=""><a href="node-imports.js.html" title="node-imports.js">node-imports.js</a></li>
                                 <li class=""><a href="node-pluginhost.js.html" title="node-pluginhost.js">node-pluginhost.js</a></li>
                                 <li class=""><a href="node-region.js.html" title="node-region.js">node-region.js</a></li>
