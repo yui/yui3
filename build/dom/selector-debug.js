@@ -498,7 +498,11 @@ var PARENT_NODE = 'parentNode',
                     if (j && !pass) {
                         while ((test = tests[--j])) {
                             operator = test[1];
-                            value = tmpNode[test[0]];
+                            if (tmpNode[test[0]] !== undefined) { // DOM property
+                                value = tmpNode[test[0]];
+                            } else if (tmpNode.getAttribute) { // custom attributes require getAttribute interface
+                                value = tmpNode.getAttribute(test[0]);
+                            }
 
                             // skip node as soon as a test fails 
                             if (getters[test[0]]) {
@@ -737,11 +741,11 @@ var PARENT_NODE = 'parentNode',
                 re, i, len;
 
             if (pseudos) {
-                selector = selector.replace(Selector._re.pseudos, 'REPLACED_PSEUDO');
+                selector = selector.replace(Selector._re.pseudos, '!!REPLACED_PSEUDO!!');
             }
 
             if (attrs) {
-                selector = selector.replace(Selector._re.attr, 'REPLACED_ATTRIBUTE');
+                selector = selector.replace(Selector._re.attr, '!!REPLACED_ATTRIBUTE!!');
             }
 
             for (re in shorthand) {
@@ -752,12 +756,12 @@ var PARENT_NODE = 'parentNode',
 
             if (attrs) {
                 for (i = 0, len = attrs.length; i < len; ++i) {
-                    selector = selector.replace('REPLACED_ATTRIBUTE', attrs[i]);
+                    selector = selector.replace('!!REPLACED_ATTRIBUTE!!', attrs[i]);
                 }
             }
             if (pseudos) {
                 for (i = 0, len = pseudos.length; i < len; ++i) {
-                    selector = selector.replace('REPLACED_PSEUDO', pseudos[i]);
+                    selector = selector.replace('!!REPLACED_PSEUDO!!', pseudos[i]);
                 }
             }
             return selector;

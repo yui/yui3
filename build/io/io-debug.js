@@ -177,7 +177,7 @@ YUI.add('io-base', function(Y) {
    	function _io(uri, c, i) {
    		var f, o, m;
    			c = c || {};
-   			o = _create(c.xdr || c.form, parseInt(i));
+   			o = _create(c.xdr || c.form, i);
    			m = c.method ? c.method.toUpperCase() : 'GET';
 
    		if (c.form) {
@@ -465,6 +465,7 @@ YUI.add('io-base', function(Y) {
    	*/
    	function _id() {
    		var id = transactionId;
+
    		transactionId++;
 
    		return id;
@@ -485,7 +486,7 @@ YUI.add('io-base', function(Y) {
    	*/
    	function _create(c, i) {
    		var o = {};
-	   		o.id = parseInt(i) || _id();
+	   		o.id = Y.Lang.isNumber(i) ? i : _id();
 	   		c = c || {};
 
 		if (!c.use && !c.upload) {
@@ -1133,7 +1134,7 @@ YUI.add('io-upload-iframe', function(Y) {
 	* @static
 	* @param {object} f HTML form object.
 	* @param {string} s The key-value POST data.
-	* @return {array} e Array of created fields.
+	* @return {array} o Array of created fields.
 	*/
 	function _addData(f, s) {
 		var o = [],
@@ -1193,12 +1194,11 @@ YUI.add('io-upload-iframe', function(Y) {
    /**
 	* @description Sets the appropriate attributes and values to the HTML
 	* form, in preparation of a file upload transaction.
-	* @method _setAttrs
+	* @method _resetAttrs
 	* @private
 	* @static
 	* @param {object} f HTML form object.
-	* @param {object} id The Transaction ID.
-	* @param {object} uri Qualified path to transaction resource.
+	* @param {object} a Object of original attributes.
 	* @return {void}
 	*/
 	function _resetAttrs(f, a){
@@ -1460,7 +1460,7 @@ YUI.add('io-queue', function(Y) {
 			_shift();
 		}
 
-		Y.log('Object queued.  Transaction id is' + o.id, 'info', 'io');
+		Y.log('Object queued.  Transaction id is ' + o.id, 'info', 'io');
 		return o;
 	}
 

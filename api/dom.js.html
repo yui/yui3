@@ -300,7 +300,9 @@
 <span class="c"></span>             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_nl2frag</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_cloneCache</span><span class="o">[</span><span class="nx">html</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">ret</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_cloneCache</span><span class="o">[</span><span class="nx">html</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="o">}</span>
         <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
     <span class="o">},</span>
 
