@@ -108,25 +108,7 @@ Y.mix(ProgressBar,{
 				return this._validateMinValueAtt(value);
 			}
 		},
-		
-		width: {
-			// getter: function() {
-				// return this.get(BOUNDING_BOX).getStyle(WIDTH);
-			// },
-			setter: function (value) {
-				return this._setWidthAtt(value);
-			}
-		},
-		
-		height: {
-			// getter: function() {
-				// return this.get(BOUNDING_BOX).getStyle(HEIGHT);
-			// },
-			setter: function (value) {
-				return this._setHeightAtt(value);
-			}
-		},
-		
+
 		ariaTextTemplate: {
 			value:'{value}'
 		},
@@ -150,7 +132,7 @@ Y.mix(ProgressBar,{
 });
 
 Y.extend(ProgressBar, Y.Widget, {
-	_previousValue: 50,
+	_previousValue: 0,
 	_tweenFactor: 1,
 	_barFactor: 1,
 	_barSpace: 0,
@@ -180,6 +162,7 @@ Y.extend(ProgressBar, Y.Widget, {
 		cb.addClass(getCN(PB,this.get(DIRECTION)));
 		this.set(BAR_EL, cb.appendChild(Y.Node.create(BAR_MARKUP)));
 		this.set(MASK_EL, cb.appendChild(Y.Node.create(MASK_MARKUP)));
+		this._barSizeFunction = this._barSizeFunctions[0][this.get(DIRECTION)];
 		if (this.get(WIDTH) === "") {
 			this.set(WIDTH, bb.getStyle(WIDTH));
 		}
@@ -192,9 +175,8 @@ Y.extend(ProgressBar, Y.Widget, {
 			'aria-valuemin':this.get(MIN_VALUE),
 			'aria-valuemax':this.get(MAX_VALUE)
 		});
-		this._barSizeFunction = this._barSizeFunctions[0][this.get(DIRECTION)];
 		this._previousValue = this.get(VALUE);
-		this._animChange();
+		this._animChange(this.get(ANIM));
 		
 	},
 	
@@ -202,8 +184,6 @@ Y.extend(ProgressBar, Y.Widget, {
 		this.after('valueChange', this._afterValueChange);
 		this.after('minValueChange', this._afterMinValueChange);
 		this.after('maxValueChange', this._afterMaxValueChange);
-		this.after('widthChange', this._afterWidthChange);
-		this.after('heightChange', this._afterHeightChange);
 		this.on('animChange', this._onAnimChange);
 	},
 	syncUI: function() {
@@ -289,16 +269,12 @@ Y.extend(ProgressBar, Y.Widget, {
 		trEl.setStyle(WIDTH,newSize);
 		brEl.setStyle(WIDTH,newSize);
 	},
-	_afterWidthChange: function(ev) { 
-		// var value = ev.newVal;
-		// this.get(BOUNDING_BOX).setStyle(WIDTH,value);
-		// this.get(CONTENT_BOX).setStyle(WIDTH,value);
+	_afterWidthChange: function() { 
+		ProgressBar.superclass._afterWidthChange.apply(this,arguments);
 		this.syncUI();
 	},
-	_afterHeightChange: function(ev) {
-		// var value = ev.newVal;
-		// this.get(BOUNDING_BOX).setStyle(HEIGHT,value);
-		// this.get(CONTENT_BOX).setStyle(HEIGHT,value);
+	_afterHeightChange: function() {
+		ProgressBar.superclass._afterHeightChange.apply(this,arguments);
 		this.syncUI();
 	},
 	_setDirectionAtt:function(value) {
@@ -319,19 +295,6 @@ Y.extend(ProgressBar, Y.Widget, {
 	},
 	_validateMaxValueAtt:L.isNumber,
 	_validateMinValueAtt:L.isNumber,
-	_setWidthAtt:function(value) {
-		if (L.isNumber(value)) {
-			value += PX;
-		}
-		return value;
-	},
-	_setHeightAtt:function(value) {
-		if (L.isNumber(value)) {
-			value += PX;
-		}
-		return value;
-
-	},
 	_validateValueAtt:function(value) {
 		return L.isNumber(value) && value >= this.get(MIN_VALUE) && value <= this.get(MAX_VALUE);
 	},
@@ -355,7 +318,7 @@ Y.extend(ProgressBar, Y.Widget, {
 		if (anim) {
 			anim.set('node', this.get(BAR_EL));
 			anim.after('tween', Y.bind(this._animOnTween,this));
-			anim.after('complete', Y.bind(this._animComplete,this));
+			anim.after('end', Y.bind(this._animComplete,this));
 
 		} else {
 			anim = this.get(ANIM);
@@ -370,12 +333,13 @@ Y.extend(ProgressBar, Y.Widget, {
 	_animComplete: function() {
 		var value = this.get(VALUE);
 		this._previousValue = value;
-		this.fire(PROGRESS,{newVal:value});
+		this.fire(PROGRESS, {newVal:value});
 		this.fire(COMPLETE, {newVal:value});
 		this.get(BAR_EL).removeClass(C_ANIM);
 	},
-	_animOnTween:function (name,oArgs) {
-		var value = Math.floor(this._tweenFactor * oArgs[0].currentFrame + this._previousValue);
+	_animOnTween:function (ev) {
+		var anim = ev.target,
+			value = Math.floor(this._tweenFactor * anim.get('elapsedTime') + this._previousValue);
 		this.fire(PROGRESS,{newVal:value});
 	},
 
@@ -431,14 +395,22 @@ b[0][DIRECTION_BTT] = function(value, pixelValue, barEl, anim) {
 };
 b[1][DIRECTION_LTR] = function(value, pixelValue, barEl, anim) {
 	barEl.addClass(C_ANIM);
-	this._tweenFactor = (value - this._previousValue) / anim.get('elapsedTime')  / anim.get('duration');
+	if (value !== this._previousValue) {
+		this._tweenFactor = (value - this._previousValue)  / anim.get('duration') / 1000;
+	} else {
+		this._tweenFactor = 0;
+	}
 	anim.set('to', {width: pixelValue }); 
 	anim.run();
 };
 b[1][DIRECTION_RTL] =  b[1][DIRECTION_LTR];
 b[1][DIRECTION_TTB] =  function(value, pixelValue, barEl, anim) {
 	barEl.addClass(C_ANIM);
-	this._tweenFactor = (value - this._previousValue) / anim.get('elapsedTime')  / anim.get('duration');
+	if (value !== this._previousValue) {
+		this._tweenFactor = (value - this._previousValue) / anim.get('duration') / 1000;
+	} else {
+		this._tweenFactor = 0;
+	}
 	anim.set('to', {height: pixelValue});
 	anim.run();
 };
