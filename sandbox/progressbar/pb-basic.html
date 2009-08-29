@@ -316,7 +316,7 @@ YUI({base:"../../build/",filter:"raw"}).use('widget','anim','progressbar','slide
 
 	Y.get('#anim').set('checked', false);
 	Y.get('#anim').after('click',function(ev) {
-		var checked = ev.target.checked;
+		var checked = ev.target.get('checked');
 		pb.set('anim',checked);
 		if (checked) {
 			Y.get('#animationSet').removeClass('disabled');

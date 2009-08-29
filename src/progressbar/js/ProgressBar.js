@@ -85,10 +85,6 @@ Y.mix(ProgressBar,{
 		direction: {
 			value:DIRECTION_LTR,
 			lazyAdd:false,
-			setter: function (value) {
-				return this._setDirectionAtt(value);
-			},
-			
 			validator: function (value) {
 				return this._validateDirectionAtt(value);
 			}
@@ -164,7 +160,7 @@ Y.extend(ProgressBar, Y.Widget, {
 		cb.addClass(getCN(PB,this.get(DIRECTION)));
 		this.set(BAR_EL, cb.appendChild(Y.Node.create(BAR_MARKUP)));
 		this.set(MASK_EL, cb.appendChild(Y.Node.create(MASK_MARKUP)));
-		this._barSizeFunction = this._barSizeFunctions[0][this.get(DIRECTION)];
+		// this._barSizeFunction = this._barSizeFunctions[0][this.get(DIRECTION)];
 		if (this.get(WIDTH) === "") {
 			this.set(WIDTH, bb.getStyle(WIDTH));
 		}
@@ -192,7 +188,7 @@ Y.extend(ProgressBar, Y.Widget, {
 		Y.log('syncUI');
 		this._fixEdges();
 		this._recalculateConstants();
-		this._valueChange(this.get(VALUE));
+		this._valueChange(this.get(VALUE),true);
 	},
 	_afterMinValueChange: function(ev) {
 		var minValue = ev.newVal;
@@ -211,16 +207,16 @@ Y.extend(ProgressBar, Y.Widget, {
 	_afterValueChange: function (ev) {
 		this._valueChange(ev.newVal);
 	},
-	_valueChange: function (value) {
+	_valueChange: function (value,noAnim) {
 		Y.log('set value: ' + value);
 		this._setAriaText(value);
 		var pixelValue = Math.floor((value - this.get(MIN_VALUE)) * this._barFactor),
 			anim = this.get(ANIM);
-		if (anim) {
+		if (anim && anim.get('running')) {
 			anim.stop();
 		}
 		this.fire(START,{newVal:this._previousValue});
-		this._barSizeFunction(value, pixelValue, this.get(BAR_EL), anim);
+		this._barSizeFunctions[(!noAnim && anim)?1:0][this.get(DIRECTION)].call(this, value, pixelValue, this.get(BAR_EL), anim);
 	},
 	destructor: function() {
 		Y.log('destroy','info','ProgressBar');
@@ -282,10 +278,6 @@ Y.extend(ProgressBar, Y.Widget, {
 		ProgressBar.superclass._afterHeightChange.apply(this,arguments);
 		this.syncUI();
 	},
-	_setDirectionAtt:function(value) {
-		this._barSizeFunction = this._barSizeFunctions[this.get(ANIM)?1:0][value];
-		return value;
-	},
 	_validateDirectionAtt:function(value) {
 		if (this._rendered) { return false; }
 		switch (value) {
@@ -334,20 +326,28 @@ Y.extend(ProgressBar, Y.Widget, {
 			}
 			anim = null;
 		}
-		this._barSizeFunction = this._barSizeFunctions[anim?1:0][this.get(DIRECTION)];
-		return anim;
+		// this._barSizeFunction = this._barSizeFunctions[anim?1:0][this.get(DIRECTION)];
 	},
 	_animComplete: function() {
 		Y.log('Animation completed','info','ProgressBar');
 		var value = this.get(VALUE);
 		this._previousValue = value;
+		this.get(BAR_EL).removeClass(C_ANIM);
 		this.fire(PROGRESS, {newVal:value});
 		this.fire(COMPLETE, {newVal:value});
-		this.get(BAR_EL).removeClass(C_ANIM);
 	},
 	_animOnTween:function (ev) {
 		var anim = ev.target,
-			value = Math.floor(this._tweenFactor * anim.get('elapsedTime') + this._previousValue);
+			value = Math.floor(this._tweenFactor * anim.get('elapsedTime') + this._previousValue),
+			barEl = this.get(BAR_EL);
+		switch(this.get(DIRECTION)) {
+			case DIRECTION_BTT:
+				barEl.setStyle('top',(this._barSpace - parseFloat(barEl.getStyle(HEIGHT))) + PX);
+				break;
+			case DIRECTION_RTL:
+				barEl.setStyle('left',(this._barSpace - parseFloat(barEl.getStyle(WIDTH))) + PX);
+				break;
+		}
 		// The following fills the logger window too fast
 		// Y.log('Animation onTween at: ' + value,'info','ProgressBar');
 		this.fire(PROGRESS,{newVal:value});

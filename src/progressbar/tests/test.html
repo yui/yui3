@@ -917,36 +917,15 @@ to add itself to the module list along with its requirements -->
 		});
 		logger.render('#testLogger');
 		//logger.hideCategory('info');
-		if (0) {
+		if (1) {
 			Y.Test.Runner.run();
 		} else {
 			// This section is for running individual tests.  Set previous if to false.
-			pb = new PB({anim:true});
-			pb.get('anim').set('duration', 2);
+			pb = new PB({direction:'rtl',anim:true});
 			pb.render(TEST);
-			var startValue = null,
-				firstProg = null,
-				halfProg = null,
-				lastProg = null,
-				endValue = null;
-			pb.on('start',function(ev) {
-				startValue = ev.newVal;
-				console.log('start',ev.newVal);
-			});
-			pb.on('progress',function(ev) {
-				if (firstProg === null) { firstProg = ev.newVal; }
-				lastProg = ev.newVal;
-				console.log('progress',ev.newVal);
-			});
-			pb.on('complete',function (ev) {
-				endValue = ev.newVal;
-				console.log('complete',ev.newVal);
-			});
-			console.log('set');
-			pb.set('value',50);
-			console.log('after set');
+			pb.set('value',30);
 		}
-    });
+	});
 });
     
 
