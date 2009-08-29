@@ -729,6 +729,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 cewrapper.fn = function(e) {
                     cewrapper.fire(Y.Event.getEvent(e, el, (compat || (false === facade))));
                 };
+				cewrapper.capture = capture;
             
                 if (el == Y.config.win && type == "load") {
                     // window load happens once
@@ -1203,7 +1204,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
             Y.each(_wrappers, function(v, k) {
                 v.detachAll();
-                remove(v.el, v.type, v.fn);
+                remove(v.el, v.type, v.fn, v.capture);
                 delete _wrappers[k];
             });
 
