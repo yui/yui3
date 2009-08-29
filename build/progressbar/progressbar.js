@@ -180,7 +180,7 @@ Y.extend(ProgressBar, Y.Widget, {
 		this.after('valueChange', this._afterValueChange);
 		this.after('minValueChange', this._afterMinValueChange);
 		this.after('maxValueChange', this._afterMaxValueChange);
-		this.on('animChange', this._onAnimChange);
+		this.after('animChange', this._afterAnimChange);
 	},
 	syncUI: function() {
 		this._fixEdges();
@@ -303,7 +303,7 @@ Y.extend(ProgressBar, Y.Widget, {
 			return new Y.Anim();
 		}
 	},
-	_onAnimChange: function(ev) {
+	_afterAnimChange: function(ev) {
 		this._animChange(ev.newVal);
 	},
 	_animChange: function(anim) {

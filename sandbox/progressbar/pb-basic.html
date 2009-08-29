@@ -121,13 +121,8 @@ code {
 				<fieldset id="sizeSet">
 					<legend>Size</legend>
 
-					Width<div id="sliderWidth" class="yui-h-slider" tabindex="-1" title="Width slider">
-						<div id="sliderWidthThumb" class="yui-slider-thumb"><img src="../../build/slider/assets/thumb-n.gif"></div>
-					</div>
-					Height
-					<div id="sliderHeight" class="yui-h-slider" tabindex="-1" title="Height slider">
-						<div id="sliderHeightThumb" class="yui-slider-thumb"><img src="../../build/slider/assets/thumb-n.gif"></div>
-					</div>
+					Width <div id="sliderWidth" title="Width slider"></div>
+					Height <div id="sliderHeight" title="Height slider"></div>
 					<p> 
 						<label>Width: <span id="width">200</span>px </label>  &nbsp;
 						<label> Height: <span id="height">20</span>px</label>
@@ -136,11 +131,9 @@ code {
 				<fieldset id="animationSet" class="disabled">
 					<legend>Animation</legend>
 					<p style="color:black;"><input type="checkbox" id="anim" /> Enable animation</p>
-					Duration<div id="sliderDuration" class="yui-h-slider" tabindex="-1" title="Duration slider">
-						<div id="sliderDurationThumb" class="yui-slider-thumb"><img src="../../build/slider/assets/thumb-n.gif"></div>
-					</div>
+					Duration <div id="sliderDuration" title="Duration slider"></div>
 					<p> 
-						<label>Duration <span id="duration">200</span> second(s)</label>
+						<label>Duration <span id="duration">1</span> second(s)</label>
 					</p>
 					<fieldset id="easing">
 						<legend>Easing</legend>
@@ -339,7 +332,7 @@ YUI({base:"../../build/",filter:"raw"}).use('widget','anim','progressbar','slide
 	durationSlider.on('slideEnd', function() {
 		var value = Math.round(this.getValue());
 		var anim = pb.get('anim');
-		if (anim) { anim.duration = value; }
+		if (anim) { anim.set('duration', value); }
 	}); 
 
 	Y.get('#easeNone').set('checked', true);
@@ -348,7 +341,7 @@ YUI({base:"../../build/",filter:"raw"}).use('widget','anim','progressbar','slide
 		if (!anim) { return; }
 		var input = ev.target;
 		if (input.get('tagName').toUpperCase() != 'INPUT') { return; }
-		anim.method = Y.Easing[input.value];
+		anim.set('easing', Y.Easing[input.get('value')]);
 	},'#easing');
 });
 </script>

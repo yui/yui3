@@ -827,7 +827,25 @@ to add itself to the module list along with its requirements -->
 				
 				},2100);
 			},1000);
+		},
+		testOnOff: function () {
+			pb = new PB();
+			pb.render(TEST);
+			pb.set('value',30);
+			t = getEls();
+			A.areEqual(30,pb.get('value'),'reported value');
+			A.areEqual('60px',getStyle(t.b,'width'),'bar width');
+			pb.set('anim',true);
+			pb.set('value',60);
+			this.wait(function() {
+				A.isTrue(parseInt(getStyle(t.b,'width'),10) < 120,'bar still going');
+				A.isTrue(parseInt(getStyle(t.b,'width'),10) > 0,'bar not departed');
+				this.wait(function () {
+					A.areEqual('120px',getStyle(t.b,'width'),'bar reached end');
+				},700);
+			},500);
 		}
+			
 
 
     }));
@@ -871,9 +889,9 @@ to add itself to the module list along with its requirements -->
 					A.isNotNull(lastProg,'lastProg value still null');
 					A.isNotNull(endValue,'end value still null');
 					A.areEqual(0,startValue,'start value not zero');
-					A.isTrue(firstProg <=1,'firstProg not close to zero');
-					A.isTrue(halfProg > 0 && halfProg < 50,'halfProg value not half way');
-					A.isTrue(50 - lastProg <= 1,'lastProg value not close to 50');
+					A.isTrue(firstProg <=1,'firstProg not close to zero: ' + firstProg);
+					A.isTrue(halfProg > 0 && halfProg < 50,'halfProg value not half way (a): ' + halfProg);
+					A.isTrue(50 - lastProg <= 1,'lastProg value not close to 50: ' + lastProg);
 					A.areEqual(50,endValue,'endValue value not 50');
 
 					startValue = firstProg = halfProg = lastProg = 	endValue = null;
@@ -888,9 +906,9 @@ to add itself to the module list along with its requirements -->
 							A.isNotNull(lastProg,'lastProg value still null 1');
 							A.isNotNull(endValue,'end value still null 1');
 							A.areEqual(50,startValue,'start value not 50');
-							A.isTrue(50 - firstProg <=1,'firstProg not close to 50');
-							A.isTrue(halfProg > 30 && halfProg < 50,'halfProg value not half way 1');
-							A.isTrue(lastProg - 30 <= 1,'lastProg value not close to 30');
+							A.isTrue(50 - firstProg <=1,'firstProg not close to 50: ' + firstProg);
+							A.isTrue(halfProg > 30 && halfProg < 50,'halfProg value not half way (b): ' + halfProg);
+							A.isTrue(lastProg - 30 <= 1,'lastProg value not close to 30: ' + lastProg);
 							A.areEqual(30,endValue,'endValue value not 30');
 						
 						},1200);
@@ -921,9 +939,11 @@ to add itself to the module list along with its requirements -->
 			Y.Test.Runner.run();
 		} else {
 			// This section is for running individual tests.  Set previous if to false.
-			pb = new PB({direction:'rtl',anim:true});
+			pb = new PB();
 			pb.render(TEST);
 			pb.set('value',30);
+			debugger;
+			pb.set('anim',true);
 		}
 	});
 });
