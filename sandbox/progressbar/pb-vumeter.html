@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+<!--CSS file (default YUI Sam Skin) -->
+<title>Progress Bar examples - VU meter</title>
+<!-- css -->
+<link rel="stylesheet" type="text/css" href="../../build/cssfonts/fonts-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssreset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssgrids/grids-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssbase/base-min.css">
+<link rel="stylesheet" type="text/css" href="../../build/widget/assets/skins/sam/widget.css" />
+
+<link rel="stylesheet" type="text/css" href="http://developer.yahoo.com/yui/assets/dpSyntaxHighlighter.css">
+
+<!-- js -->
+<scrip<script type="text/javascript" src="../../build/yui/yui.js"></script>
+
+<!-- Until they get included in the yui-loader.js tables, I have to add it manually
+I could use the Loader.addModule method, but this file is already built and has the code 
+to add itself to the module list along with its requirements -->
+<link rel="stylesheet" type="text/css" href="../../build/progressbar/assets/skins/sam/progressbar.css">
+<script type="text/javascript" src="../../build/progressbar/progressbar.js"></script>
+
+
+<style type="text/css">
+
+
+/* Here I am using the className of each bar to set the masks and/or bar images for each one separately */
+
+#vumeter {
+	padding:3px;
+	margin:10px;
+	border: medium ridge silver;
+	overflow:hidden;
+}
+
+
+#vumeter .yui-progressbar {
+	margin:3px;
+	float:left;
+}
+
+#vumeter .yui-progressbar-bar  {
+	background-image: url(vumeter.png);
+}
+
+code {
+	background-color:#e0e0e0;
+	border:thin solid #c0c0c0;
+	white-space:pre;
+	font-size:10px;
+}
+
+.dp-highlighter th, .dp-highlighter td {
+	border:0;
+	padding:0;
+}
+.dp-highlighter .line1, .dp-highlighter  .line2 {
+	padding-left:10px;
+	white-space:nowrap;
+}
+
+</style>
+</head>
+<body class="yui-skin-sam">
+
+	<div class="yui-d1">
+		<div id="hd">
+			<h1>Progress Bar examples - VU meter</h1>
+			<p>Progress bars can be quite dynamic and don't need to be alone.  They certainly cannot replace the Chart utility
+			but you can do some decent graphics with them, even animated ones.</p>
+		</div>
+		<div id="bd">
+			<div id="vumeter" ></div>
+		</div>
+		<div id="ft">
+			<p style="clear:both">Here we draw a set of several Progress Bars with <code>direction</code> set to move from bottom to top <code>'btt'</code>.
+			We are letting the <a href="http://developer.yahoo.com/yui/animation/">YUI Animation utility</a> to handle the movement for us.
+			In order to produce a more realistic movement, instead of giving random values to each of the bars independently, we
+			are using Animation's own Bezier function to calculate a Bezier curve based on four random points, then we take eight
+			evenly spaced points from that curve to use as values for each bar.</p>
+			<p>To keep them moving, we are listening to the event that signals the end of the animation.  
+			We are listening to the completion of the last bar drawn which, presumably, would be the last to end.  
+			This is not particularly relevant.  The movement of the bar can be interrupted at any time by setting a new
+			value and the bar will immediately resume its movement towards the new setting.</p>
+			<p>The code for this example is:</p>
+			<textarea name="code" class="JScript" cols="60" rows="1">
+				var pbvu = [],i,NUM_BARS= 8, hold = false;
+				for (i = 0; i < NUM_BARS;i++) {
+					pbvu[i] = new Y.ProgressBar({
+						direction:'btt',
+						width:20,
+						height:80,
+						anim:true
+					}).render('#vumeter');
+					pbvu[i].get('anim').set('duration', 0.3);
+				}
+				var redrawVUs = function() {
+					var points = [],i;
+					for (i=0;i<4;i++) {
+						points[i] = [i,Math.random() * 100];
+					}
+					for (i = 0;i < NUM_BARS;i++) {
+						var newValue = Math.floor(Y.Anim.getBezier(points,i/(NUM_BARS-1))[1]);
+						pbvu[i].set('value',newValue);
+					}
+				};
+				pbvu[NUM_BARS -1].on('end',redrawVUs);
+				redrawVUs();
+			</textarea>
+			<p>The only relevant style setting is the background image of the bar itself, the others simply deal with piling them
+			one after the other with suitable spacing and all enclosed within a common border. 
+			The border and the shaded background on each of the bars are part of the standard ProgressBar SAM skin.</p>
+			<textarea name="code" class="CSS" cols="60" rows="1">
+				#vumeter {
+					padding:3px;
+					margin:10px;
+					border: medium ridge silver;
+				}
+
+				#vumeter .yui-progressbar {
+					margin:3px;
+					display:inline-block;
+				}
+
+				#vumeter .yui-progressbar-bar  {
+					background-image: url(vumeter.png);
+				}
+			</textarea>
+		</div>
+	</div>
+	
+<script  type="text/javascript">
+YUI({base:"../../build/",filter:"raw"}).use('widget','anim','progressbar',function(Y) {
+		
+		var pbvu = [],i,NUM_BARS= 8, hold = false;
+		for (i = 0; i < NUM_BARS;i++) {
+			pbvu[i] = new Y.ProgressBar({
+				direction:'btt',
+				width:20,
+				height:80,
+				anim:true
+			}).render('#vumeter');
+			pbvu[i].get('anim').set('duration', 0.3);
+		}
+		var redrawVUs = function() {
+			var points = [],i;
+			for (i=0;i<4;i++) {
+				points[i] = [i,Math.random() * 100];
+			}
+			for (i = 0;i < NUM_BARS;i++) {
+				var newValue = Math.floor(Y.Anim.getBezier(points,i/(NUM_BARS-1))[1]);
+				pbvu[i].set('value',newValue);
+			}
+		};
+		pbvu[NUM_BARS -1].on('end',redrawVUs);
+		redrawVUs();
+	});
+</script>
+<script type="text/javascript" src="http://developer.yahoo.com/yui/assets/dpSyntaxHighlighter.js"></script>
+<script type="text/javascript" language="javascript">dp.SyntaxHighlighter.HighlightAll('code');</script>
+</body>
+</html>
+	

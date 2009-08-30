@@ -161,7 +161,7 @@ code {
 		<div id="ft">
 			<p>The ProgressBar itself is created with this code:</p>
 			<textarea name="code" class="JScript" cols="60" rows="1">
-				var pb = new YAHOO.widget.ProgressBar({value:50}).render('basic');
+				var pb = new Y.ProgressBar({value:50}).render('#basic');
 			</textarea>
 			
 			<p>Most of the code in this example deals with handling the interface, the sliders and other input controls.
@@ -170,26 +170,26 @@ code {
 			Leaving aside all the interface details, these are the statements that deal with those settings:</p>
 			<textarea name="code" class="JScript" cols="60" rows="1">
 				pb.set('value',valueSlider.getValue());
-				pb.set('minValue',rangeSlider.minValue);
-				pb.set('maxValue',rangeSlider.minValue);
+				pb.set('minValue',minValueSlider.getValue());
+				pb.set('maxValue',maxValueSlider.getValue());
 				pb.set('width',widthSlider.getValue());
 				pb.set('height',heightSlider.getValue());
 				
-				pb.set('anim',checkBoxEl.checked);
+				pb.set('anim',checkBoxEl.get('checked'));
 				
 				var anim = pb.get('anim');
 				if (anim) { 
-					anim.duration = durationSlider.getValue(); 
+					anim.set('duration', durationSlider.getValue()); 
 				}
 				
 				var anim = pb.get('anim');
 				if (anim) { 
-					anim.method = Y.Easing[inputEl.value]; 
+					anim.set('easing',Y.Easing[inputEl.get('value')]); 
 				}
 			</textarea>
-			<p>In all cases, the scaling factors from the pixel range of the Sliders to the values used for the ProgressBar have been omitted.
-			Most values are set directly, those related to animation are set depending on the existence of an Anim object.  The <code>anim</code>
-			attribute, while it receives a boolean it returns the current instance of Anim.   The <code>value</code> attribute of the radio buttons
+			<p>Most values are set directly, upon receiving the <code>slideEnd</code> event 
+			while those related to animation are set depending on the existence of an Anim object.  The <code>anim</code>
+			attribute, while it receives a boolean, it returns the current instance of Anim.   The <code>value</code> attribute of the radio buttons
 			for selecting the easing method, have been set to the actual names of the methods 
 			so it is easy to locate them in the <code>Y.Easing</code> object.  The ProgressBar rejects values outside of the range
 			given by <code>minValue</code> and <code>maxValue</code> so the slider goes back to whichever the actual value was read from the ProgressBar itself.</p>

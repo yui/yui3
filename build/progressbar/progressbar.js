@@ -1,10 +1,11 @@
 YUI.add('progressbar', function(Y) {
 
 /**
- * Create a sliding value range input visualized as a draggable thumb on a
- * background element.
- * 
+ *
  * @module progressbar
+ * @requires widget
+ * @optional animation
+ * @title ProgressBar Widget
  */
 
 var PB			= 'progressbar',
@@ -36,7 +37,7 @@ var PB			= 'progressbar',
 	// Events
 	START = 'start',
 	PROGRESS = 'progress',
-	COMPLETE = 'complete',
+	END = 'end',
 
 	getCN		= Y.ClassNameManager.getClassName,
 
@@ -67,22 +68,73 @@ var PB			= 'progressbar',
 	L = Y.Lang,
 	PX = 'px';
 
+/**
+ * The ProgressBar widget provides an easy way to draw a bar depicting progress of an operation,
+ * a level meter, rating or any such simple linear measure.
+ * It allows for highly customized styles including animation, vertical or horizontal and forward or reverse.
+
+ * @class ProgressBar
+ * @extends Widget
+ * @param oConfigs {object} An object containing any configuration attributes to be set 
+ * @constructor
+ */     
 var ProgressBar = function() {
 
 	ProgressBar.superclass.constructor.apply(this, arguments);
 };
 
 Y.mix(ProgressBar,{
+    /**
+     * The identity of the widget.
+     *
+     * @property ProgressBar.NAME
+     * @type String
+     * @static
+     */
 	NAME:'progressbar',
+    /**
+     * Static property used to define the default attribute configuration of
+     * the Widget.
+     *
+     * @property ProgressBar.ATTRS
+     * @type Object
+     * @protected
+     * @static
+     */
 	ATTRS : {
+
+		/**
+         * Reference to the moving bar element. Written once on instantiation.
+         *
+         * @attribute barEl
+         * @type Node
+         * @default reference to Node
+         * @writeOnce
+         */
 		barEl: {
 			writeOnce: true
 		},
 
+		/**
+         * Reference to the mask element. Written once on instantiation.
+         *
+         * @attribute maskEl
+         * @type Node
+         * @default reference to Node
+         * @writeOnce
+         */
 		maskEl: {
 			writeOnce: true
 		},
 
+		/**
+		 * @attribute direction
+		 * @description Direction of movement of the bar.  
+		 *    It can be any of 'ltr' (left to right), 'rtl' (the reverse) , 'ttb' (top to bottom) or 'btt'.
+		 *    Can only be set before rendering, read only after rendering.
+		 * @default 'ltr'
+		 * @type String (any of "ltr", "rtl", "ttb" or "btt")
+		 */			
 		direction: {
 			value:DIRECTION_LTR,
 			lazyAdd:false,
@@ -91,6 +143,14 @@ Y.mix(ProgressBar,{
 			}
 		},
 
+		/**
+		 * @attribute maxValue
+		 * @description Represents the top value for the bar. 
+		 *   The bar will be fully extended when reaching this value.  
+		 *   Values higher than this will be ignored. 
+		 * @default 100
+		 * @type Number
+		 */				    
 		maxValue: {
 			value: 100,
 			validator: function (value) {
@@ -98,6 +158,14 @@ Y.mix(ProgressBar,{
 			}
 		},
 		
+		/**
+		 * @attribute minValue
+		 * @description Represents the lowest value for the bar. 
+		 *   The bar will be totally collapsed when reaching this value.  
+		 *    Values lower than this will be ignored. 
+		 * @default 0
+		 * @type Number
+		 */				
 		minValue: {
 			value: 0,
 			validator: function (value) {
@@ -105,10 +173,25 @@ Y.mix(ProgressBar,{
 			}
 		},
 
+		/**
+		 * @attribute ariaTextTemplate 
+		 * @description Text to be voiced by screen readers.
+		 *     The text is processed by <a href="YAHOO.lang.html#method_substitute">YAHOO.lang.substitute</a>.  
+		 *     It can use the placeholders {value}, {minValue} and {maxValue}
+		 * @default "{value}"
+		 * @type String
+		 */				
 		ariaTextTemplate: {
 			value:'{value}'
 		},
 		
+		/**
+		 * @attribute value
+		 * @description The value for the bar.  
+		 *     Valid values are in between the minValue and maxValue attributes.
+		 * @default 0
+		 * @type Number
+		 */			
 		value: {
 			value: 0,
 			validator: function (value) {
@@ -116,6 +199,17 @@ Y.mix(ProgressBar,{
 			}
 		},
 		
+		/**
+		 * @attribute anim
+		 * @description It accepts either a boolean (recommended) or an instance of <a href="Anim.html">Anim</a>.
+		 *   If a boolean, it will enable/disable animation creating its own instance of the animation utility.  
+		 *   If given an instance of <a href="Anim.html">Anim</a> it will use that instance.
+		 *   The optional <a href="Anim.html">animation</a> utility needs to be loaded.
+		 *   When read, it returns the instance of the animation utility in use or null if none.  
+		 *   It can be used to set the animation parameters such as easing methods or duration.
+		 * @default null
+		 * @type {boolean} or {instance of Anim}
+		 */						
 		anim: {
 			value: null,
 			lazyAdd:false,
@@ -132,33 +226,69 @@ Y.extend(ProgressBar, Y.Widget, {
 	_tweenFactor: 1,
 	_barFactor: 1,
 	_barSpace: 0,
-	_rendered: false,
 
+    /**
+     * Construction logic executed during ProgressBar instantiation. 
+	 * Publishes custom events start, progress and end
+     *
+     * @method initializer
+     * @protected
+     */
 	initializer: function  (config) {
 	
 
+        /**
+         * Signals the beginning of the movement of the bar.  
+         * Payload includes the starting value of the ProgressBar.
+         *
+         * @event start
+         * @param event {Event.Facade} An Event Facade object with the following attribute specific property added:
+         *  <dl>
+         *      <dt>value</dt>
+         *          <dd>the value at the start of the movement</dd>
+         *  </dl>
+         */
 		this.publish(START);
-		// If animation is loaded, this one will trigger for each frame of the animation providing partial values
+        /**
+         * Fires several times during the movement of the bar.  
+         * Payload includes the current instantaneous value of the ProgressBar.
+		 * It will fire at least once, even with animation disabled, at the end of the movement.
+         *
+         * @event start
+         * @param event {Event.Facade} An Event Facade object with the following attribute specific property added:
+         *  <dl>
+         *      <dt>value</dt>
+         *          <dd>the value at the instant the event is fired</dd>
+         *  </dl>
+         */
 		this.publish(PROGRESS);
-		// This will fire at the end of the animation or immediately upon changing values if animation is not loaded
-		this.publish(COMPLETE);
+        /**
+         * Signals the completion of the movement of the bar.  
+         * Payload includes the end value of the ProgressBar.
+         *
+         * @event start
+         * @param event {Event.Facade} An Event Facade object with the following attribute specific property added:
+         *  <dl>
+         *      <dt>value</dt>
+         *          <dd>the value at the end of the movement</dd>
+         *  </dl>
+         */
+		this.publish(END);
 	},
 	
-	renderer : function() {
-		ProgressBar.superclass.renderer.apply(this, arguments);
-	},
-
+    /**
+     * Create the DOM structure for the ProgressBar.
+     *
+     * @method renderUI
+     * @protected
+     */
 	renderUI: function () {
-		
-		if (this._rendered) { return; }
-		this._rendered = true;
 		
 		var cb   = this.get(CONTENT_BOX),
 			bb   = this.get(BOUNDING_BOX);
 		cb.addClass(getCN(PB,this.get(DIRECTION)));
 		this.set(BAR_EL, cb.appendChild(Y.Node.create(BAR_MARKUP)));
 		this.set(MASK_EL, cb.appendChild(Y.Node.create(MASK_MARKUP)));
-		// this._barSizeFunction = this._barSizeFunctions[0][this.get(DIRECTION)];
 		if (this.get(WIDTH) === "") {
 			this.set(WIDTH, bb.getStyle(WIDTH));
 		}
@@ -176,23 +306,62 @@ Y.extend(ProgressBar, Y.Widget, {
 		
 	},
 	
+    /**
+     * Sets the listeners so the changes in the attribute values
+	 * are reflected in the DOM structure.
+     *
+     * @method bindUI
+     * @protected
+     */
 	bindUI: function () {
 		this.after('valueChange', this._afterValueChange);
 		this.after('minValueChange', this._afterMinValueChange);
 		this.after('maxValueChange', this._afterMaxValueChange);
 		this.after('animChange', this._afterAnimChange);
 	},
+	
+    /**
+     * Synchronizes the DOM state with the attribute settings, 
+     * most notably value, ProgressBar dimensions and range values. 
+	 * Recalculates several auxiliary values to speed up later processing.
+     *
+     * @method syncUI
+     */	
 	syncUI: function() {
 		this._fixEdges();
 		this._recalculateConstants();
-		this._valueChange(this.get(VALUE),true);
+		this._moveBarEl(this.get(VALUE),true);
 	},
+	
+	/**
+	 * Listener for the change in minValue event.
+     * If the current value is less than the newly set minValue, 
+	 * it adjusts it to keep it in range.
+	 * Sets the <code>aria-valuemin</code> attribute 
+	 * and adjusts the DOM to the new range.
+     *
+     * @method _afterMinValueChange
+     * @param ev {Event} minValueChange custom event
+     * @protected
+     */
 	_afterMinValueChange: function(ev) {
 		var minValue = ev.newVal;
 		if (this.get(VALUE) < minValue) {this.set(VALUE, minValue);}
 		this.get(BOUNDING_BOX).setAttribute('aria-valuemin', minValue);
 		this.syncUI();
 	},
+
+	/**
+	 * Listener for the change in maxValue event.
+     * If the current value is greater than the newly set maxValue, 
+	 * it adjusts it to keep it in range.
+	 * Sets the <code>aria-valuemax</code> attribute 
+	 * and adjusts the DOM to the new range.
+     *
+     * @method _afterMaxValueChange
+     * @param ev {Event} maxValueChange custom event
+     * @protected
+     */
 	_afterMaxValueChange: function(ev) {
 		var maxValue = ev.newVal;
 		if (this.get(VALUE) > maxValue) { this.set(VALUE, maxValue); }
@@ -200,21 +369,54 @@ Y.extend(ProgressBar, Y.Widget, {
 		this.syncUI();
 	},
 
-		
+	/**
+	 * Listener for the change in value event.
+     * Calls the <a href="#method__moveBarEl">_moveBarEl</a> method.
+     *
+     * @method _afterValueChange
+     * @param ev {Event} valueChange custom event
+     * @protected
+     */
 	_afterValueChange: function (ev) {
-		this._valueChange(ev.newVal);
+		this._moveBarEl(ev.newVal);
 	},
-	_valueChange: function (value,noAnim) {
+	
+	/**
+	 * Moves the bar element to the size representing the value given.
+	 * Sets the ARIA attributes.
+	 * Stops any currently active animation and starts anew.  May skip over animation if so requested.
+	 * Fires the <a href="#event_start">start</a> event.
+	 * Prepares several auxiliary values and branches off to the corresponding 
+	 * <a href="#property__barSizeFunctions">_barSizeFunctions</a> depending on direction and whether animation is active.
+     *
+     * @method _moveBarEl
+     * @param value {number} value to be represented by the bar
+	 * @param noAnim {boolean} (optional) move without animating
+     * @protected
+     */
+	_moveBarEl: function (value, noAnim) {
 		this._setAriaText(value);
 		var pixelValue = Math.floor((value - this.get(MIN_VALUE)) * this._barFactor),
 			anim = this.get(ANIM);
 		if (anim && anim.get('running')) {
 			anim.stop();
 		}
-		this.fire(START,{newVal:this._previousValue});
-		this._barSizeFunctions[(!noAnim && anim)?1:0][this.get(DIRECTION)].call(this, value, pixelValue, this.get(BAR_EL), anim);
+		this.fire(START,{value:this._previousValue});
+		ProgressBar._barSizeFunctions[(!noAnim && anim)?1:0][this.get(DIRECTION)].call(this, value, pixelValue, this.get(BAR_EL), anim);
 	},
+	
+	/**
+	 * Cleans all resources taken by the ProgressBar.
+	 * Stops any running animation, destroys and cleans the animation object, if any,
+	 * unsubscribes from any events and destroys the DOM elements created.
+     *
+     * @method destructor
+     * @protected
+     */
 	destructor: function() {
+		var anim = this.get(ANIM);
+		anim.stop();
+		anim.destroy();
 		this.set(ANIM,false);
 		this.unsubscribeAll();
 		var el = this.get(BOUNDING_BOX),
@@ -222,6 +424,13 @@ Y.extend(ProgressBar, Y.Widget, {
 		if (parent) { parent.removeChild(el); }
 
 	},
+	/**
+	 * Calculates <a href="#property__barSpace">_barSpace</a> and <a href="#property__barFactor">_barFactor</a> 
+	 * to speed up later calculations.
+     *
+     * @method _recalculateConstants
+     * @private
+     */
 	_recalculateConstants: function() {
 		var barEl = this.get(BAR_EL);
 		switch (this.get(DIRECTION)) {
@@ -243,13 +452,12 @@ Y.extend(ProgressBar, Y.Widget, {
 	/** 
 	 * Due to rounding differences, some browsers fail to cover the whole area 
 	 * with the mask quadrants when the width or height is odd.  This method
-	 * stretches the lower and/or right quadrants to make the difference.
+	 * stretches the lower and/or right quadrants to make up for the difference.
 	 * @method _fixEdges
-	 * @return void
 	 * @private
 	 */
 	_fixEdges:function() {
-		if (!this._rendered || Y.UA.ie || Y.UA.gecko ) { return; }
+		if (!this.get('rendered') || Y.UA.ie || Y.UA.gecko ) { return; }
 		var maskEl = this.get(MASK_EL),
 			tlEl = maskEl.one('.' + C_TL)[0],
 			trEl = maskEl.one('.' + C_TR)[0],
@@ -265,16 +473,45 @@ Y.extend(ProgressBar, Y.Widget, {
 		trEl.setStyle(WIDTH,newSize);
 		brEl.setStyle(WIDTH,newSize);
 	},
+
+	/**
+	 * Overrides Widget's own <a href="Widget.html#method__afterWidthChange">_afterWidthChange</a> method so that it 
+	 * calls <a href="#method_syncUI">syncUI</a> after executing Widget's listener.
+     *
+     * @method _afterWidthChange
+     * @param ev {Event} widthChange custom event
+     * @protected
+     */
 	_afterWidthChange: function() { 
 		ProgressBar.superclass._afterWidthChange.apply(this,arguments);
 		this.syncUI();
 	},
+
+	/**
+	 * Overrides Widget's own <a href="Widget.html#method__afterHeightChange">_afterHeightChange</a> method so that it 
+	 * calls <a href="#method_syncUI">syncUI</a> after executing Widget's listener.
+     *
+     * @method _afterHeightChange
+     * @param ev {Event} heightChange custom event
+     * @protected
+     */
 	_afterHeightChange: function() {
 		ProgressBar.superclass._afterHeightChange.apply(this,arguments);
 		this.syncUI();
 	},
-	_validateDirectionAtt:function(value) {
-		if (this._rendered) { return false; }
+
+    /**
+     * Validator applied to the direction attribute.
+	 * Accepts the strings 'ltr', 'rtl', 'ttb' and 'btt' only before the ProgressBar has been rendered.
+     * It will reject any changes after that.
+     *
+     * @method _validateDirectionAtt
+     * @param value {String} proposed value for the direction attribute
+     * @return Boolean
+     * @protected
+     */
+	 _validateDirectionAtt:function(value) {
+		if (this.get('rendered')) { return false; }
 		switch (value) {
 			case DIRECTION_LTR:
 			case DIRECTION_RTL:
@@ -285,16 +522,52 @@ Y.extend(ProgressBar, Y.Widget, {
 				return false;
 		}
 	},
-	_validateMaxValueAtt:L.isNumber,
+	
+    /**
+     * Validator applied to the minValue attribute.
+	 * Accepts numbers.
+	 * The implementor should ensure the minValue is always less than or equal to maxValue
+     *
+     * @method _validateMinValueAtt
+     * @param value {Number} proposed value for the minValue attribute
+     * @return Boolean
+     * @protected
+     */
 	_validateMinValueAtt:L.isNumber,
+
+    /**
+     * Validator applied to the maxValue attribute.
+	 * Accepts numbers.
+	 * The implementor should ensure the maxValue is always greater than or equal to minValue
+     *
+     * @method _validateMaxValueAtt
+     * @param value {Number} proposed value for the maxValue attribute
+     * @return Boolean
+     * @protected
+     */
+	_validateMaxValueAtt:L.isNumber,
+
+    /**
+     * Validator applied to the value attribute.
+	 * Accepts numbers.
+	 * Rejects values out of the range in between minValue and maxValue
+     *
+     * @method _validateMaxValueAtt
+     * @param value {Number} proposed value for the minValue attribute
+     * @return Boolean
+     * @protected
+     */
 	_validateValueAtt:function(value) {
 		return L.isNumber(value) && value >= this.get(MIN_VALUE) && value <= this.get(MAX_VALUE);
 	},
+	
 	/** 
 	 * Called in response to a change in the <a href="#config_anim">anim</a> attribute.
-	 * It creates and sets up or destroys the instance of the animation utility that will move the bar
-	 * @method _animSetter
-	 * @return  void
+	 * If the value is an instance of Anim it is returned unchanged.
+	 * If the value evaluates to true, a new instance of Anim will be returned.
+	 * Values that evaluate as false are returned unchanged.
+	 * @method _setAnimAtt
+	 * @return  {Anim | boolean}
 	 * @private
 	 */		
 	 
@@ -303,9 +576,29 @@ Y.extend(ProgressBar, Y.Widget, {
 			return new Y.Anim();
 		}
 	},
+
+	/**
+	 * Listener for the change in anim event.
+     * Calls <a href="#method__animChange">_animChange</a>.
+     *
+     * @method _afterAnimChange
+     * @param ev {Event} animChange custom event
+     * @protected
+     */
 	_afterAnimChange: function(ev) {
 		this._animChange(ev.newVal);
 	},
+
+	/**
+	 * Sets up or destroys the Anim instance that animates the bar.
+     * If <code>anim</code> evaluates to true, it will be an instance of Anim as set in <a href="#method__setAnimAtt">_setAnimAtt</a>.
+	 * It will be associated with the bar element and listeners will be associated to some events.
+	 * If <code>anim</code> evaluates to false, the Anim instance will be destroyed
+     *
+     * @method _animChange
+     * @param anim {Anim | false} instance of Anim or value that evaluates to false
+     * @protected
+     */
 	_animChange: function(anim) {
 		if (anim) {
 			anim.set('node', this.get(BAR_EL));
@@ -317,17 +610,40 @@ Y.extend(ProgressBar, Y.Widget, {
 			if (anim) {
 				anim.detachAll();
 			}
+			anim.destroy();
 			anim = null;
 		}
-		// this._barSizeFunction = this._barSizeFunctions[anim?1:0][this.get(DIRECTION)];
 	},
+
+	/**
+	 * Listener to the <code>end</code> of the Anim instance used by ProgressBar.
+	 * Fires the <a href="#event_end">end</a> event after a last <a href="#event_progress">progress</a> event
+	 * to ensure there will always be one.
+	 * Removes the className assigned while moving.
+	 * Stores the last value as initial for next movement.
+     *
+     * @method _animComplete
+     * @protected
+     */
 	_animComplete: function() {
 		var value = this.get(VALUE);
 		this._previousValue = value;
 		this.get(BAR_EL).removeClass(C_ANIM);
-		this.fire(PROGRESS, {newVal:value});
-		this.fire(COMPLETE, {newVal:value});
+		this.fire(PROGRESS, {value:value});
+		this.fire(END, {value:value});
 	},
+
+	/**
+	 * Listener to the <code>tween</code> of the Anim instance used by ProgressBar.
+	 * Fires the <a href="#event_progress">progress</a> event after scaling the elapsedTime to a value.
+	 * Due to rounding differences while interpolating values in animation, 
+	 * the left and width or top and height cannot be animated at once because they will not add up.
+	 * Anim will animate the width or height and the left or top will be set here to add up to the ProgressBar size.
+     *
+     * @method _animOnTween
+	 * @param ev {Event} <a href="#Anim.html#event_tween">tween</a> event
+     * @protected
+     */
 	_animOnTween:function (ev) {
 		var anim = ev.target,
 			value = Math.floor(this._tweenFactor * anim.get('elapsedTime') + this._previousValue),
@@ -340,11 +656,11 @@ Y.extend(ProgressBar, Y.Widget, {
 				barEl.setStyle('left',(this._barSpace - parseFloat(barEl.getStyle(WIDTH))) + PX);
 				break;
 		}
-		this.fire(PROGRESS,{newVal:value});
+		this.fire(PROGRESS,{value:value});
 	},
 
 	/** 
-	 * Utility method to set the ARIA value attributes
+	 * Sets the ARIA value attributes
 	 * @method _setAriaText
 	 * @return  void
 	 * @private
@@ -362,36 +678,37 @@ Y.extend(ProgressBar, Y.Widget, {
 	}
 });
 /**
- * Collection of functions used by to calculate the size of the bar.
- * One of this will be used depending on direction and whether animation is active.
+ * Collection of functions used to calculate the size of the bar.
+ * One of these will be used depending on direction and whether animation is active.
  * @property _barSizeFunctions
  * @type {collection of functions}
- * @private
+ * @static
+ * @protected
  */
 var b = [{},{}];
-ProgressBar.prototype._barSizeFunctions = b;
+ProgressBar._barSizeFunctions = b;
 
 b[0][DIRECTION_LTR] = function(value, pixelValue, barEl, anim) {
 	barEl.setStyle(WIDTH,  pixelValue + PX);
-	this.fire(PROGRESS,{newVal:value});
-	this.fire(COMPLETE,{newVal:value});
+	this.fire(PROGRESS,{value:value});
+	this.fire(END,{value:value});
 };
 b[0][DIRECTION_RTL] = function(value, pixelValue, barEl, anim) {
 	barEl.setStyle(WIDTH,  pixelValue + PX);
 	barEl.setStyle('left',(this._barSpace - pixelValue) + PX);
-	this.fire(PROGRESS,{newVal:value});
-	this.fire(COMPLETE,{newVal:value});
+	this.fire(PROGRESS,{value:value});
+	this.fire(END,{value:value});
 };
 b[0][DIRECTION_TTB] = function(value, pixelValue, barEl, anim) {
 	barEl.setStyle(HEIGHT,  pixelValue + PX);
-	this.fire(PROGRESS,{newVal:value});
-	this.fire(COMPLETE,{newVal:value});
+	this.fire(PROGRESS,{value:value});
+	this.fire(END,{value:value});
 };
 b[0][DIRECTION_BTT] = function(value, pixelValue, barEl, anim) {
 	barEl.setStyle(HEIGHT,  pixelValue + PX);
 	barEl.setStyle('top',  (this._barSpace - pixelValue) + PX);
-	this.fire(PROGRESS,{newVal:value});
-	this.fire(COMPLETE,{newVal:value});
+	this.fire(PROGRESS,{value:value});
+	this.fire(END,{value:value});
 };
 b[1][DIRECTION_LTR] = function(value, pixelValue, barEl, anim) {
 	barEl.addClass(C_ANIM);

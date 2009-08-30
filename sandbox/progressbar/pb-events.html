@@ -126,65 +126,70 @@ code {
 		<div id="ft">
 			<p>The code to create the ProgressBar is:</p>
 			<textarea name="code" class="JScript" cols="60" rows="1">
-				var pb = new YAHOO.widget.ProgressBar({
+				var pb = new Y.ProgressBar({
 					value:127,
 					maxValue:255,
 					anim:true
-				}).render('pbContainer');
+				}).render('#pbContainer');
 				var anim = pb.get('anim');
-				anim.duration = 3;
-				anim.method = YAHOO.util.Easing.bounceBoth;
-				
+				anim.set('duration', 3);
+				anim.set('easing', Y.Easing.bounceBoth);				
 			</textarea>
 			<p>We are instantiating the ProgressBar and configuring it so that the initial value is 127 which is halfway
 			to the maximum we set of 255, starting from the default minimum of 0.
-			The range is set so that they translate directly into color values, which we then apply to the bar.The ProgressBar uses the Animation utility so to configure it we have to fetch the instance the ProgressBar
+			The range is set so that they translate directly into color values, which we then apply to the bar.
+			The ProgressBar uses the Animation utility so to configure it we have to fetch the instance the ProgressBar
 			uses and set its duration and easing method.  We are using an animated ProgressBar with a long duration
 			so we can see the events firing, otherwise it all happens too fast. </p>
 			
 			<p>We are listening to the three events related to movement, 
 			the one that signals the start of the movement, <code>progress</code> that is fired several times while it is moving and the 
 			one that signals the completion of the movement.  Without animation, the <code>start</code>, <code>progress</code> 
-			and <code>complete</code> events fire one after the other in close sequence.</p>
+			and <code>end</code> events fire one after the other in close sequence.</p>
 			<textarea name="code" class="JScript" cols="60" rows="1">
-				pb.on('start',function (value) {
-					Dom.get('status').innerHTML = 'Started';
+				pb.on('start',function (ev) {
+					Y.get('#status').set('innerHTML', 'Started');
 					window.setTimeout(function() {
-						Dom.get('status').innerHTML = '';
+						Y.get('#status').set('innerHTML', '');
 					},1000);
 				});
 				
-				pb.on('progress',function (value) {
-					Dom.setStyle(this.get('barEl'),'backgroundColor','rgb(' + value + ',' + value + ',127)');
-					Dom.get('valueContainer').innerHTML = value;
+				pb.on('progress',function (ev) {
+					var value = ev.value;
+					this.get('barEl').setStyle('backgroundColor','rgb(' + value + ',' + value + ',127)');
+					Y.get('#valueContainer').set('innerHTML', value);
 				});
 				
-				pb.on('complete',function (value) {
-					Dom.get('status').innerHTML = 'Stopped';
+				pb.on('end',function (ev) {
+					Y.get('#status').set('innerHTML', 'Stopped');
 					window.setTimeout(function() {
-						Dom.get('status').innerHTML = '';
+						Y.get('#status').set('innerHTML', '');
 					},1000);
 				});
 			</textarea>
 			
 			<p>We are doing simple actions with the events. We show a 'Started' sign for one second upon receiving the
-			<code>start</code> event, we change the color of the bar itself according to the <code>value</code> 
-			received in <code>progress</code> and show that value right below the bar (all events provide the <code>value</code>) and finally, in the
-			<code>complete</code> event we show a 'Stopped' sign.
-			The <code>value</code> argument in all events provides the nominal value of the ProgresBar, not the size of the bar itself.
+			<code>start</code> event, we change the color of the bar itself according to the <code>value</code> property in the event facade
+			received in <code>progress</code> and show that value right below the bar (the facades for all three events have a <code>value</code> property) 
+			and finally, in the	<code>end</code> event we show a 'Stopped' sign.
+			The <code>value</code> property in all the event facades provide the nominal value of the ProgresBar, not the size of the bar itself.
 			A value of 50 will always be halfway in a range o 0 to 100, whether the ProgressBar is 100 or 500 pixels wide.
+			The value reported is also immune to the easing method of the animation, if any.  The value will change linearly over time
+			in between the start and end values, regardless of how the bar itself bounces about.
 			</p>
 			
 			<p>We have also provided a slider to change the end values for the bar so that we can show how to respond to those
 			events and display their values, with the following code. The ProgressBar inherits the attribute change events
-			from the Element utility.  There are before and after change events for all configuration attributes.</p>
+			from the Widget component.  There are before and after change events for all configuration attributes.
+			We just mean to get notified about the change, we won't convert the value or prevent it from being set 
+			so either the before (<code>on</code>) or <code>after</code> event would do just as well.</p>
 			<textarea name="code" class="JScript" cols="60" rows="1">
-				pb.on('minValueChange',function(oArgs)  {
-					Dom.get('minValueContainer').innerHTML = oArgs.newValue;
+				pb.on('minValueChange',function(ev)  {
+					Y.get('#minValueContainer').set('innerHTML', ev.newVal);
 				});
 				
-				pb.on('maxValueChange',function(oArgs)  {
-					Dom.get('maxValueContainer').innerHTML = oArgs.newValue;
+				pb.on('maxValueChange',function(ev)  {
+					Y.get('#maxValueContainer').set('innerHTML', ev.newVal);
 				});
 			</textarea>
 			<p>The containers for the values and status texts are declared as shown below.  Notice the <code>yui-progressbar-range</code> and <code>yui-progressbar-caption</code>
@@ -224,12 +229,12 @@ YUI({base:"../../build/",filter:"raw"}).use('widget','anim','progressbar','slide
 	});
 	
 	pb.on('progress',function (ev) {
-		var value = ev.newVal;
+		var value = ev.value;
 		this.get('barEl').setStyle('backgroundColor','rgb(' + value + ',' + value + ',127)');
 		Y.get('#valueContainer').set('innerHTML', value);
 	});
 	
-	pb.on('complete',function (ev) {
+	pb.on('end',function (ev) {
 		Y.get('#status').set('innerHTML', 'Stopped');
 		window.setTimeout(function() {
 			Y.get('#status').set('innerHTML', '');

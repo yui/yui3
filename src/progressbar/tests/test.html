@@ -869,14 +869,14 @@ to add itself to the module list along with its requirements -->
 				lastProg = null,
 				endValue = null;
 			pb.on('start',function(ev) {
-				startValue = ev.newVal;
+				startValue = ev.value;
 			});
 			pb.on('progress',function(ev) {
-				if (firstProg === null) { firstProg = ev.newVal; }
-				lastProg = ev.newVal;
+				if (firstProg === null) { firstProg = ev.value; }
+				lastProg = ev.value;
 			});
-			pb.on('complete',function (ev) {
-				endValue = ev.newVal;
+			pb.on('end',function (ev) {
+				endValue = ev.value;
 			});
 			pb.set('value',50);
 
