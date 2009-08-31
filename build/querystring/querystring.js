@@ -114,7 +114,7 @@ function mergeObjects (params, addition) {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['collection']});
 YUI.add('querystring-stringify', function(Y) {
 
 /**

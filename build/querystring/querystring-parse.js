@@ -114,4 +114,4 @@ function mergeObjects (params, addition) {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['collection']});
