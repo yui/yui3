@@ -461,7 +461,9 @@ YUI.prototype = {
             loader.require(a);
             loader.ignoreRegistered = true;
             loader.allowRollup = false;
-            loader.calculate(null, (css && css == 'force') ? null : 'js');
+            // loader.calculate(null, (css && css == 'force') ? null : 'js');
+            // loader.calculate();
+            loader.calculate(null, (css) ? null : 'js');
             a = loader.sorted;
         }
 
@@ -491,7 +493,7 @@ YUI.prototype = {
             loader.context = Y;
             loader.attaching = a;
             // loader.require(missing);
-            loader.require(a);
+            loader.require((css) ? missing : a);
             loader.insert(null, (css) ? null : 'js');
         } else if (boot && l && Y.Get && !Y.Env.bootstrapped) {
             Y._loading = true;
