@@ -356,6 +356,7 @@
                 <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fn</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="o">(</span><span class="nx">compat</span> <span class="o">||</span> <span class="o">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">facade</span><span class="o">))));</span>
                 <span class="o">};</span>
+				<span class="nx">cewrapper</span><span class="o">.</span><span class="nx">capture</span> <span class="o">=</span> <span class="nx">capture</span><span class="o">;</span>
             
                 <span class="k">if</span> <span class="o">(</span><span class="nx">el</span> <span class="o">==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;load&quot;</span><span class="o">)</span> <span class="o">{</span>
                     <span class="c">// window load happens once</span>
@@ -839,7 +840,7 @@
 
             <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">_wrappers</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">v</span><span class="o">.</span><span class="nx">detachAll</span><span class="o">();</span>
-                <span class="nx">remove</span><span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">el</span><span class="o">,</span> <span class="nx">v</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span> <span class="nx">v</span><span class="o">.</span><span class="nx">fn</span><span class="o">);</span>
+                <span class="nx">remove</span><span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">el</span><span class="o">,</span> <span class="nx">v</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span> <span class="nx">v</span><span class="o">.</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">v</span><span class="o">.</span><span class="nx">capture</span><span class="o">);</span>
                 <span class="nx">delete</span> <span class="nx">_wrappers</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
             <span class="o">});</span>
 
