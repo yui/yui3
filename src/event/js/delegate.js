@@ -217,13 +217,13 @@ Event.delegate = function (type, fn, el, spec) {
 
 
     var args = Y.Array(arguments, 0, true),	    
-		element,	// HTML element serving as the delegation container
+		element = el,	// HTML element serving as the delegation container
 		handles;
 
 
 	if (Lang.isString(el)) {
 		
-		element = Y.Selector.query(el);
+		element = Y.Selector.query(el);	// Y.Selector.query always returns an array
 		
 		if (element.length === 0) { // Not found, check using onAvailable
 

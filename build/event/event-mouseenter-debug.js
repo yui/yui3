@@ -34,32 +34,35 @@ var Event = Y.Event,
     	on: function(type, fn, el) {
 
 		    var args = Y.Array(arguments, 0, true),	    
-				element,
+				element = el,
 				handles;
 
 
 			if (Lang.isString(el)) {
 
-				element = Y.Selector.query(el);
+				//	Need to use Y.all because if el is a string it could be a 
+				//	selector that returns a NodeList
 
-				if (element.length === 0) { // Not found, check using onAvailable
+				element = Y.all(el);
+
+				if (element.size() === 0) { // Not found, check using onAvailable
 
 		            return Event.onAvailable(el, function() {
-		                Y.on.apply(Event, args);
+		                Y.on.apply(Y, args);
 		            }, Event, true, false);
 
 				}
 
 			}
+			
 
-
-			if (Event._isValidCollection(element)) {
+			if (element instanceof Y.NodeList || Event._isValidCollection(element)) {	// Array or NodeList
 
 		        handles = [];
 
 		        Y.each(element, function(v, k) {
 		            args[2] = v;
-		            handles.push(Y.on.apply(Event, args));
+		            handles.push(Y.on.apply(Y, args));
 		        });
 
 		        return (handles.length === 1) ? handles[0] : handles;
@@ -67,6 +70,7 @@ var Event = Y.Event,
 			}
 
 
+			//	At this point el will always be a Node instance
 			element = Y.Node.getDOMNode(el);
 
 
