@@ -83,6 +83,7 @@ var Event = Y.Event,
 
 				if (matched) {
 
+					// TO DO: Is this right?
                     if (!ev) {
                         ev = new Y.DOMEventFacade(e, el);
                         ev.container = ev.currentTarget;
@@ -97,7 +98,7 @@ var Event = Y.Event,
 			           });
 
 					if (fn) {
-						fn(ev, ename);
+						fn(e, matched, ename);
 					}
 					else {
                     	Y.fire(ename, ev);								

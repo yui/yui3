@@ -95,7 +95,7 @@ var Event = Y.Event,
 			           });
 
 					if (fn) {
-						fn(ev, ename);
+						fn(e, matched, ename);
 					}
 					else {
                     	Y.fire(ename, ev);								
