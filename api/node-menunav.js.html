@@ -272,7 +272,7 @@
 
 <span class="k">var</span> <span class="nx">getItemAnchor</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
 
-	<span class="k">return</span> <span class="nx">isAnchor</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">LOWERCASE_A</span><span class="o">);</span>
+	<span class="k">return</span> <span class="nx">isAnchor</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">LOWERCASE_A</span><span class="o">);</span>
 
 <span class="o">};</span>
 
@@ -336,7 +336,7 @@
 		<span class="o">}</span>
 		<span class="k">else</span> <span class="o">{</span>
 			<span class="nx">oItem</span> <span class="o">=</span> <span class="nx">getNodeWithClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">CSS_MENU_LABEL</span><span class="o">)</span> <span class="o">||</span> 
-				<span class="nx">node</span><span class="o">.</span><span class="nx">query</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENU_LABEL</span><span class="o">));</span>
+				<span class="nx">node</span><span class="o">.</span><span class="nx">one</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENU_LABEL</span><span class="o">));</span>
 		<span class="o">}</span>
 		
 	<span class="o">}</span>
@@ -362,7 +362,7 @@
 
 <span class="k">var</span> <span class="nx">getFirstItem</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">menu</span><span class="o">)</span> <span class="o">{</span>
 	
-	<span class="k">return</span> <span class="nx">getItem</span><span class="o">(</span><span class="nx">menu</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="s2">&quot;li&quot;</span><span class="o">));</span>
+	<span class="k">return</span> <span class="nx">getItem</span><span class="o">(</span><span class="nx">menu</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="s2">&quot;li&quot;</span><span class="o">));</span>
 
 <span class="o">};</span>
 
@@ -478,14 +478,14 @@
 
 				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">MENU</span><span class="o">);</span>
 
-				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="s2">&quot;ul,li,.&quot;</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">,</span> <span class="nx">CONTENT</span><span class="o">)).</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">PRESENTATION</span><span class="o">);</span>
+				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="s2">&quot;ul,li,.&quot;</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENU</span><span class="o">,</span> <span class="nx">CONTENT</span><span class="o">)).</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">PRESENTATION</span><span class="o">);</span>
 
-				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENUITEM</span><span class="o">,</span> <span class="nx">CONTENT</span><span class="o">))).</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">MENUITEM</span><span class="o">);</span>
+				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">all</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="o">(</span><span class="nx">MENUITEM</span><span class="o">,</span> <span class="nx">CONTENT</span><span class="o">))).</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">MENUITEM</span><span class="o">);</span>
 
-				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENU_LABEL</span><span class="o">)).</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">oMenu</span><span class="o">.</span><span class="nx">all</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENU_LABEL</span><span class="o">)).</span><span class="nx">each</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
 
 					<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
-					<span class="nx">oMenuToggle</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">MENU_TOGGLE_SELECTOR</span><span class="o">);</span>
+					<span class="nx">oMenuToggle</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">MENU_TOGGLE_SELECTOR</span><span class="o">);</span>
 
 					<span class="k">if</span> <span class="o">(</span><span class="nx">oMenuToggle</span><span class="o">)</span> <span class="o">{</span>
 						<span class="nx">oMenuToggle</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">PRESENTATION</span><span class="o">);</span>
@@ -502,7 +502,7 @@
 						<span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ROLE</span><span class="o">,</span> <span class="nx">MENU</span><span class="o">);</span>
 
 						<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">oSubmenu</span><span class="o">.</span><span class="nx">previous</span><span class="o">();</span>
-						<span class="nx">oMenuToggle</span> <span class="o">=</span> <span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">MENU_TOGGLE_SELECTOR</span><span class="o">);</span>
+						<span class="nx">oMenuToggle</span> <span class="o">=</span> <span class="nx">oMenuLabel</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">MENU_TOGGLE_SELECTOR</span><span class="o">);</span>
 
 						<span class="k">if</span> <span class="o">(</span><span class="nx">oMenuToggle</span><span class="o">)</span> <span class="o">{</span>
 							<span class="nx">oMenuLabel</span> <span class="o">=</span> <span class="nx">oMenuToggle</span><span class="o">;</span>
@@ -746,11 +746,11 @@
 
 			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span> <span class="o">=</span> <span class="nx">oRootMenu</span><span class="o">;</span>
 
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="s2">&quot;ul:first-child&quot;</span><span class="o">).</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">FIRST_OF_TYPE</span><span class="o">);</span>
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="s2">&quot;ul:first-child&quot;</span><span class="o">).</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">FIRST_OF_TYPE</span><span class="o">);</span>
 
 			<span class="c">//	Hide all visible submenus</span>
 <span class="c"></span>
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">MENU_SELECTOR</span><span class="o">).</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">CSS_MENU_HIDDEN</span><span class="o">);</span>
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">MENU_SELECTOR</span><span class="o">).</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">CSS_MENU_HIDDEN</span><span class="o">);</span>
 
 
 			<span class="c">//	Wire up all event handlers</span>
@@ -1000,7 +1000,7 @@
 			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oLabel</span><span class="o">);</span>			
 		<span class="o">}</span>
 
-		<span class="nx">oActiveItem</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">.</span><span class="nx">query</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENUITEM_ACTIVE</span><span class="o">));</span>
+		<span class="nx">oActiveItem</span> <span class="o">=</span> <span class="nx">menu</span><span class="o">.</span><span class="nx">one</span><span class="o">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENUITEM_ACTIVE</span><span class="o">));</span>
 
 		<span class="k">if</span> <span class="o">(</span><span class="nx">oActiveItem</span><span class="o">)</span> <span class="o">{</span>
 			<span class="nx">oActiveItem</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">CSS_MENUITEM_ACTIVE</span><span class="o">);</span>
@@ -1031,7 +1031,7 @@
 
 		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
 
-		<span class="nx">menu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">MENU_SELECTOR</span><span class="o">).</span><span class="nx">each</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">submenuNode</span><span class="o">)</span> <span class="o">{</span>
+		<span class="nx">menu</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">MENU_SELECTOR</span><span class="o">).</span><span class="nx">each</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">submenuNode</span><span class="o">)</span> <span class="o">{</span>
 		
 			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideMenu</span><span class="o">(</span><span class="nx">submenuNode</span><span class="o">);</span>
 		
@@ -1124,7 +1124,7 @@
 			<span class="nx">sQuery</span> <span class="o">=</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;id&quot;</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; .yui-menu a,&quot;</span> <span class="o">+</span> 
 							<span class="nx">MENU_TOGGLE_SELECTOR</span><span class="o">;</span>
 
-			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="nx">sQuery</span><span class="o">).</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;tabIndex&quot;</span><span class="o">,</span> <span class="o">-</span><span class="m">1</span><span class="o">);</span>
+			<span class="nx">oRootMenu</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">sQuery</span><span class="o">).</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;tabIndex&quot;</span><span class="o">,</span> <span class="o">-</span><span class="m">1</span><span class="o">);</span>
 
 			<span class="nx">oFocusManager</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT_CHANGE</span><span class="o">,</span> 
 				<span class="k">this</span><span class="o">.</span><span class="nx">_onActiveDescendantChange</span><span class="o">,</span> <span class="nx">oFocusManager</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
