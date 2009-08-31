@@ -493,7 +493,7 @@ YUI.prototype = {
             loader.context = Y;
             loader.attaching = a;
             // loader.require(missing);
-            loader.require(a);
+            loader.require((css) ? missing : a);
             loader.insert(null, (css) ? null : 'js');
         } else if (boot && l && Y.Get && !Y.Env.bootstrapped) {
             Y._loading = true;
