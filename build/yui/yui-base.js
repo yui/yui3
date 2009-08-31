@@ -461,7 +461,9 @@ YUI.prototype = {
             loader.require(a);
             loader.ignoreRegistered = true;
             loader.allowRollup = false;
-            loader.calculate(null, (css && css == 'force') ? null : 'js');
+            // loader.calculate(null, (css && css == 'force') ? null : 'js');
+            // loader.calculate();
+            loader.calculate(null, (css) ? null : 'js');
             a = loader.sorted;
         }
 
