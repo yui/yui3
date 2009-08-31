@@ -37,7 +37,7 @@
         INPUT!
     </label>
     <input name="ac" id="ac" type="text">
-    <input type="submit">
+    <input type="submit" id="log" value="Show times">
 </form>
 <script class="mine" src="/yui/3/build/yui/yui.js"></script>
 <script class="mine">
@@ -45,32 +45,35 @@
 YUI({
     debug: true,
     base: "/yui/3/build/",
-    filter: 'raw',
-    
-}).use('node', 'console', 'console-filters', 'log', 'event-key', function (Y) {
-
-    new Y.Console({
-        plugins: [ Y.Plugin.ConsoleFilters ],
-        newestOnTop: false
-    }).render();
-    
-    // new Y.Console()
-    //     .plug(Y.Plugin.ConsoleFilters)
-    //     .render();
-    
-    
-    var ac;
-    ac = (Y.one || Y.get)("#ac");
-    
-    
-    
-    ac.on("keypress", function (e) {
-        Y.log(e.type + ": " + e.keyCode, 'keypress');
+    filter: 'raw'
+}).use(
+    'node',
+    'console',
+    'console-filters',
+    'log',
+    'event-key',
+    function (Y) {
         
+        new Y.Console({
+            plugins : [ Y.Plugin.ConsoleFilters ],
+            newestOnTop : false,
+            useBrowserConsole : true
+        }).render();
         
-    });
-    
-});
+        // array of keypress times
+        var log = [];
+        
+        (Y.one || Y.get)("#ac").on("keypress", function (e) {
+            Y.log(e.type + ": " + e.keyCode, 'keypress');
+            log.push((new Date()).getTime());
+        });
+        (Y.one || Y.get)("#log").on("click", function (e) {
+            Y.log(log, "log");
+            
+            e.halt();
+        });
+    }
+);
 
 </script>
 </body>
