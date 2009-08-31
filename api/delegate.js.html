@@ -266,14 +266,14 @@
 
 
     <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span>	    
-		<span class="nx">element</span><span class="o">,</span>	<span class="c">// HTML element serving as the delegation container</span>
+		<span class="nx">element</span> <span class="o">=</span> <span class="nx">el</span><span class="o">,</span>	<span class="c">// HTML element serving as the delegation container</span>
 <span class="c"></span>		<span class="nx">handles</span><span class="o">;</span>
 
 
 	<span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
 		
-		<span class="nx">element</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
-		
+		<span class="nx">element</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>	<span class="c">// Y.Selector.query always returns an array</span>
+<span class="c"></span>		
 		<span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span> <span class="c">// Not found, check using onAvailable</span>
 <span class="c"></span>
             <span class="k">return</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
