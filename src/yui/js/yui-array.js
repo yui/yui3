@@ -237,8 +237,9 @@ YArray.map = (Native.map) ?
  * the function is run on every element in the array.
  **/
 YArray.reduce = (Native.reduce) ?
-    function (a, f, acc) {
-        return Native.reduce.call(a, f, acc);
+    function (a) {
+        // call with the original argument set, just shift the array out first.
+        return Native.reduce.apply(a, Native.slice.call(arguments,1));
     } :
     function (a, f, acc) {
         var len = a.length, i = 0;
