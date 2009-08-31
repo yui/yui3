@@ -36,6 +36,7 @@ QueryString.parse = function (qs, sep, eq) {
             qs.split(sep || "&"),
             pieceParser(eq || "=")
         ),
+        {},
         mergeParams
     );
 };

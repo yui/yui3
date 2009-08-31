@@ -1451,67 +1451,6 @@ YArray.some = (Native.some) ?
         return false;
     };
 
-/**
- * Executes the supplied function on each item in the array,
- * returning an array of the results of each function call.
- * @method map
- * @param a {Array} the array to map against
- * @param f {Function} the function to map onto the array
- * @param o Optional context object for function calls.
- * @static
- * @return {Array} The result array.
- **/
-YArray.map = (Native.map) ?
-    function (a, f, o) {
-        return Native.map.call(a, f, o);
-    } :
-    function (a, f, o) {
-        var l = a.length, i, res = [];
-        for (i=0; i<l; i=i+1) if (i in a) {
-            res[i] = f.call(o, a[i], i, a);
-        }
-        return res;
-    };
-
-/**
- * Apply a function against an accumulator and each value of the
- * array (from left-to-right) as to reduce it to a single value.
- * @method reduce
- * @param a {Array} The array to reduce
- * @param f {Function} The reduction function
- * @param acc Optional initial value of the accumulator
- * @static
- * @return {Variant} The eventual result of the accumulator, after
- * the function is run on every element in the array.
- **/
-YArray.reduce = (Native.reduce) ?
-    function (a) {
-        // call with the original argument set, just shift the array out first.
-        return Native.reduce.apply(a, Native.slice.call(arguments,1));
-    } :
-    function (a, f, acc) {
-        var len = a.length, i = 0;
-        
-        // accumulator is either acc, or the first value.
-        if (arguments.length < 2) {
-            // set the accumulator to the first item in the array.
-            // if there's nothing in the array, and no accumulator, then that is not allowed.
-            for (; i <= len; i ++) {
-                // no accumulator, and empty array.
-                if (i === len) throw new TypeError();
-                // take the first element that is actually in the array.
-                if (i in a) {
-                    acc = a[i];
-                    break;
-                }
-            }
-        }
-        for (; i < len; i ++) if (i in a) {
-            acc = f.call(null, acc, a[i], i, a);
-        }
-        return acc;
-    };
-
 })();
 
 
