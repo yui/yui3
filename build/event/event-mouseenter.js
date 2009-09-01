@@ -214,4 +214,4 @@ plugins.mouseenter = eventConfig;
 plugins.mouseleave = eventConfig;
 
 
-}, '@VERSION@' ,{requires:['event-base']});
+}, '@VERSION@' ,{requires:['node-base']});

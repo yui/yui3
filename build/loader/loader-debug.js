@@ -450,22 +450,22 @@ var NOT_FOUND = {},
                     requires: [EVENTCUSTOMBASE]
                 },
                 'event-delegate': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-focus': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-key': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-mouseenter': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-mousewheel': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-resize': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 }
             }
         },

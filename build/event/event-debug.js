@@ -1692,7 +1692,7 @@ Event.delegate = function (type, fn, el, spec) {
 Y.delegate = Event.delegate;
 
 
-}, '@VERSION@' ,{requires:['event-base']});
+}, '@VERSION@' ,{requires:['node-base']});
 YUI.add('event-mousewheel', function(Y) {
 
 /**
@@ -1742,7 +1742,7 @@ Y.Env.evt.plugins.mousewheel = {
 };
 
 
-}, '@VERSION@' ,{requires:['event-base']});
+}, '@VERSION@' ,{requires:['node-base']});
 YUI.add('event-mouseenter', function(Y) {
 
 /**
@@ -1961,7 +1961,7 @@ plugins.mouseenter = eventConfig;
 plugins.mouseleave = eventConfig;
 
 
-}, '@VERSION@' ,{requires:['event-base']});
+}, '@VERSION@' ,{requires:['node-base']});
 YUI.add('event-key', function(Y) {
 
 /**
@@ -2065,7 +2065,7 @@ Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info',
 };
 
 
-}, '@VERSION@' ,{requires:['event-base']});
+}, '@VERSION@' ,{requires:['node-base']});
 YUI.add('event-focus', function(Y) {
 
 /**
@@ -2175,7 +2175,7 @@ adapt.blur = {
 })();
 
 
-}, '@VERSION@' ,{requires:['event-base']});
+}, '@VERSION@' ,{requires:['node-base']});
 YUI.add('event-resize', function(Y) {
 
 /**
@@ -2239,7 +2239,7 @@ Y.Env.evt.plugins.windowresize = {
 })();
 
 
-}, '@VERSION@' ,{requires:['event-base']});
+}, '@VERSION@' ,{requires:['node-base']});
 
 
 YUI.add('event', function(Y){}, '@VERSION@' ,{use:['event-base', 'event-delegate', 'event-mousewheel', 'event-mouseenter', 'event-key', 'event-focus', 'event-resize']});

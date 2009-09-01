@@ -107,4 +107,4 @@ adapt.blur = {
 })();
 
 
-}, '@VERSION@' ,{requires:['event-base']});
+}, '@VERSION@' ,{requires:['node-base']});
