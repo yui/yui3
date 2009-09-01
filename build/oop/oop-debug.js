@@ -245,7 +245,7 @@ YUI.add('oop', function(Y) {
 
         Y.each(o, function(v, k) {
             if (!f || (f.call(c || this, v, k, this, o) !== false)) {
-                this[k] =  Y.clone(v, safe, f, c, this);
+                this[k] =  Y.clone(v, safe, f, c, owner || o);
             }
         }, o2);
 
