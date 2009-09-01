@@ -41,6 +41,21 @@ QueryString.parse = function (qs, sep, eq) {
     );
 };
 
+/**
+ * Provides Y.QueryString.unescape method to be able to override default decoding
+ * method.  This is important in cases where non-standard delimiters are used, if
+ * the delimiters would not normally be handled properly by the builtin
+ * (en|de)codeURIComponent functions.
+ * Default: replace "+" with " ", and then decodeURIComponent behavior.
+ * @module querystring
+ * @submodule querystring-parse
+ * @for QueryString
+ * @static
+ **/
+QueryString.unescape = function (s) {
+    return decodeURIComponent(s.replace(/\+/g, ' '));
+};
+
 
 // Parse a key=val string.
 // These can get pretty hairy
@@ -57,8 +72,8 @@ var pieceParser = function (eq) {
             // key=val, called from the map/reduce
             key = key.split(eq);
             return parsePiece(
-                decodeURIComponent(key.shift().replace(/\+/g, " ")),
-                decodeURIComponent(key.join(eq))
+                QueryString.unescape(key.shift()),
+                QueryString.unescape(key.join(eq))
             );
         }
         key = key.replace(/^\s+|\s+$/g, '');

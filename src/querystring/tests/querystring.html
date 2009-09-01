@@ -28,12 +28,11 @@
         background:#fff;
     }
     .yui-console, .yui-console-bd {
-        position:static!important;
         height:auto!important;
-        width:auto!important;
         overflow:auto!important;
         overflow-y:auto!important;
     }
+
     </style>
 </head>
 <body class="yui-skin-sam">
@@ -43,6 +42,7 @@
 <script src="../../../build/yui/yui.js"></script>
 <script src="../../../build/console/console-debug.js"></script>
 <script src="../../../build/querystring/querystring-debug.js"></script>
+<script src="../../../build/collection/collection-debug.js"></script>
 <script src="../../../build/test/test-debug.js"></script>
 <script>
 YUI({
@@ -54,7 +54,7 @@ YUI({
         querystring : true,
         QueryString: true
     }
-}).use( 'test', 'console', 'querystring', 'collection', function (Y) {
+}).use( 'test', 'console', 'querystring', function (Y) {
     var J = Y.JSON.stringify;
     
     if (!Array.prototype.forEach) Array.prototype.forEach = function (fn) {
@@ -130,7 +130,17 @@ YUI({
             qsWeirdObjects.forEach(function (testCase) {
                 Y.Assert.areSame(J(testCase[2]), J(Y.QueryString.parse(testCase[1])));
             });
-        }
+        },
+        testNested : function () {
+            var f = Y.QueryString.parse("a=b&q=x%3Dy%26y%3Dz");
+            f.q = Y.QueryString.parse(f.q);
+            Y.Assert.areSame(J(f), J({ a : "b", q : { x : "y", y : "z" } }));
+        },
+        testNestedColon : function () {
+            var f = Y.QueryString.parse("a:b;q:x%3Ay%3By%3Az", ";", ":");
+            f.q = Y.QueryString.parse(f.q, ";", ":");
+            Y.Assert.areSame(J(f), J({ a : "b", q : { x : "y", y : "z" } }));
+        }   
     }));
     suite.add(new Y.Test.Case({
         name : "Query Stringify Objects",
@@ -158,15 +168,36 @@ YUI({
             var f = {};
             f.f = f;
             Y.QueryString.stringify(f);
-        }
-        
+        },
+        testNested : function () {
+            var f = Y.QueryString.stringify({
+                a : "b",
+                q : Y.QueryString.stringify({
+                    x : "y",
+                    y : "z"
+                })
+            });
+            Y.Assert.areSame(f, "a=b&q=x%3Dy%26y%3Dz");
+        },
+        testNestedColon : function () {
+            var f = Y.QueryString.stringify({
+                a : "b",
+                q : Y.QueryString.stringify({
+                    x : "y",
+                    y : "z"
+                }, ";", ":")
+            }, ";", ":");
+            Y.Assert.areSame(f, "a:b;q:x%3Ay%3By%3Az");
+        }   
     }));
 
     
     var yconsole = new Y.Console({
-        contentBox:"#testbed",
-        newestOnTop: false,
-        height: '580px'
+        contentBox : "#testbed",
+        newestOnTop : false,
+        style : 'inline',
+        height : 'auto',
+        width : 'auto'
     }).render();
 
     Y.Test.Runner.add(suite);

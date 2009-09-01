@@ -11,6 +11,21 @@ YUI.add('querystring-stringify', function(Y) {
 
 var QueryString = Y.namespace("QueryString");
 
+/**
+ * Provides Y.QueryString.escape method to be able to override default encoding
+ * method.  This is important in cases where non-standard delimiters are used, if
+ * the delimiters would not normally be handled properly by the builtin
+ * (en|de)codeURIComponent functions.
+ * Default: encodeURIComponent
+ * @module querystring
+ * @submodule querystring-stringify
+ * @for QueryString
+ * @static
+ **/
+QueryString.escape = function (s) {
+    return encodeURIComponent(s);
+};
+
 
 var stack = [];
 /**
@@ -30,12 +45,12 @@ QueryString.stringify = function (obj, sep, eq, name) {
     eq = eq || "=";
     
     if (Y.Lang.isNull(obj) || Y.Lang.isUndefined(obj) || typeof(obj) === 'function') {
-        return name ? encodeURIComponent(name) + eq : '';
+        return name ? QueryString.escape(name) + eq : '';
     }
     
     if (is('Boolean',obj)) obj = +obj;
     if (is('Number',obj) || is("String",obj)) {
-        return encodeURIComponent(name) + eq + encodeURIComponent(obj);
+        return QueryString.escape(name) + eq + QueryString.escape(obj);
     }    
     
     if (Y.Lang.isArray(obj)) {
