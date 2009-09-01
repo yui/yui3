@@ -257,7 +257,7 @@
 
         /**
          * Whether or not the animation is currently paused.
-         * @attribute running 
+         * @attribute paused 
          * @type Boolean
          * @default false 
          * @readOnly

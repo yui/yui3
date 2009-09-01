@@ -64,11 +64,6 @@
 		<span class="nx">mouseleave</span><span class="o">:</span> <span class="s2">&quot;mouseout&quot;</span>
 	<span class="o">},</span>
 
-	<span class="nx">focusMethods</span> <span class="o">=</span> <span class="o">{</span>
-		<span class="nx">focus</span><span class="o">:</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">_attachFocus</span><span class="o">,</span>
-		<span class="nx">blur</span><span class="o">:</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">_attachBlur</span>
-	<span class="o">},</span>
-
 	<span class="nx">resolveTextNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
 	    <span class="k">try</span> <span class="o">{</span>
 	        <span class="k">if</span> <span class="o">(</span><span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="m">3</span> <span class="o">==</span> <span class="nx">n</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span>
@@ -159,7 +154,13 @@
 
 	<span class="nx">attach</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
 
-		<span class="k">var</span> <span class="nx">attachFn</span> <span class="o">=</span> <span class="nx">focusMethods</span><span class="o">[</span><span class="nx">type</span><span class="o">],</span>
+		<span class="k">var</span> <span class="nx">focusMethods</span> <span class="o">=</span> <span class="o">{</span>
+				<span class="nx">focus</span><span class="o">:</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">_attachFocus</span><span class="o">,</span>
+				<span class="nx">blur</span><span class="o">:</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">_attachBlur</span>
+			<span class="o">},</span>
+
+			<span class="nx">attachFn</span> <span class="o">=</span> <span class="nx">focusMethods</span><span class="o">[</span><span class="nx">type</span><span class="o">],</span>
+
 			<span class="nx">args</span> <span class="o">=</span> <span class="o">[</span><span class="nx">type</span><span class="o">,</span> 
 			<span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
 	            <span class="nx">delegateHandler</span><span class="o">(</span><span class="nx">key</span><span class="o">,</span> <span class="o">(</span><span class="nx">e</span> <span class="o">||</span> <span class="nb">window</span><span class="o">.</span><span class="nx">event</span><span class="o">),</span> <span class="nx">element</span><span class="o">);</span>
