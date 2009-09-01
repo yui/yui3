@@ -1335,11 +1335,6 @@ var Event = Y.Event,
 		mouseleave: "mouseout"
 	},
 
-	focusMethods = {
-		focus: Event._attachFocus,
-		blur: Event._attachBlur
-	},
-
 	resolveTextNode = function(n) {
 	    try {
 	        if (n && 3 == n.nodeType) {
@@ -1430,7 +1425,13 @@ var Event = Y.Event,
 
 	attach = function (type, key, element) {
 
-		var attachFn = focusMethods[type],
+		var focusMethods = {
+				focus: Event._attachFocus,
+				blur: Event._attachBlur
+			},
+
+			attachFn = focusMethods[type],
+
 			args = [type, 
 			function (e) {
 	            delegateHandler(key, (e || window.event), element);
