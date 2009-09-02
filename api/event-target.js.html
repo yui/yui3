@@ -681,6 +681,77 @@
 <span class="c">// @TODO implement a global namespace function on Y.Global?</span>
 <span class="c"></span>
 <span class="o">})();</span>
+
+
+<span class="c">/**</span>
+<span class="c"> * on() is a unified interface for subscribing to</span>
+<span class="c"> * most events exposed by YUI.  This includes custom events,</span>
+<span class="c"> * DOM events, and function events.</span>
+<span class="c"> *</span>
+<span class="c"> * The signature that on() accepts varies depending on the type</span>
+<span class="c"> * of event this is.  Refer to the on() methods for specific to</span>
+<span class="c"> * the type of event for more information:</span>
+<span class="c"> *</span>
+<span class="c"> * &lt;ul&gt;</span>
+<span class="c"> * &lt;li&gt;Custom events.  These events are defined by various</span>
+<span class="c"> * modules in the library.</span>
+<span class="c"> *   &lt;ul&gt;</span>
+<span class="c"> *     &lt;li&gt;The type of the event&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;The callback to execute&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;An optional context object&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;0..n additional arguments to supply the callback.&lt;/li&gt;</span>
+<span class="c"> *   &lt;/ul&gt;</span>
+<span class="c"> *   Example: </span>
+<span class="c"> *   &lt;code&gt;Y.on(&#39;domready&#39;, function() { // start work });&lt;/code&gt;</span>
+<span class="c"> * &lt;/li&gt;</span>
+<span class="c"> * &lt;li&gt;DOM events.  These are events that are supplied by the</span>
+<span class="c"> * browser for various events that happens to the the page.</span>
+<span class="c"> *   &lt;ul&gt;</span>
+<span class="c"> *     &lt;li&gt;The type of the event&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;The callback to execute&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;The specification for the Node(s) to attach the listener</span>
+<span class="c"> *     to.  This can be a selector, collections, or Node/Element</span>
+<span class="c"> *     refereces.&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;An optional context object&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;0..n additional arguments to supply the callback.&lt;/li&gt;</span>
+<span class="c"> *   &lt;/ul&gt;</span>
+<span class="c"> *   Example: </span>
+<span class="c"> *   &lt;code&gt;Y.on(&#39;click&#39;, function(e) { // something was clicked }, &#39;#someelement&#39;);&lt;/code&gt;</span>
+<span class="c"> * &lt;/li&gt;</span>
+<span class="c"> * &lt;li&gt;Function events.  These events can be used to react before or after a</span>
+<span class="c"> * function is executed.</span>
+<span class="c"> *   &lt;ul&gt;</span>
+<span class="c"> *     &lt;li&gt;The callback to execute&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;The object that has the function that will be listened for.&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;The name of the function to listen for.&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;An optional context object&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;0..n additional arguments to supply the callback.&lt;/li&gt;</span>
+<span class="c"> *   &lt;/ul&gt;</span>
+<span class="c"> *   Example &lt;code&gt;Y.on(function(arg1, arg2, etc) { // obj.methodname was executed }, obj &#39;methodname&#39;);&lt;/code&gt;</span>
+<span class="c"> * &lt;/li&gt;</span>
+<span class="c"> * &lt;/ul&gt;</span>
+<span class="c"> *</span>
+<span class="c"> * on() corresponds to the moment before any default behavior of</span>
+<span class="c"> * the event.  after() works the same way, but these listeners</span>
+<span class="c"> * execute after the event&#39;s default behavior.  before() is an</span>
+<span class="c"> * alias for on().</span>
+<span class="c"> *</span>
+<span class="c"> * @method on </span>
+<span class="c"> * @return the event target or a detach handle per &#39;chain&#39; config</span>
+<span class="c"> * @for YUI</span>
+<span class="c"> */</span>
+
+<span class="c">/**</span>
+<span class="c"> * after() is a unified interface for subscribing to</span>
+<span class="c"> * most events exposed by YUI.  This includes custom events,</span>
+<span class="c"> * DOM events, and AOP events.  This works the same way as</span>
+<span class="c"> * the on() function, only it operates after any default</span>
+<span class="c"> * behavior for the event has executed. @see &lt;code&gt;on&lt;/code&gt; for more </span>
+<span class="c"> * information.</span>
+<span class="c"> * @method after</span>
+<span class="c"> * @return the event target or a detach handle per &#39;chain&#39; config</span>
+<span class="c"> * @for YUI</span>
+<span class="c"> */</span>
 </pre></div>
 
                     </div>
