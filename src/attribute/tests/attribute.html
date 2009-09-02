@@ -1000,6 +1000,19 @@
                     Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
                     Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
 
+                },
+
+                testProtect : function() {
+                    var h = this.createHost();
+                    var q = h._protectAttrs(AttrHost.ATTRS);
+
+                    Y.Assert.areNotSame(AttrHost.ATTRS, q);
+                    Y.Assert.areEqual(Y.dump(AttrHost.ATTRS), Y.dump(q));
+
+                    q.A.newprop = "new prop value";
+                    q.A.value = "modified value";
+
+                    Y.Assert.areNotEqual(Y.dump(AttrHost.ATTRS), Y.dump(q));
                 }
             };
 
