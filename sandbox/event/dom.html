@@ -165,7 +165,9 @@ YUI({
         // console.log(Y.Event.getListeners(this));
         // Y.Event.purgeElement(this, true, 'click');
         // Y.Event.detach('click', null, this);
-        Y.detach('blah|*');
+        // Y.detach('blah|*');
+
+        Y.Event.purgeElement(this, true, 'click');
     };
 
     // var h = Y.on('blah|click', f, el);
