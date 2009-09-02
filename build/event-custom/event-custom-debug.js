@@ -1601,6 +1601,77 @@ Y.Global = YUI.Env.globalEvents;
 })();
 
 
+/**
+ * on() is a unified interface for subscribing to
+ * most events exposed by YUI.  This includes custom events,
+ * DOM events, and function events.
+ *
+ * The signature that on() accepts varies depending on the type
+ * of event this is.  Refer to the on() methods for specific to
+ * the type of event for more information:
+ *
+ * <ul>
+ * <li>Custom events.  These events are defined by various
+ * modules in the library.
+ *   <ul>
+ *     <li>The type of the event</li>
+ *     <li>The callback to execute</li>
+ *     <li>An optional context object</li>
+ *     <li>0..n additional arguments to supply the callback.</li>
+ *   </ul>
+ *   Example: 
+ *   <code>Y.on('domready', function() { // start work });</code>
+ * </li>
+ * <li>DOM events.  These are events that are supplied by the
+ * browser for various events that happens to the the page.
+ *   <ul>
+ *     <li>The type of the event</li>
+ *     <li>The callback to execute</li>
+ *     <li>The specification for the Node(s) to attach the listener
+ *     to.  This can be a selector, collections, or Node/Element
+ *     refereces.</li>
+ *     <li>An optional context object</li>
+ *     <li>0..n additional arguments to supply the callback.</li>
+ *   </ul>
+ *   Example: 
+ *   <code>Y.on('click', function(e) { // something was clicked }, '#someelement');</code>
+ * </li>
+ * <li>Function events.  These events can be used to react before or after a
+ * function is executed.
+ *   <ul>
+ *     <li>The callback to execute</li>
+ *     <li>The object that has the function that will be listened for.</li>
+ *     <li>The name of the function to listen for.</li>
+ *     <li>An optional context object</li>
+ *     <li>0..n additional arguments to supply the callback.</li>
+ *   </ul>
+ *   Example <code>Y.on(function(arg1, arg2, etc) { // obj.methodname was executed }, obj 'methodname');</code>
+ * </li>
+ * </ul>
+ *
+ * on() corresponds to the moment before any default behavior of
+ * the event.  after() works the same way, but these listeners
+ * execute after the event's default behavior.  before() is an
+ * alias for on().
+ *
+ * @method on 
+ * @return the event target or a detach handle per 'chain' config
+ * @for YUI
+ */
+
+/**
+ * after() is a unified interface for subscribing to
+ * most events exposed by YUI.  This includes custom events,
+ * DOM events, and AOP events.  This works the same way as
+ * the on() function, only it operates after any default
+ * behavior for the event has executed. @see <code>on</code> for more 
+ * information.
+ * @method after
+ * @return the event target or a detach handle per 'chain' config
+ * @for YUI
+ */
+
+
 }, '@VERSION@' ,{requires:['oop']});
 YUI.add('event-custom-complex', function(Y) {
 
