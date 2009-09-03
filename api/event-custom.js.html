@@ -412,7 +412,7 @@
         <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">subs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">s</span> <span class="o">=</span> <span class="nx">subs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">s</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span> <span class="o">===</span> <span class="k">this</span><span class="o">.</span><span class="nx">fn</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">s</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span> <span class="o">===</span> <span class="nx">s</span><span class="o">.</span><span class="nx">fn</span><span class="o">))</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">_delete</span><span class="o">(</span><span class="nx">s</span><span class="o">);</span>
                     <span class="nx">found</span><span class="o">++;</span>
                 <span class="o">}</span>
