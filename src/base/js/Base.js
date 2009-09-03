@@ -8,8 +8,8 @@
      */
 
     /**
-     * The base-base submodule provides the Base class and augmentable Plugin.Host implementation, 
-     * without the extension support provided by Base.build.
+     * The base-base submodule provides the Base class without the Plugin support, provided by Plugin.Host, 
+     * and without the extension support provided by Base.build.
      *
      * @module base
      * @submodule base-base
@@ -54,6 +54,13 @@
         Y.log('constructor called', 'life', 'base');
 
         Attribute.call(this);
+
+        // If Plugin.Host has been augmented [ through base-pluginhost ], setup it's
+        // initial state, but don't initialize Plugins yet. That's done after initialization.
+        var PluginHost = Y.Plugin.Host;  
+        if (this._initPlugins && PluginHost) {
+            PluginHost.call(this);
+        }
 
         if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
 

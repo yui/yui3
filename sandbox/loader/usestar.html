@@ -3,7 +3,9 @@
 <head>
 <title>use('*')</title>
     <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+    <!--
     <script src="../../build/loader/loader-debug.js" type="text/javascript" charset="utf-8"></script>                                                             
+    -->
     <script src="../../build/event/event.js" type="text/javascript" charset="utf-8"></script>                                                               
     <script src="../../build/event-custom/event-custom.js" type="text/javascript" charset="utf-8"></script>                                                 
     <script src="../../build/oop/oop.js" type="text/javascript" charset="utf-8"></script>                                                                   
@@ -20,14 +22,17 @@
     <script src="../../build/widget/widget-stdmod.js" type="text/javascript" charset="utf-8"></script>                                                      
     <script src="../../build/overlay/overlay.js" type="text/javascript" charset="utf-8"></script>                                                           
     <script src="../../build/datatype/datatype.js" type="text/javascript" charset="utf-8"></script>                                                         
+    <!--
     <script src="../../build/queue-promote/queue-promote.js" type="text/javascript" charset="utf-8"></script>                                                         
+    -->
     <script src="../../build/io/io.js" type="text/javascript" charset="utf-8"></script>                                                                     
                                                                                                                                                                     
     <script type="text/javascript" charset="utf-8">                                                                                                                 
         var A = YUI({
-            fetchCSS: 'force'
-            // bootstrap: false
-        }).use('*');                                                                                                                                 
+            // fetchCSS: 'force',
+            bootstrap: false
+        // }).use('*');                                                                                                                                 
+        }).use('widget', 'queue-promot');                                                                                                                                 
         console.log(A.Widget);                                                                                                                                  
     </script>     
 <body>

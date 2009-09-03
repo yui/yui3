@@ -293,7 +293,11 @@
                     <span class="k">if</span> <span class="o">(</span><span class="nx">j</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">pass</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">while</span> <span class="o">((</span><span class="nx">test</span> <span class="o">=</span> <span class="nx">tests</span><span class="o">[--</span><span class="nx">j</span><span class="o">]))</span> <span class="o">{</span>
                             <span class="nx">operator</span> <span class="o">=</span> <span class="nx">test</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
-                            <span class="nx">value</span> <span class="o">=</span> <span class="nx">tmpNode</span><span class="o">[</span><span class="nx">test</span><span class="o">[</span><span class="m">0</span><span class="o">]];</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">tmpNode</span><span class="o">[</span><span class="nx">test</span><span class="o">[</span><span class="m">0</span><span class="o">]]</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span> <span class="c">// DOM property</span>
+<span class="c"></span>                                <span class="nx">value</span> <span class="o">=</span> <span class="nx">tmpNode</span><span class="o">[</span><span class="nx">test</span><span class="o">[</span><span class="m">0</span><span class="o">]];</span>
+                            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">tmpNode</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">)</span> <span class="o">{</span> <span class="c">// custom attributes require getAttribute interface</span>
+<span class="c"></span>                                <span class="nx">value</span> <span class="o">=</span> <span class="nx">tmpNode</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="nx">test</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
+                            <span class="o">}</span>
 
                             <span class="c">// skip node as soon as a test fails </span>
 <span class="c"></span>                            <span class="k">if</span> <span class="o">(</span><span class="nx">getters</span><span class="o">[</span><span class="nx">test</span><span class="o">[</span><span class="m">0</span><span class="o">]])</span> <span class="o">{</span>
@@ -532,11 +536,11 @@
 <span class="c"></span>                <span class="nx">re</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">pseudos</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_re</span><span class="o">.</span><span class="nx">pseudos</span><span class="o">,</span> <span class="s1">&#39;REPLACED_PSEUDO&#39;</span><span class="o">);</span>
+                <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_re</span><span class="o">.</span><span class="nx">pseudos</span><span class="o">,</span> <span class="s1">&#39;!!REPLACED_PSEUDO!!&#39;</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_re</span><span class="o">.</span><span class="nx">attr</span><span class="o">,</span> <span class="s1">&#39;REPLACED_ATTRIBUTE&#39;</span><span class="o">);</span>
+                <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_re</span><span class="o">.</span><span class="nx">attr</span><span class="o">,</span> <span class="s1">&#39;!!REPLACED_ATTRIBUTE!!&#39;</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="k">for</span> <span class="o">(</span><span class="nx">re</span> <span class="k">in</span> <span class="nx">shorthand</span><span class="o">)</span> <span class="o">{</span>
@@ -547,12 +551,12 @@
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">attrs</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="s1">&#39;REPLACED_ATTRIBUTE&#39;</span><span class="o">,</span> <span class="nx">attrs</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
+                    <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="s1">&#39;!!REPLACED_ATTRIBUTE!!&#39;</span><span class="o">,</span> <span class="nx">attrs</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">pseudos</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">pseudos</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="s1">&#39;REPLACED_PSEUDO&#39;</span><span class="o">,</span> <span class="nx">pseudos</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
+                    <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="s1">&#39;!!REPLACED_PSEUDO!!&#39;</span><span class="o">,</span> <span class="nx">pseudos</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
             <span class="k">return</span> <span class="nx">selector</span><span class="o">;</span>

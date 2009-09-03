@@ -56,12 +56,15 @@ Y.DOM = {
     },
 
     // @deprecated
-    firstByTag: function(node, tag) {
-        var ret = null;
-        if (node) {
-            tag = tag || '*';
-            ret = Y.Selector.query(tag, node, true); 
+    firstByTag: function(tag, root) {
+        var ret;
+        root = root || Y.config.doc;
+
+        if (tag && root.getElementsByTagName) {
+            ret = root.getElementsByTagName(tag)[0];
         }
+
+        return ret || null;
     },
 
     /**
@@ -250,7 +253,9 @@ Y.DOM = {
              ret = Y.DOM._nl2frag(nodes, doc);
         }
 
-        Y.DOM._cloneCache[html] = ret.cloneNode(true);
+        if (ret) {
+            Y.DOM._cloneCache[html] = ret.cloneNode(true);
+        }
         return ret;
     },
 
@@ -725,7 +730,7 @@ addClass = Y.DOM.addClass;
 
 
 
-}, '@VERSION@' ,{requires:['oop'], skinnable:false});
+}, '@VERSION@' ,{requires:['oop']});
 YUI.add('dom-style', function(Y) {
 
 (function(Y) {
@@ -1225,7 +1230,7 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 })(Y);
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});
+}, '@VERSION@' ,{requires:['dom-base']});
 YUI.add('dom-screen', function(Y) {
 
 (function(Y) {
@@ -1791,7 +1796,7 @@ Y.mix(DOM, {
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style'], skinnable:false});
+}, '@VERSION@' ,{requires:['dom-base', 'dom-style']});
 YUI.add('selector-native', function(Y) {
 
 (function(Y) {
@@ -2043,7 +2048,7 @@ Y.mix(Y.Selector, Selector, true);
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+}, '@VERSION@' ,{requires:['dom-base']});
 YUI.add('selector-css2', function(Y) {
 
 /**
@@ -2292,7 +2297,11 @@ var PARENT_NODE = 'parentNode',
                     if (j && !pass) {
                         while ((test = tests[--j])) {
                             operator = test[1];
-                            value = tmpNode[test[0]];
+                            if (tmpNode[test[0]] !== undefined) { // DOM property
+                                value = tmpNode[test[0]];
+                            } else if (tmpNode.getAttribute) { // custom attributes require getAttribute interface
+                                value = tmpNode.getAttribute(test[0]);
+                            }
 
                             // skip node as soon as a test fails 
                             if (getters[test[0]]) {
@@ -2531,11 +2540,11 @@ var PARENT_NODE = 'parentNode',
                 re, i, len;
 
             if (pseudos) {
-                selector = selector.replace(Selector._re.pseudos, 'REPLACED_PSEUDO');
+                selector = selector.replace(Selector._re.pseudos, '!!REPLACED_PSEUDO!!');
             }
 
             if (attrs) {
-                selector = selector.replace(Selector._re.attr, 'REPLACED_ATTRIBUTE');
+                selector = selector.replace(Selector._re.attr, '!!REPLACED_ATTRIBUTE!!');
             }
 
             for (re in shorthand) {
@@ -2546,12 +2555,12 @@ var PARENT_NODE = 'parentNode',
 
             if (attrs) {
                 for (i = 0, len = attrs.length; i < len; ++i) {
-                    selector = selector.replace('REPLACED_ATTRIBUTE', attrs[i]);
+                    selector = selector.replace('!!REPLACED_ATTRIBUTE!!', attrs[i]);
                 }
             }
             if (pseudos) {
                 for (i = 0, len = pseudos.length; i < len; ++i) {
-                    selector = selector.replace('REPLACED_PSEUDO', pseudos[i]);
+                    selector = selector.replace('!!REPLACED_PSEUDO!!', pseudos[i]);
                 }
             }
             return selector;
@@ -2579,8 +2588,12 @@ if (Y.Selector.useNative && Y.Selector._supportsNative()) {
 
 
 
-}, '@VERSION@' ,{requires:['selector-native'], skinnable:false});
+}, '@VERSION@' ,{requires:['selector-native']});
 
 
-YUI.add('dom', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dom-base', 'dom-style', 'dom-screen', 'selector-native', 'selector-css2']});
+YUI.add('selector', function(Y){}, '@VERSION@' ,{use:['selector-native', 'selector-css2']});
+
+
+
+YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-base', 'dom-style', 'dom-screen', 'selector']});
 

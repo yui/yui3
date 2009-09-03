@@ -10,8 +10,8 @@ YUI.add('base-base', function(Y) {
      */
 
     /**
-     * The base-base submodule provides the Base class and augmentable Plugin.Host implementation, 
-     * without the extension support provided by Base.build.
+     * The base-base submodule provides the Base class without the Plugin support, provided by Plugin.Host, 
+     * and without the extension support provided by Base.build.
      *
      * @module base
      * @submodule base-base
@@ -56,6 +56,13 @@ YUI.add('base-base', function(Y) {
         Y.log('constructor called', 'life', 'base');
 
         Attribute.call(this);
+
+        // If Plugin.Host has been augmented [ through base-pluginhost ], setup it's
+        // initial state, but don't initialize Plugins yet. That's done after initialization.
+        var PluginHost = Y.Plugin.Host;  
+        if (this._initPlugins && PluginHost) {
+            PluginHost.call(this);
+        }
 
         if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
 
@@ -523,8 +530,8 @@ YUI.add('base-base', function(Y) {
 YUI.add('base-pluginhost', function(Y) {
 
     /**
-     * The base-pluginhost submodule added Plugin support to Base, by augmenting Base with 
-     * Plugin.Host and setting up static Base.plug and Base.unplug methods.
+     * The base-pluginhost submodule adds Plugin support to Base, by augmenting Base with 
+     * Plugin.Host and setting up static (class level) Base.plug and Base.unplug methods.
      *
      * @module base
      * @submodule base-pluginhost

@@ -1218,7 +1218,8 @@ ET.prototype = {
      * @return {EventTarget} the host
      */
     detach: function(type, fn, context) {
-        var evts = this._yuievt.events, i, ret;
+        var evts = this._yuievt.events, i, ret,
+            Node = Y.Node;
 
         // detachAll disabled on the Y instance.
         if (!type && (this !== Y)) {
@@ -1270,9 +1271,9 @@ ET.prototype = {
             ret = type.detach();
             return (this._yuievt.chain) ? this : ret;
         // extra redirection so we catch adaptor events too.  take a look at this.
-        } else if (Y.Node && (this instanceof Y.Node) && ((!shorttype) || (shorttype in Y.Node.DOM_EVENTS))) {
+        } else if (Node && (this instanceof Node) && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
             args = Y.Array(arguments, 0, true);
-            args[2] = Y.Node.getDOMNode(this);
+            args[2] = Node.getDOMNode(this);
             return Y.detach.apply(Y, args);
         }
 
@@ -1285,7 +1286,7 @@ ET.prototype = {
             if (adapt && adapt.detach) {
                 return adapt.detach.apply(Y, args);
             // DOM event fork
-            } else if (!type || (!adapt && (type in Y.Node.DOM_EVENTS))) {
+            } else if (!type || (!adapt && Node && (type in Node.DOM_EVENTS))) {
                 args[0] = type;
                 return Y.Event.detach.apply(Y.Event, args);
             }
@@ -1598,6 +1599,105 @@ Y.Global = YUI.Env.globalEvents;
 // @TODO implement a global namespace function on Y.Global?
 
 })();
+
+
+/**
+ * <code>YUI</code>'s <code>on</code> method is a unified interface for subscribing to
+ * most events exposed by YUI.  This includes custom events, DOM events, and 
+ * function events.  <code>detach</code> is also provided to remove listeners
+ * serviced by this function.
+ *
+ * The signature that <code>on</code> accepts varies depending on the type
+ * of event being consumed.  Refer to the specific methods that will
+ * service a specific request for additional information about subscribing
+ * to that type of event.
+ *
+ * <ul>
+ * <li>Custom events.  These events are defined by various
+ * modules in the library.  This type of event is delegated to
+ * <code>EventTarget</code>'s <code>on</code> method.
+ *   <ul>
+ *     <li>The type of the event</li>
+ *     <li>The callback to execute</li>
+ *     <li>An optional context object</li>
+ *     <li>0..n additional arguments to supply the callback.</li>
+ *   </ul>
+ *   Example: 
+ *   <code>Y.on('domready', function() { // start work });</code>
+ * </li>
+ * <li>DOM events.  These are moments reported by the browser related
+ * to browser functionality and user interaction.
+ * This type of event is delegated to <code>Event</code>'s 
+ * <code>attach</code> method.
+ *   <ul>
+ *     <li>The type of the event</li>
+ *     <li>The callback to execute</li>
+ *     <li>The specification for the Node(s) to attach the listener
+ *     to.  This can be a selector, collections, or Node/Element
+ *     refereces.</li>
+ *     <li>An optional context object</li>
+ *     <li>0..n additional arguments to supply the callback.</li>
+ *   </ul>
+ *   Example: 
+ *   <code>Y.on('click', function(e) { // something was clicked }, '#someelement');</code>
+ * </li>
+ * <li>Function events.  These events can be used to react before or after a
+ * function is executed.  This type of event is delegated to <code>Event.Do</code>'s 
+ * <code>before</code> method.
+ *   <ul>
+ *     <li>The callback to execute</li>
+ *     <li>The object that has the function that will be listened for.</li>
+ *     <li>The name of the function to listen for.</li>
+ *     <li>An optional context object</li>
+ *     <li>0..n additional arguments to supply the callback.</li>
+ *   </ul>
+ *   Example <code>Y.on(function(arg1, arg2, etc) { // obj.methodname was executed }, obj 'methodname');</code>
+ * </li>
+ * </ul>
+ *
+ * <code>on</code> corresponds to the moment before any default behavior of
+ * the event.  <code>after</code> works the same way, but these listeners
+ * execute after the event's default behavior.  <code>before</code> is an
+ * alias for <code>on</code>.
+ *
+ * @method on 
+ * @param type** event type (this parameter does not apply for function events)
+ * @param fn the callback
+ * @param target** a descriptor for the target (applies to custom events only).
+ * For function events, this is the object that contains the function to
+ * execute.
+ * @param extra** 0..n Extra information a particular event may need.  These
+ * will be documented with the event.  In the case of function events, this
+ * is the name of the function to execute on the host.  In the case of
+ * delegate listeners, this is the event delegation specification.
+ * @param context optionally change the value of 'this' in the callback
+ * @param args* 0..n additional arguments to pass to the callback.
+ * @return the event target or a detach handle per 'chain' config
+ * @for YUI
+ */
+
+/**
+ * after() is a unified interface for subscribing to
+ * most events exposed by YUI.  This includes custom events,
+ * DOM events, and AOP events.  This works the same way as
+ * the on() function, only it operates after any default
+ * behavior for the event has executed. @see <code>on</code> for more 
+ * information.
+ * @method after
+ * @param type event type (this parameter does not apply for function events)
+ * @param fn the callback
+ * @param target a descriptor for the target (applies to custom events only).
+ * For function events, this is the object that contains the function to
+ * execute.
+ * @param extra 0..n Extra information a particular event may need.  These
+ * will be documented with the event.  In the case of function events, this
+ * is the name of the function to execute on the host.  In the case of
+ * delegate listeners, this is the event delegation specification.
+ * @param context optionally change the value of 'this' in the callback
+ * @param args* 0..n additional arguments to pass to the callback.
+ * @return the event target or a detach handle per 'chain' config
+ * @for YUI
+ */
 
 
 }, '@VERSION@' ,{requires:['oop']});

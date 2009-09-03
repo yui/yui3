@@ -136,6 +136,7 @@ YUI.add('attribute-base', function(Y) {
      * @submodule attribute-base
      */
     var O = Y.Object,
+        Lang = Y.Lang,
         EventTarget = Y.EventTarget,
 
         DOT = ".",
@@ -215,8 +216,9 @@ YUI.add('attribute-base', function(Y) {
         host._stateProxy = host._stateProxy || null;
         host._requireAddAttr = host._requireAddAttr || false;
 
+        // ATTRS support for Node, which is not Base based
         if ( attrs && !(Base && host instanceof Base)) {
-            host.addAttrs(Y.merge(attrs));
+            host.addAttrs(this._protectAttrs(attrs));
         }
     }
 
@@ -820,7 +822,7 @@ YUI.add('attribute-base', function(Y) {
                 }
 
                 if (allowSet) {
-                    if(!subAttrName && newVal === prevVal) {
+                    if(!subAttrName && newVal === prevVal && !Lang.isObject(newVal)) {
                         Y.log('Attribute: ' + attrName + ', value unchanged:' + newVal, 'warn', 'attribute');
                         allowSet = false;
                     } else {
@@ -970,6 +972,28 @@ YUI.add('attribute-base', function(Y) {
                     host.addAttr(attr, attrCfg, lazy);
                 }
             }
+        },
+
+        /**
+         * Utility method to protect an attribute configuration
+         * hash, by merging the entire object and the individual 
+         * attr config objects. 
+         *
+         * @method _protectAttrs
+         * @protected
+         * @param {Object} attrs A hash of attribute to configuration object pairs.
+         * @return {Object} A protected version of the attrs argument.
+         */
+        _protectAttrs : function(attrs) {
+            if (attrs) {
+                attrs = Y.merge(attrs);
+                for (var attr in attrs) {
+                    if (attrs.hasOwnProperty(attr)) {
+                        attrs[attr] = Y.merge(attrs[attr]);
+                    }
+                }
+            }
+            return attrs;
         },
 
         /**

@@ -300,7 +300,8 @@
 <span class="c">     * @return {EventTarget} the host</span>
 <span class="c">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">evts</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">ret</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">evts</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span>
+            <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">;</span>
 
         <span class="c">// detachAll disabled on the Y instance.</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="k">this</span> <span class="o">!==</span> <span class="nx">Y</span><span class="o">))</span> <span class="o">{</span>
@@ -352,9 +353,9 @@
             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
             <span class="k">return</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">chain</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="nx">ret</span><span class="o">;</span>
         <span class="c">// extra redirection so we catch adaptor events too.  take a look at this.</span>
-<span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">((!</span><span class="nx">shorttype</span><span class="o">)</span> <span class="o">||</span> <span class="o">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">DOM_EVENTS</span><span class="o">)))</span> <span class="o">{</span>
+<span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">((!</span><span class="nx">shorttype</span><span class="o">)</span> <span class="o">||</span> <span class="o">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DOM_EVENTS</span><span class="o">)))</span> <span class="o">{</span>
             <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+            <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
         <span class="o">}</span>
 
@@ -367,7 +368,7 @@
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="nx">adapt</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
             <span class="c">// DOM event fork</span>
-<span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">type</span> <span class="o">||</span> <span class="o">(!</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">type</span> <span class="k">in</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">DOM_EVENTS</span><span class="o">)))</span> <span class="o">{</span>
+<span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">type</span> <span class="o">||</span> <span class="o">(!</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">type</span> <span class="k">in</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">DOM_EVENTS</span><span class="o">)))</span> <span class="o">{</span>
                 <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">type</span><span class="o">;</span>
                 <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
             <span class="o">}</span>
@@ -680,6 +681,105 @@
 <span class="c">// @TODO implement a global namespace function on Y.Global?</span>
 <span class="c"></span>
 <span class="o">})();</span>
+
+
+<span class="c">/**</span>
+<span class="c"> * &lt;code&gt;YUI&lt;/code&gt;&#39;s &lt;code&gt;on&lt;/code&gt; method is a unified interface for subscribing to</span>
+<span class="c"> * most events exposed by YUI.  This includes custom events, DOM events, and </span>
+<span class="c"> * function events.  &lt;code&gt;detach&lt;/code&gt; is also provided to remove listeners</span>
+<span class="c"> * serviced by this function.</span>
+<span class="c"> *</span>
+<span class="c"> * The signature that &lt;code&gt;on&lt;/code&gt; accepts varies depending on the type</span>
+<span class="c"> * of event being consumed.  Refer to the specific methods that will</span>
+<span class="c"> * service a specific request for additional information about subscribing</span>
+<span class="c"> * to that type of event.</span>
+<span class="c"> *</span>
+<span class="c"> * &lt;ul&gt;</span>
+<span class="c"> * &lt;li&gt;Custom events.  These events are defined by various</span>
+<span class="c"> * modules in the library.  This type of event is delegated to</span>
+<span class="c"> * &lt;code&gt;EventTarget&lt;/code&gt;&#39;s &lt;code&gt;on&lt;/code&gt; method.</span>
+<span class="c"> *   &lt;ul&gt;</span>
+<span class="c"> *     &lt;li&gt;The type of the event&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;The callback to execute&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;An optional context object&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;0..n additional arguments to supply the callback.&lt;/li&gt;</span>
+<span class="c"> *   &lt;/ul&gt;</span>
+<span class="c"> *   Example: </span>
+<span class="c"> *   &lt;code&gt;Y.on(&#39;domready&#39;, function() { // start work });&lt;/code&gt;</span>
+<span class="c"> * &lt;/li&gt;</span>
+<span class="c"> * &lt;li&gt;DOM events.  These are moments reported by the browser related</span>
+<span class="c"> * to browser functionality and user interaction.</span>
+<span class="c"> * This type of event is delegated to &lt;code&gt;Event&lt;/code&gt;&#39;s </span>
+<span class="c"> * &lt;code&gt;attach&lt;/code&gt; method.</span>
+<span class="c"> *   &lt;ul&gt;</span>
+<span class="c"> *     &lt;li&gt;The type of the event&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;The callback to execute&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;The specification for the Node(s) to attach the listener</span>
+<span class="c"> *     to.  This can be a selector, collections, or Node/Element</span>
+<span class="c"> *     refereces.&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;An optional context object&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;0..n additional arguments to supply the callback.&lt;/li&gt;</span>
+<span class="c"> *   &lt;/ul&gt;</span>
+<span class="c"> *   Example: </span>
+<span class="c"> *   &lt;code&gt;Y.on(&#39;click&#39;, function(e) { // something was clicked }, &#39;#someelement&#39;);&lt;/code&gt;</span>
+<span class="c"> * &lt;/li&gt;</span>
+<span class="c"> * &lt;li&gt;Function events.  These events can be used to react before or after a</span>
+<span class="c"> * function is executed.  This type of event is delegated to &lt;code&gt;Event.Do&lt;/code&gt;&#39;s </span>
+<span class="c"> * &lt;code&gt;before&lt;/code&gt; method.</span>
+<span class="c"> *   &lt;ul&gt;</span>
+<span class="c"> *     &lt;li&gt;The callback to execute&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;The object that has the function that will be listened for.&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;The name of the function to listen for.&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;An optional context object&lt;/li&gt;</span>
+<span class="c"> *     &lt;li&gt;0..n additional arguments to supply the callback.&lt;/li&gt;</span>
+<span class="c"> *   &lt;/ul&gt;</span>
+<span class="c"> *   Example &lt;code&gt;Y.on(function(arg1, arg2, etc) { // obj.methodname was executed }, obj &#39;methodname&#39;);&lt;/code&gt;</span>
+<span class="c"> * &lt;/li&gt;</span>
+<span class="c"> * &lt;/ul&gt;</span>
+<span class="c"> *</span>
+<span class="c"> * &lt;code&gt;on&lt;/code&gt; corresponds to the moment before any default behavior of</span>
+<span class="c"> * the event.  &lt;code&gt;after&lt;/code&gt; works the same way, but these listeners</span>
+<span class="c"> * execute after the event&#39;s default behavior.  &lt;code&gt;before&lt;/code&gt; is an</span>
+<span class="c"> * alias for &lt;code&gt;on&lt;/code&gt;.</span>
+<span class="c"> *</span>
+<span class="c"> * @method on </span>
+<span class="c"> * @param type** event type (this parameter does not apply for function events)</span>
+<span class="c"> * @param fn the callback</span>
+<span class="c"> * @param target** a descriptor for the target (applies to custom events only).</span>
+<span class="c"> * For function events, this is the object that contains the function to</span>
+<span class="c"> * execute.</span>
+<span class="c"> * @param extra** 0..n Extra information a particular event may need.  These</span>
+<span class="c"> * will be documented with the event.  In the case of function events, this</span>
+<span class="c"> * is the name of the function to execute on the host.  In the case of</span>
+<span class="c"> * delegate listeners, this is the event delegation specification.</span>
+<span class="c"> * @param context optionally change the value of &#39;this&#39; in the callback</span>
+<span class="c"> * @param args* 0..n additional arguments to pass to the callback.</span>
+<span class="c"> * @return the event target or a detach handle per &#39;chain&#39; config</span>
+<span class="c"> * @for YUI</span>
+<span class="c"> */</span>
+
+<span class="c">/**</span>
+<span class="c"> * after() is a unified interface for subscribing to</span>
+<span class="c"> * most events exposed by YUI.  This includes custom events,</span>
+<span class="c"> * DOM events, and AOP events.  This works the same way as</span>
+<span class="c"> * the on() function, only it operates after any default</span>
+<span class="c"> * behavior for the event has executed. @see &lt;code&gt;on&lt;/code&gt; for more </span>
+<span class="c"> * information.</span>
+<span class="c"> * @method after</span>
+<span class="c"> * @param type event type (this parameter does not apply for function events)</span>
+<span class="c"> * @param fn the callback</span>
+<span class="c"> * @param target a descriptor for the target (applies to custom events only).</span>
+<span class="c"> * For function events, this is the object that contains the function to</span>
+<span class="c"> * execute.</span>
+<span class="c"> * @param extra 0..n Extra information a particular event may need.  These</span>
+<span class="c"> * will be documented with the event.  In the case of function events, this</span>
+<span class="c"> * is the name of the function to execute on the host.  In the case of</span>
+<span class="c"> * delegate listeners, this is the event delegation specification.</span>
+<span class="c"> * @param context optionally change the value of &#39;this&#39; in the callback</span>
+<span class="c"> * @param args* 0..n additional arguments to pass to the callback.</span>
+<span class="c"> * @return the event target or a detach handle per &#39;chain&#39; config</span>
+<span class="c"> * @for YUI</span>
+<span class="c"> */</span>
 </pre></div>
 
                     </div>

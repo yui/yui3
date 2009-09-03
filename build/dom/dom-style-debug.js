@@ -497,4 +497,4 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 })(Y);
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});
+}, '@VERSION@' ,{requires:['dom-base']});

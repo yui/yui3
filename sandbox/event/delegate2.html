@@ -29,11 +29,7 @@ if (typeof loadFirebugConsole == 'function') {
     loadFirebugConsole();
 }
 
-YUI({
-
-    base: '../../build/'
-
-}).use('node', 'dump', 'substitute', function(Y) {
+YUI().use('event-delegate', 'dump', 'substitute', function(Y) {
 
 	//	TEST 1: THIS ONE WORKS
 	//	Test using multiple selectors with a single root node

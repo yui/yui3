@@ -223,7 +223,12 @@ var NOT_FOUND = {},
                 },
 
                 'node-pluginhost': {
-                    requires: ['node-base', PLUGINHOST]
+                    requires: [NODEBASE, PLUGINHOST]
+                },
+
+
+                'node-event-delegate': {
+                    requires: [NODEBASE, 'event-delegate']
                 }
             },
 
@@ -443,22 +448,22 @@ var NOT_FOUND = {},
                     requires: [EVENTCUSTOMBASE]
                 },
                 'event-delegate': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-focus': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-key': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-mouseenter': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-mousewheel': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-resize': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 }
             }
         },
@@ -1222,7 +1227,7 @@ Y.Loader.prototype = {
                     plug = plugins[i];
                     plug.path = _path(name, i, o.type);
                     plug.requires = plug.requires || [];
-                    plug.requires.push(name);
+                    // plug.requires.push(name);
                     this.addModule(plug, i);
                     if (o.skinnable) {
                         this._addSkin(this.skin.defaultSkin, i, name);
@@ -1587,7 +1592,7 @@ Y.Loader.prototype = {
             if (r.hasOwnProperty(i)) {
                 m = this.getModule(i);
                 // remove if already loaded
-                if ((this.loaded[i] && (!this.forceMap[i]) && !this.ignoreRegistered) || (type && m.type != type)) { 
+                if ((this.loaded[i] && (!this.forceMap[i]) && !this.ignoreRegistered) || (type && m && m.type != type)) { 
                     delete r[i];
                 // remove anything this module supersedes
                 } else {

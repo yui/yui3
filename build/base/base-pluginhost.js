@@ -1,8 +1,8 @@
 YUI.add('base-pluginhost', function(Y) {
 
     /**
-     * The base-pluginhost submodule added Plugin support to Base, by augmenting Base with 
-     * Plugin.Host and setting up static Base.plug and Base.unplug methods.
+     * The base-pluginhost submodule adds Plugin support to Base, by augmenting Base with 
+     * Plugin.Host and setting up static (class level) Base.plug and Base.unplug methods.
      *
      * @module base
      * @submodule base-pluginhost
