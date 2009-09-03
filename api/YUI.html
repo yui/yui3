@@ -308,6 +308,31 @@ omit - features that should not be loaded if this module is present</span>
                                         
                                             <strong property="yui:name">after</strong>
                                            (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         target
+                                                    
+                                                
+                                                        , 
+                                                         extra
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -322,6 +347,50 @@ information.
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> event type (this parameter does not apply for function events)</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the callback</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">target</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> a descriptor for the target (applies to custom events only).
+For function events, this is the object that contains the function to
+execute.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">extra</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n Extra information a particular event may need.  These
+will be documented with the event.  In the case of function events, this
+is the name of the function to execute on the host.  In the case of
+delegate listeners, this is the event delegation specification.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optionally change the value of 'this' in the callback</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n additional arguments to pass to the callback.</span>
+                                                        </dd>
+                                                </dl>
 
 
 
@@ -1341,19 +1410,47 @@ which should be plugged into every instance of Node by default).
                                         
                                             <strong property="yui:name">on</strong>
                                            (
+                                                
+                                                        
+                                                         type**
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         target**
+                                                    
+                                                
+                                                        , 
+                                                         extra**
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            on() is a unified interface for subscribing to
-most events exposed by YUI.  This includes custom events,
-DOM events, and function events.
-The signature that on() accepts varies depending on the type
-of event this is.  Refer to the on() methods for specific to
-the type of event for more information:
+                                            <code>YUI</code>'s <code>on</code> method is a unified interface for subscribing to
+most events exposed by YUI.  This includes custom events, DOM events, and 
+function events.  <code>detach</code> is also provided to remove listeners
+serviced by this function.
+The signature that <code>on</code> accepts varies depending on the type
+of event being consumed.  Refer to the specific methods that will
+service a specific request for additional information about subscribing
+to that type of event.
 <ul>
 <li>Custom events.  These events are defined by various
-modules in the library.
+modules in the library.  This type of event is delegated to
+<code>EventTarget</code>'s <code>on</code> method.
 <ul>
 <li>The type of the event</li>
 <li>The callback to execute</li>
@@ -1363,8 +1460,10 @@ modules in the library.
 Example: 
 <code>Y.on('domready', function() { // start work });</code>
 </li>
-<li>DOM events.  These are events that are supplied by the
-browser for various events that happens to the the page.
+<li>DOM events.  These are moments reported by the browser related
+to browser functionality and user interaction.
+This type of event is delegated to <code>Event</code>'s 
+<code>attach</code> method.
 <ul>
 <li>The type of the event</li>
 <li>The callback to execute</li>
@@ -1378,7 +1477,8 @@ Example:
 <code>Y.on('click', function(e) { // something was clicked }, '#someelement');</code>
 </li>
 <li>Function events.  These events can be used to react before or after a
-function is executed.
+function is executed.  This type of event is delegated to <code>Event.Do</code>'s 
+<code>before</code> method.
 <ul>
 <li>The callback to execute</li>
 <li>The object that has the function that will be listened for.</li>
@@ -1389,14 +1489,58 @@ function is executed.
 Example <code>Y.on(function(arg1, arg2, etc) { // obj.methodname was executed }, obj 'methodname');</code>
 </li>
 </ul>
-on() corresponds to the moment before any default behavior of
-the event.  after() works the same way, but these listeners
-execute after the event's default behavior.  before() is an
-alias for on().
+<code>on</code> corresponds to the moment before any default behavior of
+the event.  <code>after</code> works the same way, but these listeners
+execute after the event's default behavior.  <code>before</code> is an
+alias for <code>on</code>.
                                         </div>
 
                                         <div class="description">
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type**</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> event type (this parameter does not apply for function events)</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the callback</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">target**</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> a descriptor for the target (applies to custom events only).
+For function events, this is the object that contains the function to
+execute.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">extra**</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n Extra information a particular event may need.  These
+will be documented with the event.  In the case of function events, this
+is the name of the function to execute on the host.  In the case of
+delegate listeners, this is the event delegation specification.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optionally change the value of 'this' in the callback</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args*</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 0..n additional arguments to pass to the callback.</span>
+                                                        </dd>
+                                                </dl>
 
 
 
