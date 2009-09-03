@@ -1602,17 +1602,20 @@ Y.Global = YUI.Env.globalEvents;
 
 
 /**
- * on() is a unified interface for subscribing to
- * most events exposed by YUI.  This includes custom events,
- * DOM events, and function events.
+ * <code>YUI</code>'s <code>on</code> method is a unified interface for subscribing to
+ * most events exposed by YUI.  This includes custom events, DOM events, and 
+ * function events.  <code>detach</code> is also provided to remove listeners
+ * serviced by this function.
  *
- * The signature that on() accepts varies depending on the type
- * of event this is.  Refer to the on() methods for specific to
- * the type of event for more information:
+ * The signature that <code>on</code> accepts varies depending on the type
+ * of event being consumed.  Refer to the specific methods that will
+ * service a specific request for additional information about subscribing
+ * to that type of event.
  *
  * <ul>
  * <li>Custom events.  These events are defined by various
- * modules in the library.
+ * modules in the library.  This type of event is delegated to
+ * <code>EventTarget</code>'s <code>on</code> method.
  *   <ul>
  *     <li>The type of the event</li>
  *     <li>The callback to execute</li>
@@ -1622,8 +1625,10 @@ Y.Global = YUI.Env.globalEvents;
  *   Example: 
  *   <code>Y.on('domready', function() { // start work });</code>
  * </li>
- * <li>DOM events.  These are events that are supplied by the
- * browser for various events that happens to the the page.
+ * <li>DOM events.  These are moments reported by the browser related
+ * to browser functionality and user interaction.
+ * This type of event is delegated to <code>Event</code>'s 
+ * <code>attach</code> method.
  *   <ul>
  *     <li>The type of the event</li>
  *     <li>The callback to execute</li>
@@ -1637,7 +1642,8 @@ Y.Global = YUI.Env.globalEvents;
  *   <code>Y.on('click', function(e) { // something was clicked }, '#someelement');</code>
  * </li>
  * <li>Function events.  These events can be used to react before or after a
- * function is executed.
+ * function is executed.  This type of event is delegated to <code>Event.Do</code>'s 
+ * <code>before</code> method.
  *   <ul>
  *     <li>The callback to execute</li>
  *     <li>The object that has the function that will be listened for.</li>
@@ -1649,12 +1655,23 @@ Y.Global = YUI.Env.globalEvents;
  * </li>
  * </ul>
  *
- * on() corresponds to the moment before any default behavior of
- * the event.  after() works the same way, but these listeners
- * execute after the event's default behavior.  before() is an
- * alias for on().
+ * <code>on</code> corresponds to the moment before any default behavior of
+ * the event.  <code>after</code> works the same way, but these listeners
+ * execute after the event's default behavior.  <code>before</code> is an
+ * alias for <code>on</code>.
  *
  * @method on 
+ * @param type** event type (this parameter does not apply for function events)
+ * @param fn the callback
+ * @param target** a descriptor for the target (applies to custom events only).
+ * For function events, this is the object that contains the function to
+ * execute.
+ * @param extra** 0..n Extra information a particular event may need.  These
+ * will be documented with the event.  In the case of function events, this
+ * is the name of the function to execute on the host.  In the case of
+ * delegate listeners, this is the event delegation specification.
+ * @param context optionally change the value of 'this' in the callback
+ * @param args* 0..n additional arguments to pass to the callback.
  * @return the event target or a detach handle per 'chain' config
  * @for YUI
  */
@@ -1667,6 +1684,17 @@ Y.Global = YUI.Env.globalEvents;
  * behavior for the event has executed. @see <code>on</code> for more 
  * information.
  * @method after
+ * @param type event type (this parameter does not apply for function events)
+ * @param fn the callback
+ * @param target a descriptor for the target (applies to custom events only).
+ * For function events, this is the object that contains the function to
+ * execute.
+ * @param extra 0..n Extra information a particular event may need.  These
+ * will be documented with the event.  In the case of function events, this
+ * is the name of the function to execute on the host.  In the case of
+ * delegate listeners, this is the event delegation specification.
+ * @param context optionally change the value of 'this' in the callback
+ * @param args* 0..n additional arguments to pass to the callback.
  * @return the event target or a detach handle per 'chain' config
  * @for YUI
  */
