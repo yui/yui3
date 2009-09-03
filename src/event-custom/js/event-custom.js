@@ -364,7 +364,7 @@ Y.CustomEvent.prototype = {
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {
                 s = subs[i];
-                if (s && (!fn || fn === this.fn)) {
+                if (s && (!fn || fn === s.fn)) {
                     this._delete(s);
                     found++;
                 }
