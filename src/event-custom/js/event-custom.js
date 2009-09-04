@@ -158,6 +158,14 @@ Y.CustomEvent = function(type, o) {
     // this.fired = false;
 
     /**
+     * An array containing the arguments the custom event
+     * was last fired with.
+     * @property firedWith
+     * @type Array
+     */
+    // this.firedWith;
+
+    /**
      * This event should only fire one time if true, and if
      * it has fired, any new subscribers should be notified
      * immediately.
@@ -289,7 +297,7 @@ Y.CustomEvent.prototype = {
         var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-            Y.later(0, this, this._notify, s);
+            Y.later(0, this, Y.bind(this._notify, this, s, this.firedWith));
         }
 
         if (when == AFTER) {
@@ -447,9 +455,11 @@ Y.CustomEvent.prototype = {
             return true;
         } else {
 
-            this.fired = true;
-
             var args = Y.Array(arguments, 0, true);
+
+            this.fired = true;
+            this.firedWith = args;
+
             if (this.emitFacade) {
                 return this.fireComplex(args);
             } else {

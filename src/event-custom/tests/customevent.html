@@ -518,6 +518,32 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
                 Y.Assert.areEqual(1, s3);
                 Y.Assert.areEqual(1, s4);
+            },
+
+            test_fire_once: function() {
+
+                var notified = 0;
+
+                Y.publish('fireonce', {
+                    fireOnce: true
+                });
+
+                Y.fire('fireonce', 'foo', 'bar');
+
+                Y.on('fireonce', function(arg1, arg2) {
+                    notified++;
+                    Y.Assert.areEqual('foo', arg1, 'args not correct for lazy fireOnce listener')
+                    Y.Assert.areEqual('bar', arg2, 'args not correct for lazy fireOnce listener')
+                });
+
+                Y.fire('fireonce', 'foo2', 'bar2');
+                Y.fire('fireonce', 'foo3', 'bar3');
+
+
+                Y.on('fireonce', function(arg1, arg2) {
+                    Y.log('the notification is asynchronous, so I need to wait for this test');
+                    Y.Assert.areEqual(1, notified, 'listener notified more than once.');
+                });
             }
 
         });
