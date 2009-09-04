@@ -9,7 +9,6 @@ var Event = Y.Event,
 	Lang = Y.Lang,
 
 	plugins = Y.Env.evt.plugins,
-	isString = Lang.isString,
 	
 	listeners = {},
 

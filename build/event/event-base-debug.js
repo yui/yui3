@@ -1242,17 +1242,12 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @private
          */
         _unload: function(e) {
-
-            var E = Y.Event;
-
             Y.each(_wrappers, function(v, k) {
                 v.detachAll();
                 remove(v.el, v.type, v.fn, v.capture);
                 delete _wrappers[k];
                 delete _el_events[v.domkey][k];
             });
-
-            remove(window, "load", E._load);
         },
 
         

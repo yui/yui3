@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>YUI Event Tests</title>
+<title>YUI3 Custom Event Tests</title>
 <script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
 </head>
 
@@ -60,7 +60,7 @@
         Y.log('{}');
  
         var testEventTarget = new Y.Test.Case({
-            name: "EventTarget tests",
+            name: "Custom event tests",
         
             testAugment: function() {
 
@@ -532,8 +532,8 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
                 Y.on('fireonce', function(arg1, arg2) {
                     notified++;
-                    Y.Assert.areEqual('foo', arg1, 'args not correct for lazy fireOnce listener')
-                    Y.Assert.areEqual('bar', arg2, 'args not correct for lazy fireOnce listener')
+                    Y.Assert.areEqual('foo', arg1, 'arg1 not correct for lazy fireOnce listener')
+                    Y.Assert.areEqual('bar', arg2, 'arg2 not correct for lazy fireOnce listener')
                 });
 
                 Y.fire('fireonce', 'foo2', 'bar2');
