@@ -885,7 +885,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          */
         detach: function(type, fn, el, obj) {
 
-            var args=Y.Array(arguments, 0, true), compat, i, len, ok,
+            var args=Y.Array(arguments, 0, true), compat, i, l, ok,
                 id, ce;
 
             if (args[args.length-1] === COMPAT_ARG) {
@@ -902,14 +902,30 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             if (typeof el == "string") {
 
                 // el = (compat) ? Y.DOM.byId(el) : Y.all(el);
-                el = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
-                return Y.Event.detach.apply(Y.Event, args);
+                if (compat) {
+                    el = Y.DOM.byId(el);
+                } else {
+                    el = Y.Selector.query(el);
+                    l = el.length;
+                    if (l < 1) {
+                        el = null;
+                    } else if (l == 1) {
+                        el = el[0];
+                    }
+                }
+                // return Y.Event.detach.apply(Y.Event, args);
 
             // The el argument can be an array of elements or element ids.
-            } else if (shouldIterate(el)) {
+            } 
+            
+            if (!el) {
+                return false;
+            }
+            
+            if (shouldIterate(el)) {
 
                 ok = true;
-                for (i=0, len=el.length; i<len; ++i) {
+                for (i=0, l=el.length; i<l; ++i) {
                     args[2] = el[i];
                     ok = ( Y.Event.detach.apply(Y.Event, args) && ok );
                 }
@@ -917,6 +933,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 return ok;
 
             }
+
 
             if (!type || !fn || !fn.call) {
                 return this.purgeElement(el, false, type);
@@ -1214,17 +1231,12 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * @private
          */
         _unload: function(e) {
-
-            var E = Y.Event;
-
             Y.each(_wrappers, function(v, k) {
                 v.detachAll();
                 remove(v.el, v.type, v.fn, v.capture);
                 delete _wrappers[k];
                 delete _el_events[v.domkey][k];
             });
-
-            remove(window, "load", E._load);
         },
 
         

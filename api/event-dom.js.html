@@ -517,7 +517,7 @@
 <span class="c">         */</span>
         <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">var</span> <span class="nx">args</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">compat</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">,</span> <span class="nx">ok</span><span class="o">,</span>
+            <span class="k">var</span> <span class="nx">args</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">compat</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">ok</span><span class="o">,</span>
                 <span class="nx">id</span><span class="o">,</span> <span class="nx">ce</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">args</span><span class="o">[</span><span class="nx">args</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">]</span> <span class="o">===</span> <span class="nx">COMPAT_ARG</span><span class="o">)</span> <span class="o">{</span>
@@ -534,14 +534,30 @@
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">el</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="c">// el = (compat) ? Y.DOM.byId(el) : Y.all(el);</span>
-<span class="c"></span>                <span class="nx">el</span> <span class="o">=</span> <span class="o">(</span><span class="nx">compat</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">byId</span><span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
-                <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
-
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">compat</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">el</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">byId</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">el</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
+                    <span class="nx">l</span> <span class="o">=</span> <span class="nx">el</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">l</span> <span class="o">&lt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">el</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">l</span> <span class="o">==</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+                <span class="c">// return Y.Event.detach.apply(Y.Event, args);</span>
+<span class="c"></span>
             <span class="c">// The el argument can be an array of elements or element ids.</span>
-<span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">shouldIterate</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
+<span class="c"></span>            <span class="o">}</span> 
+            
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span>
+            
+            <span class="k">if</span> <span class="o">(</span><span class="nx">shouldIterate</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
 
                 <span class="nx">ok</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">len</span><span class="o">=</span><span class="nx">el</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">el</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">el</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                     <span class="nx">ok</span> <span class="o">=</span> <span class="o">(</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">detach</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">ok</span> <span class="o">);</span>
                 <span class="o">}</span>
@@ -549,6 +565,7 @@
                 <span class="k">return</span> <span class="nx">ok</span><span class="o">;</span>
 
             <span class="o">}</span>
+
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">type</span> <span class="o">||</span> <span class="o">!</span><span class="nx">fn</span> <span class="o">||</span> <span class="o">!</span><span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">purgeElement</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
@@ -850,17 +867,12 @@
 <span class="c">         * @private</span>
 <span class="c">         */</span>
         <span class="nx">_unload</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="k">var</span> <span class="nx">E</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">;</span>
-
             <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">_wrappers</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">v</span><span class="o">.</span><span class="nx">detachAll</span><span class="o">();</span>
                 <span class="nx">remove</span><span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">el</span><span class="o">,</span> <span class="nx">v</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span> <span class="nx">v</span><span class="o">.</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">v</span><span class="o">.</span><span class="nx">capture</span><span class="o">);</span>
                 <span class="nx">delete</span> <span class="nx">_wrappers</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
                 <span class="nx">delete</span> <span class="nx">_el_events</span><span class="o">[</span><span class="nx">v</span><span class="o">.</span><span class="nx">domkey</span><span class="o">][</span><span class="nx">k</span><span class="o">];</span>
             <span class="o">});</span>
-
-            <span class="nx">remove</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s2">&quot;load&quot;</span><span class="o">,</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_load</span><span class="o">);</span>
         <span class="o">},</span>
 
         

@@ -36,6 +36,19 @@
             }
         });
 
+
+var handler = function () {                                                                                                                                                 
+    alert("here");                                                                                                                                                      
+};                                                                                                                                                                          
+                                                                                                                                                                            
+Y.on("myevent", handler);                                                                                                                                                   
+                                                                                                                                                                            
+Y.fire("myevent");                                                                                                                                                          
+                                                                                                                                                                            
+Y.detach('myevent', handler);                                                                                                                                               
+                                                                                                                                                                            
+Y.fire("myevent");   
+
 /*
 Y.on("mycategory|myevent", function () {
 
@@ -50,6 +63,7 @@ Y.detach('mycategory|*');
 Y.fire("myevent");
 */
 
+/*
 Y.on("mycategory|myevent", function () {                                                                                                                                    
                                                                                                                                                                             
         alert("here");                                                                                                                                                      
@@ -61,20 +75,8 @@ Y.fire("myevent");
 Y.detach('mycategory|myevent');                                                                                                                                             
                                                                                                                                                                             
 Y.fire("myevent");   
+*/
 
-
-/*
-var handler = function () {                                                                                                                                                 
-    alert("here");                                                                                                                                                      
-};                                                                                                                                                                          
-                                                                                                                                                                            
-Y.on("myevent", handler);                                                                                                                                                   
-                                                                                                                                                                            
-Y.fire("myevent");                                                                                                                                                          
-                                                                                                                                                                            
-Y.detach('myevent', handler);                                                                                                                                               
-                                                                                                                                                                            
-Y.fire("myevent");   
 
 
 /*
