@@ -306,7 +306,9 @@ YUI.add('history', function(Y) {
             }
         }
 
-        if (!Y.Lang.isUndefined(win.onhashchange)) {
+        // IE8 in IE7 mode defines window.onhashchange, but never fires it...
+        if (!Y.Lang.isUndefined(win.onhashchange) &&
+            (Y.Lang.isUndefined(doc.documentMode) || doc.documentMode > 7)) {
 
             // The HTML5 way of handling DHTML history...
             Y.on('hashchange', function () {
