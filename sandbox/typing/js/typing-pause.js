@@ -91,8 +91,8 @@ var eventName = 'typing-pause',
                     target.on('blur', reset);
                 }
 
-                args.splice(0,4);
-                args.unshift(_proxyEvent, fn, target);
+                // Assemble the arguments to apply, preserving any extra args
+                args.splice(0,5, _proxyEvent, fn, (o || target));
 
                 return target.on.apply(target, args);
             } else {

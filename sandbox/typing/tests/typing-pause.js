@@ -64,7 +64,7 @@ var eventName = 'typing-pause',
                 // @FIXME: onAvailable will return only the first found, so
                 // non-id selectors will behave differently.
                 // @FIME: the return value from onAvailable is not a detach
-                // handler for *this* event
+                // handler for this event
                 return Y.Event.onAvailable(el, function () {
                     Y.on.apply(Y,args);
                 }, Y.Event, true, false);
@@ -90,15 +90,13 @@ var eventName = 'typing-pause',
                 // @TODO: capture these handles for detach
                 if (!target.getEvent(_proxyEvent)) {
                     target.on('keyup', handler);
-                    if (adaptive) {
-                        target.on('blur', reset);
-                    }
+                    target.on('blur', reset);
                 }
 
-                args.splice(2,1);
-                args[0] = _proxyEvent;
+                // Assemble the arguments to apply, preserving any extra args
+                args.splice(0,5, _proxyEvent, fn, (o || target));
 
-                return target.on.apply(target,args);
+                return target.on.apply(target, args);
             } else {
                 return null;
             }
@@ -111,9 +109,8 @@ var eventName = 'typing-pause',
                     return;
                 }
 
-                var node  = this,
-                    raw   = this.get('value'),
-                    value = filter ? filter(raw) : raw,
+                var raw   = this.get('value'),
+                    value = filter ? filter.call(this,raw) : raw,
                     delay, now;
 
                 if (timer) {
@@ -127,12 +124,16 @@ var eventName = 'typing-pause',
 
                         ++strokes;
 
-                        // On first key stroke, use the maxWait amount because we
-                        // don't have enough data to calculate a reasonable delay
+                        // On first key stroke, use maxWait because we don't
+                        // have enough data to calculate a reasonable delay
                         if (strokes === 1) {
                             first = now;
                             delay = maxWait;
                         } else {
+                            // @TODO: intentional pauses should not affect the
+                            // average (e.g. fast typist that pauses enough to
+                            // trigger the event, then leaves focus in the
+                            // input.  The avg is then skewed.)
                             delay = round((now - first) / strokes) * multiplier;
                             if (delay > maxWait) {
                                 delay = maxWait;
@@ -146,16 +147,15 @@ var eventName = 'typing-pause',
                         delay = minWait;
                     }
 
-                    timer = Y.later(minWait, null, function () {
-                        // TODO: deal with subscription extra args
-                        // TODO: assumes Node extends Base?
-                        node.fire(_proxyEvent, {
+                    // Schedule firing according to the appropriate delay
+                    timer = Y.later(delay, this, function () {
+                        this.fire(_proxyEvent, {
                             type: eventName,
                             inputValue: raw,
                             value: value,
                             lastKeyEvent: e,
-                            target: target,
-                            currentTarget: target
+                            target: this,
+                            currentTarget: this
                         });
                     });
                 }
