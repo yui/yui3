@@ -494,16 +494,16 @@ var PARENT_NODE = 'parentNode',
                     if (j && !pass) {
                         while ((test = tests[--j])) {
                             operator = test[1];
-                            if (tmpNode[test[0]] !== undefined) { // DOM property
-                                value = tmpNode[test[0]];
-                            } else if (tmpNode.getAttribute) { // custom attributes require getAttribute interface
-                                value = tmpNode.getAttribute(test[0]);
-                            }
-
-                            // skip node as soon as a test fails 
                             if (getters[test[0]]) {
                                 value = getters[test[0]](tmpNode, test[0]);
+                            } else {
+                                value = tmpNode[test[0]];
+                                // use getAttribute for non-standard attributes
+                                if (value === undefined && tmpNode.getAttribute) {
+                                    value = tmpNode.getAttribute(test[0]);
+                                }
                             }
+
                             if ((operator === '=' && value !== test[2]) ||  // fast path for equality
                                 (operator.test && !operator.test(value)) ||  // regex test
                                 (operator.call && !operator(tmpNode, test[0]))) { // function test
