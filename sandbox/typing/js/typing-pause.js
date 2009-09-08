@@ -27,7 +27,7 @@
  * @for YUI
  * @param type {String} 'typing'
  * @param fn {Function} the callback function
- * @param id {String|Node|etc} the element to bind
+ * @param el {String|Node|etc} the element(s) to bind
  * @param conf {Object} configuration for delay, minimum characters, etc
  * @param o {Object} optional context object
  * @param args 0..n additional arguments that should be provided 
@@ -37,97 +37,141 @@
 var eventName = 'typing-pause',
     event = {
 
-    on: function(type, fn, id, conf, o) {
+        on: function(type, fn, el, conf, o) {
 
-        conf = conf || {};
+            conf = conf || {};
 
-        var name = (Y.Lang.isString(id) ? id : Y.stamp(id)) + '_' + eventName,
-            args = Y.Array(arguments,0,true),
-            adaptive    = 'adaptive' in conf ? conf.adaptive : true,
-            minLength   = conf.minLength      || 1,
-            minWait     = conf.minWait        || 400,
-            maxWait     = conf.maxWait        || 3000,
-            multiplier  = conf.waitMultiplier || 4,
-            filter      = Y.Lang.isFunction(conf.filter) ? conf.filter : null,
-            round       = Math.round,
-            strokes     = 0,
-            first       = 0,
-            timer;
+            var args = Y.Array(arguments,0,true),
+                target      = Y.all(el),
+                adaptive    = 'adaptive' in conf ? conf.adaptive : true,
+                minLength   = conf.minLength      || 1,
+                minWait     = conf.minWait        || 400,
+                maxWait     = conf.maxWait        || 3000,
+                multiplier  = conf.waitMultiplier || 4,
+                filter      = Y.Lang.isFunction(conf.filter) ? conf.filter : null,
+                round       = Math.round,
+                strokes     = 0,
+                first       = 0,
+                _proxyEvent,
+                handles,
+                timer;
 
-        function handler(e) {
-            // Allow delete and backspace, but not shift, alt, ctrl, etc
-            if (e.keyCode < 46 && e.keyCode !== 8 && e.keyCode !== 32) {
-                return;
+            // If a selector string that doesn't match any elements, auto poll
+            // for available.
+            if (Y.Lang.isString(el) && target.size() === 0) {
+                // @FIXME: onAvailable will return only the first found, so
+                // non-id selectors will behave differently.
+                // @FIME: the return value from onAvailable is not a detach
+                // handler for this event
+                return Y.Event.onAvailable(el, function () {
+                    Y.on.apply(Y,args);
+                }, Y.Event, true, false);
             }
 
-            var raw   = this.get('value'),
-                value = filter ? filter(raw) : raw,
-                delay, now;
-
-            if (timer) {
-                timer.cancel();
-                timer = null;
+            if (target.size() > 1) {
+                handles = [];
+                target.each(function (t) {
+                    args[2] = t;
+                    handles.push(Y.on.apply(Y,args));
+                });
+                return handles;
             }
+            
+            // At this point, the target should be a NodeList with 0 or one Node
+            // instances.
+            if (target.size() === 1) {
+                target = target.item(0);
 
-            if (value && value.length > minLength) {
-                if (adaptive) {
-                    now = new Date().getTime();
+                // Create a unique custom event proxy name for this subscription
+                _proxyEvent = Y.stamp(target) + '-' + eventName;
 
-                    ++strokes;
-
-                    // On first key stroke, use the maxWait amount because we
-                    // don't have enough data to calculate a reasonable delay
-                    if (strokes === 1) {
-                        first = now;
-                        delay = maxWait;
-                    } else {
-                        delay = round((now - first) / strokes) * multiplier;
-                        if (delay > maxWait) {
-                            delay = maxWait;
-                        }
-                    }
-
-                    if (delay < minWait) {
-                        delay = minWait;
-                    }
-                } else {
-                    delay = minWait;
+                // @TODO: capture these handles for detach
+                if (!target.getEvent(_proxyEvent)) {
+                    target.on('keyup', handler);
+                    target.on('blur', reset);
                 }
 
-                timer = Y.later(minWait, null, function () {
-                    Y.fire(name, {
-                        type: eventName,
-                        inputValue: raw,
-                        value: value,
-                        lastKeyEvent: e
+                // Assemble the arguments to apply, preserving any extra args
+                args.splice(0,5, _proxyEvent, fn, (o || target));
+
+                return target.on.apply(target, args);
+            } else {
+                return null;
+            }
+
+
+            // Support functions
+            function handler(e) {
+                // Allow delete and backspace, but not shift, alt, ctrl, etc
+                if (e.keyCode < 46 && e.keyCode !== 8 && e.keyCode !== 32) {
+                    return;
+                }
+
+                var raw   = this.get('value'),
+                    value = filter ? filter.call(this,raw) : raw,
+                    delay, now;
+
+                if (timer) {
+                    timer.cancel();
+                    timer = null;
+                }
+
+                if (value && value.length > minLength) {
+                    if (adaptive) {
+                        now = new Date().getTime();
+
+                        ++strokes;
+
+                        // On first key stroke, use maxWait because we don't
+                        // have enough data to calculate a reasonable delay
+                        if (strokes === 1) {
+                            first = now;
+                            delay = maxWait;
+                        } else {
+                            // @TODO: intentional pauses should not affect the
+                            // average (e.g. fast typist that pauses enough to
+                            // trigger the event, then leaves focus in the
+                            // input.  The avg is then skewed.)
+                            delay = round((now - first) / strokes) * multiplier;
+                            if (delay > maxWait) {
+                                delay = maxWait;
+                            }
+                        }
+
+                        if (delay < minWait) {
+                            delay = minWait;
+                        }
+                    } else {
+                        delay = minWait;
+                    }
+
+                    // Schedule firing according to the appropriate delay
+                    timer = Y.later(delay, this, function () {
+                        this.fire(_proxyEvent, {
+                            type: eventName,
+                            inputValue: raw,
+                            value: value,
+                            lastKeyEvent: e,
+                            target: this,
+                            currentTarget: this
+                        });
                     });
-                });
+                }
             }
+
+            function reset() {
+                strokes = 0;
+
+                if (timer) {
+                    timer.cancel();
+                    timer = null;
+                }
+            }
+
         }
 
-        function reset() {
-            strokes = 0;
-
-            if (timer) {
-                timer.cancel();
-                timer = null;
-            }
-        }
-
-        // name is the new custom event name for this element
-        if (!Y.getEvent(name)) {
-            Y.on('keyup', handler, id);
-            if (adaptive) {
-                Y.on('blur', reset, id);
-            }
-        }
-
-        args.splice(2,2);
-        args[0] = name;
-
-        Y.on.apply(Y,args);
-    }
-};
+        // @TODO: I need a detach section
+    };
 
 Y.Env.evt.plugins[eventName] = event;
 if (Y.Node) {
