@@ -164,6 +164,10 @@ YUI({
     Y.log("Get it out in the open: "+myNode.demoNS.publicMember);
     Y.log("Not get()able, since it's not an ATTR: "+myNode.demoNS.get("publicMember"));
     
+    myOtherNode = Y.one("#log");
+    Y.log("Hasn't been plugged, so demoNS on other node is: "+myOtherNode.demoNS);
+    myOtherNode.plug(Y.Plugin.DemoPlugin);
+    Y.log("Now it's been plugged, so: "+myOtherNode.demoNS);
 });
 
 </script>
