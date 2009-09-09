@@ -1,0 +1,134 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <title>AutoComplete Design Sketch</title>
+    <style>
+	* {
+		margin-left:0;
+		margin-right:0;
+		padding-left:0;
+		padding-right:0;
+	}
+	body {
+		width:700px;
+		margin: 1px auto;
+	}
+    </style>
+</head>
+<body>
+<h1 id="autocomplete_overview">Autocomplete Overview</h1>
+
+<p>The component is build in three parts:</p>
+
+<ol>
+<li>Controller</li>
+<li>Data Source</li>
+<li>Renderer</li>
+</ol>
+
+<h2 id="controller">Controller</h2>
+
+<p>The controller&#8217;s job is to manage the interaction with the HTML <code>input</code> element, listening for key events and managing the data flow between the Data Source and Renderer.</p>
+
+<h3 id="key_events">Key Events</h3>
+
+<p>For most western character sets, <code>keydown</code> is sufficient.  However, CJK character sets have different indications that a character has been entered.</p>
+
+<p>There is going to be a configurable timeout after each key event is fired, before sending the query to the Data Source, so as to prevent flooding the Data Source with queries.  Key events will cancel any existing scheduled query.  Even setting a timeout of 0 will thus have a noticeable impact on sending unnecessary queries, but in some cases, it may be advantageous to wait a bit longer.</p>
+
+<p>We may want the Controller to expose a mechanism to customize this behavior, so that we can perhaps be &#8220;smart&#8221; about setting the timeout in response to a user&#8217;s typing speed.  (NB: the difference between &#8220;smart&#8221; and &#8220;200ms&#8221; is probably not significant the majority of the time.)</p>
+
+<p>The Data Source may change the timeout based on whether or not data has been loaded locally.  For instance, in order to avoid flooding the server with XHR calls, it may make sense to have a timeout of 300ms.  Once some data has been loaded locally, and it switches to local filtering, then it may make sense to drop the timeout value to 0.  Experimentation is required.</p>
+
+<h3 id="_etc">↓, ⇥, etc.</h3>
+
+<p>When the user presses the down-arrow or tab keys, then the Controller should pass a message to the Renderer that this event has occurred.  At this point, the Renderer can either handle the event and prevent the default behavior, or let the browser&#8217;s native behavior to continue.</p>
+
+<h3 id="focus">Focus</h3>
+
+<p>When the input element loses focus, the Controller stops being in charge.</p>
+
+<p>Open question: use FocusManager plugin?  Similar functionality.</p>
+
+<h3 id="attrs">Attrs</h3>
+
+<ul>
+<li><code>value</code> - The form control&#8217;s value.  set(&#8220;value&#8221;) is typically called by renderer widget when a selection is made.</li>
+<li><code>focused</code> - Whether or not the form control is focused.</li>
+<li><code>typeTimeout</code> - The time in ms to wait between key events before searching.</li>
+<li><code>dataSource</code> - The datasource object currently being used.  When not set, no requests get made.
+Bikeshed: Should there be some sugar to not have to create a DataSource manually?  My feeling is
+that it should be optional, but data:{type:&#8221;Get&#8221;,url:&#8221;http://yql.yahoo.com/asdf&#8221;} is a bit
+friendlier.</li>
+<li><code>delimiter</code> - What counts as a query?  Pass in a string or regex to split on.</li>
+<li><code>minQueryLength</code> - Minimum number of characters to trigger a query</li>
+<li><code>renderer</code> - The widget that is going to handle this thing.  If it&#8217;s defined here, it should support taking the results of the query as an argument to the render() function.  It is also possible to hook the widget onto the ac:queryResult event.  Default is to use an ACRenderer widget.</li>
+</ul>
+
+<p>Maybe something like this for DS sugar?</p>
+
+<pre><code>Y.one("#ac").plug(Y.ACController).ac.init({
+	// only one of these, obviously.
+
+	// Allows for a succinct algorigthm for handling.
+	// this.dataSource = (
+	//	 Y.DataSource
+	//	 &amp;&amp; ("type" in arg.data)
+	//	 &amp;&amp; (arg.data.type in Y.DataSource)
+	// ) ? Y.DataSource[arg.data.type](arg.data) : arg.data.source;
+
+	data : {
+		type : "Function"
+		source : function (request) {
+			return data;
+		},
+	},
+	data : {
+		type: "Get",
+		source : "http://query.yahooapis.com/v1/public/yql?format=json&amp;",
+		scriptCallbackParam : "cbFunc"
+	},
+	data : {
+		type : "IO",
+		source : "./myScript.php"
+	},
+	data : {
+		type : "custom", // optional
+		source : myDataSourceImitatorObject
+	},
+});
+</code></pre>
+
+<h3 id="events">Events</h3>
+
+<ul>
+<li><code>query</code> - Enough text has been entered, and the sendQuery function is being called on the DataSource if present.  Note that new queries might be made before the old query&#8217;s data has returned.</li>
+<li><code>queryCancel</code> - The user unfocused the element before the query returned.  Cancel it.</li>
+<li><code>textEntered</code> - The enter has entered some text, and paused for required timeout.</li>
+<li><code>characterEntered</code> - non-control-keydown for westerners, other things for other languages. Hook into this to be clever.</li>
+</ul>
+
+<p>And of course all the goodies it inherits from Plugin and Attribute and Base and whatnot.</p>
+
+<h2 id="data_source">Data Source</h2>
+
+<p>The Data Source receives queries from the Controller, and returns a data object using the supplied callback function.</p>
+
+<p>The default Data Source will be a Y.DataSource utility object that is created based on the arguments passed to the instantiation function.  However, this can be a hand-tuned data source, or any other kind of object that exposes the same API.</p>
+
+<p>Until and unless Data Source is assigned to the Controller, queries will not be made.  However, the <code>query</code> event will still fire, so that if you want to use the ACController in interesting ways, that could still be done.  (Is this worthwhile?  Seems better to pick EITHER event hanging, OR a required object that ducks properly.)</p>
+
+<h3 id="sendrequest"><code>sendRequest</code></h3>
+
+<p>The Data Source object must expose a sendRequest method that takes a string query and a callback object.  The callback object contains <code>success</code> and <code>failure</code> methods, which must be called at the appropriate times.</p>
+
+<p>If <code>sendRequest</code> is called before returning data, the request should be cancelled.  This logic is handled by the Data Source.</p>
+
+<h2 id="renderer">Renderer</h2>
+
+<p>The renderer object in the default implementation is an <code>ACRenderer</code> object, which inherits from <code>Widget</code>.</p>
+
+<p>The default renderer will be a simple drop-down list of selectable items.  It exposes a <code>render</code> method, which is called by the Controller with a data object returned by the Data Source.</p>
+
+<p>Warning: This seems like it might be opening the door for the M and V to know too much about one another.  The data returned by the Data Source is another API surface, and should be kept small.  Mitigate this by making the ACWidget only accept data of a very specific shape, which is what is returned by the Data Source.  If the user wants to shoot themselves in the foot, they&#8217;ll find a way no matter what we do.</p>

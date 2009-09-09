@@ -81,7 +81,7 @@ Maybe something like this for DS sugar?
 * `query` - Enough text has been entered, and the sendQuery function is being called on the DataSource if present.  Note that new queries might be made before the old query's data has returned.
 * `queryCancel` - The user unfocused the element before the query returned.  Cancel it.
 * `textEntered` - The enter has entered some text, and paused for required timeout.
-* `characterEntered` - non-control-keydown for westerners, other things for other languages
+* `characterEntered` - non-control-keydown for westerners, other things for other languages. Hook into this to be clever.
 
 And of course all the goodies it inherits from Plugin and Attribute and Base and whatnot.
 
@@ -106,7 +106,3 @@ The renderer object in the default implementation is an `ACRenderer` object, whi
 The default renderer will be a simple drop-down list of selectable items.  It exposes a `render` method, which is called by the Controller with a data object returned by the Data Source.
 
 Warning: This seems like it might be opening the door for the M and V to know too much about one another.  The data returned by the Data Source is another API surface, and should be kept small.  Mitigate this by making the ACWidget only accept data of a very specific shape, which is what is returned by the Data Source.  If the user wants to shoot themselves in the foot, they'll find a way no matter what we do.
-
-
-
-
