@@ -85,7 +85,7 @@
             <span class="k">if</span> <span class="o">(</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">current</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">el</span><span class="o">)[</span><span class="nx">property</span><span class="o">];</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">property</span> <span class="o">===</span> <span class="nx">OPACITY</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">property</span> <span class="o">===</span> <span class="nx">OPACITY</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">OPACITY</span><span class="o">])</span> <span class="o">{</span>
                     <span class="nx">value</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">OPACITY</span><span class="o">].</span><span class="nx">get</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>        
                 <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">current</span> <span class="o">||</span> <span class="o">(</span><span class="nx">current</span><span class="o">.</span><span class="nx">indexOf</span> <span class="o">&amp;&amp;</span> <span class="nx">current</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">PX</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">))</span> <span class="o">{</span> <span class="c">// no need to convert</span>
 <span class="c"></span>                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">current</span><span class="o">;</span>
@@ -225,43 +225,47 @@
 <span class="c"></span>    <span class="nx">IEComputed</span> <span class="o">=</span> <span class="o">{};</span>
 
 <span class="c">// use alpha filter for IE opacity</span>
-<span class="c"></span><span class="k">if</span> <span class="o">(</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">style</span><span class="o">[</span><span class="nx">OPACITY</span><span class="o">]</span> <span class="o">===</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span>
-        <span class="nx">documentElement</span><span class="o">[</span><span class="nx">FILTERS</span><span class="o">])</span> <span class="o">{</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">OPACITY</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span>
-        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="m">100</span><span class="o">;</span>
-            <span class="k">try</span> <span class="o">{</span> <span class="c">// will error if no DXImageTransform</span>
-<span class="c"></span>                <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">FILTERS</span><span class="o">][</span><span class="s1">&#39;DXImageTransform.Microsoft.Alpha&#39;</span><span class="o">][</span><span class="nx">OPACITY</span><span class="o">];</span>
+<span class="c"></span><span class="k">try</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">style</span><span class="o">[</span><span class="nx">OPACITY</span><span class="o">]</span> <span class="o">===</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span>
+            <span class="nx">documentElement</span><span class="o">[</span><span class="nx">FILTERS</span><span class="o">])</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">OPACITY</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span>
+            <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="m">100</span><span class="o">;</span>
+                <span class="k">try</span> <span class="o">{</span> <span class="c">// will error if no DXImageTransform</span>
+<span class="c"></span>                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">FILTERS</span><span class="o">][</span><span class="s1">&#39;DXImageTransform.Microsoft.Alpha&#39;</span><span class="o">][</span><span class="nx">OPACITY</span><span class="o">];</span>
 
-            <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">try</span> <span class="o">{</span> <span class="c">// make sure its in the document</span>
-<span class="c"></span>                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">FILTERS</span><span class="o">](</span><span class="s1">&#39;alpha&#39;</span><span class="o">)[</span><span class="nx">OPACITY</span><span class="o">];</span>
-                <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">err</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;getStyle: IE opacity filter not found; returning 1&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dom-style&#39;</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">try</span> <span class="o">{</span> <span class="c">// make sure its in the document</span>
+<span class="c"></span>                        <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">FILTERS</span><span class="o">](</span><span class="s1">&#39;alpha&#39;</span><span class="o">)[</span><span class="nx">OPACITY</span><span class="o">];</span>
+                    <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">err</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;getStyle: IE opacity filter not found; returning 1&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dom-style&#39;</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+                <span class="k">return</span> <span class="nx">val</span> <span class="o">/</span> <span class="m">100</span><span class="o">;</span>
+            <span class="o">},</span>
+
+            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">style</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">current</span><span class="o">,</span>
+                    <span class="nx">styleObj</span><span class="o">;</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// normalize inline style behavior</span>
+<span class="c"></span>                    <span class="nx">styleObj</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+                    <span class="nx">current</span> <span class="o">=</span> <span class="o">(</span><span class="nx">OPACITY</span> <span class="k">in</span> <span class="nx">styleObj</span><span class="o">)</span> <span class="o">?</span> <span class="nx">styleObj</span><span class="o">[</span><span class="nx">OPACITY</span><span class="o">]</span> <span class="o">:</span> <span class="m">1</span><span class="o">;</span> <span class="c">// revert to original opacity</span>
+<span class="c"></span>                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">current</span><span class="o">;</span>
+                <span class="o">}</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">style</span><span class="o">[</span><span class="nx">FILTER</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// in case not appended</span>
+<span class="c"></span>                    <span class="nx">style</span><span class="o">[</span><span class="nx">FILTER</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;alpha(&#39;</span> <span class="o">+</span> <span class="nx">OPACITY</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">*</span> <span class="m">100</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="o">;</span>
+                    
+                    <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">currentStyle</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="o">.</span><span class="nx">currentStyle</span><span class="o">[</span><span class="nx">HAS_LAYOUT</span><span class="o">])</span> <span class="o">{</span>
+                        <span class="nx">style</span><span class="o">.</span><span class="nx">zoom</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span> <span class="c">// needs layout </span>
+<span class="c"></span>                    <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
-            <span class="k">return</span> <span class="nx">val</span> <span class="o">/</span> <span class="m">100</span><span class="o">;</span>
-        <span class="o">},</span>
-
-        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">style</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">current</span><span class="o">,</span>
-                <span class="nx">styleObj</span><span class="o">;</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// normalize inline style behavior</span>
-<span class="c"></span>                <span class="nx">styleObj</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-                <span class="nx">current</span> <span class="o">=</span> <span class="o">(</span><span class="nx">OPACITY</span> <span class="k">in</span> <span class="nx">styleObj</span><span class="o">)</span> <span class="o">?</span> <span class="nx">styleObj</span><span class="o">[</span><span class="nx">OPACITY</span><span class="o">]</span> <span class="o">:</span> <span class="m">1</span><span class="o">;</span> <span class="c">// revert to original opacity</span>
-<span class="c"></span>                <span class="nx">val</span> <span class="o">=</span> <span class="nx">current</span><span class="o">;</span>
-            <span class="o">}</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">style</span><span class="o">[</span><span class="nx">FILTER</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// in case not appended</span>
-<span class="c"></span>                <span class="nx">style</span><span class="o">[</span><span class="nx">FILTER</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;alpha(&#39;</span> <span class="o">+</span> <span class="nx">OPACITY</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">*</span> <span class="m">100</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="o">;</span>
-                
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">currentStyle</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="o">.</span><span class="nx">currentStyle</span><span class="o">[</span><span class="nx">HAS_LAYOUT</span><span class="o">])</span> <span class="o">{</span>
-                    <span class="nx">style</span><span class="o">.</span><span class="nx">zoom</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span> <span class="c">// needs layout </span>
-<span class="c"></span>                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+<span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;document.documentElement.filters error (activeX disabled)&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dom-style&#39;</span><span class="o">);</span>
 <span class="o">}</span>
 
 <span class="k">try</span> <span class="o">{</span>
