@@ -6,6 +6,10 @@
     body {
         font-size:16px;
     }
+    .demoified {
+        font-size:200%;
+        border:10px solid red;
+    }
     script.mine {
         clear:left;
         white-space:pre;
@@ -55,7 +59,7 @@ YUI({
     new Y.Console({
         plugins : [ Y.Plugin.ConsoleFilters ],
         newestOnTop : false,
-        useBrowserConsole : false
+        useBrowserConsole : true
     }).render();
     
     // Create a very demonstrative plugin.
@@ -91,11 +95,11 @@ YUI({
         hasGetterAndSetter : {
             getter : function () {
                 Y.log("Get on hasGetterAndSetter");
-                return "also set";
+                return "Return from get";
             },
             setter : function () {
                 Y.log("Set on hasGetterAndSetter");
-                return "also get";
+                return "Return from set";
             }
         },
         incrementor : (function () {
@@ -113,9 +117,9 @@ YUI({
         })()
     };
     Y.extend(DemoPlugin, Y.Plugin.Base, {
-        _privateMember : "private",
+        _privateMember : "pretend-private",
         _privateMethod : function () {
-            Y.log("Called _privateMethod.");
+            Y.log("Called _privateMethod (which is only pretend-private.)");
         },
         publicMember : "public",
         publicMethod : function () {
@@ -149,6 +153,16 @@ YUI({
     Y.log("Incrementor: "+myNode.demoNS.get("incrementor"));
     Y.log("Incrementor: "+myNode.demoNS.get("incrementor"));
     Y.log("Incrementor: "+myNode.demoNS.get("incrementor"));
+    
+    myNode.demoNS.set("hasGetterAndSetter", 10);
+    Y.log("now getting... "+myNode.demoNS.get("hasGetterAndSetter"));
+    
+    myNode.demoNS.getTheHost().set("className", "demoified");
+    
+    Y.log("My eyes! Ze underscores do nussing! "+myNode.demoNS._privateMember);
+    Y.log("Not get()able, since it's not an ATTR: "+myNode.demoNS.get("_privateMember"));
+    Y.log("Get it out in the open: "+myNode.demoNS.publicMember);
+    Y.log("Not get()able, since it's not an ATTR: "+myNode.demoNS.get("publicMember"));
     
 });
 
