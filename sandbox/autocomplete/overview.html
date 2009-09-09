@@ -4,16 +4,16 @@
 <head>
     <title>AutoComplete Design Sketch</title>
     <style>
-	* {
-		margin-left:0;
-		margin-right:0;
-		padding-left:0;
-		padding-right:0;
-	}
-	body {
-		width:700px;
-		margin: 1px auto;
-	}
+    * {
+        margin-left:0;
+        margin-right:0;
+        padding-left:0;
+        padding-right:0;
+    }
+    body {
+        width:700px;
+        margin: 1px auto;
+    }
     </style>
 </head>
 <body>
@@ -69,34 +69,34 @@ friendlier.</li>
 <p>Maybe something like this for DS sugar?</p>
 
 <pre><code>Y.one("#ac").plug(Y.ACController).ac.init({
-	// only one of these, obviously.
+    // only one of these, obviously.
 
-	// Allows for a succinct algorigthm for handling.
-	// this.dataSource = (
-	//	 Y.DataSource
-	//	 &amp;&amp; ("type" in arg.data)
-	//	 &amp;&amp; (arg.data.type in Y.DataSource)
-	// ) ? Y.DataSource[arg.data.type](arg.data) : arg.data.source;
+    // Allows for a succinct algorigthm for handling.
+    // this.dataSource = (
+    //   Y.DataSource
+    //   &amp;&amp; ("type" in arg.data)
+    //   &amp;&amp; (arg.data.type in Y.DataSource)
+    // ) ? Y.DataSource[arg.data.type](arg.data) : arg.data.source;
 
-	data : {
-		type : "Function"
-		source : function (request) {
-			return data;
-		},
-	},
-	data : {
-		type: "Get",
-		source : "http://query.yahooapis.com/v1/public/yql?format=json&amp;",
-		scriptCallbackParam : "cbFunc"
-	},
-	data : {
-		type : "IO",
-		source : "./myScript.php"
-	},
-	data : {
-		type : "custom", // optional
-		source : myDataSourceImitatorObject
-	},
+    data : {
+        type : "Function"
+        source : function (request) {
+            return data;
+        },
+    },
+    data : {
+        type: "Get",
+        source : "http://query.yahooapis.com/v1/public/yql?format=json&amp;",
+        scriptCallbackParam : "cbFunc"
+    },
+    data : {
+        type : "IO",
+        source : "./myScript.php"
+    },
+    data : {
+        type : "custom", // optional
+        source : myDataSourceImitatorObject
+    },
 });
 </code></pre>
 
