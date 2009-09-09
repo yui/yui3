@@ -42,7 +42,7 @@ var eventName = 'typing-pause',
             conf = conf || {};
 
             var args = Y.Array(arguments,0,true),
-                target      = Y.all(el),
+                target      = el,
                 adaptive    = 'adaptive' in conf ? conf.adaptive : true,
                 minLength   = conf.minLength      || 1,
                 minWait     = conf.minWait        || 400,
@@ -58,30 +58,33 @@ var eventName = 'typing-pause',
 
             // If a selector string that doesn't match any elements, auto poll
             // for available.
-            if (Y.Lang.isString(el) && target.size() === 0) {
-                // @FIXME: onAvailable will return only the first found, so
-                // non-id selectors will behave differently.
-                // @FIME: the return value from onAvailable is not a detach
-                // handler for this event
-                return Y.Event.onAvailable(el, function () {
-                    Y.on.apply(Y,args);
-                }, Y.Event, true, false);
+            if (Y.Lang.isString(el)) {
+                target = Y.all(el);
+                
+                if (target.size() === 0) {
+                    // @FIXME: onAvailable will return only the first found, so
+                    // non-id selectors will behave differently.
+                    // @FIME: the return value from onAvailable is not a detach
+                    // handler for this event
+                    return Y.Event.onAvailable(el, function () {
+                        Y.on.apply(Y,args);
+                    }, Y.Event, true, false);
+                }
             }
 
-            if (target.size() > 1) {
+            if (target instanceof Y.NodeList || Y.Event._isValidCollection(target)) {
                 handles = [];
                 target.each(function (t) {
                     args[2] = t;
                     handles.push(Y.on.apply(Y,args));
                 });
-                return handles;
+                return handles.length === 1 ? handles[0] : handles;
             }
             
-            // At this point, the target should be a NodeList with 0 or one Node
-            // instances.
-            if (target.size() === 1) {
-                target = target.item(0);
+            // At this point, the target should be a single node or Node
+            target = Y.one(Y.Node.getDOMNode(el));
 
+            if (target) {
                 // Create a unique custom event proxy name for this subscription
                 _proxyEvent = Y.stamp(target) + '-' + eventName;
 
