@@ -39,41 +39,48 @@
     <input name="ac" id="ac" type="text">
     <input type="submit" id="log" value="Show times">
 </form>
-<script class="mine" src="/yui/3/build/yui/yui.js"></script>
+<script class="mine" src="../../build/yui/yui.js"></script>
 <script class="mine">
 // watch typing events, log "fetch" signals
 YUI({
     debug: true,
-    base: "/yui/3/build/",
+    base: "../../build/",
     filter: 'raw'
-}).use(
-    'node',
-    'console',
-    'console-filters',
-    'log',
-    'event-key',
-    function (Y) {
-        
-        new Y.Console({
-            plugins : [ Y.Plugin.ConsoleFilters ],
-            newestOnTop : false,
-            useBrowserConsole : true
-        }).render();
-        
-        // array of keypress times
-        var log = [];
-        
-        (Y.one || Y.get)("#ac").on("keypress", function (e) {
-            Y.log(e.type + ": " + e.keyCode, 'keypress');
-            log.push((new Date()).getTime());
-        });
-        (Y.one || Y.get)("#log").on("click", function (e) {
-            Y.log(log, "log");
-            
-            e.halt();
-        });
-    }
-);
+}).use('node', 'console', 'console-filters', "datasource", 'log', 'event-key', function (Y) {
+    
+    Y.one = Y.one || Y.get;
+    
+    new Y.Console({
+        plugins : [ Y.Plugin.ConsoleFilters ],
+        newestOnTop : false,
+        useBrowserConsole : false
+    }).render();
+    
+    var myAC = Y.one("#ac");
+    var myDS = new Y.DataSource.Get({
+        source : "http://query.yahooapis.com/v1/public/yql?" +
+            "format=json&" +
+            "env=http%3A%2F%2Fdatatables.org%2Falltables.env&",
+        scriptCallbackParam : "callback"
+    });
+    
+    var timeout = 0;
+    function doSomething () {
+        var query = myAC.get("value").replace('"', '\\"');
+        myDS.sendRequest("q=" + encodeURIComponent(
+            "select * from search.suggest where query =\"" + query + "\" limit 10"
+        ), handleResults)
+    };
+    function handleResults (res) {
+        console.log(res);
+    };
+    myAC.on("keydown", function (e) {
+        window.clearTimeout(timeout);
+        timeout = window.setTimeout(doSomething, 200);
+    });
+    
+    
+});
 
 </script>
 </body>
