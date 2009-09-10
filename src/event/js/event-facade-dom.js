@@ -98,6 +98,8 @@ var whitelist = {
      */
     resolve = function(n) {
 
+        var go, test;
+
         if (!n) {
             return null;
         }
@@ -106,7 +108,21 @@ var whitelist = {
             if (ua.webkit && 3 == n.nodeType) {
                 n = n.parentNode;
             } 
-        } catch(ex) { }
+        } catch(e1) { }
+
+        if (ua.gecko) {
+            while (!go) {
+                try {
+                    test = n._yuid;
+                    go = true;
+                } catch(e2) {
+                    n = n.parentNode;
+                    if (!n) {
+                        return null;
+                    }
+                }
+            }
+        }
 
         return Y.Node.get(n);
     };
