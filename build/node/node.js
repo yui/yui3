@@ -195,7 +195,7 @@ Node.importMethod = function(host, name, altName) {
  * @param {String | HTMLElement} node a node or Selector 
  * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
  */
-Node.one = function(node, doc) {
+Node.one = function(node) {
     var instance = null,
         cachedNode,
         uid;
@@ -207,7 +207,7 @@ Node.one = function(node, doc) {
             } else if (node.indexOf('win') === 0) { // win OR window
                 node = Y.config.win;
             } else {
-                node = Y.Selector.query(node, doc, true);
+                node = Y.Selector.query(node, null, true);
             }
             if (!node) {
                 return null;
@@ -851,14 +851,11 @@ Y.Array.diff = function(a, b) {
     }; 
 };
 
-var NodeList = function(config) {
-    var nodes = config.nodes || [],
-        doc = config.doc || Y.config.doc;
-
+var NodeList = function(nodes) {
     if (typeof nodes === 'string') {
         this._query = nodes;
-        nodes = Y.Selector.query(nodes, doc);
-    } else if (nodes.item) { // Live NodeList, copy to static Array
+        nodes = Y.Selector.query(nodes);
+    } else {
         nodes = Y.Array(nodes, 0, true);
     }
 
@@ -1268,16 +1265,11 @@ NodeList.prototype.get = function(attr) {
 };
 
 Y.NodeList = NodeList;
-Y.all = function(nodes, doc, restrict) {
-    // TODO: propagate restricted to nodes?
-    var nodeList = new NodeList({
-        nodes: nodes,
-        doc: doc
-    });
 
-    // zero-length result returns null
-    return nodeList;
+Y.all = function(nodes) {
+    return new NodeList(nodes);
 };
+
 Y.Node.all = Y.all;
 Y.Array.each([
     /**

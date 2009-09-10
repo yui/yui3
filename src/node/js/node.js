@@ -194,7 +194,7 @@ Node.importMethod = function(host, name, altName) {
  * @param {String | HTMLElement} node a node or Selector 
  * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
  */
-Node.one = function(node, doc) {
+Node.one = function(node) {
     var instance = null,
         cachedNode,
         uid;
@@ -206,7 +206,7 @@ Node.one = function(node, doc) {
             } else if (node.indexOf('win') === 0) { // win OR window
                 node = Y.config.win;
             } else {
-                node = Y.Selector.query(node, doc, true);
+                node = Y.Selector.query(node, null, true);
             }
             if (!node) {
                 return null;

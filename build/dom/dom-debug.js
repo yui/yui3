@@ -997,7 +997,7 @@ var HAS_LAYOUT = 'hasLayout',
             if (el) {
                     current = _getStyleObj(el)[property];
 
-                if (property === OPACITY) {
+                if (property === OPACITY && Y.DOM.CUSTOM_STYLES[OPACITY]) {
                     value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
                 } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
                     value = current;
@@ -1137,43 +1137,47 @@ var HAS_LAYOUT = 'hasLayout',
     IEComputed = {};
 
 // use alpha filter for IE opacity
-if (documentElement.style[OPACITY] === UNDEFINED &&
-        documentElement[FILTERS]) {
-    Y.DOM.CUSTOM_STYLES[OPACITY] = {
-        get: function(node) {
-            var val = 100;
-            try { // will error if no DXImageTransform
-                val = node[FILTERS]['DXImageTransform.Microsoft.Alpha'][OPACITY];
+try {
+    if (documentElement.style[OPACITY] === UNDEFINED &&
+            documentElement[FILTERS]) {
+        Y.DOM.CUSTOM_STYLES[OPACITY] = {
+            get: function(node) {
+                var val = 100;
+                try { // will error if no DXImageTransform
+                    val = node[FILTERS]['DXImageTransform.Microsoft.Alpha'][OPACITY];
 
-            } catch(e) {
-                try { // make sure its in the document
-                    val = node[FILTERS]('alpha')[OPACITY];
-                } catch(err) {
-                    Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'dom-style');
+                } catch(e) {
+                    try { // make sure its in the document
+                        val = node[FILTERS]('alpha')[OPACITY];
+                    } catch(err) {
+                        Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'dom-style');
+                    }
+                }
+                return val / 100;
+            },
+
+            set: function(node, val, style) {
+                var current,
+                    styleObj;
+
+                if (val === '') { // normalize inline style behavior
+                    styleObj = _getStyleObj(node);
+                    current = (OPACITY in styleObj) ? styleObj[OPACITY] : 1; // revert to original opacity
+                    val = current;
+                }
+
+                if (typeof style[FILTER] == 'string') { // in case not appended
+                    style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
+                    
+                    if (!node.currentStyle || !node.currentStyle[HAS_LAYOUT]) {
+                        style.zoom = 1; // needs layout 
+                    }
                 }
             }
-            return val / 100;
-        },
-
-        set: function(node, val, style) {
-            var current,
-                styleObj;
-
-            if (val === '') { // normalize inline style behavior
-                styleObj = _getStyleObj(node);
-                current = (OPACITY in styleObj) ? styleObj[OPACITY] : 1; // revert to original opacity
-                val = current;
-            }
-
-            if (typeof style[FILTER] == 'string') { // in case not appended
-                style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
-                
-                if (!node.currentStyle || !node.currentStyle[HAS_LAYOUT]) {
-                    style.zoom = 1; // needs layout 
-                }
-            }
-        }
-    };
+        };
+    }
+} catch(e) {
+    Y.log('document.documentElement.filters error (activeX disabled)', 'warn', 'dom-style');
 }
 
 try {
@@ -2297,16 +2301,16 @@ var PARENT_NODE = 'parentNode',
                     if (j && !pass) {
                         while ((test = tests[--j])) {
                             operator = test[1];
-                            if (tmpNode[test[0]] !== undefined) { // DOM property
-                                value = tmpNode[test[0]];
-                            } else if (tmpNode.getAttribute) { // custom attributes require getAttribute interface
-                                value = tmpNode.getAttribute(test[0]);
-                            }
-
-                            // skip node as soon as a test fails 
                             if (getters[test[0]]) {
                                 value = getters[test[0]](tmpNode, test[0]);
+                            } else {
+                                value = tmpNode[test[0]];
+                                // use getAttribute for non-standard attributes
+                                if (value === undefined && tmpNode.getAttribute) {
+                                    value = tmpNode.getAttribute(test[0]);
+                                }
                             }
+
                             if ((operator === '=' && value !== test[2]) ||  // fast path for equality
                                 (operator.test && !operator.test(value)) ||  // regex test
                                 (operator.call && !operator(tmpNode, test[0]))) { // function test
