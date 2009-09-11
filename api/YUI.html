@@ -1942,12 +1942,9 @@ These arguments will be added after the event object.</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Adds a DOM blur listener.  Uses the focusout event in IE,
-and the capture phase otherwise so that
+                                            Adds a DOM blur listener.  Uses the focusout event in IE, 
+DOMFocusOut for Opera and Webkit, and the capture phase for Gecko so that
 the event propagates in a way that enables event delegation.
-Note: if you are registering this event on the intended target
-rather than an ancestor, the element must be in the DOM 
-at the time of registration in order for it to work in Opera.
                                         </div>
 
                                         <div class="description">
@@ -1959,7 +1956,7 @@ at the time of registration in order for it to work in Opera.
                                                             <code><span property="yui:name">type</span>
                                                                 &lt;<span property="yui:type">string</span>&gt;
                                                             </code>
-                                                            <span property="yui:description">  'focus'</span>
+                                                            <span property="yui:description">  'blur'</span>
                                                         </dd>
                                                         
                                                         <dd rel="yui:parameter">
@@ -2253,12 +2250,9 @@ These arguments will be added after the event object.</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Adds a DOM focus listener.  Uses the focusin event in IE,
-and the capture phase otherwise so that
+                                            Adds a DOM focus listener.  Uses the focusin event in IE, 
+DOMFocusIn for Opera and Webkit, and the capture phase for Gecko so that
 the event propagates in a way that enables event delegation.
-Note: if you are registering this event on the intended target
-rather than an ancestor, the element must be in the DOM in
-order for it to work in Opera.
                                         </div>
 
                                         <div class="description">
