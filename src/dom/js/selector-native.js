@@ -26,31 +26,7 @@ var Selector = {
 
     _foundCache: [],
 
-    _supportsNative: function() {
-        // whitelist and feature detection to manage
-        // future implementations manually
-        return ( (Y.UA.ie >= 8 || Y.UA.webkit > 525) && // || Y.UA.gecko >= 1.9) &&
-            document.querySelectorAll);
-    },
-
     useNative: true,
-
-    _toArray: function(nodes) { // TODO: move to Y.Array
-        var ret = nodes,
-            i, len;
-
-        if (!nodes.slice) {
-            try {
-                ret = Array.prototype.slice.call(nodes);
-            } catch(e) { // IE: requires manual copy
-                ret = [];
-                for (i = 0, len = nodes.length; i < len; ++i) {
-                    ret[i] = nodes[i];
-                }
-            }
-        }
-        return ret;
-    },
 
     _clearFoundCache: function() {
         var foundCache = Selector._foundCache,
@@ -103,7 +79,7 @@ var Selector = {
 
     _sort: function(nodes) {
         if (nodes) {
-            nodes = Selector._toArray(nodes);
+            nodes = Y.Array(nodes, 0, true);
             if (nodes.sort) {
                 nodes.sort(Selector._compare);
             }
@@ -127,66 +103,85 @@ var Selector = {
         return ret;
     },
 
+    /**
+     * Retrieves a set of nodes based on a given CSS selector. 
+     * @method query
+     *
+     * @param {string} selector The CSS Selector to test the node against.
+     * @param {HTMLElement} root optional An HTMLElement to start the query from. Defaults to Y.config.doc
+     * @param {Boolean} firstOnly optional Whether or not to return only the first match.
+     * @return {Array} An array of nodes that match the given selector.
+     * @static
+     */
+    query: function(selector, root, firstOnly, skipNative) {
+        root = root || Y.config.doc;
+        var ret = [],
+            useNative = (Y.Selector.useNative && document.querySelector && !skipNative),
+            queries = [[selector, root]],
+            query,
+            result,
+            fn = (useNative) ? Selector._nativeQuery : Y.Selector._bruteQuery;
+
+        if (selector && fn) {
+            // split group into seperate queries
+            if (!skipNative && // already done if skipping
+                    (!useNative || root.tagName)) { // split native when element scoping is needed
+                queries = Selector._splitQueries(selector, root);
+            }
+
+            for (i = 0; query = queries[i++];) {
+                result = fn(query[0], query[1], firstOnly);
+                if (!firstOnly) { // coerce DOM Collection to Array
+                    result = Y.Array(result, 0, true);
+                }
+                ret = ret.concat(result);
+            }
+
+            if (queries.length > 1) { // remove dupes and sort by doc order 
+                ret = Selector._sort(Selector._deDupe(ret));
+            }
+        }
+
+        ret;
+
+        Y.log('query: ' + selector + ' returning: ' + ret.length, 'info', 'Selector');
+        return (firstOnly) ? (ret[0] || null) : ret;
+
+    },
+
     // allows element scoped queries to begin with combinator
     // e.g. query('> p', document.body) === query('body > p')
-    _prepQuery: function(root, selector) {
+    _splitQueries: function(selector, node) {
         var groups = selector.split(','),
             queries = [],
             inDoc = true,
-            isDocRoot = (root && root.nodeType === 9),
+            prefix = '',
             i, len;
 
-        if (root) {
-            if (!isDocRoot) {
-                root.id = root.id || Y.guid();
-                // break into separate queries for element scoping
-                for (i = 0, len = groups.length; i < len; ++i) {
-                    selector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
-                    queries.push({root: root, selector: selector});
-                }
-            } else {
-                queries.push({root: root, selector: selector});
+        if (node) {
+            // enforce for element scoping
+            if (node.tagName) {
+                node.id = node.id || Y.guid();
+                prefix = '#' + node.id + ' ';
+            }
+
+            for (i = 0, len = groups.length; i < len; ++i) {
+                selector =  prefix + groups[i]; // prepend with node ID
+                queries.push([selector, node]);
             }
         }
 
         return queries;
     },
 
-    _nativeQuery: function(selector, root, firstOnly) {
-        if (Selector._reUnSupported.test(selector)) {
-            return Y.Selector.query(selector, root, firstOnly);
+    _nativeQuery: function(selector, root, one) {
+        try {
+            Y.log('trying native query with: ' + selector, 'info', 'selector-native');
+            return root['querySelector' + (one ? '' : 'All')](selector);
+        } catch(e) { // fallback to brute if available
+            Y.log('reverting to brute query with: ' + selector, 'info', 'selector-native');
+            return Y.Selector.query(selector, root, one, true); // redo with skipNative true
         }
-
-        var ret = firstOnly ? null : [],
-            queryName = firstOnly ? 'querySelector' : 'querySelectorAll',
-            result,
-            queries,
-            i, query;
-
-        root = root || Y.config.doc;
-
-        if (selector) {
-            queries = Selector._prepQuery(root, selector);
-            ret = [];
-
-            for (i = 0, query; query = queries[i++];) {
-                try {
-                    result = query.root[queryName](query.selector);
-                    if (queryName === 'querySelectorAll') { // convert NodeList to Array
-                        result = Selector._toArray(result);
-                    }
-                    ret = ret.concat(result);
-                } catch(e) {
-                    Y.log('native selector error: ' + e, 'error', 'Selector');
-                }
-            }
-
-            if (queries.length > 1) { // remove dupes and sort by doc order 
-                ret = Selector._sort(Selector._deDupe(ret));
-            }
-            ret = (firstOnly) ? (ret[0] || null) : ret;
-        }
-        return ret;
     },
 
     filter: function(nodes, selector) {
@@ -232,15 +227,6 @@ var Selector = {
         return ret;
     }
 };
-
-if (Y.UA.ie && Y.UA.ie <= 8) {
-    Selector._reUnSupported = /:(?:nth|not|root|only|checked|first|last|empty)/;
-}
-
-// allow standalone selector-native module
-if (Selector._supportsNative() && Selector.useNative) {
-    Y.Selector.query = Y.Selector.query || Selector._nativeQuery;
-}
 
 Y.mix(Y.Selector, Selector, true);
 

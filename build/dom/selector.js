@@ -28,31 +28,7 @@ var Selector = {
 
     _foundCache: [],
 
-    _supportsNative: function() {
-        // whitelist and feature detection to manage
-        // future implementations manually
-        return ( (Y.UA.ie >= 8 || Y.UA.webkit > 525) && // || Y.UA.gecko >= 1.9) &&
-            document.querySelectorAll);
-    },
-
     useNative: true,
-
-    _toArray: function(nodes) { // TODO: move to Y.Array
-        var ret = nodes,
-            i, len;
-
-        if (!nodes.slice) {
-            try {
-                ret = Array.prototype.slice.call(nodes);
-            } catch(e) { // IE: requires manual copy
-                ret = [];
-                for (i = 0, len = nodes.length; i < len; ++i) {
-                    ret[i] = nodes[i];
-                }
-            }
-        }
-        return ret;
-    },
 
     _clearFoundCache: function() {
         var foundCache = Selector._foundCache,
@@ -105,7 +81,7 @@ var Selector = {
 
     _sort: function(nodes) {
         if (nodes) {
-            nodes = Selector._toArray(nodes);
+            nodes = Y.Array(nodes, 0, true);
             if (nodes.sort) {
                 nodes.sort(Selector._compare);
             }
@@ -129,65 +105,82 @@ var Selector = {
         return ret;
     },
 
+    /**
+     * Retrieves a set of nodes based on a given CSS selector. 
+     * @method query
+     *
+     * @param {string} selector The CSS Selector to test the node against.
+     * @param {HTMLElement} root optional An HTMLElement to start the query from. Defaults to Y.config.doc
+     * @param {Boolean} firstOnly optional Whether or not to return only the first match.
+     * @return {Array} An array of nodes that match the given selector.
+     * @static
+     */
+    query: function(selector, root, firstOnly, skipNative) {
+        root = root || Y.config.doc;
+        var ret = [],
+            useNative = (Y.Selector.useNative && document.querySelector && !skipNative),
+            queries = [[selector, root]],
+            query,
+            result,
+            fn = (useNative) ? Selector._nativeQuery : Y.Selector._bruteQuery;
+
+        if (selector && fn) {
+            // split group into seperate queries
+            if (!skipNative && // already done if skipping
+                    (!useNative || root.tagName)) { // split native when element scoping is needed
+                queries = Selector._splitQueries(selector, root);
+            }
+
+            for (i = 0; query = queries[i++];) {
+                result = fn(query[0], query[1], firstOnly);
+                if (!firstOnly) { // coerce DOM Collection to Array
+                    result = Y.Array(result, 0, true);
+                }
+                ret = ret.concat(result);
+            }
+
+            if (queries.length > 1) { // remove dupes and sort by doc order 
+                ret = Selector._sort(Selector._deDupe(ret));
+            }
+        }
+
+        ret;
+
+        return (firstOnly) ? (ret[0] || null) : ret;
+
+    },
+
     // allows element scoped queries to begin with combinator
     // e.g. query('> p', document.body) === query('body > p')
-    _prepQuery: function(root, selector) {
+    _splitQueries: function(selector, node) {
         var groups = selector.split(','),
             queries = [],
             inDoc = true,
-            isDocRoot = (root && root.nodeType === 9),
+            prefix = '',
             i, len;
 
-        if (root) {
-            if (!isDocRoot) {
-                root.id = root.id || Y.guid();
-                // break into separate queries for element scoping
-                for (i = 0, len = groups.length; i < len; ++i) {
-                    selector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
-                    queries.push({root: root, selector: selector});
-                }
-            } else {
-                queries.push({root: root, selector: selector});
+        if (node) {
+            // enforce for element scoping
+            if (node.tagName) {
+                node.id = node.id || Y.guid();
+                prefix = '#' + node.id + ' ';
+            }
+
+            for (i = 0, len = groups.length; i < len; ++i) {
+                selector =  prefix + groups[i]; // prepend with node ID
+                queries.push([selector, node]);
             }
         }
 
         return queries;
     },
 
-    _nativeQuery: function(selector, root, firstOnly) {
-        if (Selector._reUnSupported.test(selector)) {
-            return Y.Selector.query(selector, root, firstOnly);
+    _nativeQuery: function(selector, root, one) {
+        try {
+            return root['querySelector' + (one ? '' : 'All')](selector);
+        } catch(e) { // fallback to brute if available
+            return Y.Selector.query(selector, root, one, true); // redo with skipNative true
         }
-
-        var ret = firstOnly ? null : [],
-            queryName = firstOnly ? 'querySelector' : 'querySelectorAll',
-            result,
-            queries,
-            i, query;
-
-        root = root || Y.config.doc;
-
-        if (selector) {
-            queries = Selector._prepQuery(root, selector);
-            ret = [];
-
-            for (i = 0, query; query = queries[i++];) {
-                try {
-                    result = query.root[queryName](query.selector);
-                    if (queryName === 'querySelectorAll') { // convert NodeList to Array
-                        result = Selector._toArray(result);
-                    }
-                    ret = ret.concat(result);
-                } catch(e) {
-                }
-            }
-
-            if (queries.length > 1) { // remove dupes and sort by doc order 
-                ret = Selector._sort(Selector._deDupe(ret));
-            }
-            ret = (firstOnly) ? (ret[0] || null) : ret;
-        }
-        return ret;
     },
 
     filter: function(nodes, selector) {
@@ -232,15 +225,6 @@ var Selector = {
     }
 };
 
-if (Y.UA.ie && Y.UA.ie <= 8) {
-    Selector._reUnSupported = /:(?:nth|not|root|only|checked|first|last|empty)/;
-}
-
-// allow standalone selector-native module
-if (Selector._supportsNative() && Selector.useNative) {
-    Y.Selector.query = Y.Selector.query || Selector._nativeQuery;
-}
-
 Y.mix(Y.Selector, Selector, true);
 
 })(Y);
@@ -265,16 +249,6 @@ var PARENT_NODE = 'parentNode',
     ATTRIBUTES = 'attributes',
     COMBINATOR = 'combinator',
     PSEUDOS = 'pseudos',
-    //PREVIOUS = 'previous',
-    //PREVIOUS_SIBLING = 'previousSibling',
-
-    //TMP_PREFIX = 'yui-tmp-',
-
-    //g_counter = 0,
-    //g_idCache = [],
-    //g_passCache = {},
-
-    g_childCache = [], // cache to cleanup expando node.children
 
     Selector = Y.Selector,
 
@@ -299,10 +273,6 @@ var PARENT_NODE = 'parentNode',
                             children.push(child);
                         }
                     }
-                }
-                if (!node.children && !node._children) {
-                    node._children = children;
-                    g_childCache.push(node);
                 }
             }
 
@@ -347,114 +317,45 @@ var PARENT_NODE = 'parentNode',
             } 
         },
 
-        /**
-         * Retrieves a set of nodes based on a given CSS selector. 
-         * @method query
-         *
-         * @param {string} selector The CSS Selector to test the node against.
-         * @param {HTMLElement} root optional An HTMLElement to start the query from. Defaults to Y.config.doc
-         * @param {Boolean} firstOnly optional Whether or not to return only the first match.
-         * @return {Array} An array of nodes that match the given selector.
-         * @static
-         */
-        query: function(selector, root, firstOnly) {
-            var ret = [];
-
-            if (Selector.useNative && Selector._supportsNative() && // use native
-                !Selector._reUnSupported.test(selector)) { // unless selector is not supported
-                return Selector._nativeQuery.apply(Selector, arguments);
-                
-            }
-            if (selector) {
-                ret = Selector._query.apply(Selector, arguments);
-            }
-
-            Selector._cleanup();
-            return (firstOnly) ? (ret[0] || null) : ret;
-
-        },
-
-        // TODO: make extensible? events?
-        _cleanup: function() {
-            for (var i = 0, node; node = g_childCache[i++];) {
-                delete node._children;
-            }
-        /*
-            for (i = 0, node; node = g_idCache[i++];) {
-                node.removeAttribute('id');
-            }
-        */
-
-            g_childCache = [];
-            //g_passCache = {};
-            //g_idCache = [];
-        },
-
-        _query: function(selector, root, firstOnly, deDupe) {
+        _bruteQuery: function(selector, root, firstOnly) {
             var ret = [],
-                groups = selector.split(','), // TODO: handle comma in attribute/pseudo
                 nodes = [],
-                rootDoc,
-                tokens,
-                token,
+                tokens = Selector._tokenize(selector),
+                token = tokens[tokens.length - 1],
+                rootDoc = Y.DOM._getDoc(root),
                 id,
                 className,
                 tagName,
                 i, len;
 
-            if (groups.length > 1) {
-                for (i = 0, len = groups.length; i < len; ++i) {
-                    ret = ret.concat(arguments.callee(groups[i],
-                            root, firstOnly, true)); 
+
+            // if we have an initial ID, set to root when in document
+            if (tokens[0] && rootDoc === root &&  
+                    (id = tokens[0].id) &&
+                    rootDoc.getElementById(id)) {
+                root = rootDoc.getElementById(id);
+            }
+
+            if (token) {
+                // prefilter nodes
+                id = token.id;
+                className = token.className;
+                tagName = token.tagName || '*';
+
+                // try ID first
+                if (id) {
+                    if (rootDoc.getElementById(id)) { // if in document
+                    nodes = [rootDoc.getElementById(id)]; // TODO: DOM.byId?
+                }
+                // try className if supported
+                } else if (className) {
+                    nodes = root.getElementsByClassName(className);
+                } else if (tagName) { // default to tagName
+                    nodes = root.getElementsByTagName(tagName || '*');
                 }
 
-                ret = Selector._deDupe(ret);
-                ret = Selector.SORT_RESULTS ? Selector._sort(ret) : ret;
-            } else {
-                root = root || Y.config.doc;
-
-                tokens = Selector._tokenize(selector);
-
-                if (root.tagName) { // enforce element scope
-                    if (!root.id) { // by prepending ID
-                        root.id = Y.guid();
-                    }
-                    selector = '#' + root.id + ' ' + selector;
-                    rootDoc = root.ownerDocument;
-                    tokens = Selector._tokenize(selector); // regenerate tokens
-                } else {
-                    rootDoc = root;
-                }
-
-                // if we have an initial ID, set to root when in document
-                if (tokens[0] && rootDoc === root &&  
-                        (id = tokens[0].id) &&
-                        rootDoc.getElementById(id)) {
-                    root = rootDoc.getElementById(id);
-                }
-
-                token = tokens[tokens.length - 1];
-                if (token) {
-                    // prefilter nodes
-                    id = token.id;
-                    className = token.className;
-                    tagName = token.tagName || '*';
-
-                    // try ID first
-                    if (id) {
-                        if (rootDoc.getElementById(id)) { // if in document
-                        nodes = [rootDoc.getElementById(id)]; // TODO: DOM.byId?
-                    }
-                    // try className if supported
-                    } else if (className) {
-                        nodes = root.getElementsByClassName(className);
-                    } else if (tagName) { // default to tagName
-                        nodes = root.getElementsByTagName(tagName || '*');
-                    }
-
-                    if (nodes.length) {
-                        ret = Selector._filterNodes(nodes, tokens, firstOnly);
-                    }
+                if (nodes.length) {
+                    ret = Selector._filterNodes(nodes, tokens, firstOnly);
                 }
             }
 
@@ -539,15 +440,6 @@ var PARENT_NODE = 'parentNode',
 
                     } else { // success if we made it this far
                         result.push(node);
-                        /*
-                        if (!pass) {
-                            if (!tmpNode.id) {
-                                tmpNode.id = TMP_PREFIX + g_counter++;
-                                g_idCache.push(tmpNode);
-                            }
-                            //g_passCache[tmpNode.id] = 1;
-                        }
-                        */
                         if (firstOnly) {
                             return result;
                         }
@@ -778,7 +670,7 @@ Y.mix(Y.Selector, SelectorCSS2, true);
 Y.Selector.getters.src = Y.Selector.getters.rel = Y.Selector.getters.href;
 
 // IE wants class with native queries
-if (Y.Selector.useNative && Y.Selector._supportsNative()) {
+if (Y.Selector.useNative && document.querySelector) {
     Y.Selector.shorthand['\\.(-?[_a-z]+[-\\w]*)'] = '[class~=$1]';
 }
 
