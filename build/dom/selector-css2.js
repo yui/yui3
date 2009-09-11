@@ -22,7 +22,7 @@ var PARENT_NODE = 'parentNode',
     SelectorCSS2 = {
         SORT_RESULTS: true,
         _children: function(node, tag) {
-            var ret = node.children || node._children,
+            var ret = node.children,
                 i,
                 children = [],
                 childNodes,
@@ -31,7 +31,7 @@ var PARENT_NODE = 'parentNode',
             if ((!ret && node[TAG_NAME]) || (ret && tag)) { // only HTMLElements have children
                 childNodes = ret || node.childNodes;
                 ret = [];
-                for (i = 0, child; child = childNodes[i++];) {
+                for (i = 0; (child = childNodes[i++]);) {
                     if (child.tagName) {
                         if (!tag || tag === child.tagName) {
                             ret.push(child);
@@ -92,8 +92,7 @@ var PARENT_NODE = 'parentNode',
                 rootDoc = Y.DOM._getDoc(root),
                 id,
                 className,
-                tagName,
-                i, len;
+                tagName;
 
 
             // if we have an initial ID, set to root when in document
@@ -149,14 +148,13 @@ var PARENT_NODE = 'parentNode',
                 test;
 
             //do {
-            for (i = 0; tmpNode = node = nodes[i++];) {
+            for (i = 0; (tmpNode = node = nodes[i++]);) {
                 n = len - 1;
                 path = null;
                 
                 testLoop:
                 while (tmpNode && tmpNode.tagName) {
                     token = tokens[n];
-                    //pass = g_passCache[tmpNode.id];
                     tests = token.tests;
                     j = tests.length;
                     if (j && !pass) {
@@ -348,7 +346,7 @@ var PARENT_NODE = 'parentNode',
             outer:
             do {
                 found = false; // reset after full pass
-                for (i = 0, parser; parser = Selector._parsers[i++];) {
+                for (i = 0; (parser = Selector._parsers[i++]);) {
                     if ( (match = parser.re.exec(selector)) ) { // note assignment
                         if (parser !== COMBINATOR ) {
                             token.selector = selector;

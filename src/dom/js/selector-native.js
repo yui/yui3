@@ -21,26 +21,9 @@ var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     g_counter = 0;
 
 var Selector = {
-    _reLead: /^\s*([>+~]|:self)/,
-    _reUnSupported: /!./g,
-
     _foundCache: [],
 
     useNative: true,
-
-    _clearFoundCache: function() {
-        var foundCache = Selector._foundCache,
-            i, len;
-
-        for (i = 0, len = foundCache.length; i < len; ++i) {
-            try { // IE no like delete
-                delete foundCache[i]._found;
-            } catch(e) {
-                foundCache[i].removeAttribute('_found');
-            }
-        }
-        foundCache = [];
-    },
 
     _compare: ('sourceIndex' in document.documentElement) ?
         function(nodeA, nodeB) {
@@ -70,7 +53,7 @@ var Selector = {
                 rangeA.setStart(nodeA, 0);
                 rangeB = nodeB[OWNER_DOCUMENT].createRange();
                 rangeB.setStart(nodeB, 0);
-                compare = rangeA.compareBoundaryPoints(Range.START_TO_END, rangeB);
+                compare = rangeA.compareBoundaryPoints(1, rangeB); // 1 === Range.START_TO_END
             }
 
             return compare;
@@ -90,16 +73,20 @@ var Selector = {
 
     _deDupe: function(nodes) {
         var ret = [],
-            cache = Selector._foundCache,
             i, node;
 
-        for (i = 0, node; node = nodes[i++];) {
+        for (i = 0; (node = nodes[i++]);) {
             if (!node._found) {
-                ret[ret.length] = cache[cache.length] = node;
+                ret[ret.length] = node;
                 node._found = true;
             }
         }
-        Selector._clearFoundCache();
+
+        for (i = 0; (node = ret[i++]);) {
+            node._found = null;
+            node.removeAttribute('_found');
+        }
+
         return ret;
     },
 
@@ -120,6 +107,7 @@ var Selector = {
             queries = [[selector, root]],
             query,
             result,
+            i,
             fn = (useNative) ? Selector._nativeQuery : Y.Selector._bruteQuery;
 
         if (selector && fn) {
@@ -129,7 +117,7 @@ var Selector = {
                 queries = Selector._splitQueries(selector, root);
             }
 
-            for (i = 0; query = queries[i++];) {
+            for (i = 0; (query = queries[i++]);) {
                 result = fn(query[0], query[1], firstOnly);
                 if (!firstOnly) { // coerce DOM Collection to Array
                     result = Y.Array(result, 0, true);
@@ -142,8 +130,6 @@ var Selector = {
             }
         }
 
-        ret;
-
         Y.log('query: ' + selector + ' returning: ' + ret.length, 'info', 'Selector');
         return (firstOnly) ? (ret[0] || null) : ret;
 
@@ -154,7 +140,6 @@ var Selector = {
     _splitQueries: function(selector, node) {
         var groups = selector.split(','),
             queries = [],
-            inDoc = true,
             prefix = '',
             i, len;
 
@@ -166,7 +151,7 @@ var Selector = {
             }
 
             for (i = 0, len = groups.length; i < len; ++i) {
-                selector =  prefix + groups[i]; // prepend with node ID
+                selector =  prefix + groups[i];
                 queries.push([selector, node]);
             }
         }
@@ -179,7 +164,7 @@ var Selector = {
             Y.log('trying native query with: ' + selector, 'info', 'selector-native');
             return root['querySelector' + (one ? '' : 'All')](selector);
         } catch(e) { // fallback to brute if available
-            Y.log('reverting to brute query with: ' + selector, 'info', 'selector-native');
+            Y.log('native query error; reverting to brute query with: ' + selector, 'info', 'selector-native');
             return Y.Selector.query(selector, root, one, true); // redo with skipNative true
         }
     },
@@ -189,7 +174,7 @@ var Selector = {
             i, node;
 
         if (nodes && selector) {
-            for (i = 0, node; (node = nodes[i++]);) {
+            for (i = 0; (node = nodes[i++]);) {
                 if (Y.Selector.test(node, selector)) {
                     ret[ret.length] = node;
                 }
@@ -214,7 +199,7 @@ var Selector = {
             if (!node.id) {
                 node.id = TMP_PREFIX + g_counter++;
             }
-            for (i = 0, group; group = groups[i++];) { // TODO: off-dom test
+            for (i = 0; (group = groups[i++]);) { // TODO: off-dom test
                 group += '#' + node.id; // add ID for uniqueness
                 item = Y.Selector.query(group, root, true);
                 ret = (item === node);

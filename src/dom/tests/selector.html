@@ -102,8 +102,9 @@ onload = function() {
                 ArrayAssert.itemsAreEqual(all, $('#root-test li'), 'document');
                 ArrayAssert.itemsAreEqual([], $('#root-tes li', Y.DOM.byId('demo')), 'false id document');
 
-                ArrayAssert.itemsAreEqual($('a, a span', Y.DOM.byId('mod1')),
-                    $('a span, a', Y.DOM.byId('mod1')),
+                Assert.areEqual(
+                    $('a span, a', Y.DOM.byId('mod1')).length,
+                    $('a, a span', Y.DOM.byId('mod1')).length,
                     "$('a, a span') === $('a span, a')"); 
 
                 var node = document.createElement('div');
