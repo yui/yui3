@@ -5,9 +5,11 @@ The Console tool
 3.0.0
     * Added attribute 'style' to allow inline-block, block, or absolute positioning
     * Moved the hidden state css to the sam skin and increased rule specificity
-    * printBuffer now longer throws an error when called against an empty buffer
-    * Removed 'label' property from normalized message object since it was just a copy of category
-    * Moved collapsed class to the boundingBox and now resizing the boundingBox accordingly
+    * printBuffer no longer throws an error when called against an empty buffer
+    * Removed 'label' property from normalized message object since it was just
+      a copy of category
+    * Moved collapsed class to the boundingBox and now collapse resizes the
+      boundingBox accordingly
     * Added useBrowserConsole attribute as a pass through to the YUI config.
       Default to false so when a Console is instantiated messages are
       redirected to Console rather than duplicated there.
