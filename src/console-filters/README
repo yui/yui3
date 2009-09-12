@@ -7,7 +7,7 @@ The ConsoleFilters plugin
     return previously filtered messages.
 
 3.0.0
-    * Adding attribute cacheLimit to limit memory overrun from to holding onto
+    * Adding attribute cacheLimit to limit memory overrun from holding onto
       all log messages
 
 3.0.0 beta1
