@@ -83,7 +83,7 @@
    	* @description Object that stores timeout values for any transaction with
    	* a defined "timeout" configuration property.
    	*
-   	* @property _timeOut
+   	* @property _timeout
    	* @private
    	* @static
    	* @type object
@@ -175,7 +175,7 @@
    	function _io(uri, c, i) {
    		var f, o, m;
    			c = c || {};
-   			o = _create(c.xdr, parseInt(i));
+   			o = _create(c.xdr || c.form, i);
    			m = c.method ? c.method.toUpperCase() : 'GET';
 
    		if (c.form) {
@@ -194,12 +194,12 @@
 			}
 		}
 		else if (c.data && m === 'GET') {
-			uri = _concat(uri, f);
+			uri = _concat(uri, c.data);
 		}
 
    		if (c.xdr) {
 			if (c.xdr.use === 'native' && window.XDomainRequest || c.xdr.use === 'flash') {
-   				return Y.io._xdr(uri, o, c);
+   				return Y.io.xdr(uri, o, c);
 			}
 			if (c.xdr.credentials) {
 				o.c.withCredentials = true;
@@ -232,7 +232,7 @@
 			if (c.xdr) {
 				// This exception is usually thrown by browsers
 				// that do not support native XDR transactions.
-				return _resend(o, c);
+				return _resend(o, uri, c);
 			}
 		}
 
@@ -245,9 +245,11 @@
 
 		return {
 			id: o.id,
-			abort: function() { _ioCancel(o, 'abort'); },
+			abort: function() {
+				return o.c ? _ioCancel(o, 'abort') : false;
+			},
 			isInProgress: function() {
-				o.c.readyState !== 4 && o.c.readyState !== 0;
+				return o.c ? o.c.readyState !== 4 && o.c.readyState !== 0 : false;
 	   		}
 		}
    	}
@@ -311,12 +313,12 @@
     * @return void
    	*/
    	function _ioComplete(o, c) {
-   		var r, evt;
+   		var evt,
+			r = o.status ? { status: 0, statusText: o.status } : o.c;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-		r = o.status ? _response(o.status) : o.c;
    		Y.fire(E_COMPLETE, o.id, r);
    		if (c.on.complete) {
    			evt = _subscribe('complete', c);
@@ -366,8 +368,8 @@
     * @return void
    	*/
    	function _ioFailure(o, c) {
-   		var r = o.status ? _response(o.status) : o.c,
-   			evt;
+   		var evt,
+ 			r = o.status ? { status: 0, statusText: o.status } : o.c;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
@@ -428,10 +430,6 @@
    		}
    	}
 
-	function _response(s) {
-		return { status:0, statusText:s };
-	}
-
    /**
    	* @description Resends an XDR transaction, using the Flash tranport,
    	* if the native transport fails.
@@ -465,6 +463,7 @@
    	*/
    	function _id() {
    		var id = transactionId;
+
    		transactionId++;
 
    		return id;
@@ -477,22 +476,25 @@
    	* @method _create
    	* @private
    	* @static
-	* @param {number} xdr - XDR configuration object
+	* @param {number} c - configuration object subset to determine if
+	*                     the transaction is an XDR or file upload,
+	*                     requiring an alternate transport.
 	* @param {number} i - transaction id
 	* @return object
    	*/
-   	function _create(xdr, i) {
+   	function _create(c, i) {
    		var o = {};
 	   		o.id = Y.Lang.isNumber(i) ? i : _id();
+	   		c = c || {};
 
-		if (!xdr) {
+		if (!c.use && !c.upload) {
    			o.c = _xhr();
 		}
-   		else if (xdr) {
-			if (xdr.use === 'flash') {
-   				o.c = Y.io._transport[xdr.use];
+   		else if (c.use) {
+			if (c.use === 'flash') {
+   				o.c = Y.io._transport[c.use];
 			}
-			else if (xdr.use === 'native' && window.XDomainRequest) {
+			else if (c.use === 'native' && window.XDomainRequest) {
 				o.c = new XDomainRequest();
 			}
 			else {
@@ -692,7 +694,9 @@
 	_io.complete = _ioComplete;
    	_io.success = _ioSuccess;
    	_io.failure = _ioFailure;
+   	_io.end = _ioEnd;
    	_io._id = _id;
+   	_io._timeout = _timeout;
 
 	//--------------------------------------
 	//  Begin public interface definition

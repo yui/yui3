@@ -158,6 +158,14 @@ Y.CustomEvent = function(type, o) {
     // this.fired = false;
 
     /**
+     * An array containing the arguments the custom event
+     * was last fired with.
+     * @property firedWith
+     * @type Array
+     */
+    // this.firedWith;
+
+    /**
      * This event should only fire one time if true, and if
      * it has fired, any new subscribers should be notified
      * immediately.
@@ -289,7 +297,7 @@ Y.CustomEvent.prototype = {
         var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-            Y.later(0, this, this._notify, s);
+            Y.later(0, this, Y.bind(this._notify, this, s, this.firedWith));
         }
 
         if (when == AFTER) {
@@ -313,6 +321,7 @@ Y.CustomEvent.prototype = {
      * @deprecated use on
      */
     subscribe: function(fn, context) {
+        Y.log('ce.subscribe deprecated, use "on"', 'warn', 'deprecated');
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
         return this._on(fn, context, a, true);
     },
@@ -349,8 +358,8 @@ Y.CustomEvent.prototype = {
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed
      * @param {Object}   context The context object passed to subscribe.
-     * @return {boolean|EventTarget} returns a chainable event target
-     * or a boolean for legacy detach support.
+     * @return {int|EventTarget} returns a chainable event target
+     * or the number of subscribers unsubscribed.
      */
     detach: function(fn, context) {
         // unsubscribe handle
@@ -358,18 +367,14 @@ Y.CustomEvent.prototype = {
             return fn.detach();
         }
 
-        if (!fn) {
-            return this.unsubscribeAll();
-        }
-
-        var found = false, subs = this.subscribers, i, s;
+        var found = 0, subs = this.subscribers, i, s;
 
         for (i in subs) {
             if (subs.hasOwnProperty(i)) {
                 s = subs[i];
-                if (s && fn === this.fn) {
+                if (s && (!fn || fn === s.fn)) {
                     this._delete(s);
-                    found = true;
+                    found++;
                 }
             }
         }
@@ -401,26 +406,9 @@ Y.CustomEvent.prototype = {
      */
     _notify: function(s, args, ef) {
 
-        this.log(this.type + "->" + ": " +  s);
+        this.log(this.type + "->" + "sub: " +  s.id);
 
         var ret;
-
-        // emit an EventFacade if this is that sort of event
-        // if (this.emitFacade) {
-
-        //     // @TODO object literal support to fire makes it possible for
-        //     // config info to be passed if we wish.
-        //     
-        //     if (!ef) {
-        //         ef = this._getFacade(args);
-
-        //         if (Y.Lang.isObject(args[0])) {
-        //             args[0] = ef;
-        //         } else {
-        //             args.unshift(ef);
-        //         }
-        //     }
-        // }
 
         ret = s.notify(args, this);
 
@@ -467,9 +455,11 @@ Y.CustomEvent.prototype = {
             return true;
         } else {
 
-            this.fired = true;
-
             var args = Y.Array(arguments, 0, true);
+
+            this.fired = true;
+            this.firedWith = args;
+
             if (this.emitFacade) {
                 return this.fireComplex(args);
             } else {
@@ -543,17 +533,7 @@ Y.CustomEvent.prototype = {
      * @return {int} The number of listeners unsubscribed
      */
     detachAll: function() {
-        var subs = this.subscribers, i, l=0;
-        for (i in subs) {
-            if (subs.hasOwnProperty(i)) {
-                this._delete(subs[i]);
-                l++;
-            }
-        }
-
-        this.subscribers={};
-
-        return l;
+        return this.detach();
     },
 
     /**

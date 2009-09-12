@@ -54,12 +54,15 @@ Y.DOM = {
     },
 
     // @deprecated
-    firstByTag: function(node, tag) {
-        ret = null;
-        if (node) {
-            tag = tag || '*';
-            ret = Y.Selector.query(tag, node, true); 
+    firstByTag: function(tag, root) {
+        var ret;
+        root = root || Y.config.doc;
+
+        if (tag && root.getElementsByTagName) {
+            ret = root.getElementsByTagName(tag)[0];
         }
+
+        return ret || null;
     },
 
     /**
@@ -248,7 +251,9 @@ Y.DOM = {
              ret = Y.DOM._nl2frag(nodes, doc);
         }
 
-        Y.DOM._cloneCache[html] = ret.cloneNode(true);
+        if (ret) {
+            Y.DOM._cloneCache[html] = ret.cloneNode(true);
+        }
         return ret;
     },
 

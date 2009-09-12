@@ -61,4 +61,4 @@ Y.Env.evt.plugins.windowresize = {
 })();
 
 
-}, '@VERSION@' ,{requires:['event-base']});
+}, '@VERSION@' ,{requires:['node-base']});

@@ -16,14 +16,14 @@ var PARENT_NODE = 'parentNode',
     ATTRIBUTES = 'attributes',
     COMBINATOR = 'combinator',
     PSEUDOS = 'pseudos',
-    PREVIOUS = 'previous',
-    PREVIOUS_SIBLING = 'previousSibling',
+    //PREVIOUS = 'previous',
+    //PREVIOUS_SIBLING = 'previousSibling',
 
-    TMP_PREFIX = 'yui-tmp-',
+    //TMP_PREFIX = 'yui-tmp-',
 
-    g_counter = 0,
-    g_idCache = [],
-    g_passCache = {},
+    //g_counter = 0,
+    //g_idCache = [],
+    //g_passCache = {},
 
     g_childCache = [], // cache to cleanup expando node.children
 
@@ -227,7 +227,7 @@ var PARENT_NODE = 'parentNode',
                 token,
                 path,
                 pass,
-                FUNCTION = 'function',
+                //FUNCTION = 'function',
                 value,
                 tests,
                 test;
@@ -246,12 +246,16 @@ var PARENT_NODE = 'parentNode',
                     if (j && !pass) {
                         while ((test = tests[--j])) {
                             operator = test[1];
-                            value = tmpNode[test[0]];
-
-                            // skip node as soon as a test fails 
                             if (getters[test[0]]) {
                                 value = getters[test[0]](tmpNode, test[0]);
+                            } else {
+                                value = tmpNode[test[0]];
+                                // use getAttribute for non-standard attributes
+                                if (value === undefined && tmpNode.getAttribute) {
+                                    value = tmpNode.getAttribute(test[0]);
+                                }
                             }
+
                             if ((operator === '=' && value !== test[2]) ||  // fast path for equality
                                 (operator.test && !operator.test(value)) ||  // regex test
                                 (operator.call && !operator(tmpNode, test[0]))) { // function test
@@ -393,6 +397,8 @@ var PARENT_NODE = 'parentNode',
                     var test = Selector[PSEUDOS][match[1]];
                     if (test) { // reorder match array
                         return [match[2], test];
+                    } else { // selector token not supported (possibly missing CSS3 module)
+                        return false;
                     }
                 }
             }
@@ -450,7 +456,10 @@ var PARENT_NODE = 'parentNode',
                         }
 
                         test = parser.fn(match, token);
-                        if (test) {
+                        if (test === false) { // selector not supported
+                            found = false;
+                            break outer;
+                        } else if (test) {
                             token.tests.push(test);
                         }
 
@@ -480,11 +489,11 @@ var PARENT_NODE = 'parentNode',
                 re, i, len;
 
             if (pseudos) {
-                selector = selector.replace(Selector._re.pseudos, 'REPLACED_PSEUDO');
+                selector = selector.replace(Selector._re.pseudos, '!!REPLACED_PSEUDO!!');
             }
 
             if (attrs) {
-                selector = selector.replace(Selector._re.attr, 'REPLACED_ATTRIBUTE');
+                selector = selector.replace(Selector._re.attr, '!!REPLACED_ATTRIBUTE!!');
             }
 
             for (re in shorthand) {
@@ -495,12 +504,12 @@ var PARENT_NODE = 'parentNode',
 
             if (attrs) {
                 for (i = 0, len = attrs.length; i < len; ++i) {
-                    selector = selector.replace('REPLACED_ATTRIBUTE', attrs[i]);
+                    selector = selector.replace('!!REPLACED_ATTRIBUTE!!', attrs[i]);
                 }
             }
             if (pseudos) {
                 for (i = 0, len = pseudos.length; i < len; ++i) {
-                    selector = selector.replace('REPLACED_PSEUDO', pseudos[i]);
+                    selector = selector.replace('!!REPLACED_PSEUDO!!', pseudos[i]);
                 }
             }
             return selector;
@@ -521,5 +530,11 @@ var PARENT_NODE = 'parentNode',
 Y.mix(Y.Selector, SelectorCSS2, true);
 Y.Selector.getters.src = Y.Selector.getters.rel = Y.Selector.getters.href;
 
+// IE wants class with native queries
+if (Y.Selector.useNative && Y.Selector._supportsNative()) {
+    Y.Selector.shorthand['\\.(-?[_a-z]+[-\\w]*)'] = '[class~=$1]';
+}
 
-}, '@VERSION@' ,{requires:['selector-native'], skinnable:false});
+
+
+}, '@VERSION@' ,{requires:['selector-native']});

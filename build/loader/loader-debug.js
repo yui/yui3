@@ -122,7 +122,8 @@ var NOT_FOUND = {},
     CONTEXT = '-context',
 
     ANIMBASE = 'anim-base',
-    ATTRIBUTEBASE = 'attribute-base',
+	ATTRIBUTE = 'attribute',
+    ATTRIBUTEBASE = ATTRIBUTE + '-base',
     BASEBASE = 'base-base',
     DDDRAG = 'dd-drag',
     DOM = 'dom',
@@ -224,7 +225,12 @@ var NOT_FOUND = {},
                 },
 
                 'node-pluginhost': {
-                    requires: ['node-base', PLUGINHOST]
+                    requires: [NODEBASE, PLUGINHOST]
+                },
+
+
+                'node-event-delegate': {
+                    requires: [NODEBASE, 'event-delegate']
                 }
             },
 
@@ -444,22 +450,22 @@ var NOT_FOUND = {},
                     requires: [EVENTCUSTOMBASE]
                 },
                 'event-delegate': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-focus': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-key': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-mouseenter': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-mousewheel': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 },
                 'event-resize': {
-                    requires: [EVENTBASE]
+                    requires: [NODEBASE]
                 }
             }
         },
@@ -480,7 +486,7 @@ var NOT_FOUND = {},
         },
 
         'node-focusmanager': { 
-            requires: [NODE, "node-event-simulate", "event-key", "event-focus", PLUGIN]
+            requires: [ATTRIBUTE, NODE, PLUGIN, 'node-event-simulate', 'event-key', 'event-focus']
         },
 
         history: { 
@@ -580,7 +586,7 @@ var NOT_FOUND = {},
         },
 
         widget: {
-            requires: ['attribute', 'event-focus', BASE, NODE, 'classnamemanager'],
+            requires: [ATTRIBUTE, 'event-focus', BASE, NODE, 'classnamemanager'],
             plugins: {
                 'widget-position': { },
                 'widget-position-ext': {
@@ -1223,7 +1229,7 @@ Y.Loader.prototype = {
                     plug = plugins[i];
                     plug.path = _path(name, i, o.type);
                     plug.requires = plug.requires || [];
-                    plug.requires.push(name);
+                    // plug.requires.push(name);
                     this.addModule(plug, i);
                     if (o.skinnable) {
                         this._addSkin(this.skin.defaultSkin, i, name);
@@ -1344,9 +1350,11 @@ Y.Loader.prototype = {
      * property
      * @method calculate
      * @param o optional options object
+     * @param type optional argument to prune modules 
      */
-    calculate: function(o) {
-        if (o || this.dirty) {
+    calculate: function(o, type) {
+        this.loadType = type;
+        if (o || type || this.dirty) {
             this._config(o);
             this._setup();
             this._explode();
@@ -1581,35 +1589,30 @@ Y.Loader.prototype = {
      * @private
      */
     _reduce: function() {
-
-        var i, j, s, m, r=this.required;
+        var i, j, s, m, r=this.required, type = this.loadType;
         for (i in r) {
-
             if (r.hasOwnProperty(i)) {
-
+                m = this.getModule(i);
                 // remove if already loaded
-                if (this.loaded[i] && (!this.forceMap[i]) && !this.ignoreRegistered) { 
+                if ((this.loaded[i] && (!this.forceMap[i]) && !this.ignoreRegistered) || (type && m && m.type != type)) { 
                     delete r[i];
-
                 // remove anything this module supersedes
                 } else {
-
-                     m = this.getModule(i);
-                     s = m && m.supersedes;
-                     if (s) {
-                         for (j=0; j<s.length; j=j+1) {
-                             if (s[j] in r) {
-                                 delete r[s[j]];
-                             }
-                         }
-                     }
+                    
+                    s = m && m.supersedes;
+                    if (s) {
+                        for (j=0; j<s.length; j=j+1) {
+                            if (s[j] in r) {
+                                delete r[s[j]];
+                            }
+                        }
+                    }
                 }
             }
         }
     },
 
     _attach: function() {
-
         // this is the full list of items the YUI needs attached,
         // which is needed if some dependencies are already on
         // the page without their dependencies.
@@ -1818,7 +1821,7 @@ Y.Loader.prototype = {
         }
 
         // build the dependency list
-        this.calculate(o);
+        this.calculate(o); // don't include type
 
         if (!type) {
 
@@ -1826,13 +1829,13 @@ Y.Loader.prototype = {
 
             // Y.log("trying to load css first");
             this._internalCallback = function() {
-                        var f = self.onCSS;
-                        if (f) {
-                            f.call(self.context, Y);
-                        }
-                        self._internalCallback = null;
-                        self._insert(null, null, JS);
-                    };
+                var f = self.onCSS;
+                if (f) {
+                    f.call(self.context, Y);
+                }
+                self._internalCallback = null;
+                self._insert(null, null, JS);
+            };
 
             // _queue.running = false;
             this._insert(null, null, CSS);
@@ -1849,8 +1852,6 @@ Y.Loader.prototype = {
         // individually
         this._combineComplete = {};
 
-        // keep the loadType (js, css or undefined) cached
-        this.loadType = type;
 
         // start the load
         this.loadNext();
@@ -1874,13 +1875,10 @@ Y.Loader.prototype = {
      */
     insert: function(o, type) {
 
-        var self = this, copy;
-
-        Y.log('public insert() ' + type, "info", "loader");
         Y.log('public insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
 
+        var self = this, copy = Y.merge(this, true);
 
-        copy = Y.merge(this, true);
         delete copy.require;
         delete copy.dirty;
 
@@ -1916,7 +1914,6 @@ Y.Loader.prototype = {
                 Y.log('Combo complete: ' + o.data, "info", "loader");
                 this._combineComplete[type] = true;
 
-
                 var c=this._combining, len=c.length, i;
 
                 for (i=0; i<len; i=i+1) {
@@ -1939,10 +1936,11 @@ Y.Loader.prototype = {
             len=s.length;
             url=this.comboBase;
 
+
             for (i=0; i<len; i=i+1) {
                 m = this.getModule(s[i]);
                 // Do not try to combine non-yui JS
-                if (m && m.type === this.loadType && !m.ext) {
+                if (m && m.type === type && !m.ext) {
                     url += this.root + m.path;
                     if (i < len-1) {
                         url += '&';
@@ -1957,7 +1955,7 @@ Y.Loader.prototype = {
 Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
 
                 // if (m.type === CSS) {
-                if (this.loadType === CSS) {
+                if (type === CSS) {
                     fn = Y.Get.css;
                     attr = this.cssAttributes;
                 } else {

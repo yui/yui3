@@ -17,11 +17,6 @@ var Event = Y.Event,
 		mouseleave: "mouseout"
 	},
 
-	focusMethods = {
-		focus: Event._attachFocus,
-		blur: Event._attachBlur
-	},
-
 	resolveTextNode = function(n) {
 	    try {
 	        if (n && 3 == n.nodeType) {
@@ -32,6 +27,7 @@ var Event = Y.Event,
 	},
 
     delegateHandler = function(delegateKey, e, el) {
+
         var target = resolveTextNode((e.target || e.srcElement)), 
             tests  = delegates[delegateKey],
             spec, 
@@ -89,8 +85,14 @@ var Event = Y.Event,
 
                     ev.currentTarget = Y.Node.get(matched);
 
+					Y.publish(ename, {
+			               contextFn: function() {
+			                   return ev.currentTarget;
+			               }
+			           });
+
 					if (fn) {
-						fn(ev, ename);
+						fn(e, matched, ename);
 					}
 					else {
                     	Y.fire(ename, ev);								
@@ -105,7 +107,13 @@ var Event = Y.Event,
 
 	attach = function (type, key, element) {
 
-		var attachFn = focusMethods[type],
+		var focusMethods = {
+				focus: Event._attachFocus,
+				blur: Event._attachBlur
+			},
+
+			attachFn = focusMethods[type],
+
 			args = [type, 
 			function (e) {
 	            delegateHandler(key, (e || window.event), element);
@@ -114,10 +122,10 @@ var Event = Y.Event,
 
 
 		if (attachFn) {
-			attachFn(args, { capture: true, facade: false });
+			return attachFn(args, { capture: true, facade: false });
 		}
 		else {
-			Event._attach(args, { facade: false });
+			return Event._attach(args, { facade: false });
 		}
 		
 	},
@@ -160,6 +168,7 @@ Y.Env.evt.plugins.delegate = {
 
     on: function(type, fn, el, delegateType, spec) {
 
+
 		var args = Y.Array(arguments, 0, true);
 		
 		args.splice(3, 1);
@@ -201,68 +210,152 @@ Y.Env.evt.plugins.delegate = {
  * @return {EventHandle} the detach handle
  * @for YUI
  */
-Y.Event.delegate = function (type, fn, el, spec) {
+Event.delegate = function (type, fn, el, spec) {
 
     if (!spec) {
         return false;
     }
 
-    // identifier to target the container
-    var guid = (Lang.isString(el) ? el : Y.stamp(el)), 
+
+    var args = Y.Array(arguments, 0, true),	    
+		element = el,	// HTML element serving as the delegation container
+		handles;
+
+
+	if (Lang.isString(el)) {
+		
+		element = Y.Selector.query(el);	// Y.Selector.query always returns an array
+		
+		if (element.length === 0) { // Not found, check using onAvailable
+
+            return Event.onAvailable(el, function() {
+                Event.delegate.apply(Event, args);
+            }, Event, true, false);
+			
+		}
+		
+	}
+
+
+	if (Event._isValidCollection(element)) {
+
+        handles = [];
+        
+        Y.each(element, function(v, k) {
+            args[2] = v;
+            handles.push(Event.delegate.apply(Event, args));
+        });
+
+        return (handles.length === 1) ? handles[0] : handles;
+
+	}
+
+
+	element = Y.Node.getDOMNode(el);
+
+
+	var	guid = Y.stamp(element),
             
-        // the custom event for the delegation spec
+        // The Custom Event for the delegation spec
         ename = 'delegate:' + guid + type + sanitize(spec),
 
-        // the key to the listener for the event type and container
+        // The key to the listener for the event type and container
         delegateKey = type + guid,
 
 		delegate = delegates[delegateKey],
 
-        args = Y.Array(arguments, 0, true),
-
-		element;
+		domEventHandle,
+		
+		ceHandle,
+		
+		listeners;
 	
 
     if (!delegate) {
 
 		delegate = {};
-		element = Lang.isString(el) ? Y.Selector.query(el) : Y.Node.getDOMNode(el);
 
 		if (specialTypes[type]) {
+			
+			if (!Event._fireMouseEnter) {
+				return false;				
+			}
+			
 			type = specialTypes[type];
 			delegate.fn = Event._fireMouseEnter;
 		}
 
-		//	Create the DOM Event wrapper that will fire the custom event
+		//	Create the DOM Event wrapper that will fire the Custom Event
 
-		if (Lang.isArray(element)) {
+		domEventHandle = attach(type, delegateKey, element);
 
-			Y.Array.each(element, function (v) {
-				attach(type, delegateKey, v);
-			});
 
-		}
-		else {
-			attach(type, delegateKey, element);
-		}
+		//	Hook into the _delete method for the Custom Event wrapper of this
+		//	DOM Event in order to clean up the 'delegates' map and unsubscribe
+		//	the associated Custom Event listeners fired by this DOM event
+		//	listener if/when the user calls "purgeElement" OR removes all 
+		//	listeners of the Custom Event.
+		
+		Y.after(function (sub) {
+
+			if (domEventHandle.sub == sub) {
+
+				//	Delete this event from the map of known delegates
+				delete delegates[delegateKey];
+
+
+				//	Unsubscribe all listeners of the Custom Event fired 
+				//	by this DOM event.
+				Y.detachAll(ename);
+				
+			}
+
+		}, domEventHandle.evt, "_delete");
+			
+		delegate.handle = domEventHandle;
 
         delegates[delegateKey] = delegate;
 
     }
 
+
+	listeners = delegate.listeners;
+
+	delegate.listeners = listeners ? (listeners + 1) : 1;
     delegate[spec] = ename;
+
 
     args[0] = ename;
 
-    // remove element, delegation spec
+    // Remove element, delegation spec
     args.splice(2, 2);
         
-    // subscribe to the custom event for the delegation spec
-    return Y.on.apply(Y, args);
+
+    // Subscribe to the Custom Event for the delegation spec
+
+	ceHandle = Y.on.apply(Y, args);
+
+
+	//	Hook into the detach method of the handle in order to clean up the 
+	//	'delegates' map and remove the associated DOM event handler 
+	//	responsible for firing this Custom Event if all listener for this 
+	//	event have been removed.
+
+	Y.after(function () {
+			
+		delegate.listeners = (delegate.listeners - 1);
+		
+		if (delegate.listeners === 0) {
+			delegate.handle.detach();
+		}
+
+	}, ceHandle, "detach");
+
+    return ceHandle;
 	
 };
 
 Y.delegate = Event.delegate;
 
 
-}, '@VERSION@' ,{requires:['event-base']});
+}, '@VERSION@' ,{requires:['node-base']});

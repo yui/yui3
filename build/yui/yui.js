@@ -172,6 +172,8 @@ YUI.prototype = {
             debug: true,
             useBrowserConsole: true,
             throwFail: true,
+            bootstrap: true,
+            fetchCSS: true,
         
             base: function() {
                 var b, nodes, i, match;
@@ -188,7 +190,7 @@ YUI.prototype = {
                 }
 
                 // use CDN default
-                return b || this.Env.cdn;
+                return b || Y.Env.cdn;
 
             }(),
 
@@ -220,7 +222,7 @@ YUI.prototype = {
     applyTo: function(id, method, args) {
 
         if (!(method in _APPLY_TO_WHITE_LIST)) {
-            this.error(method + ': applyTo not allowed');
+            this.log(method + ': applyTo not allowed', 'warn', 'yui');
             return null;
         }
 
@@ -236,7 +238,7 @@ YUI.prototype = {
                 m = m[nest[i]];
 
                 if (!m) {
-                    this.error('applyTo not found: ' + method);
+                    this.log('applyTo not found: ' + method, 'warn', 'yui');
                 }
             }
 
@@ -355,8 +357,10 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
+            boot = Y.config.bootstrap,
             k, i, l, missing = [], 
             r = [], 
+            css = Y.config.fetchCSS,
             f = function(name) {
 
                 // only attach a module once
@@ -457,7 +461,9 @@ YUI.prototype = {
             loader.require(a);
             loader.ignoreRegistered = true;
             loader.allowRollup = false;
-            loader.calculate();
+            // loader.calculate(null, (css && css == 'force') ? null : 'js');
+            // loader.calculate();
+            loader.calculate(null, (css) ? null : 'js');
             a = loader.sorted;
         }
 
@@ -470,9 +476,15 @@ YUI.prototype = {
             f(a[i]);
         }
 
+        l = missing.length;
+
+
+        if (l) {
+            missing = Y.Object.keys(Y.Array.hash(missing));
+        }
 
         // dynamic load
-        if (Y.Loader && missing.length) {
+        if (boot && l && Y.Loader) {
             Y._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
@@ -480,9 +492,10 @@ YUI.prototype = {
             loader.onTimeout = onComplete;
             loader.context = Y;
             loader.attaching = a;
-            loader.require(missing);
-            loader.insert();
-        } else if (Y.Get && missing.length && !Y.Env.bootstrapped) {
+            // loader.require(missing);
+            loader.require((css) ? missing : a);
+            loader.insert(null, (css) ? null : 'js');
+        } else if (boot && l && Y.Get && !Y.Env.bootstrapped) {
             Y._loading = true;
 
             a = Y.Array(arguments, 0, true);
@@ -500,6 +513,8 @@ YUI.prototype = {
             return Y;
 
         } else {
+            if (l) {
+            }
             Y._attach(r);
             onComplete();
         }
@@ -666,9 +681,10 @@ YUI.prototype = {
  */
 
 /**
- * Turn debug statements on or off.
+ * Allows the YUI seed file to fetch the loader component and library
+ * metadata to dynamically load additional dependencies.
  *
- * @property debug
+ * @property bootstrap
  * @type boolean
  * @default true
  */
@@ -942,6 +958,17 @@ YUI.prototype = {
  *
  * @property loaderPath
  * @default loader/loader-min.js
+ */
+
+/**
+ * 
+ * Specifies whether or not YUI().use(...) will attempt to load CSS
+ * resources at all.  Any truthy value will cause CSS dependencies
+ * to load when fetching script.  The special value 'force' will 
+ * cause CSS dependencies to be loaded even if no script is needed.
+ *
+ * @property fetchCSS
+ * @default true
  */
 YUI.add('yui-base', function(Y) {
 
@@ -1341,7 +1368,8 @@ YArray.test = function(o) {
  * Executes the supplied function on each item in the array.
  * @method each
  * @param a {Array} the array to iterate
- * @param f {Function} the function to execute on each item
+ * @param f {Function} the function to execute on each item.  The 
+ * function receives three arguments: the value, the index, the full array.
  * @param o Optional context object
  * @static
  * @return {YUI} the YUI instance
@@ -1418,7 +1446,8 @@ YArray.numericSort = function(a, b) {
  * items.
  * @method some
  * @param a {Array} the array to iterate
- * @param f {Function} the function to execute on each item
+ * @param f {Function} the function to execute on each item. The function 
+ * receives three arguments: the value, the index, the full array.
  * @param o Optional context object
  * @static
  * @return {boolean} true if the function returns true on
@@ -1762,7 +1791,8 @@ O.owns = function(o, k) {
  * @method each
  * @static
  * @param o the object to iterate
- * @param f {function} the function to execute
+ * @param f {Function} the function to execute on each item. The function 
+ * receives three arguments: the value, the the key, the full object.
  * @param c the execution context
  * @param proto {boolean} include proto
  * @return {YUI} the YUI instance
@@ -2848,7 +2878,6 @@ INSTANCE.log = function(msg, cat, src, silent) {
     if (c.debug) {
         // apply source filters
         if (src) {
-
             excl = c.logExclude; 
             incl = c.logInclude;
 
@@ -2871,7 +2900,7 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 }
             }
 
-            if (Y.fire && !bail && !silent) {
+            if (Y.fire && !silent) {
                 if (!_published) {
                     Y.publish(LOGEVENT, {
                         broadcast: 2,

@@ -36,6 +36,49 @@
             }
         });
 
+
+var handler = function () {                                                                                                                                                 
+    alert("here");                                                                                                                                                      
+};                                                                                                                                                                          
+                                                                                                                                                                            
+Y.on("myevent", handler);                                                                                                                                                   
+                                                                                                                                                                            
+Y.fire("myevent");                                                                                                                                                          
+                                                                                                                                                                            
+Y.detach('myevent', handler);                                                                                                                                               
+                                                                                                                                                                            
+Y.fire("myevent");   
+
+/*
+Y.on("mycategory|myevent", function () {
+
+alert("here");
+
+});
+
+Y.fire("myevent");
+
+Y.detach('mycategory|*');
+
+Y.fire("myevent");
+*/
+
+/*
+Y.on("mycategory|myevent", function () {                                                                                                                                    
+                                                                                                                                                                            
+        alert("here");                                                                                                                                                      
+                                                                                                                                                                            
+});                                                                                                                                                                         
+                                                                                                                                                                            
+Y.fire("myevent");                                                                                                                                                          
+                                                                                                                                                                            
+Y.detach('mycategory|myevent');                                                                                                                                             
+                                                                                                                                                                            
+Y.fire("myevent");   
+*/
+
+
+
 /*
 
 EventTarget hasEvent replaced with getEvent
@@ -240,6 +283,13 @@ property names rather than e.details[1]
 
     Y.fire('test:event2');
 
+
+
+var f = function(foo) {
+    Y.log(Y.Lang.isUndefined(foo));
+};
+
+f();
 
 });
 

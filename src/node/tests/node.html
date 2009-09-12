@@ -376,20 +376,28 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.areEqual('foo', nodes.item(nodes.size() - 2).get('className'),
                     'nodes.item(nodes.size - 2).get("className")');
 
+            var attrMap = {
+                className: 'fooclass',
+                title: 'new title'
+            };
+            node.setAttrs(attrMap);
+            var getAttrs = node.getAttrs(['className', 'title']);
+            Assert.areEqual(attrMap.className, getAttrs.className, 'node.setAttrs(attrMap) (get className)'); 
+            Assert.areEqual(attrMap.title, getAttrs.title, 'node.setAttrs(attrMap) (get title)'); 
+
             Y.get('#test-select').set('selectedIndex', 2);
             Assert.areEqual(2, Y.get('#test-select')._node.selectedIndex,
                     "Y.get('#test-select').set('selectedIndex', 2)");
+
+            Y.get('body > form').set('test-select.selectedIndex', 2);
+            Assert.areEqual(2, byId('test-select').selectedIndex,
+                    'Y.get("body > form").set("test-select.selectedIndex", 2)');
 
             var index = Y.get('#test-select').query('option[value=1]').set('selected', true);
 
             Assert.areEqual(1, Y.get('#test-select')._node.selectedIndex,
                     "Y.get('#test-select').set('selectedIndex', 1)");
 
-            /* // chains attrs currently broken
-            Y.get('body > form').set('test-select.selectedIndex', 2);
-            Assert.areEqual(2, byId('test-select').selectedIndex,
-                    'Y.get("body > form").set("test-select.selectedIndex", 2)');
-            */
         },
 
         test_dom_methods: function() {

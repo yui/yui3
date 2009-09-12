@@ -5,6 +5,8 @@ YUI Event Utility
     - Added onreadystatechange fork in domready to handle the event in IE when YUI is hosted in an iframe.
     - Added mousewheel support.
     - Added Y.delgate function that is a bit easier to use than Y.on('delegate'...
+    - Default scope of mouseenter and mouseleave events is the Node instance to which the listener is attached
+    - Default scope of delegated event listeners is the Node instance that matched the supplied CSS selector
     - All special DOM event handlers (focus/blur/mousewheel,resize,delegate,etc) are
       broken down into submodules.  Core DOM event functionality is provided in event-base.js,
       and all of the functionality is rolled into event.js.

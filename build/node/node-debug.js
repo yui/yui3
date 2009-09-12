@@ -95,6 +95,7 @@ Node.DOM_EVENTS = {
     keypress: true,
     keyup: true,
     load: true,
+    message: true,
     mousedown: true,
     mousemove: true,
     mouseout: true, 
@@ -190,12 +191,12 @@ Node.importMethod = function(host, name, altName) {
 /**
  * Returns a single Node instance bound to the node or the
  * first element matching the given selector.
- * @method Y.get
+ * @method Y.one
  * @static
  * @param {String | HTMLElement} node a node or Selector 
  * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
  */
-Node.get = function(node, doc) {
+Node.one = function(node) {
     var instance = null,
         cachedNode,
         uid;
@@ -207,7 +208,7 @@ Node.get = function(node, doc) {
             } else if (node.indexOf('win') === 0) { // win OR window
                 node = Y.config.win;
             } else {
-                node = Y.Selector.query(node, doc, true);
+                node = Y.Selector.query(node, null, true);
             }
             if (!node) {
                 return null;
@@ -224,6 +225,20 @@ Node.get = function(node, doc) {
         }
     }
     return instance;
+};
+
+/**
+ * Returns a single Node instance bound to the node or the
+ * first element matching the given selector.
+ * @method Y.get
+ * @deprecated Use Y.one
+ * @static
+ * @param {String | HTMLElement} node a node or Selector 
+ * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
+ */
+Node.get = function() {
+    Y.log('Y.get is deprecated, use Y.one', 'warn', 'deprecated');
+    return Node.one.apply(Node, arguments);
 };
 
 /**
@@ -266,7 +281,7 @@ Node.ATTRS = {
      // TODO: break out for IE only
     'elements': {
         getter: function() {
-            return this._node.elements;
+            return Y.all(this._node.elements);
         }
     },
 
@@ -374,9 +389,14 @@ Y.mix(Node.prototype, {
         return str || errorMsg;
     },
 
+    /**
+     * Returns an attribute value on the Node instance
+     * @method get
+     * @param {String} attr The attribute to be set
+     * @return {any} The current value of the attribute
+     */
     get: function(attr) {
-        var attrConfig = Node.ATTRS[attr],
-            val;
+        var val;
 
         if (this._getAttr) { // use Attribute imple
             val = this._getAttr(attr);
@@ -394,21 +414,24 @@ Y.mix(Node.prototype, {
         var attrConfig = Node.ATTRS[attr],
             val;
 
-        if (this._getAttr) { // use Attribute imple
-            val = this._getAttr(attr);
-        } else { // use getters inline
-            if (attrConfig && attrConfig.getter) {
-                val = attrConfig.getter.call(this);
-            } else if (Node.re_aria.test(attr)) {
-                val = this._node.getAttribute(attr, 2); 
-            } else {
-                val = Node.DEFAULT_GETTER.apply(this, arguments);
-            }
+        if (attrConfig && attrConfig.getter) {
+            val = attrConfig.getter.call(this);
+        } else if (Node.re_aria.test(attr)) {
+            val = this._node.getAttribute(attr, 2); 
+        } else {
+            val = Node.DEFAULT_GETTER.apply(this, arguments);
         }
 
         return val;
     },
 
+    /**
+     * Sets an attribute on the Node instance.
+     * @method set
+     * @param {String} attr The attribute to be set.  
+     * @param {any} val The value to set the attribute to.  
+     * @chainable
+     */
     set: function(attr, val) {
         var attrConfig = Node.ATTRS[attr];
 
@@ -425,6 +448,43 @@ Y.mix(Node.prototype, {
         }
 
         return this;
+    },
+
+    /**
+     * Sets multiple attributes. 
+     * @method setAttrs
+     * @param {Object} attrMap an object of name/value pairs to set  
+     * @chainable
+     */
+    setAttrs: function(attrMap) {
+        if (this._setAttrs) { // use Attribute imple
+            this._setAttrs(attrMap);
+        } else { // use setters inline
+            Y.Object.each(attrMap, function(v, n) {
+                this.set(n, v); 
+            }, this);
+        }
+
+        return this;
+    },
+
+    /**
+     * Returns an object containing the values for the requested attributes. 
+     * @method getAttrs
+     * @param {Array} attrs an array of attributes to get values  
+     * @return {Object} An object with attribute name/value pairs.
+     */
+    getAttrs: function(attrs) {
+        var ret = {};
+        if (this._getAttrs) { // use Attribute imple
+            this._getAttrs(attrs);
+        } else { // use setters inline
+            Y.Array.each(attrs, function(v, n) {
+                ret[v] = this.get(v); 
+            }, this);
+        }
+
+        return ret;
     },
 
     /**
@@ -513,24 +573,48 @@ Y.mix(Node.prototype, {
         
     /**
      * Retrieves a Node instance of nodes based on the given CSS selector. 
-     * @method query
+     * @method one
      *
      * @param {string} selector The CSS selector to test against.
      * @return {Node} A Node instance for the matching HTMLElement.
      */
-    query: function(selector) {
+    one: function(selector) {
         return Y.get(Y.Selector.query(selector, this._node, true));
+    },
+
+    /**
+     * Retrieves a Node instance of nodes based on the given CSS selector. 
+     * @method query
+     * @deprecated Use one()
+     * @param {string} selector The CSS selector to test against.
+     * @return {Node} A Node instance for the matching HTMLElement.
+     */
+    query: function(selector) {
+        Y.log('query() is deprecated, use one()', 'warn', 'deprecated');
+        return this.one(selector);
+    },
+
+    /**
+     * Retrieves a nodeList based on the given CSS selector. 
+     * @method all
+     *
+     * @param {string} selector The CSS selector to test against.
+     * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
+     */
+    all: function(selector) {
+        return Y.all(Y.Selector.query(selector, this._node));
     },
 
     /**
      * Retrieves a nodeList based on the given CSS selector. 
      * @method queryAll
-     *
+     * @deprecated Use all()
      * @param {string} selector The CSS selector to test against.
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     queryAll: function(selector) {
-        return Y.all(Y.Selector.query(selector, this._node));
+        Y.log('queryAll() is deprecated, use all()', 'warn', 'deprecated');
+        return this.all(selector);
     },
 
     // TODO: allow fn test
@@ -631,7 +715,7 @@ Y.mix(Node.prototype, {
      */
     each: function(fn, context) {
         context = context || this;
-        Y.log('each is deprecated on Node', 'warn', 'Node');
+        Y.log('each is deprecated on Node', 'warn', 'deprecated');
         return fn.call(context, this);
     },
 
@@ -644,7 +728,7 @@ Y.mix(Node.prototype, {
      * @return {Node} The Node instance at the given index.
      */
     item: function(index) {
-        Y.log('item is deprecated on Node', 'warn', 'Node');
+        Y.log('item is deprecated on Node', 'warn', 'deprecated');
         return this;
     },
 
@@ -655,7 +739,7 @@ Y.mix(Node.prototype, {
      * @return {Int} The number of items in the Node. 
      */
     size: function() {
-        Y.log('size is deprecated on Node', 'warn', 'Node');
+        Y.log('size is deprecated on Node', 'warn', 'deprecated');
         return this._node ? 1 : 0;
     },
 
@@ -667,8 +751,7 @@ Y.mix(Node.prototype, {
      * @chainable
      */
     insert: function(content, where) {
-        var node = this._node,
-            nodes; // in case we are inserting a NodeList/Array
+        var node = this._node;
 
         if (content) {
             if (typeof where === 'number') { // allow index
@@ -731,7 +814,7 @@ Y.mix(Node.prototype, {
 
 Y.Node = Node;
 Y.get = Y.Node.get;
-Y.first = Y.Node.get;
+Y.one = Y.Node.one;
 /**
  * The NodeList module provides support for managing collections of Nodes.
  * @module node
@@ -775,14 +858,11 @@ Y.Array.diff = function(a, b) {
     }; 
 };
 
-var NodeList = function(config) {
-    var nodes = config.nodes || [],
-        doc = config.doc || Y.config.doc;
-
+var NodeList = function(nodes) {
     if (typeof nodes === 'string') {
         this._query = nodes;
-        nodes = Y.Selector.query(nodes, doc);
-    } else if (nodes.item) { // Live NodeList, copy to static Array
+        nodes = Y.Selector.query(nodes);
+    } else {
         nodes = Y.Array(nodes, 0, true);
     }
 
@@ -962,6 +1042,16 @@ Y.mix(NodeList.prototype, {
         return Y.all(Y.Selector.filter(this._nodes, selector));
     },
 
+
+    /**
+     * Creates a new NodeList containing all nodes at every n indices, where 
+     * remainder n % index equals r.
+     * (zero-based index).
+     * @method modulus
+     * @param {Int} n The offset to use (return every nth node)
+     * @param {Int} r An optional remainder to use with the modulus operation (defaults to zero) 
+     * @return {NodeList} NodeList containing the updated collection 
+     */
     modulus: function(n, r) {
         r = r || 0;
         var nodes = [];
@@ -1184,17 +1274,12 @@ NodeList.prototype.get = function(attr) {
 };
 
 Y.NodeList = NodeList;
-Y.all = function(nodes, doc, restrict) {
-    // TODO: propagate restricted to nodes?
-    var nodeList = new NodeList({
-        nodes: nodes,
-        doc: doc
-    });
 
-    // zero-length result returns null
-    return nodeList;
+Y.all = function(nodes) {
+    return new NodeList(nodes);
 };
-Y.Node.all = Y.all; // TODO: deprecated
+
+Y.Node.all = Y.all;
 Y.Array.each([
     /**
      * Passes through to DOM method.
@@ -1464,29 +1549,6 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
      */
     Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
-/**
- * Functionality to make the node a delegated event container
- * @module node
- * @submodule node-event-delegate
- */
-
-/**
- * Functionality to make the node a delegated event container
- * @method delegate
- * @param type {String} the event type to delegate
- * @param fn {Function} the function to execute
- * @param selector {String} a selector that must match the target of the event.
- * @return {Event.Handle} the detach handle
- * @for Node
- */
-Y.Node.prototype.delegate = function(type, fn, selector, context) {
-    context = context || this;
-    var args = Array.prototype.slice.call(arguments, 4),
-        a = [type, fn, Y.Node.getDOMNode(this), selector, context];
-    a = a.concat(args);
-
-    return Y.delegate.apply(Y, a);
-};
 
 if (!document.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
@@ -1510,7 +1572,7 @@ Y.Node.ATTRS.type = {
 };
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'event-base', 'selector-css2']});
+}, '@VERSION@' ,{requires:['dom-base', 'selector-css2', 'event-base']});
 YUI.add('node-style', function(Y) {
 
 (function(Y) {
@@ -1870,7 +1932,35 @@ Y.NodeList.prototype.unplug = function() {
 
 
 }, '@VERSION@' ,{requires:['node-base', 'pluginhost']});
+YUI.add('node-event-delegate', function(Y) {
+
+/**
+ * Functionality to make the node a delegated event container
+ * @module node
+ * @submodule node-event-delegate
+ */
+
+/**
+ * Functionality to make the node a delegated event container
+ * @method delegate
+ * @param type {String} the event type to delegate
+ * @param fn {Function} the function to execute
+ * @param selector {String} a selector that must match the target of the event.
+ * @return {Event.Handle} the detach handle
+ * @for Node
+ */
+Y.Node.prototype.delegate = function(type, fn, selector) {
+
+    var args = Array.prototype.slice.call(arguments, 3),
+        a = [type, fn, Y.Node.getDOMNode(this), selector];
+    a = a.concat(args);
+
+    return Y.delegate.apply(Y, a);
+};
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost'], skinnable:false, requires:['dom', 'event', 'pluginhost']});
+}, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});
+
+
+YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
 

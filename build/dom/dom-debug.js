@@ -56,12 +56,15 @@ Y.DOM = {
     },
 
     // @deprecated
-    firstByTag: function(node, tag) {
-        ret = null;
-        if (node) {
-            tag = tag || '*';
-            ret = Y.Selector.query(tag, node, true); 
+    firstByTag: function(tag, root) {
+        var ret;
+        root = root || Y.config.doc;
+
+        if (tag && root.getElementsByTagName) {
+            ret = root.getElementsByTagName(tag)[0];
         }
+
+        return ret || null;
     },
 
     /**
@@ -250,7 +253,9 @@ Y.DOM = {
              ret = Y.DOM._nl2frag(nodes, doc);
         }
 
-        Y.DOM._cloneCache[html] = ret.cloneNode(true);
+        if (ret) {
+            Y.DOM._cloneCache[html] = ret.cloneNode(true);
+        }
         return ret;
     },
 
@@ -725,7 +730,7 @@ addClass = Y.DOM.addClass;
 
 
 
-}, '@VERSION@' ,{requires:['oop'], skinnable:false});
+}, '@VERSION@' ,{requires:['oop']});
 YUI.add('dom-style', function(Y) {
 
 (function(Y) {
@@ -992,7 +997,7 @@ var HAS_LAYOUT = 'hasLayout',
             if (el) {
                     current = _getStyleObj(el)[property];
 
-                if (property === OPACITY) {
+                if (property === OPACITY && Y.DOM.CUSTOM_STYLES[OPACITY]) {
                     value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
                 } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
                     value = current;
@@ -1132,43 +1137,47 @@ var HAS_LAYOUT = 'hasLayout',
     IEComputed = {};
 
 // use alpha filter for IE opacity
-if (documentElement.style[OPACITY] === UNDEFINED &&
-        documentElement[FILTERS]) {
-    Y.DOM.CUSTOM_STYLES[OPACITY] = {
-        get: function(node) {
-            var val = 100;
-            try { // will error if no DXImageTransform
-                val = node[FILTERS]['DXImageTransform.Microsoft.Alpha'][OPACITY];
+try {
+    if (documentElement.style[OPACITY] === UNDEFINED &&
+            documentElement[FILTERS]) {
+        Y.DOM.CUSTOM_STYLES[OPACITY] = {
+            get: function(node) {
+                var val = 100;
+                try { // will error if no DXImageTransform
+                    val = node[FILTERS]['DXImageTransform.Microsoft.Alpha'][OPACITY];
 
-            } catch(e) {
-                try { // make sure its in the document
-                    val = node[FILTERS]('alpha')[OPACITY];
-                } catch(err) {
-                    Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'dom-style');
+                } catch(e) {
+                    try { // make sure its in the document
+                        val = node[FILTERS]('alpha')[OPACITY];
+                    } catch(err) {
+                        Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'dom-style');
+                    }
+                }
+                return val / 100;
+            },
+
+            set: function(node, val, style) {
+                var current,
+                    styleObj;
+
+                if (val === '') { // normalize inline style behavior
+                    styleObj = _getStyleObj(node);
+                    current = (OPACITY in styleObj) ? styleObj[OPACITY] : 1; // revert to original opacity
+                    val = current;
+                }
+
+                if (typeof style[FILTER] == 'string') { // in case not appended
+                    style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
+                    
+                    if (!node.currentStyle || !node.currentStyle[HAS_LAYOUT]) {
+                        style.zoom = 1; // needs layout 
+                    }
                 }
             }
-            return val / 100;
-        },
-
-        set: function(node, val, style) {
-            var current,
-                styleObj;
-
-            if (val === '') { // normalize inline style behavior
-                styleObj = _getStyleObj(node);
-                current = (OPACITY in styleObj) ? styleObj[OPACITY] : 1; // revert to original opacity
-                val = current;
-            }
-
-            if (typeof style[FILTER] == 'string') { // in case not appended
-                style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
-                
-                if (!node.currentStyle || !node.currentStyle[HAS_LAYOUT]) {
-                    style.zoom = 1; // needs layout 
-                }
-            }
-        }
-    };
+        };
+    }
+} catch(e) {
+    Y.log('document.documentElement.filters error (activeX disabled)', 'warn', 'dom-style');
 }
 
 try {
@@ -1225,7 +1234,7 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 })(Y);
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});
+}, '@VERSION@' ,{requires:['dom-base']});
 YUI.add('dom-screen', function(Y) {
 
 (function(Y) {
@@ -1791,7 +1800,7 @@ Y.mix(DOM, {
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style'], skinnable:false});
+}, '@VERSION@' ,{requires:['dom-base', 'dom-style']});
 YUI.add('selector-native', function(Y) {
 
 (function(Y) {
@@ -1825,7 +1834,7 @@ var Selector = {
     _supportsNative: function() {
         // whitelist and feature detection to manage
         // future implementations manually
-        return ( (Y.UA.ie >= 8 || Y.UA.webkit > 525) &&
+        return ( (Y.UA.ie >= 8 || Y.UA.webkit > 525) && // || Y.UA.gecko >= 1.9) &&
             document.querySelectorAll);
     },
 
@@ -2043,7 +2052,7 @@ Y.mix(Y.Selector, Selector, true);
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+}, '@VERSION@' ,{requires:['dom-base']});
 YUI.add('selector-css2', function(Y) {
 
 /**
@@ -2062,14 +2071,14 @@ var PARENT_NODE = 'parentNode',
     ATTRIBUTES = 'attributes',
     COMBINATOR = 'combinator',
     PSEUDOS = 'pseudos',
-    PREVIOUS = 'previous',
-    PREVIOUS_SIBLING = 'previousSibling',
+    //PREVIOUS = 'previous',
+    //PREVIOUS_SIBLING = 'previousSibling',
 
-    TMP_PREFIX = 'yui-tmp-',
+    //TMP_PREFIX = 'yui-tmp-',
 
-    g_counter = 0,
-    g_idCache = [],
-    g_passCache = {},
+    //g_counter = 0,
+    //g_idCache = [],
+    //g_passCache = {},
 
     g_childCache = [], // cache to cleanup expando node.children
 
@@ -2273,7 +2282,7 @@ var PARENT_NODE = 'parentNode',
                 token,
                 path,
                 pass,
-                FUNCTION = 'function',
+                //FUNCTION = 'function',
                 value,
                 tests,
                 test;
@@ -2292,12 +2301,16 @@ var PARENT_NODE = 'parentNode',
                     if (j && !pass) {
                         while ((test = tests[--j])) {
                             operator = test[1];
-                            value = tmpNode[test[0]];
-
-                            // skip node as soon as a test fails 
                             if (getters[test[0]]) {
                                 value = getters[test[0]](tmpNode, test[0]);
+                            } else {
+                                value = tmpNode[test[0]];
+                                // use getAttribute for non-standard attributes
+                                if (value === undefined && tmpNode.getAttribute) {
+                                    value = tmpNode.getAttribute(test[0]);
+                                }
                             }
+
                             if ((operator === '=' && value !== test[2]) ||  // fast path for equality
                                 (operator.test && !operator.test(value)) ||  // regex test
                                 (operator.call && !operator(tmpNode, test[0]))) { // function test
@@ -2439,6 +2452,8 @@ var PARENT_NODE = 'parentNode',
                     var test = Selector[PSEUDOS][match[1]];
                     if (test) { // reorder match array
                         return [match[2], test];
+                    } else { // selector token not supported (possibly missing CSS3 module)
+                        return false;
                     }
                 }
             }
@@ -2496,7 +2511,10 @@ var PARENT_NODE = 'parentNode',
                         }
 
                         test = parser.fn(match, token);
-                        if (test) {
+                        if (test === false) { // selector not supported
+                            found = false;
+                            break outer;
+                        } else if (test) {
                             token.tests.push(test);
                         }
 
@@ -2526,11 +2544,11 @@ var PARENT_NODE = 'parentNode',
                 re, i, len;
 
             if (pseudos) {
-                selector = selector.replace(Selector._re.pseudos, 'REPLACED_PSEUDO');
+                selector = selector.replace(Selector._re.pseudos, '!!REPLACED_PSEUDO!!');
             }
 
             if (attrs) {
-                selector = selector.replace(Selector._re.attr, 'REPLACED_ATTRIBUTE');
+                selector = selector.replace(Selector._re.attr, '!!REPLACED_ATTRIBUTE!!');
             }
 
             for (re in shorthand) {
@@ -2541,12 +2559,12 @@ var PARENT_NODE = 'parentNode',
 
             if (attrs) {
                 for (i = 0, len = attrs.length; i < len; ++i) {
-                    selector = selector.replace('REPLACED_ATTRIBUTE', attrs[i]);
+                    selector = selector.replace('!!REPLACED_ATTRIBUTE!!', attrs[i]);
                 }
             }
             if (pseudos) {
                 for (i = 0, len = pseudos.length; i < len; ++i) {
-                    selector = selector.replace('REPLACED_PSEUDO', pseudos[i]);
+                    selector = selector.replace('!!REPLACED_PSEUDO!!', pseudos[i]);
                 }
             }
             return selector;
@@ -2567,9 +2585,19 @@ var PARENT_NODE = 'parentNode',
 Y.mix(Y.Selector, SelectorCSS2, true);
 Y.Selector.getters.src = Y.Selector.getters.rel = Y.Selector.getters.href;
 
+// IE wants class with native queries
+if (Y.Selector.useNative && Y.Selector._supportsNative()) {
+    Y.Selector.shorthand['\\.(-?[_a-z]+[-\\w]*)'] = '[class~=$1]';
+}
 
-}, '@VERSION@' ,{requires:['selector-native'], skinnable:false});
 
 
-YUI.add('dom', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dom-base', 'dom-style', 'dom-screen', 'selector-native', 'selector-css2']});
+}, '@VERSION@' ,{requires:['selector-native']});
+
+
+YUI.add('selector', function(Y){}, '@VERSION@' ,{use:['selector-native', 'selector-css2']});
+
+
+
+YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-base', 'dom-style', 'dom-screen', 'selector']});
 

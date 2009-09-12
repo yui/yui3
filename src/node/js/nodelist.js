@@ -41,14 +41,11 @@ Y.Array.diff = function(a, b) {
     }; 
 };
 
-var NodeList = function(config) {
-    var nodes = config.nodes || [],
-        doc = config.doc || Y.config.doc;
-
+var NodeList = function(nodes) {
     if (typeof nodes === 'string') {
         this._query = nodes;
-        nodes = Y.Selector.query(nodes, doc);
-    } else if (nodes.item) { // Live NodeList, copy to static Array
+        nodes = Y.Selector.query(nodes);
+    } else {
         nodes = Y.Array(nodes, 0, true);
     }
 
@@ -228,6 +225,16 @@ Y.mix(NodeList.prototype, {
         return Y.all(Y.Selector.filter(this._nodes, selector));
     },
 
+
+    /**
+     * Creates a new NodeList containing all nodes at every n indices, where 
+     * remainder n % index equals r.
+     * (zero-based index).
+     * @method modulus
+     * @param {Int} n The offset to use (return every nth node)
+     * @param {Int} r An optional remainder to use with the modulus operation (defaults to zero) 
+     * @return {NodeList} NodeList containing the updated collection 
+     */
     modulus: function(n, r) {
         r = r || 0;
         var nodes = [];
@@ -450,14 +457,9 @@ NodeList.prototype.get = function(attr) {
 };
 
 Y.NodeList = NodeList;
-Y.all = function(nodes, doc, restrict) {
-    // TODO: propagate restricted to nodes?
-    var nodeList = new NodeList({
-        nodes: nodes,
-        doc: doc
-    });
 
-    // zero-length result returns null
-    return nodeList;
+Y.all = function(nodes) {
+    return new NodeList(nodes);
 };
-Y.Node.all = Y.all; // TODO: deprecated
+
+Y.Node.all = Y.all;

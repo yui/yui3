@@ -6,6 +6,7 @@ release 3.0.0 beta 1
 - set() fires attribute change events
 - zero length NodeLists now return an empty NodeList rather than null
 - added insert, prepend, append, setContent methods
+- default scope of delegated event listeners is the Node instance that matched the supplied CSS selector
 
 release 3.0.0 PR2
 - Node instances now have NodeList api

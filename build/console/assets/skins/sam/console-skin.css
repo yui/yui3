@@ -181,3 +181,5 @@
     background-color: #b00;
     color: #fff;
 }
+
+.yui-skin-sam .yui-console-hidden { display: none; }

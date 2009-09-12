@@ -24,6 +24,7 @@
 
 <form id="form1" name="form1">
 
+<input id="button0" type="button" value="Button 0" class="button" />
 <input id="button1" type="button" value="Button 1" class="button" />
 <input id="button2" type="button" value="Button 2" class="button" />
 <input id="text1" type="text" value="something" class="nothing" />
@@ -47,6 +48,15 @@ YUI({
         Selector: 1
     }
 }).use('event-base', 'dump', 'substitute', function(Y) {
+
+var handler = function () {
+    alert("click");
+};
+
+Y.Event.attach("click", handler, document.getElementById("button0"));
+Y.Event.detach("click", handler, document.getElementById("button0"));
+Y.Event.attach("click", handler, "#button0");
+Y.Event.detach("click", handler, "#button0");
 
     Y.on('load', function(e) {
         Y.log('window load event');
@@ -165,7 +175,9 @@ YUI({
         // console.log(Y.Event.getListeners(this));
         // Y.Event.purgeElement(this, true, 'click');
         // Y.Event.detach('click', null, this);
-        Y.detach('blah|*');
+        // Y.detach('blah|*');
+
+        Y.Event.purgeElement(this, true, 'click');
     };
 
     // var h = Y.on('blah|click', f, el);
