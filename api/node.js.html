@@ -243,7 +243,7 @@
 <span class="c"> * @param {String | HTMLElement} node a node or Selector </span>
 <span class="c"> * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. </span>
 <span class="c"> */</span>
-<span class="nx">Node</span><span class="o">.</span><span class="nx">one</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
+<span class="nx">Node</span><span class="o">.</span><span class="nx">one</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
         <span class="nx">cachedNode</span><span class="o">,</span>
         <span class="nx">uid</span><span class="o">;</span>
@@ -255,7 +255,7 @@
             <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;win&#39;</span><span class="o">)</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span> <span class="c">// win OR window</span>
 <span class="c"></span>                <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">doc</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="o">}</span>
             <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>

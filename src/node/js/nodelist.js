@@ -41,14 +41,11 @@ Y.Array.diff = function(a, b) {
     }; 
 };
 
-var NodeList = function(config) {
-    var nodes = config.nodes || [],
-        doc = config.doc || Y.config.doc;
-
+var NodeList = function(nodes) {
     if (typeof nodes === 'string') {
         this._query = nodes;
-        nodes = Y.Selector.query(nodes, doc);
-    } else if (nodes.item) { // Live NodeList, copy to static Array
+        nodes = Y.Selector.query(nodes);
+    } else {
         nodes = Y.Array(nodes, 0, true);
     }
 
@@ -460,14 +457,9 @@ NodeList.prototype.get = function(attr) {
 };
 
 Y.NodeList = NodeList;
-Y.all = function(nodes, doc, restrict) {
-    // TODO: propagate restricted to nodes?
-    var nodeList = new NodeList({
-        nodes: nodes,
-        doc: doc
-    });
 
-    // zero-length result returns null
-    return nodeList;
+Y.all = function(nodes) {
+    return new NodeList(nodes);
 };
+
 Y.Node.all = Y.all;

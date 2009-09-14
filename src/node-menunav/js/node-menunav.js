@@ -223,7 +223,7 @@ var hasVisibleSubmenu = function (menuLabel) {
 
 var getItemAnchor = function (node) {
 
-	return isAnchor(node) ? node : node.query(LOWERCASE_A);
+	return isAnchor(node) ? node : node.one(LOWERCASE_A);
 
 };
 
@@ -287,7 +287,7 @@ var getMenuLabel = function (node, searchAncestors) {
 		}
 		else {
 			oItem = getNodeWithClass(node, CSS_MENU_LABEL) || 
-				node.query((PERIOD + CSS_MENU_LABEL));
+				node.one((PERIOD + CSS_MENU_LABEL));
 		}
 		
 	}
@@ -313,7 +313,7 @@ var getItem = function (node, searchAncestors) {
 
 var getFirstItem = function (menu) {
 	
-	return getItem(menu.query("li"));
+	return getItem(menu.one("li"));
 
 };
 
@@ -429,14 +429,14 @@ NodeMenuNav.ATTRS = {
 
 				oMenu.set(ROLE, MENU);
 
-				oMenu.queryAll("ul,li,." + getClassName(MENU, CONTENT)).set(ROLE, PRESENTATION);
+				oMenu.all("ul,li,." + getClassName(MENU, CONTENT)).set(ROLE, PRESENTATION);
 
-				oMenu.queryAll((PERIOD + getClassName(MENUITEM, CONTENT))).set(ROLE, MENUITEM);
+				oMenu.all((PERIOD + getClassName(MENUITEM, CONTENT))).set(ROLE, MENUITEM);
 
-				oMenu.queryAll((PERIOD + CSS_MENU_LABEL)).each(function (node) {
+				oMenu.all((PERIOD + CSS_MENU_LABEL)).each(function (node) {
 
 					oMenuLabel = node;
-					oMenuToggle = node.query(MENU_TOGGLE_SELECTOR);
+					oMenuToggle = node.one(MENU_TOGGLE_SELECTOR);
 
 					if (oMenuToggle) {
 						oMenuToggle.set(ROLE, PRESENTATION);
@@ -453,7 +453,7 @@ NodeMenuNav.ATTRS = {
 						oSubmenu.set(ROLE, MENU);
 
 						oMenuLabel = oSubmenu.previous();
-						oMenuToggle = oMenuLabel.query(MENU_TOGGLE_SELECTOR);
+						oMenuToggle = oMenuLabel.one(MENU_TOGGLE_SELECTOR);
 
 						if (oMenuToggle) {
 							oMenuLabel = oMenuToggle;
@@ -697,11 +697,11 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			menuNav._rootMenu = oRootMenu;
 
-			oRootMenu.queryAll("ul:first-child").addClass(FIRST_OF_TYPE);
+			oRootMenu.all("ul:first-child").addClass(FIRST_OF_TYPE);
 
 			//	Hide all visible submenus
 
-			oRootMenu.queryAll(MENU_SELECTOR).addClass(CSS_MENU_HIDDEN);
+			oRootMenu.all(MENU_SELECTOR).addClass(CSS_MENU_HIDDEN);
 
 
 			//	Wire up all event handlers
@@ -951,7 +951,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			menuNav._setActiveItem(oLabel);			
 		}
 
-		oActiveItem = menu.query((PERIOD + CSS_MENUITEM_ACTIVE));
+		oActiveItem = menu.one((PERIOD + CSS_MENUITEM_ACTIVE));
 
 		if (oActiveItem) {
 			oActiveItem.removeClass(CSS_MENUITEM_ACTIVE);
@@ -982,7 +982,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 		var menuNav = this;
 
-		menu.queryAll(MENU_SELECTOR).each(Y.bind(function (submenuNode) {
+		menu.all(MENU_SELECTOR).each(Y.bind(function (submenuNode) {
 		
 			menuNav._hideMenu(submenuNode);
 		
@@ -1075,7 +1075,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			sQuery = "#" + oRootMenu.get("id") + " .yui-menu a," + 
 							MENU_TOGGLE_SELECTOR;
 
-			oRootMenu.queryAll(sQuery).set("tabIndex", -1);
+			oRootMenu.all(sQuery).set("tabIndex", -1);
 
 			oFocusManager.on(ACTIVE_DESCENDANT_CHANGE, 
 				this._onActiveDescendantChange, oFocusManager, this);

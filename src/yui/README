@@ -19,6 +19,8 @@ The YUI Global
 * yui-log and yui-later are now optional modules that are included with yui.js.
 * queue-base is no longer a submodule of queue -- it is part of yui-base.
 * All YUI submodules end up in the yui build directory.
+* Dynamic loading can be disabled by setting the 'bootstrap' config to false.
+* Automatic fetching of CSS files can be disabled by setting 'fetchCSS' to false.
 
 3.0.0 beta 1
 

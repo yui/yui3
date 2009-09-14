@@ -35,7 +35,21 @@
                 b.appendChild(n);
             }
         });
-        /*
+
+
+var handler = function () {                                                                                                                                                 
+    alert("here");                                                                                                                                                      
+};                                                                                                                                                                          
+                                                                                                                                                                            
+Y.on("myevent", handler);                                                                                                                                                   
+                                                                                                                                                                            
+Y.fire("myevent");                                                                                                                                                          
+                                                                                                                                                                            
+Y.detach('myevent', handler);                                                                                                                                               
+                                                                                                                                                                            
+Y.fire("myevent");   
+
+/*
 Y.on("mycategory|myevent", function () {
 
 alert("here");
@@ -63,20 +77,6 @@ Y.detach('mycategory|myevent');
 Y.fire("myevent");   
 */
 
-
-var handler = function () {                                                                                                                                                 
-                                                                                                                                                                            
-        alert("here");                                                                                                                                                      
-                                                                                                                                                                            
-};                                                                                                                                                                          
-                                                                                                                                                                            
-Y.on("myevent", handler);                                                                                                                                                   
-                                                                                                                                                                            
-Y.fire("myevent");                                                                                                                                                          
-                                                                                                                                                                            
-Y.detach('myevent', handler);                                                                                                                                               
-                                                                                                                                                                            
-Y.fire("myevent");   
 
 
 /*
@@ -283,6 +283,13 @@ property names rather than e.details[1]
 
     Y.fire('test:event2');
 
+
+
+var f = function(foo) {
+    Y.log(Y.Lang.isUndefined(foo));
+};
+
+f();
 
 });
 

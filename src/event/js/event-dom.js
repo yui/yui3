@@ -303,6 +303,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             
                 // for later removeListener calls
                 cewrapper.el = el;
+                cewrapper.key = key;
+                cewrapper.domkey = ek;
                 cewrapper.type = type;
                 cewrapper.fn = function(e) {
                     cewrapper.fire(Y.Event.getEvent(e, el, (compat || (false === facade))));
@@ -466,7 +468,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          */
         detach: function(type, fn, el, obj) {
 
-            var args=Y.Array(arguments, 0, true), compat, i, len, ok,
+            var args=Y.Array(arguments, 0, true), compat, i, l, ok,
                 id, ce;
 
             if (args[args.length-1] === COMPAT_ARG) {
@@ -483,14 +485,30 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             if (typeof el == "string") {
 
                 // el = (compat) ? Y.DOM.byId(el) : Y.all(el);
-                el = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);
-                return Y.Event.detach.apply(Y.Event, args);
+                if (compat) {
+                    el = Y.DOM.byId(el);
+                } else {
+                    el = Y.Selector.query(el);
+                    l = el.length;
+                    if (l < 1) {
+                        el = null;
+                    } else if (l == 1) {
+                        el = el[0];
+                    }
+                }
+                // return Y.Event.detach.apply(Y.Event, args);
 
             // The el argument can be an array of elements or element ids.
-            } else if (shouldIterate(el)) {
+            } 
+            
+            if (!el) {
+                return false;
+            }
+            
+            if (shouldIterate(el)) {
 
                 ok = true;
-                for (i=0, len=el.length; i<len; ++i) {
+                for (i=0, l=el.length; i<l; ++i) {
                     args[2] = el[i];
                     ok = ( Y.Event.detach.apply(Y.Event, args) && ok );
                 }
@@ -498,6 +516,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return ok;
 
             }
+
 
             if (!type || !fn || !fn.call) {
                 return this.purgeElement(el, false, type);
@@ -733,11 +752,16 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
         purgeElement: function(el, recurse, type) {
             // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
             var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
-                lis = this.getListeners(oEl, type), i, len;
+                lis = this.getListeners(oEl, type), i, len, props;
             if (lis) {
                 for (i=0,len=lis.length; i<len ; ++i) {
-                    lis[i].detachAll();
+                    props = lis[i];
+                    props.detachAll();
+                    remove(props.el, props.type, props.fn, props.capture);
+                    delete _wrappers[props.key];
+                    delete _el_events[props.domkey][props.key];
                 }
+
             }
 
             if (recurse && oEl && oEl.childNodes) {
@@ -745,6 +769,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     this.purgeElement(oEl.childNodes[i], recurse, type);
                 }
             }
+
         },
 
         /**
@@ -769,6 +794,13 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 if (evts[key]) {
                     results.push(evts[key]);
                 }
+
+                // get native events as well
+                key += 'native';
+                if (evts[key]) {
+                    results.push(evts[key]);
+                }
+
             } else {
                 Y.each(evts, function(v, k) {
                     results.push(v);
@@ -786,16 +818,12 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @private
          */
         _unload: function(e) {
-
-            var E = Y.Event;
-
             Y.each(_wrappers, function(v, k) {
                 v.detachAll();
                 remove(v.el, v.type, v.fn, v.capture);
                 delete _wrappers[k];
+                delete _el_events[v.domkey][k];
             });
-
-            remove(window, "load", E._load);
         },
 
         

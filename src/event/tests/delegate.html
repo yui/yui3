@@ -37,7 +37,7 @@
 		}).use('console', 'test', 'event', 'event-simulate', function (Y) {
 			
 		    // creating the console...
-			// (new Y.Console()).render();
+			(new Y.Console()).render();
 			
 			// starting the testing process
 			
@@ -274,7 +274,9 @@
 					Y.Event.simulate(document.getElementById('firstlink'), 'click');
 					Y.Assert.isFalse(bHandler1Called, "The first listener should not be be called.");
 					Y.Assert.isTrue(bHandler2Called, "The second delegated listener should be called.");
-					
+
+					bHandler1Called = false;
+					bHandler2Called = false;					
 					
 					//	Test #3: Make sure first handler is not called after 
 					//	calling Y.Event.purgeElement and passing in a type
@@ -282,7 +284,6 @@
 
 					Y.Event.simulate(document.getElementById('firstlink'), 'click');
 					Y.Assert.isFalse(bHandler2Called, "The second listener should not be be called.");
-
 
 					//	Test #4: Make sure that it is possible to delegate 
 					//	a listener to a new element with the same id of 

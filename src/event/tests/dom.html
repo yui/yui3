@@ -133,15 +133,15 @@
 
 					Y.Assert.areEqual(1, clicked, "click handler didn't work");
 					Y.Assert.areEqual(1, context.a, "context didn't work");
-					// Y.Assert.areEqual(2, ex1, "extra arg1 didn't work"); // bug #2528155
-					// Y.Assert.areEqual(3, ex2, "extra arg2 didn't work"); // bug #2528155
+					Y.Assert.areEqual(2, ex1, "extra arg1 didn't work"); // bug #2528155
+					Y.Assert.areEqual(3, ex2, "extra arg2 didn't work"); // bug #2528155
 
 					Y.Event.simulate(document.getElementById('clicker2'), 'click');
 
 					Y.Assert.areEqual(2, clicked, "click handler didn't work");
 					Y.Assert.areEqual(1, context.a, "context didn't work");
-					// Y.Assert.areEqual(2, ex1, "extra arg1 didn't work"); // bug #2528155
-					// Y.Assert.areEqual(3, ex2, "extra arg2 didn't work"); // bug #2528155
+					Y.Assert.areEqual(2, ex1, "extra arg1 didn't work"); // bug #2528155
+					Y.Assert.areEqual(3, ex2, "extra arg2 didn't work"); // bug #2528155
 				},
 
 				test_y_on_with_nodelist: function() {
@@ -239,6 +239,32 @@
 					Y.Assert.areEqual(1, context.a, "context didn't work");
 					Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
 					Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+				},
+
+				test_detach_by_sig: function() {
+					
+					var clicked = 0, 
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        }, fn = function(e, extra1, extra2) {
+                            clicked++;
+                            context = this;
+                            ex1 = extra1;
+                            ex2 = extra2;
+                        },
+                        els = document.getElementsByTagName('p');
+
+					Y.on('click', fn, 'clicker1', obj, 2, 3);
+
+					Y.Event.detach('click', fn, 'clicker1', obj, 2, 3);
+					
+					Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+					Y.Assert.areEqual(0, clicked, "click handler didn't work");
+
 				}
 				
 			})); 
