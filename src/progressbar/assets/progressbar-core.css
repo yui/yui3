@@ -7,6 +7,10 @@
 	height:100%;
 }	
 
+.yui-progressbar-hidden {
+	display:none;
+}
+
 /* contentBox */
 .yui-progressbar {
 	position:relative;

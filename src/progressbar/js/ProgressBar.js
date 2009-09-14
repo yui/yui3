@@ -615,8 +615,8 @@ Y.extend(ProgressBar, Y.Widget, {
 			anim = this.get(ANIM);
 			if (anim) {
 				anim.detachAll();
+				anim.destroy();
 			}
-			anim.destroy();
 			anim = null;
 		}
 	},
