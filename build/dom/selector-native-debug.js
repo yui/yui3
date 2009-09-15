@@ -110,7 +110,7 @@ var Selector = {
             query,
             result,
             i,
-            fn = (useNative) ? Selector._nativeQuery : Y.Selector._bruteQuery;
+            fn = (useNative) ? Y.Selector._nativeQuery : Y.Selector._bruteQuery;
 
         if (selector && fn) {
             // split group into seperate queries

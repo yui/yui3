@@ -28,16 +28,15 @@ var PARENT_NODE = 'parentNode',
                 childNodes,
                 child;
 
-            if ((!ret && node[TAG_NAME]) || (ret && tag)) { // only HTMLElements have children
+            if (node.children && tag && node.children.tags) {
+                children = node.children.tags(tag);
+            } else if ((!ret && node[TAG_NAME]) || (ret && tag)) { // only HTMLElements have children
                 childNodes = ret || node.childNodes;
                 ret = [];
                 for (i = 0; (child = childNodes[i++]);) {
                     if (child.tagName) {
                         if (!tag || tag === child.tagName) {
                             ret.push(child);
-                        }
-                        if (!node.children) {
-                            children.push(child);
                         }
                     }
                 }
@@ -50,8 +49,7 @@ var PARENT_NODE = 'parentNode',
 
         _re: {
             attr: /(\[.*\])/g,
-            pseudos: /:([\-\w]+(?:\(?:['"]?(.+)['"]?\)))*/i,
-            urls: /^(?:href|src)/
+            pseudos: /:([\-\w]+(?:\(?:['"]?(.+)['"]?\)))*/i
         },
 
         /**
