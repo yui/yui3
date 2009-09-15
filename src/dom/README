@@ -1,4 +1,4 @@
-version 3.0.0 GA
+version 3.0.0
 - Selector now using native querySelector/All when available
 - Selector.test now accepts optional root argument
 

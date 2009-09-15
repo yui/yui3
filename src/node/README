@@ -1,4 +1,4 @@
-release 3.0.0 GA 
+release 3.0.0 
 - Node no longer extends Base or augments Attribute
 - set() no longer fires attribute change events
 - Y.get -> Y.one
