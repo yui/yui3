@@ -1,5 +1,19 @@
 The Console tool
-    The Console tool creates a cross browser display to read log messages emitted by the YUI logging subsystem.
+    The Console tool creates a cross browser display to read log messages
+    emitted by the YUI logging subsystem.
+
+3.0.0
+    * Added attribute 'style' to allow inline-block, block, or absolute positioning
+    * Moved the hidden state css to the sam skin and increased rule specificity
+    * printBuffer no longer throws an error when called against an empty buffer
+    * Removed 'label' property from normalized message object since it was just
+      a copy of category
+    * Moved collapsed class to the boundingBox and now collapse resizes the
+      boundingBox accordingly
+    * Added useBrowserConsole attribute as a pass through to the YUI config.
+      Default to false so when a Console is instantiated messages are
+      redirected to Console rather than duplicated there.
+    * collapse(), expand(), and log(..) are now chainable
 
 3.0.0 beta 1
     * logSource attribute added to configure listening for events from a
