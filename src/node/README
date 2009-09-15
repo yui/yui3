@@ -1,3 +1,12 @@
+release 3.0.0 GA 
+- Node no longer extends Base or augments Attribute
+- set() no longer fires attribute change events
+- Y.get -> Y.one
+- Node::query -> Node::one
+- Node::queryAll -> Node::all
+- NodeList::get now returns a NodeList for DOM values (e.g. nodelist.get('parentNode'))
+- Added Node::replace, purge, and destroy
+
 release 3.0.0 beta 1
 - Node and NodeList broken into separate classes
 - NodeList no longer contains DOM related methods (appendChild, removeChild, contains, etc.)

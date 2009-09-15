@@ -1,3 +1,7 @@
+version 3.0.0 GA
+- Selector now using native querySelector/All when available
+- Selector.test now accepts optional root argument
+
 version 3.0.0 beta 1
 - Selector CSS3 support broken out as optional addon ('selector-css3')
 - Selector now leverages native querySelector
