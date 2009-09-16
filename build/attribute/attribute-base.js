@@ -869,10 +869,11 @@ YUI.add('attribute-base', function(Y) {
             return this._getAttrs(attrs);
         },
 
-       /**
+        /**
          * Implementation behind the public getAttrs method, to get multiple attribute values.
          *
-         * @method getAttrs
+         * @method _getAttrs
+         * @protected
          * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
          * returned. If set to true, all attributes modified from their initial values are returned.
          * @return {Object} An object with attribute name/value pairs.
