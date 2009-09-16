@@ -44,7 +44,9 @@
 
         RENDERUI = "renderUI",
         BINDUI = "bindUI",
-        SYNCUI = "syncUI";
+        SYNCUI = "syncUI",
+
+        UI = Y.Widget.UI_SRC;
 
     /**
      * Widget extension, which can be used to add Standard Module support to the 
@@ -150,12 +152,9 @@
          * in the header. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         headerContent: {
-            getter: function(val) {
-                var live = this._getStdModContent(STD_HEADER);
-                return (live === null) ? val : live;
-            }
+            value:null
         },
-        
+
         /**
          * @attribute footerContent
          * @type {String | Node}
@@ -164,10 +163,7 @@
          * in the footer. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         footerContent: {
-            getter: function(val) {
-                var live = this._getStdModContent(STD_FOOTER);
-                return (live === null) ? val : live;
-            }
+            value:null
         },
         
         /**
@@ -178,10 +174,7 @@
          * in the body. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         bodyContent: {
-            getter: function(val) {
-                var live = this._getStdModContent(STD_BODY);
-                return (live === null) ? val : live;
-            }
+            value:null
         },
         
         /**
@@ -317,7 +310,9 @@
          * @param {EventFacade} e The event facade for the attribute change
          */
         _afterHeaderChange : function(e) {
-            this._uiSetStdMod(STD_HEADER, e.newVal, e.stdModPosition);
+            if (e.src !== UI) {
+                this._uiSetStdMod(STD_HEADER, e.newVal, e.stdModPosition);
+            }
         },
 
         /**
@@ -329,7 +324,9 @@
          * @param {EventFacade} e The event facade for the attribute change
          */
         _afterBodyChange : function(e) {
-            this._uiSetStdMod(STD_BODY, e.newVal, e.stdModPosition);
+            if (e.src !== UI) {
+                this._uiSetStdMod(STD_BODY, e.newVal, e.stdModPosition);
+            }
         },
 
         /**
@@ -341,7 +338,9 @@
          * @param {EventFacade} e The event facade for the attribute change
          */
         _afterFooterChange : function(e) {
-            this._uiSetStdMod(STD_FOOTER, e.newVal, e.stdModPosition);
+            if (e.src !== UI) {
+                this._uiSetStdMod(STD_FOOTER, e.newVal, e.stdModPosition);
+            }
         },
 
         /**
@@ -432,6 +431,7 @@
                 } else {
                     this._addNodeHTML(node, content, where);
                 }
+                this.set(section + CONTENT_SUFFIX, this._getStdModContent(section), {src:UI});
                 this.fire(ContentUpdate);
             }
         },
