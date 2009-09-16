@@ -23,50 +23,9 @@ var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     g_counter = 0;
 
 var Selector = {
-    _reLead: /^\s*([>+~]|:self)/,
-    _reUnSupported: /!./g,
-
     _foundCache: [],
 
-    _supportsNative: function() {
-        // whitelist and feature detection to manage
-        // future implementations manually
-        return ( (Y.UA.ie >= 8 || Y.UA.webkit > 525) && // || Y.UA.gecko >= 1.9) &&
-            document.querySelectorAll);
-    },
-
     useNative: true,
-
-    _toArray: function(nodes) { // TODO: move to Y.Array
-        var ret = nodes,
-            i, len;
-
-        if (!nodes.slice) {
-            try {
-                ret = Array.prototype.slice.call(nodes);
-            } catch(e) { // IE: requires manual copy
-                ret = [];
-                for (i = 0, len = nodes.length; i < len; ++i) {
-                    ret[i] = nodes[i];
-                }
-            }
-        }
-        return ret;
-    },
-
-    _clearFoundCache: function() {
-        var foundCache = Selector._foundCache,
-            i, len;
-
-        for (i = 0, len = foundCache.length; i < len; ++i) {
-            try { // IE no like delete
-                delete foundCache[i]._found;
-            } catch(e) {
-                foundCache[i].removeAttribute('_found');
-            }
-        }
-        foundCache = [];
-    },
 
     _compare: ('sourceIndex' in document.documentElement) ?
         function(nodeA, nodeB) {
@@ -96,7 +55,7 @@ var Selector = {
                 rangeA.setStart(nodeA, 0);
                 rangeB = nodeB[OWNER_DOCUMENT].createRange();
                 rangeB.setStart(nodeB, 0);
-                compare = rangeA.compareBoundaryPoints(Range.START_TO_END, rangeB);
+                compare = rangeA.compareBoundaryPoints(1, rangeB); // 1 === Range.START_TO_END
             }
 
             return compare;
@@ -105,7 +64,7 @@ var Selector = {
 
     _sort: function(nodes) {
         if (nodes) {
-            nodes = Selector._toArray(nodes);
+            nodes = Y.Array(nodes, 0, true);
             if (nodes.sort) {
                 nodes.sort(Selector._compare);
             }
@@ -116,79 +75,100 @@ var Selector = {
 
     _deDupe: function(nodes) {
         var ret = [],
-            cache = Selector._foundCache,
             i, node;
 
-        for (i = 0, node; node = nodes[i++];) {
+        for (i = 0; (node = nodes[i++]);) {
             if (!node._found) {
-                ret[ret.length] = cache[cache.length] = node;
+                ret[ret.length] = node;
                 node._found = true;
             }
         }
-        Selector._clearFoundCache();
+
+        for (i = 0; (node = ret[i++]);) {
+            node._found = null;
+            node.removeAttribute('_found');
+        }
+
         return ret;
+    },
+
+    /**
+     * Retrieves a set of nodes based on a given CSS selector. 
+     * @method query
+     *
+     * @param {string} selector The CSS Selector to test the node against.
+     * @param {HTMLElement} root optional An HTMLElement to start the query from. Defaults to Y.config.doc
+     * @param {Boolean} firstOnly optional Whether or not to return only the first match.
+     * @return {Array} An array of nodes that match the given selector.
+     * @static
+     */
+    query: function(selector, root, firstOnly, skipNative) {
+        root = root || Y.config.doc;
+        var ret = [],
+            useNative = (Y.Selector.useNative && document.querySelector && !skipNative),
+            queries = [[selector, root]],
+            query,
+            result,
+            i,
+            fn = (useNative) ? Y.Selector._nativeQuery : Y.Selector._bruteQuery;
+
+        if (selector && fn) {
+            // split group into seperate queries
+            if (!skipNative && // already done if skipping
+                    (!useNative || root.tagName)) { // split native when element scoping is needed
+                queries = Selector._splitQueries(selector, root);
+            }
+
+            for (i = 0; (query = queries[i++]);) {
+                result = fn(query[0], query[1], firstOnly);
+                if (!firstOnly) { // coerce DOM Collection to Array
+                    result = Y.Array(result, 0, true);
+                }
+                ret = ret.concat(result);
+            }
+
+            if (queries.length > 1) { // remove dupes and sort by doc order 
+                ret = Selector._sort(Selector._deDupe(ret));
+            }
+        }
+
+        Y.log('query: ' + selector + ' returning: ' + ret.length, 'info', 'Selector');
+        return (firstOnly) ? (ret[0] || null) : ret;
+
     },
 
     // allows element scoped queries to begin with combinator
     // e.g. query('> p', document.body) === query('body > p')
-    _prepQuery: function(root, selector) {
+    _splitQueries: function(selector, node) {
         var groups = selector.split(','),
             queries = [],
-            inDoc = true,
-            isDocRoot = (root && root.nodeType === 9),
+            prefix = '',
             i, len;
 
-        if (root) {
-            if (!isDocRoot) {
-                root.id = root.id || Y.guid();
-                // break into separate queries for element scoping
-                for (i = 0, len = groups.length; i < len; ++i) {
-                    selector = '#' + root.id + ' ' + groups[i]; // prepend with root ID
-                    queries.push({root: root, selector: selector});
-                }
-            } else {
-                queries.push({root: root, selector: selector});
+        if (node) {
+            // enforce for element scoping
+            if (node.tagName) {
+                node.id = node.id || Y.guid();
+                prefix = '#' + node.id + ' ';
+            }
+
+            for (i = 0, len = groups.length; i < len; ++i) {
+                selector =  prefix + groups[i];
+                queries.push([selector, node]);
             }
         }
 
         return queries;
     },
 
-    _nativeQuery: function(selector, root, firstOnly) {
-        if (Selector._reUnSupported.test(selector)) {
-            return Y.Selector.query(selector, root, firstOnly);
+    _nativeQuery: function(selector, root, one) {
+        try {
+            Y.log('trying native query with: ' + selector, 'info', 'selector-native');
+            return root['querySelector' + (one ? '' : 'All')](selector);
+        } catch(e) { // fallback to brute if available
+            Y.log('native query error; reverting to brute query with: ' + selector, 'info', 'selector-native');
+            return Y.Selector.query(selector, root, one, true); // redo with skipNative true
         }
-
-        var ret = firstOnly ? null : [],
-            queryName = firstOnly ? 'querySelector' : 'querySelectorAll',
-            result,
-            queries,
-            i, query;
-
-        root = root || Y.config.doc;
-
-        if (selector) {
-            queries = Selector._prepQuery(root, selector);
-            ret = [];
-
-            for (i = 0, query; query = queries[i++];) {
-                try {
-                    result = query.root[queryName](query.selector);
-                    if (queryName === 'querySelectorAll') { // convert NodeList to Array
-                        result = Selector._toArray(result);
-                    }
-                    ret = ret.concat(result);
-                } catch(e) {
-                    Y.log('native selector error: ' + e, 'error', 'Selector');
-                }
-            }
-
-            if (queries.length > 1) { // remove dupes and sort by doc order 
-                ret = Selector._sort(Selector._deDupe(ret));
-            }
-            ret = (firstOnly) ? (ret[0] || null) : ret;
-        }
-        return ret;
     },
 
     filter: function(nodes, selector) {
@@ -196,7 +176,7 @@ var Selector = {
             i, node;
 
         if (nodes && selector) {
-            for (i = 0, node; (node = nodes[i++]);) {
+            for (i = 0; (node = nodes[i++]);) {
                 if (Y.Selector.test(node, selector)) {
                     ret[ret.length] = node;
                 }
@@ -221,7 +201,7 @@ var Selector = {
             if (!node.id) {
                 node.id = TMP_PREFIX + g_counter++;
             }
-            for (i = 0, group; group = groups[i++];) { // TODO: off-dom test
+            for (i = 0; (group = groups[i++]);) { // TODO: off-dom test
                 group += '#' + node.id; // add ID for uniqueness
                 item = Y.Selector.query(group, root, true);
                 ret = (item === node);
@@ -234,15 +214,6 @@ var Selector = {
         return ret;
     }
 };
-
-if (Y.UA.ie && Y.UA.ie <= 8) {
-    Selector._reUnSupported = /:(?:nth|not|root|only|checked|first|last|empty)/;
-}
-
-// allow standalone selector-native module
-if (Selector._supportsNative() && Selector.useNative) {
-    Y.Selector.query = Y.Selector.query || Selector._nativeQuery;
-}
 
 Y.mix(Y.Selector, Selector, true);
 

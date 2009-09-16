@@ -210,6 +210,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.areEqual(1, Y.all('.bar').size(), 'Y.get(".bar")');
             Assert.areNotEqual(nodes, Y.all('#test-nodes *'), 'nodes === Y.all("#test-nodes")');
             Assert.areEqual(nodes.size(), Y.all('#test-nodes *').size(), 'nodes.size() === Y.all("#test-nodes").size()'); 
+            ArrayAssert.itemsAreEqual(Y.Selector.query('div'), Y.all(Y.Selector.query('div'))._nodes, "Y.all(Y.Selector.query('div'))");
+            ArrayAssert.itemsAreEqual(document.getElementsByTagName('div'), Y.all(Y.Selector.query('div'))._nodes, "Y.all(Y.Selector.query('div'))");
+
+            ArrayAssert.itemsAreEqual(Y.Selector.query('input[name]'), Y.all(Y.Selector.query('input[name]'))._nodes, "Y.all(Y.Selector.query('input[name]'))");
+
+            ArrayAssert.itemsAreEqual(Y.Selector.query('.foo'), Y.all(Y.Selector.query('.foo'))._nodes, "Y.all(Y.Selector.query('.foo'))");
         },
 
         test_each: function() {

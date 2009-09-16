@@ -13,6 +13,9 @@ YUI Event Utility
     - Additional Safari key remapping.
     - Special DOM events can now be routed through delegate.
     - Y.on can target Node and NodeList references correctly.
+    - Fixed onAvailable lazy DOM listener detach handles.
+    - When configured to return a detach handle, a single object is always returned.
+      Previously requests that resolved to multiple listeners returned an array.
 
 3.0.0beta1
     - DOM event, custom event, and simulate event moved to separate modules.

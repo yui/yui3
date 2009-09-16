@@ -159,7 +159,7 @@ ET.prototype = {
 
             }, this);
 
-            return (this._yuievt.chain) ? this : ret;
+            return (this._yuievt.chain) ? this : new Y.EventHandle(ret);
 
         }
         

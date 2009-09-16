@@ -1,3 +1,7 @@
+3.0.0
+
+No Changes
+
 3.0.0 beta 1
 
 * PluginHost moved down to Base.
@@ -21,7 +25,6 @@
 * "tabIndex" attribute was updated
   - accepts a number or null
   - more documentation
-
 
 3.0.0PR2 - Initial release
 
