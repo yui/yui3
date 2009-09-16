@@ -348,10 +348,10 @@
 <span class="c">     * @return {Object} Returns an event handle that can later be use to detach(). </span>
 <span class="c">     * @see Event.on</span>
 <span class="c">     */</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">arg1</span><span class="o">,</span> <span class="nx">arg2</span><span class="o">,</span> <span class="nx">etc</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="nx">args</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">);</span>
-        <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
+        <span class="nx">args</span><span class="o">[</span><span class="m">3</span><span class="o">]</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
     <span class="o">},</span>
 
@@ -367,10 +367,10 @@
 <span class="c">     * @return {Object} Returns an event handle that can later be use to detach(). </span>
 <span class="c">     * @see Event.on</span>
 <span class="c">     */</span>
-    <span class="nx">after</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">etc</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">after</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="nx">args</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">);</span>
-        <span class="nx">args</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
+        <span class="nx">args</span><span class="o">[</span><span class="m">3</span><span class="o">]</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
     <span class="o">},</span>
 
