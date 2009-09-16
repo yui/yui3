@@ -3,7 +3,7 @@
  * enabling faster load times and a more responsive UI.
  *
  * @module imageloader
- * @requires node
+ * @requires base-base, dom-screen, node
  */
 
 

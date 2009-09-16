@@ -129,6 +129,7 @@ var NOT_FOUND = {},
     DATASOURCELOCAL = 'datasource-local',
     DOMBASE = 'dom-base',
     DOMSTYLE = 'dom-style',
+    DOMSCREEN = 'dom-screen',
     DUMP = 'dump',
     GET = 'get',
     EVENTBASE = 'event-base',
@@ -219,7 +220,7 @@ var NOT_FOUND = {},
                 },
 
                 'node-screen': {
-                    requires: ['dom-screen', NODEBASE]
+                    requires: [DOMSCREEN, NODEBASE]
                 },
 
                 'node-pluginhost': {
@@ -492,9 +493,9 @@ var NOT_FOUND = {},
         },
 
         imageloader: { 
-            requires: [NODE]
+            requires: [BASEBASE, DOMSCREEN, NODE]
         },
-        
+
         io:{
             submodules: {
 
