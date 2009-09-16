@@ -363,9 +363,16 @@ Y.EventHandle.prototype = {
      * @method detach
      */
     detach: function() {
-        if (this.evt) {
+        var evt = this.evt, i;
+        if (evt) {
             // Y.log('EventHandle.detach: ' + this.sub, 'info', 'Event');
-            this.evt._delete(this.sub);
+            if (Y.Lang.isArray(evt)) {
+                for (i=0; i<evt.length; i++) {
+                    evt[i].detach();
+                }
+            } else { 
+                evt._delete(this.sub);
+            }
         }
     }
 };
@@ -1135,7 +1142,7 @@ ET.prototype = {
 
             }, this);
 
-            return (this._yuievt.chain) ? this : ret;
+            return (this._yuievt.chain) ? this : new Y.EventHandle(ret);
 
         }
         

@@ -263,9 +263,74 @@
 					
 					Y.Event.simulate(document.getElementById('clicker1'), 'click');
 
-					Y.Assert.areEqual(0, clicked, "click handler didn't work");
+					Y.Assert.areEqual(0, clicked, "detach by signature was a failure");
 
-				}
+				},
+
+				test_multi_detach: function() {
+					
+					var clicked = 0, 
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        }, fn = function(e, extra1, extra2) {
+                            clicked++;
+                            context = this;
+                            ex1 = extra1;
+                            ex2 = extra2;
+                        },
+                        els = document.getElementsByTagName('p');
+
+					var handle = Y.on('click', fn, '.clickers', obj, 2, 3);
+
+                    // Y.log(handle);
+
+                    handle.detach();
+					
+					Y.Event.simulate(document.getElementById('clicker1'), 'click');
+					Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+					Y.Assert.areEqual(0, clicked, "single detach handle for multiple listeners doesn't work.");
+
+				},
+
+				test_onavail_detach: function() {
+                    var avail = 0,
+                        handle = Y.on('available', function() {
+                            avail++;
+                        }, '#notthereyet'),
+
+                        div = document.createElement("div");
+                        div.id = 'notthereyet';
+
+                    handle.detach();
+
+                    document.body.appendChild(div);
+
+                    this.wait(function() {
+					    Y.Assert.areEqual(0, avail, "onavailable wasn't canceled.");
+                    }, 300);
+                },
+
+				test_lazy_attach_detach: function() {
+                    var avail = 0,
+                        handle = Y.on('click', function() {
+                            avail++;
+                        }, '#notthereyet'),
+
+                        div = document.createElement("div");
+                        div.id = 'notthereyet';
+
+                    document.body.appendChild(div);
+
+                    handle.detach();
+
+					Y.Event.simulate(document.getElementById('notthereyet'), 'click');
+
+					Y.Assert.areEqual(0, avail, "lazy detacher didn't work.");
+                }
 				
 			})); 
 			
