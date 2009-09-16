@@ -1,4 +1,7 @@
 3.0.0
+* Cleaned up the way headerContent, bodyContent, footerContent are configured,
+  so that the actual stored value is always accurate, without the need for a 
+  getter which talks to the DOM directly.
 
 * Recreate sections from TEMPLATE string for each instance, instead of
   cloning a class level cached Node instance, so that ownerDocument

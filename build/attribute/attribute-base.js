@@ -783,6 +783,7 @@ YUI.add('attribute-base', function(Y) {
                 validator = state.get(attrName, VALIDATOR),
                 setter = state.get(attrName, SETTER),
                 initializing = state.get(attrName, INITIALIZING),
+                prevValRaw = state.get(attrName, VALUE),
 
                 name = subAttrName || attrName,
                 retVal,
@@ -809,7 +810,7 @@ YUI.add('attribute-base', function(Y) {
                 }
 
                 if (allowSet) {
-                    if(!subAttrName && newVal === prevVal && !Lang.isObject(newVal)) {
+                    if(!subAttrName && newVal === prevValRaw && !Lang.isObject(newVal)) {
                         allowSet = false;
                     } else {
                         // Store value
@@ -869,10 +870,11 @@ YUI.add('attribute-base', function(Y) {
             return this._getAttrs(attrs);
         },
 
-       /**
+        /**
          * Implementation behind the public getAttrs method, to get multiple attribute values.
          *
-         * @method getAttrs
+         * @method _getAttrs
+         * @protected
          * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
          * returned. If set to true, all attributes modified from their initial values are returned.
          * @return {Object} An object with attribute name/value pairs.

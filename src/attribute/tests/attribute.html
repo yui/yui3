@@ -34,7 +34,7 @@
 
     <script type="text/javascript">
 
-        YUI({base:"../../../build/", filter:"raw", useBrowserConsole:false}).use("dump", "attribute-complex", "base", "console", "test", function(Y) {
+        YUI({filter:"raw", useBrowserConsole:false}).use("dump", "attribute-complex", "base", "console", "test", function(Y) {
 
             function areObjectsReallyEqual(o1, o2) {
                 Y.ObjectAssert.areEqual(o1, o2);
@@ -309,6 +309,23 @@
                         }
                         return true;
                     }
+                },
+
+                PassThrough : {
+                    value: "passthrough",
+                    getter: function(val) {
+                        return this._passthrough;
+                    },
+                    setter: function(val) {
+                        this._passthrough = val;
+                    }
+                },
+                
+                Z : {
+                    value: "z",
+                    getter: function(val) {
+                        return val.toUpperCase();
+                    }
                 }
             };
 
@@ -472,7 +489,11 @@
                                           "BeforeComplexChange", "AfterComplexChange", 
                                           "BeforeComplexChange", "AfterComplexChange", 
                                           "BeforeComplexChange", "AfterComplexChange", 
-                                          "BeforeComplexChange", "AfterComplexChange"];
+                                          "BeforeComplexChange", "AfterComplexChange",
+                                          "BeforePassThroughChange", "AfterPassThroughChange",
+                                          "BeforePassThroughChange",
+                                          "BeforePassThroughChange", "AfterPassThroughChange"
+                                          ];
                     var actualEvents = [];
 
                     h.on("AChange", function(e) {
@@ -494,10 +515,18 @@
                             Y.Assert.areNotSame(e.newVal, e.preVal, "Should not fire after event if object values are same");
                         }
                     });
+                    
+                    h.on("PassThroughChange", function(e) {
+                        actualEvents.push("BeforePassThroughChange");
+                    });
+
+                    h.after("PassThroughChange", function(e) {
+                        actualEvents.push("AfterPassThroughChange");
+                    });
 
                     h.set("A", h.get("A"));     // No Change
                     h.set("A", "MyAVal");       // No Change
-                    
+
                     h.set("A", "MyNewAVal");                     // Change
 
                     h.set("complex", h.get("complex"));          // Change, we don't know if something changed inside the object
@@ -510,6 +539,10 @@
 
                     a.push("B");
                     h.set("complex", a);                         // Change, same object ref, but we don't know if contents changed, so fire event
+
+                    h.set("PassThrough", "MyPassThrough");
+                    h.set("PassThrough", "MyPassThrough");
+                    h.set("PassThrough", "MyNewPassThrough");
 
                     Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
                 },
@@ -1137,7 +1170,9 @@
                         "F": "MyNewFVal",
                         "DE": "MyNewDEVal",
                         complex: "MyNewComplexVal",
-                        "I" : "MyNewIVal"
+                        "I" : "MyNewIVal",
+                        "PassThrough" : "MyPassThrough",
+                        "Z" : "MyZ"
                     });
 
                     var expectedVals = {
@@ -1152,6 +1187,8 @@
                         G: 35,
                         H: 25,
                         I: "MyNewIVal",
+                        PassThrough: "MyPassThrough",
+                        Z: "MYZ",
                         initialized:true,
                         destroyed:false
                     };
@@ -1495,6 +1532,25 @@
                     h.set("A", "NewAAfterReadOnly");
 
                     Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+                },
+
+                testEventSameValueExt : function() {
+                    var h = this.createHost();
+                    var expectedEvents = ["BeforeZChange", "AfterZChange", "BeforeZChange", "AfterZChange"];
+                    var actualEvents = [];
+
+                    h.on("ZChange", function() {
+                        actualEvents.push("BeforeZChange");
+                    });
+                    
+                    h.after("ZChange", function() {
+                        actualEvents.push("AfterZChange");
+                    });
+                    
+                    h.set("Z", "MyZ");
+                    h.set("Z", "MYZ");
+                    
                     Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
                 }
             };
