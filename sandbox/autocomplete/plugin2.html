@@ -45,14 +45,14 @@ script[src] {
 
 YUI.add('demo-plugin', function (Y) {
     
-    var logSrc = "demo-plugin", logCat = "info";
+    var logSrc = "demoPlugin", logCat = "info";
 
     // Create a very demonstrative plugin.
     
     function DemoPlugin () {
-        Y.log("Starting DemoPlugin ctor, about to call parent ctor", "info", "demoPlugin");
+        Y.log("Starting DemoPlugin ctor, about to call parent ctor", logCat, logSrc);
         DemoPlugin.superclass.constructor.apply(this, arguments);
-        Y.log("Done with DemoPlugin ctor, returning", "info", "demoPlugin");
+        Y.log("Done with DemoPlugin ctor, returning", logCat, logSrc);
     };
     
     // define attributes as static properties on the class.
@@ -63,14 +63,14 @@ YUI.add('demo-plugin', function (Y) {
         },
         hasGetter : {
             getter : function () {
-                Y.log("Get the 'hasGetter' property", "info", "demoPlugin");
+                Y.log("Get the 'hasGetter' property", logCat, logSrc);
                 return "got";
             }
         },
         hasSetter : {
             setter : function (k) {
-                Y.log("Setting the 'hasSetter' property to "+k, "info", "demoPlugin");
-                Y.log("About to return " + (k+k), "info", "demoPlugin");
+                Y.log("Setting the 'hasSetter' property to "+k, logCat, logSrc);
+                Y.log("About to return " + (k+k), logCat, logSrc);
                 return k + k;
             }
         },
@@ -79,11 +79,11 @@ YUI.add('demo-plugin', function (Y) {
         },
         hasGetterAndSetter : {
             getter : function () {
-                Y.log("Get on hasGetterAndSetter", "info", "demoPlugin");
+                Y.log("Get on hasGetterAndSetter", logCat, logSrc);
                 return "Return from get";
             },
             setter : function () {
-                Y.log("Set on hasGetterAndSetter", "info", "demoPlugin");
+                Y.log("Set on hasGetterAndSetter", logCat, logSrc);
                 return "Return from set";
             }
         },
@@ -91,11 +91,11 @@ YUI.add('demo-plugin', function (Y) {
             var i = 0;
             return {
                 getter : function () {
-                    Y.log("Getting incrementor: "+i, "info", "demoPlugin");
+                    Y.log("Getting incrementor: "+i, logCat, logSrc);
                     return i ++;
                 },
                 setter : function (j) {
-                    Y.log("Setting incrementor: "+j, "info", "demoPlugin");
+                    Y.log("Setting incrementor: "+j, logCat, logSrc);
                     return i = j;
                 }
             };
@@ -104,26 +104,26 @@ YUI.add('demo-plugin', function (Y) {
     Y.extend(DemoPlugin, Y.Plugin.Base, {
         _privateMember : "pretend-private",
         _privateMethod : function () {
-            Y.log("Called _privateMethod (which is only pretend-private.)", "info", "demoPlugin");
+            Y.log("Called _privateMethod (which is only pretend-private.)", logCat, logSrc);
         },
         publicMember : "public",
         publicMethod : function () {
-            Y.log("Called publicMethod", "info", "demoPlugin");
+            Y.log("Called publicMethod", logCat, logSrc);
         },
         getTheHost : function () {
-            Y.log("My host is: "+this.get("host"), "info", "demoPlugin");
+            Y.log("My host is: "+this.get("host"), logCat, logSrc);
             return this.get("host");
         },
         initializer : function (config) {
-            Y.log("Initializing: "+config, "info", "demoPlugin");
+            Y.log("Initializing: "+config, logCat, logSrc);
             this._privateMethod();
             this.get("host").addClass("demoified");
-            Y.log("Done initializing", "info", "demoPlugin");
+            Y.log("Done initializing", logCat, logSrc);
         },
         destroy : function () {
-            Y.log("Destroying!  Clean up the mess made in initializer()", "info", "demoPlugin");
+            Y.log("Destroying!  Clean up the mess made in initializer()", logCat, logSrc);
             this.get("host").removeClass("demoified");
-            Y.log("Destroyed!", "info", "demoPlugin");
+            Y.log("Destroyed!", logCat, logSrc);
         }
     });
     
@@ -141,6 +141,7 @@ YUI({
     base : "../../build/",
     filter : "raw"
 }).use('console', 'demo-plugin', function (Y) {
+    window.Y = Y;
     
     new Y.Console({
         plugins : [ Y.Plugin.ConsoleFilters ],
