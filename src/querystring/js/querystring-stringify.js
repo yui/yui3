@@ -20,9 +20,7 @@ var QueryString = Y.namespace("QueryString");
  * @for QueryString
  * @static
  **/
-QueryString.escape = function (s) {
-    return encodeURIComponent(s);
-};
+QueryString.escape = encodeURIComponent;
 
 
 var stack = [];
