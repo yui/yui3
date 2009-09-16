@@ -299,12 +299,11 @@ Y.mix(NodeList.prototype, {
      * @return {Object} Returns an event handle that can later be use to detach(). 
      * @see Event.on
      */
-    on: function(type, fn, context, etc) {
-        var args = Y.Array(arguments);
-        args[2] = context || this;
-        this.batch(function(node) {
-            node.on.apply(node, args);
-        });
+    on: function(type, fn, context) {
+        var args = Y.Array(arguments, 0, true);
+        args.splice(2, 0, this._nodes);
+        args[3] = context || this;
+        return Y.on.apply(Y, args);
     },
 
     /**
@@ -319,12 +318,11 @@ Y.mix(NodeList.prototype, {
      * @return {Object} Returns an event handle that can later be use to detach(). 
      * @see Event.on
      */
-    after: function(type, fn, context, etc) {
-        var args = Y.Array(arguments);
-        args[2] = context || this;
-        this.batch(function(node) {
-            node.after.apply(node, args);
-        });
+    after: function(type, fn, context) {
+        var args = Y.Array(arguments, 0, true);
+        args.splice(2, 0, this._nodes);
+        args[3] = context || this;
+        return Y.after.apply(Y, args);
     },
 
     /**

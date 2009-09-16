@@ -161,10 +161,10 @@ var Selector = {
 
     _nativeQuery: function(selector, root, one) {
         try {
-            Y.log('trying native query with: ' + selector, 'info', 'selector-native');
+            //Y.log('trying native query with: ' + selector, 'info', 'selector-native');
             return root['querySelector' + (one ? '' : 'All')](selector);
         } catch(e) { // fallback to brute if available
-            Y.log('native query error; reverting to brute query with: ' + selector, 'info', 'selector-native');
+            //Y.log('native query error; reverting to brute query with: ' + selector, 'info', 'selector-native');
             return Y.Selector.query(selector, root, one, true); // redo with skipNative true
         }
     },

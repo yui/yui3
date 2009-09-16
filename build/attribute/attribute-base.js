@@ -783,6 +783,7 @@ YUI.add('attribute-base', function(Y) {
                 validator = state.get(attrName, VALIDATOR),
                 setter = state.get(attrName, SETTER),
                 initializing = state.get(attrName, INITIALIZING),
+                prevValRaw = state.get(attrName, VALUE),
 
                 name = subAttrName || attrName,
                 retVal,
@@ -809,7 +810,7 @@ YUI.add('attribute-base', function(Y) {
                 }
 
                 if (allowSet) {
-                    if(!subAttrName && newVal === prevVal && !Lang.isObject(newVal)) {
+                    if(!subAttrName && newVal === prevValRaw && !Lang.isObject(newVal)) {
                         allowSet = false;
                     } else {
                         // Store value
