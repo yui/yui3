@@ -1,10 +1,11 @@
 YUI.add('queue-run', function(Y) {
 
 /**
- * <p>Adds a new class AsyncQueue that is restricted to function callbacks, but
- * includes a host of additional features, including events, callback
- * iterations, and a run() method that can execute queued callbacks in order,
- * even across configured timeouts.</p>
+ * <p>AsyncQueue allows you create a chain of function callbacks executed
+ * via setTimeout (or synchronously) that are guaranteed to run in order.
+ * Items in the queue can be promoted or removed.  Start or resume the
+ * execution chain with run().  pause() to temporarily delay execution, or
+ * stop() to halt and clear the queue.</p>
  *
  * @module queue-run
  */
@@ -58,7 +59,7 @@ var Queue   = Y.AsyncQueue,
  * <ul>
  *  <li><code>autoContinue</code>: <code>true</code></li>
  *  <li><code>iterations</code>: 1</li>
- *  <li><code>timeout</code>: -1 (synchronous operation)</li>
+ *  <li><code>timeout</code>: 10 (10ms between callbacks)</li>
  *  <li><code>until</code>: (function to run until iterations &lt;= 0)</li>
  * </ul>
  *
@@ -69,7 +70,7 @@ var Queue   = Y.AsyncQueue,
 Queue.defaults = Y.mix({
     autoContinue : true,
     iterations   : 1,
-    timeout      : -1,
+    timeout      : 10,
     until        : function () {
         this.iterations |= 0;
         return this.iterations <= 0;
@@ -82,7 +83,8 @@ Y.extend(Queue, Y.EventTarget, {
      *
      * @property _running
      * @type {Boolean|Object} true for synchronous callback execution, the
-     *                        return handle from Y.later for async callbacks
+     *                        return handle from Y.later for async callbacks.
+     *                        Otherwise false.
      * @protected
      */
     _running : false,
