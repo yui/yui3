@@ -206,6 +206,8 @@ var whitelist = {
      */
     resolve = function(n) {
 
+        var go, test;
+
         if (!n) {
             return null;
         }
@@ -214,7 +216,21 @@ var whitelist = {
             if (ua.webkit && 3 == n.nodeType) {
                 n = n.parentNode;
             } 
-        } catch(ex) { }
+        } catch(e1) { }
+
+        if (ua.gecko) {
+            while (!go) {
+                try {
+                    test = n._yuid;
+                    go = true;
+                } catch(e2) {
+                    n = n.parentNode;
+                    if (!n) {
+                        return null;
+                    }
+                }
+            }
+        }
 
         return Y.Node.get(n);
     };
@@ -626,7 +642,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
         // @TODO fix arguments
         onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
 
-            var a = Y.Array(id), i;
+            var a = Y.Array(id), i, availHandle;
 
 
             for (i=0; i<a.length; i=i+1) {
@@ -644,7 +660,29 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             // We want the first test to be immediate, but async
             setTimeout(Y.bind(Y.Event._poll, Y.Event), 0);
 
-            return new Y.EventHandle(); // @TODO by id needs a defered handle
+            availHandle = new Y.EventHandle({
+
+                _delete: function() {
+                    // set by the event system for lazy DOM listeners
+                    if (availHandle.handle) {
+                        availHandle.handle.detach();
+                    }
+
+                    var i, j;
+
+                    // otherwise try to remove the onAvailable listener(s)
+                    for (i = 0; i < a.length; i++) {
+                        for (j = 0; j < _avail.length; j++) {
+                            if (a[i] == _avail[j].id) {
+                                _avail.splice(j, 1);
+                            }
+                        }
+                    }
+                }
+
+            });
+
+            return availHandle;
         },
 
         /**
@@ -783,7 +821,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     handles.push(E._attach(args, config));
                 });
 
-                return (handles.length === 1) ? handles[0] : handles;
+                // return (handles.length === 1) ? handles[0] : handles;
+                return new Y.EventHandle(handles);
 
             // If the el argument is a string, we assume it is 
             // actually the id of the element.  If the page is loaded
@@ -820,9 +859,13 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 // Not found = defer adding the event until the element is available
                 } else {
 
-                    return this.onAvailable(el, function() {
-                        E._attach(args, config);
+                    ret = this.onAvailable(el, function() {
+                        
+                        ret.handle = E._attach(args, config);
+
                     }, E, true, false, compat);
+
+                    return ret;
 
                 }
             }
@@ -897,7 +940,6 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 return type.detach();
             }
 
-
             // The el argument can be a string
             if (typeof el == "string") {
 
@@ -933,7 +975,6 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 return ok;
 
             }
-
 
             if (!type || !fn || !fn.call) {
                 return this.purgeElement(el, false, type);
@@ -2082,60 +2123,45 @@ YUI.add('event-focus', function(Y) {
  */
 (function() {
 
-var adapt = Y.Env.evt.plugins,
-    CAPTURE_CONFIG = { capture: true },
-    NOOP  = function(){},
+var UA = Y.UA,
+	Event = Y.Event,
+	plugins = Y.Env.evt.plugins,
+	ie = UA.ie,
+	bUseMutation = (UA.opera || UA.webkit),
+	eventNames = {
+		focus: (ie ? 'focusin' : (bUseMutation ? 'DOMFocusIn' : 'focus')),
+		blur: (ie ? 'focusout' : (bUseMutation ? 'DOMFocusOut' : 'blur'))
+	},
 
-    // Opera implents capture phase events per spec rather than
-    // the more useful way it is implemented in other browsers:
-    // The event doesn't fire on a target unless there is a
-    // listener on an element in the target's ancestry.  If a
-    // capture phase listener is added only to the element that 
-    // will be the target of the event, the listener won't fire.  
-    // To get around this, we register a NOOP listener on the
-    // element's parent.
-    _captureHack = function(type, o) {
-        var el = (Y.Lang.isString(o)) ? Y.Selector.query(o, null, true) : o,
-            p  = el && el.parentNode;
-
-        if (p) {
-            Y.Event._attach([type, NOOP, p], CAPTURE_CONFIG);
-        }
-    };
+	//	Only need to use capture phase for Gecko since it doesn't support 
+	//	focusin, focusout, DOMFocusIn, or DOMFocusOut
+    CAPTURE_CONFIG = { capture: (UA.gecko ? true : false) },
 
 
-Y.Event._attachFocus = function (args, config) {
+	attach = function (args, config) {
 
-    var a = Y.Array(args, 0, true);
-    if (Y.UA.ie) {
-        a[0] = a[0].replace(/focus/, 'focusin');
-    } else if (Y.UA.opera) {
-        _captureHack(a[0], a[2]);
-    }
-    return Y.Event._attach(a, config);
+	    var a = Y.Array(args, 0, true);
+		a[0] = eventNames[a[0]];
+	    return Event._attach(a, config);
+
+	},
 	
-};
+	eventAdapter = {
 
-Y.Event._attachBlur = function (args, config) {
+		on: function () {
+			return attach(arguments, CAPTURE_CONFIG);
+		}
 
-    var a = Y.Array(args, 0, true);
-    if (Y.UA.ie) {
-        a[0] = a[0].replace(/blur/, 'focusout');
-    } else if (Y.UA.opera) {
-        _captureHack(a[0], a[2]);
-    }
-    return Y.Event._attach(a, config);
-	
-};
+	};
+
+
+Event._attachFocus = attach;
+Event._attachBlur = attach;
 
 /**
- * Adds a DOM focus listener.  Uses the focusin event in IE,
- * and the capture phase otherwise so that
+ * Adds a DOM focus listener.  Uses the focusin event in IE, 
+ * DOMFocusIn for Opera and Webkit, and the capture phase for Gecko so that
  * the event propagates in a way that enables event delegation.
- *
- * Note: if you are registering this event on the intended target
- * rather than an ancestor, the element must be in the DOM in
- * order for it to work in Opera.
  *
  * @for YUI
  * @event focus
@@ -2146,35 +2172,23 @@ Y.Event._attachBlur = function (args, config) {
  * @param args 0..n additional arguments to provide to the listener.
  * @return {EventHandle} the detach handle
  */
-adapt.focus = {
-    on: function() {
-		return Y.Event._attachFocus(arguments, CAPTURE_CONFIG);
-    }
-};
+plugins.focus = eventAdapter;
 
 /**
- * Adds a DOM blur listener.  Uses the focusout event in IE,
- * and the capture phase otherwise so that
+ * Adds a DOM blur listener.  Uses the focusout event in IE, 
+ * DOMFocusOut for Opera and Webkit, and the capture phase for Gecko so that
  * the event propagates in a way that enables event delegation.
- *
- * Note: if you are registering this event on the intended target
- * rather than an ancestor, the element must be in the DOM 
- * at the time of registration in order for it to work in Opera.
  *
  * @for YUI
  * @event blur
- * @param type {string} 'focus'
+ * @param type {string} 'blur'
  * @param fn {function} the callback function to execute
  * @param o {string|HTMLElement|collection} the element(s) to bind
  * @param context optional context object
  * @param args 0..n additional arguments to provide to the listener.
  * @return {EventHandle} the detach handle
  */
-adapt.blur = {
-    on: function() {
-		return Y.Event._attachBlur(arguments, CAPTURE_CONFIG);
-    }
-};
+plugins.blur = eventAdapter;
 
 })();
 

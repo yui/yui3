@@ -54,7 +54,7 @@
     /**
      * <p>
      * Attribute provides configurable attribute support along with attribute change events. It is designed to be 
-     * augmented onto a host class, and provides the host with the ability to configure attributes to store and retrieve state, 
+     * augmented on to a host class, and provides the host with the ability to configure attributes to store and retrieve state, 
      * along with attribute change events.
      * </p>
      * <p>For example, attributes added to the host can be configured:</p>
@@ -533,7 +533,7 @@
                 }
 
                 if (allowSet) {
-                    // Don't need currVal if initialSet (might fail in custom getter)
+                    // Don't need currVal if initialSet (might fail in custom getter if it always expects a non-undefined/non-null value)
                     if (!initialSet) {
                         currVal =  this.get(name);
                     }
@@ -733,7 +733,16 @@
         setAttrs : function(attrs, opts) {
             return this._setAttrs(attrs, opts);
         },
-        
+
+        /**
+         * Implementation behind the public setAttrs method, to set multiple attribute values.
+         *
+         * @method _setAttrs
+         * @protected
+         * @param {Object} attrs  An object with attributes name/value pairs.
+         * @return {Object} A reference to the host object.
+         * @chainable
+         */
         _setAttrs : function(attrs, opts) {
             for (var attr in attrs) {
                 if ( attrs.hasOwnProperty(attr) ) {
@@ -755,6 +764,14 @@
             return this._getAttrs(attrs);
         },
 
+       /**
+         * Implementation behind the public getAttrs method, to get multiple attribute values.
+         *
+         * @method getAttrs
+         * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
+         * returned. If set to true, all attributes modified from their initial values are returned.
+         * @return {Object} An object with attribute name/value pairs.
+         */
         _getAttrs : function(attrs) {
             var host = this,
                 o = {}, 

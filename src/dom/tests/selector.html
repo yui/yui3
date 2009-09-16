@@ -102,8 +102,9 @@ onload = function() {
                 ArrayAssert.itemsAreEqual(all, $('#root-test li'), 'document');
                 ArrayAssert.itemsAreEqual([], $('#root-tes li', Y.DOM.byId('demo')), 'false id document');
 
-                ArrayAssert.itemsAreEqual($('a, a span', Y.DOM.byId('mod1')),
-                    $('a span, a', Y.DOM.byId('mod1')),
+                Assert.areEqual(
+                    $('a span, a', Y.DOM.byId('mod1')).length,
+                    $('a, a span', Y.DOM.byId('mod1')).length,
                     "$('a, a span') === $('a span, a')"); 
 
                 var node = document.createElement('div');
@@ -211,7 +212,8 @@ onload = function() {
                 ArrayAssert.itemsAreEqual([], $('#fake-id-not-in-doc'), 'id false positive');
                 Y.Dom.addClass($('li'), 'first-child');
                 Assert.areEqual(document.getElementById('label-checkbox-unchecked'), $('label[for=checkbox-unchecked]', null, true), 'for attribute');
-                ArrayAssert.itemsAreEqual($('.not-button', Y.DOM.byId('test-inputs')), $('input:not([type=button])', Y.DOM.byId('test-inputs')), 'input[type=radio], input[type=checkbox] = input:not([type=button])');
+                var root = Y.DOM.byId('test-inputs');
+                Assert.areEqual($('.not-button', root).length, $('input:not([type=button])', root).length, '.not-button = input:not([type=button]) - root query');
                 //ArrayAssert.itemsAreEqual(Y.Dom.get('demo2').getElementsByTagName('div'), $('div:contains(child of demo2)', Y.DOM.byId('demo2')), 'div:contains:(child of demo2) ');
                 //Assert.areEqual(document.getElementById('contains-special'), $(':contains(contains "\' & ])'), 'contains "\' & ]');
                 Assert.areEqual(Y.DOM.byId('test-select'), $('#test-select', null, true), "($('#test-select'), null, true)");

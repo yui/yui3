@@ -70,50 +70,9 @@
     <span class="nx">g_counter</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
 
 <span class="k">var</span> <span class="nx">Selector</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">_reLead</span><span class="o">:</span> <span class="sr">/^\s*([&gt;+~]|:self)/</span><span class="o">,</span>
-    <span class="nx">_reUnSupported</span><span class="o">:</span> <span class="sr">/!./g</span><span class="o">,</span>
-
     <span class="nx">_foundCache</span><span class="o">:</span> <span class="o">[],</span>
 
-    <span class="nx">_supportsNative</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c">// whitelist and feature detection to manage</span>
-<span class="c"></span>        <span class="c">// future implementations manually</span>
-<span class="c"></span>        <span class="k">return</span> <span class="o">(</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&gt;=</span> <span class="m">8</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&gt;</span> <span class="m">525</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="c">// || Y.UA.gecko &gt;= 1.9) &amp;&amp;</span>
-<span class="c"></span>            <span class="nb">document</span><span class="o">.</span><span class="nx">querySelectorAll</span><span class="o">);</span>
-    <span class="o">},</span>
-
     <span class="nx">useNative</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-
-    <span class="nx">_toArray</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">nodes</span><span class="o">)</span> <span class="o">{</span> <span class="c">// TODO: move to Y.Array</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">,</span>
-            <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">slice</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">try</span> <span class="o">{</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">nodes</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span> <span class="c">// IE: requires manual copy</span>
-<span class="c"></span>                <span class="nx">ret</span> <span class="o">=</span> <span class="o">[];</span>
-                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">ret</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-    <span class="o">},</span>
-
-    <span class="nx">_clearFoundCache</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">foundCache</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_foundCache</span><span class="o">,</span>
-            <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
-
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">foundCache</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">try</span> <span class="o">{</span> <span class="c">// IE no like delete</span>
-<span class="c"></span>                <span class="nx">delete</span> <span class="nx">foundCache</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">_found</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">foundCache</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">removeAttribute</span><span class="o">(</span><span class="s1">&#39;_found&#39;</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="nx">foundCache</span> <span class="o">=</span> <span class="o">[];</span>
-    <span class="o">},</span>
 
     <span class="nx">_compare</span><span class="o">:</span> <span class="o">(</span><span class="s1">&#39;sourceIndex&#39;</span> <span class="k">in</span> <span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">)</span> <span class="o">?</span>
         <span class="k">function</span><span class="o">(</span><span class="nx">nodeA</span><span class="o">,</span> <span class="nx">nodeB</span><span class="o">)</span> <span class="o">{</span>
@@ -143,8 +102,8 @@
                 <span class="nx">rangeA</span><span class="o">.</span><span class="nx">setStart</span><span class="o">(</span><span class="nx">nodeA</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
                 <span class="nx">rangeB</span> <span class="o">=</span> <span class="nx">nodeB</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">].</span><span class="nx">createRange</span><span class="o">();</span>
                 <span class="nx">rangeB</span><span class="o">.</span><span class="nx">setStart</span><span class="o">(</span><span class="nx">nodeB</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
-                <span class="nx">compare</span> <span class="o">=</span> <span class="nx">rangeA</span><span class="o">.</span><span class="nx">compareBoundaryPoints</span><span class="o">(</span><span class="nx">Range</span><span class="o">.</span><span class="nx">START_TO_END</span><span class="o">,</span> <span class="nx">rangeB</span><span class="o">);</span>
-            <span class="o">}</span>
+                <span class="nx">compare</span> <span class="o">=</span> <span class="nx">rangeA</span><span class="o">.</span><span class="nx">compareBoundaryPoints</span><span class="o">(</span><span class="m">1</span><span class="o">,</span> <span class="nx">rangeB</span><span class="o">);</span> <span class="c">// 1 === Range.START_TO_END</span>
+<span class="c"></span>            <span class="o">}</span>
 
             <span class="k">return</span> <span class="nx">compare</span><span class="o">;</span>
         
@@ -152,7 +111,7 @@
 
     <span class="nx">_sort</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">nodes</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_toArray</span><span class="o">(</span><span class="nx">nodes</span><span class="o">);</span>
+            <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">sort</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">nodes</span><span class="o">.</span><span class="nx">sort</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_compare</span><span class="o">);</span>
             <span class="o">}</span>
@@ -163,79 +122,100 @@
 
     <span class="nx">_deDupe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">nodes</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">cache</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_foundCache</span><span class="o">,</span>
             <span class="nx">i</span><span class="o">,</span> <span class="nx">node</span><span class="o">;</span>
 
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">node</span><span class="o">;</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="o">(</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++]);)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">_found</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ret</span><span class="o">[</span><span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cache</span><span class="o">[</span><span class="nx">cache</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
+                <span class="nx">ret</span><span class="o">[</span><span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
                 <span class="nx">node</span><span class="o">.</span><span class="nx">_found</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
             <span class="o">}</span>
         <span class="o">}</span>
-        <span class="nx">Selector</span><span class="o">.</span><span class="nx">_clearFoundCache</span><span class="o">();</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="o">(</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">ret</span><span class="o">[</span><span class="nx">i</span><span class="o">++]);)</span> <span class="o">{</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">_found</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">removeAttribute</span><span class="o">(</span><span class="s1">&#39;_found&#39;</span><span class="o">);</span>
+        <span class="o">}</span>
+
         <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Retrieves a set of nodes based on a given CSS selector. </span>
+<span class="c">     * @method query</span>
+<span class="c">     *</span>
+<span class="c">     * @param {string} selector The CSS Selector to test the node against.</span>
+<span class="c">     * @param {HTMLElement} root optional An HTMLElement to start the query from. Defaults to Y.config.doc</span>
+<span class="c">     * @param {Boolean} firstOnly optional Whether or not to return only the first match.</span>
+<span class="c">     * @return {Array} An array of nodes that match the given selector.</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">query</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">root</span><span class="o">,</span> <span class="nx">firstOnly</span><span class="o">,</span> <span class="nx">skipNative</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">useNative</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">useNative</span> <span class="o">&amp;&amp;</span> <span class="nb">document</span><span class="o">.</span><span class="nx">querySelector</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">skipNative</span><span class="o">),</span>
+            <span class="nx">queries</span> <span class="o">=</span> <span class="o">[[</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">root</span><span class="o">]],</span>
+            <span class="nx">query</span><span class="o">,</span>
+            <span class="nx">result</span><span class="o">,</span>
+            <span class="nx">i</span><span class="o">,</span>
+            <span class="nx">fn</span> <span class="o">=</span> <span class="o">(</span><span class="nx">useNative</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_nativeQuery</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_bruteQuery</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">selector</span> <span class="o">&amp;&amp;</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// split group into seperate queries</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="nx">skipNative</span> <span class="o">&amp;&amp;</span> <span class="c">// already done if skipping</span>
+<span class="c"></span>                    <span class="o">(!</span><span class="nx">useNative</span> <span class="o">||</span> <span class="nx">root</span><span class="o">.</span><span class="nx">tagName</span><span class="o">))</span> <span class="o">{</span> <span class="c">// split native when element scoping is needed</span>
+<span class="c"></span>                <span class="nx">queries</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_splitQueries</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">root</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="o">(</span><span class="nx">query</span> <span class="o">=</span> <span class="nx">queries</span><span class="o">[</span><span class="nx">i</span><span class="o">++]);)</span> <span class="o">{</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">query</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">query</span><span class="o">[</span><span class="m">1</span><span class="o">],</span> <span class="nx">firstOnly</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">firstOnly</span><span class="o">)</span> <span class="o">{</span> <span class="c">// coerce DOM Collection to Array</span>
+<span class="c"></span>                    <span class="nx">result</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">result</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="nx">result</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">queries</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span> <span class="c">// remove dupes and sort by doc order </span>
+<span class="c"></span>                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_sort</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_deDupe</span><span class="o">(</span><span class="nx">ret</span><span class="o">));</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;query: &#39;</span> <span class="o">+</span> <span class="nx">selector</span> <span class="o">+</span> <span class="s1">&#39; returning: &#39;</span> <span class="o">+</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Selector&#39;</span><span class="o">);</span>
+        <span class="k">return</span> <span class="o">(</span><span class="nx">firstOnly</span><span class="o">)</span> <span class="o">?</span> <span class="o">(</span><span class="nx">ret</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">||</span> <span class="kc">null</span><span class="o">)</span> <span class="o">:</span> <span class="nx">ret</span><span class="o">;</span>
+
     <span class="o">},</span>
 
     <span class="c">// allows element scoped queries to begin with combinator</span>
 <span class="c"></span>    <span class="c">// e.g. query(&#39;&gt; p&#39;, document.body) === query(&#39;body &gt; p&#39;)</span>
-<span class="c"></span>    <span class="nx">_prepQuery</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">root</span><span class="o">,</span> <span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>    <span class="nx">_splitQueries</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">groups</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;,&#39;</span><span class="o">),</span>
             <span class="nx">queries</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">inDoc</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
-            <span class="nx">isDocRoot</span> <span class="o">=</span> <span class="o">(</span><span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="nx">root</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span><span class="o">),</span>
+            <span class="nx">prefix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
             <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">root</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">isDocRoot</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">root</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
-                <span class="c">// break into separate queries for element scoping</span>
-<span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">groups</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">selector</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">root</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">groups</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span> <span class="c">// prepend with root ID</span>
-<span class="c"></span>                    <span class="nx">queries</span><span class="o">.</span><span class="nx">push</span><span class="o">({</span><span class="nx">root</span><span class="o">:</span> <span class="nx">root</span><span class="o">,</span> <span class="nx">selector</span><span class="o">:</span> <span class="nx">selector</span><span class="o">});</span>
-                <span class="o">}</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">queries</span><span class="o">.</span><span class="nx">push</span><span class="o">({</span><span class="nx">root</span><span class="o">:</span> <span class="nx">root</span><span class="o">,</span> <span class="nx">selector</span><span class="o">:</span> <span class="nx">selector</span><span class="o">});</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// enforce for element scoping</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">node</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
+                <span class="nx">prefix</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">groups</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">selector</span> <span class="o">=</span>  <span class="nx">prefix</span> <span class="o">+</span> <span class="nx">groups</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                <span class="nx">queries</span><span class="o">.</span><span class="nx">push</span><span class="o">([</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">node</span><span class="o">]);</span>
             <span class="o">}</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">queries</span><span class="o">;</span>
     <span class="o">},</span>
 
-    <span class="nx">_nativeQuery</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">root</span><span class="o">,</span> <span class="nx">firstOnly</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_reUnSupported</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">selector</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">root</span><span class="o">,</span> <span class="nx">firstOnly</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">firstOnly</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="o">[],</span>
-            <span class="nx">queryName</span> <span class="o">=</span> <span class="nx">firstOnly</span> <span class="o">?</span> <span class="s1">&#39;querySelector&#39;</span> <span class="o">:</span> <span class="s1">&#39;querySelectorAll&#39;</span><span class="o">,</span>
-            <span class="nx">result</span><span class="o">,</span>
-            <span class="nx">queries</span><span class="o">,</span>
-            <span class="nx">i</span><span class="o">,</span> <span class="nx">query</span><span class="o">;</span>
-
-        <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">queries</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_prepQuery</span><span class="o">(</span><span class="nx">root</span><span class="o">,</span> <span class="nx">selector</span><span class="o">);</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="o">[];</span>
-
-            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">query</span><span class="o">;</span> <span class="nx">query</span> <span class="o">=</span> <span class="nx">queries</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span>
-                <span class="k">try</span> <span class="o">{</span>
-                    <span class="nx">result</span> <span class="o">=</span> <span class="nx">query</span><span class="o">.</span><span class="nx">root</span><span class="o">[</span><span class="nx">queryName</span><span class="o">](</span><span class="nx">query</span><span class="o">.</span><span class="nx">selector</span><span class="o">);</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">queryName</span> <span class="o">===</span> <span class="s1">&#39;querySelectorAll&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// convert NodeList to Array</span>
-<span class="c"></span>                        <span class="nx">result</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_toArray</span><span class="o">(</span><span class="nx">result</span><span class="o">);</span>
-                    <span class="o">}</span>
-                    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="nx">result</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;native selector error: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;Selector&#39;</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">queries</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span> <span class="c">// remove dupes and sort by doc order </span>
-<span class="c"></span>                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_sort</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_deDupe</span><span class="o">(</span><span class="nx">ret</span><span class="o">));</span>
-            <span class="o">}</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="o">(</span><span class="nx">firstOnly</span><span class="o">)</span> <span class="o">?</span> <span class="o">(</span><span class="nx">ret</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">||</span> <span class="kc">null</span><span class="o">)</span> <span class="o">:</span> <span class="nx">ret</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+    <span class="nx">_nativeQuery</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">root</span><span class="o">,</span> <span class="nx">one</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;trying native query with: &#39;</span> <span class="o">+</span> <span class="nx">selector</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;selector-native&#39;</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">root</span><span class="o">[</span><span class="s1">&#39;querySelector&#39;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">one</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span> <span class="o">:</span> <span class="s1">&#39;All&#39;</span><span class="o">)](</span><span class="nx">selector</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span> <span class="c">// fallback to brute if available</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;native query error; reverting to brute query with: &#39;</span> <span class="o">+</span> <span class="nx">selector</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;selector-native&#39;</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">root</span><span class="o">,</span> <span class="nx">one</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span> <span class="c">// redo with skipNative true</span>
+<span class="c"></span>        <span class="o">}</span>
     <span class="o">},</span>
 
     <span class="nx">filter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
@@ -243,7 +223,7 @@
             <span class="nx">i</span><span class="o">,</span> <span class="nx">node</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">node</span><span class="o">;</span> <span class="o">(</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++]);)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="o">(</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++]);)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">selector</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">ret</span><span class="o">[</span><span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
                 <span class="o">}</span>
@@ -268,7 +248,7 @@
             <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">node</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">TMP_PREFIX</span> <span class="o">+</span> <span class="nx">g_counter</span><span class="o">++;</span>
             <span class="o">}</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">group</span><span class="o">;</span> <span class="nx">group</span> <span class="o">=</span> <span class="nx">groups</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span> <span class="c">// TODO: off-dom test</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="o">(</span><span class="nx">group</span> <span class="o">=</span> <span class="nx">groups</span><span class="o">[</span><span class="nx">i</span><span class="o">++]);)</span> <span class="o">{</span> <span class="c">// TODO: off-dom test</span>
 <span class="c"></span>                <span class="nx">group</span> <span class="o">+=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">.</span><span class="nx">id</span><span class="o">;</span> <span class="c">// add ID for uniqueness</span>
 <span class="c"></span>                <span class="nx">item</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">group</span><span class="o">,</span> <span class="nx">root</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
                 <span class="nx">ret</span> <span class="o">=</span> <span class="o">(</span><span class="nx">item</span> <span class="o">===</span> <span class="nx">node</span><span class="o">);</span>
@@ -281,15 +261,6 @@
         <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">};</span>
-
-<span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&lt;=</span> <span class="m">8</span><span class="o">)</span> <span class="o">{</span>
-    <span class="nx">Selector</span><span class="o">.</span><span class="nx">_reUnSupported</span> <span class="o">=</span> <span class="sr">/:(?:nth|not|root|only|checked|first|last|empty)/</span><span class="o">;</span>
-<span class="o">}</span>
-
-<span class="c">// allow standalone selector-native module</span>
-<span class="c"></span><span class="k">if</span> <span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_supportsNative</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">useNative</span><span class="o">)</span> <span class="o">{</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span> <span class="o">||</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_nativeQuery</span><span class="o">;</span>
-<span class="o">}</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">,</span> <span class="nx">Selector</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 

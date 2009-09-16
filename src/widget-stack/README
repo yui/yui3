@@ -1,6 +1,6 @@
 3.0.0
 
-+ Recreate iframe shim from TEMPLATE for each instance, instead of
+* Recreate iframe shim from TEMPLATE for each instance, instead of
   cloning a class level cached Node instance, so that ownerDocument
   can be set to match the bounding box.
 
