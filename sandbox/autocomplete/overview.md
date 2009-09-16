@@ -32,16 +32,16 @@ Open question: use FocusManager plugin?  Similar functionality.
 
 ### Attrs
 
-* `value` - The form control's value.  set("value") is typically called by renderer widget when a selection is made.
+* `queryValue` - The form control's value, or a single item in a delimited list.  set("queryValue") is typically called by renderer widget when a selection is made.  Getting this value in the delimited case will return the item where the cursor lives.
 * `focused` - Whether or not the form control is focused.
-* `typeTimeout` - The time in ms to wait between key events before searching.
+* `keyTimeout` - The time in ms to wait between key events before searching.
 * `dataSource` - The datasource object currently being used.  When not set, no requests get made.
 	Bikeshed: Should there be some sugar to not have to create a DataSource manually?  My feeling is
 	that it should be optional, but data:{type:"Get",url:"http://yql.yahoo.com/asdf"} is a bit
 	friendlier.
 * `delimiter` - What counts as a query?  Pass in a string or regex to split on.
 * `minQueryLength` - Minimum number of characters to trigger a query
-* `renderer` - The widget that is going to handle this thing.  If it's defined here, it should support taking the results of the query as an argument to the render() function.  It is also possible to hook the widget onto the ac:queryResult event.  Default is to use an ACRenderer widget.
+* `renderer` - The widget that is going to handle this thing.  If it's defined here, it should support taking the results of the query as an argument to the render() function.  It is also possible to hook the widget onto the ac:queryResult event.  Default is to use an ACDropDown widget.
 
 Maybe something like this for DS sugar?
 
@@ -79,8 +79,6 @@ Maybe something like this for DS sugar?
 ### Events
 
 * `query` - Enough text has been entered, and the sendQuery function is being called on the DataSource if present.  Note that new queries might be made before the old query's data has returned.
-* `queryCancel` - The user unfocused the element before the query returned.  Cancel it.
-* `textEntered` - The enter has entered some text, and paused for required timeout.
 * `characterEntered` - non-control-keydown for westerners, other things for other languages. Hook into this to be clever.
 
 And of course all the goodies it inherits from Plugin and Attribute and Base and whatnot.
@@ -101,8 +99,10 @@ If `sendRequest` is called before returning data, the request should be cancelle
 
 ## Renderer
 
-The renderer object in the default implementation is an `ACRenderer` object, which inherits from `Widget`.
+The renderer object in the default implementation is an `ACDropDown` object, which inherits from `Widget`.
 
 The default renderer will be a simple drop-down list of selectable items.  It exposes a `render` method, which is called by the Controller with a data object returned by the Data Source.
 
 Warning: This seems like it might be opening the door for the M and V to know too much about one another.  The data returned by the Data Source is another API surface, and should be kept small.  Mitigate this by making the ACWidget only accept data of a very specific shape, which is what is returned by the Data Source.  If the user wants to shoot themselves in the foot, they'll find a way no matter what we do.
+
+Some work yet to be done exploring the best ways to do expanding/selectable/list-like widgets.
