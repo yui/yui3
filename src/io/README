@@ -1,3 +1,26 @@
+*** 3.0.0 ***
+
+* Native cross-domain transactions are now supported in io-xdr.  To specify an XDR transaction, set the configuration object with the following properties:
+
+- use: Specify either 'native' or 'flash' as the desired XDR transport.
+- credentials: Set to true if cookies are to be sent with the request.  Does not work with XDomainRequest(e.g., IE8) or the Flash transport.
+- datatType: Set to 'xml' if the response is an XML document.
+
+For example:
+var configuration.xdr = {
+	use: 'flash', //Required -- 'flash' or 'native'.
+	credentials: true, //Optional.
+	dataType: 'xml' //Optional.
+}
+
+The 'use' property is required.  The others are optional or functionality-specific.
+
+When using the native transport, io will fallback to the Flash transport if the browser is not capable of supporting the native mode.  Make sure the resource responds with the correct "Access-Control-Allow-Origin" header before attempting a native XDR request.
+
+* The sub-module 'datatype-xml' is now a dependency for io-xdr, to support XML response data in XDR transactions.
+
+* XDR transport initialization is simplified to one required value -- the path to Flash transport. For example: Y.io.transport({ src:'io.swf' });
+
 *** 3.0.0 beta 1 ***
 
 * The io-queue sub-module now implements YUI Queue.  The io queue interface allows transaction callback handlers to be processed in the order the transactions were sent, regardless of actual server response order.  For example:
@@ -7,9 +30,7 @@
 - However, using the queue interface, the transaction callbacks are processed in the order of: transaction 1, 2, 3.
 
 * All transaction event flows now resolves to "success" or "failure"; the abort
-event was removed.  Transaction abort and timeout conditions resolve to "failure",
-and is distinguishable in the response data.  Specifically, the response
-object's status and statusText properties will be populated as:
+event is removed.  Transaction abort and timeout conditions resolve to "failure", and is distinguishable in the response data.  Specifically, the response object's status and statusText properties will be populated as:
 
 - response.status will be 0.
 - response.statusText will be set to "timeout" or "abort" to differentiate the two possible conditions.
