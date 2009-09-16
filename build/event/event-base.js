@@ -642,7 +642,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
         // @TODO fix arguments
         onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
 
-            var a = Y.Array(id), i;
+            var a = Y.Array(id), i, availHandle;
 
 
             for (i=0; i<a.length; i=i+1) {
@@ -660,7 +660,29 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             // We want the first test to be immediate, but async
             setTimeout(Y.bind(Y.Event._poll, Y.Event), 0);
 
-            return new Y.EventHandle(); // @TODO by id needs a defered handle
+            availHandle = new Y.EventHandle({
+
+                _delete: function() {
+                    // set by the event system for lazy DOM listeners
+                    if (availHandle.handle) {
+                        availHandle.handle.detach();
+                    }
+
+                    var i, j;
+
+                    // otherwise try to remove the onAvailable listener(s)
+                    for (i = 0; i < a.length; i++) {
+                        for (j = 0; j < _avail.length; j++) {
+                            if (a[i] == _avail[j].id) {
+                                _avail.splice(j, 1);
+                            }
+                        }
+                    }
+                }
+
+            });
+
+            return availHandle;
         },
 
         /**
@@ -799,7 +821,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     handles.push(E._attach(args, config));
                 });
 
-                return (handles.length === 1) ? handles[0] : handles;
+                // return (handles.length === 1) ? handles[0] : handles;
+                return new Y.EventHandle(handles);
 
             // If the el argument is a string, we assume it is 
             // actually the id of the element.  If the page is loaded
@@ -836,9 +859,13 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 // Not found = defer adding the event until the element is available
                 } else {
 
-                    return this.onAvailable(el, function() {
-                        E._attach(args, config);
+                    ret = this.onAvailable(el, function() {
+                        
+                        ret.handle = E._attach(args, config);
+
                     }, E, true, false, compat);
+
+                    return ret;
 
                 }
             }
@@ -913,7 +940,6 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 return type.detach();
             }
 
-
             // The el argument can be a string
             if (typeof el == "string") {
 
@@ -949,7 +975,6 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 return ok;
 
             }
-
 
             if (!type || !fn || !fn.call) {
                 return this.purgeElement(el, false, type);
