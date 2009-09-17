@@ -222,11 +222,12 @@ YUI.add('oop', function(Y) {
      */
     Y.clone = function(o, safe, f, c, owner) {
 
+
         if (!L.isObject(o)) {
             return o;
         }
 
-        var o2;
+        var Node = Y.Node, o2;
 
         switch (L.type(o)) {
             case 'date':
@@ -240,6 +241,10 @@ YUI.add('oop', function(Y) {
                 o2 = [];
                 break;
             default:
+                // workaround for #2528250
+                if (Node && o instanceof Node) {
+                    return new Node(o._node);
+                }
                 o2 = (safe) ? {} : Y.Object(o);
         }
 
