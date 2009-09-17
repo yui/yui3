@@ -1,4 +1,4 @@
-**** version 3.0.0 GA ***
+**** version 3.0.0 ***
 
 #2528096 Updated initialization routine so plugins load before DD attachs to the node.
 
