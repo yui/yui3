@@ -46,7 +46,7 @@ YUI({
     base : '../../../build/',
     filter : 'debug',
     logInclude : { TestRunner: true }
-}).use('test','console','queue-run','io-base',function (Y) {
+}).use('test','console','async-queue','io-base',function (Y) {
 
 var suite = new Y.Test.Suite("Tests");
 
