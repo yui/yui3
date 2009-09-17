@@ -141,6 +141,7 @@ var NOT_FOUND = {},
     NODE = 'node',
     NODEBASE = 'node-base',
     NODESTYLE = 'node-style',
+    NODESCREEN = 'node-screen',
     OOP = 'oop',
     PLUGINHOST = 'pluginhost',
     SELECTORCSS2 = 'selector-css2',
@@ -262,7 +263,7 @@ var NOT_FOUND = {},
                 },
 
                 'anim-xy': {
-                    requires: [ANIMBASE, 'node-screen']
+                    requires: [ANIMBASE, NODESCREEN]
                 },
 
                 'anim-curve': {
@@ -495,7 +496,7 @@ var NOT_FOUND = {},
         },
 
         imageloader: { 
-            requires: [BASEBASE, DOMSCREEN, NODE]
+            requires: [BASEBASE, NODESTYLE, NODESCREEN]
         },
 
         io:{

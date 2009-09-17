@@ -5,7 +5,7 @@ YUI.add('imageloader', function(Y) {
  * enabling faster load times and a more responsive UI.
  *
  * @module imageloader
- * @requires base-base, dom-screen, node
+ * @requires base-base, node-style, node-screen
  */
 
 
@@ -625,4 +625,4 @@ YUI.add('imageloader', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base-base', 'dom-screen', 'node']});
+}, '@VERSION@' ,{requires:['base-base', 'node-style', 'node-screen']});
