@@ -92,7 +92,7 @@ var Event = Y.Event,
 			           });
 
 					if (fn) {
-						fn(e, matched, ename);
+						fn(ev, ename);
 					}
 					else {
                     	Y.fire(ename, ev);								
@@ -219,39 +219,35 @@ Event.delegate = function (type, fn, el, spec) {
 
     var args = Y.Array(arguments, 0, true),	    
 		element = el,	// HTML element serving as the delegation container
-		handles;
+		availHandle;	
 
 
 	if (Lang.isString(el)) {
 		
-		element = Y.Selector.query(el);	// Y.Selector.query always returns an array
+		//	Y.Selector.query returns an array of matches unless specified 
+		//	to return just the first match.  Since the primary use case for
+		//	event delegation is to use a single event handler on a container,
+		//	Y.delegate doesn't currently support being able to bind a 
+		//	single listener to multiple containers.
 		
-		if (element.length === 0) { // Not found, check using onAvailable
+		element = Y.Selector.query(el, null, true);
+		
+		if (!element) { // Not found, check using onAvailable
 
-            return Event.onAvailable(el, function() {
-                Event.delegate.apply(Event, args);
+			availHandle = Event.onAvailable(el, function() {
+
+				availHandle.handle = Event.delegate.apply(Event, args);
+
             }, Event, true, false);
+
+            return availHandle;
 			
 		}
 		
 	}
 
 
-	if (Event._isValidCollection(element)) {
-
-        handles = [];
-        
-        Y.each(element, function(v, k) {
-            args[2] = v;
-            handles.push(Event.delegate.apply(Event, args));
-        });
-
-        return (handles.length === 1) ? handles[0] : handles;
-
-	}
-
-
-	element = Y.Node.getDOMNode(el);
+	element = Y.Node.getDOMNode(element);
 
 
 	var	guid = Y.stamp(element),
@@ -283,6 +279,7 @@ Event.delegate = function (type, fn, el, spec) {
 			
 			type = specialTypes[type];
 			delegate.fn = Event._fireMouseEnter;
+			
 		}
 
 		//	Create the DOM Event wrapper that will fire the Custom Event
