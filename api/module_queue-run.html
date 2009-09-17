@@ -50,10 +50,11 @@
 
                     </h3>
                     <div class="description summary">
-                        <p>Adds a new class AsyncQueue that is restricted to function callbacks, but
-includes a host of additional features, including events, callback
-iterations, and a run() method that can execute queued callbacks in order,
-even across configured timeouts.</p>
+                        <p>AsyncQueue allows you create a chain of function callbacks executed
+via setTimeout (or synchronously) that are guaranteed to run in order.
+Items in the queue can be promoted or removed.  Start or resume the
+execution chain with run().  pause() to temporarily delay execution, or
+stop() to halt and clear the queue.</p>
                     </div>
 
 
