@@ -1143,11 +1143,10 @@
 <span class="c">     *</span>
 <span class="c">     * @method _htmlEscapeMessage</span>
 <span class="c">     * @param m {Object} the normalized message object</span>
-<span class="c">     * @return Object a clone of the message object with proper escapement</span>
+<span class="c">     * @return Object the message object with proper escapement</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_htmlEscapeMessage</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">m</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">m</span><span class="o">);</span>
         <span class="nx">m</span><span class="o">.</span><span class="nx">message</span>         <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_encodeHTML</span><span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">message</span><span class="o">);</span>
         <span class="nx">m</span><span class="o">.</span><span class="nx">source</span>          <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_encodeHTML</span><span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">source</span><span class="o">);</span>
         <span class="nx">m</span><span class="o">.</span><span class="nx">sourceAndDetail</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_encodeHTML</span><span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">sourceAndDetail</span><span class="o">);</span>
