@@ -527,7 +527,7 @@ Y.mix(Node.prototype, {
         var node = this._node,
             ret = Y.DOM.byId(id, node[OWNER_DOCUMENT]);
         if (ret && Y.DOM.contains(node, ret)) {
-            ret = Y.get(ret);
+            ret = Y.one(ret);
         } else {
             ret = null;
         }
@@ -577,7 +577,7 @@ Y.mix(Node.prototype, {
      * @return {Node} A Node instance for the matching HTMLElement.
      */
     one: function(selector) {
-        return Y.get(Y.Selector.query(selector, this._node, true));
+        return Y.one(Y.Selector.query(selector, this._node, true));
     },
 
     /**

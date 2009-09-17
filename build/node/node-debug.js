@@ -529,7 +529,7 @@ Y.mix(Node.prototype, {
         var node = this._node,
             ret = Y.DOM.byId(id, node[OWNER_DOCUMENT]);
         if (ret && Y.DOM.contains(node, ret)) {
-            ret = Y.get(ret);
+            ret = Y.one(ret);
         } else {
             ret = null;
         }
@@ -579,7 +579,7 @@ Y.mix(Node.prototype, {
      * @return {Node} A Node instance for the matching HTMLElement.
      */
     one: function(selector) {
-        return Y.get(Y.Selector.query(selector, this._node, true));
+        return Y.one(Y.Selector.query(selector, this._node, true));
     },
 
     /**
@@ -958,7 +958,7 @@ Y.mix(NodeList.prototype, {
      * @return {Node} The Node instance at the given index.
      */
     item: function(index) {
-        return Y.get((this._nodes || [])[index]);
+        return Y.one((this._nodes || [])[index]);
     },
 
     /**
@@ -973,7 +973,7 @@ Y.mix(NodeList.prototype, {
     each: function(fn, context) {
         var instance = this;
         Y.Array.each(this._nodes, function(node, index) {
-            node = Y.get(node);
+            node = Y.one(node);
             return fn.call(context || node, node, index, instance);
         });
         return instance;
@@ -1005,7 +1005,7 @@ Y.mix(NodeList.prototype, {
     some: function(fn, context) {
         var instance = this;
         return Y.Array.some(this._nodes, function(node, index) {
-            node = Y.get(node);
+            node = Y.one(node);
             context = context || node;
             return fn.call(context, node, index, instance);
         });
@@ -1017,7 +1017,7 @@ Y.mix(NodeList.prototype, {
      * @return Node a Node instance bound to the documentFragment
      */
     toFrag: function() {
-        return Y.get(Y.DOM._nl2frag(this._nodes));
+        return Y.one(Y.DOM._nl2frag(this._nodes));
     },
 
     /**
@@ -1917,14 +1917,14 @@ Y.mix(Y.Node, Y.Plugin.Host, false, null, 1);
 Y.NodeList.prototype.plug = function() {
     var args = arguments;
     Y.NodeList.each(this, function(node) {
-        Y.Node.prototype.plug.apply(Y.get(node), args);
+        Y.Node.prototype.plug.apply(Y.one(node), args);
     });
 };
 
 Y.NodeList.prototype.unplug = function() {
     var args = arguments;
     Y.NodeList.each(this, function(node) {
-        Y.Node.prototype.unplug.apply(Y.get(node), args);
+        Y.Node.prototype.unplug.apply(Y.one(node), args);
     });
 };
 
