@@ -5,7 +5,7 @@
 </head>
 
 <body class="yui-skin-sam">
-<h1>OOP Tests</h1>
+<h1 id="header1">OOP Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
@@ -19,7 +19,7 @@
         // logInclude: ['event', 'test']
         //logExclude: ['Dom', 'Selector', 'Node', 'attribute']
         logExclude: {Dom:true, Selector:true, Node:true, attribute:true, event:true, base:true}
-    }).use("dump", "test", "console", "event-custom", function(Y) {
+    }).use("dump", "test", "console", function(Y) {
 
         var button = Y.get('#btnRun'),
             Assert = Y.Assert,
@@ -154,6 +154,19 @@
                 Assert.isTrue((d.a === 1));
                 Assert.isTrue((d.c() === 3));
 
+            },
+
+            test_clone_node: function() {
+
+                var a = {
+                    node: Y.one('#header1'),
+                    el: document.getElementById('header1')
+                };
+
+                var b = Y.clone(a);
+                b.node.foo = 'bar';
+
+                Assert.isFalse(b.node.foo === a.node.foo);
 
             }
 

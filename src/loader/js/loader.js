@@ -568,8 +568,15 @@ var NOT_FOUND = {},
             requires: [YUIBASE]
         },
 
+        // deprecated package, replaced with async-queue
         'queue-run': {
-            requires: [EVENTCUSTOM]
+            requires: [EVENTCUSTOM],
+            path: 'async-queue/async-queue-min.js'
+        },
+
+        'async-queue': {
+            requires: [EVENTCUSTOM],
+            supersedes: ['queue-run']
         },
 
         slider: {
