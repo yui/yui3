@@ -666,6 +666,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     // set by the event system for lazy DOM listeners
                     if (availHandle.handle) {
                         availHandle.handle.detach();
+						return;
                     }
 
                     var i, j;
