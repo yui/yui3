@@ -10,7 +10,23 @@ YUI.add('oop', function(Y) {
 
     var L  = Y.Lang, 
         A  = Y.Array,
-        OP = Object.prototype;
+        OP = Object.prototype,
+        CLONE_MARKER = "_~yuim~_";
+
+        // dispatch = function(o, f, c, proto, action) {
+        //     if (o[action] && o.item) {
+        //         return o[action].call(o, f, c);
+        //     } else {
+        //         switch (A.test(o)) {
+        //             case 1:
+        //                 return A[action](o, f, c);
+        //             case 2:
+        //                 return A[action](Y.Array(o, 0, true), f, c);
+        //             default:
+        //                 return Y.Object[action](o, f, c, proto);
+        //         }
+        //     }
+        // };
 
     /**
      * The following methods are added to the YUI instance
@@ -195,6 +211,27 @@ YUI.add('oop', function(Y) {
         // return Y.Object.each(o, f, c);
     };
 
+    // Y.each = function(o, f, c, proto) {
+    //     return dispatch(o, f, c, proto, 'each');
+    // };
+
+    /*
+     * Executes the supplied function for each item in
+     * a collection.  The operation stops if the function
+     * returns true. Supports arrays, objects, and
+     * Y.NodeLists.
+     * @method some
+     * @param o the object to iterate
+     * @param f the function to execute.  This function
+     * receives the value, key, and object as parameters
+     * @param proto if true, prototype properties are
+     * iterated on objects
+     * @return {boolean} true if the function ever returns true, false otherwise
+     */
+    // Y.some = function(o, f, c, proto) {
+    //     return dispatch(o, f, c, proto, 'some');
+    // };
+
     /**
      * Deep obj/array copy.  Functions are cloned with Y.bind.
      * Array-like objects are treated as arrays.
@@ -220,13 +257,13 @@ YUI.add('oop', function(Y) {
      * object.  Used to set up context for cloned functions.
      * @return {Array|Object} the cloned object
      */
-    Y.clone = function(o, safe, f, c, owner) {
+    Y.clone = function(o, safe, f, c, owner, cloned) {
 
         if (!L.isObject(o)) {
             return o;
         }
 
-        var o2;
+        var o2, marked = cloned || {}, stamp;
 
         switch (L.type(o)) {
             case 'date':
@@ -240,14 +277,37 @@ YUI.add('oop', function(Y) {
                 o2 = [];
                 break;
             default:
+
+                // #2528250 only one clone of a given object should be created.
+                if (o[CLONE_MARKER]) {
+                    return marked[o[CLONE_MARKER]];
+                }
+
+                stamp = Y.guid();
+
                 o2 = (safe) ? {} : Y.Object(o);
+
+                o[CLONE_MARKER] = stamp;
+                marked[stamp] = o;
         }
 
-        Y.each(o, function(v, k) {
-            if (!f || (f.call(c || this, v, k, this, o) !== false)) {
-                this[k] =  Y.clone(v, safe, f, c, owner || o);
-            }
-        }, o2);
+        // #2528250 don't try to clone element properties
+        if (!o.addEventListener && !o.attachEvent) {
+            Y.each(o, function(v, k) {
+                if (!f || (f.call(c || this, v, k, this, o) !== false)) {
+                    if (k !== CLONE_MARKER) {
+                        this[k] = Y.clone(v, safe, f, c, owner || o, marked);
+                    }
+                }
+            }, o2);
+        }
+
+        if (!cloned) {
+            Y.each(marked, function(v, k) {
+                delete v[CLONE_MARKER];
+            });
+            marked = null;
+        }
 
         return o2;
     };

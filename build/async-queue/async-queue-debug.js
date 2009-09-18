@@ -1,3 +1,5 @@
+YUI.add('async-queue', function(Y) {
+
 /**
  * <p>AsyncQueue allows you create a chain of function callbacks executed
  * via setTimeout (or synchronously) that are guaranteed to run in order.
@@ -5,7 +7,7 @@
  * execution chain with run().  pause() to temporarily delay execution, or
  * stop() to halt and clear the queue.</p>
  *
- * @module queue-run
+ * @module async-queue
  */
 
 /**
@@ -522,3 +524,6 @@ Y.extend(Queue, Y.EventTarget, {
     }
 });
 
+
+
+}, '@VERSION@' ,{requires:['event-custom']});
