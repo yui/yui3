@@ -20,7 +20,7 @@ Y.Node.ATTRS.type = {
             try { // IE errors when changing the type from "hidden'
                 this._node.type = val;
             } catch (e) {
-                Y.log('error setting type: ' + val, 'info', node');
+                Y.log('error setting type: ' + val, 'info', 'node');
             }
         }
         return val;
