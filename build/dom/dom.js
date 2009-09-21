@@ -1913,7 +1913,9 @@ var Selector = {
                 if (!firstOnly) { // coerce DOM Collection to Array
                     result = Y.Array(result, 0, true);
                 }
-                ret = ret.concat(result);
+                if (result) {
+                    ret = ret.concat(result);
+                }
             }
 
             if (queries.length > 1) { // remove dupes and sort by doc order 
