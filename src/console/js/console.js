@@ -1094,11 +1094,10 @@ Y.extend(Console,Y.Widget,{
      *
      * @method _htmlEscapeMessage
      * @param m {Object} the normalized message object
-     * @return Object a clone of the message object with proper escapement
+     * @return Object the message object with proper escapement
      * @protected
      */
     _htmlEscapeMessage : function (m) {
-        m = Y.clone(m);
         m.message         = this._encodeHTML(m.message);
         m.source          = this._encodeHTML(m.source);
         m.sourceAndDetail = this._encodeHTML(m.sourceAndDetail);

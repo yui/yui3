@@ -12,7 +12,7 @@
 YUI({
     base : '../../../build/',
     filter : 'debug'
-}).use('queue','io-base', 'node', function (Y) {
+}).use('async-queue','io-base', 'node', function (Y) {
 
     function f(message) {
         document.getElementById('results').appendChild(

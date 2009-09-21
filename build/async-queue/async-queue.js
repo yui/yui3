@@ -1,4 +1,4 @@
-YUI.add('queue-run', function(Y) {
+YUI.add('async-queue', function(Y) {
 
 /**
  * <p>AsyncQueue allows you create a chain of function callbacks executed
@@ -7,7 +7,7 @@ YUI.add('queue-run', function(Y) {
  * execution chain with run().  pause() to temporarily delay execution, or
  * stop() to halt and clear the queue.</p>
  *
- * @module queue-run
+ * @module async-queue
  */
 
 /**

@@ -1824,6 +1824,33 @@ O.each = function (o, f, c, proto) {
     return Y;
 };
 
+/*
+ * Executes a function on each item, but halts if the
+ * function returns true.  The function
+ * receives the value, the key, and the object
+ * as paramters (in that order).
+ * @method some
+ * @static
+ * @param o the object to iterate
+ * @param f {Function} the function to execute on each item. The function 
+ * receives three arguments: the value, the the key, the full object.
+ * @param c the execution context
+ * @param proto {boolean} include proto
+ * @return {boolean} true if any execution of the function returns true, false otherwise
+ */
+// O.some = function (o, f, c, proto) {
+//     var s = c || Y, i;
+// 
+//     for (i in o) {
+//         if (proto || o.hasOwnProperty(i)) {
+//             if (f.call(s, o[i], i, o)) {
+//                 return true;
+//             }
+//         }
+//     }
+//     return false;
+// };
+
 /**
  * Retrieves the sub value at the provided path,
  * from the value object provided.

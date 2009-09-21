@@ -210,6 +210,33 @@
     <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
 <span class="o">};</span>
 
+<span class="c">/*</span>
+<span class="c"> * Executes a function on each item, but halts if the</span>
+<span class="c"> * function returns true.  The function</span>
+<span class="c"> * receives the value, the key, and the object</span>
+<span class="c"> * as paramters (in that order).</span>
+<span class="c"> * @method some</span>
+<span class="c"> * @static</span>
+<span class="c"> * @param o the object to iterate</span>
+<span class="c"> * @param f {Function} the function to execute on each item. The function </span>
+<span class="c"> * receives three arguments: the value, the the key, the full object.</span>
+<span class="c"> * @param c the execution context</span>
+<span class="c"> * @param proto {boolean} include proto</span>
+<span class="c"> * @return {boolean} true if any execution of the function returns true, false otherwise</span>
+<span class="c"> */</span>
+<span class="c">// O.some = function (o, f, c, proto) {</span>
+<span class="c">//     var s = c || Y, i;</span>
+<span class="c">// </span>
+<span class="c">//     for (i in o) {</span>
+<span class="c">//         if (proto || o.hasOwnProperty(i)) {</span>
+<span class="c">//             if (f.call(s, o[i], i, o)) {</span>
+<span class="c">//                 return true;</span>
+<span class="c">//             }</span>
+<span class="c">//         }</span>
+<span class="c">//     }</span>
+<span class="c">//     return false;</span>
+<span class="c">// };</span>
+<span class="c"></span>
 <span class="c">/**</span>
 <span class="c"> * Retrieves the sub value at the provided path,</span>
 <span class="c"> * from the value object provided.</span>
@@ -277,6 +304,7 @@
                         <h4>Modules</h4>
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
@@ -306,7 +334,6 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

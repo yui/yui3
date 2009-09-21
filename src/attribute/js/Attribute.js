@@ -32,6 +32,7 @@
         VALUE_FN = "valueFn",
         BROADCAST = "broadcast",
         LAZY_ADD = "lazyAdd",
+        BYPASS_PROXY = "_bypassProxy",
 
         // Used for internal state management
         ADDED = "added",
@@ -129,7 +130,7 @@
      * @static
      * @protected
      */
-    Attribute._ATTR_CFG = [SETTER, GETTER, VALIDATOR, VALUE, VALUE_FN, WRITE_ONCE, READ_ONLY, LAZY_ADD, BROADCAST];
+    Attribute._ATTR_CFG = [SETTER, GETTER, VALIDATOR, VALUE, VALUE_FN, WRITE_ONCE, READ_ONLY, LAZY_ADD, BROADCAST, BYPASS_PROXY];
 
     Attribute.prototype = {
         /**
@@ -188,6 +189,8 @@
          * <p>The setter, getter and validator are invoked with the value and name passed in as the first and second arguments, and with
          * the context ("this") set to the host object.</p>
          *
+         * <p>Configuration properties outside of the list mentioned above are considered private properties used internally by attribute, and are not intended for public use.</p>
+         * 
          * @method addAttr
          *
          * @param {String} name The name of the attribute.
@@ -214,8 +217,6 @@
                 hasValue;
 
             lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
-
-            if (host._stateProxy && host._stateProxy[name]) { Y.log('addAttr: ' + name + ' exists on the _stateProxy object. The newly added attribute will override the use of _stateProxy for this attribute', 'warn', 'attribute'); }
 
             if (lazy && !host.attrAdded(name)) {
                 state.add(name, LAZY, config || {});
@@ -627,11 +628,7 @@
          */
         _getStateVal : function(name) {
             var stateProxy = this._stateProxy;
-            if (!stateProxy || this.attrAdded(name)) {
-                return this._state.get(name, VALUE);
-            } else {
-                return (stateProxy && stateProxy[name]);
-            }
+            return stateProxy && (name in stateProxy) && !this._state.get(name, BYPASS_PROXY) ? stateProxy[name] : this._state.get(name, VALUE);
         },
 
         /**
@@ -645,10 +642,10 @@
          */
         _setStateVal : function(name, value) {
             var stateProxy = this._stateProxy;
-            if (!stateProxy || this.attrAdded(name)) {
-                this._state.add(name, VALUE, value);
+            if (stateProxy && (name in stateProxy) && !this._state.get(name, BYPASS_PROXY)) {
+                stateProxy[name] = value;
             } else {
-                stateProxy[name] = value;             
+                this._state.add(name, VALUE, value);
             }
         },
 
@@ -674,7 +671,7 @@
                 validator = state.get(attrName, VALIDATOR),
                 setter = state.get(attrName, SETTER),
                 initializing = state.get(attrName, INITIALIZING),
-                prevValRaw = state.get(attrName, VALUE),
+                prevValRaw = this._getStateVal(attrName),
 
                 name = subAttrName || attrName,
                 retVal,
@@ -896,9 +893,8 @@
         },
 
         /**
-         * Utility method to split out simple attribute name/value pairs ("x") 
-         * from complex attribute name/value pairs ("x.y.z"), so that complex
-         * attributes can be keyed by the top level attribute name.
+         * Utility method to normalize attribute values. The base implementation 
+         * simply merges the hash to protect the original.
          *
          * @method _normAttrVals
          * @param {Object} valueHash An object with attribute name/value pairs
