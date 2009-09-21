@@ -294,6 +294,7 @@
 <span class="c"> * @static</span>
 <span class="c"> * @param {String} html The markup used to create the element</span>
 <span class="c"> * @param {HTMLDocument} doc An optional document context </span>
+<span class="c"> * @return {Node} A Node instance bound to a DOM node or fragment </span>
 <span class="c"> */</span>
 <span class="nx">Node</span><span class="o">.</span><span class="nx">create</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
     <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">create</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">));</span>
@@ -539,6 +540,7 @@
 <span class="c">     * @method create</span>
 <span class="c">     * @param {String} html The markup used to create the element</span>
 <span class="c">     * @param {HTMLDocument} doc An optional document context </span>
+<span class="c">     * @return {Node} A Node instance bound to a DOM node or fragment </span>
 <span class="c">     */</span>
     <span class="nx">create</span><span class="o">:</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">,</span>
 
