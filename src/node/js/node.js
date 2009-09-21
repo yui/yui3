@@ -245,6 +245,7 @@ Node.get = function() {
  * @static
  * @param {String} html The markup used to create the element
  * @param {HTMLDocument} doc An optional document context 
+ * @return {Node} A Node instance bound to a DOM node or fragment 
  */
 Node.create = function() {
     return Node.get(Y.DOM.create.apply(Y.DOM, arguments));
@@ -490,6 +491,7 @@ Y.mix(Node.prototype, {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
+     * @return {Node} A Node instance bound to a DOM node or fragment 
      */
     create: Node.create,
 
