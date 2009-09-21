@@ -719,8 +719,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * @static
          */
 
-        // attach: function(type, fn, el, context) {
-        attach: function() {
+        attach: function(type, fn, el, context) {
             return Y.Event._attach(Y.Array(arguments, 0, true));
         },
 
@@ -1273,7 +1272,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @private
          */
         _unload: function(e) {
-            Y.fire('yui:unload', e);
             Y.each(_wrappers, function(v, k) {
                 v.detachAll();
                 remove(v.el, v.type, v.fn, v.capture);
@@ -1326,18 +1324,7 @@ if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll, Event, true);
 }
 
-// unload listeners must be processed before we remove all listeners
-// in _unload
-Y.Env.evt.plugins.unload = {
-    on: function() {
-		var args = Y.Array(arguments, 0, true);
-        args[0] = 'yui:unload';
-        return Y.on.apply(Y, args);
-    }
-};
-
-add(window, "unload", onUnload);
-
+Y.on("unload", onUnload);
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;
@@ -1346,7 +1333,6 @@ Event.Handle = Y.EventHandle;
 Event.Facade = Y.EventFacade;
 
 Event._poll();
-
 
 })();
 
