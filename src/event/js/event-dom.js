@@ -291,7 +291,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * @static
          */
 
-        attach: function(type, fn, el, context) {
+        // attach: function(type, fn, el, context) {
+        attach: function() {
             return Y.Event._attach(Y.Array(arguments, 0, true));
         },
 

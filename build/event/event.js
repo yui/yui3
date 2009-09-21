@@ -206,8 +206,6 @@ var whitelist = {
      */
     resolve = function(n) {
 
-        var go, test;
-
         if (!n) {
             return null;
         }
@@ -215,21 +213,11 @@ var whitelist = {
         try {
             if (ua.webkit && 3 == n.nodeType) {
                 n = n.parentNode;
-            } 
-        } catch(e1) { }
-
-        if (ua.gecko) {
-            while (!go) {
-                try {
-                    test = n._yuid;
-                    go = true;
-                } catch(e2) {
-                    n = n.parentNode;
-                    if (!n) {
-                        return null;
-                    }
-                }
+            } else if (ua.gecko) {
+                var test = n._yuid;
             }
+        } catch(e2) {
+            return null;
         }
 
         return Y.Node.get(n);
@@ -729,7 +717,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * @static
          */
 
-        attach: function(type, fn, el, context) {
+        // attach: function(type, fn, el, context) {
+        attach: function() {
             return Y.Event._attach(Y.Array(arguments, 0, true));
         },
 
