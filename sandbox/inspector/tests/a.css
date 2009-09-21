@@ -1,0 +1,10 @@
+.yui-skin-sam .yui-console-entry-cat {
+    background-color: #000;
+    border: 5px solid #000;
+    font-size: 20px !important; /* !important from inherited sel trump? */
+    text-transform: lowercase;
+}
+.yui-skin-sam .demo .yui-console-entry-info .yui-console-entry-cat {
+    background-color: #abc;
+    color: red !important;
+}
