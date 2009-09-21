@@ -1562,11 +1562,24 @@ Y.Node.ATTRS.type = {
             try {
                 this._node.type = 'hidden';
             } catch(e) {
-                this._node.style.display = 'none';
+                this.setStyle('display', 'none');
+                this._inputType = 'hidden';
+            }
+        } else {
+            try {
+                this._node.type = val;
+            } catch (e) {
+                Y.log('error setting type: ' + val, 'info', node');
             }
         }
         return val;
-    }
+    },
+
+    getter: function() {
+        return this._inputType || this._node.type;
+    },
+
+    _bypassProxy: true // don't update DOM when using with Attribute
 };
 
 
