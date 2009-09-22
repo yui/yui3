@@ -4,6 +4,10 @@ YUI Custom Events
 3.0.0
     - Broken into core base and complex modules.
     - broadcast works for simple events.
+    - If configured to return an event handle, the return value
+      will always be a single object, regardless of how many listeners
+      were attached.  Previously, multiple listeners provided an array
+      of detach handles.
 
 3.0.0beta1
     - Implemented the broadcast flag.  broadcast = 1: local, accessible

@@ -294,6 +294,7 @@
 <span class="c"> * @static</span>
 <span class="c"> * @param {String} html The markup used to create the element</span>
 <span class="c"> * @param {HTMLDocument} doc An optional document context </span>
+<span class="c"> * @return {Node} A Node instance bound to a DOM node or fragment </span>
 <span class="c"> */</span>
 <span class="nx">Node</span><span class="o">.</span><span class="nx">create</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
     <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">create</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">));</span>
@@ -539,6 +540,7 @@
 <span class="c">     * @method create</span>
 <span class="c">     * @param {String} html The markup used to create the element</span>
 <span class="c">     * @param {HTMLDocument} doc An optional document context </span>
+<span class="c">     * @return {Node} A Node instance bound to a DOM node or fragment </span>
 <span class="c">     */</span>
     <span class="nx">create</span><span class="o">:</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">,</span>
 
@@ -576,7 +578,7 @@
         <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">byId</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">]);</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">ret</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ret</span><span class="o">);</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">ret</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
         <span class="o">}</span>
@@ -626,7 +628,7 @@
 <span class="c">     * @return {Node} A Node instance for the matching HTMLElement.</span>
 <span class="c">     */</span>
     <span class="nx">one</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -874,6 +876,7 @@
                         <h4>Modules</h4>
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
@@ -903,7 +906,6 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

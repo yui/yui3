@@ -9,7 +9,7 @@ The YUI Global
 
 3.0.0
 
-* Extracted the loader from the seed file.  Instead, if loader not included, 'get is included,
+* Extracted the loader from the seed file.  Instead, if loader not included, 'get' is included,
   and dependencies are missing, the loader will be fetched before continuing.
 * User agent detection is more granular.  e.g., FireFox 3.5 reports gecko 1.91 rather than 1.9.
 * Fixed UA.os.

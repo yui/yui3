@@ -203,7 +203,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
         // @TODO fix arguments
         onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
 
-            var a = Y.Array(id), i;
+            var a = Y.Array(id), i, availHandle;
 
             // Y.log('onAvailable registered for: ' + id);
 
@@ -222,7 +222,30 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             // We want the first test to be immediate, but async
             setTimeout(Y.bind(Y.Event._poll, Y.Event), 0);
 
-            return new Y.EventHandle(); // @TODO by id needs a defered handle
+            availHandle = new Y.EventHandle({
+
+                _delete: function() {
+                    // set by the event system for lazy DOM listeners
+                    if (availHandle.handle) {
+                        availHandle.handle.detach();
+						return;
+                    }
+
+                    var i, j;
+
+                    // otherwise try to remove the onAvailable listener(s)
+                    for (i = 0; i < a.length; i++) {
+                        for (j = 0; j < _avail.length; j++) {
+                            if (a[i] === _avail[j].id) {
+                                _avail.splice(j, 1);
+                            }
+                        }
+                    }
+                }
+
+            });
+
+            return availHandle;
         },
 
         /**
@@ -363,7 +386,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     handles.push(E._attach(args, config));
                 });
 
-                return (handles.length === 1) ? handles[0] : handles;
+                // return (handles.length === 1) ? handles[0] : handles;
+                return new Y.EventHandle(handles);
 
             // If the el argument is a string, we assume it is 
             // actually the id of the element.  If the page is loaded
@@ -401,10 +425,14 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 } else {
 
                     // Y.log(el + ' not found');
-                    return this.onAvailable(el, function() {
+                    ret = this.onAvailable(el, function() {
                         // Y.log('lazy attach: ' + args);
-                        E._attach(args, config);
+                        
+                        ret.handle = E._attach(args, config);
+
                     }, E, true, false, compat);
+
+                    return ret;
 
                 }
             }
@@ -480,7 +508,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return type.detach();
             }
 
-
             // The el argument can be a string
             if (typeof el == "string") {
 
@@ -516,7 +543,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return ok;
 
             }
-
 
             if (!type || !fn || !fn.call) {
                 return this.purgeElement(el, false, type);
@@ -870,7 +896,7 @@ if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll, Event, true);
 }
 
-add(window, "unload", onUnload);
+Y.on("unload", onUnload);
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;

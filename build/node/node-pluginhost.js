@@ -39,14 +39,14 @@ Y.mix(Y.Node, Y.Plugin.Host, false, null, 1);
 Y.NodeList.prototype.plug = function() {
     var args = arguments;
     Y.NodeList.each(this, function(node) {
-        Y.Node.prototype.plug.apply(Y.get(node), args);
+        Y.Node.prototype.plug.apply(Y.one(node), args);
     });
 };
 
 Y.NodeList.prototype.unplug = function() {
     var args = arguments;
     Y.NodeList.each(this, function(node) {
-        Y.Node.prototype.unplug.apply(Y.get(node), args);
+        Y.Node.prototype.unplug.apply(Y.one(node), args);
     });
 };
 

@@ -206,8 +206,6 @@ var whitelist = {
      */
     resolve = function(n) {
 
-        var go, test;
-
         if (!n) {
             return null;
         }
@@ -215,21 +213,11 @@ var whitelist = {
         try {
             if (ua.webkit && 3 == n.nodeType) {
                 n = n.parentNode;
-            } 
-        } catch(e1) { }
-
-        if (ua.gecko) {
-            while (!go) {
-                try {
-                    test = n._yuid;
-                    go = true;
-                } catch(e2) {
-                    n = n.parentNode;
-                    if (!n) {
-                        return null;
-                    }
-                }
+            } else if (ua.gecko) {
+                var test = n._yuid;
             }
+        } catch(e2) {
+            return null;
         }
 
         return Y.Node.get(n);
@@ -642,7 +630,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
         // @TODO fix arguments
         onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
 
-            var a = Y.Array(id), i;
+            var a = Y.Array(id), i, availHandle;
 
 
             for (i=0; i<a.length; i=i+1) {
@@ -660,7 +648,30 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             // We want the first test to be immediate, but async
             setTimeout(Y.bind(Y.Event._poll, Y.Event), 0);
 
-            return new Y.EventHandle(); // @TODO by id needs a defered handle
+            availHandle = new Y.EventHandle({
+
+                _delete: function() {
+                    // set by the event system for lazy DOM listeners
+                    if (availHandle.handle) {
+                        availHandle.handle.detach();
+						return;
+                    }
+
+                    var i, j;
+
+                    // otherwise try to remove the onAvailable listener(s)
+                    for (i = 0; i < a.length; i++) {
+                        for (j = 0; j < _avail.length; j++) {
+                            if (a[i] === _avail[j].id) {
+                                _avail.splice(j, 1);
+                            }
+                        }
+                    }
+                }
+
+            });
+
+            return availHandle;
         },
 
         /**
@@ -799,7 +810,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     handles.push(E._attach(args, config));
                 });
 
-                return (handles.length === 1) ? handles[0] : handles;
+                // return (handles.length === 1) ? handles[0] : handles;
+                return new Y.EventHandle(handles);
 
             // If the el argument is a string, we assume it is 
             // actually the id of the element.  If the page is loaded
@@ -836,9 +848,13 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 // Not found = defer adding the event until the element is available
                 } else {
 
-                    return this.onAvailable(el, function() {
-                        E._attach(args, config);
+                    ret = this.onAvailable(el, function() {
+                        
+                        ret.handle = E._attach(args, config);
+
                     }, E, true, false, compat);
+
+                    return ret;
 
                 }
             }
@@ -913,7 +929,6 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 return type.detach();
             }
 
-
             // The el argument can be a string
             if (typeof el == "string") {
 
@@ -949,7 +964,6 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 return ok;
 
             }
-
 
             if (!type || !fn || !fn.call) {
                 return this.purgeElement(el, false, type);
@@ -1299,7 +1313,7 @@ if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll, Event, true);
 }
 
-add(window, "unload", onUnload);
+Y.on("unload", onUnload);
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;
@@ -1454,7 +1468,7 @@ var Event = Y.Event,
 			           });
 
 					if (fn) {
-						fn(e, matched, ename);
+						fn(ev, ename);
 					}
 					else {
                     	Y.fire(ename, ev);								
@@ -1581,39 +1595,35 @@ Event.delegate = function (type, fn, el, spec) {
 
     var args = Y.Array(arguments, 0, true),	    
 		element = el,	// HTML element serving as the delegation container
-		handles;
+		availHandle;	
 
 
 	if (Lang.isString(el)) {
 		
-		element = Y.Selector.query(el);	// Y.Selector.query always returns an array
+		//	Y.Selector.query returns an array of matches unless specified 
+		//	to return just the first match.  Since the primary use case for
+		//	event delegation is to use a single event handler on a container,
+		//	Y.delegate doesn't currently support being able to bind a 
+		//	single listener to multiple containers.
 		
-		if (element.length === 0) { // Not found, check using onAvailable
+		element = Y.Selector.query(el, null, true);
+		
+		if (!element) { // Not found, check using onAvailable
 
-            return Event.onAvailable(el, function() {
-                Event.delegate.apply(Event, args);
+			availHandle = Event.onAvailable(el, function() {
+
+				availHandle.handle = Event.delegate.apply(Event, args);
+
             }, Event, true, false);
+
+            return availHandle;
 			
 		}
 		
 	}
 
 
-	if (Event._isValidCollection(element)) {
-
-        handles = [];
-        
-        Y.each(element, function(v, k) {
-            args[2] = v;
-            handles.push(Event.delegate.apply(Event, args));
-        });
-
-        return (handles.length === 1) ? handles[0] : handles;
-
-	}
-
-
-	element = Y.Node.getDOMNode(el);
+	element = Y.Node.getDOMNode(element);
 
 
 	var	guid = Y.stamp(element),
@@ -1645,6 +1655,7 @@ Event.delegate = function (type, fn, el, spec) {
 			
 			type = specialTypes[type];
 			delegate.fn = Event._fireMouseEnter;
+			
 		}
 
 		//	Create the DOM Event wrapper that will fire the Custom Event
@@ -1785,29 +1796,13 @@ var Event = Y.Event,
 	
 	listeners = {},
 
-	getRelatedTarget = function (e) {
-
-		var target = e.relatedTarget;
-
-		if (!target) {
-			if (e.type == "mouseout") {
-				target = e.toElement;
-			} else if (e.type == "mouseover") {
-				target = e.fromElement;
-			}
-		}
-
-		return target;
-
-	},
-
 	eventConfig = {
 
     	on: function(type, fn, el) {
 
 		    var args = Y.Array(arguments, 0, true),	    
 				element = el,
-				handles;
+				availHandle;
 
 
 			if (Lang.isString(el)) {
@@ -1819,32 +1814,18 @@ var Event = Y.Event,
 
 				if (element.size() === 0) { // Not found, check using onAvailable
 
-		            return Event.onAvailable(el, function() {
-		                Y.on.apply(Y, args);
+		            availHandle = Event.onAvailable(el, function() {
+
+		                availHandle.handle = Y.on.apply(Y, args);
+
 		            }, Event, true, false);
+		
+					return availHandle;
 
 				}
 
 			}
 			
-
-			if (element instanceof Y.NodeList || Event._isValidCollection(element)) {	// Array or NodeList
-
-		        handles = [];
-
-		        Y.each(element, function(v, k) {
-		            args[2] = v;
-		            handles.push(Y.on.apply(Y, args));
-		        });
-
-		        return (handles.length === 1) ? handles[0] : handles;
-
-			}
-
-
-			//	At this point el will always be a Node instance
-			element = Y.Node.getDOMNode(el);
-
 
 	        var sDOMEvent = (type === "mouseenter") ? "mouseover" : "mouseout",
 
@@ -1864,7 +1845,7 @@ var Event = Y.Event,
 			//	the custom event				
 			if (!listener) {
 				
-				domEventHandle = Event._attach([sDOMEvent, Y.rbind(Event._fireMouseEnter, Y, element, sEventName), element], { facade: false });
+				domEventHandle = Y.on(sDOMEvent, Y.rbind(Event._fireMouseEnter, Y, sEventName), element);
 
 				//	Hook into the _delete method for the Custom Event wrapper of this
 				//	DOM Event in order to clean up the 'listeners' map and unsubscribe
@@ -1932,23 +1913,21 @@ var Event = Y.Event,
 	};
 	
 
-Event._fireMouseEnter = function (e, currentTarget, eventName) {
+Event._fireMouseEnter = function (e, eventName) {
 
-	var relatedTarget = getRelatedTarget(e),
-		eventFacade;
+	var relatedTarget = e.relatedTarget,
+		currentTarget = e.currentTarget;
 
 	if (currentTarget !== relatedTarget && 
-		!Y.DOM.contains(currentTarget, relatedTarget)) {
-
-		eventFacade = new Y.DOMEventFacade(e, currentTarget);
+		!currentTarget.contains(relatedTarget)) {
 
 		Y.publish(eventName, {
                contextFn: function() {
-                   return eventFacade.currentTarget;
+                   return currentTarget;
                }
-           });
+           });			
 
-		Y.fire(eventName, eventFacade);
+		Y.fire(eventName, e);
 
 	}
 

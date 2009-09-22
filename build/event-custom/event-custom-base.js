@@ -361,8 +361,15 @@ Y.EventHandle.prototype = {
      * @method detach
      */
     detach: function() {
-        if (this.evt) {
-            this.evt._delete(this.sub);
+        var evt = this.evt, i;
+        if (evt) {
+            if (Y.Lang.isArray(evt)) {
+                for (i=0; i<evt.length; i++) {
+                    evt[i].detach();
+                }
+            } else { 
+                evt._delete(this.sub);
+            }
         }
     }
 };
@@ -1128,7 +1135,7 @@ ET.prototype = {
 
             }, this);
 
-            return (this._yuievt.chain) ? this : ret;
+            return (this._yuievt.chain) ? this : new Y.EventHandle(ret);
 
         }
         
@@ -1219,7 +1226,7 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
         var evts = this._yuievt.events, i, ret,
-            Node = Y.Node;
+            Node = Y.Node, isNode = (this instanceof Node);
 
         // detachAll disabled on the Y instance.
         if (!type && (this !== Y)) {
@@ -1228,6 +1235,11 @@ ET.prototype = {
                     ret = evts[i].detach(fn, context);
                 }
             }
+            if (isNode) {
+
+                Y.Event.purgeElement(Node.getDOMNode(this));
+            }
+
             return ret;
         }
 
@@ -1271,7 +1283,7 @@ ET.prototype = {
             ret = type.detach();
             return (this._yuievt.chain) ? this : ret;
         // extra redirection so we catch adaptor events too.  take a look at this.
-        } else if (Node && (this instanceof Node) && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
+        } else if (isNode && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
             args = Y.Array(arguments, 0, true);
             args[2] = Node.getDOMNode(this);
             return Y.detach.apply(Y, args);

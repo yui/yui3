@@ -41,20 +41,17 @@
 <div id="testbed"></div>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
-<script type="text/javascript" src="../../../build/io/io-base-debug.js"></script>
-<script type="text/javascript" src="../../../build/queue/queue-base-debug.js"></script>
-<script type="text/javascript" src="../../../build/queue/queue-debug.js"></script>
-<!--script type="text/javascript" src="../../../build/queue/queue-io-debug.js"></script-->
 <script type="text/javascript">
 YUI({
     base : '../../../build/',
     filter : 'debug',
-    useBrowserConsole : false,
     logInclude : { TestRunner: true }
-}).use('test','console','queue','queue-io','io-base',function (Y) {
+}).use('test','console','async-queue','io-base',function (Y) {
 
 var suite = new Y.Test.Suite("Tests");
+
+// FIXME: remove this and update the tests to handle the asynchronicity
+Y.AsyncQueue.defaults.timeout = -1;
 
 function f() {}
 
@@ -886,7 +883,8 @@ suite.add(new Y.Test.Case({
 
 var yconsole = new Y.Console({
     contentBox:"log",
-    newestOnTop: false
+    newestOnTop: false,
+    height: '500px'
 }).render();
 
 //yconsole.hideCategory('info');

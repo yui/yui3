@@ -141,7 +141,7 @@ Y.mix(NodeList.prototype, {
      * @return {Node} The Node instance at the given index.
      */
     item: function(index) {
-        return Y.get((this._nodes || [])[index]);
+        return Y.one((this._nodes || [])[index]);
     },
 
     /**
@@ -156,7 +156,7 @@ Y.mix(NodeList.prototype, {
     each: function(fn, context) {
         var instance = this;
         Y.Array.each(this._nodes, function(node, index) {
-            node = Y.get(node);
+            node = Y.one(node);
             return fn.call(context || node, node, index, instance);
         });
         return instance;
@@ -188,7 +188,7 @@ Y.mix(NodeList.prototype, {
     some: function(fn, context) {
         var instance = this;
         return Y.Array.some(this._nodes, function(node, index) {
-            node = Y.get(node);
+            node = Y.one(node);
             context = context || node;
             return fn.call(context, node, index, instance);
         });
@@ -200,7 +200,7 @@ Y.mix(NodeList.prototype, {
      * @return Node a Node instance bound to the documentFragment
      */
     toFrag: function() {
-        return Y.get(Y.DOM._nl2frag(this._nodes));
+        return Y.one(Y.DOM._nl2frag(this._nodes));
     },
 
     /**
@@ -299,12 +299,11 @@ Y.mix(NodeList.prototype, {
      * @return {Object} Returns an event handle that can later be use to detach(). 
      * @see Event.on
      */
-    on: function(type, fn, context, etc) {
-        var args = Y.Array(arguments);
-        args[2] = context || this;
-        this.batch(function(node) {
-            node.on.apply(node, args);
-        });
+    on: function(type, fn, context) {
+        var args = Y.Array(arguments, 0, true);
+        args.splice(2, 0, this._nodes);
+        args[3] = context || this;
+        return Y.on.apply(Y, args);
     },
 
     /**
@@ -319,12 +318,11 @@ Y.mix(NodeList.prototype, {
      * @return {Object} Returns an event handle that can later be use to detach(). 
      * @see Event.on
      */
-    after: function(type, fn, context, etc) {
-        var args = Y.Array(arguments);
-        args[2] = context || this;
-        this.batch(function(node) {
-            node.after.apply(node, args);
-        });
+    after: function(type, fn, context) {
+        var args = Y.Array(arguments, 0, true);
+        args.splice(2, 0, this._nodes);
+        args[3] = context || this;
+        return Y.after.apply(Y, args);
     },
 
     /**

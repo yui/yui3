@@ -32,6 +32,7 @@
         VALUE_FN = "valueFn",
         BROADCAST = "broadcast",
         LAZY_ADD = "lazyAdd",
+        BYPASS_PROXY = "_bypassProxy",
 
         // Used for internal state management
         ADDED = "added",
@@ -54,7 +55,7 @@
     /**
      * <p>
      * Attribute provides configurable attribute support along with attribute change events. It is designed to be 
-     * augmented onto a host class, and provides the host with the ability to configure attributes to store and retrieve state, 
+     * augmented on to a host class, and provides the host with the ability to configure attributes to store and retrieve state, 
      * along with attribute change events.
      * </p>
      * <p>For example, attributes added to the host can be configured:</p>
@@ -129,7 +130,7 @@
      * @static
      * @protected
      */
-    Attribute._ATTR_CFG = [SETTER, GETTER, VALIDATOR, VALUE, VALUE_FN, WRITE_ONCE, READ_ONLY, LAZY_ADD, BROADCAST];
+    Attribute._ATTR_CFG = [SETTER, GETTER, VALIDATOR, VALUE, VALUE_FN, WRITE_ONCE, READ_ONLY, LAZY_ADD, BROADCAST, BYPASS_PROXY];
 
     Attribute.prototype = {
         /**
@@ -188,6 +189,8 @@
          * <p>The setter, getter and validator are invoked with the value and name passed in as the first and second arguments, and with
          * the context ("this") set to the host object.</p>
          *
+         * <p>Configuration properties outside of the list mentioned above are considered private properties used internally by attribute, and are not intended for public use.</p>
+         * 
          * @method addAttr
          *
          * @param {String} name The name of the attribute.
@@ -214,8 +217,6 @@
                 hasValue;
 
             lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
-
-            if (host._stateProxy && host._stateProxy[name]) { Y.log('addAttr: ' + name + ' exists on the _stateProxy object. The newly added attribute will override the use of _stateProxy for this attribute', 'warn', 'attribute'); }
 
             if (lazy && !host.attrAdded(name)) {
                 state.add(name, LAZY, config || {});
@@ -533,7 +534,7 @@
                 }
 
                 if (allowSet) {
-                    // Don't need currVal if initialSet (might fail in custom getter)
+                    // Don't need currVal if initialSet (might fail in custom getter if it always expects a non-undefined/non-null value)
                     if (!initialSet) {
                         currVal =  this.get(name);
                     }
@@ -627,11 +628,7 @@
          */
         _getStateVal : function(name) {
             var stateProxy = this._stateProxy;
-            if (!stateProxy || this.attrAdded(name)) {
-                return this._state.get(name, VALUE);
-            } else {
-                return (stateProxy && stateProxy[name]);
-            }
+            return stateProxy && (name in stateProxy) && !this._state.get(name, BYPASS_PROXY) ? stateProxy[name] : this._state.get(name, VALUE);
         },
 
         /**
@@ -645,10 +642,10 @@
          */
         _setStateVal : function(name, value) {
             var stateProxy = this._stateProxy;
-            if (!stateProxy || this.attrAdded(name)) {
-                this._state.add(name, VALUE, value);
+            if (stateProxy && (name in stateProxy) && !this._state.get(name, BYPASS_PROXY)) {
+                stateProxy[name] = value;
             } else {
-                stateProxy[name] = value;             
+                this._state.add(name, VALUE, value);
             }
         },
 
@@ -674,6 +671,7 @@
                 validator = state.get(attrName, VALIDATOR),
                 setter = state.get(attrName, SETTER),
                 initializing = state.get(attrName, INITIALIZING),
+                prevValRaw = this._getStateVal(attrName),
 
                 name = subAttrName || attrName,
                 retVal,
@@ -702,7 +700,7 @@
                 }
 
                 if (allowSet) {
-                    if(!subAttrName && newVal === prevVal && !Lang.isObject(newVal)) {
+                    if(!subAttrName && (newVal === prevValRaw) && !Lang.isObject(newVal)) {
                         Y.log('Attribute: ' + attrName + ', value unchanged:' + newVal, 'warn', 'attribute');
                         allowSet = false;
                     } else {
@@ -733,7 +731,16 @@
         setAttrs : function(attrs, opts) {
             return this._setAttrs(attrs, opts);
         },
-        
+
+        /**
+         * Implementation behind the public setAttrs method, to set multiple attribute values.
+         *
+         * @method _setAttrs
+         * @protected
+         * @param {Object} attrs  An object with attributes name/value pairs.
+         * @return {Object} A reference to the host object.
+         * @chainable
+         */
         _setAttrs : function(attrs, opts) {
             for (var attr in attrs) {
                 if ( attrs.hasOwnProperty(attr) ) {
@@ -755,6 +762,15 @@
             return this._getAttrs(attrs);
         },
 
+        /**
+         * Implementation behind the public getAttrs method, to get multiple attribute values.
+         *
+         * @method _getAttrs
+         * @protected
+         * @param {Array | boolean} attrs Optional. An array of attribute names. If omitted, all attribute values are
+         * returned. If set to true, all attributes modified from their initial values are returned.
+         * @return {Object} An object with attribute name/value pairs.
+         */
         _getAttrs : function(attrs) {
             var host = this,
                 o = {}, 
@@ -877,9 +893,8 @@
         },
 
         /**
-         * Utility method to split out simple attribute name/value pairs ("x") 
-         * from complex attribute name/value pairs ("x.y.z"), so that complex
-         * attributes can be keyed by the top level attribute name.
+         * Utility method to normalize attribute values. The base implementation 
+         * simply merges the hash to protect the original.
          *
          * @method _normAttrVals
          * @param {Object} valueHash An object with attribute name/value pairs

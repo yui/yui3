@@ -110,9 +110,16 @@
 <span class="c">     * @method detach</span>
 <span class="c">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">evt</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">evt</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">evt</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">evt</span><span class="o">)</span> <span class="o">{</span>
             <span class="c">// Y.log(&#39;EventHandle.detach: &#39; + this.sub, &#39;info&#39;, &#39;Event&#39;);</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">_delete</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sub</span><span class="o">);</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">evt</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">evt</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                    <span class="nx">evt</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">detach</span><span class="o">();</span>
+                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> 
+                <span class="nx">evt</span><span class="o">.</span><span class="nx">_delete</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sub</span><span class="o">);</span>
+            <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">}</span>
 <span class="o">};</span>
@@ -733,6 +740,7 @@
                         <h4>Modules</h4>
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
@@ -762,7 +770,6 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
