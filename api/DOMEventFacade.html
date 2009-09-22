@@ -381,7 +381,14 @@ confirmation query to the beforeunload event).</span>
                                         <div class="description" property="yui:description">
                                             Returns a wrapped node.  Intended to be used on event targets,
 so it will return the node's parent if the target is a text
-node
+node.
+If accessing a property of the node throws an error, this is
+probably the anonymous div wrapper Gecko adds inside text
+nodes.  This likely will only occur when attempting to access
+the relatedTarget.  In this case, we now return null because
+the anonymous div is completely useless and we do not know
+what the related target was because we can't even get to
+the element's parent node.
                                         </div>
 
                                         <div class="description">

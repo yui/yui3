@@ -141,23 +141,25 @@
     <span class="c">/**</span>
 <span class="c">     * Returns a wrapped node.  Intended to be used on event targets,</span>
 <span class="c">     * so it will return the node&#39;s parent if the target is a text</span>
-<span class="c">     * node</span>
+<span class="c">     * node.</span>
+<span class="c">     *</span>
+<span class="c">     * If accessing a property of the node throws an error, this is</span>
+<span class="c">     * probably the anonymous div wrapper Gecko adds inside text</span>
+<span class="c">     * nodes.  This likely will only occur when attempting to access</span>
+<span class="c">     * the relatedTarget.  In this case, we now return null because</span>
+<span class="c">     * the anonymous div is completely useless and we do not know</span>
+<span class="c">     * what the related target was because we can&#39;t even get to</span>
+<span class="c">     * the element&#39;s parent node.</span>
+<span class="c">     *</span>
 <span class="c">     * @method resolve</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="nx">resolve</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
-
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="o">}</span>
-
         <span class="k">try</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="m">3</span> <span class="o">==</span> <span class="nx">n</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="m">3</span> <span class="o">==</span> <span class="nx">n</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">gecko</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">test</span> <span class="o">=</span> <span class="nx">n</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">;</span>
             <span class="o">}</span>
-        <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e2</span><span class="o">)</span> <span class="o">{</span>
+        <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span> 
             <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
         <span class="o">}</span>
 
