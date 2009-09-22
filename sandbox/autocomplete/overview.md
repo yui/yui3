@@ -24,16 +24,9 @@ The Data Source may change the timeout based on whether or not data has been loa
 
 When the user presses the down-arrow or tab keys, then the Controller should pass a message to the Renderer that this event has occurred.  At this point, the Renderer can either handle the event and prevent the default behavior, or let the browser's native behavior to continue.
 
-### Focus
-
-When the input element loses focus, the Controller stops being in charge.
-
-Open question: use FocusManager plugin?  Similar functionality.
-
 ### Attrs
 
 * `queryValue` - The form control's value, or a single item in a delimited list.  set("queryValue") is typically called by renderer widget when a selection is made.  Getting this value in the delimited case will return the item where the cursor lives.
-* `focused` - Whether or not the form control is focused.
 * `keyTimeout` - The time in ms to wait between key events before searching.
 * `dataSource` - The datasource object currently being used.  When not set, no requests get made.
 	Bikeshed: Should there be some sugar to not have to create a DataSource manually?  My feeling is
@@ -79,7 +72,6 @@ Maybe something like this for DS sugar?
 ### Events
 
 * `query` - Enough text has been entered, and the sendQuery function is being called on the DataSource if present.  Note that new queries might be made before the old query's data has returned.
-* `characterEntered` - non-control-keydown for westerners, other things for other languages. Hook into this to be clever.
 
 And of course all the goodies it inherits from Plugin and Attribute and Base and whatnot.
 
