@@ -1,3 +1,10 @@
-**** 3.0.0 beta 1 ***
+**** version 3.0.0 ****
+
+* DataSource.IO now passes request value to IO.
+* DataSource.Function now catches exception and fires error event.
+
+
+
+**** version 3.0.0 beta 1 ****
 
 * Initial release.
