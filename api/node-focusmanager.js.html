@@ -367,8 +367,15 @@
 <span class="c"></span>					<span class="c">//	&quot;activeDescendant&quot; attribute try to infer it from </span>
 <span class="c"></span>					<span class="c">//	the markup.</span>
 <span class="c"></span>
+					<span class="c">//	Need to pass &quot;2&quot; when using &quot;getAttribute&quot; for IE to get</span>
+<span class="c"></span>					<span class="c">//	the attribute value as it is set in the markup.</span>
+<span class="c"></span>					<span class="c">//	Need to use &quot;parseInt&quot; because IE always returns the </span>
+<span class="c"></span>					<span class="c">//	value as a number, whereas all other browsers return</span>
+<span class="c"></span>					<span class="c">//	the attribute as a string when accessed </span>
+<span class="c"></span>					<span class="c">//	via &quot;getAttribute&quot;.</span>
+<span class="c"></span>
 					<span class="k">if</span> <span class="o">(</span><span class="nx">nActiveDescendant</span> <span class="o">&lt;</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> 
-							<span class="nx">oNode</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">)</span> <span class="o">===</span> <span class="s2">&quot;0&quot;</span><span class="o">)</span> <span class="o">{</span>
+							<span class="nb">parseInt</span><span class="o">(</span><span class="nx">oNode</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">,</span> <span class="m">2</span><span class="o">),</span> <span class="m">10</span><span class="o">)</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
 
 						<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">i</span><span class="o">;</span>
 
