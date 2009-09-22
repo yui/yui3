@@ -190,7 +190,7 @@
 <span class="c">     * @return {Node} The Node instance at the given index.</span>
 <span class="c">     */</span>
     <span class="nx">item</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">((</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span> <span class="o">||</span> <span class="o">[])[</span><span class="nx">index</span><span class="o">]);</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">((</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span> <span class="o">||</span> <span class="o">[])[</span><span class="nx">index</span><span class="o">]);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -205,7 +205,7 @@
     <span class="nx">each</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
             <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">instance</span><span class="o">);</span>
         <span class="o">});</span>
         <span class="k">return</span> <span class="nx">instance</span><span class="o">;</span>
@@ -237,7 +237,7 @@
     <span class="nx">some</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">some</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
             <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="nx">node</span><span class="o">;</span>
             <span class="k">return</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">context</span><span class="o">,</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">instance</span><span class="o">);</span>
         <span class="o">});</span>
@@ -249,7 +249,7 @@
 <span class="c">     * @return Node a Node instance bound to the documentFragment</span>
 <span class="c">     */</span>
     <span class="nx">toFrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_nl2frag</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">));</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_nl2frag</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">));</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>

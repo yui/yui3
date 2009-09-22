@@ -245,6 +245,7 @@ Node.get = function() {
  * @static
  * @param {String} html The markup used to create the element
  * @param {HTMLDocument} doc An optional document context 
+ * @return {Node} A Node instance bound to a DOM node or fragment 
  */
 Node.create = function() {
     return Node.get(Y.DOM.create.apply(Y.DOM, arguments));
@@ -490,6 +491,7 @@ Y.mix(Node.prototype, {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
+     * @return {Node} A Node instance bound to a DOM node or fragment 
      */
     create: Node.create,
 
@@ -527,7 +529,7 @@ Y.mix(Node.prototype, {
         var node = this._node,
             ret = Y.DOM.byId(id, node[OWNER_DOCUMENT]);
         if (ret && Y.DOM.contains(node, ret)) {
-            ret = Y.get(ret);
+            ret = Y.one(ret);
         } else {
             ret = null;
         }
@@ -577,7 +579,7 @@ Y.mix(Node.prototype, {
      * @return {Node} A Node instance for the matching HTMLElement.
      */
     one: function(selector) {
-        return Y.get(Y.Selector.query(selector, this._node, true));
+        return Y.one(Y.Selector.query(selector, this._node, true));
     },
 
     /**
@@ -949,7 +951,7 @@ Y.mix(NodeList.prototype, {
      * @return {Node} The Node instance at the given index.
      */
     item: function(index) {
-        return Y.get((this._nodes || [])[index]);
+        return Y.one((this._nodes || [])[index]);
     },
 
     /**
@@ -964,7 +966,7 @@ Y.mix(NodeList.prototype, {
     each: function(fn, context) {
         var instance = this;
         Y.Array.each(this._nodes, function(node, index) {
-            node = Y.get(node);
+            node = Y.one(node);
             return fn.call(context || node, node, index, instance);
         });
         return instance;
@@ -996,7 +998,7 @@ Y.mix(NodeList.prototype, {
     some: function(fn, context) {
         var instance = this;
         return Y.Array.some(this._nodes, function(node, index) {
-            node = Y.get(node);
+            node = Y.one(node);
             context = context || node;
             return fn.call(context, node, index, instance);
         });
@@ -1008,7 +1010,7 @@ Y.mix(NodeList.prototype, {
      * @return Node a Node instance bound to the documentFragment
      */
     toFrag: function() {
-        return Y.get(Y.DOM._nl2frag(this._nodes));
+        return Y.one(Y.DOM._nl2frag(this._nodes));
     },
 
     /**
@@ -1553,11 +1555,23 @@ Y.Node.ATTRS.type = {
             try {
                 this._node.type = 'hidden';
             } catch(e) {
-                this._node.style.display = 'none';
+                this.setStyle('display', 'none');
+                this._inputType = 'hidden';
+            }
+        } else {
+            try { // IE errors when changing the type from "hidden'
+                this._node.type = val;
+            } catch (e) {
             }
         }
         return val;
-    }
+    },
+
+    getter: function() {
+        return this._inputType || this._node.type;
+    },
+
+    _bypassProxy: true // don't update DOM when using with Attribute
 };
 
 

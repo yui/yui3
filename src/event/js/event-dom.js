@@ -896,7 +896,7 @@ if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll, Event, true);
 }
 
-add(window, "unload", onUnload);
+Y.on("unload", onUnload);
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;

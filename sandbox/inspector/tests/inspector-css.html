@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="a.css">
+    <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.0.0b1/build/console/assets/skins/sam/console.css">
+    <style type="text/css">
+    .yui-skin-sam .demo .yui-console-entry-cat {
+        color: rgb(0,0,128);
+        border-bottom-color: #f00;
+    }
+    .yui-skin-sam .yui-console-entry-info .yui-console-entry-cat {
+        background-color: #000;
+        font-size: 10px; /* attempt to override !important from inherit */
+    }
+
+    /* page styles */
+    body {
+        font: normal 13px/1.4 arial, sans-serif;
+    }
+    #results {
+        border: 1px solid #ccc;
+        margin: 1em;
+        float: left;
+        padding: 1em;
+        width: 35em;
+    }
+    #results h3 {
+        color: #777;
+        float: right;
+        font-weight: bold;
+        font-size: 13px;
+        margin: 0;
+    }
+    #results strong {
+        clear: right;
+        display: block;
+    }
+    #results ul {
+        list-style: none;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    </style>
+</head>
+<body class="yui-skin-sam">
+<h1>FireBug-like reporting of CSS applied to a node</h1>
+<p>Due to browser security, the <code>Y.Inspector</code> module currently has no support for external <code>&lt;link&gt;</code> elements.  The place where it fails is marked in the code (you'll see the <code>try/catch</code>).  Note that Safari and IE <strong>DO</strong> allow access xdomain stylesheets, so this only applies to FF and Opera (today).</p>
+
+<p>Also outstanding are including inherited styles and dealing with Opera's lack of any way to determine if an prop was declared with !important.</p>
+
+<p>The following markup is used as a testbed, and has rules applied inline, from a <code>&lt;style&gt;</code> element, a local <code>&lt;link&gt;</code> element and a remote <code>&lt;link&gt;</code> element.  Note the remote css overrides the <code>text-transform: lowercase</code> from the local styles.</p>
+
+<div class="demo">
+    <p class="yui-console-entry-info">
+        <span class="yui-console-entry-cat" style="font-style: italic; color: white;">INFO</span>
+    </p>
+</div>
+
+<p>Results for <code>Y.Inspector.getCSS(Y.one('.yui-console-entry-cat'))</code></p>
+<div id="results"></div>
+
+<script type="text/javascript" src="/yui3/build/yui/yui.js"></script>
+<script type="text/javascript">
+YUI({
+    base: '/yui3/build/',
+    filter: 'raw',
+    modules: {
+        'inspector-css': {
+            requires: ['node-base'],
+            //fullpath: '/yui3/build/inspector/inspector-css.js'
+            fullpath: 'inspector-css.js'
+        }
+    }
+}).use('inspector-css',function (Y) {
+
+var styles = Y.Inspector.getCSS(Y.one('.yui-console-entry-cat'));
+
+Y.each(styles, function (rule) {
+    var div =
+        '<div>' +
+            '<h3>' + rule.origin + '</h3>' +
+            '<strong>' + rule.selectorText + ' {</strong>' +
+            '<ul>PROPERTIES</ul>' +
+            '<strong>}</strong>' +
+        '</div>',
+
+        props = '', k, p;
+
+    for (k in rule.style) {
+        p = '<em>' + k + '</em> : ' + rule.style[k].value;
+
+        if (rule.style[k].important) {
+            p += ' !important';
+        }
+
+        props += rule.style[k].overridden ?
+                 '<li><del>' + p + '</del></li>' : '<li>' + p + '</li>';
+    }
+
+    Y.one('#results').append(div.replace(/PROPERTIES/,props));
+});
+
+});
+</script>
+</body>
+</html>

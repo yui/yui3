@@ -358,11 +358,11 @@
             <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">doc</span><span class="o">.</span><span class="nx">documentMode</span><span class="o">)</span> <span class="o">||</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">documentMode</span> <span class="o">&gt;</span> <span class="m">7</span><span class="o">))</span> <span class="o">{</span>
 
             <span class="c">// The HTML5 way of handling DHTML history...</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;hashchange&#39;</span><span class="o">,</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+<span class="c"></span>            <span class="nx">win</span><span class="o">.</span><span class="nx">onhashchange</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nx">_getHash</span><span class="o">();</span>
                 <span class="nx">_handleFQStateChange</span><span class="o">(</span><span class="nx">hash</span><span class="o">);</span>
                 <span class="nx">_storeStates</span><span class="o">();</span>
-            <span class="o">},</span> <span class="nb">window</span><span class="o">);</span>
+            <span class="o">};</span>
 
             <span class="nx">G</span><span class="o">.</span><span class="nx">ready</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
             <span class="nx">H</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_HISTORY_READY</span><span class="o">);</span>

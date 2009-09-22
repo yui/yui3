@@ -61,12 +61,25 @@
             <span class="k">try</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;hidden&#39;</span><span class="o">;</span>
             <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="o">;</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;display&#39;</span><span class="o">,</span> <span class="s1">&#39;none&#39;</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_inputType</span> <span class="o">=</span> <span class="s1">&#39;hidden&#39;</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">{</span> <span class="c">// IE errors when changing the type from &quot;hidden&#39;</span>
+<span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;error setting type: &#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;node&#39;</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
         <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+    <span class="o">},</span>
+
+    <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_inputType</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">type</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="nx">_bypassProxy</span><span class="o">:</span> <span class="kc">true</span> <span class="c">// don&#39;t update DOM when using with Attribute</span>
+<span class="c"></span><span class="o">};</span>
 </pre></div>
 
                     </div>

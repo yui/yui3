@@ -206,8 +206,6 @@ var whitelist = {
      */
     resolve = function(n) {
 
-        var go, test;
-
         if (!n) {
             return null;
         }
@@ -215,21 +213,11 @@ var whitelist = {
         try {
             if (ua.webkit && 3 == n.nodeType) {
                 n = n.parentNode;
-            } 
-        } catch(e1) { }
-
-        if (ua.gecko) {
-            while (!go) {
-                try {
-                    test = n._yuid;
-                    go = true;
-                } catch(e2) {
-                    n = n.parentNode;
-                    if (!n) {
-                        return null;
-                    }
-                }
+            } else if (ua.gecko) {
+                var test = n._yuid;
             }
+        } catch(e2) {
+            return null;
         }
 
         return Y.Node.get(n);
@@ -1336,7 +1324,7 @@ if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll, Event, true);
 }
 
-add(window, "unload", onUnload);
+Y.on("unload", onUnload);
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;
