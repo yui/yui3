@@ -1,0 +1,61 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <title>text change event</title>
+    <style>
+    
+    </style>
+</head>
+<body>
+
+<input id="foo" type="text"><button id="remover">remove</button>
+<button id="rall">remove all</button>
+
+<script class="mine" src="../../../build/yui/yui.js"></script>
+<script src="../js/text-change.js"></script>
+<script>
+YUI({
+    debug: true,
+    base : "../../../build/",
+    filter : "raw"
+}).use('console', 'text-change', function (Y) {
+    window.Y = Y;
+    window.myNode = Y.all("#foo");
+    
+    function fn1 (e) {
+        Y.log("text change handler 1, assigned with Y.Node.on");
+        console.log(e);
+    };
+    
+    function fn2 (e) {
+        Y.log("text change handler 2, assigned with Y.on");
+        console.log(e);
+    };
+    
+    var handle1 = myNode.on("textchange", fn1);
+    
+    console.log("handle (returned by Node.on)", handle1);
+
+    var handle2 = Y.on("textchange", fn2, Y.one("#foo"));
+    
+    console.log("handle (returned by Y.on)", handle2);
+    
+    // @BUG: For some reason, removing it with the handle returned by Y.one(t).on(e,f)
+    // is different than the one returned by Y.on(e,f,t).  wtf?
+    
+    console.log("click handle", Y.one("#remover").on("click", function (e) {
+        Y.log("removing the one from Y.on");
+        console.log("handle:", handle2)
+        // myNode.detach("textchange", fn1);
+        handle2.detach();
+    }));
+    
+    console.log("removeall handle", Y.one("#rall").on("click", function (e) {
+        Y.log("removing all");
+        myNode.detach("textchange");
+    }));
+});
+</script>
+</body>
+</html>
