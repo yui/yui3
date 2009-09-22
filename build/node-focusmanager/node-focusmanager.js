@@ -320,8 +320,15 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 					//	"activeDescendant" attribute try to infer it from 
 					//	the markup.
 
+					//	Need to pass "2" when using "getAttribute" for IE to get
+					//	the attribute value as it is set in the markup.
+					//	Need to use "parseInt" because IE always returns the 
+					//	value as a number, whereas all other browsers return
+					//	the attribute as a string when accessed 
+					//	via "getAttribute".
+
 					if (nActiveDescendant < 0 && 
-							oNode.getAttribute(TAB_INDEX) === "0") {
+							parseInt(oNode.getAttribute(TAB_INDEX, 2), 10) === 0) {
 
 						nActiveDescendant = i;
 
