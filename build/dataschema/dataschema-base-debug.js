@@ -63,5 +63,4 @@ Y.namespace("DataSchema").Base = SchemaBase;
 Y.namespace("Parsers");
 
 
-
 }, '@VERSION@' ,{requires:['base']});

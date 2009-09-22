@@ -99,5 +99,4 @@ var LANG = Y.Lang,
 Y.DataSchema.Array = Y.mix(SchemaArray, Y.DataSchema.Base);
 
 
-
 }, '@VERSION@' ,{requires:['dataschema-base']});

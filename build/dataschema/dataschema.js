@@ -62,9 +62,7 @@ Y.namespace("DataSchema").Base = SchemaBase;
 Y.namespace("Parsers");
 
 
-
 }, '@VERSION@' ,{requires:['base']});
-
 YUI.add('dataschema-json', function(Y) {
 
 /**
@@ -138,7 +136,7 @@ var LANG = Y.Lang,
         getLocationValue: function (path, data) {
             var i = 0,
                 len = path.length;
-            for (;i<len;i++) {
+            if (data) for (;i<len;i++) {
                 if(!LANG.isUndefined(data[path[i]])) {
                     data = data[path[i]];
                 }
@@ -217,8 +215,16 @@ var LANG = Y.Lang,
                         error = new Error("JSON results retrieval failure");
                     }
                     else {
-                        if(LANG.isArray(schema.resultFields) && LANG.isArray(results)) {
-                            data_out = SchemaJSON._getFieldValues(schema.resultFields, results, data_out);
+                        if(LANG.isArray(results)) {
+                            // if no result fields are passed in, then just take the results array whole-hog
+                            // Sometimes you're getting an array of strings, or want the whole object,
+                            // so resultFields don't make sense.
+                            if (LANG.isArray(schema.resultFields)) {
+                                data_out = SchemaJSON._getFieldValues(schema.resultFields, results, data_out);
+                            }
+                            else {
+                                data_out.results = results;
+                            }
                         }
                         else {
                             data_out.results = [];
@@ -350,9 +356,7 @@ var LANG = Y.Lang,
 Y.DataSchema.JSON = Y.mix(SchemaJSON, Y.DataSchema.Base);
 
 
-
 }, '@VERSION@' ,{requires:['json', 'dataschema-base']});
-
 YUI.add('dataschema-xml', function(Y) {
 
 /**
@@ -508,9 +512,7 @@ var LANG = Y.Lang,
 Y.DataSchema.XML = Y.mix(SchemaXML, Y.DataSchema.Base);
 
 
-
 }, '@VERSION@' ,{requires:['dataschema-base']});
-
 YUI.add('dataschema-array', function(Y) {
 
 /**
@@ -609,9 +611,7 @@ var LANG = Y.Lang,
 Y.DataSchema.Array = Y.mix(SchemaArray, Y.DataSchema.Base);
 
 
-
 }, '@VERSION@' ,{requires:['dataschema-base']});
-
 YUI.add('dataschema-text', function(Y) {
 
 /**
@@ -719,9 +719,7 @@ var LANG = Y.Lang,
 Y.DataSchema.Text = Y.mix(SchemaText, Y.DataSchema.Base);
 
 
-
 }, '@VERSION@' ,{requires:['dataschema-base']});
-
 
 
 YUI.add('dataschema', function(Y){}, '@VERSION@' ,{use:['dataschema-base','dataschema-json','dataschema-xml','dataschema-array','dataschema-text']});
