@@ -437,7 +437,7 @@ Y.mix(Node.prototype, {
         var attrConfig = Node.ATTRS[attr];
 
         if (this._setAttr) { // use Attribute imple
-            this._setAttr(attr, val);
+            this._setAttr.apply(this, arguments);
         } else { // use setters inline
             if (attrConfig && attrConfig.setter) {
                 attrConfig.setter.call(this, val);
