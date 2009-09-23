@@ -205,18 +205,11 @@ var whitelist = {
      * @private
      */
     resolve = function(n) {
-
-        if (!n) {
-            return null;
-        }
-
         try {
-            if (ua.webkit && 3 == n.nodeType) {
+            if (n && 3 == n.nodeType) {
                 n = n.parentNode;
-            } else if (ua.gecko) {
-                var test = n._yuid;
             }
-        } catch(e2) {
+        } catch(e) { 
             return null;
         }
 
