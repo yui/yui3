@@ -87,12 +87,7 @@
 
 <span class="nx">shouldIterate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">try</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="o">(</span> <span class="o">(</span><span class="nx">o</span>                    <span class="o">&amp;&amp;</span> <span class="c">// o is something</span>
-<span class="c"></span>                 <span class="k">typeof</span> <span class="nx">o</span> <span class="o">!==</span> <span class="s2">&quot;string&quot;</span> <span class="o">&amp;&amp;</span> <span class="c">// o is not a string</span>
-<span class="c"></span>                 <span class="nx">o</span><span class="o">.</span><span class="nx">length</span>              <span class="o">&amp;&amp;</span> <span class="c">// o is indexed</span>
-<span class="c"></span>                 <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">tagName</span>            <span class="o">&amp;&amp;</span> <span class="c">// o is not an HTML element</span>
-<span class="c"></span>                 <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">alert</span>              <span class="o">&amp;&amp;</span> <span class="c">// o is not a window</span>
-<span class="c"></span>                 <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">item</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">o</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">!==</span> <span class="s2">&quot;undefined&quot;</span><span class="o">))</span> <span class="o">);</span>
+        <span class="k">return</span> <span class="o">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">!==</span> <span class="s2">&quot;string&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">alert</span><span class="o">);</span>
     <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">ex</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;collection check failure&quot;</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;event&quot;</span><span class="o">);</span>
         <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
@@ -422,12 +417,9 @@
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
 
-
             <span class="c">// The el argument can be an array of elements or element ids.</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">shouldIterate</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
 
-                <span class="c">// Y.log(&#39;collection: &#39; + el.item(0) + &#39;, &#39; + el.item(1));</span>
-<span class="c"></span>
                 <span class="nx">handles</span><span class="o">=[];</span>
                 
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
