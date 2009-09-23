@@ -140,7 +140,7 @@
             Assert.areEqual(Y.Lang.trim({}), "[object Object]");
         },
 
-        test_isValue: function() {
+        test_is_value: function() {
             Assert.isFalse(Y.Lang.isValue(null), "null should be false");
             Assert.isFalse(Y.Lang.isValue(undefined), "undefined should be false");
             Assert.isFalse(Y.Lang.isValue(parseInt("adsf", 10)), "NaN should be false");
@@ -150,7 +150,7 @@
             Assert.isTrue(Y.Lang.isValue(false), "false should be true");
         },
 
-        test_isDate: function() {
+        test_is_date: function() {
             Assert.isFalse(Y.Lang.isDate(null), "null should be false");
             Assert.isFalse(Y.Lang.isDate(undefined), "undefined should be false");
             Assert.isFalse(Y.Lang.isDate(parseInt("adsf", 10)), "NaN should be false");
@@ -161,6 +161,9 @@
             Assert.isFalse(Y.Lang.isDate(false), "false should be false");
             Assert.isFalse(Y.Lang.isDate(xframe.fun), "Cross frame function should be false");
             Assert.isTrue(Y.Lang.isDate(xframe.dat), "Cross frame date should be true");
+
+            var badDateObj = new Date('junk');
+            Assert.isFalse(Y.Lang.isDate(badDateObj), "A date object containing and invalid date should be false.");
         }
             
         });
