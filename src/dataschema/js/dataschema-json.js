@@ -71,7 +71,10 @@ var LANG = Y.Lang,
             var i = 0,
                 len = path.length;
             for (;i<len;i++) {
-                if(!LANG.isUndefined(data[path[i]])) {
+                if(
+                    LANG.isObject(data) &&
+                    (path[i] in data)
+                ) {
                     data = data[path[i]];
                 }
                 else {
