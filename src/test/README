@@ -2,6 +2,10 @@ YUI Test Framework
 Module Name: "test"
 Documentation: http://developer.yahoo.com/yui/3/test
 
+3.NEXT
+
+    * Added JUnit XML test format.
+
 3.0.0
     * Added missing space in assert failure message (trac #2528058).
     * Fixed ArrayAssert errors (trac #2528142).
