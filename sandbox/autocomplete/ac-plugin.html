@@ -50,7 +50,6 @@ script[src] {
 <script class="mine">
 YUI.add('ac-plugin', function (Y) {
 
-    window.Y=Y;
     
     var PRIVATE = {},
         HANDLE = "handle";
@@ -62,17 +61,17 @@ YUI.add('ac-plugin', function (Y) {
             PRIVATE[id][HANDLE].detach
         ) {
             if (delay === who.get("keyDelay")) {
-                console.log("no need, because "+delay+" === "+who.get("keyDelay"));
+                // console.log("no need, because "+delay+" === "+who.get("keyDelay"));
                 return;
             }
             
-            console.log("detach, because "+delay+" !== "+who.get("keyDelay"));
-            Y.log("detaching pre-existing one");
-            console.log(PRIVATE[id][HANDLE]);
+            // console.log("detach, because "+delay+" !== "+who.get("keyDelay"));
+            // Y.log("detaching pre-existing one");
+            // console.log(PRIVATE[id][HANDLE]);
             PRIVATE[id][HANDLE].detach();
         }
         
-        console.log("set delay to", delay, "pre-existing:", PRIVATE[id][HANDLE]);
+        // console.log("set delay to", delay, "pre-existing:", PRIVATE[id][HANDLE]);
         
         PRIVATE[id][HANDLE] = Y.on(
             "textchange",
@@ -81,7 +80,7 @@ YUI.add('ac-plugin', function (Y) {
             who,
             { delay : delay }
         );
-        PRIVATE[id][HANDLE]._delay = delay;
+        // PRIVATE[id][HANDLE]._delay = delay;
     };
     function tcHandler () {
         // see if we got enough to make a query.
@@ -99,7 +98,7 @@ YUI.add('ac-plugin', function (Y) {
         
         query = tpl.replace(/(^|[^\\])\{query\}/, '$1'+encodeURIComponent(query)).replace(/\\([\{|\}])/, '$1');
         
-        console.log("handleQuery", e, val, query);
+        // console.log("handleQuery", e, val, query);
         ds.sendRequest(query, {
             success : this.handleQueryResponse,
             failure : this.handleQueryResponse
@@ -115,7 +114,7 @@ YUI.add('ac-plugin', function (Y) {
     
     function showResults (e) {
         var widget = this.get("widget");
-        console.log("showResults", e, widget);
+        // console.log("showResults", e, widget);
         
         if (widget) widget.render(e.results);
     };
@@ -188,8 +187,12 @@ YUI.add('ac-plugin', function (Y) {
                 PRIVATE[id] = {};
             }
             
-            console.log("assigning tcHandler with ", this, this.get("keyDelay"));
+            // console.log("assigning tcHandler with ", this, this.get("keyDelay"));
             attachTCHandler(this, host, id, this.get("keyDelay"));
+            
+            // in addition to the textchange event, pressing down or enter will force it to trigger a query
+            // right now, even if the timeout has not happened yet.
+            Y.on("key", Y.bind(tcHandler, this), host, "down:13,10,40");
             
             // manage the browser's autocomplete, since that'll interefere,
             // but we need to make sure that we don't prevent pre-filling 
@@ -211,7 +214,6 @@ YUI.add('ac-plugin', function (Y) {
             
             // bind the query response handler to this.
             this.handleQueryResponse = Y.bind(handleQueryResponse, this);
-            
         },
         destroy : function () {
             // remove the textchange handler.
@@ -225,13 +227,13 @@ YUI.add('ac-plugin', function (Y) {
     // support events.
     Y.augment(ACPlugin, Y.EventTarget);
     
-    ACPlugin.NAME = "AutocompletePlugin";
+    ACPlugin.NAME = "ACPlugin";
     ACPlugin.NS = "ac";
     
     Y.namespace("Plugin").ACPlugin = ACPlugin;
     
 }, '@VERSION@', {
-    requires : [ 'node', 'plugin', 'text-change' ]
+    requires : [ 'node', 'plugin', 'text-change', 'event-key' ]
 });
 </script>
 
@@ -241,14 +243,14 @@ YUI.add('ac-plugin', function (Y) {
 YUI({
     debug: true,
     base : "../../build/",
-    filter : "raw"
-}).use('console', 'datasource', 'ac-plugin', function (Y) {
+    filter : "debug"
+}).use('console', 'console-filters', 'datasource', 'ac-plugin', function (Y) {
     window.Y = Y;
     
     new Y.Console({
         plugins : [ Y.Plugin.ConsoleFilters ],
         newestOnTop : false,
-        useBrowserConsole : true
+        useBrowserConsole : false
     }).render();
     
     window.myNode = Y.one("#ac");
@@ -285,7 +287,7 @@ YUI({
         console.log(" ac:query", e, q);
     });
     myNode.ac.on("ac:render", function (e) {
-        console.log("ac:render", e);
+        console.log(" ac:render", e);
         var results = e.results;
     });
     
