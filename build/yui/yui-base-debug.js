@@ -976,7 +976,7 @@ YUI.prototype = {
  * @default loader/loader-min.js
  */
 
-/**
+/*
  * 
  * Specifies whether or not YUI().use(...) will attempt to load CSS
  * resources at all.  Any truthy value will cause CSS dependencies
