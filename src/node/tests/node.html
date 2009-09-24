@@ -109,6 +109,7 @@ button {
         text
         <div id="test-extras">extras</div>
         <div id="test-children">foo <span>bar</span> <strong>baz</strong> </div>
+        <div id="test-empty-children"></div>
     </div>
     <div id="inline-style" style="color: green">inline style</div>
     <div id="foo" aria-checked="true"></div>
@@ -304,6 +305,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
 
             Assert.areEqual(2, node.get('children').size(), 'get("children")');
 
+            Assert.areEqual(0, Y.one('#test-empty-children').get('children').size(), "Y.one('#test-empty-children').get('children')");
             Assert.areEqual(8, Y.all('#' + id + ' li').size(), 'Y.all("#test-nodes li.size()")');
 
             // size() is deprecated on Node

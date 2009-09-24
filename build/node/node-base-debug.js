@@ -308,7 +308,7 @@ Node.ATTRS = {
                     }
                 }
             }
-            return children;
+            return Y.all(children);
         }
     },
 
