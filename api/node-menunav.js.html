@@ -1945,16 +1945,14 @@
 <span class="c"></span>							<span class="c">//	is visible.</span>
 <span class="c"></span>							<span class="nx">event</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
 							
-							<span class="c">//	For Webkit--By default FocusManager will try</span>
-<span class="c"></span>							<span class="c">//	to focus one of its descendants onMouseDown</span>
-<span class="c"></span>							<span class="c">//	since Webkit doesn&#39;t do that by default.  Since</span>
-<span class="c"></span>							<span class="c">//	we want to explicitly control where focus is </span>
-<span class="c"></span>							<span class="c">//	going, we need to call </span>
+							<span class="c">//	FocusManager will attempt to focus any </span>
+<span class="c"></span>							<span class="c">//	descendant that is the target of the mousedown</span>
+<span class="c"></span>							<span class="c">//	event.  Since we want to explicitly control </span>
+<span class="c"></span> 							<span class="c">//	where focus is going, we need to call </span>
 <span class="c"></span>							<span class="c">//	&quot;stopImmediatePropagation&quot; to stop the </span>
 <span class="c"></span>							<span class="c">//	FocusManager from doing its thing.</span>
-<span class="c"></span>							<span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
-								<span class="nx">event</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>	
-							<span class="o">}</span>
+<span class="c"></span>							<span class="nx">event</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>	
+
 
 							<span class="c">//	The &quot;_focusItem&quot; method relies on the </span>
 <span class="c"></span>							<span class="c">//	&quot;_hasFocus&quot; property being set to true.  The</span>
@@ -1964,26 +1962,53 @@
 <span class="c"></span>							<span class="c">//	this property manually.</span>
 <span class="c"></span>							<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
+								
+							<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_isRoot</span><span class="o">(</span><span class="nx">getParentMenu</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">)))</span> <span class="o">{</span>	<span class="c">//	Event target is a submenu label in the root menu</span>
+<span class="c"></span>
+								<span class="c">//	Menu label toggle functionality</span>
+<span class="c"></span>
+								<span class="k">if</span> <span class="o">(</span><span class="nx">hasVisibleSubmenu</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">))</span> <span class="o">{</span>
 
-							<span class="k">if</span> <span class="o">(</span><span class="nx">hasVisibleSubmenu</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">))</span> <span class="o">{</span>
-								
-								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
-								
-								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">);</span>								
-								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">);</span>
+									<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>								
+									<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">);</span>	
+									<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">oMenuLabel</span><span class="o">);</span>
+									
+								<span class="o">}</span>
+								<span class="k">else</span> <span class="o">{</span>
+
+									<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">);</span>
+									<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
+
+									<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">getFirstItem</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">));</span>
+									<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">getFirstItem</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">));</span>
+									
+								<span class="o">}</span>
 							
 							<span class="o">}</span>
-							<span class="k">else</span> <span class="o">{</span>
-							
-								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">);</span>
-								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
-							
-								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">getFirstItem</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">));</span>
-								<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">getFirstItem</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">));</span>
-							
+							<span class="k">else</span> <span class="o">{</span>	<span class="c">//	Event target is a submenu label within a submenu</span>
+<span class="c"></span>
+								<span class="k">if</span> <span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeItem</span> <span class="o">==</span> <span class="nx">oMenuLabel</span><span class="o">)</span> <span class="o">{</span>
+
+									<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_showMenu</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">);</span>
+									<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusItem</span><span class="o">(</span><span class="nx">getFirstItem</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">));</span>
+									<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">getFirstItem</span><span class="o">(</span><span class="nx">oSubmenu</span><span class="o">));</span>										
+
+								<span class="o">}</span>
+								<span class="k">else</span> <span class="o">{</span>
+
+									<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">);</span>
+
+									<span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
+										<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+										<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>
+									<span class="o">}</span>
+									
+								<span class="o">}</span>
+								
 							<span class="o">}</span>
-						
+
 						<span class="o">}</span>
+
 
 
 						<span class="k">if</span> <span class="o">(</span><span class="nx">sType</span> <span class="o">===</span> <span class="nx">CLICK</span><span class="o">)</span> <span class="o">{</span>
@@ -2114,31 +2139,10 @@
 
 		<span class="k">var</span> <span class="nx">menuNav</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span>
 			<span class="nx">oRoot</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="o">.</span><span class="nx">_rootMenu</span><span class="o">,</span>
-			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span>
-			<span class="nx">oMenu</span><span class="o">;</span>
+			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
 
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">oRoot</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">)</span> <span class="o">||</span> <span class="nx">oRoot</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">))</span> <span class="o">{</span>
-
-			<span class="nx">oMenu</span> <span class="o">=</span> <span class="nx">getParentMenu</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">);</span>
-
-			<span class="c">//	If the user mouses down on an element that is a descendant </span>
-<span class="c"></span>			<span class="c">//	of the root menu, but is in a submenu not currently being </span>
-<span class="c"></span>			<span class="c">//	managed by the Focus Manager, update the Focus Manager so </span>
-<span class="c"></span>			<span class="c">//	that it is now managing the submenu that is the parent of the </span>
-<span class="c"></span>			<span class="c">//	element that was the target of the mousedown event.</span>
-<span class="c"></span>			
-			<span class="k">if</span> <span class="o">(!</span><span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oMenu</span><span class="o">))</span> <span class="o">{</span>
-
-				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_activeMenu</span> <span class="o">=</span> <span class="nx">oMenu</span><span class="o">;</span>
-				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_initFocusManager</span><span class="o">();</span>
-				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_focusManager</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">,</span> <span class="nx">oTarget</span><span class="o">);</span>
-				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_setActiveItem</span><span class="o">(</span><span class="nx">getItem</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
-				
-			<span class="o">}</span>
-
-		<span class="o">}</span>
-		<span class="k">else</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(!(</span><span class="nx">oRoot</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">)</span> <span class="o">||</span> <span class="nx">oRoot</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">)))</span> <span class="o">{</span>
 
 			<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hideAllSubmenus</span><span class="o">(</span><span class="nx">oRoot</span><span class="o">);</span>
 
@@ -2150,7 +2154,7 @@
 				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_hasFocus</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 				<span class="nx">menuNav</span><span class="o">.</span><span class="nx">_clearActiveItem</span><span class="o">();</span>
 			<span class="o">}</span>
-						
+
 		<span class="o">}</span>
 
 	<span class="o">}</span>
