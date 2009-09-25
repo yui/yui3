@@ -243,6 +243,11 @@ Y.mix(NodeList.prototype, {
         delete NodeList._instances[this[UID]];
     },
 
+    /**
+     * Reruns the initial query, when created using a selector query 
+     * @method refresh
+     * @chainable
+     */
     refresh: function() {
         var doc,
             nodes = this._nodes;
