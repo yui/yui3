@@ -1898,16 +1898,14 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 							//	is visible.
 							event.preventDefault();
 							
-							//	For Webkit--By default FocusManager will try
-							//	to focus one of its descendants onMouseDown
-							//	since Webkit doesn't do that by default.  Since
-							//	we want to explicitly control where focus is 
-							//	going, we need to call 
+							//	FocusManager will attempt to focus any 
+							//	descendant that is the target of the mousedown
+							//	event.  Since we want to explicitly control 
+ 							//	where focus is going, we need to call 
 							//	"stopImmediatePropagation" to stop the 
 							//	FocusManager from doing its thing.
-							if (Y.UA.webkit) {
-								event.stopImmediatePropagation();	
-							}
+							event.stopImmediatePropagation();	
+
 
 							//	The "_focusItem" method relies on the 
 							//	"_hasFocus" property being set to true.  The
@@ -1917,26 +1915,53 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 							//	this property manually.
 							menuNav._hasFocus = true;
 
+								
+							if (menuNav._isRoot(getParentMenu(oTarget))) {	//	Event target is a submenu label in the root menu
 
-							if (hasVisibleSubmenu(oMenuLabel)) {
-								
-								menuNav._hideMenu(oSubmenu);
-								
-								menuNav._focusItem(oMenuLabel);								
-								menuNav._setActiveItem(oMenuLabel);
+								//	Menu label toggle functionality
+
+								if (hasVisibleSubmenu(oMenuLabel)) {
+
+									menuNav._hideMenu(oSubmenu);								
+									menuNav._focusItem(oMenuLabel);	
+									menuNav._setActiveItem(oMenuLabel);
+									
+								}
+								else {
+
+									menuNav._hideAllSubmenus(menuNav._rootMenu);
+									menuNav._showMenu(oSubmenu);
+
+									menuNav._focusItem(getFirstItem(oSubmenu));
+									menuNav._setActiveItem(getFirstItem(oSubmenu));
+									
+								}
 							
 							}
-							else {
-							
-								menuNav._hideAllSubmenus(menuNav._rootMenu);
-								menuNav._showMenu(oSubmenu);
-							
-								menuNav._focusItem(getFirstItem(oSubmenu));
-								menuNav._setActiveItem(getFirstItem(oSubmenu));
-							
+							else {	//	Event target is a submenu label within a submenu
+
+								if (menuNav._activeItem == oMenuLabel) {
+
+									menuNav._showMenu(oSubmenu);
+									menuNav._focusItem(getFirstItem(oSubmenu));
+									menuNav._setActiveItem(getFirstItem(oSubmenu));										
+
+								}
+								else {
+
+									menuNav._hideAllSubmenus(menuNav._rootMenu);
+
+									if (UA.webkit) {
+										menuNav._hasFocus = false;
+										menuNav._clearActiveItem();
+									}
+									
+								}
+								
 							}
-						
+
 						}
+
 
 
 						if (sType === CLICK) {
@@ -2067,31 +2092,10 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 		var menuNav = this,
 			oRoot = menuNav._rootMenu,
-			oTarget = event.target,
-			oMenu;
+			oTarget = event.target;
 
 
-		if (oRoot.compareTo(oTarget) || oRoot.contains(oTarget)) {
-
-			oMenu = getParentMenu(oTarget);
-
-			//	If the user mouses down on an element that is a descendant 
-			//	of the root menu, but is in a submenu not currently being 
-			//	managed by the Focus Manager, update the Focus Manager so 
-			//	that it is now managing the submenu that is the parent of the 
-			//	element that was the target of the mousedown event.
-			
-			if (!menuNav._activeMenu.compareTo(oMenu)) {
-
-				menuNav._activeMenu = oMenu;
-				menuNav._initFocusManager();
-				menuNav._focusManager.set(ACTIVE_DESCENDANT, oTarget);
-				menuNav._setActiveItem(getItem(oTarget, true));
-				
-			}
-
-		}
-		else {
+		if (!(oRoot.compareTo(oTarget) || oRoot.contains(oTarget))) {
 
 			menuNav._hideAllSubmenus(oRoot);
 
@@ -2103,7 +2107,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 				menuNav._hasFocus = false;
 				menuNav._clearActiveItem();
 			}
-						
+
 		}
 
 	}
