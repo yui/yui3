@@ -410,33 +410,8 @@ YUI.prototype = {
 
             },
 
-            onComplete = function(fromLoader) {
+            onComplete;
 
-                // Y.log('Use complete');
-
-                fromLoader = fromLoader || {
-                    success: true,
-                    msg: 'not dynamic'
-                };
-
-                if (Y.Env._callback) {
-
-                    var cb = Y.Env._callback;
-                    Y.Env._callback = null;
-                    cb(Y, fromLoader);
-                }
-
-                if (Y.fire) {
-                    Y.fire('yui:load', Y, fromLoader);
-                }
-
-                // process queued use requests as long until done 
-                // or dynamic load happens again.
-                Y._loading = false;
-                while (Y._useQueue && Y._useQueue.size() && !Y._loading) {
-                    Y.use.apply(Y, Y._useQueue.next());
-                }
-            };
 
         // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback);
 
@@ -447,6 +422,39 @@ YUI.prototype = {
         } else {
             callback = null;
         }
+
+        onComplete = function(fromLoader) {
+
+            // Y.log('Use complete');
+
+            fromLoader = fromLoader || {
+                success: true,
+                msg: 'not dynamic'
+            };
+
+            // if (Y.Env._callback) {
+            //     var cb = Y.Env._callback;
+            //     Y.Env._callback = null;
+            //     cb(Y, fromLoader);
+            // }
+
+            if (callback) {
+                callback(Y, fromLoader);
+            }
+
+            if (Y.fire) {
+                Y.fire('yui:load', Y, fromLoader);
+            }
+
+            // process queued use requests as long until done 
+            // or dynamic load happens again.
+            Y._loading = false;
+
+            if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
+                Y.use.apply(Y, Y._useQueue.next());
+            }
+        };
+ 
 
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
@@ -976,7 +984,7 @@ YUI.prototype = {
  * @default loader/loader-min.js
  */
 
-/*
+/**
  * 
  * Specifies whether or not YUI().use(...) will attempt to load CSS
  * resources at all.  Any truthy value will cause CSS dependencies

@@ -53,6 +53,8 @@
           'io.xdrResponse':1
         },
 
+        SERVICE_PREFIX = 'shared:',
+
         SLICE = Array.prototype.slice;
         
 // reduce to one or the other
@@ -145,6 +147,7 @@ YUI.prototype = {
             mods: {},
             cdn: 'http://yui.yahooapis.com/' + v + '/build/',
             bootstrapped: false,
+            shared: {},
             _idx: 0,
             _used: {},
             _attached: {},
@@ -249,6 +252,17 @@ YUI.prototype = {
     }, 
 
     /**
+     * Share information outside of the YUI instance sandbox.  This
+     * can be accessed by any YUI instance via use():
+     * @method share
+     * @param name {string} the name of the service
+     * @param item the item to share
+     */
+    share: function(name, item) {
+        YUI.Env.shared[name] = item;
+    },
+
+    /**
      * Register a module
      * @method add
      * @param name {string} module name
@@ -347,8 +361,24 @@ YUI.prototype = {
             this._useQueue = this._useQueue || new this.Queue();
             this._useQueue.add(SLICE.call(arguments, 0));
             return this;
-        }
+        } else {
+            var name = arguments[0], i = name.indexOf(SERVICE_PREFIX), 
+                service;
 
+            if (i > -1) {
+                this.log('service: ' + name.substr(i+SERVICE_PREFIX.length));
+                service = YUI.Env.shared[name.substr(i+SERVICE_PREFIX.length)];
+                this.log('service: ' + service);
+                if (service) {
+                    return service;
+                }
+            }
+
+            return this._use.apply(this, arguments);
+        }
+    },
+
+    _use: function() {
         var Y = this, 
             a=SLICE.call(arguments, 0), 
             mods = YUI.Env.mods, 
@@ -410,43 +440,43 @@ YUI.prototype = {
 
             },
 
-            onComplete;
+            onComplete = function(fromLoader) {
+
+                // Y.log('Use complete');
+
+                fromLoader = fromLoader || {
+                    success: true,
+                    msg: 'not dynamic'
+                };
+
+                if (Y.Env._callback) {
+
+                    var cb = Y.Env._callback;
+                    Y.Env._callback = null;
+                    cb(Y, fromLoader);
+                }
+
+                if (Y.fire) {
+                    Y.fire('yui:load', Y, fromLoader);
+                }
+
+                // process queued use requests as long until done 
+                // or dynamic load happens again.
+                Y._loading = false;
+                while (Y._useQueue && Y._useQueue.size() && !Y._loading) {
+                    Y.use.apply(Y, Y._useQueue.next());
+                }
+            };
 
         // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback);
 
         // The last argument supplied to use can be a load complete callback
         if (typeof callback === 'function') {
             a.pop();
+            Y.Env._callback = callback;
         } else {
             callback = null;
         }
-
-        onComplete = function(fromLoader) {
-
-            // Y.log('Use complete');
-
-            fromLoader = fromLoader || {
-                success: true,
-                msg: 'not dynamic'
-            };
-
-            if (callback) {
-                callback(Y, fromLoader);
-            }
-
-            if (Y.fire) {
-                Y.fire('yui:load', Y, fromLoader);
-            }
-
-            // process queued use requests as long until done 
-            // or dynamic load happens again.
-            Y._loading = false;
-
-            if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
-                Y.use.apply(Y, Y._useQueue.next());
-            }
-        };
- 
 
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
