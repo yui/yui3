@@ -604,7 +604,9 @@ Y.mix(Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     all: function(selector) {
-        return Y.all(Y.Selector.query(selector, this._node));
+        var nodelist = Y.all(Y.Selector.query(selector, this._node));
+        nodelist._query = selector;
+        return nodelist;
     },
 
     /**
