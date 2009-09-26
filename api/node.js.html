@@ -651,7 +651,9 @@
 <span class="c">     * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.</span>
 <span class="c">     */</span>
     <span class="nx">all</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">));</span>
+        <span class="k">var</span> <span class="nx">nodelist</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">));</span>
+        <span class="nx">nodelist</span><span class="o">.</span><span class="nx">_query</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">nodelist</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
