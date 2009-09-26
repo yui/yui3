@@ -1,3 +1,4 @@
+/*global Y */
 /**
  * <p>Provides Y.QueryString.stringify method for converting objects to Query Strings.
  * This is a simpler implementation than the full querystring-stringify.</p>
@@ -45,7 +46,7 @@ QueryString.escape = encodeURIComponent;
 QueryString.stringify = function (obj, sep, eq) {
     var qs = [], key, escape = QueryString.escape;
     for (key in obj) if (obj.hasOwnProperty(key)) {
-        qs.push(escape(key)+eq+escape(String(obj[key])));
+        qs.push(escape(key) + eq + escape(String(obj[key])));
     }
     return qs.join(sep);
 };
