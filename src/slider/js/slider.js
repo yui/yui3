@@ -751,17 +751,23 @@ Y.extend(Slider, Y.Widget, {
     _imageLoaded : function (img,e) {
         var error = (e.type.toLowerCase().indexOf('error') > -1);
 
-        if (this._stall) {
-            this._stall.detach();
-        }
+        // Need to execute inside a setTimeout because IE doesn't report
+        // img.complete === true until after the img.onload handler
+        // @TODO: readyState reports correctly in onload.  Lose this wrapper
+        // and use that in _isImageLoaded.
+        Y.later(0, this, function () {
+            if (this._stall) {
+                this._stall.detach();
+            }
 
-        Y.log('Thumb image '+e.type+'ed.  Syncing','info','slider');
+            Y.log('Thumb image '+e.type+'ed.  Syncing','info','slider');
 
-        this._stall = false;
+            this._stall = false;
 
-        this._ready(img,error);
+            this._ready(img,error);
 
-        this.set(DISABLED,this._disabled);
+            this.set(DISABLED,this._disabled);
+        });
     },
 
     /**
