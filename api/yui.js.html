@@ -505,6 +505,10 @@
                     <span class="nx">a</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">k</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
+            
+            <span class="k">if</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">a</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">callback</span><span class="o">);</span>
+            <span class="o">}</span>
 
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
         <span class="o">}</span>
