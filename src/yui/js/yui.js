@@ -456,6 +456,10 @@ YUI.prototype = {
                     a.push(k);
                 }
             }
+            
+            if (callback) {
+                a.push(callback);
+            }
 
             return Y.use.apply(Y, a);
         }
