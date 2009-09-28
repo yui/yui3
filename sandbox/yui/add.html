@@ -9,6 +9,7 @@
     <body>
         <script type="text/javascript">
             (function () {
+
                 YUI.add('mywidget', function(Y) {
 
                     function MyWidget(config) {
@@ -66,22 +67,23 @@
             // })
 
             // *was* broken
-            YUI( { filter: 'debug' }, config1, config2, config3).use('dump', 'mywidget', function(Y) {
-                new Y.MyWidget().render();
-                Y.log("use 'mywidget', custom module - No Exceptions");
-                Y.log("config: " + Y.dump(Y.config));
-                Y.log("modules: " + Y.dump(Y.config.modules, 0));
-                Y.log("DOM element: " + Y.dump(document.getElementById('my')));
-                Y.log("document.location: " + Y.dump(document.location));
-            })
+            // YUI( { filter: 'debug' }, config1, config2, config3).use('dump', 'mywidget', function(Y) {
+            //     new Y.MyWidget().render();
+            //     Y.log("use 'mywidget', custom module - No Exceptions");
+            //     Y.log("config: " + Y.dump(Y.config));
+            //     Y.log("modules: " + Y.dump(Y.config.modules, 0));
+            //     Y.log("DOM element: " + Y.dump(document.getElementById('my')));
+            //     Y.log("document.location: " + Y.dump(document.location));
+            // })
 
-YUI().add('bacon-dom', function(Y) {
-Y.log("Loading bacon-dom",'debug',"bacon-dom");
-}, '@VERSION@', { requires: ['event'] });
+            YUI().add('bacon-dom', function(Y) {
+                Y.log("Loading bacon-dom",'debug',"bacon-dom");
+            }, '@VERSION@', { requires: ['event'] });
 
-YUI().use('bacon-dom', function(Y) {
-alert('usinghello' + Y.Event + ' - ' + Y.Selector);
-});
+            YUI({ filter: 'debug' }).use('bacon-dom', 'console-filters', function(Y) {
+                // alert('usinghello' + Y.Event + ' - ' + Y.Selector);
+                Y.log('used backon-dom: ' + Y.Event + ' - ' + Y.Selector);
+            });
         </script>
 
     </body>

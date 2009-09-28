@@ -114,7 +114,7 @@ var whitelist = {
             return null;
         }
 
-        return Y.Node.get(n);
+        return Y.one(n);
     };
 
 

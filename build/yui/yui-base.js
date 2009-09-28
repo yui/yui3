@@ -407,11 +407,9 @@ YUI.prototype = {
             onComplete;
 
 
-
         // The last argument supplied to use can be a load complete callback
         if (typeof callback === 'function') {
             a.pop();
-            Y.Env._callback = callback;
         } else {
             callback = null;
         }
@@ -423,12 +421,6 @@ YUI.prototype = {
                 success: true,
                 msg: 'not dynamic'
             };
-
-            // if (Y.Env._callback) {
-            //     var cb = Y.Env._callback;
-            //     Y.Env._callback = null;
-            //     cb(Y, fromLoader);
-            // }
 
             if (callback) {
                 callback(Y, fromLoader);
@@ -455,6 +447,10 @@ YUI.prototype = {
                 if (mods.hasOwnProperty(k)) {
                     a.push(k);
                 }
+            }
+            
+            if (callback) {
+                a.push(callback);
             }
 
             return Y.use.apply(Y, a);

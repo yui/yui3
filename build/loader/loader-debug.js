@@ -325,7 +325,7 @@ var NOT_FOUND = {},
             skinnable: true,
             plugins: {
                 'console-filters': {
-                    requires: [PLUGIN],
+                    requires: [PLUGIN, 'console'],
                     skinnable: true
                 }
             }
