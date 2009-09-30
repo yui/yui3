@@ -1,0 +1,34 @@
+<html debug="true">
+    <head>
+        <title>YUI 3.0</title>
+        <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+
+ YUI().use('event-custom', function(Y) {
+     Y.shared = true;
+     Y.share('global_y', Y);
+     Y.share('global_data', { foo: 'bar' });
+ });
+
+ 
+ YUI().use('shared:global_y', function(Y) {
+     // Y is the shared instance, not the
+     // one we created with YUI() to set up
+     // the service provider;
+ 
+     var global_data = Y.use('shared:global_data');
+     Y.log(global_data.foo);
+     Y.log(Y.shared);
+ });
+ 
+ // should work as well
+ var my_y = YUI().use('shared:global_y');
+
+my_y.log(my_y.shared);
+
+        </script>
+
+    </body>
+</html>

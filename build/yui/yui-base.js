@@ -404,41 +404,41 @@ YUI.prototype = {
 
             },
 
-            onComplete = function(fromLoader) {
-
-
-                fromLoader = fromLoader || {
-                    success: true,
-                    msg: 'not dynamic'
-                };
-
-                if (Y.Env._callback) {
-
-                    var cb = Y.Env._callback;
-                    Y.Env._callback = null;
-                    cb(Y, fromLoader);
-                }
-
-                if (Y.fire) {
-                    Y.fire('yui:load', Y, fromLoader);
-                }
-
-                // process queued use requests as long until done 
-                // or dynamic load happens again.
-                Y._loading = false;
-                while (Y._useQueue && Y._useQueue.size() && !Y._loading) {
-                    Y.use.apply(Y, Y._useQueue.next());
-                }
-            };
+            onComplete;
 
 
         // The last argument supplied to use can be a load complete callback
         if (typeof callback === 'function') {
             a.pop();
-            Y.Env._callback = callback;
         } else {
             callback = null;
         }
+
+        onComplete = function(fromLoader) {
+
+
+            fromLoader = fromLoader || {
+                success: true,
+                msg: 'not dynamic'
+            };
+
+            if (callback) {
+                callback(Y, fromLoader);
+            }
+
+            if (Y.fire) {
+                Y.fire('yui:load', Y, fromLoader);
+            }
+
+            // process queued use requests as long until done 
+            // or dynamic load happens again.
+            Y._loading = false;
+
+            if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
+                Y.use.apply(Y, Y._useQueue.next());
+            }
+        };
+ 
 
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
@@ -447,6 +447,10 @@ YUI.prototype = {
                 if (mods.hasOwnProperty(k)) {
                     a.push(k);
                 }
+            }
+            
+            if (callback) {
+                a.push(callback);
             }
 
             return Y.use.apply(Y, a);

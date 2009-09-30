@@ -13,34 +13,6 @@
  * @constructor
  */
 
-Y.Array._diff = function(a, b) {
-    var removed = [],
-        present = false,
-        i, j, lenA, lenB;
-
-    outer:
-    for (i = 0, lenA = a.length; i < lenA; i++) {
-        present = false;
-        for (j = 0, lenB = b.length; j < lenB; j++) {
-            if (a[i] === b[j]) {
-                present = true;
-                continue outer;
-            }
-        }
-        if (!present) {
-            removed[removed.length] = a[i];
-        }
-    }
-    return removed;
-};
-
-Y.Array.diff = function(a, b) {
-    return {
-        added: Y.Array._diff(b, a),
-        removed: Y.Array._diff(a, b)
-    }; 
-};
-
 var NodeList = function(nodes) {
     if (typeof nodes === 'string') {
         this._query = nodes;
@@ -271,21 +243,22 @@ Y.mix(NodeList.prototype, {
         delete NodeList._instances[this[UID]];
     },
 
+    /**
+     * Reruns the initial query, when created using a selector query 
+     * @method refresh
+     * @chainable
+     */
     refresh: function() {
         var doc,
-            diff,
-            oldList = this._nodes;
+            nodes = this._nodes;
         if (this._query) {
-            if (oldList && oldList[0] && oldList[0].ownerDocument) {
-                doc = oldList[0].ownerDocument;
+            if (nodes && nodes[0] && nodes[0].ownerDocument) {
+                doc = nodes[0].ownerDocument;
             }
 
             this._nodes = Y.Selector.query(this._query, doc || Y.config.doc);        
-            diff = Y.Array.diff(oldList, this._nodes); 
-            diff.added = diff.added ? Y.all(diff.added) : null;
-            diff.removed = diff.removed ? Y.all(diff.removed) : null;
-            this.fire('refresh', diff);
         }
+
         return this;
     },
 
