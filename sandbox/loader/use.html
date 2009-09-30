@@ -3,6 +3,7 @@
 <head>
 <title>YUI 3.0</title>
 <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
 <style>
 .dd {
             padding-left: 20px;
@@ -39,15 +40,16 @@ if (typeof loadFirebugConsole == 'function') {
 
 
 YUI({
-    base: '../../build/',
-    root: '2.5.2/build/',
+    // base: '../../build/',
+    // root: '2.5.2/build/',
     insertBefore: 'styleoverrides',
     ignore: ['skin-sam-widget'],
     //charset: 'utf-8',
     //loadOptional: true,
-    // combine: true,
+    combine: true,
     filter: 'debug',
     // logInclude: { event: true },
+    logExclude: { get: true },
     timeout: 20000
 // }).use('compat', 'dd-dragdrop-all', function(Y) {
 }).use('widget', function(Y, result) {
