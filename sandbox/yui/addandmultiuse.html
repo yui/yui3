@@ -1,13 +1,11 @@
 <html>
 <head>
 <title>YUI3 Testing</title>
-
-</head>
-
-<body>
-
 <script src="../../build/yui/yui-min.js" type="text/javascript"></script> 
+</head>
+<body>
 <script type="text/javascript">
+
 YUI.add('config', function(Y) {
     Y.Config = function() {
         var conf;
@@ -47,7 +45,7 @@ YUI.add('config', function(Y) {
     }();
 }, '.01', { requires : ['json-parse'] });
 
-YUI.Test = YUI({ base : '../../build/' });
+YUI.Test = YUI();
 
 YUI.Test.use('config', function(Y) {
     console.log("Block 1 :: Y.Config: %o", Y.Config); //TODO: REMOVE DEBUG OUTPUT
@@ -64,7 +62,6 @@ YUI.Test.use('config', function(Y) {
 YUI.Test.use('config', 'console', 'datasource', 'anim', 'dd', 'slider', function(Y) {
     console.log("Block 4 :: Y.Config: %o", Y.Config); //TODO: REMOVE DEBUG OUTPUT
 });
-
 
 </script>
 </body>

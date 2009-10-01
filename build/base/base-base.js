@@ -58,7 +58,7 @@ YUI.add('base-base', function(Y) {
 
         // If Plugin.Host has been augmented [ through base-pluginhost ], setup it's
         // initial state, but don't initialize Plugins yet. That's done after initialization.
-        var PluginHost = Y.Plugin.Host;  
+        var PluginHost = Y.Plugin && Y.Plugin.Host;  
         if (this._initPlugins && PluginHost) {
             PluginHost.call(this);
         }

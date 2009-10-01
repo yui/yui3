@@ -9,7 +9,7 @@ The YUI Global
 
 3.0.0
 
-* Extracted the loader from the seed file.  Instead, if loader not included, 'get is included,
+* Extracted the loader from the seed file.  Instead, if loader not included, 'get' is included,
   and dependencies are missing, the loader will be fetched before continuing.
 * User agent detection is more granular.  e.g., FireFox 3.5 reports gecko 1.91 rather than 1.9.
 * Fixed UA.os.
@@ -20,7 +20,6 @@ The YUI Global
 * queue-base is no longer a submodule of queue -- it is part of yui-base.
 * All YUI submodules end up in the yui build directory.
 * Dynamic loading can be disabled by setting the 'bootstrap' config to false.
-* Automatic fetching of CSS files can be disabled by setting 'fetchCSS' to false.
 
 3.0.0 beta 1
 

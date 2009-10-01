@@ -202,13 +202,6 @@ See <a href="#method_addAttr">addAttr</a>.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -253,13 +246,6 @@ See <a href="#method_addAttr">addAttr</a>.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -304,13 +290,6 @@ See <a href="#method_addAttr">addAttr</a>.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -396,13 +375,6 @@ if this is a sub-attribute value being change. Otherwise null.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -452,7 +424,7 @@ See <a href="#method_get">get</a> for argument details.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Any
+                                                            Any
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">The value of the attribute.</dd>
                                                 </dl>
@@ -529,7 +501,7 @@ provided and the attribute is not read-only.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Any
+                                                            Any
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">The initial value of the attribute.</dd>
                                                 </dl>
@@ -581,7 +553,7 @@ returned. If set to true, all attributes modified from their initial values are 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">An object with attribute name/value pairs.</dd>
                                                 </dl>
@@ -633,7 +605,7 @@ internal state object, or the state proxy if it exits
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Any
+                                                            Any
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">The stored value of the attribute</dd>
                                                 </dl>
@@ -685,7 +657,7 @@ added lazily and still requires initialization.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        boolean
+                                                            boolean
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">true if it's a lazily added attribute, false otherwise.</dd>
                                                 </dl>
@@ -738,7 +710,7 @@ attributes can be keyed by the top level attribute name.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">An object literal with 2 properties - "simple" and "complex",
 containing simple and complex attribute values respectively keyed 
@@ -793,7 +765,7 @@ attr config objects.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A protected version of the attrs argument.</dd>
                                                 </dl>
@@ -865,7 +837,7 @@ the event facade passed to subscribers of the attribute's change event.</span>
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A reference to the host object.</dd>
                                                 </dl>
@@ -952,7 +924,7 @@ readOnly or writeOnce attributes which have already been set.</span>
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A reference to the host object.</dd>
                                                 </dl>
@@ -1006,7 +978,7 @@ readOnly or writeOnce attributes which have already been set.</span>
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A reference to the host object.</dd>
                                                 </dl>
@@ -1091,7 +1063,7 @@ if validation and setter passes.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        booolean
+                                                            booolean
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">true if the new attribute value was stored, false if not.</dd>
                                                 </dl>
@@ -1150,13 +1122,6 @@ internal state object, or the state proxy if it exits
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1237,6 +1202,7 @@ the <a href="#method_addAttrs">addAttrs</a> method.</dd>
 </dl>
 <p>The setter, getter and validator are invoked with the value and name passed in as the first and second arguments, and with
 the context ("this") set to the host object.</p>
+<p>Configuration properties outside of the list mentioned above are considered private properties used internally by attribute, and are not intended for public use.</p>
                                         </div>
 
                                         <div class="description">
@@ -1270,7 +1236,7 @@ to protect the original values, you will need to merge the object.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A reference to the host object.</dd>
                                                 </dl>
@@ -1351,7 +1317,7 @@ See <a href="#method_addAttr">addAttr</a>.</span>
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A reference to the host object.</dd>
                                                 </dl>
@@ -1405,7 +1371,7 @@ See <a href="#method_addAttr">addAttr</a>.</span>
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        boolean
+                                                            boolean
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">true if an attribute with the given name has been added, false if it hasn't. This method will return true for lazily added attributes.</dd>
                                                 </dl>
@@ -1459,7 +1425,7 @@ dot notation can be used to obtain the value of a property of the object (e.g. <
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Any
+                                                            Any
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">The value of the attribute</dd>
                                                 </dl>
@@ -1511,7 +1477,7 @@ returned. If set to true, all attributes modified from their initial values are 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">An object with attribute name/value pairs.</dd>
                                                 </dl>
@@ -1575,13 +1541,6 @@ broadcast and getter.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1626,13 +1585,6 @@ broadcast and getter.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1681,7 +1633,7 @@ the attribute is not readOnly, or writeOnce.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A reference to the host object.</dd>
                                                 </dl>
@@ -1761,7 +1713,7 @@ set called externally by the application developer.</span>
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A reference to the host object.</dd>
                                                 </dl>
@@ -1815,7 +1767,7 @@ set called externally by the application developer.</span>
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A reference to the host object.</dd>
                                                 </dl>
@@ -1911,6 +1863,7 @@ set called externally by the application developer.</span>
                         <h4>Modules</h4>
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class="selected"><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
@@ -1932,6 +1885,7 @@ set called externally by the application developer.</span>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
@@ -1940,7 +1894,6 @@ set called externally by the application developer.</span>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

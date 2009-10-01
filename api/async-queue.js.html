@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: queue-run   queue-run.js  (YUI Library)</title>
+	<title>API: async-queue   async-queue.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,11 +16,11 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>queue-run&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>async-queue&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_queue-run.html" title="queue-run">queue-run</a>
+            &gt; <a href="./module_async-queue.html" title="async-queue">async-queue</a>
                 
-                 &gt; queue-run.js (source view) 
+                 &gt; async-queue.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -48,12 +48,13 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * &lt;p&gt;Adds a new class AsyncQueue that is restricted to function callbacks, but</span>
-<span class="c"> * includes a host of additional features, including events, callback</span>
-<span class="c"> * iterations, and a run() method that can execute queued callbacks in order,</span>
-<span class="c"> * even across configured timeouts.&lt;/p&gt;</span>
+<span class="c"> * &lt;p&gt;AsyncQueue allows you create a chain of function callbacks executed</span>
+<span class="c"> * via setTimeout (or synchronously) that are guaranteed to run in order.</span>
+<span class="c"> * Items in the queue can be promoted or removed.  Start or resume the</span>
+<span class="c"> * execution chain with run().  pause() to temporarily delay execution, or</span>
+<span class="c"> * stop() to halt and clear the queue.&lt;/p&gt;</span>
 <span class="c"> *</span>
-<span class="c"> * @module queue-run</span>
+<span class="c"> * @module async-queue</span>
 <span class="c"> */</span>
 
 <span class="c">/**</span>
@@ -105,7 +106,7 @@
 <span class="c"> * &lt;ul&gt;</span>
 <span class="c"> *  &lt;li&gt;&lt;code&gt;autoContinue&lt;/code&gt;: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;</span>
 <span class="c"> *  &lt;li&gt;&lt;code&gt;iterations&lt;/code&gt;: 1&lt;/li&gt;</span>
-<span class="c"> *  &lt;li&gt;&lt;code&gt;timeout&lt;/code&gt;: -1 (synchronous operation)&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;&lt;code&gt;timeout&lt;/code&gt;: 10 (10ms between callbacks)&lt;/li&gt;</span>
 <span class="c"> *  &lt;li&gt;&lt;code&gt;until&lt;/code&gt;: (function to run until iterations &amp;lt;= 0)&lt;/li&gt;</span>
 <span class="c"> * &lt;/ul&gt;</span>
 <span class="c"> *</span>
@@ -116,7 +117,7 @@
 <span class="nx">Queue</span><span class="o">.</span><span class="nx">defaults</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span>
     <span class="nx">autoContinue</span> <span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
     <span class="nx">iterations</span>   <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
-    <span class="nx">timeout</span>      <span class="o">:</span> <span class="o">-</span><span class="m">1</span><span class="o">,</span>
+    <span class="nx">timeout</span>      <span class="o">:</span> <span class="m">10</span><span class="o">,</span>
     <span class="nx">until</span>        <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">iterations</span> <span class="o">|=</span> <span class="m">0</span><span class="o">;</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">iterations</span> <span class="o">&lt;=</span> <span class="m">0</span><span class="o">;</span>
@@ -129,7 +130,8 @@
 <span class="c">     *</span>
 <span class="c">     * @property _running</span>
 <span class="c">     * @type {Boolean|Object} true for synchronous callback execution, the</span>
-<span class="c">     *                        return handle from Y.later for async callbacks</span>
+<span class="c">     *                        return handle from Y.later for async callbacks.</span>
+<span class="c">     *                        Otherwise false.</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_running</span> <span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
@@ -580,6 +582,7 @@
                         <h4>Modules</h4>
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class="selected"><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
@@ -601,6 +604,7 @@
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
@@ -609,7 +613,6 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class="selected"><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -633,7 +636,7 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="queue-run.js.html" title="queue-run.js">queue-run.js</a></li>
+                                <li class="selected"><a href="async-queue.js.html" title="async-queue.js">async-queue.js</a></li>
                         </ul>
                     </div>
 

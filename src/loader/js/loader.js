@@ -129,6 +129,7 @@ var NOT_FOUND = {},
     DATASOURCELOCAL = 'datasource-local',
     DOMBASE = 'dom-base',
     DOMSTYLE = 'dom-style',
+    DOMSCREEN = 'dom-screen',
     DUMP = 'dump',
     GET = 'get',
     EVENTBASE = 'event-base',
@@ -138,6 +139,7 @@ var NOT_FOUND = {},
     NODE = 'node',
     NODEBASE = 'node-base',
     NODESTYLE = 'node-style',
+    NODESCREEN = 'node-screen',
     OOP = 'oop',
     PLUGINHOST = 'pluginhost',
     SELECTORCSS2 = 'selector-css2',
@@ -219,7 +221,7 @@ var NOT_FOUND = {},
                 },
 
                 'node-screen': {
-                    requires: ['dom-screen', NODEBASE]
+                    requires: [DOMSCREEN, NODEBASE]
                 },
 
                 'node-pluginhost': {
@@ -259,7 +261,7 @@ var NOT_FOUND = {},
                 },
 
                 'anim-xy': {
-                    requires: [ANIMBASE, 'node-screen']
+                    requires: [ANIMBASE, NODESCREEN]
                 },
 
                 'anim-curve': {
@@ -321,7 +323,7 @@ var NOT_FOUND = {},
             skinnable: true,
             plugins: {
                 'console-filters': {
-                    requires: [PLUGIN],
+                    requires: [PLUGIN, 'console'],
                     skinnable: true
                 }
             }
@@ -492,9 +494,9 @@ var NOT_FOUND = {},
         },
 
         imageloader: { 
-            requires: [NODE]
+            requires: [BASEBASE, NODESTYLE, NODESCREEN]
         },
-        
+
         io:{
             submodules: {
 
@@ -566,8 +568,15 @@ var NOT_FOUND = {},
             requires: [YUIBASE]
         },
 
+        // deprecated package, replaced with async-queue
         'queue-run': {
-            requires: [EVENTCUSTOM]
+            requires: [EVENTCUSTOM],
+            path: 'async-queue/async-queue-min.js'
+        },
+
+        'async-queue': {
+            requires: [EVENTCUSTOM],
+            supersedes: ['queue-run']
         },
 
         slider: {
@@ -771,7 +780,7 @@ Y.Loader = function(o) {
      * @type boolean
      * @default true if a base dir isn't in the config
      */
-    this.combine = (!(BASE in o));
+    this.combine = o.base && (o.base.indexOf( this.comboBase.substr(0, 20)) > -1);
 
     /**
      * Ignore modules registered on the YUI global
@@ -1351,7 +1360,6 @@ Y.Loader.prototype = {
      * @param type optional argument to prune modules 
      */
     calculate: function(o, type) {
-        this.loadType = type;
         if (o || type || this.dirty) {
             this._config(o);
             this._setup();
@@ -1819,7 +1827,9 @@ Y.Loader.prototype = {
         }
 
         // build the dependency list
-        this.calculate(o); // don't include type
+        this.calculate(o); // don't include type so we can process CSS and script in
+                           // one pass when the type is not specified.
+        this.loadType = type;
 
         if (!type) {
 
@@ -1938,7 +1948,7 @@ Y.Loader.prototype = {
             for (i=0; i<len; i=i+1) {
                 m = this.getModule(s[i]);
                 // Do not try to combine non-yui JS
-                if (m && m.type === type && !m.ext) {
+                if (m && (m.type === type) && !m.ext) {
                     url += this.root + m.path;
                     if (i < len-1) {
                         url += '&';

@@ -200,39 +200,29 @@ var whitelist = {
     /**
      * Returns a wrapped node.  Intended to be used on event targets,
      * so it will return the node's parent if the target is a text
-     * node
+     * node.
+     *
+     * If accessing a property of the node throws an error, this is
+     * probably the anonymous div wrapper Gecko adds inside text
+     * nodes.  This likely will only occur when attempting to access
+     * the relatedTarget.  In this case, we now return null because
+     * the anonymous div is completely useless and we do not know
+     * what the related target was because we can't even get to
+     * the element's parent node.
+     *
      * @method resolve
      * @private
      */
     resolve = function(n) {
-
-        var go, test;
-
-        if (!n) {
+        try {
+            if (n && 3 == n.nodeType) {
+                n = n.parentNode;
+            }
+        } catch(e) { 
             return null;
         }
 
-        try {
-            if (ua.webkit && 3 == n.nodeType) {
-                n = n.parentNode;
-            } 
-        } catch(e1) { }
-
-        if (ua.gecko) {
-            while (!go) {
-                try {
-                    test = n._yuid;
-                    go = true;
-                } catch(e2) {
-                    n = n.parentNode;
-                    if (!n) {
-                        return null;
-                    }
-                }
-            }
-        }
-
-        return Y.Node.get(n);
+        return Y.one(n);
     };
 
 
@@ -478,12 +468,7 @@ COMPAT_ARG = '~yui|2|compat~',
 
 shouldIterate = function(o) {
     try {
-        return ( (o                    && // o is something
-                 typeof o !== "string" && // o is not a string
-                 o.length              && // o is indexed
-                 !o.tagName            && // o is not an HTML element
-                 !o.alert              && // o is not a window
-                 (o.item || typeof o[0] !== "undefined")) );
+        return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !o.alert);
     } catch(ex) {
         Y.log("collection check failure", "warn", "event");
         return false;
@@ -668,6 +653,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     // set by the event system for lazy DOM listeners
                     if (availHandle.handle) {
                         availHandle.handle.detach();
+						return;
                     }
 
                     var i, j;
@@ -675,7 +661,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     // otherwise try to remove the onAvailable listener(s)
                     for (i = 0; i < a.length; i++) {
                         for (j = 0; j < _avail.length; j++) {
-                            if (a[i] == _avail[j].id) {
+                            if (a[i] === _avail[j].id) {
                                 _avail.splice(j, 1);
                             }
                         }
@@ -812,11 +798,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return false;
             }
 
-
             // The el argument can be an array of elements or element ids.
             if (shouldIterate(el)) {
-
-                // Y.log('collection: ' + el.item(0) + ', ' + el.item(1));
 
                 handles=[];
                 
@@ -1335,7 +1318,7 @@ if (Y.UA.ie) {
     Y.on(EVENT_READY, Event._poll, Event, true);
 }
 
-add(window, "unload", onUnload);
+Y.on("unload", onUnload);
 
 Event.Custom = Y.CustomEvent;
 Event.Subscriber = Y.Subscriber;

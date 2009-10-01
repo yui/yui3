@@ -367,8 +367,15 @@
 <span class="c"></span>					<span class="c">//	&quot;activeDescendant&quot; attribute try to infer it from </span>
 <span class="c"></span>					<span class="c">//	the markup.</span>
 <span class="c"></span>
+					<span class="c">//	Need to pass &quot;2&quot; when using &quot;getAttribute&quot; for IE to get</span>
+<span class="c"></span>					<span class="c">//	the attribute value as it is set in the markup.</span>
+<span class="c"></span>					<span class="c">//	Need to use &quot;parseInt&quot; because IE always returns the </span>
+<span class="c"></span>					<span class="c">//	value as a number, whereas all other browsers return</span>
+<span class="c"></span>					<span class="c">//	the attribute as a string when accessed </span>
+<span class="c"></span>					<span class="c">//	via &quot;getAttribute&quot;.</span>
+<span class="c"></span>
 					<span class="k">if</span> <span class="o">(</span><span class="nx">nActiveDescendant</span> <span class="o">&lt;</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> 
-							<span class="nx">oNode</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">)</span> <span class="o">===</span> <span class="s2">&quot;0&quot;</span><span class="o">)</span> <span class="o">{</span>
+							<span class="nb">parseInt</span><span class="o">(</span><span class="nx">oNode</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">,</span> <span class="m">2</span><span class="o">),</span> <span class="m">10</span><span class="o">)</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
 
 						<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">i</span><span class="o">;</span>
 
@@ -1103,6 +1110,7 @@
                         <h4>Modules</h4>
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
@@ -1124,6 +1132,7 @@
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
                                 <li class="selected"><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
@@ -1132,7 +1141,6 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

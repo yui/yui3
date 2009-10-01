@@ -7,15 +7,6 @@
 <link type="text/css" rel="stylesheet" href="../../../../yui2/build/yuitest/assets/testlogger.css">     
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
-<script type="text/javascript" src="../../../build/event/event.js"></script>
-<script type="text/javascript" src="../../../build/oop/oop.js"></script>
-<script type="text/javascript" src="../../../build/dom/dom-base.js"></script>
-<script type="text/javascript" src="../../../build/dom/selector-css3.js"></script>
-<script type="text/javascript" src="../../../build/base/base-debug.js"></script>
-<script type="text/javascript" src="../../../build/attribute/attribute-debug.js"></script>
-<script type="text/javascript" src="../../../build/node/node-debug.js"></script>
-
 <script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
 <script type="text/javascript" src="../../../../yui2/build/event/event.js"></script>
@@ -24,7 +15,7 @@
 
 <script>
 onload = function() {
-    YUI({filter: 'raw'}).use('*', function(Y) {
+    YUI({filter: 'raw'}).use('node', 'selector-css3', function(Y) {
         Y.Dom = YAHOO.util.Dom;
         var logger = new YAHOO.tool.TestLogger(null, {height:'2000px'});
         var suite = new YAHOO.tool.TestSuite("Selector Suite");

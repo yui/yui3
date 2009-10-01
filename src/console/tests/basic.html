@@ -5,11 +5,6 @@
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
     <link type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console-filters.css">
     <style type="text/css">
-.yui-skin-sam #c .yui-console {
-    position: relative;
-    top: auto;
-    right: auto;
-}
 #c {
     margin-bottom: 1em;
 }
@@ -28,17 +23,22 @@
     <button type="button" id="expand">Expand</button>
     <button type="button" id="destroy">Destroy</button>
     <button type="button" id="throttle">Throttle</button>
+    <button type="button" id="limit">Limit cache</button>
 </div>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/console/console-filters.js"></script>
 <script type="text/javascript">
 YUI({
-    base: '../../../build/',
+    //useBrowserConsole:false,
     //logLevel: 'warn',
-    filter: 'debug',
-    logInclude : { global: true },
-    useBrowserConsole:false
+    //filter: 'debug',
+    //logInclude : { global: true },
+    //logExclude : { attribute: true },
+    filters : {
+        console: 'raw',
+        'console-filters': 'debug'
+    },
+    base: '../../../build/'
 }).use('console','console-filters', function (Y) {
 
 var x = {
@@ -62,28 +62,37 @@ Y.get('#throttle').on('click', function () {
         Y.log('Throttle message ' + i);
     }
 });
+Y.get('#limit').on('click', function () {
+    yconsole.filter.set('cacheLimit', 500);
+});
 
 var yconsole = new Y.Console({
+    //useBrowserConsole: true,
     //verbose : true,
     //consoleLimit : 10,
+    boundingBox: '#c',
+    //style : 'inline',
     logLevel : "Garbage",
     newestOnTop : false
 });
 
-yconsole.plug(Y.Plugin.ConsoleFilters);
+//yconsole.plug(Y.Plugin.ConsoleFilters);
 
-yconsole.render('#c');
+yconsole.render();
 
-Y.log('testing');
-Y.log('testing known category','info');
-Y.log('testing new category','foo');
-Y.log('testing known source','info','global');
-Y.log('testing new source','info','bar');
-yconsole.log("Test from the console object",'info','Console');
-Y.log('testing warn','warn');
-Y.log('testing long warn that will take up multiple lines in the console','warn');
-Y.log('testing error','error');
-Y.log('testing long error that will take up multiple lines in the console','error');
+//Y.log('testing');
+//Y.log('testing known category','info');
+Y.log('Using a custom source and category','note','my-app');
+Y.log('Standard info message');
+Y.log('This is a warning','warn','attribute');
+Y.log('This is an error','error','event');
+//Y.log('testing known source','info','global');
+//Y.log('testing new source','info','bar');
+//yconsole.log("Test from the console object",'info','Console');
+//Y.log('testing warn','warn');
+//Y.log('testing long warn that will take up multiple lines in the console','warn');
+//Y.log('testing error','error');
+//Y.log('testing long error that will take up multiple lines in the console','error');
 
 });
 </script>

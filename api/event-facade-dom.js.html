@@ -141,39 +141,29 @@
     <span class="c">/**</span>
 <span class="c">     * Returns a wrapped node.  Intended to be used on event targets,</span>
 <span class="c">     * so it will return the node&#39;s parent if the target is a text</span>
-<span class="c">     * node</span>
+<span class="c">     * node.</span>
+<span class="c">     *</span>
+<span class="c">     * If accessing a property of the node throws an error, this is</span>
+<span class="c">     * probably the anonymous div wrapper Gecko adds inside text</span>
+<span class="c">     * nodes.  This likely will only occur when attempting to access</span>
+<span class="c">     * the relatedTarget.  In this case, we now return null because</span>
+<span class="c">     * the anonymous div is completely useless and we do not know</span>
+<span class="c">     * what the related target was because we can&#39;t even get to</span>
+<span class="c">     * the element&#39;s parent node.</span>
+<span class="c">     *</span>
 <span class="c">     * @method resolve</span>
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="nx">resolve</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
-
-        <span class="k">var</span> <span class="nx">go</span><span class="o">,</span> <span class="nx">test</span><span class="o">;</span>
-
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="m">3</span> <span class="o">==</span> <span class="nx">n</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span> 
             <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="m">3</span> <span class="o">==</span> <span class="nx">n</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
-            <span class="o">}</span> 
-        <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e1</span><span class="o">)</span> <span class="o">{</span> <span class="o">}</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">gecko</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">while</span> <span class="o">(!</span><span class="nx">go</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">try</span> <span class="o">{</span>
-                    <span class="nx">test</span> <span class="o">=</span> <span class="nx">n</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">;</span>
-                    <span class="nx">go</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e2</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
-                    <span class="k">if</span> <span class="o">(!</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
     <span class="o">};</span>
 
 
@@ -391,6 +381,7 @@
                         <h4>Modules</h4>
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
@@ -412,6 +403,7 @@
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
@@ -420,7 +412,6 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

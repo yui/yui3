@@ -459,43 +459,43 @@
 
             <span class="o">},</span>
 
-            <span class="nx">onComplete</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">fromLoader</span><span class="o">)</span> <span class="o">{</span>
-
-                <span class="c">// Y.log(&#39;Use complete&#39;);</span>
-<span class="c"></span>
-                <span class="nx">fromLoader</span> <span class="o">=</span> <span class="nx">fromLoader</span> <span class="o">||</span> <span class="o">{</span>
-                    <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-                    <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;not dynamic&#39;</span>
-                <span class="o">};</span>
-
-                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span><span class="o">)</span> <span class="o">{</span>
-
-                    <span class="k">var</span> <span class="nx">cb</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span><span class="o">;</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                    <span class="nx">cb</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
-                <span class="o">}</span>
-
-                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:load&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
-                <span class="o">}</span>
-
-                <span class="c">// process queued use requests as long until done </span>
-<span class="c"></span>                <span class="c">// or dynamic load happens again.</span>
-<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-                <span class="k">while</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">_useQueue</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">_useQueue</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">_loading</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">_useQueue</span><span class="o">.</span><span class="nx">next</span><span class="o">());</span>
-                <span class="o">}</span>
-            <span class="o">};</span>
+            <span class="nx">onComplete</span><span class="o">;</span>
 
         <span class="c">// Y.log(Y.id + &#39;: use called: &#39; + a + &#39; :: &#39; + callback);</span>
 <span class="c"></span>
         <span class="c">// The last argument supplied to use can be a load complete callback</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">callback</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">a</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span> <span class="o">=</span> <span class="nx">callback</span><span class="o">;</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="nx">callback</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
         <span class="o">}</span>
+
+        <span class="nx">onComplete</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">fromLoader</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="c">// Y.log(&#39;Use complete&#39;);</span>
+<span class="c"></span>
+            <span class="nx">fromLoader</span> <span class="o">=</span> <span class="nx">fromLoader</span> <span class="o">||</span> <span class="o">{</span>
+                <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+                <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;not dynamic&#39;</span>
+            <span class="o">};</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">callback</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:load&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="c">// process queued use requests as long until done </span>
+<span class="c"></span>            <span class="c">// or dynamic load happens again.</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">_useQueue</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">_useQueue</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">_loading</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">_useQueue</span><span class="o">.</span><span class="nx">next</span><span class="o">());</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+ 
 
         <span class="c">// YUI().use(&#39;*&#39;); // bind everything available</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">firstArg</span> <span class="o">===</span> <span class="s2">&quot;*&quot;</span><span class="o">)</span> <span class="o">{</span>
@@ -504,6 +504,10 @@
                 <span class="k">if</span> <span class="o">(</span><span class="nx">mods</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">k</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">a</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">k</span><span class="o">);</span>
                 <span class="o">}</span>
+            <span class="o">}</span>
+            
+            <span class="k">if</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">a</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">callback</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
@@ -1047,6 +1051,7 @@
                         <h4>Modules</h4>
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
@@ -1068,6 +1073,7 @@
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
@@ -1076,7 +1082,6 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

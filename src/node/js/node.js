@@ -245,6 +245,7 @@ Node.get = function() {
  * @static
  * @param {String} html The markup used to create the element
  * @param {HTMLDocument} doc An optional document context 
+ * @return {Node} A Node instance bound to a DOM node or fragment 
  */
 Node.create = function() {
     return Node.get(Y.DOM.create.apply(Y.DOM, arguments));
@@ -305,7 +306,7 @@ Node.ATTRS = {
                     }
                 }
             }
-            return children;
+            return Y.all(children);
         }
     },
 
@@ -434,7 +435,7 @@ Y.mix(Node.prototype, {
         var attrConfig = Node.ATTRS[attr];
 
         if (this._setAttr) { // use Attribute imple
-            this._setAttr(attr, val);
+            this._setAttr.apply(this, arguments);
         } else { // use setters inline
             if (attrConfig && attrConfig.setter) {
                 attrConfig.setter.call(this, val);
@@ -490,6 +491,7 @@ Y.mix(Node.prototype, {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
+     * @return {Node} A Node instance bound to a DOM node or fragment 
      */
     create: Node.create,
 
@@ -527,7 +529,7 @@ Y.mix(Node.prototype, {
         var node = this._node,
             ret = Y.DOM.byId(id, node[OWNER_DOCUMENT]);
         if (ret && Y.DOM.contains(node, ret)) {
-            ret = Y.get(ret);
+            ret = Y.one(ret);
         } else {
             ret = null;
         }
@@ -577,7 +579,7 @@ Y.mix(Node.prototype, {
      * @return {Node} A Node instance for the matching HTMLElement.
      */
     one: function(selector) {
-        return Y.get(Y.Selector.query(selector, this._node, true));
+        return Y.one(Y.Selector.query(selector, this._node, true));
     },
 
     /**
@@ -600,7 +602,10 @@ Y.mix(Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     all: function(selector) {
-        return Y.all(Y.Selector.query(selector, this._node));
+        var nodelist = Y.all(Y.Selector.query(selector, this._node));
+        nodelist._query = selector;
+        nodelist._queryRoot = this;
+        return nodelist;
     },
 
     /**

@@ -404,41 +404,41 @@ YUI.prototype = {
 
             },
 
-            onComplete = function(fromLoader) {
-
-
-                fromLoader = fromLoader || {
-                    success: true,
-                    msg: 'not dynamic'
-                };
-
-                if (Y.Env._callback) {
-
-                    var cb = Y.Env._callback;
-                    Y.Env._callback = null;
-                    cb(Y, fromLoader);
-                }
-
-                if (Y.fire) {
-                    Y.fire('yui:load', Y, fromLoader);
-                }
-
-                // process queued use requests as long until done 
-                // or dynamic load happens again.
-                Y._loading = false;
-                while (Y._useQueue && Y._useQueue.size() && !Y._loading) {
-                    Y.use.apply(Y, Y._useQueue.next());
-                }
-            };
+            onComplete;
 
 
         // The last argument supplied to use can be a load complete callback
         if (typeof callback === 'function') {
             a.pop();
-            Y.Env._callback = callback;
         } else {
             callback = null;
         }
+
+        onComplete = function(fromLoader) {
+
+
+            fromLoader = fromLoader || {
+                success: true,
+                msg: 'not dynamic'
+            };
+
+            if (callback) {
+                callback(Y, fromLoader);
+            }
+
+            if (Y.fire) {
+                Y.fire('yui:load', Y, fromLoader);
+            }
+
+            // process queued use requests as long until done 
+            // or dynamic load happens again.
+            Y._loading = false;
+
+            if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
+                Y.use.apply(Y, Y._useQueue.next());
+            }
+        };
+ 
 
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
@@ -447,6 +447,10 @@ YUI.prototype = {
                 if (mods.hasOwnProperty(k)) {
                     a.push(k);
                 }
+            }
+            
+            if (callback) {
+                a.push(callback);
             }
 
             return Y.use.apply(Y, a);
@@ -1807,6 +1811,33 @@ O.each = function (o, f, c, proto) {
     }
     return Y;
 };
+
+/*
+ * Executes a function on each item, but halts if the
+ * function returns true.  The function
+ * receives the value, the key, and the object
+ * as paramters (in that order).
+ * @method some
+ * @static
+ * @param o the object to iterate
+ * @param f {Function} the function to execute on each item. The function 
+ * receives three arguments: the value, the the key, the full object.
+ * @param c the execution context
+ * @param proto {boolean} include proto
+ * @return {boolean} true if any execution of the function returns true, false otherwise
+ */
+// O.some = function (o, f, c, proto) {
+//     var s = c || Y, i;
+// 
+//     for (i in o) {
+//         if (proto || o.hasOwnProperty(i)) {
+//             if (f.call(s, o[i], i, o)) {
+//                 return true;
+//             }
+//         }
+//     }
+//     return false;
+// };
 
 /**
  * Retrieves the sub value at the provided path,

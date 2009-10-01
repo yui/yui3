@@ -2,6 +2,9 @@ YUI Event Simulation Utilities
 Module Name: "event-simulate"
 Documentation: http://developer.yahoo.com/yui/3/event
 
+3.0.0
+    * No changes.
+
 3.0.0b1
 
     * Moved out of event module.

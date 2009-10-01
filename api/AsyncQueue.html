@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: queue-run  AsyncQueue   (YUI Library)</title>
+	<title>API: async-queue  AsyncQueue   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>queue-run&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>async-queue&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_queue-run.html" title="queue-run">queue-run</a>
+            &gt; <a href="./module_async-queue.html" title="async-queue">async-queue</a>
                  &gt; AsyncQueue 
                 
         <form onsubmit="return false">
@@ -118,7 +118,8 @@ indexOf, or delete this callback.</li>
                                     <div class="protected" rel="yui:property" resource="#property__running">
                                     <h4><a name="property__running" property="yui:name">_running</a>
                                         - <code>protected <span property="yui:type">{Boolean|Object} true for synchronous callback execution, the
-return handle from Y.later for async callbacks</span></code>
+return handle from Y.later for async callbacks.
+Otherwise false.</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -142,7 +143,7 @@ Preconfigured defaults include:</p>
 <ul>
 <li><code>autoContinue</code>: <code>true</code></li>
 <li><code>iterations</code>: 1</li>
-<li><code>timeout</code>: -1 (synchronous operation)</li>
+<li><code>timeout</code>: 10 (10ms between callbacks)</li>
 <li><code>until</code>: (function to run until iterations &lt;= 0)</li>
 </ul>
                                         </div>
@@ -216,13 +217,6 @@ after phase.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -268,13 +262,6 @@ callback function
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -322,13 +309,6 @@ holds the id of a callback or the callback object itself.</p>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -376,13 +356,6 @@ holds the id of a callback or the callback object itself.</p>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -429,13 +402,6 @@ the queue if it is the first item.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -484,7 +450,7 @@ whether it is appropriate to continue running.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Boolean
+                                                            Boolean
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">whether the run loop should continue</dd>
                                                 </dl>
@@ -518,13 +484,6 @@ whether it is appropriate to continue running.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -555,13 +514,6 @@ whether it is appropriate to continue running.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -613,7 +565,7 @@ properties for runtime modification.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Function
+                                                            Function
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">a decorated function wrapper to execute the callback</dd>
                                                 </dl>
@@ -664,7 +616,7 @@ properties for runtime modification.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Boolean
+                                                            Boolean
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">whether the run loop should continue</dd>
                                                 </dl>
@@ -716,7 +668,7 @@ provided as functions or objects.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        AsyncQueue
+                                                            AsyncQueue
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the AsyncQueue instance</dd>
                                                 </dl>
@@ -771,7 +723,7 @@ while the queue is running.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Object
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the callback object</dd>
                                                 </dl>
@@ -823,7 +775,7 @@ callback function from getCallback.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Number
+                                                            Number
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">index of the callback or -1 if not found</dd>
                                                 </dl>
@@ -860,7 +812,7 @@ callback function from getCallback.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Boolean
+                                                            Boolean
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">true if queue is waiting for a 
 from any initiated transactions</dd>
@@ -901,7 +853,7 @@ When the queue is empty, null is returned.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        Function
+                                                            Function
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the callback to execute</dd>
                                                 </dl>
@@ -941,7 +893,7 @@ restarted with q.run()
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        AsyncQueue
+                                                            AsyncQueue
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the AsyncQueue instance</dd>
                                                 </dl>
@@ -997,7 +949,7 @@ is scheduled to occur after the current callback has completed.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        AsyncQueue
+                                                            AsyncQueue
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the AsyncQueue instance</dd>
                                                 </dl>
@@ -1052,7 +1004,7 @@ removal is scheduled to occur after the current callback has completed.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        AsyncQueue
+                                                            AsyncQueue
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the AsyncQueue instance</dd>
                                                 </dl>
@@ -1094,7 +1046,7 @@ configured with autoContinue: false.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        AsyncQueue
+                                                            AsyncQueue
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the AsyncQueue instance</dd>
                                                 </dl>
@@ -1131,13 +1083,6 @@ configured with autoContinue: false.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        Number
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1172,7 +1117,7 @@ current callback completes.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        AsyncQueue
+                                                            AsyncQueue
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the AsyncQueue instance</dd>
                                                 </dl>
@@ -1302,6 +1247,7 @@ current callback completes.
                         <h4>Modules</h4>
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class="selected"><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
@@ -1323,6 +1269,7 @@ current callback completes.
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
@@ -1331,7 +1278,6 @@ current callback completes.
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class="selected"><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -1355,7 +1301,7 @@ current callback completes.
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="queue-run.js.html" title="queue-run.js">queue-run.js</a></li>
+                                <li class=""><a href="async-queue.js.html" title="async-queue.js">async-queue.js</a></li>
                         </ul>
                     </div>
 

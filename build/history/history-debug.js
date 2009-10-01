@@ -311,11 +311,11 @@ YUI.add('history', function(Y) {
             (Y.Lang.isUndefined(doc.documentMode) || doc.documentMode > 7)) {
 
             // The HTML5 way of handling DHTML history...
-            Y.on('hashchange', function () {
+            win.onhashchange = function () {
                 var hash = _getHash();
                 _handleFQStateChange(hash);
                 _storeStates();
-            }, window);
+            };
 
             G.ready = true;
             H.fire(EV_HISTORY_READY);

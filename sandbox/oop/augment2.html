@@ -5,18 +5,20 @@
 <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 </head>
 <body>
+<h1 id="header1">blah</h1>
 <script type="text/javascript">
-    var Y = YUI({
-        base: '../../build/'
+    YUI({
+        filter: 'raw'
     }).use('node', function(Y) {
 
-    Y.on('yui:log', function(msg) {
-        var d=document, b=d.body, n=d.createElement("div");
-        if (b) {
-            n.appendChild(d.createTextNode(msg));
-            b.appendChild(n);
-        }    
-    });
+    // Y.on('yui:log', function(msg) {
+    //     var d=document, b=d.body, n=d.createElement("div");
+    //     if (b) {
+    //         n.appendChild(d.createTextNode(msg));
+    //         b.appendChild(n);
+    //     }    
+    // });
+
 
     function ClassOne() {
     }
@@ -88,6 +90,25 @@
     x.methodOne();      // Fails
 
     Y.log('asdf');
+
+                var a = {
+                    node: Y.one('#header1'),
+                    y: Y,
+                    doc: document,
+                    win: window,
+                    el: document.getElementById('header1')
+                };
+
+                var b = Y.clone(a);
+                b.node.foo = 'bar';
+
+    //Y.log('isWin: ' + (window instanceof Window));
+    Y.log('constructor: ' + (window.constructor));
+    Y.log('typeof constructor: ' + (typeof window.constructor));
+    Y.log('typeof window: ' + (typeof window));
+    Y.log('instanceof HTMLElement: ' + (window instanceof HTMLElement));
+    Y.log('window toString: ' + Object.prototype.toString(window));
+    Y.log('constructor toString: ' + Object.prototype.toString(window.constructor));
 
 });
 </script>

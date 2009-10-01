@@ -81,6 +81,7 @@
         <span class="nx">VALUE_FN</span> <span class="o">=</span> <span class="s2">&quot;valueFn&quot;</span><span class="o">,</span>
         <span class="nx">BROADCAST</span> <span class="o">=</span> <span class="s2">&quot;broadcast&quot;</span><span class="o">,</span>
         <span class="nx">LAZY_ADD</span> <span class="o">=</span> <span class="s2">&quot;lazyAdd&quot;</span><span class="o">,</span>
+        <span class="nx">BYPASS_PROXY</span> <span class="o">=</span> <span class="s2">&quot;_bypassProxy&quot;</span><span class="o">,</span>
 
         <span class="c">// Used for internal state management</span>
 <span class="c"></span>        <span class="nx">ADDED</span> <span class="o">=</span> <span class="s2">&quot;added&quot;</span><span class="o">,</span>
@@ -178,7 +179,7 @@
 <span class="c">     * @static</span>
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
-    <span class="nx">Attribute</span><span class="o">.</span><span class="nx">_ATTR_CFG</span> <span class="o">=</span> <span class="o">[</span><span class="nx">SETTER</span><span class="o">,</span> <span class="nx">GETTER</span><span class="o">,</span> <span class="nx">VALIDATOR</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">,</span> <span class="nx">VALUE_FN</span><span class="o">,</span> <span class="nx">WRITE_ONCE</span><span class="o">,</span> <span class="nx">READ_ONLY</span><span class="o">,</span> <span class="nx">LAZY_ADD</span><span class="o">,</span> <span class="nx">BROADCAST</span><span class="o">];</span>
+    <span class="nx">Attribute</span><span class="o">.</span><span class="nx">_ATTR_CFG</span> <span class="o">=</span> <span class="o">[</span><span class="nx">SETTER</span><span class="o">,</span> <span class="nx">GETTER</span><span class="o">,</span> <span class="nx">VALIDATOR</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">,</span> <span class="nx">VALUE_FN</span><span class="o">,</span> <span class="nx">WRITE_ONCE</span><span class="o">,</span> <span class="nx">READ_ONLY</span><span class="o">,</span> <span class="nx">LAZY_ADD</span><span class="o">,</span> <span class="nx">BROADCAST</span><span class="o">,</span> <span class="nx">BYPASS_PROXY</span><span class="o">];</span>
 
     <span class="nx">Attribute</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
         <span class="c">/**</span>
@@ -237,6 +238,8 @@
 <span class="c">         * &lt;p&gt;The setter, getter and validator are invoked with the value and name passed in as the first and second arguments, and with</span>
 <span class="c">         * the context (&quot;this&quot;) set to the host object.&lt;/p&gt;</span>
 <span class="c">         *</span>
+<span class="c">         * &lt;p&gt;Configuration properties outside of the list mentioned above are considered private properties used internally by attribute, and are not intended for public use.&lt;/p&gt;</span>
+<span class="c">         * </span>
 <span class="c">         * @method addAttr</span>
 <span class="c">         *</span>
 <span class="c">         * @param {String} name The name of the attribute.</span>
@@ -263,8 +266,6 @@
                 <span class="nx">hasValue</span><span class="o">;</span>
 
             <span class="nx">lazy</span> <span class="o">=</span> <span class="o">(</span><span class="nx">LAZY_ADD</span> <span class="k">in</span> <span class="nx">config</span><span class="o">)</span> <span class="o">?</span> <span class="nx">config</span><span class="o">[</span><span class="nx">LAZY_ADD</span><span class="o">]</span> <span class="o">:</span> <span class="nx">lazy</span><span class="o">;</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">host</span><span class="o">.</span><span class="nx">_stateProxy</span> <span class="o">&amp;&amp;</span> <span class="nx">host</span><span class="o">.</span><span class="nx">_stateProxy</span><span class="o">[</span><span class="nx">name</span><span class="o">])</span> <span class="o">{</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;addAttr: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; exists on the _stateProxy object. The newly added attribute will override the use of _stateProxy for this attribute&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span> <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">lazy</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">host</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">state</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">LAZY</span><span class="o">,</span> <span class="nx">config</span> <span class="o">||</span> <span class="o">{});</span>
@@ -546,6 +547,7 @@
         <span class="nx">_setAttr</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">,</span> <span class="nx">force</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">true</span><span class="o">,</span>
                 <span class="nx">state</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_state</span><span class="o">,</span>
+                <span class="nx">stateProxy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_stateProxy</span><span class="o">,</span>
                 <span class="nx">data</span> <span class="o">=</span> <span class="nx">state</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
                 <span class="nx">initialSet</span><span class="o">,</span>
                 <span class="nx">strPath</span><span class="o">,</span>
@@ -563,6 +565,11 @@
             <span class="o">}</span>
 
             <span class="nx">initialSet</span> <span class="o">=</span> <span class="o">(!</span><span class="nx">data</span><span class="o">.</span><span class="nx">value</span> <span class="o">||</span> <span class="o">!(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">data</span><span class="o">.</span><span class="nx">value</span><span class="o">));</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">stateProxy</span> <span class="o">&amp;&amp;</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">stateProxy</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_state</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">BYPASS_PROXY</span><span class="o">))</span> <span class="o">{</span>
+                <span class="c">// TODO: Value is always set for proxy. Can we do any better? Maybe take a snapshot as the initial value for the first call to set? </span>
+<span class="c"></span>                <span class="nx">initialSet</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_requireAddAttr</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Set attribute:&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, aborted; Attribute is not configured&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
@@ -676,11 +683,7 @@
 <span class="c">         */</span>
         <span class="nx">_getStateVal</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">stateProxy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_stateProxy</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">stateProxy</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_state</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="o">(</span><span class="nx">stateProxy</span> <span class="o">&amp;&amp;</span> <span class="nx">stateProxy</span><span class="o">[</span><span class="nx">name</span><span class="o">]);</span>
-            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">stateProxy</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">stateProxy</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_state</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">BYPASS_PROXY</span><span class="o">)</span> <span class="o">?</span> <span class="nx">stateProxy</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_state</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -694,10 +697,10 @@
 <span class="c">         */</span>
         <span class="nx">_setStateVal</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">stateProxy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_stateProxy</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">stateProxy</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">attrAdded</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_state</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">,</span> <span class="nx">value</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">stateProxy</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">stateProxy</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_state</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">BYPASS_PROXY</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">stateProxy</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">value</span><span class="o">;</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">stateProxy</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">value</span><span class="o">;</span>             
+                <span class="k">this</span><span class="o">.</span><span class="nx">_state</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">,</span> <span class="nx">value</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
 
@@ -723,6 +726,7 @@
                 <span class="nx">validator</span> <span class="o">=</span> <span class="nx">state</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">VALIDATOR</span><span class="o">),</span>
                 <span class="nx">setter</span> <span class="o">=</span> <span class="nx">state</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">SETTER</span><span class="o">),</span>
                 <span class="nx">initializing</span> <span class="o">=</span> <span class="nx">state</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attrName</span><span class="o">,</span> <span class="nx">INITIALIZING</span><span class="o">),</span>
+                <span class="nx">prevValRaw</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getStateVal</span><span class="o">(</span><span class="nx">attrName</span><span class="o">),</span>
 
                 <span class="nx">name</span> <span class="o">=</span> <span class="nx">subAttrName</span> <span class="o">||</span> <span class="nx">attrName</span><span class="o">,</span>
                 <span class="nx">retVal</span><span class="o">,</span>
@@ -751,7 +755,7 @@
                 <span class="o">}</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">allowSet</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span><span class="o">(!</span><span class="nx">subAttrName</span> <span class="o">&amp;&amp;</span> <span class="nx">newVal</span> <span class="o">===</span> <span class="nx">prevVal</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">newVal</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">if</span><span class="o">(!</span><span class="nx">subAttrName</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">newVal</span> <span class="o">===</span> <span class="nx">prevValRaw</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">newVal</span><span class="o">))</span> <span class="o">{</span>
                         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attribute: &#39;</span> <span class="o">+</span> <span class="nx">attrName</span> <span class="o">+</span> <span class="s1">&#39;, value unchanged:&#39;</span> <span class="o">+</span> <span class="nx">newVal</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;attribute&#39;</span><span class="o">);</span>
                         <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
                     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
@@ -944,9 +948,8 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Utility method to split out simple attribute name/value pairs (&quot;x&quot;) </span>
-<span class="c">         * from complex attribute name/value pairs (&quot;x.y.z&quot;), so that complex</span>
-<span class="c">         * attributes can be keyed by the top level attribute name.</span>
+<span class="c">         * Utility method to normalize attribute values. The base implementation </span>
+<span class="c">         * simply merges the hash to protect the original.</span>
 <span class="c">         *</span>
 <span class="c">         * @method _normAttrVals</span>
 <span class="c">         * @param {Object} valueHash An object with attribute name/value pairs</span>
@@ -1005,6 +1008,7 @@
                         <h4>Modules</h4>
                         <ul class="content">
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class="selected"><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
@@ -1026,6 +1030,7 @@
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
@@ -1034,7 +1039,6 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class=""><a href="module_queue-run.html" title="queue-run">queue-run</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

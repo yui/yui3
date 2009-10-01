@@ -245,6 +245,7 @@ Node.get = function() {
  * @static
  * @param {String} html The markup used to create the element
  * @param {HTMLDocument} doc An optional document context 
+ * @return {Node} A Node instance bound to a DOM node or fragment 
  */
 Node.create = function() {
     return Node.get(Y.DOM.create.apply(Y.DOM, arguments));
@@ -305,7 +306,7 @@ Node.ATTRS = {
                     }
                 }
             }
-            return children;
+            return Y.all(children);
         }
     },
 
@@ -434,7 +435,7 @@ Y.mix(Node.prototype, {
         var attrConfig = Node.ATTRS[attr];
 
         if (this._setAttr) { // use Attribute imple
-            this._setAttr(attr, val);
+            this._setAttr.apply(this, arguments);
         } else { // use setters inline
             if (attrConfig && attrConfig.setter) {
                 attrConfig.setter.call(this, val);
@@ -490,6 +491,7 @@ Y.mix(Node.prototype, {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
+     * @return {Node} A Node instance bound to a DOM node or fragment 
      */
     create: Node.create,
 
@@ -527,7 +529,7 @@ Y.mix(Node.prototype, {
         var node = this._node,
             ret = Y.DOM.byId(id, node[OWNER_DOCUMENT]);
         if (ret && Y.DOM.contains(node, ret)) {
-            ret = Y.get(ret);
+            ret = Y.one(ret);
         } else {
             ret = null;
         }
@@ -577,7 +579,7 @@ Y.mix(Node.prototype, {
      * @return {Node} A Node instance for the matching HTMLElement.
      */
     one: function(selector) {
-        return Y.get(Y.Selector.query(selector, this._node, true));
+        return Y.one(Y.Selector.query(selector, this._node, true));
     },
 
     /**
@@ -599,7 +601,10 @@ Y.mix(Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     all: function(selector) {
-        return Y.all(Y.Selector.query(selector, this._node));
+        var nodelist = Y.all(Y.Selector.query(selector, this._node));
+        nodelist._query = selector;
+        nodelist._queryRoot = this;
+        return nodelist;
     },
 
     /**
@@ -823,34 +828,6 @@ Y.one = Y.Node.one;
  * @constructor
  */
 
-Y.Array._diff = function(a, b) {
-    var removed = [],
-        present = false,
-        i, j, lenA, lenB;
-
-    outer:
-    for (i = 0, lenA = a.length; i < lenA; i++) {
-        present = false;
-        for (j = 0, lenB = b.length; j < lenB; j++) {
-            if (a[i] === b[j]) {
-                present = true;
-                continue outer;
-            }
-        }
-        if (!present) {
-            removed[removed.length] = a[i];
-        }
-    }
-    return removed;
-};
-
-Y.Array.diff = function(a, b) {
-    return {
-        added: Y.Array._diff(b, a),
-        removed: Y.Array._diff(a, b)
-    }; 
-};
-
 var NodeList = function(nodes) {
     if (typeof nodes === 'string') {
         this._query = nodes;
@@ -949,7 +926,7 @@ Y.mix(NodeList.prototype, {
      * @return {Node} The Node instance at the given index.
      */
     item: function(index) {
-        return Y.get((this._nodes || [])[index]);
+        return Y.one((this._nodes || [])[index]);
     },
 
     /**
@@ -964,7 +941,7 @@ Y.mix(NodeList.prototype, {
     each: function(fn, context) {
         var instance = this;
         Y.Array.each(this._nodes, function(node, index) {
-            node = Y.get(node);
+            node = Y.one(node);
             return fn.call(context || node, node, index, instance);
         });
         return instance;
@@ -996,7 +973,7 @@ Y.mix(NodeList.prototype, {
     some: function(fn, context) {
         var instance = this;
         return Y.Array.some(this._nodes, function(node, index) {
-            node = Y.get(node);
+            node = Y.one(node);
             context = context || node;
             return fn.call(context, node, index, instance);
         });
@@ -1008,7 +985,7 @@ Y.mix(NodeList.prototype, {
      * @return Node a Node instance bound to the documentFragment
      */
     toFrag: function() {
-        return Y.get(Y.DOM._nl2frag(this._nodes));
+        return Y.one(Y.DOM._nl2frag(this._nodes));
     },
 
     /**
@@ -1079,21 +1056,27 @@ Y.mix(NodeList.prototype, {
         delete NodeList._instances[this[UID]];
     },
 
+    /**
+     * Reruns the initial query, when created using a selector query 
+     * @method refresh
+     * @chainable
+     */
     refresh: function() {
         var doc,
-            diff,
-            oldList = this._nodes;
-        if (this._query) {
-            if (oldList && oldList[0] && oldList[0].ownerDocument) {
-                doc = oldList[0].ownerDocument;
+            nodes = this._nodes,
+            query = this._query,
+            root = this._queryRoot;
+
+        if (query) {
+            if (!root) {
+                if (nodes && nodes[0] && nodes[0].ownerDocument) {
+                    root = nodes[0].ownerDocument;
+                }
             }
 
-            this._nodes = Y.Selector.query(this._query, doc || Y.config.doc);        
-            diff = Y.Array.diff(oldList, this._nodes); 
-            diff.added = diff.added ? Y.all(diff.added) : null;
-            diff.removed = diff.removed ? Y.all(diff.removed) : null;
-            this.fire('refresh', diff);
+            this._nodes = Y.Selector.query(query, root);
         }
+
         return this;
     },
 
@@ -1107,12 +1090,11 @@ Y.mix(NodeList.prototype, {
      * @return {Object} Returns an event handle that can later be use to detach(). 
      * @see Event.on
      */
-    on: function(type, fn, context, etc) {
-        var args = Y.Array(arguments);
-        args[2] = context || this;
-        this.batch(function(node) {
-            node.on.apply(node, args);
-        });
+    on: function(type, fn, context) {
+        var args = Y.Array(arguments, 0, true);
+        args.splice(2, 0, this._nodes);
+        args[3] = context || this;
+        return Y.on.apply(Y, args);
     },
 
     /**
@@ -1127,12 +1109,11 @@ Y.mix(NodeList.prototype, {
      * @return {Object} Returns an event handle that can later be use to detach(). 
      * @see Event.on
      */
-    after: function(type, fn, context, etc) {
-        var args = Y.Array(arguments);
-        args[2] = context || this;
-        this.batch(function(node) {
-            node.after.apply(node, args);
-        });
+    after: function(type, fn, context) {
+        var args = Y.Array(arguments, 0, true);
+        args.splice(2, 0, this._nodes);
+        args[3] = context || this;
+        return Y.after.apply(Y, args);
     },
 
     /**
@@ -1555,11 +1536,23 @@ Y.Node.ATTRS.type = {
             try {
                 this._node.type = 'hidden';
             } catch(e) {
-                this._node.style.display = 'none';
+                this.setStyle('display', 'none');
+                this._inputType = 'hidden';
+            }
+        } else {
+            try { // IE errors when changing the type from "hidden'
+                this._node.type = val;
+            } catch (e) {
             }
         }
         return val;
-    }
+    },
+
+    getter: function() {
+        return this._inputType || this._node.type;
+    },
+
+    _bypassProxy: true // don't update DOM when using with Attribute
 };
 
 
@@ -1908,14 +1901,14 @@ Y.mix(Y.Node, Y.Plugin.Host, false, null, 1);
 Y.NodeList.prototype.plug = function() {
     var args = arguments;
     Y.NodeList.each(this, function(node) {
-        Y.Node.prototype.plug.apply(Y.get(node), args);
+        Y.Node.prototype.plug.apply(Y.one(node), args);
     });
 };
 
 Y.NodeList.prototype.unplug = function() {
     var args = arguments;
     Y.NodeList.each(this, function(node) {
-        Y.Node.prototype.unplug.apply(Y.get(node), args);
+        Y.Node.prototype.unplug.apply(Y.one(node), args);
     });
 };
 
