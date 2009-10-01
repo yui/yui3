@@ -604,6 +604,7 @@ Y.mix(Node.prototype, {
     all: function(selector) {
         var nodelist = Y.all(Y.Selector.query(selector, this._node));
         nodelist._query = selector;
+        nodelist._queryRoot = this;
         return nodelist;
     },
 
