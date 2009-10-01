@@ -299,13 +299,18 @@
 <span class="c">     */</span>
     <span class="nx">refresh</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">doc</span><span class="o">,</span>
-            <span class="nx">nodes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_query</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">ownerDocument</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">doc</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">ownerDocument</span><span class="o">;</span>
+            <span class="nx">nodes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">,</span>
+            <span class="nx">query</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_query</span><span class="o">,</span>
+            <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_queryRoot</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">query</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">root</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">ownerDocument</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">root</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">ownerDocument</span><span class="o">;</span>
+                <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_query</span><span class="o">,</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">);</span>        
+            <span class="k">this</span><span class="o">.</span><span class="nx">_nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">query</span><span class="o">,</span> <span class="nx">root</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
@@ -517,6 +522,7 @@
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class="selected"><a href="module_node.html" title="node">node</a></li>
                                 <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
