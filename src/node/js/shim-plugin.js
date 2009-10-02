@@ -61,25 +61,22 @@ YUI.add('shim-plugin', function(Y) {
 
         insert: function() {
             var node = this._host;
-            this._shim = node.insertBefore(
-                this.getShim(),
-                node.get('firstChild')
-            );
+            this._shim = node.insertBefore( this.getShim(),
+                    node.get('firstChild'));
         },
 
         /**
          * Updates the size of the shim to fill its container
          * @method sync
-         * @private
          */
         sync: function() {
             var shim = this._shim,
                 node = this._host;
 
             if (shim) {
-                shim.setStyles({
-                    width: node.get('offsetWidth') + 'px',
-                    height: node.get('offsetHeight') + 'px'
+                shim.setAttrs({
+                    width: node.getStyle('width'),
+                    height: node.getStyle('height')
                 });
             }
         },

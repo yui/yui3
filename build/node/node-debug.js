@@ -1812,15 +1812,20 @@ Y.Node.importMethod(Y.DOM, [
  */
 Y.Node.ATTRS.region = {
     getter: function() {
-        var node = Y.Node.getDOMNode(this);
+        var node = Y.Node.getDOMNode(this),
+            region;
+
         if (node && !node.tagName) {
             if (node.nodeType === 9) { // document
                 node = node.documentElement;
-            } else if (node.alert) { // window
-                node = node.document.documentElement;
             }
         }
-        return Y.DOM.region(node);
+        if (node.alert) {
+            region = Y.DOM.viewportRegion(node);
+        } else {
+            region = Y.DOM.region(node);
+        }
+        return region; 
     }
 };
     
@@ -1956,5 +1961,5 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
 

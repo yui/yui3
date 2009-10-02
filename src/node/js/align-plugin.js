@@ -7,14 +7,7 @@ YUI.add('align-plugin', function(Y) {
 
     var OFFSET_WIDTH = 'offsetWidth',
         OFFSET_HEIGHT = 'offsetHeight',
-
-    _resolveRegion = function(region) {
-        region = region || this._host.get('viewportRegion');
-        if (region instanceof Y.Node || region.nodeType) {
-            region = Y.DOM.region(Y.Node.getDOMNode(region));
-        }
-        return region;
-    };
+        ie6 = (Y.UA.ie && Y.UA.ie < 7);
 
     /**
      * Node plugin which can be used to align a node with another node,
@@ -23,7 +16,7 @@ YUI.add('align-plugin', function(Y) {
      * @class Plugin.Align
      * @param {Object} User configuration object
      */
-    var Align = function(config) {
+    function Align(config) {
         // TODO: allow for boundingBox
         this._host = config.host;
     };
@@ -52,7 +45,7 @@ YUI.add('align-plugin', function(Y) {
          *      <dd>left center</dd>
          * </dl>
          * @method to 
-         * @parm region {Node || HTMLElement || Object} optional The node or
+         * @parm region {String || Node || HTMLElement || Object} The node or
          * region to align with. Defaults to the viewport region.
          * @parm regionPoint {String} The point of the region to align with.
          * @parm point {String} The point of the node aligned to the region. 
@@ -60,17 +53,15 @@ YUI.add('align-plugin', function(Y) {
          * the window is resized. Defaults to false.
          */
         to: function(region, regionPoint, point, fixed) {
-            var args = Y.Array(arguments);
-
-            if (Y.Lang.isString(region)) { // default region to viewport
-                fixed = point;
-                point = regionPoint;
-                regionPoint = region;
-                region = null;
-            }
-
+            // default align point is node's top left
             point = point || 'tl';
-            region = _resolveRegion.call(this, region);
+            // cache original args for syncing
+            this._syncArgs = Y.Array(arguments);
+
+            if (!region.top) {
+                region = Y.one(region);
+                region = region.get('region');
+            }
 
             var top = region.top,
                 right = region.right,
@@ -82,6 +73,7 @@ YUI.add('align-plugin', function(Y) {
                 xy;
                 
 
+            // align to region
             switch(regionPoint) {
                 case 'tl':
                     break;
@@ -115,6 +107,7 @@ YUI.add('align-plugin', function(Y) {
                     break;
             }
 
+            // align our node
             switch (point) {
                 case 'tl':
                     xy = [x, y];
@@ -148,35 +141,50 @@ YUI.add('align-plugin', function(Y) {
             }
 
             if (xy && node) {
-                if (fixed) {
-                    this._attachResize(args);
-                } else {
-                    this._detachResize();
-                }
-
+                this._fix(fixed);
                 node.setXY(xy);
 
             }
         },
 
-        _attachResize: function(args) {
-            var align = this;
-            this._resizeHandle = this._resizeHandle ||
-            Y.on('resize', function() {
-                setTimeout(function() {
-                    align.to.apply(align, args);
-                });
-            }, window); 
+        sync: function() {
+            this.to.apply(this, this._syncArgs);
+        },
 
-        },        
+        _setStyleFixed: function(add) {
+            var pos = add ? 'fixed' : '';
+            this._host.setStyle('position', pos);
+            this._isStyleFixed = add;
+        },
 
-        _detachResize: function(args) {
-            if (this._resizeHandle) {
-                this._resizeHandle.detach();
-                this._resizeHandle = null;
+        _onresize: function() {
+            this.sync();
+        },
+    
+        _fix: function(fixed) {
+            var prefix = Align.DETACH_PREFIX;
+
+            if (fixed) {
+                if (!this._fixing) {
+                    Y.on(prefix + 'resize', this._onresize, window, this);
+                    this._fixing = true;
+
+                    // use scroll listener for IE6 and IE quirks
+                    // otherwise use position :fixed
+                    if (ie6 || (Y.UA.ie && Y.config.doc.compatMode === 'backCompat')) {
+                        Y.on(prefix + 'scroll', this._onresize, window, this);
+                    } else if (!this._isStyleFixed) {
+                        this._setStyleFixed(true); 
+                    }
+                }
+            } else { // "unfix"
+                Y.detach(prefix);
+                this._fixing = false;
+                if (this._isStyleFixed) {
+                    this._setStyleFixed(false); 
+                }
             }
-        },        
-
+        },
 
         /**
          * Aligns the center of a node to the center of another node or region.
@@ -187,12 +195,8 @@ YUI.add('align-plugin', function(Y) {
          * the window is resized. If centering to viewport, this defaults
          * to true, otherwise default is false.
          */
-        center: function(node, fixed) {
-            if (!node && fixed === undefined) {
-                fixed = true; // default to true when centering to viewport 
-            }
-            this.to(node, 'cc', 'cc', fixed); 
-
+        center: function(region, fixed) {
+            this.to(region, 'cc', 'cc', fixed); 
         },
 
         /**
@@ -201,15 +205,15 @@ YUI.add('align-plugin', function(Y) {
          * @method destroy 
          */
         destroy: function() {
-            if (this._resizeHandle) {
-                this._resizeHandle.detach();
-            }
+            Y.detach('alignfixed');
         }
     };
 
 
     Align.NAME = 'Align';
     Align.NS = 'align';
+
+    Align.DETACH_PREFIX = 'alignfixed|';
 
     Y.namespace('Plugin');
     Y.Plugin.Align = Align;
