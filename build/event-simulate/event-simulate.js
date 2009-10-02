@@ -480,4 +480,4 @@ Y.Event.simulate = function(target, type, options){
 })();
 
 
-}, '@VERSION@' ,{requires:['event']});
+}, '@VERSION@' ,{requires:['event-base']});
