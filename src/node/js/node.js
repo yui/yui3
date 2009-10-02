@@ -567,7 +567,7 @@ Y.mix(Node.prototype, {
      * If a function is used, it receives the current node being tested as the only argument.
      * @return {Node} Node instance or null if not found
      */
-    next: function(node, fn, all) {
+    next: function(fn, all) {
         return Node.get(Y.DOM.elementByAxis(this._node, 'nextSibling', _wrapFn(fn), all));
     },
         
@@ -604,6 +604,7 @@ Y.mix(Node.prototype, {
     all: function(selector) {
         var nodelist = Y.all(Y.Selector.query(selector, this._node));
         nodelist._query = selector;
+        nodelist._queryRoot = this;
         return nodelist;
     },
 
