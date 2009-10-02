@@ -964,7 +964,7 @@ YUI.prototype = {
  * @default loader/loader-min.js
  */
 
-/**
+/*
  * 
  * Specifies whether or not YUI().use(...) will attempt to load CSS
  * resources at all.  Any truthy value will cause CSS dependencies
@@ -1155,7 +1155,7 @@ L.isFunction = function(o) {
  */
 L.isDate = function(o) {
     // return o instanceof Date;
-    return L.type(o) === DATE;
+    return L.type(o) === DATE && o.toString() !== 'Invalid Date';
 };
 
 /**

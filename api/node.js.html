@@ -616,7 +616,7 @@
 <span class="c">     * If a function is used, it receives the current node being tested as the only argument.</span>
 <span class="c">     * @return {Node} Node instance or null if not found</span>
 <span class="c">     */</span>
-    <span class="nx">next</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">next</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="s1">&#39;nextSibling&#39;</span><span class="o">,</span> <span class="nx">_wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">),</span> <span class="nx">all</span><span class="o">));</span>
     <span class="o">},</span>
         
