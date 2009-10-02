@@ -1,4 +1,3 @@
-YUI.add('shim-plugin', function(Y) {
     /**
      * Provides shimming support for Node via a Plugin.
      * This fixes SELECT bleedthrough for IE6 & Mac scrollbars
@@ -101,4 +100,3 @@ YUI.add('shim-plugin', function(Y) {
 
     Y.namespace('Plugin');
     Y.Plugin.Shim = Shim;
-}, '@VERSION@' ,{requires:['node']});

@@ -239,6 +239,14 @@ var NOT_FOUND = {},
             plugins: {
                 'node-event-simulate': {
                     requires: [NODEBASE, 'event-simulate']
+                },
+
+                'align-plugin': {
+                    requires: ['node-region', 'node-pluginhost']
+                },
+
+                'shim-plugin': {
+                    requires: ['node-style', 'node-pluginhost']
                 }
             }
         },

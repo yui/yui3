@@ -1,4 +1,3 @@
-YUI.add('align-plugin', function(Y) {
     /**
      * Provides advanced positioning support for Node via a Plugin
      * for centering and alignment. 
@@ -218,4 +217,3 @@ YUI.add('align-plugin', function(Y) {
     Y.namespace('Plugin');
     Y.Plugin.Align = Align;
 
-}, '@VERSION@' ,{requires:['node']});
