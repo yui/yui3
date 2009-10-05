@@ -1842,18 +1842,18 @@ O.each = function (o, f, c, proto) {
  * @param proto {boolean} include proto
  * @return {boolean} true if any execution of the function returns true, false otherwise
  */
-// O.some = function (o, f, c, proto) {
-//     var s = c || Y, i;
-// 
-//     for (i in o) {
-//         if (proto || o.hasOwnProperty(i)) {
-//             if (f.call(s, o[i], i, o)) {
-//                 return true;
-//             }
-//         }
-//     }
-//     return false;
-// };
+O.some = function (o, f, c, proto) {
+    var s = c || Y, i;
+
+    for (i in o) {
+        if (proto || o.hasOwnProperty(i)) {
+            if (f.call(s, o[i], i, o)) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
 
 /**
  * Retrieves the sub value at the provided path,
