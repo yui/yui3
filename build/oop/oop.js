@@ -11,22 +11,22 @@ YUI.add('oop', function(Y) {
     var L  = Y.Lang, 
         A  = Y.Array,
         OP = Object.prototype,
-        CLONE_MARKER = "_~yuim~_";
+        CLONE_MARKER = "_~yuim~_",
 
-        // dispatch = function(o, f, c, proto, action) {
-        //     if (o[action] && o.item) {
-        //         return o[action].call(o, f, c);
-        //     } else {
-        //         switch (A.test(o)) {
-        //             case 1:
-        //                 return A[action](o, f, c);
-        //             case 2:
-        //                 return A[action](Y.Array(o, 0, true), f, c);
-        //             default:
-        //                 return Y.Object[action](o, f, c, proto);
-        //         }
-        //     }
-        // };
+        dispatch = function(o, f, c, proto, action) {
+            if (o[action] && o.item) {
+                return o[action].call(o, f, c);
+            } else {
+                switch (A.test(o)) {
+                    case 1:
+                        return A[action](o, f, c);
+                    case 2:
+                        return A[action](Y.Array(o, 0, true), f, c);
+                    default:
+                        return Y.Object[action](o, f, c, proto);
+                }
+            }
+        };
 
     /**
      * The following methods are added to the YUI instance
@@ -190,26 +190,8 @@ YUI.add('oop', function(Y) {
      * @return {YUI} the YUI instance
      */
     Y.each = function(o, f, c, proto) {
-
-        if (o.each && o.item) {
-            return o.each.call(o, f, c);
-        } else {
-            switch (A.test(o)) {
-                case 1:
-                    return A.each(o, f, c);
-                case 2:
-                    return A.each(Y.Array(o, 0, true), f, c);
-                default:
-                    return Y.Object.each(o, f, c, proto);
-            }
-        }
-
-        // return Y.Object.each(o, f, c);
+        return dispatch(o, f, c, proto, 'each');
     };
-
-    // Y.each = function(o, f, c, proto) {
-    //     return dispatch(o, f, c, proto, 'each');
-    // };
 
     /*
      * Executes the supplied function for each item in
@@ -224,9 +206,9 @@ YUI.add('oop', function(Y) {
      * iterated on objects
      * @return {boolean} true if the function ever returns true, false otherwise
      */
-    // Y.some = function(o, f, c, proto) {
-    //     return dispatch(o, f, c, proto, 'some');
-    // };
+    Y.some = function(o, f, c, proto) {
+        return dispatch(o, f, c, proto, 'some');
+    };
 
     /**
      * Deep obj/array copy.  Functions are cloned with Y.bind.
