@@ -73,7 +73,7 @@ if (typeof YUI === 'undefined' || !YUI) {
 
     /*global YUI*/
     /*global YUI_config*/
-    // Make a function, disallow direct instantiation
+    // @TODO Advice was to make a function, disallow direct instantiation.
     YUI = function(o1, o2, o3, o4, o5) {
 
         var Y = this, a = arguments, i, l = a.length,
@@ -679,21 +679,6 @@ YUI.prototype = {
     YUI.Env.add = add;
     YUI.Env.remove = remove;
 
-    /*
-     * Subscribe to an event.  The signature differs depending on the
-     * type of event you are attaching to.
-     * @method on 
-     * @param type {string|function|object} The type of the event.  If
-     * this is a function, this is dispatched to the aop system.  If an
-     * object, it is parsed for multiple subsription definitions
-     * @param fn {Function} The callback
-     * @param elspec {any} DOM element(s), selector string(s), and or
-     * Node ref(s) to attach DOM related events to (only applies to
-     * DOM events).
-     * @param
-     * @return the event target or a detach handle per 'chain' config
-     */
-
 })();
 
 /**
@@ -1177,7 +1162,7 @@ L.isFunction = function(o) {
  */
 L.isDate = function(o) {
     // return o instanceof Date;
-    return L.type(o) === DATE && o.toString() !== 'Invalid Date';
+    return L.type(o) === DATE && o.toString() !== 'Invalid Date' && !isNaN(o);
 };
 
 /**
