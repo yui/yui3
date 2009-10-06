@@ -8,7 +8,8 @@ The YUI Global
         get
 
 3.next
-* Added Object.some
+* Added the ability to define a global configuration object (YUI_config).
+* Added Object.some().
 
 3.0.0
 

@@ -72,10 +72,12 @@ if (typeof YUI === 'undefined' || !YUI) {
      */
 
     /*global YUI*/
+    /*global YUI_config*/
     // Make a function, disallow direct instantiation
     YUI = function(o1, o2, o3, o4, o5) {
 
-        var Y = this, a = arguments, i, l = a.length;
+        var Y = this, a = arguments, i, l = a.length,
+            globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
 
         // Allow instantiation without the new operator
         if (!(Y instanceof YUI)) {
@@ -83,6 +85,10 @@ if (typeof YUI === 'undefined' || !YUI) {
         } else {
             // set up the core environment
             Y._init();
+
+            if (globalConfig) {
+                Y._config(globalConfig);
+            }
 
             for (i=0; i<l; i++) {
                 Y._config(a[i]);
