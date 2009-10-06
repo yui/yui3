@@ -58,23 +58,23 @@
     <span class="k">var</span> <span class="nx">L</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> 
         <span class="nx">A</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">,</span>
         <span class="nx">OP</span> <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span>
-        <span class="nx">CLONE_MARKER</span> <span class="o">=</span> <span class="s2">&quot;_~yuim~_&quot;</span><span class="o">;</span>
+        <span class="nx">CLONE_MARKER</span> <span class="o">=</span> <span class="s2">&quot;_~yuim~_&quot;</span><span class="o">,</span>
 
-        <span class="c">// dispatch = function(o, f, c, proto, action) {</span>
-<span class="c"></span>        <span class="c">//     if (o[action] &amp;&amp; o.item) {</span>
-<span class="c"></span>        <span class="c">//         return o[action].call(o, f, c);</span>
-<span class="c"></span>        <span class="c">//     } else {</span>
-<span class="c"></span>        <span class="c">//         switch (A.test(o)) {</span>
-<span class="c"></span>        <span class="c">//             case 1:</span>
-<span class="c"></span>        <span class="c">//                 return A[action](o, f, c);</span>
-<span class="c"></span>        <span class="c">//             case 2:</span>
-<span class="c"></span>        <span class="c">//                 return A[action](Y.Array(o, 0, true), f, c);</span>
-<span class="c"></span>        <span class="c">//             default:</span>
-<span class="c"></span>        <span class="c">//                 return Y.Object[action](o, f, c, proto);</span>
-<span class="c"></span>        <span class="c">//         }</span>
-<span class="c"></span>        <span class="c">//     }</span>
-<span class="c"></span>        <span class="c">// };</span>
-<span class="c"></span>
+        <span class="nx">dispatch</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="nx">action</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">action</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">o</span><span class="o">[</span><span class="nx">action</span><span class="o">].</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">switch</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">case</span> <span class="m">1</span><span class="o">:</span>
+                        <span class="k">return</span> <span class="nx">A</span><span class="o">[</span><span class="nx">action</span><span class="o">](</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
+                    <span class="nx">case</span> <span class="m">2</span><span class="o">:</span>
+                        <span class="k">return</span> <span class="nx">A</span><span class="o">[</span><span class="nx">action</span><span class="o">](</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
+                    <span class="nx">default</span><span class="o">:</span>
+                        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">[</span><span class="nx">action</span><span class="o">](</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+
     <span class="c">/**</span>
 <span class="c">     * The following methods are added to the YUI instance</span>
 <span class="c">     * @class YUI~oop</span>
@@ -241,27 +241,9 @@
 <span class="c">     * @return {YUI} the YUI instance</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">dispatch</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="s1">&#39;each&#39;</span><span class="o">);</span>
+    <span class="o">};</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">each</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">o</span><span class="o">.</span><span class="nx">each</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">switch</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">case</span> <span class="m">1</span><span class="o">:</span>
-                    <span class="k">return</span> <span class="nx">A</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-                <span class="nx">case</span> <span class="m">2</span><span class="o">:</span>
-                    <span class="k">return</span> <span class="nx">A</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-                <span class="nx">default</span><span class="o">:</span>
-                    <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="c">// return Y.Object.each(o, f, c);</span>
-<span class="c"></span>    <span class="o">};</span>
-
-    <span class="c">// Y.each = function(o, f, c, proto) {</span>
-<span class="c"></span>    <span class="c">//     return dispatch(o, f, c, proto, &#39;each&#39;);</span>
-<span class="c"></span>    <span class="c">// };</span>
-<span class="c"></span>
     <span class="c">/*</span>
 <span class="c">     * Executes the supplied function for each item in</span>
 <span class="c">     * a collection.  The operation stops if the function</span>
@@ -275,10 +257,10 @@
 <span class="c">     * iterated on objects</span>
 <span class="c">     * @return {boolean} true if the function ever returns true, false otherwise</span>
 <span class="c">     */</span>
-    <span class="c">// Y.some = function(o, f, c, proto) {</span>
-<span class="c"></span>    <span class="c">//     return dispatch(o, f, c, proto, &#39;some&#39;);</span>
-<span class="c"></span>    <span class="c">// };</span>
-<span class="c"></span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">some</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">dispatch</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="s1">&#39;some&#39;</span><span class="o">);</span>
+    <span class="o">};</span>
+
     <span class="c">/**</span>
 <span class="c">     * Deep obj/array copy.  Functions are cloned with Y.bind.</span>
 <span class="c">     * Array-like objects are treated as arrays.</span>
