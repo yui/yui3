@@ -148,7 +148,7 @@
 <span class="c"> */</span>
 <span class="nx">L</span><span class="o">.</span><span class="nx">isDate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
     <span class="c">// return o instanceof Date;</span>
-<span class="c"></span>    <span class="k">return</span> <span class="nx">L</span><span class="o">.</span><span class="nx">type</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">===</span> <span class="nx">DATE</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">!==</span> <span class="s1">&#39;Invalid Date&#39;</span><span class="o">;</span>
+<span class="c"></span>    <span class="k">return</span> <span class="nx">L</span><span class="o">.</span><span class="nx">type</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">===</span> <span class="nx">DATE</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">!==</span> <span class="s1">&#39;Invalid Date&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nb">isNaN</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
 <span class="o">};</span>
 
 <span class="c">/**</span>
