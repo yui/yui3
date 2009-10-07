@@ -161,7 +161,24 @@ YUI({
                 
                 Assert.areEqual(expectedXml, xml, "JUnit XML formatting is incorrect.");
             
-            }        
+            },
+
+            testTAPFormat : function(){
+                var text = Y.Test.Format.TAP(this.simpleReport);
+                var expectedText = 
+                    "1..5\n" + 
+                    "#Begin testsuite Some Suite(2 failed of 5)\n" +
+                    "#Begin testcase Some Tests(2 failed of 5)\n" + 
+                    "ok 1 - test1\n" +
+                    "ok 2 - test2\n" + 
+                    "#Ignored test test3\n" + 
+                    "not ok 3 - test4 - Test failed.\n" + 
+                    "not ok 4 - test5 - Test failed.\n" +
+                    "#End testcase Some Tests\n" + 
+                    "#End testsuite Some Suite\n";  
+                
+                Assert.areEqual(expectedText, text, "TAP formatting is incorrect.");
+            }
         }));
           
     
