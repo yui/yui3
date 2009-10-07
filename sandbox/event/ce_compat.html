@@ -22,9 +22,8 @@
 <script type="text/javascript" src="../../build/dump/dump.js"></script>
 <script type="text/javascript" src="../../build/substitute/substitute.js"></script>
 <script type="text/javascript" src="../../build/event-custom/event-custom-debug.js"></script>
-<script type="text/javascript" src="../../build/event/event-debug.js"></script>
+<script type="text/javascript" src="../../build/event/event-base-debug.js"></script>
 <script type="text/javascript" src="../../build/dom/dom-debug.js"></script>
-<script type="text/javascript" src="../../build/node/node-base-debug.js"></script>
 <script type="text/javascript" src="../../build/compat/compat-debug.js"></script>
 <script type="text/javascript">
 
@@ -34,7 +33,7 @@ if (typeof loadFirebugConsole == 'function') {
 
 var Y = YUI({
     logExclude: ['Selector']
-}).use('dump', 'node', 'compat', function(Y) {
+}).use('compat', function(Y) {
 
 
 

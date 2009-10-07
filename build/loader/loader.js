@@ -309,7 +309,7 @@ var NOT_FOUND = {},
         },
         
         compat: { 
-            requires: [NODE, DUMP, SUBSTITUTE]
+            requires: [EVENTBASE, DOM, DUMP, SUBSTITUTE]
         },
 
         classnamemanager: { 
