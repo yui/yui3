@@ -744,8 +744,12 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     silent: true,
                     bubbles: false,
                     contextFn: function() {
-                        cewrapper.nodeRef = cewrapper.nodeRef || Y.one(cewrapper.el);
-                        return cewrapper.nodeRef;
+                        if (compat) {
+                            return cewrapper.el;
+                        } else {
+                            cewrapper.nodeRef = cewrapper.nodeRef || Y.one(cewrapper.el);
+                            return cewrapper.nodeRef;
+                        }
                     }
                 });
             
