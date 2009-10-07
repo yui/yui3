@@ -55,7 +55,7 @@
                 xml += " result=\"" + results.result + "\" message=\"" + xmlEscape(results.message) + "\">";
             } else {
                 xml += " passed=\"" + results.passed + "\" failed=\"" + results.failed + "\" ignored=\"" + results.ignored + "\" total=\"" + results.total + "\">";
-                Y.Object.each(results, function(value, prop){
+                Y.Object.each(results, function(value){
                     if (l.isObject(value) && !l.isArray(value)){
                         xml += serializeToXML(value);
                     }
@@ -82,11 +82,9 @@
      */
     Y.Test.Format.JUnitXML = function(results) {
 
-
         function serializeToJUnitXML(results){
             var l   = Y.Lang,
-                xml = "",
-                prop;
+                xml = "";
                 
             switch (results.type){
                 //equivalent to testcase in JUnit
@@ -105,7 +103,7 @@
                 
                     xml = "<testsuite name=\"" + xmlEscape(results.name) + "\" tests=\"" + results.total + "\" failures=\"" + results.failed + "\">";
                     
-                    Y.Object.each(results, function(value, prop){
+                    Y.Object.each(results, function(value){
                         if (l.isObject(value) && !l.isArray(value)){
                             xml += serializeToJUnitXML(value);
                         }
@@ -114,21 +112,21 @@
                     xml += "</testsuite>";
                     break;
                 
+                //no JUnit equivalent, don't output anything
                 case "testsuite":
-                    Y.Object.each(results, function(value, prop){
+                    Y.Object.each(results, function(value){
                         if (l.isObject(value) && !l.isArray(value)){
                             xml += serializeToJUnitXML(value);
                         }
-                    });             
-
-                    //skip output - no JUnit equivalent                    
+                    });                                                     
                     break;
                     
+                //top-level, equivalent to testsuites in JUnit
                 case "report":
                 
                     xml = "<testsuites>";
                 
-                    Y.Object.each(results, function(value, prop){
+                    Y.Object.each(results, function(value){
                         if (l.isObject(value) && !l.isArray(value)){
                             xml += serializeToJUnitXML(value);
                         }
@@ -146,3 +144,82 @@
         return "<?xml version=\"1.0\" charset=\"UTF-8\"?>" + serializeToJUnitXML(results);
     };
     
+    /**
+     * Returns test results formatted in TAP format.
+     * @param {Object} result The results object created by TestRunner.
+     * @return {String} A TAP-formatted string of results.
+     * @namespace Test.Format
+     * @method TAP
+     * @static
+     */
+    Y.Test.Format.TAP = function(results) {
+    
+        var currentTestNum = 1;
+
+        function serializeToTAP(results){
+            var l   = Y.Lang,
+                text = "";
+                
+            switch (results.type){
+
+                case "test":
+                    if (results.result != "ignore"){
+
+                        text = "ok " + (currentTestNum++) + " - " + results.name;
+                        
+                        if (results.result == "fail"){
+                            text = "not " + text + " - " + results.message;
+                        }
+                        
+                        text += "\n";
+                    } else {
+                        text = "#Ignored test " + results.name + "\n";
+                    }
+                    break;
+                    
+                case "testcase":
+                
+                    text = "#Begin testcase " + results.name + "(" + results.failed + " failed of " + results.total + ")\n";
+                                    
+                    Y.Object.each(results, function(value){
+                        if (l.isObject(value) && !l.isArray(value)){
+                            text += serializeToTAP(value);
+                        }
+                    });             
+                    
+                    text += "#End testcase " + results.name + "\n";
+                    
+                    
+                    break;
+                
+                case "testsuite":
+
+                    text = "#Begin testsuite " + results.name + "(" + results.failed + " failed of " + results.total + ")\n";                
+                
+                    Y.Object.each(results, function(value){
+                        if (l.isObject(value) && !l.isArray(value)){
+                            text += serializeToTAP(value);
+                        }
+                    });                                                     
+
+                    text += "#End testsuite " + results.name + "\n";
+                    break;
+
+                case "report":
+                
+                    Y.Object.each(results, function(value){
+                        if (l.isObject(value) && !l.isArray(value)){
+                            text += serializeToTAP(value);
+                        }
+                    });             
+                    
+                //no default
+            }
+            
+            return text;
+     
+        }
+
+        return "1.." + results.total + "\n" + serializeToTAP(results);
+    };
+        

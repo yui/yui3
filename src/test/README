@@ -4,7 +4,8 @@ Documentation: http://developer.yahoo.com/yui/3/test
 
 3.NEXT
 
-    * Added JUnit XML test format.
+    * Added JUnit XML test results format.
+    * Added TAP test results format.
 
 3.0.0
     * Added missing space in assert failure message (trac #2528058).
