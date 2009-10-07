@@ -539,7 +539,7 @@ if (Y.Event) {
                 // a[1] = obj;
             }
 
-            Y.EventTarget.prototype.subscribe.apply(this, a);
+            Y.EventTarget.prototype.on.apply(this, a);
         },
 
         fireEvent: function(type) {

@@ -7,6 +7,10 @@ The YUI Global
         yui-base
         get
 
+3.next
+* Added the ability to define a global configuration object (YUI_config).
+* Added Object.some().
+
 3.0.0
 
 * Extracted the loader from the seed file.  Instead, if loader not included, 'get' is included,

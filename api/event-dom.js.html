@@ -363,8 +363,12 @@
                     <span class="nx">silent</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
                     <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
                     <span class="nx">contextFn</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">cewrapper</span><span class="o">.</span><span class="nx">el</span><span class="o">);</span>
-                        <span class="k">return</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span><span class="o">;</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">compat</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">return</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">el</span><span class="o">;</span>
+                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">cewrapper</span><span class="o">.</span><span class="nx">el</span><span class="o">);</span>
+                            <span class="k">return</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span><span class="o">;</span>
+                        <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">});</span>
             

@@ -72,10 +72,12 @@ if (typeof YUI === 'undefined' || !YUI) {
      */
 
     /*global YUI*/
-    // Make a function, disallow direct instantiation
+    /*global YUI_config*/
+    // @TODO Advice was to make a function, disallow direct instantiation.
     YUI = function(o1, o2, o3, o4, o5) {
 
-        var Y = this, a = arguments, i, l = a.length;
+        var Y = this, a = arguments, i, l = a.length,
+            globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
 
         // Allow instantiation without the new operator
         if (!(Y instanceof YUI)) {
@@ -83,6 +85,10 @@ if (typeof YUI === 'undefined' || !YUI) {
         } else {
             // set up the core environment
             Y._init();
+
+            if (globalConfig) {
+                Y._config(globalConfig);
+            }
 
             for (i=0; i<l; i++) {
                 Y._config(a[i]);
@@ -672,21 +678,6 @@ YUI.prototype = {
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
-
-    /*
-     * Subscribe to an event.  The signature differs depending on the
-     * type of event you are attaching to.
-     * @method on 
-     * @param type {string|function|object} The type of the event.  If
-     * this is a function, this is dispatched to the aop system.  If an
-     * object, it is parsed for multiple subsription definitions
-     * @param fn {Function} The callback
-     * @param elspec {any} DOM element(s), selector string(s), and or
-     * Node ref(s) to attach DOM related events to (only applies to
-     * DOM events).
-     * @param
-     * @return the event target or a detach handle per 'chain' config
-     */
 
 })();
 

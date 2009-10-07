@@ -317,6 +317,7 @@ Y.Do.Error = Y.Do.Halt;
 var AFTER = 'after', 
     CONFIGS = [
         'broadcast',
+        'monitor',
         'bubbles',
         'context',
         'contextFn',
@@ -408,6 +409,14 @@ Y.CustomEvent = function(type, o) {
      * @type object
      */
     this.context = Y;
+
+    /**
+     * Monitor when an event is attached or detached.
+     * 
+     * @property monitor
+     * @type boolean
+     */
+    // this.monitor = false;
 
     this.logSystem = (type == YUI_LOG);
 
@@ -1226,7 +1235,7 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
         var evts = this._yuievt.events, i, ret,
-            Node = Y.Node, isNode = (this instanceof Node);
+            Node = Y.Node, isNode = Node && (this instanceof Node);
 
         // detachAll disabled on the Y instance.
         if (!type && (this !== Y)) {

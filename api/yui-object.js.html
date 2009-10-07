@@ -224,19 +224,19 @@
 <span class="c"> * @param proto {boolean} include proto</span>
 <span class="c"> * @return {boolean} true if any execution of the function returns true, false otherwise</span>
 <span class="c"> */</span>
-<span class="c">// O.some = function (o, f, c, proto) {</span>
-<span class="c">//     var s = c || Y, i;</span>
-<span class="c">// </span>
-<span class="c">//     for (i in o) {</span>
-<span class="c">//         if (proto || o.hasOwnProperty(i)) {</span>
-<span class="c">//             if (f.call(s, o[i], i, o)) {</span>
-<span class="c">//                 return true;</span>
-<span class="c">//             }</span>
-<span class="c">//         }</span>
-<span class="c">//     }</span>
-<span class="c">//     return false;</span>
-<span class="c">// };</span>
-<span class="c"></span>
+<span class="nx">O</span><span class="o">.</span><span class="nx">some</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+
+    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">proto</span> <span class="o">||</span> <span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+<span class="o">};</span>
+
 <span class="c">/**</span>
 <span class="c"> * Retrieves the sub value at the provided path,</span>
 <span class="c"> * from the value object provided.</span>

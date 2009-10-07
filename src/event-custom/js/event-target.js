@@ -253,7 +253,7 @@ ET.prototype = {
      */
     detach: function(type, fn, context) {
         var evts = this._yuievt.events, i, ret,
-            Node = Y.Node, isNode = (this instanceof Node);
+            Node = Y.Node, isNode = Node && (this instanceof Node);
 
         // detachAll disabled on the Y instance.
         if (!type && (this !== Y)) {
