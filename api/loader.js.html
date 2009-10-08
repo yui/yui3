@@ -880,8 +880,8 @@
 <span class="c">     * @type boolean</span>
 <span class="c">     * @default true</span>
 <span class="c">     */</span>
-    <span class="c">// this.allowRollup = true;</span>
-<span class="c"></span>
+    <span class="k">this</span><span class="o">.</span><span class="nx">allowRollup</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
     <span class="c">/**</span>
 <span class="c">     * A filter to apply to result urls.  This filter will modify the default</span>
 <span class="c">     * path for all modules.  The default path for the YUI library is the</span>
@@ -1413,7 +1413,7 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">_config</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_setup</span><span class="o">();</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_explode</span><span class="o">();</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">allowRollup</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">combine</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">allowRollup</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_rollup</span><span class="o">();</span>
             <span class="o">}</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_reduce</span><span class="o">();</span>
@@ -1572,6 +1572,8 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">rollups</span> <span class="o">=</span> <span class="nx">rollups</span><span class="o">;</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">forceMap</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">force</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">hash</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">force</span><span class="o">)</span> <span class="o">:</span> <span class="o">{};</span>
         <span class="o">}</span>
+
+        <span class="nx">console</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;HERE&#39;</span><span class="o">);</span>
 
         <span class="c">// make as many passes as needed to pick up rollup rollups</span>
 <span class="c"></span>        <span class="k">for</span> <span class="o">(;;)</span> <span class="o">{</span>
