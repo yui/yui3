@@ -889,5 +889,5 @@ YAHOO.util.Point.prototype = new YAHOO.util.Region();
 
 
 
-}, '@VERSION@' ,{requires:['dom','event']});
-YUI._setup(); YUI.use('dom', 'event', 'compat');
+}, '@VERSION@' ,{requires:['dom','event-base','dump','substitute']});
+YUI._setup(); YUI.use('compat');
