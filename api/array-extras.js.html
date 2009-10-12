@@ -97,7 +97,7 @@
 
     <span class="k">while</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">b</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">item</span> <span class="o">=</span> <span class="nx">b</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-        <span class="k">while</span> <span class="o">((</span><span class="nx">n</span> <span class="o">=</span> <span class="nx">b</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">item</span><span class="o">))</span> <span class="o">!==</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">while</span> <span class="o">((</span><span class="nx">n</span> <span class="o">=</span> <span class="nx">A</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">b</span><span class="o">,</span> <span class="nx">item</span><span class="o">))</span> <span class="o">!==</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">b</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">n</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
         <span class="o">}</span>
         <span class="nx">i</span> <span class="o">+=</span> <span class="m">1</span><span class="o">;</span>
