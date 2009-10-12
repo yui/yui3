@@ -1526,8 +1526,6 @@ Y.Loader.prototype = {
             this.forceMap = (this.force) ? Y.Array.hash(this.force) : {};
         }
 
-        console.log('HERE');
-
         // make as many passes as needed to pick up rollup rollups
         for (;;) {
             rolled = false;
