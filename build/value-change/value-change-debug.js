@@ -152,8 +152,6 @@ var Event = Y.Event,
             // If it hasn't been done yet, then bind the DOM event handlers
             // which will call the custom event.
             
-            
-            
             var proxy = [Y.stamp(target), eventName].join("-"),
                 handles = PRIVATE[proxy];
             if (!handles) {
@@ -182,67 +180,26 @@ var Event = Y.Event,
             // Remove the 5 named args, and replace with these things,
             // preserving any extra arguments, and return the handle.
             args.splice(0, 5, proxy, fn, (o || target));
-            return target.on.apply(target, args);
             
+            var proxyHandle = target.on.apply(target, args);
+            
+            // hook into the detach event of the proxy to clean up our mess.
+            Y.after(function () {
+                handles[COUNT] --;
+                if (handles[COUNT] <= 0) {
+                    // remove dom listeners.
+                    Y.Array.each(conf.events, function (event) {
+                        target.detach(handles[event]);
+                    });
+                }
+            }, proxyHandle, "detach");
+            
+            return proxyHandle;
         }
     };
-//         detach : function (eventName, handle, target) {
-//             
-//             // @TODO @FIXME @BROKEN @OMGWTFSRSLY
-//             // This is a big mess right here.
-//             // The arguments to this function seem to be radically different
-//             // depending on how you call detach().
-//             // myNode.detach("valueChange", fn) vs Y.detach("valueChange", node, fn)
-//             // vs handle.detach().  Only handle.detach() works.
-//             // I suspect that I'm doing something very wrong in here.
-//             
-//             // This right here is a minefield that must be rewritten asap.
-//             
-//             Y.log("Detach ", "info", eventName);
-//             
-//             // if there's a handle, then remove just that one.
-//             // otherwise, remove everything for this target.
-//             
-//             // @FIXME @SECURITY Should I really be getting a raw dom node here?
-//             // That seems weird and insecure.
-//             target = Y.one(target);
-//             
-//             var proxy = [Y.stamp(target), eventName].join("-"),
-//                 handles = PRIVATE[proxy];
-//             
-//             // if I just got one, then delete just that one.
-//             // otherwise, make them all go away.
-//             // @FIXME - Need a way to tell if this handle has already been
-//             // deleted, and if so, dont' decrement the counter to delete the
-//             // handles.  Detaching the same handler multiple times will eventually
-//             // cause all the listeners to be cut off, as the proxy handler gets
-//             if (handle) {
-//                 if (handle.detach) handle.detach();
-//             } else {
-//                 handles[COUNT] = -1;
-//             }
-//             
-//             // nothing to do?
-//             if (!handles) return;
-//             
-//             // Decrement the counters, and remove the DOM events if this was
-//             // the last one
-//             // @TODO @FIXME This should be looking at the event list from the conf object
-//             // in on(), not just the default list.  What if they listened to some other
-//             // event, and now there's a listener on there doing nothing?
-//             handles[COUNT] --;
-//             if (handles[COUNT] <= 0) {
-//                 Y.Array.each([CHANGE,KEYDOWN,KEYPRESS], function (event) {
-//                     target.detach(handles[event]);
-//                 });
-//             }
-//         }
-//     };
-
 
 Y.Env.evt.plugins[eventName] = event;
 if (Y.Node) Y.Node.DOM_EVENTS[eventName] = event;
-
 
 
 }, '@VERSION@' ,{requires:['node-base']});
