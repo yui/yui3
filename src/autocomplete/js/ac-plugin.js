@@ -171,7 +171,7 @@ ACPlugin.ATTRS = {
      *
      * @type String
      **/
-    queryValue     : {
+    queryValue : {
         // @TODO: Support delimiters here.
         // Split, get the cursor position, and return just the one that's active.
         // Same goes for setting.
@@ -189,7 +189,7 @@ ACPlugin.ATTRS = {
      * <p>If the value is changed, then set up a new valueChange handler.</p>
      * @type Number
      **/
-    keyDelay     : {
+    keyDelay : {
         value : 50,
         // @TODO add a validator
         // In the initializer, subscribe to the after event, rather than calling
@@ -206,14 +206,14 @@ ACPlugin.ATTRS = {
      * <p>Without this, the default behavior of ac:query is a no-op.</p>
      * @type Object
      **/
-    dataSource     : { value : null },
+    dataSource : { value : null },
     
     /**
      * <p>Set to trigger "delimited" mode.</p>
      * @TODO: Implement this.
      * @type String
      **/
-    delimiter      : { value : null },
+    delimiter : { value : null },
     
     /**
      * <p>The minimum number of characters to require before triggering an ac:query event.</p>
@@ -231,7 +231,7 @@ ACPlugin.ATTRS = {
      * have an autocomplete plugin that always sends the same query, but that's a bit silly.)</p>
      * @type String
      **/
-    queryTemplate  : { value : "{query}" },
+    queryTemplate : { value : "{query}" },
     
     /**
      * <p>The widget that responds to the render(data) call when results return from the
@@ -239,7 +239,7 @@ ACPlugin.ATTRS = {
      * will work just fine.</p>
      * @type Object
      **/
-    widget         : { value : null }
+    widget : { value : null }
 };
 
 
