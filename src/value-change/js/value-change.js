@@ -10,7 +10,7 @@
  *   <li>The user triggers an onchange event, ie by pasting a value into the field via mouse.</li>
  * </ol>
  * <p>The event signature is otherwise identical to either the keydown or onchange events,
- * whichever cause textchange to be triggered.</p>
+ * whichever cause valueChange to be triggered.</p>
  * <p>This does not replace the DOM onchange event, but rather augments it to do onchange-like
  * logic as a result of key presses, even in multi-stroke character sets.</p>
  * 
@@ -21,9 +21,9 @@
  * <p>Known issue: If attaching to elements that are not yet available, then only the first 
  * node will be guaranteed to have the event handler attached.</p>
  *
- * @event textchange
+ * @event valueChange
  * @for YUI
- * @param type {String} 'textchange'
+ * @param type {String} 'valueChange'
  * @param fn {Function} the callback function
  * @param el {String|Node|etc} the element(s) to bind
  * @param o {Object} optional context object
@@ -33,11 +33,12 @@
  * @return {Event.Handle} the detach handle
  **/
 
-// @TODO It could be a LOT simpler to hook into a dom mutation event, and maybe be alerted
-// when the node.value changes.  Not sure where that'd be available, but it's worth looking
-// into.
 
-var eventName = 'textchange',
+var Event = Y.Event,
+    Lang = Y.Lang,
+    plugins = Y.Env.evt.plugins
+    listeners = {},
+    eventName = "valueChange",
     PRIVATE = {},
     CHANGE = "change",
     KEYDOWN = "keydown",
@@ -49,7 +50,7 @@ var eventName = 'textchange',
     
     /**
      * create a handler that listens to keydown/keypress/change, and then
-     * fires the proxy event, which in turn fires the textchange event, but
+     * fires the proxy event, which in turn fires the valueChange event, but
      * only if the value has changed from what it was the last time the event
      * was fired.
      *
@@ -146,6 +147,9 @@ var eventName = 'textchange',
             // 1 target left. Rock and roll.
             target = target.item(0);
             
+            // If it hasn't been done yet, then bind the DOM event handlers
+            // which will call the custom event.
+            
             var proxy = [Y.stamp(target), eventName].join("-"),
                 handles = PRIVATE[proxy];
             if (!handles) {
@@ -165,74 +169,32 @@ var eventName = 'textchange',
             handles[DELAY] = conf[DELAY];
             
             // Keep a count of the number of listeners.  If this drops to zero (ie, by
-            // detaching all the textchange listeners), then also remove the
+            // detaching all the valueChange listeners), then also remove the
             // DOM event listeners
             handles[COUNT] ++;
             
-            // The consumer said to listen to "textchange", but we're actually going to
+            // The consumer said to listen to "valueChange", but we're actually going to
             // set a listener on the private proxy event, which is what gets fired.
             // Remove the 5 named args, and replace with these things,
             // preserving any extra arguments, and return the handle.
             args.splice(0, 5, proxy, fn, (o || target));
-            return target.on.apply(target, args);
             
-        },
-        detach : function (eventName, handle, target) {
+            var proxyHandle = target.on.apply(target, args);
             
-            // @TODO @FIXME @BROKEN @OMGWTFSRSLY
-            // This is a big mess right here.
-            // The arguments to this function seem to be radically different
-            // depending on how you call detach().
-            // myNode.detach("textchange", fn) vs Y.detach("textchange", node, fn)
-            // vs handle.detach().  Only handle.detach() works.
-            // I suspect that I'm doing something very wrong in here.
+            // hook into the detach event of the proxy to clean up our mess.
+            Y.after(function () {
+                handles[COUNT] --;
+                if (handles[COUNT] <= 0) {
+                    // remove dom listeners.
+                    Y.Array.each(conf.events, function (event) {
+                        target.detach(handles[event]);
+                    });
+                }
+            }, proxyHandle, "detach");
             
-            // This right here is a minefield that must be rewritten asap.
-            
-            Y.log("Detach ", "info", eventName);
-            
-            // if there's a handle, then remove just that one.
-            // otherwise, remove everything for this target.
-            
-            // @FIXME @SECURITY Should I really be getting a raw dom node here?
-            // That seems weird and insecure.
-            target = Y.one(target);
-            
-            var proxy = [Y.stamp(target), eventName].join("-"),
-                handles = PRIVATE[proxy];
-            
-            // if I just got one, then delete just that one.
-            // otherwise, make them all go away.
-            // @FIXME - Need a way to tell if this handle has already been
-            // deleted, and if so, dont' decrement the counter to delete the
-            // handles.  Detaching the same handler multiple times will eventually
-            // cause all the listeners to be cut off, as the proxy handler gets
-            if (handle) {
-                if (handle.detach) handle.detach();
-            } else {
-                handles[COUNT] = -1;
-            }
-            
-            // nothing to do?
-            if (!handles) return;
-            
-            // Decrement the counters, and remove the DOM events if this was
-            // the last one
-            // @TODO @FIXME This should be looking at the event list from the conf object
-            // in on(), not just the default list.  What if they listened to some other
-            // event, and now there's a listener on there doing nothing?
-            handles[COUNT] --;
-            if (handles[COUNT] <= 0) {
-                Y.Array.each([CHANGE,KEYDOWN,KEYPRESS], function (event) {
-                    target.detach(handles[event]);
-                });
-            }
+            return proxyHandle;
         }
     };
 
-
 Y.Env.evt.plugins[eventName] = event;
-if (Y.Node) {
-    Y.Node.DOM_EVENTS[eventName] = event;
-}
-
+if (Y.Node) Y.Node.DOM_EVENTS[eventName] = event;
