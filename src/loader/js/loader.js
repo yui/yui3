@@ -501,7 +501,7 @@ var NOT_FOUND = {},
             submodules: {
 
                 'io-base': {
-                    requires: [EVENTCUSTOMBASE, 'querystring-simple-stringify']
+                    requires: [EVENTCUSTOMBASE, 'querystring-stringify-simple']
                 }, 
 
                 'io-xdr': {
@@ -579,22 +579,23 @@ var NOT_FOUND = {},
             supersedes: ['queue-run']
         },
 
-        'querystring-simple-stringify': {
+        'querystring-stringify-simple': {
             requires: [YUIBASE]
         },
-        'querystring-stringify': {
-            supersedes: ['querystring-simple-stringify'],
-            requires: [YUIBASE]
-        },
-        'querystring-simple-parse': {
-            requires: [YUIBASE]
-        },
-        'querystring-parse': {
-            supersedes: ['querystring-simple-parse'],
+        'querystring-parse-simple': {
             requires: [YUIBASE]
         },
         'querystring': {
-            requires: ['querystring-parse', 'querystring-stringify']
+            submodules: {
+                'querystring-parse': {
+                    supersedes: ['querystring-parse-simple'],
+                    requires: [YUIBASE]
+                },
+                'querystring-stringify': {
+                    supersedes: ['querystring-stringify-simple'],
+                    requires: [YUIBASE]
+                },
+            }
         },
 
         slider: {
