@@ -1,1 +1,1 @@
-YUI._setup(); YUI.use('dom', 'event', 'compat');
+YUI._setup(); YUI.use('compat');
