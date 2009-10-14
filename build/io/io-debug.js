@@ -179,8 +179,11 @@ YUI.add('io-base', function(Y) {
    			c = c || {};
    			o = _create(c.xdr || c.form, i);
    			m = c.method ? c.method.toUpperCase() : 'GET';
-
-   		if (c.form) {
+        
+        if (c.data && Y.Lang.isObject(c.data) && Y.QueryString && Y.QueryString.stringify) {
+            c.data = Y.QueryString.stringify(c.data);
+        }
+        if (c.form) {
    			if (c.form.upload) {
    				return Y.io._upload(o, uri, c);
    			}
@@ -732,9 +735,7 @@ YUI.add('io-base', function(Y) {
 	Y.io.http = _io;
 
 
-
-}, '@VERSION@' ,{requires:['event-custom-base']});
-
+}, '@VERSION@' ,{requires:['event-custom-base','querystring-stringify-simple']});
 YUI.add('io-form', function(Y) {
 
    /**
@@ -828,9 +829,7 @@ YUI.add('io-form', function(Y) {
     }, true);
 
 
-
 }, '@VERSION@' ,{requires:['io-base','node-base','node-style']});
-
 YUI.add('io-xdr', function(Y) {
 
    /**
@@ -1113,9 +1112,7 @@ YUI.add('io-xdr', function(Y) {
 	});
 
 
-
 }, '@VERSION@' ,{requires:['io-base','datatype-xml']});
-
 YUI.add('io-upload-iframe', function(Y) {
 
    /**
@@ -1134,7 +1131,7 @@ YUI.add('io-upload-iframe', function(Y) {
 	* @static
 	* @param {object} f HTML form object.
 	* @param {string} s The key-value POST data.
-	* @return {array} o Array of created fields.
+	* @return {array} e Array of created fields.
 	*/
 	function _addData(f, s) {
 		var o = [],
@@ -1398,9 +1395,7 @@ YUI.add('io-upload-iframe', function(Y) {
 	});
 
 
-
-}, '@VERSION@' ,{requires:['io-base','node-base','event-base']});
-
+}, '@VERSION@' ,{requires:['io-base']});
 YUI.add('io-queue', function(Y) {
 
    /**
@@ -1460,7 +1455,7 @@ YUI.add('io-queue', function(Y) {
 			_shift();
 		}
 
-		Y.log('Object queued.  Transaction id is ' + o.id, 'info', 'io');
+		Y.log('Object queued.  Transaction id is' + o.id, 'info', 'io');
 		return o;
 	}
 
@@ -1617,9 +1612,7 @@ YUI.add('io-queue', function(Y) {
     }, true);
 
 
-
 }, '@VERSION@' ,{requires:['io-base','queue-promote']});
-
 
 
 YUI.add('io', function(Y){}, '@VERSION@' ,{use:['io-base', 'io-form', 'io-xdr', 'io-upload-iframe', 'io-queue']});

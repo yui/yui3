@@ -28,6 +28,8 @@ var QueryString = Y.namespace("QueryString");
  * @static
  */
 QueryString.parse = function (qs, sep, eq) {
+    sep = sep || "&";
+    eq = eq || "=";
     for (
         var obj = {},
             i = 0,

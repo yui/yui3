@@ -580,10 +580,12 @@ var NOT_FOUND = {},
         },
 
         'querystring-stringify-simple': {
-            requires: [YUIBASE]
+            requires: [YUIBASE],
+            path: 'querystring/querystring-stringify-simple.js'
         },
         'querystring-parse-simple': {
-            requires: [YUIBASE]
+            requires: [YUIBASE],
+            path: 'querystring/querystring-parse-simple.js'
         },
         'querystring': {
             submodules: {

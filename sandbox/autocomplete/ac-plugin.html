@@ -276,7 +276,7 @@ YUI({
             encodeURIComponent("\" limit 10"),
         dataSource : myDS,
         widget : { render : function (results) {
-            console.log("widget.render", results);
+            // console.log("widget.render", results);
             Y.one("#res").set("innerHTML", results.join("\n"));
         }}
     });
@@ -288,7 +288,6 @@ YUI({
     });
     myNode.ac.on("ac:render", function (e) {
         console.log(" ac:render", e);
-        var results = e.results;
     });
     
 });
