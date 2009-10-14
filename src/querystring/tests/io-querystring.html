@@ -37,7 +37,8 @@
 </head>
 <body class="yui-skin-sam">
 <h1>Query String Tests</h1>
-<div id="testbed"></div>
+
+<p>Tests running...</p>
 
 <script src="../../../build/yui/yui.js"></script>
 <script>
@@ -47,9 +48,12 @@ var DATA = {
     baz : { quux : "foo" },
     arr : [1,2,3]
 };
-function log (which) {
-    return function () {
-        console.log.call(console, which, arguments)
+function verify (expected) {
+    return function (_, o) {
+        var actual = o.responseText;
+        if (actual !== expected) throw new Error("Expected: "+expected+"\nActual: "+actual);
+        document.body.appendChild(document.createElement("pre")).innerHTML =
+            "Success! " + expected;
     };
 };
 
@@ -58,17 +62,13 @@ YUI({
     base : '../../../build/',
     filter : 'raw'
 }).use( 'io', function (Y) {
-    
     Y.io("./test.php?simple_qs", {
         method : "POST",
         data : DATA,
         on : {
-            start : log("start"),
-            complete : log("complete"),
-            end : log("end")
+            success : verify('{"POST":{"foo":"bar","baz":"[object Object]","arr":"1,2,3"},"GET":{"simple_qs":""}}')
         }
     });
-        
 });
 
 YUI({
@@ -80,9 +80,7 @@ YUI({
         method : "POST",
         data : DATA,
         on : {
-            start : log("start"),
-            complete : log("complete"),
-            end : log("end")
+            success : verify('{"POST":{"foo":"bar","baz":{"quux":"foo"},"arr":["1","2","3"]},"GET":{"with_qs":""}}')
         }
     });
         
