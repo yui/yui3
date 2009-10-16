@@ -329,7 +329,7 @@ Y.mix(Console, {
             value : Y,
             writeOnce : true,
             validator : function (v) {
-                return v && Y.Lang.isFunction(v.on);
+                return this._validateLogSource(v);
             }
         },
 
@@ -573,19 +573,10 @@ Y.mix(Console, {
             lazyAdd: false,
             value: false,
             getter : function () {
-                var logSource = this.get('logSource');
-                return logSource instanceof YUI ?
-                    logSource.config.useBrowserConsole : null;
+                return this._getUseBrowserConsole();
             },
             setter : function (v) {
-                var logSource = this.get('logSource');
-                if (logSource instanceof YUI) {
-                    v = !!v;
-                    logSource.config.useBrowserConsole = !!v;
-                    return v;
-                } else {
-                    return Y.Attribute.INVALID_VALUE;
-                }
+                return this._setUseBrowserConsole(v);
             }
          },
 
@@ -1235,6 +1226,19 @@ Y.extend(Console,Y.Widget,{
 
 
     /**
+     * Validator for logSource attribute.
+     *
+     * @method _validateLogSource
+     * @param v {Object} the desired logSource
+     * @return {Boolean} true if the input is an object with an <code>on</code>
+     *                   method
+     * @protected
+     */
+    _validateLogSource: function (v) {
+        return v && Y.Lang.isFunction(v.on);
+    },
+
+    /**
      * Setter method for logLevel attribute.  Acceptable values are
      * &quot;error&quot, &quot;warn&quot, and &quot;info&quot (case
      * insensitive).  Other values are treated as &quot;info&quot;.
@@ -1250,6 +1254,43 @@ Y.extend(Console,Y.Widget,{
         }
         
         return (v === WARN || v === ERROR) ? v : INFO;
+    },
+
+    /**
+     * Getter method for useBrowserConsole attribute.  Just a pass through to
+     * the YUI instance configuration setting.
+     *
+     * @method _getUseBrowserConsole
+     * @return {Boolean} or null if logSource is not a YUI instance
+     * @protected
+     */
+    _getUseBrowserConsole: function () {
+        var logSource = this.get('logSource');
+        return logSource instanceof YUI ?
+            logSource.config.useBrowserConsole : null;
+    },
+
+    /**
+     * Setter method for useBrowserConsole attributes.  Only functional if the
+     * logSource attribute points to a YUI instance.  Passes the value down to
+     * the YUI instance.  NOTE: multiple Console instances cannot maintain
+     * independent useBrowserConsole values, since it is just a pass through to
+     * the YUI instance configuration.
+     *
+     * @method _setUseBrowserConsole
+     * @param v {Boolean} false to disable browser console printing (default)
+     * @return {Boolean} true|false if logSource is a YUI instance
+     * @protected
+     */
+    _setUseBrowserConsole: function (v) {
+        var logSource = this.get('logSource');
+        if (logSource instanceof YUI) {
+            v = !!v;
+            logSource.config.useBrowserConsole = v;
+            return v;
+        } else {
+            return Y.Attribute.INVALID_VALUE;
+        }
     },
 
     /**
