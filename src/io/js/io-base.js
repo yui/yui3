@@ -174,7 +174,7 @@
    	*/
    	function _io(uri, c, i) {
    		var f, o, m;
-   			c = c || {};
+   			c = Y.Object(c);
    			o = _create(c.xdr || c.form, i);
    			m = c.method ? c.method.toUpperCase() : 'GET';
         
@@ -240,6 +240,7 @@
 		}
 
    		_ioStart(o.id, c);
+
    		// If config.timeout is defined, and the request is standard XHR,
    		// initialize timeout polling.
    		if (c.timeout) {

@@ -262,6 +262,18 @@
                     Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
                 },
 
+                test_y_on_empty_array: function() {
+
+                    Y.on('click', function(e, extra1, extra2) {
+                        // 
+                    }, []);
+                    
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    
+
+                },
+
+
                 test_detach_by_sig: function() {
                     
                     var clicked = 0, 

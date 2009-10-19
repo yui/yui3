@@ -308,7 +308,7 @@ Node.ATTRS = {
                     }
                 }
             }
-            return children;
+            return Y.all(children);
         }
     },
 
@@ -437,7 +437,7 @@ Y.mix(Node.prototype, {
         var attrConfig = Node.ATTRS[attr];
 
         if (this._setAttr) { // use Attribute imple
-            this._setAttr(attr, val);
+            this._setAttr.apply(this, arguments);
         } else { // use setters inline
             if (attrConfig && attrConfig.setter) {
                 attrConfig.setter.call(this, val);
@@ -569,7 +569,7 @@ Y.mix(Node.prototype, {
      * If a function is used, it receives the current node being tested as the only argument.
      * @return {Node} Node instance or null if not found
      */
-    next: function(node, fn, all) {
+    next: function(fn, all) {
         return Node.get(Y.DOM.elementByAxis(this._node, 'nextSibling', _wrapFn(fn), all));
     },
         
@@ -604,7 +604,10 @@ Y.mix(Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     all: function(selector) {
-        return Y.all(Y.Selector.query(selector, this._node));
+        var nodelist = Y.all(Y.Selector.query(selector, this._node));
+        nodelist._query = selector;
+        nodelist._queryRoot = this;
+        return nodelist;
     },
 
     /**
@@ -831,34 +834,6 @@ Y.one = Y.Node.one;
  * @class NodeList
  * @constructor
  */
-
-Y.Array._diff = function(a, b) {
-    var removed = [],
-        present = false,
-        i, j, lenA, lenB;
-
-    outer:
-    for (i = 0, lenA = a.length; i < lenA; i++) {
-        present = false;
-        for (j = 0, lenB = b.length; j < lenB; j++) {
-            if (a[i] === b[j]) {
-                present = true;
-                continue outer;
-            }
-        }
-        if (!present) {
-            removed[removed.length] = a[i];
-        }
-    }
-    return removed;
-};
-
-Y.Array.diff = function(a, b) {
-    return {
-        added: Y.Array._diff(b, a),
-        removed: Y.Array._diff(a, b)
-    }; 
-};
 
 var NodeList = function(nodes) {
     if (typeof nodes === 'string') {
@@ -1090,21 +1065,27 @@ Y.mix(NodeList.prototype, {
         delete NodeList._instances[this[UID]];
     },
 
+    /**
+     * Reruns the initial query, when created using a selector query 
+     * @method refresh
+     * @chainable
+     */
     refresh: function() {
         var doc,
-            diff,
-            oldList = this._nodes;
-        if (this._query) {
-            if (oldList && oldList[0] && oldList[0].ownerDocument) {
-                doc = oldList[0].ownerDocument;
+            nodes = this._nodes,
+            query = this._query,
+            root = this._queryRoot;
+
+        if (query) {
+            if (!root) {
+                if (nodes && nodes[0] && nodes[0].ownerDocument) {
+                    root = nodes[0].ownerDocument;
+                }
             }
 
-            this._nodes = Y.Selector.query(this._query, doc || Y.config.doc);        
-            diff = Y.Array.diff(oldList, this._nodes); 
-            diff.added = diff.added ? Y.all(diff.added) : null;
-            diff.removed = diff.removed ? Y.all(diff.removed) : null;
-            this.fire('refresh', diff);
+            this._nodes = Y.Selector.query(query, root);
         }
+
         return this;
     },
 
@@ -1975,5 +1956,5 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
 

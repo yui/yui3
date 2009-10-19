@@ -306,7 +306,7 @@ Node.ATTRS = {
                     }
                 }
             }
-            return children;
+            return Y.all(children);
         }
     },
 
@@ -435,7 +435,7 @@ Y.mix(Node.prototype, {
         var attrConfig = Node.ATTRS[attr];
 
         if (this._setAttr) { // use Attribute imple
-            this._setAttr(attr, val);
+            this._setAttr.apply(this, arguments);
         } else { // use setters inline
             if (attrConfig && attrConfig.setter) {
                 attrConfig.setter.call(this, val);
@@ -567,7 +567,7 @@ Y.mix(Node.prototype, {
      * If a function is used, it receives the current node being tested as the only argument.
      * @return {Node} Node instance or null if not found
      */
-    next: function(node, fn, all) {
+    next: function(fn, all) {
         return Node.get(Y.DOM.elementByAxis(this._node, 'nextSibling', _wrapFn(fn), all));
     },
         
@@ -602,7 +602,10 @@ Y.mix(Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     all: function(selector) {
-        return Y.all(Y.Selector.query(selector, this._node));
+        var nodelist = Y.all(Y.Selector.query(selector, this._node));
+        nodelist._query = selector;
+        nodelist._queryRoot = this;
+        return nodelist;
     },
 
     /**

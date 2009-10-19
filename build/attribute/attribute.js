@@ -613,6 +613,7 @@ YUI.add('attribute-base', function(Y) {
         _setAttr : function(name, val, opts, force) {
             var allowSet = true,
                 state = this._state,
+                stateProxy = this._stateProxy,
                 data = state.data,
                 initialSet,
                 strPath,
@@ -630,6 +631,11 @@ YUI.add('attribute-base', function(Y) {
             }
 
             initialSet = (!data.value || !(name in data.value));
+
+            if (stateProxy && name in stateProxy && !this._state.get(name, BYPASS_PROXY)) {
+                // TODO: Value is always set for proxy. Can we do any better? Maybe take a snapshot as the initial value for the first call to set? 
+                initialSet = false;
+            }
 
             if (this._requireAddAttr && !this.attrAdded(name)) {
             } else {

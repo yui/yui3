@@ -173,7 +173,7 @@ Widget.ATTRS = {
 	* method), while being removed from the default tab flow.  A value of 
 	* null removes the "tabIndex" attribute from the widget's bounding box.
     * @type Number
-	* @default null
+	* @default 0
     */
     tabIndex: {
 

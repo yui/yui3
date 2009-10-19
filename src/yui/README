@@ -7,6 +7,10 @@ The YUI Global
         yui-base
         get
 
+3.next
+* Added the ability to define a global configuration object (YUI_config).
+* Added Object.some().
+
 3.0.0
 
 * Extracted the loader from the seed file.  Instead, if loader not included, 'get' is included,
@@ -20,7 +24,6 @@ The YUI Global
 * queue-base is no longer a submodule of queue -- it is part of yui-base.
 * All YUI submodules end up in the yui build directory.
 * Dynamic loading can be disabled by setting the 'bootstrap' config to false.
-* Automatic fetching of CSS files can be disabled by setting 'fetchCSS' to false.
 
 3.0.0 beta 1
 

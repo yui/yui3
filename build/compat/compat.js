@@ -539,7 +539,7 @@ if (Y.Event) {
                 // a[1] = obj;
             }
 
-            Y.EventTarget.prototype.subscribe.apply(this, a);
+            Y.EventTarget.prototype.on.apply(this, a);
         },
 
         fireEvent: function(type) {
@@ -885,5 +885,5 @@ YAHOO.util.Point.prototype = new YAHOO.util.Region();
 
 
 
-}, '@VERSION@' ,{requires:['dom','event']});
-YUI._setup(); YUI.use('dom', 'event', 'compat');
+}, '@VERSION@' ,{requires:['dom','event-base','dump','substitute']});
+YUI._setup(); YUI.use('compat');

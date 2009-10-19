@@ -72,10 +72,12 @@ if (typeof YUI === 'undefined' || !YUI) {
      */
 
     /*global YUI*/
-    // Make a function, disallow direct instantiation
+    /*global YUI_config*/
+    // @TODO Advice was to make a function, disallow direct instantiation.
     YUI = function(o1, o2, o3, o4, o5) {
 
-        var Y = this, a = arguments, i, l = a.length;
+        var Y = this, a = arguments, i, l = a.length,
+            globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
 
         // Allow instantiation without the new operator
         if (!(Y instanceof YUI)) {
@@ -83,6 +85,10 @@ if (typeof YUI === 'undefined' || !YUI) {
         } else {
             // set up the core environment
             Y._init();
+
+            if (globalConfig) {
+                Y._config(globalConfig);
+            }
 
             for (i=0; i<l; i++) {
                 Y._config(a[i]);
@@ -410,43 +416,43 @@ YUI.prototype = {
 
             },
 
-            onComplete = function(fromLoader) {
-
-                // Y.log('Use complete');
-
-                fromLoader = fromLoader || {
-                    success: true,
-                    msg: 'not dynamic'
-                };
-
-                if (Y.Env._callback) {
-
-                    var cb = Y.Env._callback;
-                    Y.Env._callback = null;
-                    cb(Y, fromLoader);
-                }
-
-                if (Y.fire) {
-                    Y.fire('yui:load', Y, fromLoader);
-                }
-
-                // process queued use requests as long until done 
-                // or dynamic load happens again.
-                Y._loading = false;
-                while (Y._useQueue && Y._useQueue.size() && !Y._loading) {
-                    Y.use.apply(Y, Y._useQueue.next());
-                }
-            };
+            onComplete;
 
         // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback);
 
         // The last argument supplied to use can be a load complete callback
         if (typeof callback === 'function') {
             a.pop();
-            Y.Env._callback = callback;
         } else {
             callback = null;
         }
+
+        onComplete = function(fromLoader) {
+
+            // Y.log('Use complete');
+
+            fromLoader = fromLoader || {
+                success: true,
+                msg: 'not dynamic'
+            };
+
+            if (callback) {
+                callback(Y, fromLoader);
+            }
+
+            if (Y.fire) {
+                Y.fire('yui:load', Y, fromLoader);
+            }
+
+            // process queued use requests as long until done 
+            // or dynamic load happens again.
+            Y._loading = false;
+
+            if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
+                Y.use.apply(Y, Y._useQueue.next());
+            }
+        };
+ 
 
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
@@ -455,6 +461,10 @@ YUI.prototype = {
                 if (mods.hasOwnProperty(k)) {
                     a.push(k);
                 }
+            }
+            
+            if (callback) {
+                a.push(callback);
             }
 
             return Y.use.apply(Y, a);
@@ -668,21 +678,6 @@ YUI.prototype = {
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
-
-    /*
-     * Subscribe to an event.  The signature differs depending on the
-     * type of event you are attaching to.
-     * @method on 
-     * @param type {string|function|object} The type of the event.  If
-     * this is a function, this is dispatched to the aop system.  If an
-     * object, it is parsed for multiple subsription definitions
-     * @param fn {Function} The callback
-     * @param elspec {any} DOM element(s), selector string(s), and or
-     * Node ref(s) to attach DOM related events to (only applies to
-     * DOM events).
-     * @param
-     * @return the event target or a detach handle per 'chain' config
-     */
 
 })();
 
@@ -976,7 +971,7 @@ YUI.prototype = {
  * @default loader/loader-min.js
  */
 
-/**
+/*
  * 
  * Specifies whether or not YUI().use(...) will attempt to load CSS
  * resources at all.  Any truthy value will cause CSS dependencies
@@ -1167,7 +1162,7 @@ L.isFunction = function(o) {
  */
 L.isDate = function(o) {
     // return o instanceof Date;
-    return L.type(o) === DATE;
+    return L.type(o) === DATE && o.toString() !== 'Invalid Date' && !isNaN(o);
 };
 
 /**
@@ -1838,18 +1833,18 @@ O.each = function (o, f, c, proto) {
  * @param proto {boolean} include proto
  * @return {boolean} true if any execution of the function returns true, false otherwise
  */
-// O.some = function (o, f, c, proto) {
-//     var s = c || Y, i;
-// 
-//     for (i in o) {
-//         if (proto || o.hasOwnProperty(i)) {
-//             if (f.call(s, o[i], i, o)) {
-//                 return true;
-//             }
-//         }
-//     }
-//     return false;
-// };
+O.some = function (o, f, c, proto) {
+    var s = c || Y, i;
+
+    for (i in o) {
+        if (proto || o.hasOwnProperty(i)) {
+            if (f.call(s, o[i], i, o)) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
 
 /**
  * Retrieves the sub value at the provided path,

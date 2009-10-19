@@ -99,7 +99,7 @@ L.isFunction = function(o) {
  */
 L.isDate = function(o) {
     // return o instanceof Date;
-    return L.type(o) === DATE;
+    return L.type(o) === DATE && o.toString() !== 'Invalid Date' && !isNaN(o);
 };
 
 /**

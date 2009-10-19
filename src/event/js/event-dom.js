@@ -38,12 +38,7 @@ COMPAT_ARG = '~yui|2|compat~',
 
 shouldIterate = function(o) {
     try {
-        return ( (o                    && // o is something
-                 typeof o !== "string" && // o is not a string
-                 o.length              && // o is indexed
-                 !o.tagName            && // o is not an HTML element
-                 !o.alert              && // o is not a window
-                 (o.item || typeof o[0] !== "undefined")) );
+        return (o && typeof o !== "string" && Y.Lang.isNumber(o.length) && !o.tagName && !o.alert);
     } catch(ex) {
         Y.log("collection check failure", "warn", "event");
         return false;
@@ -319,8 +314,12 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     silent: true,
                     bubbles: false,
                     contextFn: function() {
-                        cewrapper.nodeRef = cewrapper.nodeRef || Y.one(cewrapper.el);
-                        return cewrapper.nodeRef;
+                        if (compat) {
+                            return cewrapper.el;
+                        } else {
+                            cewrapper.nodeRef = cewrapper.nodeRef || Y.one(cewrapper.el);
+                            return cewrapper.nodeRef;
+                        }
                     }
                 });
             
@@ -373,11 +372,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return false;
             }
 
-
             // The el argument can be an array of elements or element ids.
             if (shouldIterate(el)) {
-
-                // Y.log('collection: ' + el.item(0) + ', ' + el.item(1));
 
                 handles=[];
                 

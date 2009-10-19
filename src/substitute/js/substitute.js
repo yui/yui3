@@ -12,10 +12,6 @@
      * @class YUI~substitute
      */
 
-     // @todo template configurability is not implemented yet
-     // @param ldelim {string} optional left delimiter for the replacement token (default: left brace)
-     // @param rdelim {string} optional right delimiter for the replacement token (default: right brace)
-
     /**
      * Does variable substitution on a string. It scans through the string 
      * looking for expressions enclosed in { } braces. If an expression 
@@ -44,17 +40,16 @@
      * @return {string} the substituted string
      */
 
-    substitute = function (s, o, f, ldelim, rdelim) {
-        var i, j, k, key, v, meta, saved=[], token, dump;
-        ldelim = ldelim || LBRACE;
-        rdelim = rdelim || RBRACE;
+    substitute = function (s, o, f, recurse) {
+        var i, j, k, key, v, meta, saved=[], token, dump,
+            lidx = s.length;
 
         for (;;) {
-            i = s.lastIndexOf(ldelim);
+            i = s.lastIndexOf(LBRACE, lidx);
             if (i < 0) {
                 break;
             }
-            j = s.indexOf(rdelim, i);
+            j = s.indexOf(RBRACE, i);
             if (i + 1 >= j) {
                 break;
             }
@@ -111,11 +106,15 @@
 
             s = s.substring(0, i) + v + s.substring(j + 1);
 
+            if (!recurse) {
+                lidx = i-1;
+            }
+
         }
 
         // restore saved {block}s
         for (i=saved.length-1; i>=0; i=i-1) {
-            s = s.replace(new RegExp("~-" + i + "-~"), ldelim  + saved[i] + rdelim, "g");
+            s = s.replace(new RegExp("~-" + i + "-~"), LBRACE  + saved[i] + RBRACE, "g");
         }
 
         return s;
