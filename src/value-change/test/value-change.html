@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>value-change</title>
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/3.0.0b1/build/cssfonts/fonts-min.css">
+<style>
+body {
+    font-size:16px;
+}
+.demoified {
+    font-size:200%;
+    border:10px solid red;
+}
+script.mine {
+    clear:left;
+    white-space:pre;
+    display:block;
+    font-family:monospace;
+    background:#eef;
+}
+script::before, script::after {
+    content:"<script>";
+}
+script::after {
+    content:"</script>";
+}
+script[src]::before {
+    content:"<script src=\"" attr(src) "\">";
+    white-space:nowrap;
+}
+script[src] {
+    background:#fff;
+}
+</style>
+
+</head>
+<body>
+<input class="input" value="change me!" size="100"><br>
+<textarea class="input" rows="20" cols="80">
+	change me!
+</textarea>
+
+<textarea class="output" rows="100" cols="80"></textarea>
+
+<script class="mine" src="../../../build/yui/yui.js"></script>
+<script class="mine" src="value-change.js"></script>
+<script>
+// testy test code below.
+YUI({
+    debug: true,
+    base : "../../../build/",
+    filter : "debug"
+}).use('value-change', function (Y) {
+	window.Y = Y;
+	
+	Y.all(".input").on("valueChange", function (e) {
+		console.log(e, this);
+	}, null, {
+		delay : 100
+	});
+});
+</script>
+</body>
+</html>
