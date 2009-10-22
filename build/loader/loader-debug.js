@@ -239,14 +239,6 @@ var NOT_FOUND = {},
             plugins: {
                 'node-event-simulate': {
                     requires: [NODEBASE, 'event-simulate']
-                },
-
-                'align-plugin': {
-                    requires: ['node-region', 'node-pluginhost']
-                },
-
-                'shim-plugin': {
-                    requires: ['node-style', 'node-pluginhost']
                 }
             }
         },
@@ -1533,8 +1525,6 @@ Y.Loader.prototype = {
             this.rollups = rollups;
             this.forceMap = (this.force) ? Y.Array.hash(this.force) : {};
         }
-
-        console.log('HERE');
 
         // make as many passes as needed to pick up rollup rollups
         for (;;) {
