@@ -307,7 +307,7 @@ var NOT_FOUND = {},
         },
         
         compat: { 
-            requires: [NODE, DUMP, SUBSTITUTE]
+            requires: [EVENTBASE, DOM, DUMP, SUBSTITUTE]
         },
 
         classnamemanager: { 
@@ -831,7 +831,7 @@ Y.Loader = function(o) {
      * @type boolean
      * @default true
      */
-    // this.allowRollup = true;
+    this.allowRollup = true;
 
     /**
      * A filter to apply to result urls.  This filter will modify the default
@@ -1364,7 +1364,7 @@ Y.Loader.prototype = {
             this._config(o);
             this._setup();
             this._explode();
-            if (this.allowRollup && !this.combine) {
+            if (this.allowRollup) {
                 this._rollup();
             }
             this._reduce();

@@ -356,7 +356,7 @@
         <span class="o">},</span>
         
         <span class="nx">compat</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODE</span><span class="o">,</span> <span class="nx">DUMP</span><span class="o">,</span> <span class="nx">SUBSTITUTE</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTBASE</span><span class="o">,</span> <span class="nx">DOM</span><span class="o">,</span> <span class="nx">DUMP</span><span class="o">,</span> <span class="nx">SUBSTITUTE</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">classnamemanager</span><span class="o">:</span> <span class="o">{</span> 
@@ -880,8 +880,8 @@
 <span class="c">     * @type boolean</span>
 <span class="c">     * @default true</span>
 <span class="c">     */</span>
-    <span class="c">// this.allowRollup = true;</span>
-<span class="c"></span>
+    <span class="k">this</span><span class="o">.</span><span class="nx">allowRollup</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
     <span class="c">/**</span>
 <span class="c">     * A filter to apply to result urls.  This filter will modify the default</span>
 <span class="c">     * path for all modules.  The default path for the YUI library is the</span>
@@ -1413,7 +1413,7 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">_config</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_setup</span><span class="o">();</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_explode</span><span class="o">();</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">allowRollup</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">combine</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">allowRollup</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_rollup</span><span class="o">();</span>
             <span class="o">}</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_reduce</span><span class="o">();</span>
@@ -2243,6 +2243,7 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

@@ -183,12 +183,7 @@ Y.mix(ConsoleFilters,{
         cacheLimit : {
             value : Number.POSITIVE_INFINITY,
             setter : function (v) {
-                if (Y.Lang.isNumber(v)) {
-                    this._cacheLimit = v;
-                    return v;
-                } else {
-                    return Y.Attribute.INVALID_VALUE;
-                }
+                return this._setCacheLimit(v);
             }
         }
     }
@@ -208,6 +203,14 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      */
     _entries : null,
 
+    /**
+     * Maximum number of entries to store in the message cache.
+     *
+     * @property _cacheLimit
+     * @type {Number}
+     * @default Infinity
+     * @protected
+     */
     _cacheLimit : Number.POSITIVE_INFINITY,
 
     /**
@@ -693,8 +696,25 @@ Y.extend(ConsoleFilters, Y.Plugin.Base, {
      */
     _validateSource : function (src, v) {
         return Y.Lang.isObject(v,true) && src.split(/\./).length < 3;
-    }
+    },
 
+    /**
+     * Setter method for cacheLimit attribute.  Basically a validator to ensure
+     * numeric input.
+     *
+     * @method _setCacheLimit
+     * @param v {Number} Maximum number of entries
+     * @return {Number}
+     * @protected
+     */
+    _setCacheLimit: function (v) {
+        if (Y.Lang.isNumber(v)) {
+            this._cacheLimit = v;
+            return v;
+        } else {
+            return Y.Attribute.INVALID_VALUE;
+        }
+    }
 });
 
 Y.namespace('Plugin').ConsoleFilters = ConsoleFilters;

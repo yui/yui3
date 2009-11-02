@@ -43,16 +43,19 @@ YUI({
     // base: '../../build/',
     // root: '2.5.2/build/',
     insertBefore: 'styleoverrides',
-    ignore: ['skin-sam-widget'],
+    // ignore: ['skin-sam-widget'],
     //charset: 'utf-8',
     //loadOptional: true,
-    combine: true,
+    // combine: true,
     filter: 'debug',
+    fetchCSS: false,
+    allowRollup: true,
     // logInclude: { event: true },
-    logExclude: { get: true },
+    // logExclude: { get: true },
     timeout: 20000
 // }).use('compat', 'dd-dragdrop-all', function(Y) {
-}).use('widget', function(Y, result) {
+// }).use('widget', function(Y, result) {
+}).use('attribute-base', 'attribute-complex', function(Y, result) {
 
     if (!result.success) {   
         alert('Load failure: ' + result.msg);

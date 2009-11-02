@@ -176,7 +176,7 @@ YUI.add('io-base', function(Y) {
    	*/
    	function _io(uri, c, i) {
    		var f, o, m;
-   			c = c || {};
+   			c = Y.Object(c);
    			o = _create(c.xdr || c.form, i);
    			m = c.method ? c.method.toUpperCase() : 'GET';
 
@@ -239,6 +239,7 @@ YUI.add('io-base', function(Y) {
 		}
 
    		_ioStart(o.id, c);
+
    		// If config.timeout is defined, and the request is standard XHR,
    		// initialize timeout polling.
    		if (c.timeout) {
@@ -1134,7 +1135,7 @@ YUI.add('io-upload-iframe', function(Y) {
 	* @static
 	* @param {object} f HTML form object.
 	* @param {string} s The key-value POST data.
-	* @return {array} o Array of created fields.
+	* @return {array} e Array of created fields.
 	*/
 	function _addData(f, s) {
 		var o = [],
@@ -1460,7 +1461,7 @@ YUI.add('io-queue', function(Y) {
 			_shift();
 		}
 
-		Y.log('Object queued.  Transaction id is ' + o.id, 'info', 'io');
+		Y.log('Object queued.  Transaction id is' + o.id, 'info', 'io');
 		return o;
 	}
 

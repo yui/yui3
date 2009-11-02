@@ -363,8 +363,12 @@
                     <span class="nx">silent</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
                     <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
                     <span class="nx">contextFn</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">cewrapper</span><span class="o">.</span><span class="nx">el</span><span class="o">);</span>
-                        <span class="k">return</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span><span class="o">;</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">compat</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">return</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">el</span><span class="o">;</span>
+                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">cewrapper</span><span class="o">.</span><span class="nx">el</span><span class="o">);</span>
+                            <span class="k">return</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">nodeRef</span><span class="o">;</span>
+                        <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">});</span>
             
@@ -991,6 +995,7 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>

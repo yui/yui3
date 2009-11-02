@@ -18,6 +18,7 @@
 var AFTER = 'after', 
     CONFIGS = [
         'broadcast',
+        'monitor',
         'bubbles',
         'context',
         'contextFn',
@@ -110,6 +111,14 @@ Y.CustomEvent = function(type, o) {
      * @type object
      */
     this.context = Y;
+
+    /**
+     * Monitor when an event is attached or detached.
+     * 
+     * @property monitor
+     * @type boolean
+     */
+    // this.monitor = false;
 
     this.logSystem = (type == YUI_LOG);
 

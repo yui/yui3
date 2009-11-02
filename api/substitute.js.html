@@ -61,10 +61,6 @@
 <span class="c">     * @class YUI~substitute</span>
 <span class="c">     */</span>
 
-     <span class="c">// @todo template configurability is not implemented yet</span>
-<span class="c"></span>     <span class="c">// @param ldelim {string} optional left delimiter for the replacement token (default: left brace)</span>
-<span class="c"></span>     <span class="c">// @param rdelim {string} optional right delimiter for the replacement token (default: right brace)</span>
-<span class="c"></span>
     <span class="c">/**</span>
 <span class="c">     * Does variable substitution on a string. It scans through the string </span>
 <span class="c">     * looking for expressions enclosed in { } braces. If an expression </span>
@@ -93,17 +89,16 @@
 <span class="c">     * @return {string} the substituted string</span>
 <span class="c">     */</span>
 
-    <span class="nx">substitute</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">ldelim</span><span class="o">,</span> <span class="nx">rdelim</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">meta</span><span class="o">,</span> <span class="nx">saved</span><span class="o">=[],</span> <span class="nx">token</span><span class="o">,</span> <span class="nx">dump</span><span class="o">;</span>
-        <span class="nx">ldelim</span> <span class="o">=</span> <span class="nx">ldelim</span> <span class="o">||</span> <span class="nx">LBRACE</span><span class="o">;</span>
-        <span class="nx">rdelim</span> <span class="o">=</span> <span class="nx">rdelim</span> <span class="o">||</span> <span class="nx">RBRACE</span><span class="o">;</span>
+    <span class="nx">substitute</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">recurse</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">meta</span><span class="o">,</span> <span class="nx">saved</span><span class="o">=[],</span> <span class="nx">token</span><span class="o">,</span> <span class="nx">dump</span><span class="o">,</span>
+            <span class="nx">lidx</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
 
         <span class="k">for</span> <span class="o">(;;)</span> <span class="o">{</span>
-            <span class="nx">i</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">ldelim</span><span class="o">);</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">LBRACE</span><span class="o">,</span> <span class="nx">lidx</span><span class="o">);</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">break</span><span class="o">;</span>
             <span class="o">}</span>
-            <span class="nx">j</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">rdelim</span><span class="o">,</span> <span class="nx">i</span><span class="o">);</span>
+            <span class="nx">j</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">RBRACE</span><span class="o">,</span> <span class="nx">i</span><span class="o">);</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span> <span class="o">&gt;=</span> <span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">break</span><span class="o">;</span>
             <span class="o">}</span>
@@ -160,11 +155,15 @@
 
             <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">+</span> <span class="nx">v</span> <span class="o">+</span> <span class="nx">s</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="nx">j</span> <span class="o">+</span> <span class="m">1</span><span class="o">);</span>
 
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">recurse</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">lidx</span> <span class="o">=</span> <span class="nx">i</span><span class="o">-</span><span class="m">1</span><span class="o">;</span>
+            <span class="o">}</span>
+
         <span class="o">}</span>
 
         <span class="c">// restore saved {block}s</span>
 <span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">saved</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span><span class="o">&gt;=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="s2">&quot;~-&quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot;-~&quot;</span><span class="o">),</span> <span class="nx">ldelim</span>  <span class="o">+</span> <span class="nx">saved</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">+</span> <span class="nx">rdelim</span><span class="o">,</span> <span class="s2">&quot;g&quot;</span><span class="o">);</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="s2">&quot;~-&quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot;-~&quot;</span><span class="o">),</span> <span class="nx">LBRACE</span>  <span class="o">+</span> <span class="nx">saved</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">+</span> <span class="nx">RBRACE</span><span class="o">,</span> <span class="s2">&quot;g&quot;</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">s</span><span class="o">;</span>
@@ -216,6 +215,7 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class="selected"><a href="module_substitute.html" title="substitute">substitute</a></li>

@@ -408,7 +408,7 @@ YUI.add('history', function(Y) {
                 return true;
             }
 
-            stateField = Y.get(stateField);
+            stateField = Y.one(stateField);
             if (!stateField) {
                 throw new Error(E_MISSING_OR_INVALID_ARG);
             }
@@ -423,7 +423,7 @@ YUI.add('history', function(Y) {
             // IE < 8 or IE8 in quirks mode or IE7 standards mode
             if (Y.UA.ie && (Y.Lang.isUndefined(doc.documentMode) || doc.documentMode < 8)) {
                 _useIFrame = true;
-                historyIFrame = Y.get(historyIFrame);
+                historyIFrame = Y.one(historyIFrame);
                 if (!historyIFrame || historyIFrame.get('tagName').toUpperCase() !== 'IFRAME') {
                     throw new Error(E_MISSING_OR_INVALID_ARG);
                 }
@@ -670,4 +670,4 @@ YUI.add('history', function(Y) {
     Y.History = H;
 
 
-}, '@VERSION@' ,{skinnable:false, use:['event', 'node']});
+}, '@VERSION@' ,{requires:['node-base'], skinnable:false});

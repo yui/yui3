@@ -616,7 +616,7 @@
 <span class="c">     * If a function is used, it receives the current node being tested as the only argument.</span>
 <span class="c">     * @return {Node} Node instance or null if not found</span>
 <span class="c">     */</span>
-    <span class="nx">next</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">next</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="s1">&#39;nextSibling&#39;</span><span class="o">,</span> <span class="nx">_wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">),</span> <span class="nx">all</span><span class="o">));</span>
     <span class="o">},</span>
         
@@ -910,6 +910,7 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -936,15 +937,13 @@
                         <ul class="content">        
                                 <li class=""><a href="node-class.js.html" title="node-class.js">node-class.js</a></li>
                                 <li class=""><a href="node-event-delegate.js.html" title="node-event-delegate.js">node-event-delegate.js</a></li>
-                                <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
-                                <li class=""><a href="node-ie.js.html" title="node-ie.js">node-ie.js</a></li>
                                 <li class=""><a href="node-imports.js.html" title="node-imports.js">node-imports.js</a></li>
-                                <li class=""><a href="node-pluginhost.js.html" title="node-pluginhost.js">node-pluginhost.js</a></li>
                                 <li class=""><a href="node-region.js.html" title="node-region.js">node-region.js</a></li>
                                 <li class=""><a href="node-screen.js.html" title="node-screen.js">node-screen.js</a></li>
                                 <li class=""><a href="node-style.js.html" title="node-style.js">node-style.js</a></li>
                                 <li class="selected"><a href="node.js.html" title="node.js">node.js</a></li>
                                 <li class=""><a href="nodelist.js.html" title="nodelist.js">nodelist.js</a></li>
+                                <li class=""><a href="shim-plugin.js.html" title="shim-plugin.js">shim-plugin.js</a></li>
                         </ul>
                     </div>
 

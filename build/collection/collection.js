@@ -50,7 +50,7 @@ A.unique = function(a, sort) {
 
     while (i < b.length) {
         item = b[i];
-        while ((n = b.lastIndexOf(item)) !== i) {
+        while ((n = A.lastIndexOf(b, item)) !== i) {
             b.splice(n, 1);
         }
         i += 1;
