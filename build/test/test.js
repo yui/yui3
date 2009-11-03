@@ -1086,6 +1086,28 @@ YUI.add('test', function(Y) {
             },            
             
             /**
+             * Returns the coverage report for the files that have been executed.
+             * This returns only coverage information for files that have been
+             * instrumented using YUI Test Coverage and only those that were run
+             * in the same pass.
+             * @param {Function} format (Optional) A coverage format to return results in.
+             * @return {Object|String} Either the coverage object or, if a coverage
+             *      format is specified, a string representing the results in that format.
+             * @method getCoverage
+             */
+            getCoverage: function(format){
+                if (!this._running && typeof _yuitest_coverage == "object"){
+                    if (Y.Lang.isFunction(format)){
+                        return format(_yuitest_coverage);                    
+                    } else {
+                        return _yuitest_coverage;
+                    }
+                } else {
+                    return null;
+                }            
+            },
+            
+            /**
              * Resumes the TestRunner after wait() was called.
              * @param {Function} segment The function to run as the rest
              *      of the haulted test.
@@ -2402,7 +2424,7 @@ YUI.add('test', function(Y) {
             return xml;    
         }
 
-        return "<?xml version=\"1.0\" charset=\"UTF-8\"?>" + serializeToXML(results);
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + serializeToXML(results);
 
     };
 
@@ -2476,7 +2498,7 @@ YUI.add('test', function(Y) {
      
         }
 
-        return "<?xml version=\"1.0\" charset=\"UTF-8\"?>" + serializeToJUnitXML(results);
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + serializeToJUnitXML(results);
     };
     
     /**
