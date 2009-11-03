@@ -125,7 +125,7 @@ YUI({
             testXmlFormat : function(){
                 var xml = Y.Test.Format.XML(this.simpleReport);
                 var expectedXml = 
-                    "<?xml version=\"1.0\" charset=\"UTF-8\"?>" +
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                     "<report name=\"YUI Test Results\" passed=\"2\" failed=\"2\" ignored=\"1\" total=\"5\">" +
                         "<testsuite name=\"Some Suite\" passed=\"2\" failed=\"2\" ignored=\"1\" total=\"5\">" +
                             "<testcase name=\"Some Tests\" passed=\"2\" failed=\"2\" ignored=\"1\" total=\"5\">" +
@@ -145,7 +145,7 @@ YUI({
             testJUnitXmlFormat : function(){
                 var xml = Y.Test.Format.JUnitXML(this.simpleReport);
                 var expectedXml = 
-                    "<?xml version=\"1.0\" charset=\"UTF-8\"?>" +
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                     "<testsuites>" +
                         "<testsuite name=\"Some Tests\" tests=\"5\" failures=\"2\">" + 
                             "<testcase name=\"test1\"></testcase>" +

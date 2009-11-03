@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: test   DateAssert.js  (YUI Library)</title>
+	<title>API: test   CoverageFormat.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_test.html" title="test">test</a>
                 
-                 &gt; DateAssert.js (source view) 
+                 &gt; CoverageFormat.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,90 +47,40 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    
+                        <div class="highlight" ><pre>    <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Coverage.Format&quot;</span><span class="o">);</span>
+    
     <span class="c">/**</span>
-<span class="c">     * The DateAssert object provides functions to test JavaScript Date objects</span>
-<span class="c">     * for a variety of cases.</span>
-<span class="c">     *</span>
-<span class="c">     * @class DateAssert</span>
-<span class="c">     * @static</span>
+<span class="c">     * Returns the coverage report in JSON format. This is the straight</span>
+<span class="c">     * JSON representation of the native coverage report.</span>
+<span class="c">     * @param {Object} coverage The coverage report object.</span>
+<span class="c">     * @return {String} A JSON-formatted string of coverage data.</span>
+<span class="c">     * @method JSON</span>
+<span class="c">     * @namespace Coverage.Format</span>
 <span class="c">     */</span>
-     
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">DateAssert</span> <span class="o">=</span> <span class="o">{</span>
-    
-        <span class="c">/**</span>
-<span class="c">         * Asserts that a date&#39;s month, day, and year are equal to another date&#39;s.</span>
-<span class="c">         * @param {Date} expected The expected date.</span>
-<span class="c">         * @param {Date} actual The actual date to test.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method datesAreEqual</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">datesAreEqual</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">expected</span><span class="o">,</span> <span class="nx">actual</span><span class="o">,</span> <span class="nx">message</span><span class="o">){</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>        
-            <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span> <span class="k">instanceof</span> <span class="nb">Date</span> <span class="o">&amp;&amp;</span> <span class="nx">actual</span> <span class="k">instanceof</span> <span class="nb">Date</span><span class="o">){</span>
-                <span class="k">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
-                
-                <span class="c">//check years first</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span><span class="o">.</span><span class="nx">getFullYear</span><span class="o">()</span> <span class="o">!=</span> <span class="nx">actual</span><span class="o">.</span><span class="nx">getFullYear</span><span class="o">()){</span>
-                    <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;Years should be equal.&quot;</span><span class="o">;</span>
-                <span class="o">}</span>
-                
-                <span class="c">//now check months</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span><span class="o">.</span><span class="nx">getMonth</span><span class="o">()</span> <span class="o">!=</span> <span class="nx">actual</span><span class="o">.</span><span class="nx">getMonth</span><span class="o">()){</span>
-                    <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;Months should be equal.&quot;</span><span class="o">;</span>
-                <span class="o">}</span>                
-                
-                <span class="c">//last, check the day of the month</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span><span class="o">.</span><span class="nx">getDate</span><span class="o">()</span> <span class="o">!=</span> <span class="nx">actual</span><span class="o">.</span><span class="nx">getDate</span><span class="o">()){</span>
-                    <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;Days of month should be equal.&quot;</span><span class="o">;</span>
-                <span class="o">}</span>                
-                
-                <span class="k">if</span> <span class="o">(</span><span class="nx">msg</span><span class="o">.</span><span class="nx">length</span><span class="o">){</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">ComparisonFailure</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="nx">msg</span><span class="o">),</span> <span class="nx">expected</span><span class="o">,</span> <span class="nx">actual</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="o">(</span><span class="s2">&quot;Y.Assert.datesAreEqual(): Expected and actual values must be Date objects.&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
-    
-        <span class="c">/**</span>
-<span class="c">         * Asserts that a date&#39;s hour, minutes, and seconds are equal to another date&#39;s.</span>
-<span class="c">         * @param {Date} expected The expected date.</span>
-<span class="c">         * @param {Date} actual The actual date to test.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method timesAreEqual</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">timesAreEqual</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">expected</span><span class="o">,</span> <span class="nx">actual</span><span class="o">,</span> <span class="nx">message</span><span class="o">){</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span> <span class="k">instanceof</span> <span class="nb">Date</span> <span class="o">&amp;&amp;</span> <span class="nx">actual</span> <span class="k">instanceof</span> <span class="nb">Date</span><span class="o">){</span>
-                <span class="k">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
-                
-                <span class="c">//check hours first</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span><span class="o">.</span><span class="nx">getHours</span><span class="o">()</span> <span class="o">!=</span> <span class="nx">actual</span><span class="o">.</span><span class="nx">getHours</span><span class="o">()){</span>
-                    <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;Hours should be equal.&quot;</span><span class="o">;</span>
-                <span class="o">}</span>
-                
-                <span class="c">//now check minutes</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span><span class="o">.</span><span class="nx">getMinutes</span><span class="o">()</span> <span class="o">!=</span> <span class="nx">actual</span><span class="o">.</span><span class="nx">getMinutes</span><span class="o">()){</span>
-                    <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;Minutes should be equal.&quot;</span><span class="o">;</span>
-                <span class="o">}</span>                
-                
-                <span class="c">//last, check the seconds</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span><span class="o">.</span><span class="nx">getSeconds</span><span class="o">()</span> <span class="o">!=</span> <span class="nx">actual</span><span class="o">.</span><span class="nx">getSeconds</span><span class="o">()){</span>
-                    <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;Seconds should be equal.&quot;</span><span class="o">;</span>
-                <span class="o">}</span>                
-                
-                <span class="k">if</span> <span class="o">(</span><span class="nx">msg</span><span class="o">.</span><span class="nx">length</span><span class="o">){</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">ComparisonFailure</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="nx">msg</span><span class="o">),</span> <span class="nx">expected</span><span class="o">,</span> <span class="nx">actual</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="o">(</span><span class="s2">&quot;DateY.AsserttimesAreEqual(): Expected and actual values must be Date objects.&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Coverage</span><span class="o">.</span><span class="nx">Format</span><span class="o">.</span><span class="nx">JSON</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">coverage</span><span class="o">){</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">stringify</span><span class="o">(</span><span class="nx">coverage</span><span class="o">);</span>
     <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Returns the coverage report in a JSON format compatible with</span>
+<span class="c">     * Xdebug. See &lt;a href=&quot;http://www.xdebug.com/docs/code_coverage&quot;&gt;Xdebug Documentation&lt;/a&gt;</span>
+<span class="c">     * for more information. Note: function coverage is not available</span>
+<span class="c">     * in this format.</span>
+<span class="c">     * @param {Object} coverage The coverage report object.</span>
+<span class="c">     * @return {String} A JSON-formatted string of coverage data.</span>
+<span class="c">     * @method XdebugJSON</span>
+<span class="c">     * @namespace Coverage.Format</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Coverage</span><span class="o">.</span><span class="nx">Format</span><span class="o">.</span><span class="nx">XdebugJSON</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">coverage</span><span class="o">){</span>
+        <span class="k">var</span> <span class="nx">report</span> <span class="o">=</span> <span class="o">{};</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">coverage</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">,</span> <span class="nx">name</span><span class="o">){</span>
+            <span class="nx">report</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">coverage</span><span class="o">[</span><span class="nx">name</span><span class="o">].</span><span class="nx">lines</span><span class="o">;</span>
+        <span class="o">});</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">stringify</span><span class="o">(</span><span class="nx">report</span><span class="o">);</span>        
+    <span class="o">};</span>
+
+
+  
 </pre></div>
 
                     </div>
@@ -217,8 +167,8 @@
                         <ul class="content">        
                                 <li class=""><a href="ArrayAssert.js.html" title="ArrayAssert.js">ArrayAssert.js</a></li>
                                 <li class=""><a href="Assert.js.html" title="Assert.js">Assert.js</a></li>
-                                <li class=""><a href="CoverageFormat.js.html" title="CoverageFormat.js">CoverageFormat.js</a></li>
-                                <li class="selected"><a href="DateAssert.js.html" title="DateAssert.js">DateAssert.js</a></li>
+                                <li class="selected"><a href="CoverageFormat.js.html" title="CoverageFormat.js">CoverageFormat.js</a></li>
+                                <li class=""><a href="DateAssert.js.html" title="DateAssert.js">DateAssert.js</a></li>
                                 <li class=""><a href="Mock.js.html" title="Mock.js">Mock.js</a></li>
                                 <li class=""><a href="ObjectAssert.js.html" title="ObjectAssert.js">ObjectAssert.js</a></li>
                                 <li class=""><a href="TestCase.js.html" title="TestCase.js">TestCase.js</a></li>
