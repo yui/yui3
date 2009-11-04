@@ -154,6 +154,8 @@ YUI.add('attribute-base', function(Y) {
         LAZY_ADD = "lazyAdd",
         BYPASS_PROXY = "_bypassProxy",
 
+        FN_REFS = [SETTER, GETTER, VALIDATOR, VALUE_FN],
+
         // Used for internal state management
         ADDED = "added",
         INITIALIZING = "initializing",
@@ -164,6 +166,7 @@ YUI.add('attribute-base', function(Y) {
         IS_LAZY_ADD = "isLazyAdd",
 
         INVALID_VALUE,
+
         MODIFIABLE = {};
 
         // Properties which can be changed after the attribute has been added.
@@ -334,7 +337,8 @@ YUI.add('attribute-base', function(Y) {
             var host = this, // help compression
                 state = host._state,
                 value,
-                hasValue;
+                hasValue,
+                i, l, fn, fnRef;
 
             lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
 
@@ -354,13 +358,22 @@ YUI.add('attribute-base', function(Y) {
                     if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
 
                     if(hasValue) {
-                        // We'll go through set, don't want to set value in _state directly
+                        // We'll go through set, don't want to set value in config directly
                         value = config.value;
                         delete config.value;
                     }
 
                     config.added = true;
                     config.initializing = true;
+
+                    // String to fns
+                    for (i = 0, l = FN_REFS.length; i < l; i++) {
+                        fnRef = FN_REFS[i];
+                        fn = config[fnRef];
+                        if (fn && Lang.isString(fn)) {
+                            config[fnRef] = this[fn];
+                        }
+                    }
 
                     state.addAll(name, config);
 
