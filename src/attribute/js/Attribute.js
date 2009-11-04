@@ -34,8 +34,6 @@
         LAZY_ADD = "lazyAdd",
         BYPASS_PROXY = "_bypassProxy",
 
-        FN_REFS = [SETTER, GETTER, VALIDATOR, VALUE_FN],
-
         // Used for internal state management
         ADDED = "added",
         INITIALIZING = "initializing",
@@ -217,8 +215,7 @@
             var host = this, // help compression
                 state = host._state,
                 value,
-                hasValue,
-                i, l, fn, fnRef;
+                hasValue;
 
             lazy = (LAZY_ADD in config) ? config[LAZY_ADD] : lazy;
 
@@ -245,15 +242,6 @@
 
                     config.added = true;
                     config.initializing = true;
-
-                    // String to fns
-                    for (i = 0, l = FN_REFS.length; i < l; i++) {
-                        fnRef = FN_REFS[i];
-                        fn = config[fnRef];
-                        if (fn && Lang.isString(fn)) {
-                            config[fnRef] = this[fn];
-                        }
-                    }
 
                     state.addAll(name, config);
 
@@ -484,6 +472,10 @@
             val = host._getStateVal(name);
             getter = state.get(name, GETTER);
 
+            if (getter && !getter.call) {
+                getter = this[getter];
+            }
+
             val = (getter) ? getter.call(host, val, fullName) : val;
             val = (path) ? O.getValue(val, path) : val;
 
@@ -697,24 +689,36 @@
                 valid;
 
             if (validator) {
-                valid = validator.call(host, newVal, name);
+                if (!validator.call) { 
+                    // Assume string - trying to keep critical path tight, so avoiding Lang check
+                    validator = this[validator];
+                }
+                if (validator) {
+                    valid = validator.call(host, newVal, name);
 
-                if (!valid && initializing) {
-                    newVal = state.get(attrName, DEF_VALUE);
-                    valid = true; // Assume it's valid, for perf.
+                    if (!valid && initializing) {
+                        newVal = state.get(attrName, DEF_VALUE);
+                        valid = true; // Assume it's valid, for perf.
+                    }
                 }
             }
 
             if (!validator || valid) {
                 if (setter) {
-                    retVal = setter.call(host, newVal, name);
+                    if (!setter.call) {
+                        // Assume string - trying to keep critical path tight, so avoiding Lang check
+                        setter = this[setter];
+                    }
+                    if (setter) {
+                        retVal = setter.call(host, newVal, name);
 
-                    if (retVal === INVALID_VALUE) {
-                        Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
-                        allowSet = false;
-                    } else if (retVal !== undefined){
-                        Y.log('Attribute: ' + attrName + ', raw value: ' + newVal + ' modified by setter to:' + retVal, 'info', 'attribute');
-                        newVal = retVal;
+                        if (retVal === INVALID_VALUE) {
+                            Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
+                            allowSet = false;
+                        } else if (retVal !== undefined){
+                            Y.log('Attribute: ' + attrName + ', raw value: ' + newVal + ' modified by setter to:' + retVal, 'info', 'attribute');
+                            newVal = retVal;
+                        }
                     }
                 }
 
@@ -942,13 +946,23 @@
          * @private
          */
         _getAttrInitVal : function(attr, cfg, initValues) {
-
+            var val, valFn;
             // init value is provided by the user if it exists, else, provided by the config
-            var val = (!cfg[READ_ONLY] && initValues && initValues.hasOwnProperty(attr)) ?
-                            val = initValues[attr] :
-                            (cfg[VALUE_FN]) ?
-                                cfg[VALUE_FN].call(this) : 
-                                cfg[VALUE];
+            if (!cfg[READ_ONLY] && initValues && initValues.hasOwnProperty(attr)) {
+                val = initValues[attr];
+            } else {
+                val = cfg[VALUE];
+                valFn = cfg[VALUE_FN];
+ 
+                if (valFn) {
+                    if (!valFn.call) {
+                        valFn = this[valFn];
+                    }
+                    if (valFn) {
+                        val = valFn.call(this);
+                    }
+                }
+            }
 
             Y.log('initValue for ' + attr + ':' + val, 'info', 'attribute');
 
