@@ -32,6 +32,7 @@ script[src]::before {
 script[src] {
     background:#fff;
 }
+.lipsum { display:none; }
 </style>
 <script class="mine" src="../../../build/yui/yui.js"></script>
 <script class="mine" src="value-change.js"></script>
@@ -39,57 +40,64 @@ script[src] {
 <script>
 
 // testy test code below.
-YUI({
-    debug: true,
-    base : "../../../build/",
-    filter : "raw"
-}).use('value-change', function (Y) {
-	console.log("attach to a later loading thing", Y.on("valueChange", function (e) {
-		console.log("from Y.on with later", e, this);
-	}, "#later"));
-});
+// YUI({
+//     debug: true,
+//     base : "../../../build/",
+//     filter : "raw"
+// }).use('value-change', function (Y) {
+// 	console.log("attach to a later loading thing", Y.on("valueChange", function (e) {
+// 		console.log("from Y.on with later", e, this);
+// 	}, "#later"));
+// });
 </script>
 
 
 </head>
 <body>
 <input class="input" id="input" value="change me!" size="100"><br>
-<textarea class="input" id="textarea" rows="20" cols="80">
+<textarea class="input" id="textarea" rows="1" cols="40">
 	change me!
 </textarea>
 
-<textarea class="output" rows="10" cols="40"></textarea>
-
 <script>
-// testy test code below.
-// YUI({
-//     debug: true,
-//     base : "../../../build/",
-//     filter : "raw"
-// }).use('value-change', function (Y) {
-// 	window.Y = Y;
-// 	
-// 	console.log("attach Y.all", Y.all(".input").on("valueChange", function (e) {
-// 		console.log("from Y.all", e, this);
-// 	}));
-// 	console.log("attach Y.on with ID", Y.on("valueChange", function (e) {
-// 		console.log("from Y.on with ID", e, this);
-// 	}, "#input"));
-// 	console.log("attach Y.one with ID", Y.one("#textarea").on("valueChange", function (e) {
-// 		console.log("from Y.one with ID", e, this);
-// 	}));
-// 	console.log("attach Y.on with className", Y.on("valueChange", function (e) {
-// 		console.log("from Y.on with className", e, this);
-// 	}, ".input"));
-// 	
-// });
+YUI({
+    debug: true,
+    base : "../../../build/",
+    filter : "raw"
+}).use('value-change', function (Y) {
+	window.Y = Y;
+	
+	// console.log("attach Y.all",
+	// 	Y.all(".input").on("valueChange", function (e) {
+	// 		console.log("from Y.all", e, this);
+	// 	})
+	// );
+	console.log("attach Y.on with ID", Y.on("valueChange", function (e) {
+		console.log("from Y.on with ID", e, this, e.currentTarget);
+	}, "#input"));
+	
+	// console.log("attach Y.one with ID", Y.one("#textarea").on("valueChange", function (e) {
+	// 	console.log("from Y.one with ID", e, this);
+	// }));
+	
+	// var handle;
+	// console.log("attach Y.on with className", handle = Y.on("valueChange", function (e) {
+	// 	console.log("from Y.on with className", e, this);
+	// }, ".input"));
+	// 
+	// console.log("k, now remove one");
+	// handle.detach();
+	
+	
+});
 </script>
 
 <!-- <script src="http://foohack.com/tests/sleep.php?sleep=5&type=js"></script> -->
-
-<div><p>
+<?php ob_flush(); // sleep(1); ?>
+<div class="lipsum"><p>
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla velit felis, tristique sed dictum id, tristique id nunc. Nam lacinia posuere convallis. Ut ut dolor ante, a condimentum ipsum. Morbi vitae lectus velit, id sodales risus. Quisque eget iaculis ipsum. Nunc at justo metus, quis feugiat nisi. Pellentesque quis purus sed elit tempus semper. Aliquam eleifend vulputate nisl tristique vestibulum. Suspendisse erat lorem, laoreet eu tincidunt elementum, volutpat quis purus. Integer non semper massa. Etiam tempus, nulla eu cursus interdum, ante leo molestie tellus, eget tristique purus enim id felis. Mauris id arcu odio, vel pretium odio. Quisque eleifend, tortor non semper eleifend, sem urna venenatis enim, scelerisque mollis odio felis in arcu. Duis semper nulla vitae massa sagittis ut vehicula lacus cursus. Sed nec elit nisi.
 </p>
+<?php ob_flush(); // sleep(1); ?>
 <p>
 Vivamus scelerisque, odio accumsan varius vestibulum, dolor neque malesuada sapien, id rutrum leo nunc id arcu. Sed at tellus non nisl lacinia egestas. Vestibulum congue lobortis diam eget lobortis. Vestibulum gravida leo non lorem euismod sit amet viverra elit consequat. Aliquam ut euismod ante. In gravida, lacus in adipiscing laoreet, dui dolor lacinia lectus, nec tincidunt sem justo non tellus. Praesent euismod egestas neque, at mollis tortor tempor ullamcorper. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris in felis velit. Ut feugiat placerat odio feugiat ornare. Maecenas ut dolor eget nulla aliquam faucibus. Nulla id dui tellus. Suspendisse potenti. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec vehicula tempor erat, eget eleifend nibh auctor sit amet. Quisque vitae nisi purus. Vivamus et nisi dolor, non pharetra lectus.
 </p>
@@ -122,6 +130,7 @@ Duis quis elit turpis, auctor dictum velit. Quisque quis elit id mi euismod tinc
 <p>
 Proin fermentum, augue quis vehicula sollicitudin, metus lectus auctor elit, a cursus orci nisi id leo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris aliquam lacinia laoreet. Sed nec nibh non nibh vehicula cursus. Maecenas at ante a tortor venenatis placerat. Phasellus molestie pulvinar lectus, tempus suscipit metus sollicitudin in. Donec at mi non ligula posuere pulvinar. Fusce feugiat felis eu eros varius non cursus est ultrices. Maecenas feugiat tincidunt ipsum, eget elementum dui sodales nec. Curabitur mi enim, tristique id pulvinar eu, feugiat non urna.
 </p>
+<?php ob_flush(); // sleep(1); ?>
 <p>
 Ut ac arcu nulla, ut hendrerit massa. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse potenti. Vivamus vitae enim mollis lectus euismod viverra id nec nisi. Mauris tincidunt, est eget accumsan feugiat, enim odio bibendum lorem, sit amet malesuada ante mi quis est. Integer eleifend quam at tellus dictum ornare. Duis fringilla dolor ut nisl venenatis in malesuada metus tempor. Aenean commodo massa massa. Nam gravida metus vel nulla suscipit gravida. In elit metus, scelerisque id scelerisque sit amet, facilisis at purus. Pellentesque nec lectus imperdiet orci sagittis hendrerit.
 </p>
@@ -142,6 +151,7 @@ In purus nisi, porttitor id ultricies ornare, adipiscing id urna. Nam suscipit, 
 Nullam accumsan venenatis ipsum in ornare. Nullam a turpis a ligula fermentum cursus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec luctus orci ut nibh luctus quis vulputate lectus commodo. Sed dolor elit, cursus nec dapibus vel, porttitor quis ante. Vivamus nisi turpis, ornare at aliquet id, scelerisque dictum erat. Praesent magna mauris, consectetur vitae imperdiet id, pulvinar sed mauris. Phasellus blandit nisi eu libero placerat volutpat. Fusce in ante id lorem pulvinar faucibus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque a neque vitae urna interdum semper in sodales mauris. Ut dapibus tincidunt nunc sit amet vehicula. Cras ut tortor eget urna lobortis consequat. Nulla facilisi. Morbi varius urna rutrum nibh dictum nec convallis mauris tincidunt. Cras eleifend molestie augue, sed fringilla purus lacinia eu. Nullam ultricies sodales metus, et consectetur enim ornare in. Donec euismod velit non ligula tincidunt euismod. Etiam imperdiet arcu at est egestas cursus. Duis quam neque, imperdiet vel porta id, molestie et magna.
 </p>
 <p>
+	<?php ob_flush(); // sleep(1); ?>
 Fusce sodales erat id ipsum pretium hendrerit. Fusce in ligula eu urna gravida hendrerit. Sed eu nisl ipsum. Cras eu purus adipiscing massa aliquet porta. Nunc dignissim elementum risus sed ornare. Pellentesque ac purus eget odio mattis aliquet. Cras vel erat odio, id varius ligula. Aliquam consectetur porta arcu ac fringilla. Nunc aliquet sapien nec mauris volutpat id laoreet risus posuere. Morbi pharetra orci quis tortor condimentum in viverra nibh gravida. Maecenas dui lorem, mattis ut eleifend et, consectetur non magna. Praesent tincidunt, dui quis mollis imperdiet, lacus sem lacinia urna, non vulputate enim purus auctor augue. Cras venenatis magna in tortor dapibus et vulputate tortor tempus. Integer posuere laoreet ultricies. Morbi aliquet, nulla bibendum molestie pellentesque, metus velit elementum ipsum, sit amet dapibus odio odio sit amet orci. Vivamus at nibh tortor, eget mollis augue. Duis non libero ut arcu molestie euismod et at magna. Fusce felis lectus, gravida a semper vitae, suscipit id enim.
 </p>
 <p>
@@ -164,6 +174,7 @@ Nam eros lorem, semper tincidunt posuere vel, laoreet eu nisi. Aliquam erat volu
 Nulla faucibus, nulla sed tempus mollis, elit odio sollicitudin risus, at facilisis mauris enim id nulla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nullam tellus dolor, congue id rhoncus ut, ultrices at nibh. Aliquam vel eros nulla, ac bibendum augue. In a libero nunc. Donec vitae euismod arcu. Phasellus neque quam, lobortis at imperdiet at, cursus nec sapien. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed volutpat arcu nec erat aliquet laoreet auctor nunc mollis. Vivamus non elit in mi hendrerit condimentum nec in elit. Proin augue massa, dapibus a posuere eget, accumsan quis odio. Curabitur sodales porttitor augue, non eleifend quam condimentum eget. Pellentesque fringilla luctus neque vel egestas.
 </p>
 <p>
+	<?php ob_flush(); // sleep(1); ?>
 Donec nec metus ut arcu venenatis vestibulum. Sed commodo mi sed justo luctus malesuada. Praesent mattis, eros at sagittis pharetra, urna urna venenatis metus, ut ullamcorper neque sem eu mi. Quisque felis arcu, faucibus non mattis sit amet, mattis eu lectus. Etiam sollicitudin mollis tellus, vel sodales ipsum pretium quis. Maecenas at libero turpis. Curabitur rhoncus, lectus non pulvinar euismod, ante orci porta elit, nec mollis felis risus quis ipsum. Aliquam luctus dapibus condimentum. Nam sed turpis turpis. Integer dapibus hendrerit magna at gravida. Etiam a libero sed tortor ornare dapibus in ac ipsum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris posuere mi eget metus consectetur aliquet. Nunc auctor elementum iaculis. Vivamus imperdiet rutrum tempus. Ut eget imperdiet dolor. Sed tempus felis id neque iaculis dignissim.
 
 </p>
@@ -206,6 +217,7 @@ Fusce nec leo id eros cursus molestie. Nullam vestibulum hendrerit leo sed rhonc
 Vestibulum tincidunt mi at sapien blandit vehicula. Quisque at est risus, vitae pretium quam. Maecenas ullamcorper nisi at orci ultrices eget pretium dolor ornare. Suspendisse potenti. Nullam sodales condimentum justo, non mollis justo vestibulum vitae. Vestibulum faucibus bibendum metus, vel elementum leo placerat et. Fusce sapien nulla, tincidunt sit amet tempus eget, consectetur ut quam. Curabitur sed ante eget lacus euismod varius nec vitae augue. Ut quis turpis congue leo venenatis bibendum vel at urna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam blandit, erat a lobortis tempus, nisi lectus semper ipsum, et malesuada massa tortor eu dui. Fusce pharetra aliquet dapibus. Suspendisse condimentum hendrerit elementum. Vestibulum pulvinar porta diam vitae mollis. Suspendisse vel massa eu nunc tempor fermentum at in dui.
 </p>
 <p>
+	<?php ob_flush(); // sleep(1); ?>
 Mauris id ante sem. Fusce sed dolor magna, sed gravida ligula. Mauris mollis feugiat leo ut vulputate. In hendrerit, metus a iaculis euismod, ligula eros lacinia nunc, at adipiscing velit mi accumsan magna. Duis porta pharetra lacus tempus feugiat. Donec nec eros sit amet mi fermentum rutrum. Etiam gravida ultrices turpis vel iaculis. Mauris enim urna, pretium consequat posuere sed, elementum eget tortor. Phasellus sed sapien orci. Donec iaculis risus in justo consectetur iaculis.
 </p>
 <p>
