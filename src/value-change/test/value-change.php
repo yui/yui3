@@ -40,15 +40,15 @@ script[src] {
 <script>
 
 // testy test code below.
-// YUI({
-//     debug: true,
-//     base : "../../../build/",
-//     filter : "raw"
-// }).use('value-change', function (Y) {
-// 	console.log("attach to a later loading thing", Y.on("valueChange", function (e) {
-// 		console.log("from Y.on with later", e, this);
-// 	}, "#later"));
-// });
+YUI({
+    debug: true,
+    base : "../../../build/",
+    filter : "raw"
+}).use('value-change', function (Y) {
+	console.log("attach to a later loading thing", Y.on("valueChange", function (e) {
+		console.log("from Y.on with later", e, this);
+	}, "#later"));
+});
 </script>
 
 
@@ -67,26 +67,26 @@ YUI({
 }).use('value-change', function (Y) {
 	window.Y = Y;
 	
-	// console.log("attach Y.all",
-	// 	Y.all(".input").on("valueChange", function (e) {
-	// 		console.log("from Y.all", e, this);
-	// 	})
-	// );
+	console.log("attach Y.all",
+		Y.all(".input").on("valueChange", function (e) {
+			console.log("from Y.all", e, this);
+		})
+	);
 	console.log("attach Y.on with ID", Y.on("valueChange", function (e) {
 		console.log("from Y.on with ID", e, this, e.currentTarget);
 	}, "#input"));
 	
-	// console.log("attach Y.one with ID", Y.one("#textarea").on("valueChange", function (e) {
-	// 	console.log("from Y.one with ID", e, this);
-	// }));
+	console.log("attach Y.one with ID", Y.one("#textarea").on("valueChange", function (e) {
+		console.log("from Y.one with ID", e, this);
+	}));
 	
-	// var handle;
-	// console.log("attach Y.on with className", handle = Y.on("valueChange", function (e) {
-	// 	console.log("from Y.on with className", e, this);
-	// }, ".input"));
-	// 
-	// console.log("k, now remove one");
-	// handle.detach();
+	var handle;
+	console.log("attach Y.on with className", handle = Y.on("valueChange", function (e) {
+		console.log("from Y.on with className", e, this);
+	}, ".input"));
+	
+	console.log("k, now remove one");
+	handle.detach();
 	
 	
 });

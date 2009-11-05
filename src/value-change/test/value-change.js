@@ -55,13 +55,13 @@ function onAvail (el, args) {
 
 function attachProxy (node, args) {
     // args = [type, fn, el, o, ...]
+    // node.on(type, fn, o, ...);
     args[0] = ceName(node);
-    args[2] = node;
-    var registry = attachTriggers(node);
-    console.log("attach proxy", node, args);
+    args.splice(2,1);
+
+    var registry = attachTriggers(node),
+        proxyHandle = node.on.apply(node, args);
     
-    var proxyHandle = Y.on.apply(Y, args);
-    console.log("proxyHandle", proxyHandle);
     return proxyHandle;
 };
 
@@ -69,13 +69,20 @@ function ceName (node) {
     return Y.stamp(node) + "-" + eventName;
 };
 
+function attachDomEventHandlers (handlers, node) {
+    var handles = {};
+    for (var i in handlers) {
+        handles[i] = handleDom(i, handlers[i], node);
+    }
+    return handles;
+};
+
 // attach the dom events that will trigger the CE
 function attachTriggers (node) {
-    console.log("attach triggers to ", node);
     var key = ceName(node);
     var reg = registry[ key ] = registry[ key ] || {
         count : 0,
-        handles : attachDomEventHandlers(node)
+        handles : attachDomEventHandlers(domEventHandlers, node)
     };
     reg.count++;
     return reg;
@@ -89,29 +96,26 @@ function handleDom (event, handler, node) {
 
 // call this after detaching a CE handler
 function afterDetach (node, force) {
-    console.log("clean up after ", node);
     var reg = registry[ ceName(node) ];
     if (!reg) return;
     reg.count --;
     if (force) reg.count = 0;
     if (reg.count <= 0) {
+        delete registry[ ceName(node) ];
         for (var i in reg.handles) reg.handles[i].detach();
     }
 };
 
-var eventName = "valueChange",
-    registry = {},
+var registry = {},
     Lang = Y.Lang,
     event = {
+        emitFacade : true,
         on : function (type, fn, el, o) {
             var args = Y.Array(arguments, 0, true),
                 nodeList = toNodeList(el);
-            // console.log("nodeList", nodeList);
             if (nodeList.size() === 0) return onAvail(el, args);
             
             args[3] = o = o || ((nodeList.size() === 1) ? nodeList.item(0) : nodeList);
-            
-            console.log(type, fn, el, o);
             
             var handles = [];
             nodeList.each(function (node) {
@@ -120,17 +124,17 @@ var eventName = "valueChange",
                 // hook into the detach event to remove it from that node.
                 Y.after(Y.bind(afterDetach, null, node), proxyHandle, "detach");
             });
-            // return an appropriate handle.
-            return { evt : handles, sub : nodeList, detach : function () {
-                for (var i = 0, l = handles.length; i < l; i ++) handles[i].detach();
+            // return a handle
+            return { evt:handles, sub:nodeList, detach:function () {
+                Y.Array.each(handles, function (h) { h.detach() });
             }};
         }
     },
     
     
     // IMPLEMENTATION SPECIFIC
-    attachDomEventHandlers = (function () {
-        console.log("creating the attachDomeventhandlers");
+    eventName = "valueChange",
+    domEventHandlers = (function () {
         var valueHistory = {}, intervals = {}, timeouts = {};
             
         function startPolling (node, e) {
@@ -148,48 +152,42 @@ var eventName = "valueChange",
         function poller (node, e) {
             var key = ceName(node);
             var value = node.get("value");
-            if (value !== valueHistory[key]) {
-                var ev = {
-                    type : eventName,
-                    value : value,
-                    oldValue : valueHistory[key],
-                    lastKeyEvent : e,
-                    target : node,
-                    currentTarget : node
-                };
-                console.log("fire", eventName, key, ev);
-                // node.fire(key, ev);
-                Y.fire(key, ev, node);
-                
-                valueHistory[key] = node.get("value");
-            }
+            if (value === valueHistory[key]) return;
+            node.fire(key, {
+                type : eventName,
+                value : value,
+                oldValue : valueHistory[key],
+                _event : e,
+                target : node,
+                currentTarget : node
+            })
+            
+            valueHistory[key] = node.get("value");
+            startPolling(node, e);
+            
         };
         
         function keyUpHandler (e) {
-            // console.log("start polling if e.charcode === 229", this, e);
-            console.log("keyup", e.charCode);
+            // indications that an IME has started.
+            // poll for 10 seconds.
+            if (e.charCode === 229 || e.charCode === 197) startPolling(
+                e.currentTarget, e
+            );
         };
         function blurHandler (e) {
-            console.log("blur, stop polling", e);
             stopPolling(e.currentTarget);
         };
         function keyDownHandler (e) {
-            console.log("keydown", e.charCode, e.currentTarget, e);
             startPolling(e.currentTarget, e);
         };
-
-        return function (node) {
-            console.log("attachDomEventHandlers", node);
-            return {
-            //FIXME: this impl code knows about what's outside its box.
-            // that's not ideal. it should just return the hash, and then
-            // the code outside will deal with it.
-            keyup : handleDom("keyup", keyUpHandler, node),
-            blur : handleDom("blur", blurHandler, node),
-            keydown : handleDom("keydown", keyDownHandler, node)
-        }};
+        
+        return {
+            keyup : keyUpHandler,
+            blur : blurHandler,
+            keydown : keyDownHandler
+        };
     })();
-    // IMPLEMENTATION SPECIFIC
+    // /IMPLEMENTATION SPECIFIC
     
 
 
