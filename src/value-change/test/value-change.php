@@ -35,7 +35,7 @@ script[src] {
 .lipsum { display:none; }
 </style>
 <script class="mine" src="../../../build/yui/yui.js"></script>
-<script class="mine" src="value-change.js"></script>
+<script class="mine" src="../build_tmp/value-change.js"></script>
 
 <script>
 

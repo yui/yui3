@@ -5,19 +5,10 @@ YUI.add('value-change', function(Y) {
  * <p>Event that fires when a text or input field has changed value as a result of a keystroke.
  * Attaches a timed-out listener on the keydown event, and keeps the value to provide support
  * for multi-keystroke character sets.</p>
- * <p>This event fires when:</p>
- * <ol>
- *   <li>The user presses a key, causing the value in the field to be different than it was before.</li>
- *   <li>The user triggers an onchange event, ie by pasting a value into the field via mouse.</li>
- * </ol>
- * <p>The event signature is otherwise identical to either the keydown or onchange events,
- * whichever cause valueChange to be triggered.</p>
+ * <p>This event fires when the value of the element changes, either as a result of
+ * a keystroke, or an IME input event.</p>
  * <p>This does not replace the DOM onchange event, but rather augments it to do onchange-like
  * logic as a result of key presses, even in multi-stroke character sets.</p>
- * 
- * <p>The config object can specify the delay (number of ms to wait before checking to
- * see if the value has changed), and a set of DOM events to listen to.
- * The defaults are 50 and ["keypress", "keydown", "change"], respectively.</p>
  *
  * <p>Known issue: If attaching to elements that are not yet available, then only the first 
  * node will be guaranteed to have the event handler attached.</p>
@@ -28,7 +19,6 @@ YUI.add('value-change', function(Y) {
  * @param fn {Function} the callback function
  * @param el {String|Node|etc} the element(s) to bind
  * @param o {Object} optional context object
- * @param conf {Object} Config object specifying delay and events.
  * @param args 0..n additional arguments that should be provided 
  * to the listener.
  * @return {Event.Handle} the detach handle
@@ -109,7 +99,6 @@ function afterDetach (node, force) {
 var registry = {},
     Lang = Y.Lang,
     event = {
-        emitFacade : true,
         on : function (type, fn, el, o) {
             var args = Y.Array(arguments, 0, true),
                 nodeList = toNodeList(el);
