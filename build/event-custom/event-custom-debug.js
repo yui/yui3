@@ -1766,11 +1766,18 @@ Y.EventFacade = function(e, currentTarget) {
     this.details = e.details;
 
     /**
-     * The event type
+     * The event type, this can be overridden by the fire() payload
      * @property type
      * @type string
      */
     this.type = e.type;
+
+    /**
+     * The real event type
+     * @property type
+     * @type string
+     */
+    this._type = e.type;
 
     //////////////////////////////////////////////////////
 
@@ -1967,6 +1974,10 @@ CEProto._getFacade = function() {
 
         // restore ef
         Y.mix(ef, o2, true, FACADE_KEYS);
+
+        // Allow the event type to be faked
+        // http://yuilibrary.com/projects/yui3/ticket/2528376
+        ef.type = o.type || ef.type;
     }
 
     // update the details field with the arguments
@@ -2084,6 +2095,7 @@ Y.EventTarget.prototype.bubble = function(evt, args, target) {
 
 FACADE = new Y.EventFacade();
 FACADE_KEYS = Y.Object.keys(FACADE);
+
 
 })();
 
