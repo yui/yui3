@@ -298,6 +298,11 @@ YUI.prototype = {
             name = r[i]; 
             m    = mods[name];
 
+            // console.log(name + '::' + m);
+
+            if (!m) {
+            }
+
             if (!attached[name] && m) {
 
                 attached[name] = true;
@@ -305,6 +310,9 @@ YUI.prototype = {
                 d   = m.details; 
                 req = d.requires; 
                 use = d.use;
+
+                // console.log(req);
+                // console.log(use);
 
                 if (req) {
                     this._attach(this.Array(req));
