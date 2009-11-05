@@ -2,13 +2,14 @@
 <html debug="true">
 <head>
 <title>YUI 3.0</title>
-<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
+
 <!--
 <script type="text/javascript" src="../../build/dump/dump-debug.js"></script>
 <script type="text/javascript" src="../../build/compat/compat-debug.js"></script>
 <script type="text/javascript" src="../../build/substitute/substitute-debug.js"></script>
 <script type="text/javascript" src="../../build/get/get-debug.js"></script>
-<script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
 -->
 
 <body>
@@ -28,9 +29,11 @@ YUI({
     base: '../../build/'
 }).use('*', function(Y) {
 
-    var loader = new Y.Loader({
-            base: '../../build/'
-        });
+    var loader = new Y.Loader({ 
+
+        base: '../../build/'
+        
+    });
 
     loader.onSuccess = function() {
         Y.log('loader success');
@@ -54,10 +57,9 @@ YUI({
         // require: ["dom-base","dom-style","dom-screen","selector","selector-native"],
         // require: ["animation", "substitute", "dump", "dom-base","dom-style","dom-screen","selector","selector-native"],
         // force: ["dom-base","dom-style","dom-screen","selector","selector-native"],
-        require: ["io-form"],
+        require: ["io-form", "substitute", "dump", "nothing", "gallery-mygal"],
         // require: ["io-upload-iframe"],
         //require: ["charts", "simpleeditor"],
-        base: '../../build/',
         // root: '2.5.2/build/',
         // root: '3.0.0pr1/build/',
         insertBefore: 'styleoverrides',
@@ -181,9 +183,7 @@ YUI({
      );
 
     Y.log(loader.sorted);
-    //jY.log(Y.Lang.dump(loader.moduleInfo));
-
-
+    //Y.log(Y.Lang.dump(loader.moduleInfo));
 
 });
 
