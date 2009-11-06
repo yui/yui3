@@ -146,11 +146,15 @@
          *    <dt>value &#60;Any&#62;</dt>
          *    <dd>The initial value to set on the attribute</dd>
          *
-         *    <dt>valueFn &#60;Function&#62;</dt>
-         *    <dd>A function, which will return the initial value to set on the attribute. This is useful
+         *    <dt>valueFn &#60;Function | String&#62;</dt>
+         *    <dd>
+         *    <p>A function, which will return the initial value to set on the attribute. This is useful
          *    for cases where the attribute configuration is defined statically, but needs to 
          *    reference the host instance ("this") to obtain an initial value.
-         *    If defined, this precedence over the value property.</dd>
+         *    If defined, valueFn has precedence over the value property.</p>
+         *
+         *    <p>valueFn can also be set to a string, representing the name of the instance method to be used to retrieve the value.</p>
+         *    </dd>
          *
          *    <dt>readOnly &#60;boolean&#62;</dt>
          *    <dd>Whether or not the attribute is read only. Attributes having readOnly set to true
@@ -161,20 +165,37 @@
          *        can only have their values set once, be it through the default configuration, 
          *        constructor configuration arguments, or by invoking set.</dd>
          *
-         *    <dt>setter &#60;Function&#62;</dt>
-         *    <dd>The setter function used to massage or normalize the value passed to the set method for the attribute. 
+         *    <dt>setter &#60;Function | String&#62;</dt>
+         *    <dd>
+         *    <p>The setter function used to massage or normalize the value passed to the set method for the attribute. 
          *    The value returned by the setter will be the final stored value. Returning
          *    <a href="#property_Attribute.INVALID_VALUE">Attribute.INVALID_VALUE</a>, from the setter will prevent
-         *    the value from being stored.</dd>
-         *
-         *    <dt>getter &#60;Function&#62;</dt>
-         *    <dd>The getter function used to massage or normalize the value returned by the get method for the attribute.
+         *    the value from being stored.
+         *    </p>
+         *    
+         *    <p>setter can also be set to a string, representing the name of the instance method to be used as the setter function.</p>
+         *    </dd>
+         *      
+         *    <dt>getter &#60;Function | String&#62;</dt>
+         *    <dd>
+         *    <p>
+         *    The getter function used to massage or normalize the value returned by the get method for the attribute.
          *    The value returned by the getter function is the value which will be returned to the user when they 
-         *    invoke get.</dd>
+         *    invoke get.
+         *    </p>
          *
-         *    <dt>validator &#60;Function&#62;</dt>
-         *    <dd>The validator function invoked prior to setting the stored value. Returning
-         *    false from the validator function will prevent the value from being stored.</dd>
+         *    <p>getter can also be set to a string, representing the name of the instance method to be used as the getter function.</p>
+         *    </dd>
+         *
+         *    <dt>validator &#60;Function | String&#62;</dt>
+         *    <dd>
+         *    <p>
+         *    The validator function invoked prior to setting the stored value. Returning
+         *    false from the validator function will prevent the value from being stored.
+         *    </p>
+         *    
+         *    <p>validator can also be set to a string, representing the name of the instance method to be used as the validator function.</p>
+         *    </dd>
          *    
          *    <dt>broadcast &#60;int&#62;</dt>
          *    <dd>If and how attribute change events for this attribute should be broadcast. See CustomEvent's <a href="CustomEvent.html#property_broadcast">broadcast</a> property for 
