@@ -47,8 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s1">&#39;align-plugin&#39;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c">/**</span>
+                        <div class="highlight" ><pre>    <span class="c">/**</span>
 <span class="c">     * Provides advanced positioning support for Node via a Plugin</span>
 <span class="c">     * for centering and alignment. </span>
 <span class="c">     * @module shim-plugin</span>
@@ -56,14 +55,7 @@
 
     <span class="k">var</span> <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="o">,</span>
         <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;offsetHeight&#39;</span><span class="o">,</span>
-
-    <span class="nx">_resolveRegion</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">region</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">region</span> <span class="o">=</span> <span class="nx">region</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">_host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;viewportRegion&#39;</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">region</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span> <span class="o">||</span> <span class="nx">region</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">region</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">region</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">region</span><span class="o">));</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">region</span><span class="o">;</span>
-    <span class="o">};</span>
+        <span class="nx">ie6</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&lt;</span> <span class="m">7</span><span class="o">);</span>
 
     <span class="c">/**</span>
 <span class="c">     * Node plugin which can be used to align a node with another node,</span>
@@ -72,7 +64,7 @@
 <span class="c">     * @class Plugin.Align</span>
 <span class="c">     * @param {Object} User configuration object</span>
 <span class="c">     */</span>
-    <span class="k">var</span> <span class="nx">Align</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">function</span> <span class="nx">Align</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
         <span class="c">// TODO: allow for boundingBox</span>
 <span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">_host</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">host</span><span class="o">;</span>
     <span class="o">};</span>
@@ -101,7 +93,7 @@
 <span class="c">         *      &lt;dd&gt;left center&lt;/dd&gt;</span>
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * @method to </span>
-<span class="c">         * @parm region {Node || HTMLElement || Object} optional The node or</span>
+<span class="c">         * @parm region {String || Node || HTMLElement || Object} The node or</span>
 <span class="c">         * region to align with. Defaults to the viewport region.</span>
 <span class="c">         * @parm regionPoint {String} The point of the region to align with.</span>
 <span class="c">         * @parm point {String} The point of the node aligned to the region. </span>
@@ -109,17 +101,15 @@
 <span class="c">         * the window is resized. Defaults to false.</span>
 <span class="c">         */</span>
         <span class="nx">to</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">region</span><span class="o">,</span> <span class="nx">regionPoint</span><span class="o">,</span> <span class="nx">point</span><span class="o">,</span> <span class="nx">fixed</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">);</span>
+            <span class="c">// default align point is node&#39;s top left</span>
+<span class="c"></span>            <span class="nx">point</span> <span class="o">=</span> <span class="nx">point</span> <span class="o">||</span> <span class="s1">&#39;tl&#39;</span><span class="o">;</span>
+            <span class="c">// cache original args for syncing</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_syncArgs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">);</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">region</span><span class="o">))</span> <span class="o">{</span> <span class="c">// default region to viewport</span>
-<span class="c"></span>                <span class="nx">fixed</span> <span class="o">=</span> <span class="nx">point</span><span class="o">;</span>
-                <span class="nx">point</span> <span class="o">=</span> <span class="nx">regionPoint</span><span class="o">;</span>
-                <span class="nx">regionPoint</span> <span class="o">=</span> <span class="nx">region</span><span class="o">;</span>
-                <span class="nx">region</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">region</span><span class="o">.</span><span class="nx">top</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">region</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">region</span><span class="o">);</span>
+                <span class="nx">region</span> <span class="o">=</span> <span class="nx">region</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;region&#39;</span><span class="o">);</span>
             <span class="o">}</span>
-
-            <span class="nx">point</span> <span class="o">=</span> <span class="nx">point</span> <span class="o">||</span> <span class="s1">&#39;tl&#39;</span><span class="o">;</span>
-            <span class="nx">region</span> <span class="o">=</span> <span class="nx">_resolveRegion</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">region</span><span class="o">);</span>
 
             <span class="k">var</span> <span class="nx">top</span> <span class="o">=</span> <span class="nx">region</span><span class="o">.</span><span class="nx">top</span><span class="o">,</span>
                 <span class="nx">right</span> <span class="o">=</span> <span class="nx">region</span><span class="o">.</span><span class="nx">right</span><span class="o">,</span>
@@ -131,7 +121,8 @@
                 <span class="nx">xy</span><span class="o">;</span>
                 
 
-            <span class="nx">switch</span><span class="o">(</span><span class="nx">regionPoint</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// align to region</span>
+<span class="c"></span>            <span class="nx">switch</span><span class="o">(</span><span class="nx">regionPoint</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">case</span> <span class="s1">&#39;tl&#39;</span><span class="o">:</span>
                     <span class="k">break</span><span class="o">;</span>
                 <span class="nx">case</span> <span class="s1">&#39;tr&#39;</span><span class="o">:</span>
@@ -164,7 +155,8 @@
                     <span class="k">break</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="nx">switch</span> <span class="o">(</span><span class="nx">point</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// align our node</span>
+<span class="c"></span>            <span class="nx">switch</span> <span class="o">(</span><span class="nx">point</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">case</span> <span class="s1">&#39;tl&#39;</span><span class="o">:</span>
                     <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span><span class="o">,</span> <span class="nx">y</span><span class="o">];</span>
                     <span class="k">break</span><span class="o">;</span>
@@ -197,35 +189,50 @@
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">xy</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">fixed</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_attachResize</span><span class="o">(</span><span class="nx">args</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_detachResize</span><span class="o">();</span>
-                <span class="o">}</span>
-
+                <span class="k">this</span><span class="o">.</span><span class="nx">_fix</span><span class="o">(</span><span class="nx">fixed</span><span class="o">);</span>
                 <span class="nx">node</span><span class="o">.</span><span class="nx">setXY</span><span class="o">(</span><span class="nx">xy</span><span class="o">);</span>
 
             <span class="o">}</span>
         <span class="o">},</span>
 
-        <span class="nx">_attachResize</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">align</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span> <span class="o">||</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="nx">setTimeout</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                    <span class="nx">align</span><span class="o">.</span><span class="nx">to</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">align</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
-                <span class="o">});</span>
-            <span class="o">},</span> <span class="nb">window</span><span class="o">);</span> 
+        <span class="nx">sync</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">to</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_syncArgs</span><span class="o">);</span>
+        <span class="o">},</span>
 
-        <span class="o">},</span>        
+        <span class="nx">_setStyleFixed</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">add</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">pos</span> <span class="o">=</span> <span class="nx">add</span> <span class="o">?</span> <span class="s1">&#39;fixed&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_host</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;position&#39;</span><span class="o">,</span> <span class="nx">pos</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_isStyleFixed</span> <span class="o">=</span> <span class="nx">add</span><span class="o">;</span>
+        <span class="o">},</span>
 
-        <span class="nx">_detachResize</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="nx">_onresize</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">sync</span><span class="o">();</span>
+        <span class="o">},</span>
+    
+        <span class="nx">_fix</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fixed</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">prefix</span> <span class="o">=</span> <span class="nx">Align</span><span class="o">.</span><span class="nx">DETACH_PREFIX</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">fixed</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_fixing</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onresize</span><span class="o">,</span> <span class="nb">window</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_fixing</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+                    <span class="c">// use scroll listener for IE6 and IE quirks</span>
+<span class="c"></span>                    <span class="c">// otherwise use position :fixed</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">ie6</span> <span class="o">||</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">compatMode</span> <span class="o">===</span> <span class="s1">&#39;backCompat&#39;</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="s1">&#39;scroll&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onresize</span><span class="o">,</span> <span class="nb">window</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_isStyleFixed</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">this</span><span class="o">.</span><span class="nx">_setStyleFixed</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span> 
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// &quot;unfix&quot;</span>
+<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">detach</span><span class="o">(</span><span class="nx">prefix</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_fixing</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_isStyleFixed</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_setStyleFixed</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span> 
+                <span class="o">}</span>
             <span class="o">}</span>
-        <span class="o">},</span>        
-
+        <span class="o">},</span>
 
         <span class="c">/**</span>
 <span class="c">         * Aligns the center of a node to the center of another node or region.</span>
@@ -236,12 +243,8 @@
 <span class="c">         * the window is resized. If centering to viewport, this defaults</span>
 <span class="c">         * to true, otherwise default is false.</span>
 <span class="c">         */</span>
-        <span class="nx">center</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">fixed</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">fixed</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">fixed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="c">// default to true when centering to viewport </span>
-<span class="c"></span>            <span class="o">}</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">to</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="s1">&#39;cc&#39;</span><span class="o">,</span> <span class="s1">&#39;cc&#39;</span><span class="o">,</span> <span class="nx">fixed</span><span class="o">);</span> 
-
+        <span class="nx">center</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">region</span><span class="o">,</span> <span class="nx">fixed</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">to</span><span class="o">(</span><span class="nx">region</span><span class="o">,</span> <span class="s1">&#39;cc&#39;</span><span class="o">,</span> <span class="s1">&#39;cc&#39;</span><span class="o">,</span> <span class="nx">fixed</span><span class="o">);</span> 
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -250,9 +253,7 @@
 <span class="c">         * @method destroy </span>
 <span class="c">         */</span>
         <span class="nx">destroy</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-            <span class="o">}</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">detach</span><span class="o">(</span><span class="s1">&#39;alignfixed&#39;</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">};</span>
 
@@ -260,10 +261,10 @@
     <span class="nx">Align</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;Align&#39;</span><span class="o">;</span>
     <span class="nx">Align</span><span class="o">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s1">&#39;align&#39;</span><span class="o">;</span>
 
+    <span class="nx">Align</span><span class="o">.</span><span class="nx">DETACH_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;alignfixed|&#39;</span><span class="o">;</span>
+
     <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;Plugin&#39;</span><span class="o">);</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">Align</span> <span class="o">=</span> <span class="nx">Align</span><span class="o">;</span>
-
-<span class="o">},</span> <span class="s1">&#39;@VERSION@&#39;</span> <span class="o">,{</span><span class="nx">requires</span><span class="o">:[</span><span class="s1">&#39;node&#39;</span><span class="o">]});</span>
 </pre></div>
 
                     </div>
@@ -352,7 +353,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Align", "name": "center", "url": "Plugin.Align.html#method_center", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "destroy", "url": "Plugin.Align.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.Shim", "name": "destroy", "url": "Plugin.Shim.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "Node.plug", "url": "Plugin.Align.html#method_Node.plug", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "Node.unplug", "url": "Plugin.Align.html#method_Node.unplug", "type": "method"}, {"access": "", "host": "Plugin.Shim", "name": "Shim.CLASS_NAME", "url": "Plugin.Shim.html#property_Shim.CLASS_NAME", "type": "property"}, {"access": "", "host": "Plugin.Shim", "name": "Shim.TEMPLATE", "url": "Plugin.Shim.html#property_Shim.TEMPLATE", "type": "property"}, {"access": "private", "host": "Plugin.Shim", "name": "sync", "url": "Plugin.Shim.html#method_sync", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "to", "url": "Plugin.Align.html#method_to", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Align", "name": "center", "url": "Plugin.Align.html#method_center", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "destroy", "url": "Plugin.Align.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.Shim", "name": "destroy", "url": "Plugin.Shim.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "Node.plug", "url": "Plugin.Align.html#method_Node.plug", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "Node.unplug", "url": "Plugin.Align.html#method_Node.unplug", "type": "method"}, {"access": "", "host": "Plugin.Shim", "name": "Shim.CLASS_NAME", "url": "Plugin.Shim.html#property_Shim.CLASS_NAME", "type": "property"}, {"access": "", "host": "Plugin.Shim", "name": "Shim.TEMPLATE", "url": "Plugin.Shim.html#property_Shim.TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.Shim", "name": "sync", "url": "Plugin.Shim.html#method_sync", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "to", "url": "Plugin.Align.html#method_to", "type": "method"}];
 </script>
 </body>
 </html>
