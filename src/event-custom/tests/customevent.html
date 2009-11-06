@@ -20,7 +20,7 @@
         // combine: false,
         useConsole: true,
         onCSS: function(Y) {
-            Y.log('CSS is done loading');
+            Y.log('CSS is done loading', 'info', 'testcase');
         },
         // logInclude: ['event', 'test']
         logExclude: {
@@ -31,6 +31,8 @@
             Node: true, 
             yui: true,
             attribute: true, 
+            event: true, 
+            deprecated: true, 
             base: true, 
             loader: true, 
             widget: true
@@ -312,7 +314,10 @@
 
                 // configure chaining via global default or on the event target
                 YUI({ /* chain: true */ 
-                    base:'../../../build/'
+                    base:'../../../build/',
+                    logInclude: {
+                        test: true
+                    }
                 }).use('*', function(Y2) {
 
                     var o = new Y2.EventTarget({
@@ -385,6 +390,7 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 Y.Assert.areEqual(1, count);
                 Y.Assert.isFalse(ret);
             },
+
 
             testPreventFnOnce: function() {
                 var count = 0;
@@ -578,8 +584,151 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
                 Y.Assert.areEqual(1, preventCount);
                 Y.Assert.areEqual(2, heard);
-            }
+            },
 
+            // SRC, ON
+            // BUBBLE, ON
+            // BUBBLE, DEFAULT BEHAVIOR
+            // BUBBLE, AFTER
+            // SRC, DEFAULT BEHAVIOR
+            // SRC, AFTER
+            testBubbleSequence300GA: function() {
+                var count = 0,
+                    called = null,
+                    fn = function() {
+                        called = this.name;
+                    },
+                    config = {
+                        emitFacade: true,
+                        bubbles: true
+                    },
+                    leaf = new Y.EventTarget(config), 
+                    branch = new Y.EventTarget(config), 
+                    root = new Y.EventTarget(config);
+
+                leaf.name = 'leaf';
+                branch.name = 'branch';
+                root.name = 'root';
+                    
+                leaf.addTarget(branch);
+                branch.addTarget(root);
+
+                leaf.publish('test:foo', { defaultFn: fn});
+                branch.publish('test:foo', { defaultFn: fn});
+                root.publish('test:foo', { defaultFn: fn});
+
+                leaf.on('test:foo', function(e) {
+                    Y.Assert.areEqual(0, count, 'leaf.on should be first');
+                    Y.Assert.isNull(called, 'leaf.on should be executed before any default function');
+                    count++;
+                });
+
+                branch.on('test:foo', function() {
+                    Y.Assert.areEqual(1, count, 'branch.on should be second');
+                    Y.Assert.isNull(called, 'branch.on should be executed before any default function');
+                    count++;
+                });
+
+                root.on('test:foo', function() {
+                    Y.Assert.areEqual(2, count, 'root.on should be third');
+                    Y.Assert.isNull(called, 'root.on should be executed before any default function');
+                    count++;
+                });
+
+                root.after('test:foo', function() {
+                    Y.Assert.areEqual(3, count, 'root.after should be fourth');
+                    Y.Assert.areEqual('root', called, 'root.after should be executed after the root default function');
+                    count++;
+                });
+
+                branch.after('test:foo', function() {
+                    Y.Assert.areEqual(4, count, 'branch.after should be fifth');
+                    Y.Assert.areEqual('branch', called, 'branch.after should be executed after the branch default function');
+                    count++;
+                });
+
+                leaf.after('test:foo', function(e) {
+                    Y.Assert.areEqual(5, count, 'leaf.after should be sixth and last');
+                    Y.Assert.areEqual('leaf', called, 'leaf.after should be executed after the leaf default function');
+                    count++;
+                });
+
+                leaf.fire('test:foo', {}, leaf);
+                Y.Assert.areEqual(6, count);
+
+            },
+
+            // SRC, ON
+            // BUBBLE, ON
+            // SRC, DEFAULT BEHAVIOR
+            // BUBBLE, DEFAULT BEHAVIOR (unless configured to only execute the default function on the target)
+            // SRC, AFTER
+            // BUBBLE, AFTER
+            ___testAlternativeSequencePost300GA: function() {
+                var count = 0,
+                    called = null,
+                    fn = function() {
+                        called = this.name;
+                    },
+                    config = {
+                        emitFacade: true,
+                        bubbles: true
+                    },
+                    leaf = new Y.EventTarget(config), 
+                    branch = new Y.EventTarget(config), 
+                    root = new Y.EventTarget(config);
+
+                leaf.name = 'leaf';
+                branch.name = 'branch';
+                root.name = 'root';
+                    
+                leaf.addTarget(branch);
+                branch.addTarget(root);
+
+                leaf.publish('test:foo', { defaultFn: fn});
+                branch.publish('test:foo', { defaultFn: fn});
+                root.publish('test:foo', { defaultFn: fn});
+
+                leaf.on('test:foo', function(e) {
+                    Y.Assert.areEqual(0, count, 'leaf.on should be first');
+                    Y.Assert.isNull(called, 'leaf.on should be executed before any default function');
+                    count++;
+                });
+
+                branch.on('test:foo', function() {
+                    Y.Assert.areEqual(1, count, 'branch.on should be second');
+                    Y.Assert.isNull(called, 'branch.on should be executed before any default function');
+                    count++;
+                });
+
+                root.on('test:foo', function() {
+                    Y.Assert.areEqual(2, count, 'root.on should be third');
+                    Y.Assert.isNull(called, 'root.on should be executed before any default function');
+                    count++;
+                });
+
+                leaf.after('test:foo', function(e) {
+                    Y.Assert.areEqual(3, count, 'leaf.after should be fourth');
+                    Y.Assert.areEqual('root', called, 'leaf.after should be executed after the root default function');
+                    count++;
+                });
+
+                branch.after('test:foo', function() {
+                    Y.Assert.areEqual(4, count, 'branch.after should be fifth');
+                    Y.Assert.areEqual('root', called, 'leaf.after should be executed after the root default function');
+                    count++;
+                });
+
+                root.after('test:foo', function() {
+                    Y.Assert.areEqual(5, count, 'root.after should be sixth and last');
+                    Y.Assert.areEqual('root', called, 'leaf.after should be executed after the root default function');
+                    count++;
+                });
+
+                leaf.fire('test:foo', {}, leaf);
+                Y.Assert.areEqual(6, count);
+
+            }
         });
         
         Y.Test.Runner.add(testEventTarget);
