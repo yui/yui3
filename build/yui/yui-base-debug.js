@@ -546,7 +546,7 @@ YUI.prototype = {
 
         } else {
             if (l) {
-                Y.log('Unable or not configured to fetch missing modules.', 'info', 'yui');
+                Y.message('Unable or not configured to fetch missing modules: ' + missing, 'info', 'yui');
             }
             Y.log('Attaching available dependencies.', 'info', 'yui');
             Y._attach(r);
