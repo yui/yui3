@@ -151,13 +151,14 @@
     <span class="nx">_scriptNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">win</span><span class="o">,</span> <span class="nx">attributes</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{</span>
             <span class="nx">id</span><span class="o">:</span>   <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(),</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="nx">TYPE_JS</span><span class="o">,</span>
-            <span class="nx">src</span><span class="o">:</span>  <span class="nx">url</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="nx">TYPE_JS</span>
         <span class="o">};</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">attributes</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">attributes</span><span class="o">);</span>
         <span class="o">}</span>
+
+        <span class="nx">o</span><span class="o">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">url</span><span class="o">;</span>
 
         <span class="k">return</span> <span class="nx">_node</span><span class="o">(</span><span class="s2">&quot;script&quot;</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">win</span><span class="o">);</span>
     <span class="o">},</span>

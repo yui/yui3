@@ -164,6 +164,7 @@ YUI.add('attribute-base', function(Y) {
         IS_LAZY_ADD = "isLazyAdd",
 
         INVALID_VALUE,
+
         MODIFIABLE = {};
 
         // Properties which can be changed after the attribute has been added.
@@ -350,7 +351,7 @@ YUI.add('attribute-base', function(Y) {
 
 
                     if(hasValue) {
-                        // We'll go through set, don't want to set value in _state directly
+                        // We'll go through set, don't want to set value in config directly
                         value = config.value;
                         delete config.value;
                     }
@@ -586,6 +587,10 @@ YUI.add('attribute-base', function(Y) {
             val = host._getStateVal(name);
             getter = state.get(name, GETTER);
 
+            if (getter && !getter.call) {
+                getter = this[getter];
+            }
+
             val = (getter) ? getter.call(host, val, fullName) : val;
             val = (path) ? O.getValue(val, path) : val;
 
@@ -794,22 +799,34 @@ YUI.add('attribute-base', function(Y) {
                 valid;
 
             if (validator) {
-                valid = validator.call(host, newVal, name);
+                if (!validator.call) { 
+                    // Assume string - trying to keep critical path tight, so avoiding Lang check
+                    validator = this[validator];
+                }
+                if (validator) {
+                    valid = validator.call(host, newVal, name);
 
-                if (!valid && initializing) {
-                    newVal = state.get(attrName, DEF_VALUE);
-                    valid = true; // Assume it's valid, for perf.
+                    if (!valid && initializing) {
+                        newVal = state.get(attrName, DEF_VALUE);
+                        valid = true; // Assume it's valid, for perf.
+                    }
                 }
             }
 
             if (!validator || valid) {
                 if (setter) {
-                    retVal = setter.call(host, newVal, name);
+                    if (!setter.call) {
+                        // Assume string - trying to keep critical path tight, so avoiding Lang check
+                        setter = this[setter];
+                    }
+                    if (setter) {
+                        retVal = setter.call(host, newVal, name);
 
-                    if (retVal === INVALID_VALUE) {
-                        allowSet = false;
-                    } else if (retVal !== undefined){
-                        newVal = retVal;
+                        if (retVal === INVALID_VALUE) {
+                            allowSet = false;
+                        } else if (retVal !== undefined){
+                            newVal = retVal;
+                        }
                     }
                 }
 
@@ -1035,13 +1052,23 @@ YUI.add('attribute-base', function(Y) {
          * @private
          */
         _getAttrInitVal : function(attr, cfg, initValues) {
-
+            var val, valFn;
             // init value is provided by the user if it exists, else, provided by the config
-            var val = (!cfg[READ_ONLY] && initValues && initValues.hasOwnProperty(attr)) ?
-                            val = initValues[attr] :
-                            (cfg[VALUE_FN]) ?
-                                cfg[VALUE_FN].call(this) : 
-                                cfg[VALUE];
+            if (!cfg[READ_ONLY] && initValues && initValues.hasOwnProperty(attr)) {
+                val = initValues[attr];
+            } else {
+                val = cfg[VALUE];
+                valFn = cfg[VALUE_FN];
+ 
+                if (valFn) {
+                    if (!valFn.call) {
+                        valFn = this[valFn];
+                    }
+                    if (valFn) {
+                        val = valFn.call(this);
+                    }
+                }
+            }
 
 
             return val;
