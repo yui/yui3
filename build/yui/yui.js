@@ -2245,13 +2245,14 @@ Y.Get = function() {
     _scriptNode = function(url, win, attributes) {
         var o = {
             id:   Y.guid(),
-            type: TYPE_JS,
-            src:  url
+            type: TYPE_JS
         };
 
         if (attributes) {
             Y.mix(o, attributes);
         }
+
+        o.src = url;
 
         return _node("script", o, win);
     },
