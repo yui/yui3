@@ -1,52 +1,24 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>YUI3 Custom Event Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+<title>YUI Event Tests</title>
 </head>
 
 <body class="yui-skin-sam">
 <h1>Event Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
-<div id="adiv">a div</div>
 
-
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript">
 
 (function() {
-    //YUI.add("selector-native", function(){});
     YUI({
+        base: "../../../build/",
         filter: "debug",
-        // combine: false,
         useConsole: true,
-        onCSS: function(Y) {
-            Y.log('CSS is done loading');
-        },
         // logInclude: ['event', 'test']
-        logExclude: {
-            'deprecated': 1,
-            get: true,
-            Dom: true, 
-            Selector: true, 
-            Node: true, 
-            yui: true,
-            attribute: true, 
-            base: true, 
-            loader: true, 
-            widget: true
-        },
-
-        filters: {
-            base: 'raw',
-            // dom: null,
-            attribute: 'min'
-        }
-    }).use("dump", "test", "console", function(Y) {
-
-
-        // Y.Global.on('yui:log', function(e) {
-        //     console.log('GLOBAL LOG: ' + e.msg);
-        // });
+        logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+    }).use("dump", "test", "console", "event-custom", function(Y) {
 
         var button = Y.get('#btnRun');
 
@@ -56,12 +28,10 @@
             Y.Test.Runner.run();
         }, button);
 
-
         var myConsole = new Y.Console().render();
-        Y.log('{}');
  
         var testEventTarget = new Y.Test.Case({
-            name: "Custom event tests",
+            name: "EventTarget tests",
         
             testAugment: function() {
 
@@ -193,7 +163,7 @@
                 var fired1 = false,
                     fired2 = false;
 
-                Y.on('handle|test:event', function() {
+                Y.on('handle, test:event', function() {
                     fired1 = true;
                 });
 
@@ -202,12 +172,12 @@
                 Y.Assert.isTrue(fired1);
                 Y.Assert.isFalse(fired2);
 
-                Y.detach('handle|test:event');
+                Y.detach('handle, test:event');
 
                 fired1 = false;
                 fired2 = false;
 
-                Y.on('handle|test:event', function() {
+                Y.on('handle, test:event', function() {
                     fired2 = true;
                 });
 
@@ -216,61 +186,36 @@
                 Y.Assert.isFalse(fired1);
                 Y.Assert.isTrue(fired2);
 
-                Y.detach('handle|test:event');
+                Y.detach('handle,test:event');
                 fired1 = false;
                 fired2 = false;
 
-                Y.after('handle|test:event', function(arg1) {
-                    Y.Assert.areEqual('orange', arg1);
+                Y.after('handle, test:event', function() {
                     Y.Assert.isTrue(fired1);
                     fired2 = true;
                 });
 
                 // comma or pipe
-                Y.on('handle|test:event', function(arg1) {
-                    Y.Assert.areEqual('orange', arg1);
+                Y.on('handle|test:event', function() {
                     Y.Assert.isFalse(fired2);
                     fired1 = true;
                 });
 
                 // testing on and after order
-                Y.fire('test:event', 'orange');
+                Y.fire('test:event');
 
                 fired1 = false;
                 fired2 = false;
 
                 // spaces after the comma or lack thereof should have
                 // no effect on the addition or removal of listeners
-                Y.detach('handle|test:event');
+                Y.detach('handle,test:event');
 
                 // added both an on listener and an after listener,
                 // then detached both
-                Y.fire('test:event', 'orange');
+                Y.fire('test:event');
                 Y.Assert.isFalse(fired1);
                 Y.Assert.isFalse(fired2);
-
-            },
-
-            testDetachAllByKey: function() {
-
-                var fired1 = false,
-                    fired2 = false;
-
-                Y.after('handle|event2', function() {
-                    fired2 = true;
-                });
-
-                Y.on('handle|event2', function() {
-                    fired1 = true;
-                });
-
-                // detachAll
-                Y.detach('handle|*');
-
-                Y.fire('event2');
-
-                Y.Assert.isFalse(fired1, 'fired1, the after listener should not have fired.');
-                Y.Assert.isFalse(fired2, 'fired2, the on listener should not have fired.');
 
             },
 
@@ -311,9 +256,7 @@
                 };
 
                 // configure chaining via global default or on the event target
-                YUI({ /* chain: true */ 
-                    base:'../../../build/'
-                }).use('*', function(Y2) {
+                YUI({ /* chain: true */ }).use('*', function(Y2) {
 
                     var o = new Y2.EventTarget({
                         prefix: 'foo',
@@ -335,9 +278,9 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                     Y.Assert.isTrue(fired5);  // verifies custom prefix
                     
                 });
-
             },
 
+            
             testObjType: function() {
                 var f1, f2;
                 Y.on({
@@ -352,251 +295,34 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 Y.Assert.isTrue(f2);
             },
 
-            testBubble: function() {
-                var count = 0,
-                    ret,
-                    config = {
-                        emitFacade: true,
-                        bubbles: true
-                    },
-                    a = new Y.EventTarget(config), 
-                    b = new Y.EventTarget(config);
-                    
-                b.addTarget(a);
-
-                // this should not be necessary
-                b.publish('test:foo');
-                    
-                a.on('test:foo', function() {
-                    count++;
-                });
-
-                ret = b.fire('test:foo', {}, b);
-
-                Y.Assert.areEqual(1, count);
-                Y.Assert.isTrue(ret);
-
-                b.on('test:foo', function(e) {
-                    e.stopPropagation();
-                });
-
-                ret = b.fire('test:foo', {}, b);
-
-                Y.Assert.areEqual(1, count);
-                Y.Assert.isFalse(ret);
-            },
-
             testPreventFnOnce: function() {
                 var count = 0;
-                Y.publish('y:foo1', {
+                Y.publish('y:foo', {
                     emitFacade: true,
                     preventedFn: function() {
-                        count++;
-                        Y.Assert.isTrue(this instanceof YUI);
+                        count++
                     }
                 });
 
-                Y.on('y:foo1', function(e) {
+                Y.on('y:foo', function(e) {
                     e.preventDefault();
-                });
-
-                Y.on('y:foo1', function(e) {
-                    e.preventDefault();
-                });
-
-                Y.fire('y:foo1');
-
-                Y.Assert.areEqual(1, count);
-            },
-
-            testDetachHandle: function() {
-                var count = 0, handle, handle2;
-                Y.publish('y:foo', {
-                    emitFacade: true
                 });
 
                 Y.on('y:foo', function(e) {
-                    count++;
-                    handle2.detach();
+                    e.preventDefault();
                 });
-
-                handle = Y.on('y:foo', function(e) {
-                    count += 100;
-                });
-
-                handle2 = Y.on('y:foo', function(e) {
-                    count += 1000;
-                });
-
-                Y.detach(handle);
 
                 Y.fire('y:foo');
 
                 Y.Assert.areEqual(1, count);
-
-                count = 0;
-
-                var handle3 = Y.on('y:click', function() {
-                    count++;
-                    handle3.detach();
-                });
-
-                Y.fire('y:click');
-                Y.fire('y:click');
-
-                var o = new Y.EventTarget();
-
-                count = 0;
-
-                o.on('foo', function(e) {
-                    count++;
-                });
-
-                o.on('foo', function(e) {
-                    count++;
-                });
-
-                o.detachAll();
-
-                o.fire('foo');
-
-                Y.Assert.areEqual(0, count);
-
-                var handle3 = Y.on('y:click', function() {
-                    count++;
-                });
-
-                // detachAll can't be allowed to work on the YUI instance.
-                Y.detachAll();
-
-                Y.fire('y:click');
-
-                Y.Assert.areEqual(1, count);
-            },
-
-            testBroadcast: function() {
-                var o = new Y.EventTarget(), s1, s2, s3, s4;
-
-                o.publish('y:foo2', {
-                    emitFacade: true,
-                    broadcast: 1
-                });
-
-                Y.on('y:foo2', function() {
-                    Y.log('Y foo2 executed');
-                    s1 = 1;
-                });
-
-                Y.Global.on('y:foo2', function() {
-                    Y.log('GLOBAL foo2 executed');
-                    s2 = 1;
-                });
-
-                o.fire('y:foo2');
-
-                Y.Assert.areEqual(1, s1);
-                Y.Assert.areNotEqual(1, s2);
-
-                s1 = 0;
-                s2 = 0;
-
-                o.publish('y:bar', {
-                    emitFacade: true,
-                    broadcast: 2
-                });
-
-                Y.on('y:bar', function() {
-                    Y.log('Y bar executed');
-                    s3 = 1;
-                });
-
-                Y.Global.on('y:bar', function() {
-                    Y.log('GLOBAL bar executed');
-                    s4 = 1;
-                });
-
-                o.fire('y:bar');
-
-                Y.Assert.areEqual(1, s3);
-                Y.Assert.areEqual(1, s4);
-            },
-
-            test_fire_once: function() {
-
-                var notified = 0;
-
-                Y.publish('fireonce', {
-                    fireOnce: true
-                });
-
-                Y.fire('fireonce', 'foo', 'bar');
-
-                Y.on('fireonce', function(arg1, arg2) {
-                    notified++;
-                    Y.Assert.areEqual('foo', arg1, 'arg1 not correct for lazy fireOnce listener')
-                    Y.Assert.areEqual('bar', arg2, 'arg2 not correct for lazy fireOnce listener')
-                });
-
-                Y.fire('fireonce', 'foo2', 'bar2');
-                Y.fire('fireonce', 'foo3', 'bar3');
-
-
-                Y.on('fireonce', function(arg1, arg2) {
-                    Y.log('the notification is asynchronous, so I need to wait for this test');
-                    Y.Assert.areEqual(1, notified, 'listener notified more than once.');
-                });
-            },
-
-            test_node_publish: function() {
-                var node = Y.one('#adiv');
-
-                var preventCount = 0, heard = 0;
-                node.publish('foo1', {
-                    emitFacade: true,
-                    // should only be called once
-                    preventedFn: function() {
-                        preventCount++;
-                        Y.Assert.isTrue(this instanceof Y.Node);
-                    }
-                });
-
-                node.on('foo1', function(e) {
-                    Y.Assert.areEqual('faking foo', e.type);
-                    Y.Assert.areEqual('foo1', e._type);
-                    heard++;
-                    e.preventDefault();
-                });
-
-                node.on('foo1', function(e) {
-                    heard++;
-                    e.preventDefault();
-                });
-
-                node.fire('foo1', {
-                    type: 'faking foo'
-                });
-
-                Y.Assert.areEqual(1, preventCount);
-                Y.Assert.areEqual(2, heard);
             }
 
         });
         
+
         Y.Test.Runner.add(testEventTarget);
         Y.Test.Runner.run();
     });
-
-   //  YUI({
-   //      base: "../../../build/",
-   //      filter: "debug",
-   //      combine: false,
-   //      useConsole: true,
-   //      logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, loader: true, get: true, widget: true}
-   //  }).use("datasource", function(Y) {
-   //      Y.log('loaded datasource: ' + Y.DataSource);
-   //  });
-
-
 })();
 </script>
 </body>
