@@ -169,6 +169,20 @@
 
                 Assert.isFalse(b.node.foo === a.node.foo);
 
+            },
+
+            test_each: function() {
+                Y.each(null, function(v, k) {
+                    // should not throw
+                });
+
+                Y.each('string', function(v, k) {
+                    // should not throw
+                });
+
+                Y.each(12345, function(v, k) {
+                    // should not throw
+                });
             }
 
         });
