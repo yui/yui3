@@ -116,7 +116,7 @@
              * @static
              * @private
              */
-            this.masterSuite /*:Y.Test.Suite*/ = new Y.Test.Suite("YUI Test Results");        
+            this.masterSuite /*:Y.Test.Suite*/ = new Y.Test.Suite("yuitests" + (new Date()).getTime());        
     
             /**
              * Pointer to the current node in the test tree.
@@ -793,7 +793,22 @@
                     this._resumeTest(test);                
                 }
     
-            },        
+            },            
+
+            //-------------------------------------------------------------------------
+            // Misc Methods
+            //-------------------------------------------------------------------------   
+
+            /**
+             * The name assigned to the master suite of the TestRunner. This is the name
+             * that is output as the root's name when results are retrieved.
+             * @param {String} name The name of the result set.
+             * @return {Void}
+             * @method setName
+             */
+            setName: function(name){
+                this.masterSuite.name = name;
+            },            
             
             //-------------------------------------------------------------------------
             // Protected Methods
@@ -839,6 +854,7 @@
              */
             clear : function () {
                 this.masterSuite.items = [];
+                this.masterSuite.name = "yuitests" + (new Date()).getTime();
             },
             
             /**

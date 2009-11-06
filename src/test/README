@@ -7,7 +7,9 @@ Documentation: http://developer.yahoo.com/yui/3/test
     * Added JUnit XML test results format.
     * Added TAP test results format.
     * Added getResults() method on TestRunner.
-    * Added isRunning() method on TestRunner.    
+    * Added isRunning() method on TestRunner.
+    * Added setName() method on TestRunner.
+    * Added coverage support, including getCoverage() on TestRunner and CoverageFormat.
 
 3.0.0
     * Added missing space in assert failure message (trac #2528058).
