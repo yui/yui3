@@ -1179,7 +1179,8 @@ YUI.add('attribute-complex', function(Y) {
          */
         _getAttrInitVal : function(attr, cfg, initValues) {
 
-            var val = (cfg.valueFn) ? cfg.valueFn.call(this) : cfg.value,
+            var val = cfg.value,
+                valFn = cfg.valueFn,
                 simple,
                 complex,
                 i,
@@ -1187,6 +1188,15 @@ YUI.add('attribute-complex', function(Y) {
                 path,
                 subval,
                 subvals;
+
+            if (valFn) {
+                if (!valFn.call) {
+                    valFn = this[valFn];
+                }
+                if (valFn) {
+                    val = valFn.call(this);
+                }
+            }
 
             if (!cfg.readOnly && initValues) {
 
