@@ -5,10 +5,24 @@
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script>
-YUI({ base: '../../../build/', filter: 'raw' }).use('console', 'test', function(Y) {
+YUI({ base: '../../../build/', filter: 'raw' }).use('console-filters', 'test', function(Y) {
     var testSuite = new Y.Test.Suite("Selector Test Suite"),
         doc = document,
         $ = Y.Selector.query;
+
+    Y.DOM.byTag = function (tag, root, test) {
+        var els = (root || document).getElementsByTagName(tag),
+            nodes = [],
+            i, len;
+
+        for (i = 0, len = els.length; i < len; ++i) {
+            if (!test || test(els[i])) {
+                nodes.push(els[i]);
+            }
+        }
+
+        return nodes;
+    };
 
     //Y.config.useBrowserConsole = false;
 
@@ -135,8 +149,10 @@ YUI({ base: '../../../build/', filter: 'raw' }).use('console', 'test', function(
 
     //create the console
     testSuite.reader = new Y.Console({
+        height: '90%',
         node: '#test-logger',
-        newestOnTop : false
+        newestOnTop : false,
+        plugins: [Y.Plugin.ConsoleFilters]
     }).render();
         
     Y.each(testSuite.css1Cases, function(test, testCase) {
@@ -222,21 +238,17 @@ YUI({ base: '../../../build/', filter: 'raw' }).use('console', 'test', function(
 </div>
 
 <style type="text/css">
-/* TODO: how to keep in head and have override dynamic stylesheets? */
-.yui-skin-sam .yui-console-bd {
-    height: auto !important;
-}
-
 .yui-console-entry-src {
     display: none;
 }
 
-.yui-console-entry-pass .yui-console-entry-cat {
-    background-color: green !important;
+.yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+    background: #070;
+    color: #fff;
 }
-
-.yui-console-entry-fail .yui-console-entry-cat {
-    background-color: red !important;
+.yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+    background: #700;
+    color: #fff;
 }
 
 .yui-skin-sam .yui-console-entry {
