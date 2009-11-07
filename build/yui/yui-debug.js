@@ -546,7 +546,7 @@ YUI.prototype = {
 
         } else {
             if (l) {
-                Y.log('Unable or not configured to fetch missing modules.', 'info', 'yui');
+                Y.message('Unable or not configured to fetch missing modules: ' + missing, 'info', 'yui');
             }
             Y.log('Attaching available dependencies.', 'info', 'yui');
             Y._attach(r);
@@ -1862,10 +1862,15 @@ O.some = function (o, f, c, proto) {
  * @param o The object from which to extract the property value
  * @param path {Array} A path array, specifying the object traversal path
  * from which to obtain the sub value.
- * @return {Any} The value stored in the path, undefined if not found.
- * Returns the source object if an empty path is provided.
+ * @return {Any} The value stored in the path, undefined if not found,
+ * undefined if the source is not an object.  Returns the source object 
+ * if an empty path is provided.
  */
 O.getValue = function (o, path) {
+    if (!Y.Lang.isObject(o)) {
+        return UNDEFINED;
+    }
+
     var p=Y.Array(path), l=p.length, i;
 
     for (i=0; o !== UNDEFINED && i < l; i=i+1) {
@@ -2262,13 +2267,14 @@ Y.Get = function() {
     _scriptNode = function(url, win, attributes) {
         var o = {
             id:   Y.guid(),
-            type: TYPE_JS,
-            src:  url
+            type: TYPE_JS
         };
 
         if (attributes) {
             Y.mix(o, attributes);
         }
+
+        o.src = url;
 
         return _node("script", o, win);
     },

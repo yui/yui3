@@ -595,7 +595,7 @@
 
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">l</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Unable or not configured to fetch missing modules.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">message</span><span class="o">(</span><span class="s1">&#39;Unable or not configured to fetch missing modules: &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
             <span class="o">}</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attaching available dependencies.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">r</span><span class="o">);</span>
