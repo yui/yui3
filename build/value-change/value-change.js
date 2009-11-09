@@ -48,6 +48,13 @@ function attachProxy (node, args) {
     // node.on(type, fn, o, ...);
     args[0] = ceName(node);
     args.splice(2,1);
+    
+    // if event-custom is loaded, then this is gonna do something.
+    // otherwise, it's basically just a no-op.
+    node.publish(args[0], {
+        broadcast : true,
+        emitFacade : true
+    });
 
     var registry = attachTriggers(node),
         proxyHandle = node.on.apply(node, args);
@@ -149,7 +156,7 @@ var registry = {},
                 _event : e,
                 target : node,
                 currentTarget : node
-            })
+            });
             
             valueHistory[key] = node.get("value");
             startPolling(node, e);
@@ -184,4 +191,4 @@ Y.Env.evt.plugins[eventName] = event;
 if (Y.Node) Y.Node.DOM_EVENTS[eventName] = event;
 
 
-}, '@VERSION@' ,{requires:['node-base', 'event-focus']});
+}, '@VERSION@' ,{optional:['event-custom'], requires:['node-base', 'event-focus']});
