@@ -9,7 +9,7 @@
 <h1>Namespace Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
-<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript" src="../../../build/oop/oop.js"></script>
 <script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
 <script type="text/javascript" src="../../../build/dom/dom.js"></script>
@@ -37,11 +37,28 @@
             testUse = new Y2.Test.Case({
                     name: "Usestar tests",
 
-
                 test_use_star: function () {
 
                     // Loader should not have been pulled in if dependencies are right
                     Y2.Assert.isUndefined(Y2.Loader);
+                } 
+
+            });
+            
+        });
+
+        YUI({
+            bootstrap: false
+        }).use("test", "blahblah", function(Y3) {
+
+            // Y.log('Use missing');
+            count++;
+
+            testUse = new Y3.Test.Case({
+                    name: "Usestar tests",
+
+                test_missing_message: function () {
+
                 } 
 
             });
@@ -56,7 +73,7 @@
 
             test_ran: function () {
                 // tests to make sure the use('*') callback executed
-                Y.Assert.areEqual(1, count);
+                Y.Assert.areEqual(2, count);
             } 
 
         });

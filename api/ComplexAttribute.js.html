@@ -121,7 +121,8 @@
 <span class="c">         */</span>
         <span class="nx">_getAttrInitVal</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">,</span> <span class="nx">initValues</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">cfg</span><span class="o">.</span><span class="nx">valueFn</span><span class="o">)</span> <span class="o">?</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">valueFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">:</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span><span class="o">,</span>
+            <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span><span class="o">,</span>
+                <span class="nx">valFn</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">valueFn</span><span class="o">,</span>
                 <span class="nx">simple</span><span class="o">,</span>
                 <span class="nx">complex</span><span class="o">,</span>
                 <span class="nx">i</span><span class="o">,</span>
@@ -129,6 +130,15 @@
                 <span class="nx">path</span><span class="o">,</span>
                 <span class="nx">subval</span><span class="o">,</span>
                 <span class="nx">subvals</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">valFn</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">valFn</span><span class="o">.</span><span class="nx">call</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">valFn</span> <span class="o">=</span> <span class="k">this</span><span class="o">[</span><span class="nx">valFn</span><span class="o">];</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">valFn</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">valFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">cfg</span><span class="o">.</span><span class="nx">readOnly</span> <span class="o">&amp;&amp;</span> <span class="nx">initValues</span><span class="o">)</span> <span class="o">{</span>
 

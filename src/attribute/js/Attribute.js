@@ -44,6 +44,7 @@
         IS_LAZY_ADD = "isLazyAdd",
 
         INVALID_VALUE,
+
         MODIFIABLE = {};
 
         // Properties which can be changed after the attribute has been added.
@@ -145,11 +146,15 @@
          *    <dt>value &#60;Any&#62;</dt>
          *    <dd>The initial value to set on the attribute</dd>
          *
-         *    <dt>valueFn &#60;Function&#62;</dt>
-         *    <dd>A function, which will return the initial value to set on the attribute. This is useful
+         *    <dt>valueFn &#60;Function | String&#62;</dt>
+         *    <dd>
+         *    <p>A function, which will return the initial value to set on the attribute. This is useful
          *    for cases where the attribute configuration is defined statically, but needs to 
          *    reference the host instance ("this") to obtain an initial value.
-         *    If defined, this precedence over the value property.</dd>
+         *    If defined, valueFn has precedence over the value property.</p>
+         *
+         *    <p>valueFn can also be set to a string, representing the name of the instance method to be used to retrieve the value.</p>
+         *    </dd>
          *
          *    <dt>readOnly &#60;boolean&#62;</dt>
          *    <dd>Whether or not the attribute is read only. Attributes having readOnly set to true
@@ -160,20 +165,37 @@
          *        can only have their values set once, be it through the default configuration, 
          *        constructor configuration arguments, or by invoking set.</dd>
          *
-         *    <dt>setter &#60;Function&#62;</dt>
-         *    <dd>The setter function used to massage or normalize the value passed to the set method for the attribute. 
+         *    <dt>setter &#60;Function | String&#62;</dt>
+         *    <dd>
+         *    <p>The setter function used to massage or normalize the value passed to the set method for the attribute. 
          *    The value returned by the setter will be the final stored value. Returning
          *    <a href="#property_Attribute.INVALID_VALUE">Attribute.INVALID_VALUE</a>, from the setter will prevent
-         *    the value from being stored.</dd>
-         *
-         *    <dt>getter &#60;Function&#62;</dt>
-         *    <dd>The getter function used to massage or normalize the value returned by the get method for the attribute.
+         *    the value from being stored.
+         *    </p>
+         *    
+         *    <p>setter can also be set to a string, representing the name of the instance method to be used as the setter function.</p>
+         *    </dd>
+         *      
+         *    <dt>getter &#60;Function | String&#62;</dt>
+         *    <dd>
+         *    <p>
+         *    The getter function used to massage or normalize the value returned by the get method for the attribute.
          *    The value returned by the getter function is the value which will be returned to the user when they 
-         *    invoke get.</dd>
+         *    invoke get.
+         *    </p>
          *
-         *    <dt>validator &#60;Function&#62;</dt>
-         *    <dd>The validator function invoked prior to setting the stored value. Returning
-         *    false from the validator function will prevent the value from being stored.</dd>
+         *    <p>getter can also be set to a string, representing the name of the instance method to be used as the getter function.</p>
+         *    </dd>
+         *
+         *    <dt>validator &#60;Function | String&#62;</dt>
+         *    <dd>
+         *    <p>
+         *    The validator function invoked prior to setting the stored value. Returning
+         *    false from the validator function will prevent the value from being stored.
+         *    </p>
+         *    
+         *    <p>validator can also be set to a string, representing the name of the instance method to be used as the validator function.</p>
+         *    </dd>
          *    
          *    <dt>broadcast &#60;int&#62;</dt>
          *    <dd>If and how attribute change events for this attribute should be broadcast. See CustomEvent's <a href="CustomEvent.html#property_broadcast">broadcast</a> property for 
@@ -234,7 +256,7 @@
                     if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
 
                     if(hasValue) {
-                        // We'll go through set, don't want to set value in _state directly
+                        // We'll go through set, don't want to set value in config directly
                         value = config.value;
                         delete config.value;
                     }
@@ -471,6 +493,10 @@
             val = host._getStateVal(name);
             getter = state.get(name, GETTER);
 
+            if (getter && !getter.call) {
+                getter = this[getter];
+            }
+
             val = (getter) ? getter.call(host, val, fullName) : val;
             val = (path) ? O.getValue(val, path) : val;
 
@@ -684,24 +710,36 @@
                 valid;
 
             if (validator) {
-                valid = validator.call(host, newVal, name);
+                if (!validator.call) { 
+                    // Assume string - trying to keep critical path tight, so avoiding Lang check
+                    validator = this[validator];
+                }
+                if (validator) {
+                    valid = validator.call(host, newVal, name);
 
-                if (!valid && initializing) {
-                    newVal = state.get(attrName, DEF_VALUE);
-                    valid = true; // Assume it's valid, for perf.
+                    if (!valid && initializing) {
+                        newVal = state.get(attrName, DEF_VALUE);
+                        valid = true; // Assume it's valid, for perf.
+                    }
                 }
             }
 
             if (!validator || valid) {
                 if (setter) {
-                    retVal = setter.call(host, newVal, name);
+                    if (!setter.call) {
+                        // Assume string - trying to keep critical path tight, so avoiding Lang check
+                        setter = this[setter];
+                    }
+                    if (setter) {
+                        retVal = setter.call(host, newVal, name);
 
-                    if (retVal === INVALID_VALUE) {
-                        Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
-                        allowSet = false;
-                    } else if (retVal !== undefined){
-                        Y.log('Attribute: ' + attrName + ', raw value: ' + newVal + ' modified by setter to:' + retVal, 'info', 'attribute');
-                        newVal = retVal;
+                        if (retVal === INVALID_VALUE) {
+                            Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
+                            allowSet = false;
+                        } else if (retVal !== undefined){
+                            Y.log('Attribute: ' + attrName + ', raw value: ' + newVal + ' modified by setter to:' + retVal, 'info', 'attribute');
+                            newVal = retVal;
+                        }
                     }
                 }
 
@@ -929,13 +967,23 @@
          * @private
          */
         _getAttrInitVal : function(attr, cfg, initValues) {
-
+            var val, valFn;
             // init value is provided by the user if it exists, else, provided by the config
-            var val = (!cfg[READ_ONLY] && initValues && initValues.hasOwnProperty(attr)) ?
-                            val = initValues[attr] :
-                            (cfg[VALUE_FN]) ?
-                                cfg[VALUE_FN].call(this) : 
-                                cfg[VALUE];
+            if (!cfg[READ_ONLY] && initValues && initValues.hasOwnProperty(attr)) {
+                val = initValues[attr];
+            } else {
+                val = cfg[VALUE];
+                valFn = cfg[VALUE_FN];
+ 
+                if (valFn) {
+                    if (!valFn.call) {
+                        valFn = this[valFn];
+                    }
+                    if (valFn) {
+                        val = valFn.call(this);
+                    }
+                }
+            }
 
             Y.log('initValue for ' + attr + ':' + val, 'info', 'attribute');
 

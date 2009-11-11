@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>YUI3 Build File</description>
-    <property environment="env" />
+    <description>DOM - Build All Modules</description>
 
-    <property file="build.properties" />
+    <target name="local">
+	<ant antfile="build.node.xml" target="local" />
+	<ant antfile="build.shim.xml" target="local" />
+	<ant antfile="build.align.xml" target="local" />
+    </target>
 
-    <import file="${builddir}/3.x/bootstrap.xml" 
-            description="Default Build Properties and Targets" />
+    <target name="deploy">
+	<ant antfile="build.node.xml" target="deploy" />
+	<ant antfile="build.shim.xml" target="deploy" />
+	<ant antfile="build.align.xml" target="deploy" />
+    </target>
+
+    <target name="all">
+	<ant antfile="build.node.xml" target="all" />
+	<ant antfile="build.shim.xml" target="all" />
+	<ant antfile="build.align.xml" target="all" />
+    </target>
+
 </project>

@@ -298,6 +298,11 @@ YUI.prototype = {
             name = r[i]; 
             m    = mods[name];
 
+            // console.log(name + '::' + m);
+
+            if (!m) {
+            }
+
             if (!attached[name] && m) {
 
                 attached[name] = true;
@@ -305,6 +310,9 @@ YUI.prototype = {
                 d   = m.details; 
                 req = d.requires; 
                 use = d.use;
+
+                // console.log(req);
+                // console.log(use);
 
                 if (req) {
                     this._attach(this.Array(req));
@@ -538,7 +546,7 @@ YUI.prototype = {
 
         } else {
             if (l) {
-                Y.log('Unable or not configured to fetch missing modules.', 'info', 'yui');
+                Y.message('Unable or not configured to fetch missing modules: ' + missing, 'info', 'yui');
             }
             Y.log('Attaching available dependencies.', 'info', 'yui');
             Y._attach(r);

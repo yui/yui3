@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Test Page</title>
-    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
     <link type="text/css" rel="stylesheet" href="../../../build/test/assets/test-console.css">
     <style type="text/css" id="styleblock" class="highlight-ignore">
         h1 {
@@ -60,7 +59,7 @@
     <button id="button_submit_with_value" type="submit" value="submit button value">content and value</button>
     <input type="button" id="input_button" value="input button">
     <input type="submit" id="input_submit" value="input submit">
-    <input type="image" id="input_image" src="404.png" value="input image">
+    <!--input type="image" id="input_image" src="404.png" value="input image"-->
 </form>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
@@ -526,8 +525,8 @@ suite.add(new Y.Test.Case({
             //button_submit           : $('button_submit').value,
             //button_submit_with_value: $('button_submit_with_value').value,
             input_button            : $('input_button').value,
-            input_submit            : $('input_submit').value,
-            input_image             : $('input_image').value
+            input_submit            : $('input_submit').value//,
+            //input_image             : $('input_image').value
         };
 
         Y.Assert.areSame('{'+
@@ -546,8 +545,8 @@ suite.add(new Y.Test.Case({
             //'"button_submit":"",'+
             //'"button_submit_with_value":"submit button value",'+
             '"input_button":"input button",'+
-            '"input_submit":"input submit",'+
-            '"input_image":"input image"}',
+            '"input_submit":"input submit"}',
+            //'"input_image":"input image"}',
             Y.JSON.stringify(data));
     }
 
@@ -961,7 +960,5 @@ Y.Test.Runner.run();
 
 });
 </script>
-<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
-<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
 </body>
 </html>

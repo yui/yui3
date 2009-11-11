@@ -59,9 +59,11 @@
         <span class="nx">A</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">,</span>
         <span class="nx">OP</span> <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span>
         <span class="nx">CLONE_MARKER</span> <span class="o">=</span> <span class="s2">&quot;_~yuim~_&quot;</span><span class="o">,</span>
+        <span class="nx">EACH</span> <span class="o">=</span> <span class="s1">&#39;each&#39;</span><span class="o">,</span>
+        <span class="nx">SOME</span> <span class="o">=</span> <span class="s1">&#39;some&#39;</span><span class="o">,</span>
 
         <span class="nx">dispatch</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="nx">action</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">action</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">[</span><span class="nx">action</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="nx">o</span><span class="o">[</span><span class="nx">action</span><span class="o">].</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">switch</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
@@ -241,7 +243,7 @@
 <span class="c">     * @return {YUI} the YUI instance</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">dispatch</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="s1">&#39;each&#39;</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">dispatch</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="nx">EACH</span><span class="o">);</span>
     <span class="o">};</span>
 
     <span class="c">/*</span>
@@ -258,7 +260,7 @@
 <span class="c">     * @return {boolean} true if the function ever returns true, false otherwise</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">some</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">dispatch</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="s1">&#39;some&#39;</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">dispatch</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="nx">SOME</span><span class="o">);</span>
     <span class="o">};</span>
 
     <span class="c">/**</span>

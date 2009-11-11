@@ -245,10 +245,15 @@
 <span class="c"> * @param o The object from which to extract the property value</span>
 <span class="c"> * @param path {Array} A path array, specifying the object traversal path</span>
 <span class="c"> * from which to obtain the sub value.</span>
-<span class="c"> * @return {Any} The value stored in the path, undefined if not found.</span>
-<span class="c"> * Returns the source object if an empty path is provided.</span>
+<span class="c"> * @return {Any} The value stored in the path, undefined if not found,</span>
+<span class="c"> * undefined if the source is not an object.  Returns the source object </span>
+<span class="c"> * if an empty path is provided.</span>
 <span class="c"> */</span>
 <span class="nx">O</span><span class="o">.</span><span class="nx">getValue</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">path</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">UNDEFINED</span><span class="o">;</span>
+    <span class="o">}</span>
+
     <span class="k">var</span> <span class="nx">p</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">path</span><span class="o">),</span> <span class="nx">l</span><span class="o">=</span><span class="nx">p</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 
     <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">o</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
