@@ -1,5 +1,6 @@
 YUI.add('ac-plugin', function(Y) {
 
+
 /**
  * <p>Node plugin that attaches autocomplete-related events and functionality
  * to a form element, most commonly an input element.</p>
@@ -14,18 +15,18 @@ var PRIVATE = {},
     HANDLE = "handle";
 
 /**
- * <p>Attach a new textchange event handler if necessary, possibly removing the old one
+ * <p>Attach a new valueChange event handler if necessary, possibly removing the old one
  * if the delay value is changing.</p>
  *
  * @private
  * @param who {Object} The plugin object.
  * @param host {Object} The node that we're plugged into.
  * @param id {String} The stamp on the plugin
- * @param delay {Number} The keyDelay value to use with the textchange event.
+ * @param delay {Number} The keyDelay value to use with the valueChange event.
  **/
 function attachTCHandler (who, host, id, delay) {
     // If we're changing something, remove the pre-existing listener, and create a new one.
-    // Note that the problems with textchange's detach stuff come back to bite me here,
+    // Note that the problems with valueChange's detach stuff come back to bite me here,
     // so I have to be careful to only ever use handle.detach() and Y.on to attach it,
     // Not Node.on or Node.detach!
     if (
@@ -43,7 +44,7 @@ function attachTCHandler (who, host, id, delay) {
     }
     // store a private reference to the event handle.
     PRIVATE[id][HANDLE] = Y.on(
-        "textchange",
+        "valueChange",
         tcHandler,
         Y.one(host),
         who,
@@ -52,7 +53,7 @@ function attachTCHandler (who, host, id, delay) {
 };
 
 /**
- * <p>The function that gets called when the textchange event fires.</p>
+ * <p>The function that gets called when the valueChange event fires.</p>
  *
  * @private
  **/
@@ -95,7 +96,7 @@ function handleQuery (e, val) {
  * the renderer is expecting.</p>
  * <p>Basically, you can send it anything, but if it's something unusual,
  * then your renderer widget ought to know what to do with it.</p>
- * <p>Fires the "ac:render" event.</p>
+ * <p>Fires the "ac:load" event.</p>
  *
  * @private
  * @param e {Object} Response object from a DataSource, or something that the renderer
@@ -103,17 +104,18 @@ function handleQuery (e, val) {
  **/
 function handleQueryResponse (e) {
     var data = (e && e.response && e.response.results) ? e.response.results : e;
-    this.fire("ac:render", {results : data});
+    this.fire("ac:load", {results : data});
 };
 
 /**
- * <p>The default behavior for the ac:render event.  If there is a "widget" member,
+ * <p>The default behavior for the ac:load event.  If there is a "widget" member,
  * then call it's render() method, passing in the data object.</p>
  *
  * @private
  * @param e {Object} Response object from the event that was fired.  Should
  * have the result data on the "results" member.
  **/
+// @TODO: Delete this?  Just have the widget listen for it.
 function showResults (e) {
     var widget = this.get("widget");
     if (widget) widget.render(e.results);
@@ -171,7 +173,7 @@ ACPlugin.ATTRS = {
      *
      * @type String
      **/
-    queryValue     : {
+    queryValue : {
         // @TODO: Support delimiters here.
         // Split, get the cursor position, and return just the one that's active.
         // Same goes for setting.
@@ -186,11 +188,14 @@ ACPlugin.ATTRS = {
     
     /**
      * <p>The time in ms to wait after a key event before triggering a query.</p>
-     * <p>If the value is changed, then set up a new textchange handler.</p>
+     * <p>If the value is changed, then set up a new valueChange handler.</p>
      * @type Number
      **/
-    keyDelay     : {
+    keyDelay : {
         value : 50,
+        // @TODO add a validator
+        // In the initializer, subscribe to the after event, rather than calling
+        // attachTCHandler here.
         setter : function (t) {
             t = +t;
             if (isNaN(t)) return this.get("keyDelay");
@@ -203,14 +208,14 @@ ACPlugin.ATTRS = {
      * <p>Without this, the default behavior of ac:query is a no-op.</p>
      * @type Object
      **/
-    dataSource     : { value : null },
+    dataSource : { value : null },
     
     /**
      * <p>Set to trigger "delimited" mode.</p>
      * @TODO: Implement this.
      * @type String
      **/
-    delimiter      : { value : null },
+    delimiter : { value : null },
     
     /**
      * <p>The minimum number of characters to require before triggering an ac:query event.</p>
@@ -228,7 +233,7 @@ ACPlugin.ATTRS = {
      * have an autocomplete plugin that always sends the same query, but that's a bit silly.)</p>
      * @type String
      **/
-    queryTemplate  : { value : "{query}" },
+    queryTemplate : { value : "{query}" },
     
     /**
      * <p>The widget that responds to the render(data) call when results return from the
@@ -236,7 +241,7 @@ ACPlugin.ATTRS = {
      * will work just fine.</p>
      * @type Object
      **/
-    widget         : { value : null }
+    widget : { value : null }
 };
 
 
@@ -245,18 +250,18 @@ Y.extend(ACPlugin, Y.Plugin.Base, {
         var host = this.get("host"),
             id = Y.stamp(this);
         
-        // stash the private textchange handle, so we can remove it later.
-        // @FIXME: there are some issues with removing textchange. That may
+        // stash the private valueChange handle, so we can remove it later.
+        // @FIXME: there are some issues with removing valueChange. That may
         // need to be reworked, but as long as there's no unplugging, it's ok
         // for now.
         if (!(id in PRIVATE)) {
             PRIVATE[id] = {};
         }
         
-        // attach the textchange handler, if it isn't already.
+        // attach the valueChange handler, if it isn't already.
         attachTCHandler(this, host, id, this.get("keyDelay"));
         
-        // in addition to the textchange event, pressing down or enter will force it to trigger a query
+        // in addition to the valueChange event, pressing down or enter will force it to trigger a query
         // right away, even if the timeout has not happened yet, or the value hasn't changed.
         // Note that enter usually will submit the form, but if it doesn't, then it'll do this, instead.
         Y.on("key", Y.bind(tcHandler, this), host, "down:13,10,40");
@@ -272,12 +277,12 @@ Y.extend(ACPlugin, Y.Plugin.Base, {
         
         // publish the events
         this.publish("ac:query", {
-            broadcast : true,
+            broadcast : 1,
             defaultFn : handleQuery,
             prefix : "ac"
         });
-        this.publish("ac:render", {
-            broadcase : true,
+        this.publish("ac:load", {
+            broadcast : 1,
             defaultFn : showResults,
             prefix : "ac"
         });
@@ -286,7 +291,7 @@ Y.extend(ACPlugin, Y.Plugin.Base, {
         this.handleQueryResponse = Y.bind(handleQueryResponse, this);
     },
     destroy : function () {
-        // remove the textchange handler.
+        // remove the valueChange handler.
         var id = Y.stamp(this),
             priv = PRIVATE[id];
         priv[HANDLE].detach();
@@ -303,7 +308,7 @@ ACPlugin.NS = "ac";
 Y.namespace("Plugin").ACPlugin = ACPlugin;
 
 
-}, '@VERSION@' ,{requires:['node-base', 'plugin', 'text-change', 'event-key']});
+}, '@VERSION@' ,{requires:['node-base', 'plugin', 'value-change', 'event-key']});
 
 
 YUI.add('autocomplete', function(Y){}, '@VERSION@' ,{use:['ac-plugin']});
