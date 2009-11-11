@@ -656,7 +656,7 @@ Y.mix(Node.prototype, {
      */
     replace: function(newNode) {
         var node = this._node;
-        node.parentNode.replaceChild(newNode, node);
+        node.parentNode.replaceChild(Y.Node.getDOMNode(newNode), node);
         return this;
     },
 
