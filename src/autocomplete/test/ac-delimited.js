@@ -17,7 +17,7 @@ Y.extend(ACDelimited, Y.Plugin.Base, {
         var host = this.get("host");
         // this is not the valueChange event, but rather a listener
         // on the host's "value" attribute is set via myAC.set("value")
-        this.handle = host.on("valueGet", handleChange(this));
+        
         
     },
     destructor : function () {

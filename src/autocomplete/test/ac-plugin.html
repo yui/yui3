@@ -35,10 +35,37 @@ script[src] {
 .lipsum { display:none; }
 </style>
 
+<style>
+form {
+    position:relative;
+}
+#aclist {
+    position:absolute;
+    display:none;
+    list-style:none;
+    border:1px solid #ccc;
+    border-width:1px 1px 0;
+    padding:0;
+    margin:0;
+    background:#fff;
+}
+#aclist li {
+    display:block;
+    list-style:none;
+    border-bottom:1px solid #ccc;
+    padding:3px;
+    margin:0;
+}
+#aclist .selected {
+    background:#900;
+    color:#fff;
+}
+</style>
+
 </head>
 <body>
     <form>
-        <input class="input" id="input" value="change me!" size="100">
+        <input class="input" id="input" size="100"><ul id="aclist"></ul>
     </form>
 </body>
 
@@ -54,8 +81,8 @@ YUI({
 }).use('ac-plugin', 'plugin', 'node-base', 'datasource', function (Y) {
     window.Y = Y;
 
-    var ac = window.ac = Y.get("#input");
-    ac.plug(Y.Plugin.ACPlugin);
+    var input = window.input = Y.get("#input");
+    input.plug(Y.Plugin.ACPlugin);
     
   
     var myDS = new Y.DataSource.Get({
@@ -71,7 +98,7 @@ YUI({
         }
     }});
 
-    ac.plug(Y.Plugin.ACPlugin, {
+    input.plug(Y.Plugin.ACPlugin, {
         queryTemplate : function (q) { return "q=" + encodeURIComponent(
             "select * from search.suggest where query =\"" +
             q.replace(/(["\\])/g, '\\$1') +
@@ -79,14 +106,95 @@ YUI({
         )},
         dataSource : myDS
     });
+    
+    var myWidget = (function () {
+        var data = [],
+            node = Y.one('#aclist'),
+            selected = -1;
+        
+        return {
+            setData : function (d) {
+                if (d.length) data = d;
+                return this;
+            },
+            render : function () {
+                console.log("render");
+                if (!data.length) return this;
+                this.visible = true;
+                selected = -1;
+                node.set("innerHTML", "");
+                for (var i = 0, l = data.length; i < l; i ++) {
+                    node.appendChild(Y.Node.create("<li>"+data[i]+"</li>"));
+                }
+                node.setStyle("display", "block");
+                return this;
+            },
+            hide : function () {
+                data = [];
+                node.setStyle("display", "none");
+                this.visible = false;
+                return this;
+            },
+            focus : function (i) {
+                i = i || selected;
+                console.log("focus on ",i, data, data[i]);
+                if (!data.length) return this;
+                if (i >= data.length) i = 0;
+                if (i < 0) i = data.length - 1;
+                
+                var list = node.all("li"),
+                    current = node.one(".selected"),
+                    intent = list.item(i);
+                console.log("list", list, "current", current, "intent", intent, intent === current);
+                if (!intent || intent === current) return this;
+                selected = i;
+                if (current) current.removeClass("selected");
+                intent.addClass("selected");
+                return this;
+            },
+            next : function () {
+                console.log("mywidget.next");
+                selected = selected || 0;
+                selected ++;
+                return this.focus(selected);
+            },
+            previous : function () {
+                selected = selected || data.length;
+                selected --;
+                return this.focus(selected);
+            },
+            getValue : function () {
+                if (!data.length || !data[selected]) return "";
+                return data[selected];
+            }
+        };
+    })();
+        
 
-    // ac.ac.on("ac:query", function (e) {
-    //     // console.log(" ac:query", e);
-    // });
-    ac.ac.on("ac:load", function (e) {
-        console.log(" ac:render", e, e.results);
+    input.ac.on("ac:load", function (e) {
+        console.log(" ac:load", e, e.results);
+        myWidget.setData(e.results).render();
     });
-
+    input.ac.on("ac:query", function (e) {
+        if (myWidget.visible && e.value === myWidget.value) {
+            console.log("Cancelling ac:query");
+            e.halt();
+        }
+        myWidget.value = e.value;
+    });
+    input.ac.on("ac:show", function () {
+        if (!myWidget.visible) myWidget.render;
+    }, myWidget);
+    // input.ac.on("ac:show", myWidget.render, myWidget);
+    input.ac.on("ac:hide", myWidget.hide, myWidget);
+    input.ac.on("ac:next", myWidget.next, myWidget);
+    input.ac.on("ac:previous", myWidget.previous, myWidget);
+    Y.on("key", function (e) {
+        console.log("enter!", e);
+        input.ac.set("queryValue", myWidget.getValue());
+        myWidget.hide();
+        e.preventDefault();
+    }, input, "down:13,10");
     
 });
 </script>

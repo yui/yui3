@@ -13,7 +13,7 @@ ACPlugin.NS = "ac";
 function attachHandles (self, host) {
     return [
         Y.on("valueChange", self.open, host, self),
-        Y.on("key", self.next, host, "down:13,10,40", self),
+        Y.on("key", self.next, host, "down:40", self),
         Y.on("key", self.previous, host, "down:38", self),
         Y.on("key", self.close, host, "down:27", self)
     ];
@@ -112,17 +112,24 @@ Y.extend(ACPlugin, Y.Plugin.Base, {
         var self = this;
         if (!force && self[paused]) return;
         var value = self.get("queryValue");
-        if (value.length > self.get("minQueryLength")) {
+        if (value === self._cachedValue) self.fire("ac:show");
+        self._cachedValue = value;
+        if (value.length >= self.get("minQueryLength")) {
+            console.log("fire query");
             self.fire("ac:query", { value : value });
-        } else {
-            self.fire("ac:hide");
         }
+        // else {
+        //     self.fire("ac:hide");
+        // }
     },
-    next : function () {
-        self.fire("ac:next");
+    next : function (e) {
+        console.log("fire next");
+        if (e && e.halt()) e.halt();
+        this.fire("ac:next");
     },
-    previous : function () {
-        self.fire("ac:previous");
+    previous : function (e) {
+        if (e && e.halt()) e.halt();
+        this.fire("ac:previous");
     },
     close : function (force) {
         if (!force && this[paused]) return;
