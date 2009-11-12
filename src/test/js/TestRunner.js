@@ -62,7 +62,8 @@
                 passed : 0,
                 failed : 0,
                 total : 0,
-                ignored : 0
+                ignored : 0,
+                duration: 0
             };
             
             //initialize results
@@ -459,7 +460,8 @@
                     node.parent.results.passed += node.results.passed;
                     node.parent.results.failed += node.results.failed;
                     node.parent.results.total += node.results.total;                
-                    node.parent.results.ignored += node.results.ignored;                
+                    node.parent.results.ignored += node.results.ignored;       
+                    node.parent.results.duration += node.results.duration;
                     node.parent.results[node.testObject.name] = node.results;
                 
                     if (node.testObject instanceof Y.Test.Suite){
@@ -497,7 +499,7 @@
                     if (this._cur == this._root){
                         this._cur.results.type = "report";
                         this._cur.results.timestamp = (new Date()).toLocaleString();
-                        this._cur.results.duration = (new Date()) - this._cur.results.duration;   
+                        //this._cur.results.duration = (new Date()) - this._cur.results.duration;   
                         this._lastResults = this._cur.results;
                         this._running = false;                         
                         this.fire(this.COMPLETE_EVENT, { results: this._lastResults});
@@ -690,12 +692,16 @@
                 //run the tear down
                 testCase.tearDown();
                 
+                //calculate duration
+                var duration = (new Date()) - node._start;
+                
                 //update results
                 node.parent.results[testName] = { 
                     result: failed ? "fail" : "pass",
                     message: error ? error.getMessage() : "Test passed",
                     type: "test",
-                    name: testName
+                    name: testName,
+                    duration: duration
                 };
                 
                 if (failed){
@@ -704,6 +710,7 @@
                     node.parent.results.passed++;
                 }
                 node.parent.results.total++;
+                node.parent.results.duration += duration;
     
                 //set timeout not supported in all environments
                 if (typeof setTimeout != "undefined"){
@@ -785,6 +792,9 @@
                     }
     
                 } else {
+                
+                    //mark the start time
+                    node._start = new Date();
                 
                     //run the setup
                     testCase.setUp();
@@ -956,7 +966,7 @@
                 runner._buildTestTree();
                             
                 //set when the test started
-                runner._root.results.duration = (new Date()).valueOf();
+                //runner._root.results.duration = (new Date()).valueOf();
                 
                 //fire the begin event
                 runner.fire(runner.BEGIN_EVENT);
