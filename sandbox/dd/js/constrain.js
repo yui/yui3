@@ -172,7 +172,7 @@ YUI.add('dd-constrain', function(Y) {
         * @description Fires on drag:start and clears the _regionCache
         */
         _handleStart: function() {
-            this._regionCache = null;
+            this.resetCache();
         },
         /**
         * @private
@@ -188,6 +188,13 @@ YUI.add('dd-constrain', function(Y) {
         */
         _cacheRegion: function() {
             this._regionCache = this.get(CON_2_NODE).get('region');
+        },
+        /**
+        * @method resetCache
+        * @description Reset the internal region cache.
+        */
+        resetCache: function() {
+            this._regionCache = null;
         },
         /**
         * @method getRegion
