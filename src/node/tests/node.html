@@ -792,7 +792,14 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
                 newNode = document.createElement('div');
 
             node.replace(newNode);
-            Assert.areEqual(newNode, Y.get('#test-replace').get('firstChild')._node, 'node.replace()');
+            Assert.areEqual(newNode, Y.get('#test-replace').get('firstChild')._node, 'node.replace(domNode)');
+
+            node = Y.get('#test-replace').get('firstChild');
+            newNode = Y.Node.create('<div/>');
+            console.log(node);
+            node.replace(newNode);
+            Assert.areEqual(newNode, Y.get('#test-replace').get('firstChild'), 'node.replace()');
+            Assert.areEqual(newNode._node, Y.get('#test-replace').get('firstChild')._node, 'node.replace()');
         },
 
         test_elements: function() {

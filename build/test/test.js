@@ -265,7 +265,8 @@ YUI.add('test', function(Y) {
                 passed : 0,
                 failed : 0,
                 total : 0,
-                ignored : 0
+                ignored : 0,
+                duration: 0
             };
             
             //initialize results
@@ -662,7 +663,8 @@ YUI.add('test', function(Y) {
                     node.parent.results.passed += node.results.passed;
                     node.parent.results.failed += node.results.failed;
                     node.parent.results.total += node.results.total;                
-                    node.parent.results.ignored += node.results.ignored;                
+                    node.parent.results.ignored += node.results.ignored;       
+                    node.parent.results.duration += node.results.duration;
                     node.parent.results[node.testObject.name] = node.results;
                 
                     if (node.testObject instanceof Y.Test.Suite){
@@ -700,7 +702,7 @@ YUI.add('test', function(Y) {
                     if (this._cur == this._root){
                         this._cur.results.type = "report";
                         this._cur.results.timestamp = (new Date()).toLocaleString();
-                        this._cur.results.duration = (new Date()) - this._cur.results.duration;   
+                        //this._cur.results.duration = (new Date()) - this._cur.results.duration;   
                         this._lastResults = this._cur.results;
                         this._running = false;                         
                         this.fire(this.COMPLETE_EVENT, { results: this._lastResults});
@@ -893,12 +895,16 @@ YUI.add('test', function(Y) {
                 //run the tear down
                 testCase.tearDown();
                 
+                //calculate duration
+                var duration = (new Date()) - node._start;
+                
                 //update results
                 node.parent.results[testName] = { 
                     result: failed ? "fail" : "pass",
                     message: error ? error.getMessage() : "Test passed",
                     type: "test",
-                    name: testName
+                    name: testName,
+                    duration: duration
                 };
                 
                 if (failed){
@@ -907,6 +913,7 @@ YUI.add('test', function(Y) {
                     node.parent.results.passed++;
                 }
                 node.parent.results.total++;
+                node.parent.results.duration += duration;
     
                 //set timeout not supported in all environments
                 if (typeof setTimeout != "undefined"){
@@ -988,6 +995,9 @@ YUI.add('test', function(Y) {
                     }
     
                 } else {
+                
+                    //mark the start time
+                    node._start = new Date();
                 
                     //run the setup
                     testCase.setUp();
@@ -1159,7 +1169,7 @@ YUI.add('test', function(Y) {
                 runner._buildTestTree();
                             
                 //set when the test started
-                runner._root.results.duration = (new Date()).valueOf();
+                //runner._root.results.duration = (new Date()).valueOf();
                 
                 //fire the begin event
                 runner.fire(runner.BEGIN_EVENT);
@@ -2472,7 +2482,7 @@ YUI.add('test', function(Y) {
                 //equivalent to testcase in JUnit
                 case "test":
                     if (results.result != "ignore"){
-                        xml = "<testcase name=\"" + xmlEscape(results.name) + "\">";
+                        xml = "<testcase name=\"" + xmlEscape(results.name) + "\" time=\"" + (results.duration/1000) + "\">";
                         if (results.result == "fail"){
                             xml += "<failure message=\"" + xmlEscape(results.message) + "\"><![CDATA[" + results.message + "]]></failure>";
                         }
@@ -2483,7 +2493,7 @@ YUI.add('test', function(Y) {
                 //equivalent to testsuite in JUnit
                 case "testcase":
                 
-                    xml = "<testsuite name=\"" + xmlEscape(results.name) + "\" tests=\"" + results.total + "\" failures=\"" + results.failed + "\">";
+                    xml = "<testsuite name=\"" + xmlEscape(results.name) + "\" tests=\"" + results.total + "\" failures=\"" + results.failed + "\" time=\"" + (results.duration/1000) + "\">";
                     
                     Y.Object.each(results, function(value){
                         if (l.isObject(value) && !l.isArray(value)){
