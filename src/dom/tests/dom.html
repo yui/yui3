@@ -3,16 +3,7 @@
 <head>
 <title>DOM Test Suite</title>
 
-<link type="text/css" rel="stylesheet" href="../../../../yui2/build/logger/assets/logger.css">
-<link type="text/css" rel="stylesheet" href="../../../../yui2/build/yuitest/assets/testlogger.css">     
-
 <script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
-
-<script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/event/event.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/logger/logger-min.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/yuitest/yuitest.js"></script>
 
 <style>
 
@@ -42,13 +33,21 @@ form {
 #ft {
     opacity: 0.75;
 }
+.yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+    background: #070;
+    color: #fff;
+}
+.yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+    background: #700;
+    color: #fff;
+}
 </style>
 
 <style type="text/css">
 
 </style>
 </head>
-<body>
+<body class="yui-skin-sam">
     <div id="doc">
         <div id="hd"><h1>Page Header</h1></div>
         <div id="bd">
@@ -120,13 +119,12 @@ form {
         </div>
     </div>
 <script type="text/javascript">
-    YUI({ base: '../../../build/', filter: 'raw'}).use('dom', function(Y) {
-        tool = YAHOO.tool,
-        Assert = YAHOO.util.Assert,
-        ArrayAssert = YAHOO.util.ArrayAssert,
-        suite = new tool.TestSuite("yuisuite");
+    YUI({ base: '../../../build/', filter: 'raw'}).use('console', 'test', function(Y) {
+        Assert = Y.Assert,
+        ArrayAssert = Y.ArrayAssert,
+        suite = new Y.Test.Suite("yuisuite");
 
-        var logger = new YAHOO.tool.TestLogger(null, { height: '80%' });
+        new Y.Console({ height: '80%' }).render();
 
         var doc = document.getElementById('doc'),
             hd = document.getElementById('hd'),
@@ -143,7 +141,7 @@ form {
             foo = document.getElementById('foo'),
             tmp = document.createElement('div');
 
-        suite.add( new tool.TestCase({
+        suite.add( new Y.Test.Case({
             name: 'DOM',
 
             test_byId: function() {
@@ -692,12 +690,12 @@ form {
             }
 
         })); 
-        tool.TestRunner.add(suite);
+        Y.Test.Runner.add(suite);
 
         if (parent && parent != window) {
-            tool.TestManager.load();
+            Y.Test.Manager.load();
         } else {
-            tool.TestRunner.run();
+            Y.Test.Runner.run();
         }
 
 });
