@@ -90,7 +90,7 @@
                 //equivalent to testcase in JUnit
                 case "test":
                     if (results.result != "ignore"){
-                        xml = "<testcase name=\"" + xmlEscape(results.name) + "\">";
+                        xml = "<testcase name=\"" + xmlEscape(results.name) + "\" time=\"" + (results.duration/1000) + "\">";
                         if (results.result == "fail"){
                             xml += "<failure message=\"" + xmlEscape(results.message) + "\"><![CDATA[" + results.message + "]]></failure>";
                         }
@@ -101,7 +101,7 @@
                 //equivalent to testsuite in JUnit
                 case "testcase":
                 
-                    xml = "<testsuite name=\"" + xmlEscape(results.name) + "\" tests=\"" + results.total + "\" failures=\"" + results.failed + "\">";
+                    xml = "<testsuite name=\"" + xmlEscape(results.name) + "\" tests=\"" + results.total + "\" failures=\"" + results.failed + "\" time=\"" + (results.duration/1000) + "\">";
                     
                     Y.Object.each(results, function(value){
                         if (l.isObject(value) && !l.isArray(value)){
