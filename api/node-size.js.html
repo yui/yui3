@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: shim-plugin   node-ie.js  (YUI Library)</title>
+	<title>API: align-plugin   node-size.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,11 +16,11 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>shim-plugin&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>align-plugin&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_shim-plugin.html" title="shim-plugin">shim-plugin</a>
+            &gt; <a href="./module_align-plugin.html" title="align-plugin">align-plugin</a>
                 
-                 &gt; node-ie.js (source view) 
+                 &gt; node-size.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,39 +47,44 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="k">if</span> <span class="o">(!</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">hasAttribute</span><span class="o">)</span> <span class="o">{</span> <span class="c">// IE &lt; 8</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">hasAttribute</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="nx">attr</span><span class="o">)</span> <span class="o">!==</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
-    <span class="o">};</span>
-<span class="o">}</span>
+                        <div class="highlight" ><pre><span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">,</span> <span class="o">{</span>
+    <span class="nx">offsetHeight</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">h</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">setHeight</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="nx">h</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">h</span><span class="o">;</span>
+        <span class="o">},</span>
 
-<span class="c">// IE throws error when setting input.type = &#39;hidden&#39;,</span>
-<span class="c">// input.setAttribute(&#39;type&#39;, &#39;hidden&#39;) and input.attributes.type.value = &#39;hidden&#39;</span>
-<span class="c"></span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;hidden&#39;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">try</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;hidden&#39;</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;display&#39;</span><span class="o">,</span> <span class="s1">&#39;none&#39;</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_inputType</span> <span class="o">=</span> <span class="s1">&#39;hidden&#39;</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">try</span> <span class="o">{</span> <span class="c">// IE errors when changing the type from &quot;hidden&#39;</span>
-<span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;error setting type: &#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;node&#39;</span><span class="o">);</span>
-            <span class="o">}</span>
+        <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">offsetHeight</span><span class="o">;</span>
         <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
     <span class="o">},</span>
 
-    <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_inputType</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">type</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="nx">offsetWidth</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">w</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">setWidth</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="nx">w</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">w</span><span class="o">;</span>
+        <span class="o">},</span>
 
-    <span class="nx">_bypassProxy</span><span class="o">:</span> <span class="kc">true</span> <span class="c">// don&#39;t update DOM when using with Attribute</span>
-<span class="c"></span><span class="o">};</span>
+        <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">offsetWidth</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="o">{</span>
+    <span class="nx">sizeTo</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">size</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">node</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">size</span><span class="o">,</span> <span class="kc">true</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">size</span><span class="o">);</span>
+            <span class="nx">size</span> <span class="o">=</span> <span class="o">[</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;offsetWidth&#39;</span><span class="o">),</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="o">)];</span>
+        <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">setAttrs</span><span class="o">({</span>
+            <span class="nx">width</span><span class="o">:</span> <span class="nx">size</span><span class="o">[</span><span class="m">0</span><span class="o">],</span>
+            <span class="nx">height</span><span class="o">:</span> <span class="nx">size</span><span class="o">[</span><span class="m">1</span><span class="o">]</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">});</span>
 </pre></div>
 
                     </div>
@@ -91,7 +96,7 @@
                     <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class="selected"><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
@@ -125,7 +130,7 @@
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class="selected"><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -142,14 +147,17 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Plugin.Shim.html" title="Plugin.Shim">Plugin.Shim</a></li>
+                                <li class=""><a href="Plugin.Align.html" title="Plugin.Align">Plugin.Align</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="node-ie.js.html" title="node-ie.js">node-ie.js</a></li>
+                                <li class=""><a href="align-plugin.js.html" title="align-plugin.js">align-plugin.js</a></li>
+                                <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
+                                <li class=""><a href="node-pluginhost.js.html" title="node-pluginhost.js">node-pluginhost.js</a></li>
+                                <li class="selected"><a href="node-size.js.html" title="node-size.js">node-size.js</a></li>
                         </ul>
                     </div>
 
@@ -166,7 +174,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Shim", "name": "destroy", "url": "Plugin.Shim.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.Shim", "name": "Shim.CLASS_NAME", "url": "Plugin.Shim.html#property_Shim.CLASS_NAME", "type": "property"}, {"access": "", "host": "Plugin.Shim", "name": "Shim.TEMPLATE", "url": "Plugin.Shim.html#property_Shim.TEMPLATE", "type": "property"}, {"access": "", "host": "Plugin.Shim", "name": "sync", "url": "Plugin.Shim.html#method_sync", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Align", "name": "center", "url": "Plugin.Align.html#method_center", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "destroy", "url": "Plugin.Align.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "Node.plug", "url": "Plugin.Align.html#method_Node.plug", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "Node.unplug", "url": "Plugin.Align.html#method_Node.unplug", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "to", "url": "Plugin.Align.html#method_to", "type": "method"}];
 </script>
 </body>
 </html>

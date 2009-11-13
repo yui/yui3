@@ -130,14 +130,13 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Removes the shim from the DOM</span>
+<span class="c">         * Removes the shim and destroys the plugin</span>
 <span class="c">         * @method destroy</span>
 <span class="c">         */</span>
         <span class="nx">destroy</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">shim</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_shim</span><span class="o">;</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">shim</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">shim</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;parentNode&#39;</span><span class="o">).</span><span class="nx">removeChild</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_shim</span><span class="o">);</span>
-                <span class="nx">shim</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                <span class="nx">shim</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
@@ -160,6 +159,7 @@
                     <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
