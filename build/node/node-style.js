@@ -103,16 +103,17 @@ Y.mix(Y.Node.ATTRS, {
 });
 
 Y.mix(Y.Node.prototype, {
-    sizeTo: function(size) {
+    sizeTo: function(w, h) {
         var node;
-        if (!Y.Lang.isArray(size, true)) {
-            node = Y.one(size);
-            size = [node.get('offsetWidth'), node.get('offsetHeight')];
+        if (arguments.length < 2) {
+            node = Y.one(w);
+            w = node.get('offsetWidth');
+            h = node.get('offsetHeight');
         }
 
         this.setAttrs({
-            width: size[0],
-            height: size[1]
+            offsetWidth: w,
+            offsetHeight: h
         });
     }
 });
