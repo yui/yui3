@@ -143,6 +143,7 @@ var NOT_FOUND = {},
     NODEBASE = 'node-base',
     NODESTYLE = 'node-style',
     NODESCREEN = 'node-screen',
+    NODEPLUGINHOST = 'node-pluginhost',
     OOP = 'oop',
     PLUGINHOST = 'pluginhost',
     SELECTORCSS2 = 'selector-css2',
@@ -240,6 +241,14 @@ var NOT_FOUND = {},
             plugins: {
                 'node-event-simulate': {
                     requires: [NODEBASE, 'event-simulate']
+                },
+
+                'align-plugin': {
+                    requires: [NODESCREEN, NODEPLUGINHOST]
+                },
+
+                'shim-plugin': {
+                    requires: [NODESTYLE, NODEPLUGINHOST]
                 }
             }
         },
@@ -638,9 +647,9 @@ var NOT_FOUND = {},
         'gallery-': { 
             // http://yui.yahooapis.com/3.0.0/build/
             // http://yui.yahooapis.com/gallery-/build/
-            base: GALLERY_BASE  // explicit declaration of the base attribute
+            base: GALLERY_BASE,  // explicit declaration of the base attribute
             filter: {
-                'searchExp': VERSION
+                'searchExp': VERSION,
                 'replaceStr': GALLERY_VERSION
             }
         }

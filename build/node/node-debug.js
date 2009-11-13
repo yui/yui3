@@ -664,10 +664,27 @@ Y.mix(Node.prototype, {
         return this;
     },
 
+    /**
+     * Removes event listeners from the node and (optionally) its subtree
+     * @method purge
+     * @param {Boolean} recurse (optional) Whether or not to remove listeners from the
+     * node's subtree
+     * @param {String} type (optional) Only remove listeners of the specified type
+     * @chainable
+     *
+     */
     purge: function(recurse, type) {
         Y.Event.purgeElement(this._node, recurse, type);
+        return this;
     },
 
+    /**
+     * Nulls internal node references, removes any plugins and event listeners
+     * @method destroy
+     * @param {Boolean} purge (optional) Whether or not to remove listeners from the
+     * node and its subtree (default is false)
+     *
+     */
     destroy: function(purge) {
         delete Node._instances[this[UID]];
         if (purge) {
@@ -1647,6 +1664,45 @@ Y.Node.importMethod(Y.DOM, methods);
  */
 Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
+Y.mix(Y.Node.ATTRS, {
+    offsetHeight: {
+        setter: function(h) {
+            Y.DOM.setHeight(this._node, h);
+            return h;
+        },
+
+        getter: function() {
+            return this._node.offsetHeight;
+        }
+    },
+
+    offsetWidth: {
+        setter: function(w) {
+            Y.DOM.setWidth(this._node, w);
+            return w;
+        },
+
+        getter: function() {
+            return this._node.offsetWidth;
+        }
+    }
+});
+
+Y.mix(Y.Node.prototype, {
+    sizeTo: function(w, h) {
+        var node;
+        if (arguments.length < 2) {
+            node = Y.one(w);
+            w = node.get('offsetWidth');
+            h = node.get('offsetHeight');
+        }
+
+        this.setAttrs({
+            offsetWidth: w,
+            offsetHeight: h
+        });
+    }
+});
 
 
 }, '@VERSION@' ,{requires:['dom-style', 'node-base']});
