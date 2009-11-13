@@ -192,6 +192,7 @@
     <span class="nx">NODEBASE</span> <span class="o">=</span> <span class="s1">&#39;node-base&#39;</span><span class="o">,</span>
     <span class="nx">NODESTYLE</span> <span class="o">=</span> <span class="s1">&#39;node-style&#39;</span><span class="o">,</span>
     <span class="nx">NODESCREEN</span> <span class="o">=</span> <span class="s1">&#39;node-screen&#39;</span><span class="o">,</span>
+    <span class="nx">NODEPLUGINHOST</span> <span class="o">=</span> <span class="s1">&#39;node-pluginhost&#39;</span><span class="o">,</span>
     <span class="nx">OOP</span> <span class="o">=</span> <span class="s1">&#39;oop&#39;</span><span class="o">,</span>
     <span class="nx">PLUGINHOST</span> <span class="o">=</span> <span class="s1">&#39;pluginhost&#39;</span><span class="o">,</span>
     <span class="nx">SELECTORCSS2</span> <span class="o">=</span> <span class="s1">&#39;selector-css2&#39;</span><span class="o">,</span>
@@ -289,6 +290,14 @@
             <span class="nx">plugins</span><span class="o">:</span> <span class="o">{</span>
                 <span class="s1">&#39;node-event-simulate&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODEBASE</span><span class="o">,</span> <span class="s1">&#39;event-simulate&#39;</span><span class="o">]</span>
+                <span class="o">},</span>
+
+                <span class="s1">&#39;align-plugin&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODESCREEN</span><span class="o">,</span> <span class="nx">NODEPLUGINHOST</span><span class="o">]</span>
+                <span class="o">},</span>
+
+                <span class="s1">&#39;shim-plugin&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">NODESTYLE</span><span class="o">,</span> <span class="nx">NODEPLUGINHOST</span><span class="o">]</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -687,9 +696,9 @@
         <span class="s1">&#39;gallery-&#39;</span><span class="o">:</span> <span class="o">{</span> 
             <span class="c">// http://yui.yahooapis.com/3.0.0/build/</span>
 <span class="c"></span>            <span class="c">// http://yui.yahooapis.com/gallery-/build/</span>
-<span class="c"></span>            <span class="nx">base</span><span class="o">:</span> <span class="nx">GALLERY_BASE</span>  <span class="c">// explicit declaration of the base attribute</span>
+<span class="c"></span>            <span class="nx">base</span><span class="o">:</span> <span class="nx">GALLERY_BASE</span><span class="o">,</span>  <span class="c">// explicit declaration of the base attribute</span>
 <span class="c"></span>            <span class="nx">filter</span><span class="o">:</span> <span class="o">{</span>
-                <span class="s1">&#39;searchExp&#39;</span><span class="o">:</span> <span class="nx">VERSION</span>
+                <span class="s1">&#39;searchExp&#39;</span><span class="o">:</span> <span class="nx">VERSION</span><span class="o">,</span>
                 <span class="s1">&#39;replaceStr&#39;</span><span class="o">:</span> <span class="nx">GALLERY_VERSION</span>
             <span class="o">}</span>
         <span class="o">}</span>
@@ -2275,6 +2284,7 @@
                     <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
@@ -2305,6 +2315,7 @@
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>

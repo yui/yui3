@@ -81,14 +81,13 @@
         },
 
         /**
-         * Removes the shim from the DOM
+         * Removes the shim and destroys the plugin
          * @method destroy
          */
         destroy: function() {
             var shim = this._shim;
             if (shim) {
-                shim.get('parentNode').removeChild(this._shim);
-                shim = null;
+                shim.remove(true);
             }
 
             this._resizeHandle.detach();
