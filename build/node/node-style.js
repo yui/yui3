@@ -79,7 +79,7 @@ Y.Node.importMethod(Y.DOM, methods);
 Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 Y.mix(Y.Node.ATTRS, {
-    height: {
+    offsetHeight: {
         setter: function(h) {
             Y.DOM.setHeight(this._node, h);
             return h;
@@ -90,7 +90,7 @@ Y.mix(Y.Node.ATTRS, {
         }
     },
 
-    width: {
+    offsetWidth: {
         setter: function(w) {
             Y.DOM.setWidth(this._node, w);
             return w;
@@ -107,7 +107,7 @@ Y.mix(Y.Node.prototype, {
         var node;
         if (!Y.Lang.isArray(size, true)) {
             node = Y.one(size);
-            size = [node.get('width'), node.get('height')];
+            size = [node.get('offsetWidth'), node.get('offsetHeight')];
         }
 
         this.setAttrs({

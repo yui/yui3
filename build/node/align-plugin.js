@@ -3,7 +3,7 @@ YUI.add('align-plugin', function(Y) {
     /**
      * Provides advanced positioning support for Node via a Plugin
      * for centering and alignment. 
-     * @module shim-plugin
+     * @module align-plugin
      */
 
     var OFFSET_WIDTH = 'offsetWidth',
@@ -127,7 +127,7 @@ YUI.add('align-plugin', function(Y) {
 
         _onresize: function() {
             var self = this;
-            setTimeout(function() {
+            setTimeout(function() { // for performance
                 self.sync();
             });
         },
