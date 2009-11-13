@@ -434,9 +434,37 @@ var LANG = Y.Lang,
                 }
                 // IE mode
                 else {
-                    xmldoc.setProperty("SelectionLanguage", "XPath");
-                    result = context.selectNodes(locator)[0];
-                    value = result.value || result.text || null;
+                    // XPath is supported
+                    try {
+                        xmldoc.setProperty("SelectionLanguage", "XPath");
+                        result = context.selectNodes(locator)[0];
+                        value = result.value || result.text || null;
+                    }
+                    // Fallback for DOM nodes and fragments
+                    catch(ee) {
+                        var locatorArray = locator.split("/"), i=0, l=locatorArray.length, location, subloc;
+                        // Iterate over each locator piece
+                        for(; i<l; i++) {
+                            location = locatorArray[i];
+
+                            // grab nth child []
+                            if((location.indexOf("[") > -1) && (location.indexOf("]") > -1)) {
+                                subloc = location.slice(location.indexOf("[")+1, location.indexOf("]"));
+                                //XPath is 1-based while DOM is 0-based
+                                subloc--;
+                                context = context.childNodes[subloc];
+                            }
+
+                            // grab attribute value @
+                            if(location.indexOf("@") > -1) {
+                                subloc = location.substr(location.indexOf("@"));
+                                context = subloc ? context.getAttribute(subloc) : context;
+                            }
+                        }
+                        
+                        // grab node value
+                        value = context.innerHTML;
+                    }
                 }
                 return Y.DataSchema.Base.parse(value, field);
 
