@@ -1168,11 +1168,14 @@ The config argument object supports the following properties:
 <dl>
 <dt>value &#60;Any&#62;</dt>
 <dd>The initial value to set on the attribute</dd>
-<dt>valueFn &#60;Function&#62;</dt>
-<dd>A function, which will return the initial value to set on the attribute. This is useful
+<dt>valueFn &#60;Function | String&#62;</dt>
+<dd>
+<p>A function, which will return the initial value to set on the attribute. This is useful
 for cases where the attribute configuration is defined statically, but needs to 
 reference the host instance ("this") to obtain an initial value.
-If defined, this precedence over the value property.</dd>
+If defined, valueFn has precedence over the value property.</p>
+<p>valueFn can also be set to a string, representing the name of the instance method to be used to retrieve the value.</p>
+</dd>
 <dt>readOnly &#60;boolean&#62;</dt>
 <dd>Whether or not the attribute is read only. Attributes having readOnly set to true
 cannot be modified by invoking the set method.</dd>
@@ -1180,18 +1183,32 @@ cannot be modified by invoking the set method.</dd>
 <dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
 can only have their values set once, be it through the default configuration, 
 constructor configuration arguments, or by invoking set.</dd>
-<dt>setter &#60;Function&#62;</dt>
-<dd>The setter function used to massage or normalize the value passed to the set method for the attribute. 
+<dt>setter &#60;Function | String&#62;</dt>
+<dd>
+<p>The setter function used to massage or normalize the value passed to the set method for the attribute. 
 The value returned by the setter will be the final stored value. Returning
 <a href="#property_Attribute.INVALID_VALUE">Attribute.INVALID_VALUE</a>, from the setter will prevent
-the value from being stored.</dd>
-<dt>getter &#60;Function&#62;</dt>
-<dd>The getter function used to massage or normalize the value returned by the get method for the attribute.
+the value from being stored.
+</p>
+<p>setter can also be set to a string, representing the name of the instance method to be used as the setter function.</p>
+</dd>
+<dt>getter &#60;Function | String&#62;</dt>
+<dd>
+<p>
+The getter function used to massage or normalize the value returned by the get method for the attribute.
 The value returned by the getter function is the value which will be returned to the user when they 
-invoke get.</dd>
-<dt>validator &#60;Function&#62;</dt>
-<dd>The validator function invoked prior to setting the stored value. Returning
-false from the validator function will prevent the value from being stored.</dd>
+invoke get.
+</p>
+<p>getter can also be set to a string, representing the name of the instance method to be used as the getter function.</p>
+</dd>
+<dt>validator &#60;Function | String&#62;</dt>
+<dd>
+<p>
+The validator function invoked prior to setting the stored value. Returning
+false from the validator function will prevent the value from being stored.
+</p>
+<p>validator can also be set to a string, representing the name of the instance method to be used as the validator function.</p>
+</dd>
 <dt>broadcast &#60;int&#62;</dt>
 <dd>If and how attribute change events for this attribute should be broadcast. See CustomEvent's <a href="CustomEvent.html#property_broadcast">broadcast</a> property for 
 valid values. By default attribute change events are not broadcast.</dd>
@@ -1862,6 +1879,7 @@ set called externally by the application developer.</span>
                     <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class="selected"><a href="module_attribute.html" title="attribute">attribute</a></li>
@@ -1892,6 +1910,7 @@ set called externally by the application developer.</span>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>

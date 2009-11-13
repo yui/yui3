@@ -78,11 +78,18 @@
     <span class="k">this</span><span class="o">.</span><span class="nx">details</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">details</span><span class="o">;</span>
 
     <span class="c">/**</span>
-<span class="c">     * The event type</span>
+<span class="c">     * The event type, this can be overridden by the fire() payload</span>
 <span class="c">     * @property type</span>
 <span class="c">     * @type string</span>
 <span class="c">     */</span>
     <span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">type</span><span class="o">;</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The real event type</span>
+<span class="c">     * @property type</span>
+<span class="c">     * @type string</span>
+<span class="c">     */</span>
+    <span class="k">this</span><span class="o">.</span><span class="nx">_type</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">type</span><span class="o">;</span>
 
     <span class="c">//////////////////////////////////////////////////////</span>
 <span class="c"></span>
@@ -279,6 +286,10 @@
 
         <span class="c">// restore ef</span>
 <span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o2</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">FACADE_KEYS</span><span class="o">);</span>
+
+        <span class="c">// Allow the event type to be faked</span>
+<span class="c"></span>        <span class="c">// http://yuilibrary.com/projects/yui3/ticket/2528376</span>
+<span class="c"></span>        <span class="nx">ef</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">type</span> <span class="o">||</span> <span class="nx">ef</span><span class="o">.</span><span class="nx">type</span><span class="o">;</span>
     <span class="o">}</span>
 
     <span class="c">// update the details field with the arguments</span>
@@ -397,6 +408,7 @@
 <span class="nx">FACADE</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventFacade</span><span class="o">();</span>
 <span class="nx">FACADE_KEYS</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">keys</span><span class="o">(</span><span class="nx">FACADE</span><span class="o">);</span>
 
+
 <span class="o">})();</span>
 </pre></div>
 
@@ -409,6 +421,7 @@
                     <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
@@ -439,6 +452,7 @@
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>

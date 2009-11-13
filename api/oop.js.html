@@ -59,9 +59,11 @@
         <span class="nx">A</span>  <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">,</span>
         <span class="nx">OP</span> <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span>
         <span class="nx">CLONE_MARKER</span> <span class="o">=</span> <span class="s2">&quot;_~yuim~_&quot;</span><span class="o">,</span>
+        <span class="nx">EACH</span> <span class="o">=</span> <span class="s1">&#39;each&#39;</span><span class="o">,</span>
+        <span class="nx">SOME</span> <span class="o">=</span> <span class="s1">&#39;some&#39;</span><span class="o">,</span>
 
         <span class="nx">dispatch</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="nx">action</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">action</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">[</span><span class="nx">action</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="nx">o</span><span class="o">[</span><span class="nx">action</span><span class="o">].</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">switch</span> <span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
@@ -241,7 +243,7 @@
 <span class="c">     * @return {YUI} the YUI instance</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">dispatch</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="s1">&#39;each&#39;</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">dispatch</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="nx">EACH</span><span class="o">);</span>
     <span class="o">};</span>
 
     <span class="c">/*</span>
@@ -258,7 +260,7 @@
 <span class="c">     * @return {boolean} true if the function ever returns true, false otherwise</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">some</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">dispatch</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="s1">&#39;some&#39;</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">dispatch</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">,</span> <span class="nx">SOME</span><span class="o">);</span>
     <span class="o">};</span>
 
     <span class="c">/**</span>
@@ -398,6 +400,7 @@
                     <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
@@ -428,6 +431,7 @@
                                 <li class="selected"><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>

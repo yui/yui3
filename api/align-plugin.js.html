@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: shim-plugin   align-plugin.js  (YUI Library)</title>
+	<title>API: align-plugin   align-plugin.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>shim-plugin&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>align-plugin&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_shim-plugin.html" title="shim-plugin">shim-plugin</a>
+            &gt; <a href="./module_align-plugin.html" title="align-plugin">align-plugin</a>
                 
                  &gt; align-plugin.js (source view) 
         <form onsubmit="return false">
@@ -47,23 +47,15 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s1">&#39;align-plugin&#39;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c">/**</span>
+                        <div class="highlight" ><pre>    <span class="c">/**</span>
 <span class="c">     * Provides advanced positioning support for Node via a Plugin</span>
 <span class="c">     * for centering and alignment. </span>
-<span class="c">     * @module shim-plugin</span>
+<span class="c">     * @module align-plugin</span>
 <span class="c">     */</span>
 
     <span class="k">var</span> <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="o">,</span>
         <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;offsetHeight&#39;</span><span class="o">,</span>
-
-    <span class="nx">_resolveRegion</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">region</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">region</span> <span class="o">=</span> <span class="nx">region</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">_host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;viewportRegion&#39;</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">region</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span> <span class="o">||</span> <span class="nx">region</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">region</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">region</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">region</span><span class="o">));</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">region</span><span class="o">;</span>
-    <span class="o">};</span>
+        <span class="kc">undefined</span> <span class="o">=</span> <span class="kc">undefined</span><span class="o">;</span>
 
     <span class="c">/**</span>
 <span class="c">     * Node plugin which can be used to align a node with another node,</span>
@@ -72,11 +64,21 @@
 <span class="c">     * @class Plugin.Align</span>
 <span class="c">     * @param {Object} User configuration object</span>
 <span class="c">     */</span>
-    <span class="k">var</span> <span class="nx">Align</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">// TODO: allow for boundingBox</span>
-<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">_host</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">host</span><span class="o">;</span>
-    <span class="o">};</span>
+    <span class="k">function</span> <span class="nx">Align</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
 
+        <span class="k">function</span> <span class="nx">fn</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">self</span><span class="o">.</span><span class="nx">to</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">host</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_host</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">host</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+    <span class="o">}</span>
         
     <span class="nx">Align</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
         <span class="c">/**</span>
@@ -99,149 +101,95 @@
 <span class="c">         *      &lt;dd&gt;right center&lt;/dd&gt;</span>
 <span class="c">         *      &lt;dt&gt;lc&lt;/dt&gt;</span>
 <span class="c">         *      &lt;dd&gt;left center&lt;/dd&gt;</span>
+<span class="c">         *      &lt;dt&gt;cc&lt;/dt&gt;</span>
+<span class="c">         *      &lt;dd&gt;center center&lt;/dd&gt;</span>
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * @method to </span>
-<span class="c">         * @parm region {Node || HTMLElement || Object} optional The node or</span>
+<span class="c">         * @parm region {String || Node || HTMLElement || Object} The node or</span>
 <span class="c">         * region to align with. Defaults to the viewport region.</span>
 <span class="c">         * @parm regionPoint {String} The point of the region to align with.</span>
 <span class="c">         * @parm point {String} The point of the node aligned to the region. </span>
-<span class="c">         * @parm fixed {Boolean} Whether or not the node should re-align when</span>
+<span class="c">         * @parm resize {Boolean} Whether or not the node should re-align when</span>
 <span class="c">         * the window is resized. Defaults to false.</span>
 <span class="c">         */</span>
-        <span class="nx">to</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">region</span><span class="o">,</span> <span class="nx">regionPoint</span><span class="o">,</span> <span class="nx">point</span><span class="o">,</span> <span class="nx">fixed</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">);</span>
+        <span class="nx">to</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">region</span><span class="o">,</span> <span class="nx">regionPoint</span><span class="o">,</span> <span class="nx">point</span><span class="o">,</span> <span class="nx">syncOnResize</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// cache original args for syncing</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_syncArgs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">);</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">region</span><span class="o">))</span> <span class="o">{</span> <span class="c">// default region to viewport</span>
-<span class="c"></span>                <span class="nx">fixed</span> <span class="o">=</span> <span class="nx">point</span><span class="o">;</span>
-                <span class="nx">point</span> <span class="o">=</span> <span class="nx">regionPoint</span><span class="o">;</span>
-                <span class="nx">regionPoint</span> <span class="o">=</span> <span class="nx">region</span><span class="o">;</span>
-                <span class="nx">region</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">region</span><span class="o">.</span><span class="nx">top</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">region</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">region</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;region&#39;</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="nx">point</span> <span class="o">=</span> <span class="nx">point</span> <span class="o">||</span> <span class="s1">&#39;tl&#39;</span><span class="o">;</span>
-            <span class="nx">region</span> <span class="o">=</span> <span class="nx">_resolveRegion</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">region</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">region</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">region</span><span class="o">.</span><span class="nx">left</span><span class="o">,</span> <span class="nx">region</span><span class="o">.</span><span class="nx">top</span><span class="o">],</span>
+                    <span class="nx">offxy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">region</span><span class="o">.</span><span class="nx">width</span><span class="o">,</span> <span class="nx">region</span><span class="o">.</span><span class="nx">height</span><span class="o">],</span>
+                    <span class="nx">points</span> <span class="o">=</span> <span class="nx">Align</span><span class="o">.</span><span class="nx">points</span><span class="o">,</span>
+                    <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_host</span><span class="o">,</span>
+                    <span class="nx">NULL</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
+                    <span class="nx">size</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getAttrs</span><span class="o">([</span><span class="nx">OFFSET_HEIGHT</span><span class="o">,</span> <span class="nx">OFFSET_WIDTH</span><span class="o">]),</span>
+                    <span class="nx">nodeoff</span> <span class="o">=</span> <span class="o">[</span><span class="m">0</span> <span class="o">-</span> <span class="nx">size</span><span class="o">[</span><span class="nx">OFFSET_WIDTH</span><span class="o">],</span> <span class="m">0</span> <span class="o">-</span> <span class="nx">size</span><span class="o">[</span><span class="nx">OFFSET_HEIGHT</span><span class="o">]],</span> <span class="c">// reverse offsets</span>
+<span class="c"></span>                    <span class="nx">regionFn0</span> <span class="o">=</span> <span class="nx">regionPoint</span> <span class="o">?</span> <span class="nx">points</span><span class="o">[</span><span class="nx">regionPoint</span><span class="o">.</span><span class="nx">charAt</span><span class="o">(</span><span class="m">0</span><span class="o">)]:</span> <span class="nx">NULL</span><span class="o">,</span>
+                    <span class="nx">regionFn1</span> <span class="o">=</span> <span class="o">(</span><span class="nx">regionPoint</span> <span class="o">&amp;&amp;</span> <span class="nx">regionPoint</span> <span class="o">!==</span> <span class="s1">&#39;cc&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">points</span><span class="o">[</span><span class="nx">regionPoint</span><span class="o">.</span><span class="nx">charAt</span><span class="o">(</span><span class="m">1</span><span class="o">)]</span> <span class="o">:</span> <span class="nx">NULL</span><span class="o">,</span>
+                    <span class="nx">nodeFn0</span> <span class="o">=</span> <span class="nx">point</span> <span class="o">?</span> <span class="nx">points</span><span class="o">[</span><span class="nx">point</span><span class="o">.</span><span class="nx">charAt</span><span class="o">(</span><span class="m">0</span><span class="o">)]</span> <span class="o">:</span> <span class="nx">NULL</span><span class="o">,</span>
+                    <span class="nx">nodeFn1</span> <span class="o">=</span> <span class="o">(</span><span class="nx">point</span> <span class="o">&amp;&amp;</span> <span class="nx">point</span> <span class="o">!==</span> <span class="s1">&#39;cc&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">points</span><span class="o">[</span><span class="nx">point</span><span class="o">.</span><span class="nx">charAt</span><span class="o">(</span><span class="m">1</span><span class="o">)]</span> <span class="o">:</span> <span class="nx">NULL</span><span class="o">;</span>
 
-            <span class="k">var</span> <span class="nx">top</span> <span class="o">=</span> <span class="nx">region</span><span class="o">.</span><span class="nx">top</span><span class="o">,</span>
-                <span class="nx">right</span> <span class="o">=</span> <span class="nx">region</span><span class="o">.</span><span class="nx">right</span><span class="o">,</span>
-                <span class="nx">bottom</span> <span class="o">=</span> <span class="nx">region</span><span class="o">.</span><span class="nx">bottom</span><span class="o">,</span>
-                <span class="nx">left</span> <span class="o">=</span> <span class="nx">region</span><span class="o">.</span><span class="nx">left</span><span class="o">,</span>
-                <span class="nx">x</span> <span class="o">=</span> <span class="nx">left</span><span class="o">,</span>
-                <span class="nx">y</span> <span class="o">=</span> <span class="nx">top</span><span class="o">,</span>
-                <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_host</span><span class="o">,</span>
-                <span class="nx">xy</span><span class="o">;</span>
-                
-
-            <span class="nx">switch</span><span class="o">(</span><span class="nx">regionPoint</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">case</span> <span class="s1">&#39;tl&#39;</span><span class="o">:</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;tr&#39;</span><span class="o">:</span>
-                    <span class="nx">x</span> <span class="o">=</span> <span class="nx">right</span><span class="o">;</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;bl&#39;</span><span class="o">:</span>
-                    <span class="nx">y</span> <span class="o">=</span> <span class="nx">bottom</span><span class="o">;</span>  
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;br&#39;</span><span class="o">:</span>
-                    <span class="nx">x</span> <span class="o">=</span> <span class="nx">right</span><span class="o">;</span>
-                    <span class="nx">y</span> <span class="o">=</span> <span class="nx">bottom</span><span class="o">;</span>  
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;tc&#39;</span><span class="o">:</span>
-                    <span class="nx">x</span> <span class="o">+=</span> <span class="o">(</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">left</span><span class="o">)</span> <span class="o">/</span> <span class="m">2</span><span class="o">;</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;bc&#39;</span><span class="o">:</span>
-                    <span class="nx">x</span> <span class="o">+=</span> <span class="o">(</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">left</span><span class="o">)</span> <span class="o">/</span> <span class="m">2</span><span class="o">;</span>
-                    <span class="nx">y</span> <span class="o">=</span> <span class="nx">bottom</span><span class="o">;</span>  
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;lc&#39;</span><span class="o">:</span>
-                    <span class="nx">y</span> <span class="o">+=</span> <span class="o">(</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">top</span><span class="o">)</span> <span class="o">/</span> <span class="m">2</span><span class="o">;</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;rc&#39;</span><span class="o">:</span>
-                    <span class="nx">x</span> <span class="o">=</span> <span class="nx">right</span><span class="o">;</span>
-                    <span class="nx">y</span> <span class="o">+=</span> <span class="o">(</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">top</span><span class="o">)</span> <span class="o">/</span> <span class="m">2</span><span class="o">;</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;cc&#39;</span><span class="o">:</span>
-                    <span class="nx">x</span> <span class="o">+=</span> <span class="o">(</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">left</span><span class="o">)</span> <span class="o">/</span> <span class="m">2</span><span class="o">;</span>
-                    <span class="nx">y</span> <span class="o">+=</span> <span class="o">(</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">top</span><span class="o">)</span> <span class="o">/</span> <span class="m">2</span><span class="o">;</span>
-                    <span class="k">break</span><span class="o">;</span>
-            <span class="o">}</span>
-
-            <span class="nx">switch</span> <span class="o">(</span><span class="nx">point</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">case</span> <span class="s1">&#39;tl&#39;</span><span class="o">:</span>
-                    <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span><span class="o">,</span> <span class="nx">y</span><span class="o">];</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;tr&#39;</span><span class="o">:</span>
-                    <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">),</span> <span class="nx">y</span><span class="o">];</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;bl&#39;</span><span class="o">:</span>
-                    <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span><span class="o">,</span> <span class="nx">y</span> <span class="o">-</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)];</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;br&#39;</span><span class="o">:</span>
-                    <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">),</span> <span class="nx">y</span> <span class="o">-</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)];</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;tc&#39;</span><span class="o">:</span>
-                    <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span> <span class="o">-</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)/</span><span class="m">2</span><span class="o">),</span> <span class="nx">y</span><span class="o">];</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;bc&#39;</span><span class="o">:</span>
-                    <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span> <span class="o">-</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)/</span><span class="m">2</span><span class="o">),</span> <span class="nx">y</span> <span class="o">-</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)];</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;lc&#39;</span><span class="o">:</span>
-                    <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span><span class="o">,</span> <span class="nx">y</span> <span class="o">-</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)/</span><span class="m">2</span><span class="o">)];</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;rc&#39;</span><span class="o">:</span>
-                    <span class="nx">xy</span> <span class="o">=</span> <span class="o">[(</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)),</span> <span class="nx">y</span> <span class="o">-</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)/</span><span class="m">2</span><span class="o">)];</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s1">&#39;cc&#39;</span><span class="o">:</span>
-                    <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span> <span class="o">-</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)</span><span class="sr">/2), y - (node.get(OFFSET_HEIGHT)/</span><span class="m">2</span><span class="o">)];</span>
-                    <span class="k">break</span><span class="o">;</span>
-                <span class="nx">default</span><span class="o">:</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;align: Invalid Points Argument&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;node-align&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">xy</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">fixed</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_attachResize</span><span class="o">(</span><span class="nx">args</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_detachResize</span><span class="o">();</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">regionFn0</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">xy</span> <span class="o">=</span> <span class="nx">regionFn0</span><span class="o">(</span><span class="nx">xy</span><span class="o">,</span> <span class="nx">offxy</span><span class="o">,</span> <span class="nx">regionPoint</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">regionFn1</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">xy</span> <span class="o">=</span> <span class="nx">regionFn1</span><span class="o">(</span><span class="nx">xy</span><span class="o">,</span> <span class="nx">offxy</span><span class="o">,</span> <span class="nx">regionPoint</span><span class="o">);</span>
                 <span class="o">}</span>
 
-                <span class="nx">node</span><span class="o">.</span><span class="nx">setXY</span><span class="o">(</span><span class="nx">xy</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">nodeFn0</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">xy</span> <span class="o">=</span> <span class="nx">nodeFn0</span><span class="o">(</span><span class="nx">xy</span><span class="o">,</span> <span class="nx">nodeoff</span><span class="o">,</span> <span class="nx">point</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">nodeFn1</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">xy</span> <span class="o">=</span> <span class="nx">nodeFn1</span><span class="o">(</span><span class="nx">xy</span><span class="o">,</span> <span class="nx">nodeoff</span><span class="o">,</span> <span class="nx">point</span><span class="o">);</span>
+                <span class="o">}</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">xy</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">node</span><span class="o">.</span><span class="nx">setXY</span><span class="o">(</span><span class="nx">xy</span><span class="o">);</span>
+                <span class="o">}</span>
+                
+                <span class="k">this</span><span class="o">.</span><span class="nx">_resize</span><span class="o">(</span><span class="nx">syncOnResize</span><span class="o">);</span>
 
             <span class="o">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
 
-        <span class="nx">_attachResize</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">align</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span> <span class="o">||</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="nx">setTimeout</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                    <span class="nx">align</span><span class="o">.</span><span class="nx">to</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">align</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
-                <span class="o">});</span>
-            <span class="o">},</span> <span class="nb">window</span><span class="o">);</span> 
+        <span class="nx">sync</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">to</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_syncArgs</span><span class="o">);</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">},</span>
 
-        <span class="o">},</span>        
-
-        <span class="nx">_detachResize</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="nx">_resize</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">add</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_handle</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">add</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">handle</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onresize</span><span class="o">,</span> <span class="nb">window</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">add</span> <span class="o">&amp;&amp;</span> <span class="nx">handle</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">handle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
             <span class="o">}</span>
-        <span class="o">},</span>        
 
+        <span class="o">},</span>
 
+        <span class="nx">_onresize</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+            <span class="nx">setTimeout</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="c">// for performance</span>
+<span class="c"></span>                <span class="nx">self</span><span class="o">.</span><span class="nx">sync</span><span class="o">();</span>
+            <span class="o">});</span>
+        <span class="o">},</span>
+    
         <span class="c">/**</span>
 <span class="c">         * Aligns the center of a node to the center of another node or region.</span>
 <span class="c">         * @method center </span>
 <span class="c">         * @parm region {Node || HTMLElement || Object} optional The node or</span>
 <span class="c">         * region to align with. Defaults to the viewport region.</span>
-<span class="c">         * @parm fixed {Boolean} Whether or not the node should re-align when</span>
 <span class="c">         * the window is resized. If centering to viewport, this defaults</span>
 <span class="c">         * to true, otherwise default is false.</span>
 <span class="c">         */</span>
-        <span class="nx">center</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">fixed</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">fixed</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">fixed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span> <span class="c">// default to true when centering to viewport </span>
-<span class="c"></span>            <span class="o">}</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">to</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="s1">&#39;cc&#39;</span><span class="o">,</span> <span class="s1">&#39;cc&#39;</span><span class="o">,</span> <span class="nx">fixed</span><span class="o">);</span> 
-
+        <span class="nx">center</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">region</span><span class="o">,</span> <span class="nx">resize</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">to</span><span class="o">(</span><span class="nx">region</span><span class="o">,</span> <span class="s1">&#39;cc&#39;</span><span class="o">,</span> <span class="s1">&#39;cc&#39;</span><span class="o">,</span> <span class="nx">resize</span><span class="o">);</span> 
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -250,20 +198,52 @@
 <span class="c">         * @method destroy </span>
 <span class="c">         */</span>
         <span class="nx">destroy</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
+            <span class="k">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_handle</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">handle</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">handle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
             <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">};</span>
 
+    <span class="nx">Align</span><span class="o">.</span><span class="nx">points</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="s1">&#39;t&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">xy</span><span class="o">,</span> <span class="nx">off</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">xy</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="s1">&#39;r&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">xy</span><span class="o">,</span> <span class="nx">off</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">[</span><span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">+</span> <span class="nx">off</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">]];</span>
+        <span class="o">},</span>
+
+        <span class="s1">&#39;b&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">xy</span><span class="o">,</span> <span class="nx">off</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">[</span><span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">+</span> <span class="nx">off</span><span class="o">[</span><span class="m">1</span><span class="o">]];</span>
+        <span class="o">},</span>
+
+        <span class="s1">&#39;l&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">xy</span><span class="o">,</span> <span class="nx">off</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">xy</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="s1">&#39;c&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">xy</span><span class="o">,</span> <span class="nx">off</span><span class="o">,</span> <span class="nx">point</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">axis</span> <span class="o">=</span> <span class="o">(</span><span class="nx">point</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">===</span> <span class="s1">&#39;t&#39;</span> <span class="o">||</span> <span class="nx">point</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">===</span> <span class="s1">&#39;b&#39;</span><span class="o">)</span> <span class="o">?</span>  <span class="m">0</span> <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+                <span class="nx">ret</span><span class="o">,</span> <span class="nx">val</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">point</span> <span class="o">===</span> <span class="s1">&#39;cc&#39;</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="o">[</span><span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">+</span> <span class="nx">off</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="sr">/ 2, xy[1] + off[1] /</span> <span class="m">2</span><span class="o">];</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">xy</span><span class="o">[</span><span class="nx">axis</span><span class="o">]</span> <span class="o">+</span> <span class="nx">off</span><span class="o">[</span><span class="nx">axis</span><span class="o">]</span> <span class="o">/</span> <span class="m">2</span><span class="o">;</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="o">(</span><span class="nx">axis</span><span class="o">)</span> <span class="o">?</span> <span class="o">[</span><span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">val</span><span class="o">]</span> <span class="o">:</span> <span class="o">[</span><span class="nx">val</span><span class="o">,</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">]];</span>
+            <span class="o">}</span>
+
+             <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
 
     <span class="nx">Align</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;Align&#39;</span><span class="o">;</span>
     <span class="nx">Align</span><span class="o">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s1">&#39;align&#39;</span><span class="o">;</span>
 
+    <span class="nx">Align</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Align</span><span class="o">;</span>
+
     <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;Plugin&#39;</span><span class="o">);</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">Align</span> <span class="o">=</span> <span class="nx">Align</span><span class="o">;</span>
-
-<span class="o">},</span> <span class="s1">&#39;@VERSION@&#39;</span> <span class="o">,{</span><span class="nx">requires</span><span class="o">:[</span><span class="s1">&#39;node&#39;</span><span class="o">]});</span>
 </pre></div>
 
                     </div>
@@ -275,6 +255,7 @@
                     <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
+                                <li class="selected"><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
@@ -305,9 +286,10 @@
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class="selected"><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
@@ -325,7 +307,6 @@
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="Plugin.Align.html" title="Plugin.Align">Plugin.Align</a></li>
-                                <li class=""><a href="Plugin.Shim.html" title="Plugin.Shim">Plugin.Shim</a></li>
                         </ul>
                     </div>
 
@@ -334,8 +315,8 @@
                         <ul class="content">        
                                 <li class="selected"><a href="align-plugin.js.html" title="align-plugin.js">align-plugin.js</a></li>
                                 <li class=""><a href="node-event-simulate.js.html" title="node-event-simulate.js">node-event-simulate.js</a></li>
-                                <li class=""><a href="node-ie.js.html" title="node-ie.js">node-ie.js</a></li>
                                 <li class=""><a href="node-pluginhost.js.html" title="node-pluginhost.js">node-pluginhost.js</a></li>
+                                <li class=""><a href="node-size.js.html" title="node-size.js">node-size.js</a></li>
                         </ul>
                     </div>
 
@@ -352,7 +333,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Align", "name": "center", "url": "Plugin.Align.html#method_center", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "destroy", "url": "Plugin.Align.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.Shim", "name": "destroy", "url": "Plugin.Shim.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "Node.plug", "url": "Plugin.Align.html#method_Node.plug", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "Node.unplug", "url": "Plugin.Align.html#method_Node.unplug", "type": "method"}, {"access": "", "host": "Plugin.Shim", "name": "Shim.CLASS_NAME", "url": "Plugin.Shim.html#property_Shim.CLASS_NAME", "type": "property"}, {"access": "", "host": "Plugin.Shim", "name": "Shim.TEMPLATE", "url": "Plugin.Shim.html#property_Shim.TEMPLATE", "type": "property"}, {"access": "private", "host": "Plugin.Shim", "name": "sync", "url": "Plugin.Shim.html#method_sync", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "to", "url": "Plugin.Align.html#method_to", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Align", "name": "center", "url": "Plugin.Align.html#method_center", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "destroy", "url": "Plugin.Align.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "Node.plug", "url": "Plugin.Align.html#method_Node.plug", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "Node.unplug", "url": "Plugin.Align.html#method_Node.unplug", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "to", "url": "Plugin.Align.html#method_to", "type": "method"}];
 </script>
 </body>
 </html>
