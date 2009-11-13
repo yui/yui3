@@ -6,7 +6,7 @@
 
     var OFFSET_WIDTH = 'offsetWidth',
         OFFSET_HEIGHT = 'offsetHeight',
-        ie6 = (Y.UA.ie && Y.UA.ie < 7);
+        undefined = undefined;
 
     /**
      * Node plugin which can be used to align a node with another node,
@@ -16,10 +16,20 @@
      * @param {Object} User configuration object
      */
     function Align(config) {
-        // TODO: allow for boundingBox
-        this._host = config.host;
-    };
+        var self = this;
 
+        function fn() {
+            if (config.length) {
+                self.to.apply(this, arguments);
+            }
+        }
+
+        if (config.host) {
+            this._host = config.host;
+        }
+
+        return Y.mix(fn, this);
+    }
         
     Align.prototype = {
         /**
@@ -42,160 +52,95 @@
          *      <dd>right center</dd>
          *      <dt>lc</dt>
          *      <dd>left center</dd>
+         *      <dt>cc</dt>
+         *      <dd>center center</dd>
          * </dl>
          * @method to 
          * @parm region {String || Node || HTMLElement || Object} The node or
          * region to align with. Defaults to the viewport region.
          * @parm regionPoint {String} The point of the region to align with.
          * @parm point {String} The point of the node aligned to the region. 
-         * @parm fixed {Boolean} Whether or not the node should re-align when
+         * @parm resize {Boolean} Whether or not the node should re-align when
          * the window is resized. Defaults to false.
          */
-        to: function(region, regionPoint, point, fixed) {
-            // default align point is node's top left
-            point = point || 'tl';
+        to: function(region, regionPoint, point, syncOnResize) {
             // cache original args for syncing
             this._syncArgs = Y.Array(arguments);
 
-            if (!region.top) {
-                region = Y.one(region);
-                region = region.get('region');
+            if (region.top === undefined) {
+                region = Y.one(region).get('region');
             }
 
-            var top = region.top,
-                right = region.right,
-                bottom = region.bottom,
-                left = region.left,
-                x = left,
-                y = top,
-                node = this._host,
-                xy;
+            if (region) {
+                var xy = [region.left, region.top],
+                    offxy = [region.width, region.height],
+                    points = Align.points,
+                    node = this._host,
+                    NULL = null,
+                    size = node.getAttrs([OFFSET_HEIGHT, OFFSET_WIDTH]),
+                    nodeoff = [0 - size[OFFSET_WIDTH], 0 - size[OFFSET_HEIGHT]], // reverse offsets
+                    regionFn0 = regionPoint ? points[regionPoint.charAt(0)]: NULL,
+                    regionFn1 = (regionPoint && regionPoint !== 'cc') ? points[regionPoint.charAt(1)] : NULL,
+                    nodeFn0 = point ? points[point.charAt(0)] : NULL,
+                    nodeFn1 = (point && point !== 'cc') ? points[point.charAt(1)] : NULL;
+
+                if (regionFn0) {
+                    xy = regionFn0(xy, offxy, regionPoint);
+                }
+                if (regionFn1) {
+                    xy = regionFn1(xy, offxy, regionPoint);
+                }
+
+                if (nodeFn0) {
+                    xy = nodeFn0(xy, nodeoff, point);
+                }
+                if (nodeFn1) {
+                    xy = nodeFn1(xy, nodeoff, point);
+                }
+
+                if (xy && node) {
+                    node.setXY(xy);
+                }
                 
-
-            // align to region
-            switch(regionPoint) {
-                case 'tl':
-                    break;
-                case 'tr':
-                    x = right;
-                    break;
-                case 'bl':
-                    y = bottom;  
-                    break;
-                case 'br':
-                    x = right;
-                    y = bottom;  
-                    break;
-                case 'tc':
-                    x += (right - left) / 2;
-                    break;
-                case 'bc':
-                    x += (right - left) / 2;
-                    y = bottom;  
-                    break;
-                case 'lc':
-                    y += (bottom - top) / 2;
-                    break;
-                case 'rc':
-                    x = right;
-                    y += (bottom - top) / 2;
-                    break;
-                case 'cc':
-                    x += (right - left) / 2;
-                    y += (bottom - top) / 2;
-                    break;
-            }
-
-            // align our node
-            switch (point) {
-                case 'tl':
-                    xy = [x, y];
-                    break;
-                case 'tr':
-                    xy = [x - node.get(OFFSET_WIDTH), y];
-                    break;
-                case 'bl':
-                    xy = [x, y - node.get(OFFSET_HEIGHT)];
-                    break;
-                case 'br':
-                    xy = [x - node.get(OFFSET_WIDTH), y - node.get(OFFSET_HEIGHT)];
-                    break;
-                case 'tc':
-                    xy = [x - (node.get(OFFSET_WIDTH)/2), y];
-                    break;
-                case 'bc':
-                    xy = [x - (node.get(OFFSET_WIDTH)/2), y - node.get(OFFSET_HEIGHT)];
-                    break;
-                case 'lc':
-                    xy = [x, y - (node.get(OFFSET_HEIGHT)/2)];
-                    break;
-                case 'rc':
-                    xy = [(x - node.get(OFFSET_WIDTH)), y - (node.get(OFFSET_HEIGHT)/2)];
-                    break;
-                case 'cc':
-                    xy = [x - (node.get(OFFSET_WIDTH)/2), y - (node.get(OFFSET_HEIGHT)/2)];
-                    break;
-                default:
-                    Y.log("align: Invalid Points Argument", "info", "node-align");
-            }
-
-            if (xy && node) {
-                this._fix(fixed);
-                node.setXY(xy);
+                this._resize(syncOnResize);
 
             }
+            return this;
         },
 
         sync: function() {
             this.to.apply(this, this._syncArgs);
+            return this;
         },
 
-        _setStyleFixed: function(add) {
-            var pos = add ? 'fixed' : '';
-            this._host.setStyle('position', pos);
-            this._isStyleFixed = add;
+        _resize: function(add) {
+            var handle = this._handle;
+            if (add && !handle) {
+                this._handle = Y.on('resize', this._onresize, window, this);
+            } else if (!add && handle) {
+                handle.detach();
+            }
+
         },
 
         _onresize: function() {
-            this.sync();
+            var self = this;
+            setTimeout(function() {
+                self.sync();
+            });
         },
     
-        _fix: function(fixed) {
-            var prefix = Align.DETACH_PREFIX;
-
-            if (fixed) {
-                if (!this._fixing) {
-                    Y.on(prefix + 'resize', this._onresize, window, this);
-                    this._fixing = true;
-
-                    // use scroll listener for IE6 and IE quirks
-                    // otherwise use position :fixed
-                    if (ie6 || (Y.UA.ie && Y.config.doc.compatMode === 'backCompat')) {
-                        Y.on(prefix + 'scroll', this._onresize, window, this);
-                    } else if (!this._isStyleFixed) {
-                        this._setStyleFixed(true); 
-                    }
-                }
-            } else { // "unfix"
-                Y.detach(prefix);
-                this._fixing = false;
-                if (this._isStyleFixed) {
-                    this._setStyleFixed(false); 
-                }
-            }
-        },
-
         /**
          * Aligns the center of a node to the center of another node or region.
          * @method center 
          * @parm region {Node || HTMLElement || Object} optional The node or
          * region to align with. Defaults to the viewport region.
-         * @parm fixed {Boolean} Whether or not the node should re-align when
          * the window is resized. If centering to viewport, this defaults
          * to true, otherwise default is false.
          */
-        center: function(region, fixed) {
-            this.to(region, 'cc', 'cc', fixed); 
+        center: function(region, resize) {
+            this.to(region, 'cc', 'cc', resize); 
+            return this;
         },
 
         /**
@@ -204,15 +149,49 @@
          * @method destroy 
          */
         destroy: function() {
-            Y.detach('alignfixed');
+            var handle = this._handle;
+            if (handle) {
+                handle.detach();
+            }
         }
     };
 
+    Align.points = {
+        't': function(xy, off) {
+            return xy;
+        },
+
+        'r': function(xy, off) {
+            return [xy[0] + off[0], xy[1]];
+        },
+
+        'b': function(xy, off) {
+            return [xy[0], xy[1] + off[1]];
+        },
+
+        'l': function(xy, off) {
+            return xy;
+        },
+
+        'c': function(xy, off, point) {
+            var axis = (point[0] === 't' || point[0] === 'b') ?  0 : 1,
+                ret, val;
+
+            if (point === 'cc') {
+                ret = [xy[0] + off[0] / 2, xy[1] + off[1] / 2];
+            } else {
+                val = xy[axis] + off[axis] / 2;
+                ret = (axis) ? [xy[0], val] : [val, xy[1]];
+            }
+
+             return ret;
+        }
+    };
 
     Align.NAME = 'Align';
     Align.NS = 'align';
 
-    Align.DETACH_PREFIX = 'alignfixed|';
+    Align.prototype.constructor = Align;
 
     Y.namespace('Plugin');
     Y.Plugin.Align = Align;
