@@ -63,14 +63,17 @@
                 Y.Mock.expect(handler,{
                     method: "handleSuccess",
                     args: [Y.Mock.Value(function(e){
+                        ASSERT.isUndefined(e.request, "request: Expected undefined request.");
                         ARRAYASSERT.itemsAreSame(["a","b","c","d"], e.response.results, "Expected live array.");
                     })]
                 });
 
-                ds.sendRequest(null, {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
-                        ASSERT.fail("IO failure case.");
+                ds.sendRequest({
+                    callback: {
+                        success: handler.handleSuccess,
+                        failure: function(e) {
+                            ASSERT.fail("IO failure case.");
+                        }
                     }
                 });
                 
@@ -118,7 +121,10 @@
                 });
                 ds.on("response", handler.handleResponse);
 
-                ds.sendRequest("a", "callback");
+                ds.sendRequest({
+                    request: "a",
+                    callback: "callback"
+                });
                 Y.Mock.verify(handler);
             },
 
@@ -141,7 +147,10 @@
                 ds.on("error", handler.handleError);
 
                 ds.set("source", undefined);
-                ds.sendRequest("a", "callback");
+                ds.sendRequest({
+                    request: "a",
+                    callback: "callback"
+                });
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             }
         });
@@ -164,10 +173,13 @@
                     })]
                 });
 
-                ds.sendRequest(null, {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
-                        ASSERT.fail("IO failure case.");
+                ds.sendRequest({
+                    request: null,
+                    callback: {
+                        success: handler.handleSuccess,
+                        failure: function(e) {
+                            ASSERT.fail("IO failure case.");
+                        }
                     }
                 });
 
@@ -183,20 +195,23 @@
                 Y.Mock.expect(handler,{
                     method: "handleSuccess",
                     args: [Y.Mock.Value(function(e){
-                        ASSERT.isNull(e.request, "Expected null request.");
+                        ASSERT.isUndefined(e.request, "Expected undefined request.");
                         ASSERT.isObject(e.response, "Expected response object.");
                         OBJECTASSERT.ownsKeys({tId:null,request:null,data:null,response:null,callback:null}, e, "Expected all properties.");
                     })]
                 });
 
-                ds.sendRequest(null, {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
-                        ASSERT.fail("IO failure case.");
+                ds.sendRequest({
+                    callback: {
+                        success: handler.handleSuccess,
+                        failure: function(e) {
+                            ASSERT.fail("IO failure case.");
+                        }
+                    },
+                    cfg: {
+                        method: "POST",
+                        data: "foo=bar"
                     }
-                },{
-                    method: "POST",
-                    data: "foo=bar"
                 });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -218,7 +233,7 @@
                     method: "handleRequest",
                     args: [Y.Mock.Value(function(e){
                         ASSERT.isNumber(e.tId, "request: Expected transaction ID.");
-                        ASSERT.areSame(null, e.request, "request: Expected request.");
+                        ASSERT.isUndefined(e.request, "request: Expected undefined request.");
                         ASSERT.areSame("callback", e.callback, "request: Expected callback.");
                     })]
                 });
@@ -228,7 +243,7 @@
                     method: "handleData",
                     args: [Y.Mock.Value(function(e){
                         ASSERT.isNumber(e.tId, "data: Expected transaction ID.");
-                        ASSERT.areSame(null, e.request, "data: Expected request.");
+                        ASSERT.isUndefined(e.request, "data: Expected undefined request.");
                         ASSERT.areSame("callback", e.callback, "data: Expected callback.");
                         ASSERT.isObject(e.data, "data: Expected raw data.");
                     })]
@@ -239,7 +254,7 @@
                     method: "handleResponse",
                     args: [Y.Mock.Value(function(e){
                         ASSERT.isNumber(e.tId, "response: Expected transaction ID.");
-                        ASSERT.areSame(null, e.request, "response: Expected request.");
+                        ASSERT.isUndefined(e.request, "response: Expected undefined request.");
                         ASSERT.areSame("callback", e.callback, "response: Expected callback.");
                         ASSERT.isObject(e.data, "response: Expected raw data.");
                         ASSERT.isObject(e.response, "response: Expected normalized response object.");
@@ -249,7 +264,9 @@
                 });
                 ds.on("response", handler.handleResponse);
 
-                ds.sendRequest(null, "callback");
+                ds.sendRequest({
+                    callback: "callback"
+                });
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             },
 
@@ -278,7 +295,10 @@
                 ds.on("error", handler.handleError);
 
                 ds.set("source", "foo");
-                ds.sendRequest("a", "callback");
+                ds.sendRequest({
+                    request: "a",
+                    callback: "callback"
+                });
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             }
         });
@@ -301,10 +321,13 @@
                     })]
                 });
 
-                ds.sendRequest("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
-                        ASSERT.fail("Get failure case.");
+                ds.sendRequest({
+                    request: "q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22",
+                    callback: {
+                        success: handler.handleSuccess,
+                        failure: function(e) {
+                            ASSERT.fail("Get failure case.");
+                        }
                     }
                 });
 
@@ -358,7 +381,10 @@
                 });
                 ds.on("response", handler.handleResponse);
 
-                ds.sendRequest("q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22", "callback");
+                ds.sendRequest({
+                    request: "q=select%20*%20from%20search.web%20where%20query%3D%22pizza%22",
+                    callback: "callback"
+                });
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             },
 
@@ -388,7 +414,10 @@
                 ds.on("error", handler.handleError);
 
                 ds.set("source", "foo");
-                ds.sendRequest("a", "callback");
+                ds.sendRequest({
+                    request: "a",
+                    callback: "callback"
+                });
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             } : function(){}
         });
@@ -413,10 +442,13 @@
                     })]
                 });
 
-                ds.sendRequest("foo", {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
-                        ASSERT.fail("Function failure case.");
+                ds.sendRequest({
+                    request: "foo",
+                    callback: {
+                        success: handler.handleSuccess,
+                        failure: function(e) {
+                            ASSERT.fail("Function failure case.");
+                        }
                     }
                 });
 
@@ -471,7 +503,10 @@
                 });
                 ds.on("response", handler.handleResponse);
 
-                ds.sendRequest("foo", "callback");
+                ds.sendRequest({
+                    request: "foo",
+                    callback: "callback"
+                });
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             },
 
@@ -498,7 +533,10 @@
                 });
                 ds.on("error", handler.handleError);
 
-                ds.sendRequest("a", "callback");
+                ds.sendRequest({
+                    request: "a",
+                    callback: "callback"
+                });
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             },
             
@@ -528,7 +566,10 @@
                 });
                 ds.on("error", handler.handleError);
 
-                ds.sendRequest("a", "callback");
+                ds.sendRequest({
+                    request: "a",
+                    callback: "callback"
+                });
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
             }
         });
@@ -551,7 +592,7 @@
                 Y.Mock.expect(handler,{
                     method: "handleSuccess",
                     args: [Y.Mock.Value(function(e){
-                        ASSERT.isNull(e.request, "Expected null request.");
+                        ASSERT.isUndefined(e.request, "Expected undefined request.");
                         ASSERT.isObject(e.response, "Expected normalized response object.");
                         ASSERT.isArray(e.response.results, "Expected results array.");
                         ASSERT.areSame(10, e.response.results.length, "Expected 10 results.")
@@ -559,11 +600,13 @@
                     })]
                 });
 
-                ds.sendRequest(null, {
-                    success: Y.bind(handler.handleSuccess, this),
-                    failure: Y.bind(function(e) {
-                        ASSERT.fail("IO failure case.");
-                    }, this)
+                ds.sendRequest({
+                    callback: {
+                        success: Y.bind(handler.handleSuccess, this),
+                        failure: Y.bind(function(e) {
+                            ASSERT.fail("IO failure case.");
+                        }, this)
+                    }
                 });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -584,7 +627,7 @@
                 Y.Mock.expect(handler,{
                     method: "handleSuccess",
                     args: [Y.Mock.Value(function(e){
-                        ASSERT.isNull(e.request, "Expected null request.");
+                        ASSERT.isUndefined(e.request, "Expected undefined request.");
                         ASSERT.isObject(e.response, "Expected normalized response object.");
                         ASSERT.isArray(e.response.results, "Expected results array.");
                         ASSERT.areSame(10, e.response.results.length, "Expected 10 results.")
@@ -592,11 +635,13 @@
                     })]
                 });
 
-                ds.sendRequest(null, {
-                    success: Y.bind(handler.handleSuccess, this),
-                    failure: Y.bind(function(e) {
-                        ASSERT.fail("IO failure case.");
-                    }, this)
+                ds.sendRequest({
+                    callback: {
+                        success: Y.bind(handler.handleSuccess, this),
+                        failure: Y.bind(function(e) {
+                            ASSERT.fail("IO failure case.");
+                        }, this)
+                    }
                 });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -616,7 +661,7 @@
                 Y.Mock.expect(handler,{
                     method: "handleSuccess",
                     args: [Y.Mock.Value(function(e){
-                        ASSERT.isNull(e.request, "Expected null request.");
+                        ASSERT.isUndefined(e.request, "Expected undefined request.");
                         ASSERT.isObject(e.response, "Expected normalized response object.");
                         ASSERT.isArray(e.response.results, "Expected results array.");
                         ASSERT.areSame(3, e.response.results.length, "Expected 3 results.")
@@ -629,11 +674,13 @@
                     })]
                 });
 
-                ds.sendRequest(null, {
-                    success: Y.bind(handler.handleSuccess, this),
-                    failure: Y.bind(function(e) {
-                        ASSERT.fail("Local failure case.");
-                    }, this)
+                ds.sendRequest({
+                    callback: {
+                        success: Y.bind(handler.handleSuccess, this),
+                        failure: Y.bind(function(e) {
+                            ASSERT.fail("Local failure case.");
+                        }, this)
+                    }
                 });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -655,7 +702,7 @@
                 Y.Mock.expect(handler,{
                     method: "handleSuccess",
                     args: [Y.Mock.Value(function(e){
-                        ASSERT.isNull(e.request, "Expected null request.");
+                        ASSERT.isUndefined(e.request, "Expected undefined request.");
                         ASSERT.isObject(e.response, "Expected normalized response object.");
                         ASSERT.isArray(e.response.results, "Expected results array.");
                         ASSERT.areSame(3, e.response.results.length, "Expected 3 results.")
@@ -668,11 +715,13 @@
                     })]
                 });
 
-                ds.sendRequest(null, {
-                    success: Y.bind(handler.handleSuccess, this),
-                    failure: Y.bind(function(e) {
-                        ASSERT.fail("Local failure case.");
-                    }, this)
+                ds.sendRequest({
+                    callback: {
+                        success: Y.bind(handler.handleSuccess, this),
+                        failure: Y.bind(function(e) {
+                            ASSERT.fail("Local failure case.");
+                        }, this)
+                    }
                 });
 
                 this.wait(function(){Y.Mock.verify(handler);}, WAITTIMEOUT);
@@ -710,17 +759,17 @@
                     });
                 ds.plug({fn:Y.Plugin.DataSourceCache, cfg:{max:3}});
 
-                ds.sendRequest("a");
-                ds.sendRequest("b");
-                ds.sendRequest("c");
+                ds.sendRequest({request:"a"});
+                ds.sendRequest({request:"b"});
+                ds.sendRequest({request:"c"});
 
                 ds.on("data", function(e) {
                     ASSERT.fail("Entry should be cached -- 'data' event is unexpected");
                 });
 
-                ds.sendRequest("a");
-                ds.sendRequest("b");
-                ds.sendRequest("c");
+                ds.sendRequest({request:"a"});
+                ds.sendRequest({request:"b"});
+                ds.sendRequest({request:"c"});
             },
 
             testLocalCacheUnplug: function() {
@@ -729,14 +778,14 @@
                     });
                 ds.plug({fn:Y.Plugin.DataSourceCache, cfg:{max:3}});
 
-                ds.sendRequest("a");
+                ds.sendRequest({request:"a"});
 
                 ds.cache.on("retrieve", function(e) {
                     ASSERT.fail("Cache is unset -- 'retrieve' event is unexpected");
                 });
 
                 ds.unplug("cache");
-                ds.sendRequest("a");
+                ds.sendRequest({request:"a"});
             }
         });
 
