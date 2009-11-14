@@ -25,15 +25,12 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             float: left;
         }
         #drop {
-            border: 4px solid black;
+            border: 1px solid black;
             height: 200px;
             width: 300px;
             position: absolute;
             top: 200px;
             right: 10px;
-        }
-        #drop.yui-dd-drop-over {
-            border: 4px solid green;
         }
 	</style>
 </head>
@@ -71,8 +68,6 @@ foreach (range(1, $count) as $k) {
 <script type="text/javascript" src="js/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 
-<script type="text/javascript" src="js/delegate.js?bust=<?php echo(mktime()); ?>"></script>
-
 <script type="text/javascript">
 var yConfig = {
     base: '../../build/',
@@ -89,10 +84,7 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-drop', 'dd-delegate', 'event-mouseenter', function(Y) {
-    //Y.DD.DDM._debugShim = true;
-    //Y.DD.DDM._useShim = false;
-
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-drop', function(Y) {
     var count = <?php echo($count); ?>,
         inc = 1;
     
@@ -101,20 +93,18 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-drop', 'dd-delegate', 'event-mouseente
         for (var i = 1; i < count + 1; i++) {
             node = Y.Node.create('<div class="item">(' + inc + ') ' + i + '</div>');
             demo.append(node);
+            new Y.DD.Drag({
+                node: node
+            });
         }
         inc++;
     });
-
-    var del = new Y.DD.Delegate({
-        cont: '#demo',
-        nodes: '.item'
+    
+    Y.all('#demo .item').each(function(v) {
+        new Y.DD.Drag({
+            node: v
+        });
     });
-    del.on('drag:start', function(e) {
-        this.get('lastNode').setStyle('zIndex', '');
-        this.get('currentNode').setStyle('zIndex', '999');
-    });
-    //del.on('drag:drag', console.log);
-    //console.log(del);
 
     var drop = new Y.DD.Drop({
         node: '#drop'
