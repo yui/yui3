@@ -24,6 +24,14 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             margin: 4px;
             float: left;
         }
+        #drop {
+            border: 1px solid black;
+            height: 200px;
+            width: 300px;
+            position: absolute;
+            top: 200px;
+            right: 10px;
+        }
 	</style>
 </head>
 <body class="yui-skin-sam">
@@ -36,6 +44,8 @@ foreach (range(1, $count) as $k) {
 }
 ?>
 </div>
+
+<div id="drop">Drop Here..</div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
@@ -76,8 +86,7 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-delegate', function(Y) {
-    console.log(Y);
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-drop', 'dd-delegate', function(Y) {
     var count = <?php echo($count); ?>,
         inc = 1;
     
@@ -93,6 +102,14 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-delegate', function(Y) {
     var del = new Y.DD.Delegate({
         cont: '#demo',
         nodes: '.item'
+    });
+
+    var drop = new Y.DD.Drop({
+        node: '#drop'
+    });
+
+    drop.on('drop:hit', function(e) {
+        console.log(e);
     });
     //del.on('drag:drag', console.log);
     //console.log(del);

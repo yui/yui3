@@ -1,34 +1,35 @@
 YUI.add('dd-delegate', function(Y) {
 
-    D = function(o) {
+    var D = function(o) {
         D.superclass.constructor.apply(this, arguments);
-    };
+    },
+    dd_cache = {};
 
     D.NAME = 'delegate';
 
     D.ATTRS = {
         cont: {
-            value: null
+            value: 'body'
         },
         nodes: {
-            value: null
-        },
-        handles: {
-            value: []
+            value: 'dd-draggable'
         }
     };
 
     Y.extend(D, Y.Base, {
         _dd: null,
         initializer: function() {
+            //Create a tmp DD instance under the hood.
             this._dd = new Y.DD.Drag({
                 node: Y.Node.create('<div>TEMP</div>'),
                 bubbles: this
             });
+            //On end drag, detach the listeners
             this._dd.on('drag:end', Y.bind(function() {
                 this._dd._unprep();
             }, this));
 
+            //Attach the delegate to the container
             Y.delegate('mousedown', Y.bind(function(e) {
                 this._dd.set('node', e.currentTarget).set('dragNode', e.currentTarget);
                 this._dd._prep();
@@ -36,6 +37,9 @@ YUI.add('dd-delegate', function(Y) {
             }, this), this.get('cont'), this.get('nodes'));
         },
         destructor: function() {
+            if (this._dd) {
+                this._dd.destroy();
+            }
         }
     });
 
