@@ -19,7 +19,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         #demo .item {
             height: 50px;
             width: 50px;
-            border: 1px solid black;
+            border: 2px solid black;
             background-color: #ccc;
             margin: 4px;
             float: left;
@@ -31,6 +31,9 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             position: absolute;
             top: 200px;
             right: 10px;
+        }
+        #demo .yui-dd-drop-over {
+            border: 2px solid green;
         }
         #drop.yui-dd-drop-over {
             border: 4px solid green;
@@ -89,9 +92,24 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-drop', 'dd-delegate', 'event-mouseenter', function(Y) {
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-drop-plugin', 'event-mouseenter', function(Y) {
+    console.log(Y);
     //Y.DD.DDM._debugShim = true;
     //Y.DD.DDM._useShim = false;
+
+    var del = new Y.DD.Delegate({
+        cont: '#demo',
+        nodes: '.item',
+        target: true
+    });
+    del.plugdd(Y.Plugin.DDProxy);
+
+    del.on('drag:start', function(e) {
+        this.get('lastNode').setStyle('zIndex', '');
+        this.get('currentNode').setStyle('zIndex', '999');
+    });
+    //del.on('drag:drag', console.log);
+    //console.log(del);
 
     var count = <?php echo($count); ?>,
         inc = 1;
@@ -103,18 +121,9 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-drop', 'dd-delegate', 'event-mouseente
             demo.append(node);
         }
         inc++;
+        del.syncTargets();
     });
 
-    var del = new Y.DD.Delegate({
-        cont: '#demo',
-        nodes: '.item'
-    });
-    del.on('drag:start', function(e) {
-        this.get('lastNode').setStyle('zIndex', '');
-        this.get('currentNode').setStyle('zIndex', '999');
-    });
-    //del.on('drag:drag', console.log);
-    //console.log(del);
 
     var drop = new Y.DD.Drop({
         node: '#drop',

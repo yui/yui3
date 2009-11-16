@@ -15,7 +15,7 @@
 
         var Drag = function(config) {
             config.node = ((Y.Widget && config.host instanceof Y.Widget) ? config.host.get('boundingBox') : config.host);
-            Drag.superclass.constructor.apply(this, arguments);
+            Drag.superclass.constructor.call(this, config);
         };
         
         /**

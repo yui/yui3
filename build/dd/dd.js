@@ -584,7 +584,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         isOverTarget: function(drop) {
             if (this.activeDrag && drop) {
                 var xy = this.activeDrag.mouseXY, r, dMode = this.activeDrag.get('dragMode'),
-                    aRegion;
+                    aRegion, node = drop.shim;
                 if (xy && this.activeDrag) {
                     aRegion = this.activeDrag.region;
                     if (dMode == this.STRICT) {
@@ -595,7 +595,10 @@ YUI.add('dd-ddm-drop', function(Y) {
                                 r = ((aRegion) ? aRegion : this.activeDrag.get('node'));
                                 return drop.get('node').intersect(r).inRegion;
                             } else {
-                                return drop.shim.intersect({
+                                if (this._noShim) {
+                                    node = drop.get('node');
+                                }
+                                return node.intersect({
                                     top: xy[1],
                                     bottom: xy[1],
                                     left: xy[0], 
@@ -2284,6 +2287,14 @@ YUI.add('dd-constrain', function(Y) {
         */
         constrain2view: {
             value: false
+        },
+        /**
+        * @attribute cacheRegion
+        * @description Should the region be cached for performace. Default: true
+        * @type Boolean
+        */
+        cacheRegion: {
+            value: true
         }
     };
 
@@ -2298,7 +2309,7 @@ YUI.add('dd-constrain', function(Y) {
         * @description Fires on drag:start and clears the _regionCache
         */
         _handleStart: function() {
-            this._regionCache = null;
+            this.resetCache();
         },
         /**
         * @private
@@ -2313,7 +2324,16 @@ YUI.add('dd-constrain', function(Y) {
         * @description Get's the region and caches it, called from window.resize and when the cache is null
         */
         _cacheRegion: function() {
-            this._regionCache = this.get(CON_2_NODE).get('region');
+            if (this.get('cacheRegion')) {
+                this._regionCache = this.get(CON_2_NODE).get('region');
+            }
+        },
+        /**
+        * @method resetCache
+        * @description Reset the internal region cache.
+        */
+        resetCache: function() {
+            this._regionCache = null;
         },
         /**
         * @method getRegion
@@ -2946,7 +2966,7 @@ YUI.add('dd-scroll', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag'], optional:['dd-proxy']});
+}, '@VERSION@' ,{optional:['dd-proxy'], skinnable:false, requires:['dd-drag']});
 YUI.add('dd-plugin', function(Y) {
 
 
@@ -2966,7 +2986,7 @@ YUI.add('dd-plugin', function(Y) {
 
         var Drag = function(config) {
             config.node = ((Y.Widget && config.host instanceof Y.Widget) ? config.host.get('boundingBox') : config.host);
-            Drag.superclass.constructor.apply(this, arguments);
+            Drag.superclass.constructor.call(this, config);
         };
         
         /**
@@ -2992,7 +3012,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag'], optional:['dd-constrain', 'dd-proxy']});
+}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], skinnable:false, requires:['dd-drag']});
 YUI.add('dd-drop', function(Y) {
 
 
@@ -3130,6 +3150,13 @@ YUI.add('dd-drop', function(Y) {
         bubbles: {
             writeOnce: true,
             value: Y.DD.DDM
+        },
+        useShim: {
+            value: true,
+            setter: function(v) {
+                Y.DD.DDM._noShim = !v;
+                return v;
+            }
         }
     };
 
@@ -3258,11 +3285,14 @@ YUI.add('dd-drop', function(Y) {
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-valid');
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-invalid');
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-over');
-            this.shim.setStyles({
-                top: '-999px',
-                left: '-999px',
-                zIndex: '1'
-            });
+
+            if (this.get('useShim')) {
+                this.shim.setStyles({
+                    top: '-999px',
+                    left: '-999px',
+                    zIndex: '1'
+                });
+            }
             this.overTarget = false;
         },
         /**
@@ -3288,7 +3318,9 @@ YUI.add('dd-drop', function(Y) {
                 node.addClass(DDM.CSS_PREFIX + '-drop-active-valid');
                 DDM._addValid(this);
                 this.overTarget = false;
-                this.sizeShim();
+                if (this.get('useShim')) {
+                    this.sizeShim();
+                }
             } else {
                 DDM._removeValid(this);
                 node.removeClass(DDM.CSS_PREFIX + '-drop-active-valid');
@@ -3306,7 +3338,7 @@ YUI.add('dd-drop', function(Y) {
             if (this.get(NODE) === DDM.activeDrag.get(NODE)) {
                 return false;
             }
-            if (this.get('lock')) {
+            if (this.get('lock') || !this.get('useShim')) {
                 return false;
             }
             if (!this.shim) {
@@ -3375,24 +3407,30 @@ YUI.add('dd-drop', function(Y) {
             if (this.shim) {
                 return;
             }
-            var s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
+            var s = this.get('node');
 
-            s.setStyles({
-                height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
-                width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
-                backgroundColor: 'yellow',
-                opacity: '.5',
-                zIndex: '1',
-                overflow: 'hidden',
-                top: '-900px',
-                left: '-900px',
-                position:  'absolute'
-            });
-            DDM._pg.appendChild(s);
+            if (this.get('useShim')) {
+                s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
+                s.setStyles({
+                    height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
+                    width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
+                    backgroundColor: 'yellow',
+                    opacity: '.5',
+                    zIndex: '1',
+                    overflow: 'hidden',
+                    top: '-900px',
+                    left: '-900px',
+                    position:  'absolute'
+                });
+
+                DDM._pg.appendChild(s);
+
+                s.on('mouseover', Y.bind(this._handleOverEvent, this));
+                s.on('mouseout', Y.bind(this._handleOutEvent, this));
+            }
+
+
             this.shim = s;
-
-            s.on('mouseover', Y.bind(this._handleOverEvent, this));
-            s.on('mouseout', Y.bind(this._handleOutEvent, this));
         },
         /**
         * @private
@@ -3455,9 +3493,6 @@ YUI.add('dd-drop', function(Y) {
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];
-                        //if (DDM.activeDrop === this) {
-                        //    DDM.activeDrop = null;
-                        //}
                     }
                 }
             }
@@ -3516,7 +3551,114 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
 }, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
+YUI.add('dd-delegate', function(Y) {
 
 
-YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-scroll'], skinnable:false});
+    var D = function(o) {
+        D.superclass.constructor.apply(this, arguments);
+    },
+    _tmpNode = Y.Node.create('<div>Temp Node</div>'),
+    dd_cache = {};
+
+    D.NAME = 'delegate';
+
+    D.ATTRS = {
+        cont: {
+            value: 'body'
+        },
+        nodes: {
+            value: '.dd-draggable'
+        },
+        lastNode: {
+            value: _tmpNode
+        },
+        currentNode: {
+            value: _tmpNode
+        },
+        over: {
+            value: false
+        },
+        target: {
+            value: false
+        }
+    };
+
+    Y.extend(D, Y.Base, {
+        _dd: null,
+        _shimState: null,
+        initializer: function() {
+            //Create a tmp DD instance under the hood.
+            this._dd = new Y.DD.Drag({
+                node: _tmpNode,
+                bubbles: this
+            });
+            this.addTarget(Y.DD.DDM);
+            //On end drag, detach the listeners
+            this._dd.on('drag:end', Y.bind(function(e) {
+                Y.DD.DDM._noShim = this._shimState;
+                this.set('lastNode', this._dd.get('node'));
+                this._dd._unprep();
+                this._dd.set('node', _tmpNode);
+            }, this));
+
+            //Attach the delegate to the container
+            Y.delegate('mousedown', Y.bind(function(e) {
+                this._shimState = Y.DD.DDM._noShim;
+                Y.DD.DDM._noShim = true;
+                this.set('currentNode', e.currentTarget);
+                this._dd.set('node', e.currentTarget);
+                if (this._dd.proxy) {
+                    this._dd.set('dragNode', Y.DD.DDM._proxy);
+                } else {
+                    this._dd.set('dragNode', e.currentTarget);
+                }
+                this._dd._prep();
+                this._dd.fire.call(this._dd, 'drag:mouseDown', { ev: e });
+            }, this), this.get('cont'), this.get('nodes'));
+
+            Y.on('mouseenter', Y.bind(function() {
+                this._shimState = Y.DD.DDM._noShim;
+                Y.DD.DDM._noShim = true;
+            }, this), this.get('cont'));
+
+            Y.on('mouseleave', Y.bind(function() {
+                Y.DD.DDM._noShim = this._shimState;
+            }, this), this.get('cont'));
+
+            this.syncTargets();
+        },
+        syncTargets: function() {
+            if (!Y.Plugin.Drop) {
+                Y.error('DD.Delegate: Drop Plugin Not Found');
+                return;
+            }
+            if (this.get('target')) {
+                var items = Y.one(this.get('cont')).all(this.get('nodes'));
+                items.each(function(i) {
+                    if (!i.drop) {
+                        i.plug(Y.Plugin.Drop, { useShim: true });
+                    }
+                });
+
+            }
+        },
+        plugdd: function(cls, conf) {
+            this._dd.plug(cls, conf)
+        },
+        destructor: function() {
+            if (this._dd) {
+                this._dd.destroy();
+            }
+        }
+    });
+
+    Y.namespace('DD');    
+    Y.DD.Delegate = D;
+
+
+
+}, '@VERSION@' ,{optional:['dd-drop-plugin'], skinnable:false, requires:['dd-drag', 'event-mouseenter']});
+
+
+YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-scroll', 'dd-delegate'], skinnable:false});
 
