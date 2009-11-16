@@ -403,4 +403,4 @@ YUI.add('dd-scroll', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-proxy'], skinnable:false, requires:['dd-drag']});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-drag'], optional:['dd-proxy']});
