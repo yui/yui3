@@ -302,22 +302,30 @@ Y.extend(DSLocal, Y.Base, {
      * Generates a unique transaction ID and fires <code>request</code> event.
      *
      * @method sendRequest
-     * @param request {Object} Request.
-     * @param callback {Object} An object literal with the following properties:
+     * @param request {Object} An object literal with the following properties:
      *     <dl>
-     *     <dt><code>success</code></dt>
-     *     <dd>The function to call when the data is ready.</dd>
-     *     <dt><code>failure</code></dt>
-     *     <dd>The function to call upon a response failure condition.</dd>
-     *     <dt><code>argument</code></dt>
-     *     <dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
+     *     <dt><code>request</code></dt>
+     *     <dd>The request to send to the live data source, if any.</dd>
+     *     <dt><code>callback</code></dt>
+     *     <dd>An object literal with the following properties:
+     *         <dl>
+     *         <dt><code>success</code></dt>
+     *         <dd>The function to call when the data is ready.</dd>
+     *         <dt><code>failure</code></dt>
+     *         <dd>The function to call upon a response failure condition.</dd>
+     *         <dt><code>argument</code></dt>
+     *         <dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
+     *         </dl>
+     *     </dd>
+     *     <dt><code>cfg</code></dt>
+     *     <dd>Configuration object, if any.</dd>
      *     </dl>
-     * @param cfg {Object} Configuration object
      * @return {Number} Transaction ID.
      */
-    sendRequest: function(request, callback, cfg) {
+    sendRequest: function(request) {
+        request = request || {};
         var tId = DSLocal._tId++;
-        this.fire("request", {tId:tId, request:request, callback:callback, cfg:cfg || {}});
+        this.fire("request", {tId:tId, request:request.request, callback:request.callback, cfg:request.cfg || {}});
         return tId;
     }
 });
