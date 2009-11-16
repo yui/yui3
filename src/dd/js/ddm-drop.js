@@ -172,7 +172,7 @@
         isOverTarget: function(drop) {
             if (this.activeDrag && drop) {
                 var xy = this.activeDrag.mouseXY, r, dMode = this.activeDrag.get('dragMode'),
-                    aRegion;
+                    aRegion, node = drop.shim;
                 if (xy && this.activeDrag) {
                     aRegion = this.activeDrag.region;
                     if (dMode == this.STRICT) {
@@ -183,7 +183,10 @@
                                 r = ((aRegion) ? aRegion : this.activeDrag.get('node'));
                                 return drop.get('node').intersect(r).inRegion;
                             } else {
-                                return drop.shim.intersect({
+                                if (this._noShim) {
+                                    node = drop.get('node');
+                                }
+                                return node.intersect({
                                     top: xy[1],
                                     bottom: xy[1],
                                     left: xy[0], 
