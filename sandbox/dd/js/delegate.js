@@ -28,6 +28,7 @@ YUI.add('dd-delegate', function(Y) {
 
     Y.extend(D, Y.Base, {
         _dd: null,
+        _shimState: null,
         initializer: function() {
             //Create a tmp DD instance under the hood.
             this._dd = new Y.DD.Drag({
@@ -40,12 +41,10 @@ YUI.add('dd-delegate', function(Y) {
                 this.set('lastNode', this._dd.get('node'));
                 this._dd._unprep();
                 this._dd.set('node', _tmpNode);
-                Y.DD.DDM._noShim = false;
             }, this));
 
             //Attach the delegate to the container
             Y.delegate('mousedown', Y.bind(function(e) {
-                Y.DD.DDM._noShim = true;
                 this.set('currentNode', e.currentTarget);
                 this._dd.set('node', e.currentTarget).set('dragNode', e.currentTarget);
                 this._dd._prep();
@@ -53,11 +52,12 @@ YUI.add('dd-delegate', function(Y) {
             }, this), this.get('cont'), this.get('nodes'));
 
             Y.on('mouseenter', Y.bind(function() {
-                this.set('over', true);
+                this._shimState = Y.DD.DDM._noShim;
+                Y.DD.DDM._noShim = true;
             }, this), this.get('cont'));
 
             Y.on('mouseleave', Y.bind(function() {
-                this.set('over', false);
+                Y.DD.DDM._noShim = this._shimState;
             }, this), this.get('cont'));
         },
         destructor: function() {

@@ -117,7 +117,8 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-drop', 'dd-delegate', 'event-mouseente
     //console.log(del);
 
     var drop = new Y.DD.Drop({
-        node: '#drop'
+        node: '#drop',
+        useShim: false
     });
 
     drop.on('drop:hit', function(e) {

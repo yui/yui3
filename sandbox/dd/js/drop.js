@@ -134,6 +134,13 @@ YUI.add('dd-drop', function(Y) {
         bubbles: {
             writeOnce: true,
             value: Y.DD.DDM
+        },
+        useShim: {
+            value: true,
+            setter: function(v) {
+                Y.DD.DDM._noShim = !v;
+                return v;
+            }
         }
     };
 
@@ -256,7 +263,7 @@ YUI.add('dd-drop', function(Y) {
         * @description Removes classes from the target, resets some flags and sets the shims deactive position [-999, -999]
         */
         _deactivateShim: function() {
-            if (!this.shim) {
+            if (!this.shim || !this.get('useShim')) {
                 return false;
             }
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-valid');
@@ -292,7 +299,7 @@ YUI.add('dd-drop', function(Y) {
                 node.addClass(DDM.CSS_PREFIX + '-drop-active-valid');
                 DDM._addValid(this);
                 this.overTarget = false;
-                if (!DDM._noShim) {
+                if (this.get('useShim')) {
                     this.sizeShim();
                 }
             } else {
@@ -312,7 +319,7 @@ YUI.add('dd-drop', function(Y) {
             if (this.get(NODE) === DDM.activeDrag.get(NODE)) {
                 return false;
             }
-            if (this.get('lock')) {
+            if (this.get('lock') || !this.get('useShim')) {
                 return false;
             }
             if (!this.shim) {
@@ -381,9 +388,10 @@ YUI.add('dd-drop', function(Y) {
             if (this.shim) {
                 return;
             }
-            var s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
+            var s = this.get('node');
 
-            if (!DDM._noShim) {
+            if (this.get('useShim')) {
+                s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
                 s.setStyles({
                     height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
                     width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
@@ -466,9 +474,6 @@ YUI.add('dd-drop', function(Y) {
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];
-                        //if (DDM.activeDrop === this) {
-                        //    DDM.activeDrop = null;
-                        //}
                     }
                 }
             }
