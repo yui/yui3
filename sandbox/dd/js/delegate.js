@@ -94,11 +94,14 @@ YUI.add('dd-delegate', function(Y) {
             this.addTarget(Y.DD.DDM);
 
             //On end drag, detach the listeners
-            this._dd.on('drag:end', Y.bind(function(e) {
+            this._dd.after('drag:end', Y.bind(function(e) {
                 Y.DD.DDM._noShim = this._shimState;
                 this.set('lastNode', this._dd.get('node'));
+                this.get('lastNode').removeClass(Y.DD.DDM.CSS_PREFIX + '-dragging');
                 this._dd._unprep();
+                
                 this._dd.set('node', _tmpNode);
+
             }, this));
 
             //Attach the delegate to the container
