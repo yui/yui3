@@ -142,7 +142,7 @@ YUI.add('dd-drag', function(Y) {
     Drag.ATTRS = {
         /**
         * @attribute node
-        * @description Y.Node instanace to use as the element to initiate a drag operation
+        * @description Y.Node instance to use as the element to initiate a drag operation
         * @type Node
         */
         node: {
@@ -158,7 +158,7 @@ YUI.add('dd-drag', function(Y) {
         },
         /**
         * @attribute dragNode
-        * @description Y.Node instanace to use as the draggable element, defaults to node
+        * @description Y.Node instance to use as the draggable element, defaults to node
         * @type Node
         */
         dragNode: {
