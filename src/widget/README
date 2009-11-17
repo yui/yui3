@@ -1,3 +1,30 @@
+3.1.0
+
+Added support for:
+
+- An "id" attribute
+
+- A "render" attribute, to auto-render the widget at the end of construction
+
+- A "srcNode" attribute, to act as the root for parseHTML. Used doesn't 
+  need to worry about contentBox vs. boundingBox.
+
+- Single Box model (contentBox and boundingBox point to same node).
+  activated by setting CONTENT_TEMPLATE to null
+
+- Added _bindAttrUI and _syncAttrUI sugar methods (WIP)
+
+- Renamed private _parseHTML to _parseNode
+
+- Added _preParseNode and _postParseNode methods to allow for easy
+  parseNode customization, by allowing developers to customize
+  node passed in and configuration merge.
+
+- All changes should be backward compatible. Existing Widget impls
+  should still work. However HTML_PARSER implementations based on
+  contentBox being the root node should be modified to work off 
+  of srcNode.
+
 3.0.0
 
 No Changes

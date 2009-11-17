@@ -137,9 +137,9 @@
                     zIndex:5,
                     headerContent:"Overlay Header",
                     bodyContent:"width:12em, #align, tr, tl, zIndex:5",
-                    footerContent:"Overlay Footer"
+                    footerContent:"Overlay Footer",
+                    render: "#foobar"
                 });
-                widget.render("#foobar");
 
                 widget.after("xyChange", function(e) {
                     Y.log(e.newVal);
@@ -154,9 +154,9 @@
                     width:200,
                     height:200,
                     xy: [800,200],
-                    footerContent: "Footer Content - was in markup, but got over-ridden in constructor"
+                    footerContent: "Footer Content - was in markup, but got over-ridden in constructor",
+                    render:true
                 });
-                widget2.render();
 
                 var stepDelay = 2000;
 
@@ -236,6 +236,9 @@
                         widget.setStdModContent(Y.WidgetStdMod.HEADER, Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
                         widget.setStdModContent(Y.WidgetStdMod.FOOTER, Y.Node.create("<p>Append After Footer Content</p>"), Y.WidgetStdMod.AFTER);
                         widget.setStdModContent(Y.WidgetStdMod.BODY, "Replaced Body - DONE!", Y.WidgetStdMod.REPLACE);
+                    },
+                    function() {
+                        widget.destroy();
                     }
                 ];
 
