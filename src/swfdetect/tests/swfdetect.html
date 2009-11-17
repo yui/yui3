@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>swfdetect tests</title>
+<link type="text/css" rel="stylesheet" href="../../../build/logreader/assets/skins/sam/logreader.css" />
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+</head>
+<body class="yui-skin-sam">
+    <h1>Cookie Tests</h1>
+    <div id="testoutput"></div>
+<script type="text/javascript">  
+    
+YUI({
+    base: '../../../build/',
+    filter: "debug",
+    logInclude: { TestRunner: 1}
+}).use('swfdetect', function (Y) {
+
+output = "";
+output += "Flash Major: " + String(Y.UA.flashMajor) + "<br/>";
+output += "Flash Minor: " + String(Y.UA.flashMinor) + "<br/>";
+output += "Flash Revision: " + String(Y.UA.flashRev) + "<br/>";
+
+document.getElementById('testoutput').innerHTML = output;
+});
+
