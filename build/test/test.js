@@ -664,13 +664,15 @@ YUI.add('test', function(Y) {
                     node.parent.results.failed += node.results.failed;
                     node.parent.results.total += node.results.total;                
                     node.parent.results.ignored += node.results.ignored;       
-                    node.parent.results.duration += node.results.duration;
+                    //node.parent.results.duration += node.results.duration;
                     node.parent.results[node.testObject.name] = node.results;
                 
                     if (node.testObject instanceof Y.Test.Suite){
                         node.testObject.tearDown();
+                        node.results.duration = (new Date()) - node._start;
                         this.fire(this.TEST_SUITE_COMPLETE_EVENT, { testSuite: node.testObject, results: node.results});
                     } else if (node.testObject instanceof Y.Test.Case){
+                        node.results.duration = (new Date()) - node._start;
                         this.fire(this.TEST_CASE_COMPLETE_EVENT, { testCase: node.testObject, results: node.results});
                     }      
                 } 
@@ -702,7 +704,7 @@ YUI.add('test', function(Y) {
                     if (this._cur == this._root){
                         this._cur.results.type = "report";
                         this._cur.results.timestamp = (new Date()).toLocaleString();
-                        //this._cur.results.duration = (new Date()) - this._cur.results.duration;   
+                        this._cur.results.duration = (new Date()) - this._cur._start;   
                         this._lastResults = this._cur.results;
                         this._running = false;                         
                         this.fire(this.COMPLETE_EVENT, { results: this._lastResults});
@@ -746,9 +748,11 @@ YUI.add('test', function(Y) {
                     if (Y.Lang.isObject(testObject)){
                         if (testObject instanceof Y.Test.Suite){
                             this.fire(this.TEST_SUITE_BEGIN_EVENT, { testSuite: testObject });
+                            node._start = new Date();
                             testObject.setUp();
                         } else if (testObject instanceof Y.Test.Case){
                             this.fire(this.TEST_CASE_BEGIN_EVENT, { testCase: testObject });
+                            node._start = new Date();
                         }
                         
                         //some environments don't support setTimeout
@@ -913,7 +917,6 @@ YUI.add('test', function(Y) {
                     node.parent.results.passed++;
                 }
                 node.parent.results.total++;
-                node.parent.results.duration += duration;
     
                 //set timeout not supported in all environments
                 if (typeof setTimeout != "undefined"){
@@ -1169,7 +1172,7 @@ YUI.add('test', function(Y) {
                 runner._buildTestTree();
                             
                 //set when the test started
-                //runner._root.results.duration = (new Date()).valueOf();
+                runner._root._start = new Date();
                 
                 //fire the begin event
                 runner.fire(runner.BEGIN_EVENT);
