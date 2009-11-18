@@ -59,7 +59,6 @@
     <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">,</span>
     <span class="nx">ClassNameManager</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">ClassNameManager</span><span class="o">,</span>
 
-    <span class="nx">WIDGET</span> <span class="o">=</span> <span class="s2">&quot;widget&quot;</span><span class="o">,</span>
     <span class="nx">CONTENT</span> <span class="o">=</span> <span class="s2">&quot;content&quot;</span><span class="o">,</span>
     <span class="nx">VISIBLE</span> <span class="o">=</span> <span class="s2">&quot;visible&quot;</span><span class="o">,</span>
     <span class="nx">HIDDEN</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="o">,</span>
@@ -72,8 +71,8 @@
     <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="o">,</span>
     <span class="nx">CONTENT_BOX</span> <span class="o">=</span> <span class="s2">&quot;contentBox&quot;</span><span class="o">,</span>
     <span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s2">&quot;parentNode&quot;</span><span class="o">,</span>
-    <span class="nx">FIRST_CHILD</span> <span class="o">=</span> <span class="s2">&quot;firstChild&quot;</span><span class="o">,</span>
     <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s2">&quot;ownerDocument&quot;</span><span class="o">,</span>
+    <span class="nx">SRC_NODE</span> <span class="o">=</span> <span class="s2">&quot;srcNode&quot;</span><span class="o">,</span>
     <span class="nx">BODY</span> <span class="o">=</span> <span class="s2">&quot;body&quot;</span><span class="o">,</span>
 	<span class="nx">TAB_INDEX</span> <span class="o">=</span> <span class="s2">&quot;tabIndex&quot;</span><span class="o">,</span>
     <span class="nx">LOCALE</span> <span class="o">=</span> <span class="s2">&quot;locale&quot;</span><span class="o">,</span>
@@ -83,9 +82,13 @@
     <span class="nx">RENDERED</span> <span class="o">=</span> <span class="s2">&quot;rendered&quot;</span><span class="o">,</span>
     <span class="nx">DESTROYED</span> <span class="o">=</span> <span class="s2">&quot;destroyed&quot;</span><span class="o">,</span>
 
+    <span class="nx">CHANGE</span> <span class="o">=</span> <span class="s2">&quot;Change&quot;</span><span class="o">,</span>
+    <span class="nx">_AFTER</span> <span class="o">=</span> <span class="s2">&quot;_after&quot;</span><span class="o">,</span>
+    <span class="nx">_UISET</span> <span class="o">=</span> <span class="s2">&quot;_uiSet&quot;</span><span class="o">,</span>
+
     <span class="nx">ContentUpdate</span> <span class="o">=</span> <span class="s2">&quot;contentUpdate&quot;</span><span class="o">,</span>
 
-    <span class="c">// Widget nodeid-to-instance map for now, 1-to-1.</span>
+    <span class="c">// Widget nodeguid-to-instance map.</span>
 <span class="c"></span>    <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{};</span>
 
 <span class="c">/**</span>
@@ -109,10 +112,17 @@
 <span class="k">function</span> <span class="nx">Widget</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;widget&#39;</span><span class="o">);</span>
 
-    <span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(</span><span class="nx">WIDGET</span><span class="o">);</span>
     <span class="k">this</span><span class="o">.</span><span class="nx">_strings</span> <span class="o">=</span> <span class="o">{};</span>
 
     <span class="nx">Widget</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+
+    <span class="k">var</span> <span class="nx">render</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RENDER</span><span class="o">),</span> <span class="nx">parentNode</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nx">render</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">render</span> <span class="o">!==</span> <span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">parentNode</span> <span class="o">=</span> <span class="nx">render</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">render</span><span class="o">(</span><span class="nx">parentNode</span><span class="o">);</span>
+    <span class="o">}</span>
 <span class="o">}</span>
 
 <span class="c">/**</span>
@@ -143,7 +153,7 @@
 <span class="c"> * @type String</span>
 <span class="c"> * @static</span>
 <span class="c"> */</span>
-<span class="nx">Widget</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="nx">WIDGET</span><span class="o">;</span>
+<span class="nx">Widget</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s2">&quot;widget&quot;</span><span class="o">;</span>
 
 <span class="c">/**</span>
 <span class="c"> * Constant used to identify state changes originating from</span>
@@ -169,7 +179,18 @@
 <span class="nx">Widget</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
 
     <span class="c">/**</span>
-<span class="c">     * Flag indicating whether or not this object</span>
+<span class="c">     * @attribute id</span>
+<span class="c">     * @writeOnce</span>
+<span class="c">     * @default Generated using guid()</span>
+<span class="c">     * @type String</span>
+<span class="c">     */</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">valueFn</span><span class="o">:</span> <span class="s2">&quot;_guid&quot;</span><span class="o">,</span>
+        <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Flag indicating whether or not this Widget</span>
 <span class="c">     * has been through the render lifecycle phase.</span>
 <span class="c">     *</span>
 <span class="c">     * @attribute rendered</span>
@@ -179,7 +200,7 @@
 <span class="c">     */</span>
     <span class="nx">rendered</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">value</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span>
-        <span class="nx">readOnly</span><span class="o">:</span><span class="kc">true</span>
+        <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -187,13 +208,12 @@
 <span class="c">    * @description The outermost DOM node for the Widget, used for sizing and positioning </span>
 <span class="c">    * of a Widget as well as a containing element for any decorator elements used </span>
 <span class="c">    * for skinning.</span>
-<span class="c">    * @type Node</span>
+<span class="c">    * @type String | Node</span>
+<span class="c">    * @writeOnce</span>
 <span class="c">    */</span>
     <span class="nx">boundingBox</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">value</span><span class="o">:</span><span class="kc">null</span><span class="o">,</span>
-        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setBoundingBox</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-        <span class="o">},</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="s2">&quot;_setBoundingBox&quot;</span><span class="o">,</span>
         <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
     <span class="o">},</span>
 
@@ -201,13 +221,12 @@
 <span class="c">    * @attribute contentBox</span>
 <span class="c">    * @description A DOM node that is a direct descendent of a Widget&#39;s bounding box that </span>
 <span class="c">    * houses its content.</span>
-<span class="c">    * @type Node</span>
+<span class="c">    * @type String | Node</span>
+<span class="c">    * @writeOnce</span>
 <span class="c">    */</span>
     <span class="nx">contentBox</span><span class="o">:</span> <span class="o">{</span>
         <span class="nx">value</span><span class="o">:</span><span class="kc">null</span><span class="o">,</span>
-        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setContentBox</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-        <span class="o">},</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="s2">&quot;_setContentBox&quot;</span><span class="o">,</span>
         <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
     <span class="o">},</span>
 
@@ -223,12 +242,8 @@
 <span class="c">	* @default 0</span>
 <span class="c">    */</span>
     <span class="nx">tabIndex</span><span class="o">:</span> <span class="o">{</span>
-
 		<span class="nx">value</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
-		<span class="nx">validator</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">||</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isNull</span><span class="o">(</span><span class="nx">val</span><span class="o">));</span>
-        <span class="o">}</span>
-
+		<span class="nx">validator</span><span class="o">:</span> <span class="s2">&quot;_validTabIndex&quot;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -324,6 +339,31 @@
         <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">getStrings</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">LOCALE</span><span class="o">));</span>
         <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Whether or not to render the widget automatically after init, and optionally, to which parent node.</span>
+<span class="c">     *</span>
+<span class="c">     * @attribute render</span>
+<span class="c">     * @type boolean | Node</span>
+<span class="c">     * @writeOnce</span>
+<span class="c">     */</span>
+    <span class="nx">render</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span>
+        <span class="nx">writeOnce</span><span class="o">:</span><span class="kc">true</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The DOM node to parse for configuration values, passed to the Widget&#39;s HTML_PARSER definition</span>
+<span class="c">     *</span>
+<span class="c">     * @attribute srcNode</span>
+<span class="c">     * @type String | Node</span>
+<span class="c">     * @writeOnce</span>
+<span class="c">     */</span>
+    <span class="nx">srcNode</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">one</span><span class="o">,</span>
+        <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
     <span class="o">}</span>
 <span class="o">};</span>
 
@@ -334,7 +374,7 @@
 <span class="c"> * @private</span>
 <span class="c"> * @static</span>
 <span class="c"> */</span>
-<span class="nx">Widget</span><span class="o">.</span><span class="nx">_NAME_LOWERCASE</span> <span class="o">=</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">NAME</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">();</span>
+<span class="nx">Widget</span><span class="o">.</span><span class="nx">_NAME</span> <span class="o">=</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">NAME</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">();</span>
 
 <span class="c">/**</span>
 <span class="c"> * Generate a standard prefixed classname for the Widget, prefixed by the default prefix defined</span>
@@ -351,7 +391,7 @@
 <span class="c"> */</span>
 <span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 	<span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-	<span class="nx">args</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_NAME_LOWERCASE</span><span class="o">);</span>
+	<span class="nx">args</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_NAME</span><span class="o">);</span>
 	<span class="k">return</span> <span class="nx">ClassNameManager</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ClassNameManager</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
 <span class="o">};</span>
 
@@ -369,13 +409,13 @@
 <span class="c"> */</span>
 <span class="nx">Widget</span><span class="o">.</span><span class="nx">getByNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">var</span> <span class="nx">widget</span><span class="o">,</span>
-        <span class="nx">bbMarker</span> <span class="o">=</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">();</span>
+        <span class="nx">widgetMarker</span> <span class="o">=</span> <span class="nx">Widget</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">();</span>
 
     <span class="nx">node</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
     <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">node</span> <span class="o">=</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">hasClass</span><span class="o">(</span><span class="nx">bbMarker</span><span class="o">))</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">ancestor</span><span class="o">(</span><span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nx">bbMarker</span><span class="o">);</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">hasClass</span><span class="o">(</span><span class="nx">widgetMarker</span><span class="o">))</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">ancestor</span><span class="o">(</span><span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nx">widgetMarker</span><span class="o">);</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">widget</span> <span class="o">=</span> <span class="nx">_instances</span><span class="o">[</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">)];</span>
+            <span class="nx">widget</span> <span class="o">=</span> <span class="nx">_instances</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="kc">true</span><span class="o">)];</span>
         <span class="o">}</span>
     <span class="o">}</span>
 
@@ -420,7 +460,7 @@
 <span class="c">	 *    var scn = slider.getClassName(&#39;foo&#39;,&#39;bar&#39;);</span>
 <span class="c">	 *</span>
 <span class="c">	 *    // returns &quot;yui-overlay-foo-bar&quot;, for an overlay instance</span>
-<span class="c">	 *    var ocn = slider.getClassName(&#39;foo&#39;,&#39;bar&#39;);</span>
+<span class="c">	 *    var ocn = overlay.getClassName(&#39;foo&#39;,&#39;bar&#39;);</span>
 <span class="c">	 * &lt;/pre&gt;</span>
 <span class="c">	 * &lt;/code&gt;</span>
 <span class="c">	 *</span>
@@ -442,7 +482,13 @@
 <span class="c">     * @param  config {Object} Configuration object literal for the widget</span>
 <span class="c">     */</span>
     <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">srcNode</span><span class="o">,</span> <span class="nx">parsedConfig</span><span class="o">;</span>
+
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;initializer called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;widget&#39;</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_name</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">();</span>
+
+        <span class="nx">_instances</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">))]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
 
         <span class="c">/**</span>
 <span class="c">         * Notification event, which widget implementations can fire, when</span>
@@ -457,17 +503,9 @@
 <span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">ContentUpdate</span><span class="o">,</span> <span class="o">{</span> <span class="nx">preventable</span><span class="o">:</span><span class="kc">false</span> <span class="o">});</span>
 
-		<span class="k">this</span><span class="o">.</span><span class="nx">_name</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">();</span>
-
-        <span class="k">var</span> <span class="nx">nodeId</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">nodeId</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">_instances</span><span class="o">[</span><span class="nx">nodeId</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-        <span class="o">}</span>
-
-        <span class="k">var</span> <span class="nx">htmlConfig</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_parseHTML</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CONTENT_BOX</span><span class="o">));</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">htmlConfig</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span><span class="o">(</span><span class="nx">config</span><span class="o">,</span> <span class="nx">htmlConfig</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="nx">srcNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getSrcNode</span><span class="o">();</span>
+        <span class="nx">parsedConfig</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_parseNode</span><span class="o">(</span><span class="nx">srcNode</span><span class="o">);</span>
+        <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_applyParsedConfig</span><span class="o">(</span><span class="nx">srcNode</span><span class="o">,</span> <span class="nx">config</span><span class="o">,</span> <span class="nx">parsedConfig</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -482,13 +520,13 @@
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;destructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;widget&#39;</span><span class="o">);</span>
 
         <span class="k">var</span> <span class="nx">boundingBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">);</span>
-        
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">purgeElement</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
-        <span class="k">var</span> <span class="nx">nodeId</span> <span class="o">=</span> <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">nodeId</span> <span class="o">&amp;&amp;</span> <span class="nx">nodeId</span> <span class="k">in</span> <span class="nx">_instances</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">delete</span> <span class="nx">_instances</span><span class="o">[</span><span class="nx">nodeId</span><span class="o">];</span>
+        <span class="k">var</span> <span class="nx">guid</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">guid</span> <span class="o">&amp;&amp;</span> <span class="nx">guid</span> <span class="k">in</span> <span class="nx">_instances</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">delete</span> <span class="nx">_instances</span><span class="o">[</span><span class="nx">guid</span><span class="o">];</span>
         <span class="o">}</span>
+
+        <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -533,7 +571,7 @@
 <span class="c">             * before the widget is rendered.</span>
 <span class="c">             * &lt;/p&gt;</span>
 <span class="c">             * &lt;p&gt;</span>
-<span class="c">             * Subscribers to the &quot;after&quot; momemt of this event, will be notified</span>
+<span class="c">             * Subscribers to the &quot;after&quot; moment of this event, will be notified</span>
 <span class="c">             * after rendering is complete.</span>
 <span class="c">             * &lt;/p&gt;</span>
 <span class="c">             *</span>
@@ -563,14 +601,13 @@
 <span class="c">     * @param {Node} parentNode The parent node to render to, if passed in to the &lt;code&gt;render&lt;/code&gt; method</span>
 <span class="c">     */</span>
     <span class="nx">_defRenderFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_renderUI</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_bindUI</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_syncUI</span><span class="o">();</span>
 
-            <span class="k">this</span><span class="o">.</span><span class="nx">_renderUI</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_bindUI</span><span class="o">();</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_syncUI</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">renderer</span><span class="o">();</span>
 
-            <span class="k">this</span><span class="o">.</span><span class="nx">renderer</span><span class="o">();</span>
-
-            <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">RENDERED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">RENDERED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/** </span>
@@ -619,11 +656,11 @@
 <span class="c">     * @method syncUI</span>
 <span class="c">     * </span>
 <span class="c">     */</span>
-    <span class="nx">syncUI</span><span class="o">:</span> <span class="k">function</span><span class="o">(){},</span>
+    <span class="nx">syncUI</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
 
     <span class="c">/**</span>
 <span class="c">    * @method hide</span>
-<span class="c">    * @description Shows the Module element by setting the &quot;visible&quot; attribute to &quot;false&quot;.</span>
+<span class="c">    * @description Hides the Widget by setting the &quot;visible&quot; attribute to &quot;false&quot;.</span>
 <span class="c">    */</span>
     <span class="nx">hide</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">VISIBLE</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
@@ -631,7 +668,7 @@
 
     <span class="c">/**</span>
 <span class="c">    * @method show</span>
-<span class="c">    * @description Shows the Module element by setting the &quot;visible&quot; attribute to &quot;true&quot;.</span>
+<span class="c">    * @description Shows the Widget by setting the &quot;visible&quot; attribute to &quot;true&quot;.</span>
 <span class="c">    */</span>
     <span class="nx">show</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">VISIBLE</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
@@ -664,7 +701,7 @@
     <span class="o">},</span>
 
     <span class="c">/**</span>
-<span class="c">    * @method disabled</span>
+<span class="c">    * @method disable</span>
 <span class="c">    * @description Set the Widget&#39;s &quot;disabled&quot; attribute to &quot;true&quot;.</span>
 <span class="c">    */</span>
     <span class="nx">disable</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
@@ -674,19 +711,19 @@
     <span class="c">/**</span>
 <span class="c">     * Utilitity method used to apply the &lt;code&gt;HTML_PARSER&lt;/code&gt; configuration for the </span>
 <span class="c">     * instance, to retrieve config data values.</span>
-<span class="c">     * </span>
-<span class="c">     * @method _parseHTML</span>
+<span class="c">     *</span>
+<span class="c">     * @method _parseNode</span>
 <span class="c">     * @private </span>
 <span class="c">     * @param  node {Node} Root node to use to parse markup for configuration data</span>
 <span class="c">     * @return config {Object} configuration object, with values found in the HTML, populated</span>
 <span class="c">     */</span>
-    <span class="nx">_parseHTML</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">_parseNode</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
  
         <span class="k">var</span> <span class="nx">schema</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getHtmlParser</span><span class="o">(),</span>
             <span class="nx">data</span><span class="o">,</span>
             <span class="nx">val</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">schema</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">.</span><span class="nx">hasChildNodes</span><span class="o">())</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">schema</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="nx">O</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">val</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
@@ -708,8 +745,25 @@
 
             <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
         <span class="o">}</span>
-
         <span class="k">return</span> <span class="nx">data</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * @method _getSrcNode</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @return {Node} The Node to apply HTML_PARSER to</span>
+<span class="c">     */</span>
+    <span class="nx">_getSrcNode</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">SRC_NODE</span><span class="o">)</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CONTENT_BOX</span><span class="o">);</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * @method _applyParsedConfig</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @return {Object} The merged configuration literal</span>
+<span class="c">     */</span>
+    <span class="nx">_applyParsedConfig</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">,</span> <span class="nx">parsedCfg</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">(</span><span class="nx">parsedCfg</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span><span class="o">(</span><span class="nx">cfg</span><span class="o">,</span> <span class="nx">parsedCfg</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span> <span class="o">:</span> <span class="nx">cfg</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -786,30 +840,35 @@
 <span class="c">    */</span>
     <span class="nx">_renderBox</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">parentNode</span><span class="o">)</span> <span class="o">{</span>
 
+        <span class="c">// TODO: Performance Optimization [ More effective algo to reduce Node refs, compares, replaces? ]</span>
+<span class="c"></span>
         <span class="k">var</span> <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CONTENT_BOX</span><span class="o">),</span>
             <span class="nx">boundingBox</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">),</span>
-            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OWNER_DOCUMENT</span><span class="o">)</span> <span class="o">||</span> <span class="nx">contentBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OWNER_DOCUMENT</span><span class="o">),</span>
+            <span class="nx">srcNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">SRC_NODE</span><span class="o">),</span>
+
+            <span class="nx">doc</span> <span class="o">=</span> <span class="o">(</span><span class="nx">srcNode</span> <span class="o">&amp;&amp;</span> <span class="nx">srcNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OWNER_DOCUMENT</span><span class="o">))</span> <span class="o">||</span> <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OWNER_DOCUMENT</span><span class="o">)</span> <span class="o">||</span> <span class="nx">contentBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OWNER_DOCUMENT</span><span class="o">),</span>
             <span class="nx">body</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">boundingBox</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">contentBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">)))</span> <span class="o">{</span>
+        <span class="c">// If srcNode (assume it&#39;s always in doc), have contentBox take its place (widget render responsible for re-use of srcNode contents)</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">srcNode</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">srcNode</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">contentBox</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">contentBox</span><span class="o">.</span><span class="nx">inDoc</span><span class="o">(</span><span class="nx">doc</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">srcNode</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">contentBox</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">boundingBox</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">contentBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">))</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">boundingBox</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">contentBox</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;moveStyles&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_moveStyles</span><span class="o">(</span><span class="nx">contentBox</span><span class="o">,</span> <span class="nx">boundingBox</span><span class="o">);</span>
             <span class="o">}</span>
+
             <span class="c">// If contentBox box is already in the document, have boundingBox box take it&#39;s place</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">contentBox</span><span class="o">.</span><span class="nx">inDoc</span><span class="o">(</span><span class="nx">doc</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">contentBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">).</span><span class="nx">replaceChild</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">,</span> <span class="nx">contentBox</span><span class="o">);</span>
+                <span class="nx">contentBox</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">);</span>
             <span class="o">}</span>
             <span class="nx">boundingBox</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">contentBox</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">boundingBox</span><span class="o">.</span><span class="nx">inDoc</span><span class="o">(</span><span class="nx">doc</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">parentNode</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">body</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BODY</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">body</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FIRST_CHILD</span><span class="o">))</span> <span class="o">{</span>
-                <span class="c">// Special case when handling body as default (no parentNode), always try to insert.</span>
-<span class="c"></span>                <span class="nx">body</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">,</span> <span class="nx">body</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FIRST_CHILD</span><span class="o">));</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">body</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="c">// Special case when handling body as default (no parentNode), always try to insert.</span>
+<span class="c"></span>            <span class="nx">body</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">BODY</span><span class="o">).</span><span class="nx">insert</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">parentNode</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PARENT_NODE</span><span class="o">)))</span> <span class="o">{</span>
                 <span class="nx">parentNode</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">boundingBox</span><span class="o">);</span>
@@ -826,7 +885,7 @@
 <span class="c">    * @return Node</span>
 <span class="c">    */</span>
     <span class="nx">_setBoundingBox</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setBox</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">BOUNDING_TEMPLATE</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setBox</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">),</span> <span class="nx">node</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">BOUNDING_TEMPLATE</span><span class="o">);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -838,7 +897,11 @@
 <span class="c">    * @return Node</span>
 <span class="c">    */</span>
     <span class="nx">_setContentBox</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setBox</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">CONTENT_TEMPLATE</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">CONTENT_TEMPLATE</span> <span class="o">===</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setBox</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">)</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">CONTENT_BOX_ID_SUFFIX</span><span class="o">,</span> <span class="nx">node</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">CONTENT_TEMPLATE</span><span class="o">);</span>
+        <span class="o">}</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -848,16 +911,16 @@
 <span class="c">     * @method _setBox</span>
 <span class="c">     * @private</span>
 <span class="c">     *</span>
+<span class="c">     * @param {String} id The node&#39;s id attribute</span>
 <span class="c">     * @param {Node|String} node The node reference</span>
 <span class="c">     * @param {String} template HTML string template for the node</span>
 <span class="c">     * @return {Node} The node</span>
 <span class="c">     */</span>
-    <span class="nx">_setBox</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">template</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">node</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">||</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="nx">template</span><span class="o">);</span>
-
-        <span class="k">var</span> <span class="nx">sid</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+    <span class="nx">_setBox</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">template</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">||</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="nx">template</span><span class="o">);</span>
         <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ID</span><span class="o">,</span> <span class="nx">sid</span><span class="o">);</span>
+            <span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ID</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
         <span class="o">}</span>
         <span class="k">return</span> <span class="nx">node</span><span class="o">;</span>
     <span class="o">},</span>
@@ -874,9 +937,9 @@
         <span class="k">this</span><span class="o">.</span><span class="nx">_renderBox</span><span class="o">(</span><span class="nx">parentNode</span><span class="o">);</span>
     <span class="o">},</span>
 
-     <span class="c">/**</span>
+    <span class="c">/**</span>
 <span class="c">      * Applies standard class names to the boundingBox and contentBox</span>
-<span class="c">      * </span>
+<span class="c">      *</span>
 <span class="c">      * @method _renderBoxClassNames</span>
 <span class="c">      * @protected</span>
 <span class="c">      */</span>
@@ -907,13 +970,34 @@
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_bindUI</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;visibleChange&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterVisibleChange</span><span class="o">);</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;disabledChange&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterDisabledChange</span><span class="o">);</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;heightChange&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterHeightChange</span><span class="o">);</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;widthChange&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterWidthChange</span><span class="o">);</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s1">&#39;focusedChange&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterFocusedChange</span><span class="o">);</span>
-
+        <span class="k">this</span><span class="o">.</span><span class="nx">_bindAttrUI</span><span class="o">([</span><span class="nx">VISIBLE</span><span class="o">,</span> <span class="nx">DISABLED</span><span class="o">,</span> <span class="nx">HEIGHT</span><span class="o">,</span> <span class="nx">WIDTH</span><span class="o">,</span> <span class="nx">FOCUSED</span><span class="o">]);</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_bindDOMListeners</span><span class="o">();</span>
+    <span class="o">},</span>
+
+    <span class="c">// TODO: Sugar method. Optimize Perf. Edge Case checks</span>
+<span class="c"></span>    <span class="c">/**</span>
+<span class="c">     * @method _bindAttrUI</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Object} attrs</span>
+<span class="c">     */</span>
+    <span class="nx">_bindAttrUI</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">attrs</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">attr</span> <span class="o">=</span> <span class="nx">attrs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">attr</span> <span class="o">+</span> <span class="nx">CHANGE</span><span class="o">,</span> <span class="k">this</span><span class="o">[</span><span class="nx">_AFTER</span> <span class="o">+</span> <span class="nx">attr</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="m">1</span><span class="o">).</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">+</span> <span class="nx">attr</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">1</span><span class="o">)</span> <span class="o">+</span> <span class="nx">CHANGE</span><span class="o">]);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+
+    <span class="c">// TODO: Sugar method. Optimize Perf. Edge Case checks</span>
+<span class="c"></span>    <span class="c">/**</span>
+<span class="c">     * @method _syncAttrUI</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Object} attrs</span>
+<span class="c">     */</span>
+    <span class="nx">_syncAttrUI</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attrs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">attrs</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">attr</span> <span class="o">=</span> <span class="nx">attrs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+            <span class="k">this</span><span class="o">[</span><span class="nx">_UISET</span> <span class="o">+</span> <span class="nx">attr</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="m">1</span><span class="o">).</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">+</span> <span class="nx">attr</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">1</span><span class="o">)](</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">attr</span><span class="o">));</span>
+        <span class="o">}</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -924,16 +1008,18 @@
 <span class="c">     */</span>
     <span class="nx">_bindDOMListeners</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-		<span class="k">var</span> <span class="nx">oDocument</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">);</span>
+		<span class="k">var</span> <span class="nx">oDocument</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OWNER_DOCUMENT</span><span class="o">);</span>
 
+        <span class="c">// TODO: Perf Optimization: Use Widget.getByNode delegation, to get by </span>
+<span class="c"></span>        <span class="c">// with just one _onFocus subscription per sandbox, instead of one per widget</span>
+<span class="c"></span>
 		<span class="nx">oDocument</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onFocus</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
 
 		<span class="c">//	Fix for Webkit:</span>
 <span class="c"></span>		<span class="c">//	Document doesn&#39;t receive focus in Webkit when the user mouses </span>
 <span class="c"></span>		<span class="c">//	down on it, so the &quot;focused&quot; attribute won&#39;t get set to the </span>
 <span class="c"></span>		<span class="c">//	correct value.</span>
-<span class="c"></span>		
-		<span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>		<span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
 			<span class="nx">oDocument</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mousedown&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
 		<span class="o">}</span>
 
@@ -946,12 +1032,7 @@
 <span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_syncUI</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetVisible</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">VISIBLE</span><span class="o">));</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetDisabled</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">));</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetHeight</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HEIGHT</span><span class="o">));</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetWidth</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">WIDTH</span><span class="o">));</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetFocused</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FOCUSED</span><span class="o">));</span>
-		<span class="k">this</span><span class="o">.</span><span class="nx">_uiSetTabIndex</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">));</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_syncAttrUI</span><span class="o">([</span><span class="nx">VISIBLE</span><span class="o">,</span> <span class="nx">DISABLED</span><span class="o">,</span> <span class="nx">HEIGHT</span><span class="o">,</span> <span class="nx">WIDTH</span><span class="o">,</span> <span class="nx">FOCUSED</span><span class="o">,</span> <span class="nx">TAB_INDEX</span><span class="o">]);</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -994,7 +1075,7 @@
         <span class="k">var</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">),</span> 
             <span class="nx">sClassName</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">HIDDEN</span><span class="o">);</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">true</span><span class="o">)</span> <span class="o">{</span> 
+        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span> 
             <span class="nx">box</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span> 
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="nx">box</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span> 
@@ -1012,13 +1093,12 @@
         <span class="k">var</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">),</span> 
             <span class="nx">sClassName</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">);</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">box</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="nx">box</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">},</span>
-
 
     <span class="c">/**</span>
 <span class="c">    * Set the tabIndex on the widget&#39;s rendered UI</span>
@@ -1040,7 +1120,6 @@
 
     <span class="o">},</span>
 
-
     <span class="c">/**</span>
 <span class="c">     * Sets the focused state for the UI</span>
 <span class="c">     *</span>
@@ -1054,7 +1133,7 @@
         <span class="k">var</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">BOUNDING_BOX</span><span class="o">),</span>
             <span class="nx">sClassName</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getClassName</span><span class="o">(</span><span class="nx">FOCUSED</span><span class="o">);</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">box</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">UI</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">box</span><span class="o">.</span><span class="nx">focus</span><span class="o">();</span>
@@ -1066,8 +1145,6 @@
             <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">},</span>
-
-
 
     <span class="c">/**</span>
 <span class="c">     * Default visible attribute state change handler</span>
@@ -1132,11 +1209,9 @@
 <span class="c">    * @param {EventFacade} evt The event facade for the DOM focus event</span>
 <span class="c">	*/</span>
 	<span class="nx">_onDocMouseDown</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">evt</span><span class="o">)</span> <span class="o">{</span>
-
 		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_hasDOMFocus</span><span class="o">)</span> <span class="o">{</span>
  			<span class="k">this</span><span class="o">.</span><span class="nx">_onFocus</span><span class="o">(</span><span class="nx">evt</span><span class="o">);</span>
 		<span class="o">}</span>
-		
 	<span class="o">},</span>
 
     <span class="c">/**</span>
@@ -1164,7 +1239,7 @@
 <span class="c">     * @return {String} The default string value for the widget [ displays the NAME of the instance, and the unique id ]</span>
 <span class="c">     */</span>
     <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -1175,7 +1250,9 @@
     <span class="nx">DEF_UNIT</span> <span class="o">:</span> <span class="s2">&quot;px&quot;</span><span class="o">,</span>
 
     <span class="c">/**</span>
-<span class="c">     * Static property defining the markup template for content box.</span>
+<span class="c">     * Property defining the markup template for content box. If your Widget doesn&#39;t</span>
+<span class="c">     * need the dual boundingBox/contentBox structure, set CONTENT_TEMPLATE to null,</span>
+<span class="c">     * and contentBox and boundingBox will both point to the same Node. </span>
 <span class="c">     *</span>
 <span class="c">     * @property CONTENT_TEMPLATE</span>
 <span class="c">     * @type String</span>
@@ -1183,12 +1260,14 @@
     <span class="nx">CONTENT_TEMPLATE</span> <span class="o">:</span> <span class="s2">&quot;&lt;div&gt;&lt;/div&gt;&quot;</span><span class="o">,</span>
 
     <span class="c">/**</span>
-<span class="c">     * Static property defining the markup template for bounding box.</span>
+<span class="c">     * Property defining the markup template for bounding box.</span>
 <span class="c">     *</span>
 <span class="c">     * @property BOUNDING_TEMPLATE</span>
 <span class="c">     * @type String</span>
 <span class="c">     */</span>
     <span class="nx">BOUNDING_TEMPLATE</span> <span class="o">:</span> <span class="s2">&quot;&lt;div&gt;&lt;/div&gt;&quot;</span><span class="o">,</span>
+
+    <span class="nx">CONTENT_BOX_ID_SUFFIX</span> <span class="o">:</span> <span class="s2">&quot;_c&quot;</span><span class="o">,</span>
 
     <span class="c">/**</span>
 <span class="c">     * Static property listing the styles that are mimiced on the bounding box from the content box.</span>
@@ -1348,6 +1427,7 @@
 <span class="c">     * Gets the HTML_PARSER definition for this instance, by merging HTML_PARSER</span>
 <span class="c">     * definitions across the class hierarchy.</span>
 <span class="c">     *</span>
+<span class="c">     * @private</span>
 <span class="c">     * @method _getHtmlParser</span>
 <span class="c">     * @return {Object} HTML_PARSER definition for this instance</span>
 <span class="c">     */</span>
@@ -1368,6 +1448,23 @@
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_HTML_PARSER</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * @method _guid</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_guid</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * @method _validTabIndex</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Number} tabIndex</span>
+<span class="c">     */</span>
+    <span class="nx">_validTabIndex</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">tabIndex</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">tabIndex</span><span class="o">)</span> <span class="o">||</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isNull</span><span class="o">(</span><span class="nx">tabIndex</span><span class="o">));</span>
     <span class="o">}</span>
 <span class="o">});</span>
 
@@ -1458,7 +1555,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "Widget", "name": "_afterDisabledChange", "url": "Widget.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterFocusedChange", "url": "Widget.html#method__afterFocusedChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterHeightChange", "url": "Widget.html#method__afterHeightChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterVisibleChange", "url": "Widget.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterWidthChange", "url": "Widget.html#method__afterWidthChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindDOMListeners", "url": "Widget.html#method__bindDOMListeners", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindUI", "url": "Widget.html#method__bindUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "bindUI", "url": "Widget.html#method_bindUI", "type": "method"}, {"access": "", "host": "Widget", "name": "blur", "url": "Widget.html#method_blur", "type": "method"}, {"access": "", "host": "Widget", "name": "boundingBox", "url": "Widget.html#config_boundingBox", "type": "config"}, {"access": "", "host": "Widget", "name": "boundingBoxChange", "url": "Widget.html#event_boundingBoxChange", "type": "event"}, {"access": "", "host": "Widget", "name": "BOUNDING_TEMPLATE", "url": "Widget.html#property_BOUNDING_TEMPLATE", "type": "property"}, {"access": "private", "host": "Widget", "name": "_buildCfg", "url": "Widget.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Widget", "name": "contentBox", "url": "Widget.html#config_contentBox", "type": "config"}, {"access": "", "host": "Widget", "name": "contentBoxChange", "url": "Widget.html#event_contentBoxChange", "type": "event"}, {"access": "", "host": "Widget", "name": "CONTENT_TEMPLATE", "url": "Widget.html#property_CONTENT_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Widget", "name": "_defRenderFn", "url": "Widget.html#method__defRenderFn", "type": "method"}, {"access": "", "host": "Widget", "name": "DEF_UNIT", "url": "Widget.html#property_DEF_UNIT", "type": "property"}, {"access": "protected", "host": "Widget", "name": "destructor", "url": "Widget.html#method_destructor", "type": "method"}, {"access": "", "host": "Widget", "name": "disabled", "url": "Widget.html#method_disabled", "type": "method"}, {"access": "", "host": "Widget", "name": "disabled", "url": "Widget.html#config_disabled", "type": "config"}, {"access": "", "host": "Widget", "name": "disabledChange", "url": "Widget.html#event_disabledChange", "type": "event"}, {"access": "", "host": "Widget", "name": "enable", "url": "Widget.html#method_enable", "type": "method"}, {"access": "", "host": "Widget", "name": "focus", "url": "Widget.html#method_focus", "type": "method"}, {"access": "", "host": "Widget", "name": "focused", "url": "Widget.html#config_focused", "type": "config"}, {"access": "", "host": "Widget", "name": "focusedChange", "url": "Widget.html#event_focusedChange", "type": "event"}, {"access": "", "host": "Widget", "name": "getClassName", "url": "Widget.html#method_getClassName", "type": "method"}, {"access": "", "host": "Widget", "name": "getDefaultLocale", "url": "Widget.html#method_getDefaultLocale", "type": "method"}, {"access": "", "host": "Widget", "name": "_getHtmlParser", "url": "Widget.html#method__getHtmlParser", "type": "method"}, {"access": "", "host": "Widget", "name": "getString", "url": "Widget.html#method_getString", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_getStrings", "url": "Widget.html#method__getStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "getStrings", "url": "Widget.html#method_getStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "height", "url": "Widget.html#config_height", "type": "config"}, {"access": "", "host": "Widget", "name": "heightChange", "url": "Widget.html#event_heightChange", "type": "event"}, {"access": "", "host": "Widget", "name": "hide", "url": "Widget.html#method_hide", "type": "method"}, {"access": "protected", "host": "Widget", "name": "initializer", "url": "Widget.html#method_initializer", "type": "method"}, {"access": "", "host": "Widget", "name": "locale", "url": "Widget.html#config_locale", "type": "config"}, {"access": "", "host": "Widget", "name": "localeChange", "url": "Widget.html#event_localeChange", "type": "event"}, {"access": "private", "host": "Widget", "name": "_moveStyles", "url": "Widget.html#method__moveStyles", "type": "method"}, {"access": "", "host": "Widget", "name": "moveStyles", "url": "Widget.html#config_moveStyles", "type": "config"}, {"access": "", "host": "Widget", "name": "moveStylesChange", "url": "Widget.html#event_moveStylesChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "_onDocMouseDown", "url": "Widget.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_onFocus", "url": "Widget.html#method__onFocus", "type": "method"}, {"access": "private", "host": "Widget", "name": "_parseHTML", "url": "Widget.html#method__parseHTML", "type": "method"}, {"access": "", "host": "Widget", "name": "render", "url": "Widget.html#method_render", "type": "method"}, {"access": "private", "host": "Widget", "name": "_renderBox", "url": "Widget.html#method__renderBox", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_renderBoxClassNames", "url": "Widget.html#method__renderBoxClassNames", "type": "method"}, {"access": "", "host": "Widget", "name": "rendered", "url": "Widget.html#config_rendered", "type": "config"}, {"access": "", "host": "Widget", "name": "renderedChange", "url": "Widget.html#event_renderedChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "renderer", "url": "Widget.html#method_renderer", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_renderUI", "url": "Widget.html#method__renderUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "renderUI", "url": "Widget.html#method_renderUI", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setBoundingBox", "url": "Widget.html#method__setBoundingBox", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setBox", "url": "Widget.html#method__setBox", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setContentBox", "url": "Widget.html#method__setContentBox", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_setStrings", "url": "Widget.html#method__setStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "show", "url": "Widget.html#method_show", "type": "method"}, {"access": "private", "host": "Widget", "name": "_strings", "url": "Widget.html#property__strings", "type": "property"}, {"access": "", "host": "Widget", "name": "strings", "url": "Widget.html#config_strings", "type": "config"}, {"access": "", "host": "Widget", "name": "stringsChange", "url": "Widget.html#event_stringsChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "_syncUI", "url": "Widget.html#method__syncUI", "type": "method"}, {"access": "", "host": "Widget", "name": "syncUI", "url": "Widget.html#method_syncUI", "type": "method"}, {"access": "", "host": "Widget", "name": "tabIndex", "url": "Widget.html#config_tabIndex", "type": "config"}, {"access": "", "host": "Widget", "name": "tabIndexChange", "url": "Widget.html#event_tabIndexChange", "type": "event"}, {"access": "", "host": "Widget", "name": "toString", "url": "Widget.html#method_toString", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetDisabled", "url": "Widget.html#method__uiSetDisabled", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetFocused", "url": "Widget.html#method__uiSetFocused", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetHeight", "url": "Widget.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetTabIndex", "url": "Widget.html#method__uiSetTabIndex", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetVisible", "url": "Widget.html#method__uiSetVisible", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetWidth", "url": "Widget.html#method__uiSetWidth", "type": "method"}, {"access": "", "host": "Widget", "name": "visible", "url": "Widget.html#config_visible", "type": "config"}, {"access": "", "host": "Widget", "name": "visibleChange", "url": "Widget.html#event_visibleChange", "type": "event"}, {"access": "", "host": "Widget", "name": "widget:contentUpdate", "url": "Widget.html#event_widget:contentUpdate", "type": "event"}, {"access": "", "host": "Widget", "name": "widget:render", "url": "Widget.html#event_widget:render", "type": "event"}, {"access": "", "host": "Widget", "name": "Widget.ATTRS", "url": "Widget.html#property_Widget.ATTRS", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.getByNode", "url": "Widget.html#method_Widget.getByNode", "type": "method"}, {"access": "", "host": "Widget", "name": "Widget.HTML_PARSER", "url": "Widget.html#property_Widget.HTML_PARSER", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.NAME", "url": "Widget.html#property_Widget.NAME", "type": "property"}, {"access": "private", "host": "Widget", "name": "Widget._NAME_LOWERCASE", "url": "Widget.html#property_Widget._NAME_LOWERCASE", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.UI_SRC", "url": "Widget.html#property_Widget.UI_SRC", "type": "property"}, {"access": "", "host": "Widget", "name": "width", "url": "Widget.html#config_width", "type": "config"}, {"access": "", "host": "Widget", "name": "widthChange", "url": "Widget.html#event_widthChange", "type": "event"}, {"access": "", "host": "Widget", "name": "WRAP_STYLES", "url": "Widget.html#property_WRAP_STYLES", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "Widget", "name": "_afterDisabledChange", "url": "Widget.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterFocusedChange", "url": "Widget.html#method__afterFocusedChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterHeightChange", "url": "Widget.html#method__afterHeightChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterVisibleChange", "url": "Widget.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterWidthChange", "url": "Widget.html#method__afterWidthChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_applyParsedConfig", "url": "Widget.html#method__applyParsedConfig", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindAttrUI", "url": "Widget.html#method__bindAttrUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindDOMListeners", "url": "Widget.html#method__bindDOMListeners", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindUI", "url": "Widget.html#method__bindUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "bindUI", "url": "Widget.html#method_bindUI", "type": "method"}, {"access": "", "host": "Widget", "name": "blur", "url": "Widget.html#method_blur", "type": "method"}, {"access": "", "host": "Widget", "name": "boundingBox", "url": "Widget.html#config_boundingBox", "type": "config"}, {"access": "", "host": "Widget", "name": "boundingBoxChange", "url": "Widget.html#event_boundingBoxChange", "type": "event"}, {"access": "", "host": "Widget", "name": "BOUNDING_TEMPLATE", "url": "Widget.html#property_BOUNDING_TEMPLATE", "type": "property"}, {"access": "private", "host": "Widget", "name": "_buildCfg", "url": "Widget.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Widget", "name": "contentBox", "url": "Widget.html#config_contentBox", "type": "config"}, {"access": "", "host": "Widget", "name": "contentBoxChange", "url": "Widget.html#event_contentBoxChange", "type": "event"}, {"access": "", "host": "Widget", "name": "CONTENT_TEMPLATE", "url": "Widget.html#property_CONTENT_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Widget", "name": "_defRenderFn", "url": "Widget.html#method__defRenderFn", "type": "method"}, {"access": "", "host": "Widget", "name": "DEF_UNIT", "url": "Widget.html#property_DEF_UNIT", "type": "property"}, {"access": "protected", "host": "Widget", "name": "destructor", "url": "Widget.html#method_destructor", "type": "method"}, {"access": "", "host": "Widget", "name": "disable", "url": "Widget.html#method_disable", "type": "method"}, {"access": "", "host": "Widget", "name": "disabled", "url": "Widget.html#config_disabled", "type": "config"}, {"access": "", "host": "Widget", "name": "disabledChange", "url": "Widget.html#event_disabledChange", "type": "event"}, {"access": "", "host": "Widget", "name": "enable", "url": "Widget.html#method_enable", "type": "method"}, {"access": "", "host": "Widget", "name": "focus", "url": "Widget.html#method_focus", "type": "method"}, {"access": "", "host": "Widget", "name": "focused", "url": "Widget.html#config_focused", "type": "config"}, {"access": "", "host": "Widget", "name": "focusedChange", "url": "Widget.html#event_focusedChange", "type": "event"}, {"access": "", "host": "Widget", "name": "getClassName", "url": "Widget.html#method_getClassName", "type": "method"}, {"access": "", "host": "Widget", "name": "getDefaultLocale", "url": "Widget.html#method_getDefaultLocale", "type": "method"}, {"access": "private", "host": "Widget", "name": "_getHtmlParser", "url": "Widget.html#method__getHtmlParser", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_getSrcNode", "url": "Widget.html#method__getSrcNode", "type": "method"}, {"access": "", "host": "Widget", "name": "getString", "url": "Widget.html#method_getString", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_getStrings", "url": "Widget.html#method__getStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "getStrings", "url": "Widget.html#method_getStrings", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_guid", "url": "Widget.html#method__guid", "type": "method"}, {"access": "", "host": "Widget", "name": "height", "url": "Widget.html#config_height", "type": "config"}, {"access": "", "host": "Widget", "name": "heightChange", "url": "Widget.html#event_heightChange", "type": "event"}, {"access": "", "host": "Widget", "name": "hide", "url": "Widget.html#method_hide", "type": "method"}, {"access": "", "host": "Widget", "name": "id", "url": "Widget.html#config_id", "type": "config"}, {"access": "", "host": "Widget", "name": "idChange", "url": "Widget.html#event_idChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "initializer", "url": "Widget.html#method_initializer", "type": "method"}, {"access": "", "host": "Widget", "name": "locale", "url": "Widget.html#config_locale", "type": "config"}, {"access": "", "host": "Widget", "name": "localeChange", "url": "Widget.html#event_localeChange", "type": "event"}, {"access": "private", "host": "Widget", "name": "_moveStyles", "url": "Widget.html#method__moveStyles", "type": "method"}, {"access": "", "host": "Widget", "name": "moveStyles", "url": "Widget.html#config_moveStyles", "type": "config"}, {"access": "", "host": "Widget", "name": "moveStylesChange", "url": "Widget.html#event_moveStylesChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "_onDocMouseDown", "url": "Widget.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_onFocus", "url": "Widget.html#method__onFocus", "type": "method"}, {"access": "private", "host": "Widget", "name": "_parseNode", "url": "Widget.html#method__parseNode", "type": "method"}, {"access": "", "host": "Widget", "name": "render", "url": "Widget.html#method_render", "type": "method"}, {"access": "", "host": "Widget", "name": "render", "url": "Widget.html#config_render", "type": "config"}, {"access": "private", "host": "Widget", "name": "_renderBox", "url": "Widget.html#method__renderBox", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_renderBoxClassNames", "url": "Widget.html#method__renderBoxClassNames", "type": "method"}, {"access": "", "host": "Widget", "name": "renderChange", "url": "Widget.html#event_renderChange", "type": "event"}, {"access": "", "host": "Widget", "name": "rendered", "url": "Widget.html#config_rendered", "type": "config"}, {"access": "", "host": "Widget", "name": "renderedChange", "url": "Widget.html#event_renderedChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "renderer", "url": "Widget.html#method_renderer", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_renderUI", "url": "Widget.html#method__renderUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "renderUI", "url": "Widget.html#method_renderUI", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setBoundingBox", "url": "Widget.html#method__setBoundingBox", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setBox", "url": "Widget.html#method__setBox", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setContentBox", "url": "Widget.html#method__setContentBox", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_setStrings", "url": "Widget.html#method__setStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "show", "url": "Widget.html#method_show", "type": "method"}, {"access": "", "host": "Widget", "name": "srcNode", "url": "Widget.html#config_srcNode", "type": "config"}, {"access": "", "host": "Widget", "name": "srcNodeChange", "url": "Widget.html#event_srcNodeChange", "type": "event"}, {"access": "private", "host": "Widget", "name": "_strings", "url": "Widget.html#property__strings", "type": "property"}, {"access": "", "host": "Widget", "name": "strings", "url": "Widget.html#config_strings", "type": "config"}, {"access": "", "host": "Widget", "name": "stringsChange", "url": "Widget.html#event_stringsChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "_syncAttrUI", "url": "Widget.html#method__syncAttrUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_syncUI", "url": "Widget.html#method__syncUI", "type": "method"}, {"access": "", "host": "Widget", "name": "syncUI", "url": "Widget.html#method_syncUI", "type": "method"}, {"access": "", "host": "Widget", "name": "tabIndex", "url": "Widget.html#config_tabIndex", "type": "config"}, {"access": "", "host": "Widget", "name": "tabIndexChange", "url": "Widget.html#event_tabIndexChange", "type": "event"}, {"access": "", "host": "Widget", "name": "toString", "url": "Widget.html#method_toString", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetDisabled", "url": "Widget.html#method__uiSetDisabled", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetFocused", "url": "Widget.html#method__uiSetFocused", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetHeight", "url": "Widget.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetTabIndex", "url": "Widget.html#method__uiSetTabIndex", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetVisible", "url": "Widget.html#method__uiSetVisible", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetWidth", "url": "Widget.html#method__uiSetWidth", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_validTabIndex", "url": "Widget.html#method__validTabIndex", "type": "method"}, {"access": "", "host": "Widget", "name": "visible", "url": "Widget.html#config_visible", "type": "config"}, {"access": "", "host": "Widget", "name": "visibleChange", "url": "Widget.html#event_visibleChange", "type": "event"}, {"access": "", "host": "Widget", "name": "widget:contentUpdate", "url": "Widget.html#event_widget:contentUpdate", "type": "event"}, {"access": "", "host": "Widget", "name": "widget:render", "url": "Widget.html#event_widget:render", "type": "event"}, {"access": "", "host": "Widget", "name": "Widget.ATTRS", "url": "Widget.html#property_Widget.ATTRS", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.getByNode", "url": "Widget.html#method_Widget.getByNode", "type": "method"}, {"access": "", "host": "Widget", "name": "Widget.HTML_PARSER", "url": "Widget.html#property_Widget.HTML_PARSER", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.NAME", "url": "Widget.html#property_Widget.NAME", "type": "property"}, {"access": "private", "host": "Widget", "name": "Widget._NAME_LOWERCASE", "url": "Widget.html#property_Widget._NAME_LOWERCASE", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.UI_SRC", "url": "Widget.html#property_Widget.UI_SRC", "type": "property"}, {"access": "", "host": "Widget", "name": "width", "url": "Widget.html#config_width", "type": "config"}, {"access": "", "host": "Widget", "name": "widthChange", "url": "Widget.html#event_widthChange", "type": "event"}, {"access": "", "host": "Widget", "name": "WRAP_STYLES", "url": "Widget.html#property_WRAP_STYLES", "type": "property"}];
 </script>
 </body>
 </html>
