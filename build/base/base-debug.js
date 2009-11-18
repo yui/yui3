@@ -466,7 +466,7 @@ YUI.add('base-base', function(Y) {
                 constr = classes[ci];
                 constrProto = constr.prototype;
 
-                if (constr._yuibuild && constr._yuibuild.exts && !constr._yuibuild.dynamic) {
+                if (constr._yuibuild && constr._yuibuild.exts) {
                     for (ei = 0, el = constr._yuibuild.exts.length; ei < el; ei++) {
                         constr._yuibuild.exts[ei].apply(this, arguments);
                     }
@@ -683,14 +683,6 @@ YUI.add('base-build', function(Y) {
             function BuiltClass() {
 
                 BuiltClass.superclass.constructor.apply(this, arguments);
-
-                var f = BuiltClass._yuibuild.exts, 
-                    l = f.length,
-                    i;
-
-                for (i = 0; i < l; i++) {
-                    f[i].apply(this, arguments);
-                }
 
                 return this;
             }
