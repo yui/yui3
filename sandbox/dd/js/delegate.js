@@ -48,10 +48,18 @@ YUI.add('dd-delegate', function(Y) {
         },
         /**
         * @attribute currentNode
-        * @description Y.Node instance of the currently dragging node.
+        * @description Y.Node instance of the dd node.
         * @type Node
         */        
         currentNode: {
+            value: _tmpNode
+        },
+        /**
+        * @attribute dragNode
+        * @description Y.Node instance of the dd dragNode.
+        * @type Node
+        */        
+        dragNode: {
             value: _tmpNode
         },
         /**
@@ -69,39 +77,48 @@ YUI.add('dd-delegate', function(Y) {
         */        
         target: {
             value: false
+        },
+        dragConfig: {
+            value: null
         }
     };
 
     Y.extend(D, Y.Base, {
         /**
-        * @property _dd
+        * @property dd
         * @description A reference to the temporary dd instance used under the hood.
         */    
-        _dd: null,
+        dd: null,
         /**
         * @property _shimState
+        * @private
         * @description The state of the Y.DD.DDM._noShim property to it can be reset.
         */    
         _shimState: null,
         initializer: function() {
             //Create a tmp DD instance under the hood.
-            this._dd = new Y.DD.Drag({
-                node: _tmpNode,
-                bubbles: this
-            });
+            var conf = this.get('dragConfig') || {};
+            conf.node = _tmpNode.cloneNode(true);
+            conf.bubbles = this;
+
+            this.dd = new Y.DD.Drag(conf);
 
             //Set this as the target
             this.addTarget(Y.DD.DDM);
 
             //On end drag, detach the listeners
-            this._dd.after('drag:end', Y.bind(function(e) {
+            this.dd.after('drag:end', Y.bind(function(e) {
                 Y.DD.DDM._noShim = this._shimState;
-                this.set('lastNode', this._dd.get('node'));
+                this.set('lastNode', this.dd.get('node'));
                 this.get('lastNode').removeClass(Y.DD.DDM.CSS_PREFIX + '-dragging');
-                this._dd._unprep();
+                this.dd._unprep();
                 
-                this._dd.set('node', _tmpNode);
+                this.dd.set('node', _tmpNode);
 
+            }, this));
+
+            this.dd.on('dragNodeChange', Y.bind(function(e) {
+                this.set('dragNode', e.newVal);
             }, this));
 
             //Attach the delegate to the container
@@ -109,14 +126,14 @@ YUI.add('dd-delegate', function(Y) {
                 this._shimState = Y.DD.DDM._noShim;
                 Y.DD.DDM._noShim = true;
                 this.set('currentNode', e.currentTarget);
-                this._dd.set('node', e.currentTarget);
-                if (this._dd.proxy) {
-                    this._dd.set('dragNode', Y.DD.DDM._proxy);
+                this.dd.set('node', e.currentTarget);
+                if (this.dd.proxy) {
+                    this.dd.set('dragNode', Y.DD.DDM._proxy);
                 } else {
-                    this._dd.set('dragNode', e.currentTarget);
+                    this.dd.set('dragNode', e.currentTarget);
                 }
-                this._dd._prep();
-                this._dd.fire.call(this._dd, 'drag:mouseDown', { ev: e });
+                this.dd._prep();
+                this.dd.fire.call(this.dd, 'drag:mouseDown', { ev: e });
             }, this), this.get('cont'), this.get('nodes'));
 
             Y.on('mouseenter', Y.bind(function() {
@@ -142,23 +159,36 @@ YUI.add('dd-delegate', function(Y) {
                 return;
             }
             if (this.get('target')) {
-                var items = Y.one(this.get('cont')).all(this.get('nodes'));
+                var items = Y.one(this.get('cont')).all(this.get('nodes')),
+                    dc = this.get('dragConfig');
+
                 items.each(function(i) {
                     if (!i.drop) {
-                        i.plug(Y.Plugin.Drop, { useShim: false, bubbles: this });
+                        var config = {
+                            useShim: false,
+                            bubbles: this
+                        };
+                        if (dc && dc.groups) {
+                            config.groups = dc.groups;
+                        }
+                        i.plug(Y.Plugin.Drop, config);
+                    } else {
+                        if (dc && dc.groups) {
+                            i.drop.set('groups', this.dd.get('groups'));
+                        }
                     }
-                });
+                }, this);
             }
             return this;
         },
         //TODO
         plugdd: function(cls, conf) {
-            this._dd.plug(cls, conf);
+            this.dd.plug(cls, conf);
             return this;
         },
         destructor: function() {
-            if (this._dd) {
-                this._dd.destroy();
+            if (this.dd) {
+                this.dd.destroy();
             }
         }
     });

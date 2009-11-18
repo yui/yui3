@@ -20,6 +20,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             border: 1px solid blue;
             width: 200px;
             float: left;
+            min-height: 100px;
         }
         #demo .item {
             border: 2px solid black;
@@ -100,55 +101,47 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-drop-plugin', 'event-mouseenter', 'sortable', function(Y) {
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-constrain', 'dd-drop-plugin', 'event-mouseenter', 'sortable', function(Y) {
     console.log(Y);
 
-    var del = new Y.Sortable({
-        cont: '#demo',
-        nodes: '.item'
-    });
-    
-    /*
-    var del = new Y.DD.Delegate({
-        cont: '#demo',
+    var sel = new Y.Sortable({
+        cont: '#one',
         nodes: '.item',
-        target: true
+        opacity: '.5',
+        swap: false
     });
-    del.plugdd(Y.Plugin.DDProxy, {
-        moveOnEnd: false
+    sel.plug(Y.Plugin.DDConstrained, {
+        constrain2node: '#demo'
     });
 
-    del.on('drag:start', function(e) {
-        this.get('lastNode').setStyle('zIndex', '');
-        this.get('currentNode').setStyle('zIndex', '999');
+    
+
+    var sel2 = new Y.Sortable({
+        cont: '#two',
+        nodes: '.item',
+        swap: false
     });
-    del.on('drag:over', function(e) {
-        var sel = e.currentTarget.get('cont') + ' ' + e.currentTarget.get('nodes');
-        if (e.drop.get('node').test(sel)) {
-            Y.DD.DDM.swapNode(e.drag, e.drop);
-        }
+    sel2.plug(Y.Plugin.DDConstrained, {
+        constrain2node: '#demo'
     });
-    del.on('drag:end', function(e) {
-        this.get('currentNode').setStyles({
-            top: 0,
-            left: 0
-        });
-    });
-    //del.on('drag:drag', console.log);
-    //console.log(del);
-    */
+
+    //sel2.bindTo(sel);
+    sel2.bindWith(sel);
+    
 
     var count = <?php echo($count); ?>,
         inc = 1;
     
     Y.one('#add').on('click', function(e) {
-        var node, demo = Y.one('#demo ul');
+        var node, one = Y.one('#one'), two = Y.one('#two');
         for (var i = 1; i < count + 1; i++) {
-            node = Y.Node.create('<li class="item">(' + inc + ') ' + i + '</li>');
-            demo.append(node);
+            node = Y.Node.create('<li class="item">(' + inc + ':1) ' + i + '</li>');
+            one.append(node);
+            two.append(node.cloneNode(true).set('innerHTML', '(' + inc + ':2) ' + i));
         }
         inc++;
-        del.syncTargets();
+        sel.sync();
+        sel2.sync();
     });
 
 });

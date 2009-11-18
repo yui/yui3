@@ -35,75 +35,124 @@ YUI.add('sortable', function(Y) {
         nodes: {
             value: '.dd-draggable'
         },
-        /**
-        * @attribute lastNode
-        * @description Y.Node instance of the last item dragged.
-        * @type Node
-        */        
-        lastNode: {
-            value: false
+        opacity: {
+            value: '.75'
         },
-        /**
-        * @attribute currentNode
-        * @description Y.Node instance of the currently dragging node.
-        * @type Node
-        */        
-        currentNode: {
-            value: false
+        id: {
+            value: null
         },
-        /**
-        * @attribute over
-        * @description Is the mouse currently over the container
-        * @type Boolean
-        */        
-        over: {
-            value: false
-        },
-        /**
-        * @attribute target
-        * @description Should the items also be a drop target.
-        * @type Boolean
-        */        
-        target: {
-            value: false
+        swap: {
+            value: true
         }
     };
 
     Y.extend(S, Y.Base, {
+        delegate: null,
         initializer: function() {
-            var del = new Y.DD.Delegate({
-                cont: this.get('cont'),
-                nodes: this.get('nodes'),
-                target: true
-            });
+            var id = 'sortable-' + Y.stamp({}),
+                del = new Y.DD.Delegate({
+                    cont: this.get('cont'),
+                    nodes: this.get('nodes'),
+                    target: true,
+                    dragConfig: {
+                        groups: [ id ]
+                    }
+                });
+
+            this.set('id', id);
+
             del.plugdd(Y.Plugin.DDProxy, {
                 moveOnEnd: false,
                 cloneNode: true
             });
 
-            del.on('drag:start', function(e) {
-                this.get('lastNode').setStyle('zIndex', '');
-                this.get('currentNode').setStyle('zIndex', '999');
-            });
-            del.on('drag:over', function(e) {
-                var sel = e.currentTarget.get('cont') + ' ' + e.currentTarget.get('nodes');
-                if (e.drop.get('node').test(sel)) {
-                    Y.DD.DDM.swapNode(e.drag, e.drop);
+            this._cont = new Y.DD.Drop({
+                node: this.get('cont'),
+                bubbles: del,
+                groups: del.dd.get('groups')
+            }).on('drop:over', Y.bind(function(e) {
+                if (!e.drop.get('node').test(this.get('nodes'))) {
+                    e.drop.get('node').append(e.drag.get('node'));
                 }
-            });
-            del.on('drag:end', function(e) {
-                this.get('currentNode').setStyles({
-                    top: 0,
-                    left: 0
+            }, this));
+
+            del.on('drag:start', Y.bind(function(e) {
+                del.get('lastNode').setStyle('zIndex', '');
+                del.get('dragNode').setStyle('opacity', this.get('opacity'));
+                del.get('currentNode').setStyle('zIndex', '999');
+            }, this));
+
+            del.on('drag:over', Y.bind(function(e) {
+                var dp = e.drop.get('node'),
+                    dg = e.drag.get('node');
+                if (!dp.test(this.get('nodes'))) {
+                    return;
+                }
+                if (dg === dp) {
+                    return;
+                }
+                if (this.get('swap')) {
+                    Y.DD.DDM.swapNode(dg, dp);
+                } else {
+                    if (dg.get('parentNode').contains(dp)) {
+                        Y.DD.DDM.swapNode(dg, dp);
+                    } else {
+                        //Another List
+                        dp.get('parentNode').insertBefore(dg, dp);
+                    }
+                }
+            }, this));
+            del.on('drag:end', Y.bind(function(e) {
+                del.get('dragNode').setStyle('opacity', 1);
+                del.get('currentNode').setStyles({
+                    top: '',
+                    left: ''
                 });
-            });
-        
+            }, this));
+            this.delegate = del;
+        },
+        plug: function(cls, config) {
+            this.delegate.plugdd(cls, config);
+        },
+        sync: function() {
+            this.delegate.syncTargets();
         },
         destructor: function() {
+        },
+        bindTo: function(sel, swap) {
+            if (!(sel instanceof Y.Sortable)) {
+                Y.error('Sortable: bindTo needs a Sortable Instance');
+                return;
+            }
+            sel.delegate.dd.addToGroup(this.get('id'));
+            this.delegate.syncTargets();
+        },
+        unBindTo: function(sel) {
+            if (!(sel instanceof Y.Sortable)) {
+                Y.error('Sortable: unBindTo needs a Sortable Instance');
+                return;
+            }
+            sel.delegate.dd.removeFromGroup(this.get('id'));
+            this.delegate.syncTargets();
+        },
+        bindWith: function(sel) {
+            if (!(sel instanceof Y.Sortable)) {
+                Y.error('Sortable: bindWith needs a Sortable Instance');
+                return;
+            }
+            this.delegate.dd.addToGroup(sel.get('id'));
+            this.bindTo(sel);
+        },
+        unBindWith: function(sel) {
+            if (!(sel instanceof Y.Sortable)) {
+                Y.error('Sortable: unBindWith needs a Sortable Instance');
+                return;
+            }
+            this.delegate.dd.removeFromGroup(sel.get('id'));
+            this.unBindTo(sel);
         }
     });
 
     Y.Sortable = S;
 
 }, '@VERSION@' ,{requires:['dd-delegate'], skinnable:false});
-
