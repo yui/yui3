@@ -161,7 +161,7 @@ the <a href="Base.html#method_build">Base.build</a> method.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Static property defining the markup template for bounding box.
+                                            Property defining the markup template for bounding box.
                                         </div>
                                     </div>
      
@@ -176,7 +176,9 @@ the <a href="Base.html#method_build">Base.build</a> method.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Static property defining the markup template for content box.
+                                            Property defining the markup template for content box. If your Widget doesn't
+need the dual boundingBox/contentBox structure, set CONTENT_TEMPLATE to null,
+and contentBox and boundingBox will both point to the same Node.
                                         </div>
                                     </div>
      
@@ -563,6 +565,87 @@ the DOM (as opposed to the JavaScript model).
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__applyParsedConfig">
+                                    <h4>
+                                        <a name="method__applyParsedConfig">_applyParsedConfig</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">_applyParsedConfig</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The merged configuration literal</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__bindAttrUI">
+                                    <h4>
+                                        <a name="method__bindAttrUI">_bindAttrUI</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_bindAttrUI</strong>
+                                           (
+                                                
+                                                        
+                                                         attrs
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attrs</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__bindDOMListeners">
                                     <h4>
                                         <a name="method__bindDOMListeners">_bindDOMListeners</a></h4>
@@ -677,12 +760,12 @@ the DOM (as opposed to the JavaScript model).
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method__getHtmlParser">
+                                    <div class="private" rel="yui:method" resource="#method__getHtmlParser">
                                     <h4>
                                         <a name="method__getHtmlParser">_getHtmlParser</a></h4>
                                     <div class="detail" >
                                         <code>
-                                        
+                                         private 
                                         
                                         
                                         Object
@@ -705,6 +788,43 @@ definitions across the class hierarchy.
                                                             Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">HTML_PARSER definition for this instance</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__getSrcNode">
+                                    <h4>
+                                        <a name="method__getSrcNode">_getSrcNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">_getSrcNode</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The Node to apply HTML_PARSER to</dd>
                                                 </dl>
 
 
@@ -749,6 +869,36 @@ definitions across the class hierarchy.
                                                         <span property="yui:description"></span>
                                                         </dd>
                                                 </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__guid">
+                                    <h4>
+                                        <a name="method__guid">_guid</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_guid</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
 
 
 
@@ -902,16 +1052,16 @@ widget's bounding box.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method__parseHTML">
+                                    <div class="private" rel="yui:method" resource="#method__parseNode">
                                     <h4>
-                                        <a name="method__parseHTML">_parseHTML</a></h4>
+                                        <a name="method__parseNode">_parseNode</a></h4>
                                     <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         Object
-                                            <strong property="yui:name">_parseHTML</strong>
+                                            <strong property="yui:name">_parseNode</strong>
                                            (
                                                 
                                                         
@@ -1140,6 +1290,10 @@ the contentBox are not currently in the document, the widget will be rendered to
                                            (
                                                 
                                                         
+                                                         id
+                                                    
+                                                
+                                                        , 
                                                          node
                                                     
                                                 
@@ -1159,6 +1313,12 @@ the provided template if not found.
 
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">id</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The node's id attribute</span>
+                                                        </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">node</span>
                                                         &lt;<span property="yui:type">Node|String</span>&gt;
@@ -1282,6 +1442,50 @@ strings which may already be defined for the locale.
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> The locale for the string values being set</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__syncAttrUI">
+                                    <h4>
+                                        <a name="method__syncAttrUI">_syncAttrUI</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_syncAttrUI</strong>
+                                           (
+                                                
+                                                        
+                                                         attrs
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attrs</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
                                                         </dd>
                                                 </dl>
 
@@ -1599,6 +1803,50 @@ the UI.</span>
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__validTabIndex">
+                                    <h4>
+                                        <a name="method__validTabIndex">_validTabIndex</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_validTabIndex</strong>
+                                           (
+                                                
+                                                        
+                                                         tabIndex
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">tabIndex</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method_bindUI">
                                     <h4>
                                         <a name="method_bindUI">bindUI</a></h4>
@@ -1694,16 +1942,16 @@ list of registered widgets.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_disabled">
+                                    <div class="" rel="yui:method" resource="#method_disable">
                                     <h4>
-                                        <a name="method_disabled">disabled</a></h4>
+                                        <a name="method_disable">disable</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong property="yui:name">disabled</strong>
+                                            <strong property="yui:name">disable</strong>
                                            (
                                             )
                                         </code>
@@ -1996,7 +2244,7 @@ default locale (in initial locale set for the class) is returned.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Shows the Module element by setting the "visible" attribute to "false".
+                                            Hides the Widget by setting the "visible" attribute to "false".
                                         </div>
 
                                         <div class="description">
@@ -2201,7 +2449,7 @@ automatically for the class hierarchy.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Shows the Module element by setting the "visible" attribute to "true".
+                                            Shows the Widget by setting the "visible" attribute to "true".
                                         </div>
 
                                         <div class="description">
@@ -2783,6 +3031,50 @@ string is passed in, which selects more than one node, the first node found is u
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:event" resource="#event_idChange">
+                                    <h4>
+                                        <a name="event_idChange">idChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">idChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'id' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:event" resource="#event_localeChange">
                                     <h4>
                                         <a name="event_localeChange">localeChange</a></h4>
@@ -2871,6 +3163,50 @@ string is passed in, which selects more than one node, the first node found is u
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:event" resource="#event_renderChange">
+                                    <h4>
+                                        <a name="event_renderChange">renderChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">renderChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'render' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:event" resource="#event_renderedChange">
                                     <h4>
                                         <a name="event_renderedChange">renderedChange</a></h4>
@@ -2893,6 +3229,50 @@ string is passed in, which selects more than one node, the first node found is u
                                         
                                         <div class="description" property="yui:description">
                                             Fires when the value for the configuration attribute 'rendered' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_srcNodeChange">
+                                    <h4>
+                                        <a name="event_srcNodeChange">srcNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">srcNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'srcNode' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -3126,7 +3506,7 @@ Subscribers to the "on" moment of this event, will be notified
 before the widget is rendered.
 </p>
 <p>
-Subscribers to the "after" momemt of this event, will be notified
+Subscribers to the "after" moment of this event, will be notified
 after rendering is complete.
 </p>
                                         </div>
@@ -3232,7 +3612,7 @@ after rendering is complete.
                             <div class="content">
                                     <div class="" rel="yui:attribute" resource="#config_boundingBox">
                                     <h4><a name="config_boundingBox">boundingBox</a>
-                                        <code>- <span property="yui:type">Node</span></code>
+                                        <code>- writeonce <span property="yui:type">String | Node</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -3248,7 +3628,7 @@ for skinning.
                                     </div>        
                                     <div class="" rel="yui:attribute" resource="#config_contentBox">
                                     <h4><a name="config_contentBox">contentBox</a>
-                                        <code>- <span property="yui:type">Node</span></code>
+                                        <code>- writeonce <span property="yui:type">String | Node</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -3315,6 +3695,23 @@ the default unit, defined by the Widgets DEF_UNIT, property is used.
 
                                     <hr />
                                     </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_id">
+                                    <h4><a name="config_id">id</a>
+                                        <code>- writeonce <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: Generated using guid()
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
                                     <div class="" rel="yui:attribute" resource="#config_locale">
                                     <h4><a name="config_locale">locale</a>
                                         <code>- <span property="yui:type">String</span></code>
@@ -3351,13 +3748,27 @@ should be moved to the bounding box when wrapped (as defined by the WRAP_STYLES 
 
                                     <hr />
                                     </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_render">
+                                    <h4><a name="config_render">render</a>
+                                        <code>- writeonce <span property="yui:type">boolean | Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Whether or not to render the widget automatically after init, and optionally, to which parent node.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
                                     <div class="" rel="yui:attribute" resource="#config_rendered">
                                     <h4><a name="config_rendered">rendered</a>
                                         <code>- <span property="yui:type">boolean</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Flag indicating whether or not this object
+                                            Flag indicating whether or not this Widget
 has been through the render lifecycle phase.
                                         </div>
                                     </div>
@@ -3366,6 +3777,20 @@ has been through the render lifecycle phase.
                                     <div class="default">
                                         Default Value: false
                                     </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_srcNode">
+                                    <h4><a name="config_srcNode">srcNode</a>
+                                        <code>- writeonce <span property="yui:type">String | Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The DOM node to parse for configuration values, passed to the Widget's HTML_PARSER definition
+                                        </div>
+                                    </div>
+ 
+     
 
                                     <hr />
                                     </div>        
@@ -3560,15 +3985,19 @@ the default unit, defined by the Widgets DEF_UNIT, property is used.
                                 <li class="protected"><a href="#method__afterHeightChange" title="_afterHeightChange">_afterHeightChange</a></li>
                                 <li class="protected"><a href="#method__afterVisibleChange" title="_afterVisibleChange">_afterVisibleChange</a></li>
                                 <li class="protected"><a href="#method__afterWidthChange" title="_afterWidthChange">_afterWidthChange</a></li>
+                                <li class="protected"><a href="#method__applyParsedConfig" title="_applyParsedConfig">_applyParsedConfig</a></li>
+                                <li class="protected"><a href="#method__bindAttrUI" title="_bindAttrUI">_bindAttrUI</a></li>
                                 <li class="protected"><a href="#method__bindDOMListeners" title="_bindDOMListeners">_bindDOMListeners</a></li>
                                 <li class="protected"><a href="#method__bindUI" title="_bindUI">_bindUI</a></li>
                                 <li class="protected"><a href="#method__defRenderFn" title="_defRenderFn">_defRenderFn</a></li>
-                                <li class=""><a href="#method__getHtmlParser" title="_getHtmlParser">_getHtmlParser</a></li>
+                                <li class="private"><a href="#method__getHtmlParser" title="_getHtmlParser">_getHtmlParser</a></li>
+                                <li class="protected"><a href="#method__getSrcNode" title="_getSrcNode">_getSrcNode</a></li>
                                 <li class="protected"><a href="#method__getStrings" title="_getStrings">_getStrings</a></li>
+                                <li class="protected"><a href="#method__guid" title="_guid">_guid</a></li>
                                 <li class="private"><a href="#method__moveStyles" title="_moveStyles">_moveStyles</a></li>
                                 <li class="protected"><a href="#method__onDocMouseDown" title="_onDocMouseDown">_onDocMouseDown</a></li>
                                 <li class="protected"><a href="#method__onFocus" title="_onFocus">_onFocus</a></li>
-                                <li class="private"><a href="#method__parseHTML" title="_parseHTML">_parseHTML</a></li>
+                                <li class="private"><a href="#method__parseNode" title="_parseNode">_parseNode</a></li>
                                 <li class="private"><a href="#method__renderBox" title="_renderBox">_renderBox</a></li>
                                 <li class="protected"><a href="#method__renderBoxClassNames" title="_renderBoxClassNames">_renderBoxClassNames</a></li>
                                 <li class="protected"><a href="#method__renderUI" title="_renderUI">_renderUI</a></li>
@@ -3576,6 +4005,7 @@ the default unit, defined by the Widgets DEF_UNIT, property is used.
                                 <li class="private"><a href="#method__setBox" title="_setBox">_setBox</a></li>
                                 <li class="private"><a href="#method__setContentBox" title="_setContentBox">_setContentBox</a></li>
                                 <li class="protected"><a href="#method__setStrings" title="_setStrings">_setStrings</a></li>
+                                <li class="protected"><a href="#method__syncAttrUI" title="_syncAttrUI">_syncAttrUI</a></li>
                                 <li class="protected"><a href="#method__syncUI" title="_syncUI">_syncUI</a></li>
                                 <li class="protected"><a href="#method__uiSetDisabled" title="_uiSetDisabled">_uiSetDisabled</a></li>
                                 <li class="protected"><a href="#method__uiSetFocused" title="_uiSetFocused">_uiSetFocused</a></li>
@@ -3583,10 +4013,11 @@ the default unit, defined by the Widgets DEF_UNIT, property is used.
                                 <li class="protected"><a href="#method__uiSetTabIndex" title="_uiSetTabIndex">_uiSetTabIndex</a></li>
                                 <li class="protected"><a href="#method__uiSetVisible" title="_uiSetVisible">_uiSetVisible</a></li>
                                 <li class="protected"><a href="#method__uiSetWidth" title="_uiSetWidth">_uiSetWidth</a></li>
+                                <li class="protected"><a href="#method__validTabIndex" title="_validTabIndex">_validTabIndex</a></li>
                                 <li class="protected"><a href="#method_bindUI" title="bindUI">bindUI</a></li>
                                 <li class=""><a href="#method_blur" title="blur">blur</a></li>
                                 <li class="protected"><a href="#method_destructor" title="destructor">destructor</a></li>
-                                <li class=""><a href="#method_disabled" title="disabled">disabled</a></li>
+                                <li class=""><a href="#method_disable" title="disable">disable</a></li>
                                 <li class=""><a href="#method_enable" title="enable">enable</a></li>
                                 <li class=""><a href="#method_focus" title="focus">focus</a></li>
                                 <li class=""><a href="#method_getClassName" title="getClassName">getClassName</a></li>
@@ -3613,9 +4044,12 @@ the default unit, defined by the Widgets DEF_UNIT, property is used.
                                 <li class=""><a href="#event_disabledChange" title="disabledChange">disabledChange</a></li>
                                 <li class=""><a href="#event_focusedChange" title="focusedChange">focusedChange</a></li>
                                 <li class=""><a href="#event_heightChange" title="heightChange">heightChange</a></li>
+                                <li class=""><a href="#event_idChange" title="idChange">idChange</a></li>
                                 <li class=""><a href="#event_localeChange" title="localeChange">localeChange</a></li>
                                 <li class=""><a href="#event_moveStylesChange" title="moveStylesChange">moveStylesChange</a></li>
+                                <li class=""><a href="#event_renderChange" title="renderChange">renderChange</a></li>
                                 <li class=""><a href="#event_renderedChange" title="renderedChange">renderedChange</a></li>
+                                <li class=""><a href="#event_srcNodeChange" title="srcNodeChange">srcNodeChange</a></li>
                                 <li class=""><a href="#event_stringsChange" title="stringsChange">stringsChange</a></li>
                                 <li class=""><a href="#event_tabIndexChange" title="tabIndexChange">tabIndexChange</a></li>
                                 <li class=""><a href="#event_visibleChange" title="visibleChange">visibleChange</a></li>
@@ -3633,9 +4067,12 @@ the default unit, defined by the Widgets DEF_UNIT, property is used.
                                 <li class=""><a href="#config_disabled" title="disabled">disabled</a></li>
                                 <li class=""><a href="#config_focused" title="focused">focused</a></li>
                                 <li class=""><a href="#config_height" title="height">height</a></li>
+                                <li class=""><a href="#config_id" title="id">id</a></li>
                                 <li class=""><a href="#config_locale" title="locale">locale</a></li>
                                 <li class=""><a href="#config_moveStyles" title="moveStyles">moveStyles</a></li>
+                                <li class=""><a href="#config_render" title="render">render</a></li>
                                 <li class=""><a href="#config_rendered" title="rendered">rendered</a></li>
+                                <li class=""><a href="#config_srcNode" title="srcNode">srcNode</a></li>
                                 <li class=""><a href="#config_strings" title="strings">strings</a></li>
                                 <li class=""><a href="#config_tabIndex" title="tabIndex">tabIndex</a></li>
                                 <li class=""><a href="#config_visible" title="visible">visible</a></li>
@@ -3652,7 +4089,7 @@ the default unit, defined by the Widgets DEF_UNIT, property is used.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "Widget", "name": "_afterDisabledChange", "url": "Widget.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterFocusedChange", "url": "Widget.html#method__afterFocusedChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterHeightChange", "url": "Widget.html#method__afterHeightChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterVisibleChange", "url": "Widget.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterWidthChange", "url": "Widget.html#method__afterWidthChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindDOMListeners", "url": "Widget.html#method__bindDOMListeners", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindUI", "url": "Widget.html#method__bindUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "bindUI", "url": "Widget.html#method_bindUI", "type": "method"}, {"access": "", "host": "Widget", "name": "blur", "url": "Widget.html#method_blur", "type": "method"}, {"access": "", "host": "Widget", "name": "boundingBox", "url": "Widget.html#config_boundingBox", "type": "config"}, {"access": "", "host": "Widget", "name": "boundingBoxChange", "url": "Widget.html#event_boundingBoxChange", "type": "event"}, {"access": "", "host": "Widget", "name": "BOUNDING_TEMPLATE", "url": "Widget.html#property_BOUNDING_TEMPLATE", "type": "property"}, {"access": "private", "host": "Widget", "name": "_buildCfg", "url": "Widget.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Widget", "name": "contentBox", "url": "Widget.html#config_contentBox", "type": "config"}, {"access": "", "host": "Widget", "name": "contentBoxChange", "url": "Widget.html#event_contentBoxChange", "type": "event"}, {"access": "", "host": "Widget", "name": "CONTENT_TEMPLATE", "url": "Widget.html#property_CONTENT_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Widget", "name": "_defRenderFn", "url": "Widget.html#method__defRenderFn", "type": "method"}, {"access": "", "host": "Widget", "name": "DEF_UNIT", "url": "Widget.html#property_DEF_UNIT", "type": "property"}, {"access": "protected", "host": "Widget", "name": "destructor", "url": "Widget.html#method_destructor", "type": "method"}, {"access": "", "host": "Widget", "name": "disabled", "url": "Widget.html#method_disabled", "type": "method"}, {"access": "", "host": "Widget", "name": "disabled", "url": "Widget.html#config_disabled", "type": "config"}, {"access": "", "host": "Widget", "name": "disabledChange", "url": "Widget.html#event_disabledChange", "type": "event"}, {"access": "", "host": "Widget", "name": "enable", "url": "Widget.html#method_enable", "type": "method"}, {"access": "", "host": "Widget", "name": "focus", "url": "Widget.html#method_focus", "type": "method"}, {"access": "", "host": "Widget", "name": "focused", "url": "Widget.html#config_focused", "type": "config"}, {"access": "", "host": "Widget", "name": "focusedChange", "url": "Widget.html#event_focusedChange", "type": "event"}, {"access": "", "host": "Widget", "name": "getClassName", "url": "Widget.html#method_getClassName", "type": "method"}, {"access": "", "host": "Widget", "name": "getDefaultLocale", "url": "Widget.html#method_getDefaultLocale", "type": "method"}, {"access": "", "host": "Widget", "name": "_getHtmlParser", "url": "Widget.html#method__getHtmlParser", "type": "method"}, {"access": "", "host": "Widget", "name": "getString", "url": "Widget.html#method_getString", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_getStrings", "url": "Widget.html#method__getStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "getStrings", "url": "Widget.html#method_getStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "height", "url": "Widget.html#config_height", "type": "config"}, {"access": "", "host": "Widget", "name": "heightChange", "url": "Widget.html#event_heightChange", "type": "event"}, {"access": "", "host": "Widget", "name": "hide", "url": "Widget.html#method_hide", "type": "method"}, {"access": "protected", "host": "Widget", "name": "initializer", "url": "Widget.html#method_initializer", "type": "method"}, {"access": "", "host": "Widget", "name": "locale", "url": "Widget.html#config_locale", "type": "config"}, {"access": "", "host": "Widget", "name": "localeChange", "url": "Widget.html#event_localeChange", "type": "event"}, {"access": "private", "host": "Widget", "name": "_moveStyles", "url": "Widget.html#method__moveStyles", "type": "method"}, {"access": "", "host": "Widget", "name": "moveStyles", "url": "Widget.html#config_moveStyles", "type": "config"}, {"access": "", "host": "Widget", "name": "moveStylesChange", "url": "Widget.html#event_moveStylesChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "_onDocMouseDown", "url": "Widget.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_onFocus", "url": "Widget.html#method__onFocus", "type": "method"}, {"access": "private", "host": "Widget", "name": "_parseHTML", "url": "Widget.html#method__parseHTML", "type": "method"}, {"access": "", "host": "Widget", "name": "render", "url": "Widget.html#method_render", "type": "method"}, {"access": "private", "host": "Widget", "name": "_renderBox", "url": "Widget.html#method__renderBox", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_renderBoxClassNames", "url": "Widget.html#method__renderBoxClassNames", "type": "method"}, {"access": "", "host": "Widget", "name": "rendered", "url": "Widget.html#config_rendered", "type": "config"}, {"access": "", "host": "Widget", "name": "renderedChange", "url": "Widget.html#event_renderedChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "renderer", "url": "Widget.html#method_renderer", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_renderUI", "url": "Widget.html#method__renderUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "renderUI", "url": "Widget.html#method_renderUI", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setBoundingBox", "url": "Widget.html#method__setBoundingBox", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setBox", "url": "Widget.html#method__setBox", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setContentBox", "url": "Widget.html#method__setContentBox", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_setStrings", "url": "Widget.html#method__setStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "show", "url": "Widget.html#method_show", "type": "method"}, {"access": "private", "host": "Widget", "name": "_strings", "url": "Widget.html#property__strings", "type": "property"}, {"access": "", "host": "Widget", "name": "strings", "url": "Widget.html#config_strings", "type": "config"}, {"access": "", "host": "Widget", "name": "stringsChange", "url": "Widget.html#event_stringsChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "_syncUI", "url": "Widget.html#method__syncUI", "type": "method"}, {"access": "", "host": "Widget", "name": "syncUI", "url": "Widget.html#method_syncUI", "type": "method"}, {"access": "", "host": "Widget", "name": "tabIndex", "url": "Widget.html#config_tabIndex", "type": "config"}, {"access": "", "host": "Widget", "name": "tabIndexChange", "url": "Widget.html#event_tabIndexChange", "type": "event"}, {"access": "", "host": "Widget", "name": "toString", "url": "Widget.html#method_toString", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetDisabled", "url": "Widget.html#method__uiSetDisabled", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetFocused", "url": "Widget.html#method__uiSetFocused", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetHeight", "url": "Widget.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetTabIndex", "url": "Widget.html#method__uiSetTabIndex", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetVisible", "url": "Widget.html#method__uiSetVisible", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetWidth", "url": "Widget.html#method__uiSetWidth", "type": "method"}, {"access": "", "host": "Widget", "name": "visible", "url": "Widget.html#config_visible", "type": "config"}, {"access": "", "host": "Widget", "name": "visibleChange", "url": "Widget.html#event_visibleChange", "type": "event"}, {"access": "", "host": "Widget", "name": "widget:contentUpdate", "url": "Widget.html#event_widget:contentUpdate", "type": "event"}, {"access": "", "host": "Widget", "name": "widget:render", "url": "Widget.html#event_widget:render", "type": "event"}, {"access": "", "host": "Widget", "name": "Widget.ATTRS", "url": "Widget.html#property_Widget.ATTRS", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.getByNode", "url": "Widget.html#method_Widget.getByNode", "type": "method"}, {"access": "", "host": "Widget", "name": "Widget.HTML_PARSER", "url": "Widget.html#property_Widget.HTML_PARSER", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.NAME", "url": "Widget.html#property_Widget.NAME", "type": "property"}, {"access": "private", "host": "Widget", "name": "Widget._NAME_LOWERCASE", "url": "Widget.html#property_Widget._NAME_LOWERCASE", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.UI_SRC", "url": "Widget.html#property_Widget.UI_SRC", "type": "property"}, {"access": "", "host": "Widget", "name": "width", "url": "Widget.html#config_width", "type": "config"}, {"access": "", "host": "Widget", "name": "widthChange", "url": "Widget.html#event_widthChange", "type": "event"}, {"access": "", "host": "Widget", "name": "WRAP_STYLES", "url": "Widget.html#property_WRAP_STYLES", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "Widget", "name": "_afterDisabledChange", "url": "Widget.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterFocusedChange", "url": "Widget.html#method__afterFocusedChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterHeightChange", "url": "Widget.html#method__afterHeightChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterVisibleChange", "url": "Widget.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_afterWidthChange", "url": "Widget.html#method__afterWidthChange", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_applyParsedConfig", "url": "Widget.html#method__applyParsedConfig", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindAttrUI", "url": "Widget.html#method__bindAttrUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindDOMListeners", "url": "Widget.html#method__bindDOMListeners", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_bindUI", "url": "Widget.html#method__bindUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "bindUI", "url": "Widget.html#method_bindUI", "type": "method"}, {"access": "", "host": "Widget", "name": "blur", "url": "Widget.html#method_blur", "type": "method"}, {"access": "", "host": "Widget", "name": "boundingBox", "url": "Widget.html#config_boundingBox", "type": "config"}, {"access": "", "host": "Widget", "name": "boundingBoxChange", "url": "Widget.html#event_boundingBoxChange", "type": "event"}, {"access": "", "host": "Widget", "name": "BOUNDING_TEMPLATE", "url": "Widget.html#property_BOUNDING_TEMPLATE", "type": "property"}, {"access": "private", "host": "Widget", "name": "_buildCfg", "url": "Widget.html#property__buildCfg", "type": "property"}, {"access": "", "host": "Widget", "name": "contentBox", "url": "Widget.html#config_contentBox", "type": "config"}, {"access": "", "host": "Widget", "name": "contentBoxChange", "url": "Widget.html#event_contentBoxChange", "type": "event"}, {"access": "", "host": "Widget", "name": "CONTENT_TEMPLATE", "url": "Widget.html#property_CONTENT_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Widget", "name": "_defRenderFn", "url": "Widget.html#method__defRenderFn", "type": "method"}, {"access": "", "host": "Widget", "name": "DEF_UNIT", "url": "Widget.html#property_DEF_UNIT", "type": "property"}, {"access": "protected", "host": "Widget", "name": "destructor", "url": "Widget.html#method_destructor", "type": "method"}, {"access": "", "host": "Widget", "name": "disable", "url": "Widget.html#method_disable", "type": "method"}, {"access": "", "host": "Widget", "name": "disabled", "url": "Widget.html#config_disabled", "type": "config"}, {"access": "", "host": "Widget", "name": "disabledChange", "url": "Widget.html#event_disabledChange", "type": "event"}, {"access": "", "host": "Widget", "name": "enable", "url": "Widget.html#method_enable", "type": "method"}, {"access": "", "host": "Widget", "name": "focus", "url": "Widget.html#method_focus", "type": "method"}, {"access": "", "host": "Widget", "name": "focused", "url": "Widget.html#config_focused", "type": "config"}, {"access": "", "host": "Widget", "name": "focusedChange", "url": "Widget.html#event_focusedChange", "type": "event"}, {"access": "", "host": "Widget", "name": "getClassName", "url": "Widget.html#method_getClassName", "type": "method"}, {"access": "", "host": "Widget", "name": "getDefaultLocale", "url": "Widget.html#method_getDefaultLocale", "type": "method"}, {"access": "private", "host": "Widget", "name": "_getHtmlParser", "url": "Widget.html#method__getHtmlParser", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_getSrcNode", "url": "Widget.html#method__getSrcNode", "type": "method"}, {"access": "", "host": "Widget", "name": "getString", "url": "Widget.html#method_getString", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_getStrings", "url": "Widget.html#method__getStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "getStrings", "url": "Widget.html#method_getStrings", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_guid", "url": "Widget.html#method__guid", "type": "method"}, {"access": "", "host": "Widget", "name": "height", "url": "Widget.html#config_height", "type": "config"}, {"access": "", "host": "Widget", "name": "heightChange", "url": "Widget.html#event_heightChange", "type": "event"}, {"access": "", "host": "Widget", "name": "hide", "url": "Widget.html#method_hide", "type": "method"}, {"access": "", "host": "Widget", "name": "id", "url": "Widget.html#config_id", "type": "config"}, {"access": "", "host": "Widget", "name": "idChange", "url": "Widget.html#event_idChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "initializer", "url": "Widget.html#method_initializer", "type": "method"}, {"access": "", "host": "Widget", "name": "locale", "url": "Widget.html#config_locale", "type": "config"}, {"access": "", "host": "Widget", "name": "localeChange", "url": "Widget.html#event_localeChange", "type": "event"}, {"access": "private", "host": "Widget", "name": "_moveStyles", "url": "Widget.html#method__moveStyles", "type": "method"}, {"access": "", "host": "Widget", "name": "moveStyles", "url": "Widget.html#config_moveStyles", "type": "config"}, {"access": "", "host": "Widget", "name": "moveStylesChange", "url": "Widget.html#event_moveStylesChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "_onDocMouseDown", "url": "Widget.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_onFocus", "url": "Widget.html#method__onFocus", "type": "method"}, {"access": "private", "host": "Widget", "name": "_parseNode", "url": "Widget.html#method__parseNode", "type": "method"}, {"access": "", "host": "Widget", "name": "render", "url": "Widget.html#method_render", "type": "method"}, {"access": "", "host": "Widget", "name": "render", "url": "Widget.html#config_render", "type": "config"}, {"access": "private", "host": "Widget", "name": "_renderBox", "url": "Widget.html#method__renderBox", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_renderBoxClassNames", "url": "Widget.html#method__renderBoxClassNames", "type": "method"}, {"access": "", "host": "Widget", "name": "renderChange", "url": "Widget.html#event_renderChange", "type": "event"}, {"access": "", "host": "Widget", "name": "rendered", "url": "Widget.html#config_rendered", "type": "config"}, {"access": "", "host": "Widget", "name": "renderedChange", "url": "Widget.html#event_renderedChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "renderer", "url": "Widget.html#method_renderer", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_renderUI", "url": "Widget.html#method__renderUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "renderUI", "url": "Widget.html#method_renderUI", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setBoundingBox", "url": "Widget.html#method__setBoundingBox", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setBox", "url": "Widget.html#method__setBox", "type": "method"}, {"access": "private", "host": "Widget", "name": "_setContentBox", "url": "Widget.html#method__setContentBox", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_setStrings", "url": "Widget.html#method__setStrings", "type": "method"}, {"access": "", "host": "Widget", "name": "show", "url": "Widget.html#method_show", "type": "method"}, {"access": "", "host": "Widget", "name": "srcNode", "url": "Widget.html#config_srcNode", "type": "config"}, {"access": "", "host": "Widget", "name": "srcNodeChange", "url": "Widget.html#event_srcNodeChange", "type": "event"}, {"access": "private", "host": "Widget", "name": "_strings", "url": "Widget.html#property__strings", "type": "property"}, {"access": "", "host": "Widget", "name": "strings", "url": "Widget.html#config_strings", "type": "config"}, {"access": "", "host": "Widget", "name": "stringsChange", "url": "Widget.html#event_stringsChange", "type": "event"}, {"access": "protected", "host": "Widget", "name": "_syncAttrUI", "url": "Widget.html#method__syncAttrUI", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_syncUI", "url": "Widget.html#method__syncUI", "type": "method"}, {"access": "", "host": "Widget", "name": "syncUI", "url": "Widget.html#method_syncUI", "type": "method"}, {"access": "", "host": "Widget", "name": "tabIndex", "url": "Widget.html#config_tabIndex", "type": "config"}, {"access": "", "host": "Widget", "name": "tabIndexChange", "url": "Widget.html#event_tabIndexChange", "type": "event"}, {"access": "", "host": "Widget", "name": "toString", "url": "Widget.html#method_toString", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetDisabled", "url": "Widget.html#method__uiSetDisabled", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetFocused", "url": "Widget.html#method__uiSetFocused", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetHeight", "url": "Widget.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetTabIndex", "url": "Widget.html#method__uiSetTabIndex", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetVisible", "url": "Widget.html#method__uiSetVisible", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_uiSetWidth", "url": "Widget.html#method__uiSetWidth", "type": "method"}, {"access": "protected", "host": "Widget", "name": "_validTabIndex", "url": "Widget.html#method__validTabIndex", "type": "method"}, {"access": "", "host": "Widget", "name": "visible", "url": "Widget.html#config_visible", "type": "config"}, {"access": "", "host": "Widget", "name": "visibleChange", "url": "Widget.html#event_visibleChange", "type": "event"}, {"access": "", "host": "Widget", "name": "widget:contentUpdate", "url": "Widget.html#event_widget:contentUpdate", "type": "event"}, {"access": "", "host": "Widget", "name": "widget:render", "url": "Widget.html#event_widget:render", "type": "event"}, {"access": "", "host": "Widget", "name": "Widget.ATTRS", "url": "Widget.html#property_Widget.ATTRS", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.getByNode", "url": "Widget.html#method_Widget.getByNode", "type": "method"}, {"access": "", "host": "Widget", "name": "Widget.HTML_PARSER", "url": "Widget.html#property_Widget.HTML_PARSER", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.NAME", "url": "Widget.html#property_Widget.NAME", "type": "property"}, {"access": "private", "host": "Widget", "name": "Widget._NAME_LOWERCASE", "url": "Widget.html#property_Widget._NAME_LOWERCASE", "type": "property"}, {"access": "", "host": "Widget", "name": "Widget.UI_SRC", "url": "Widget.html#property_Widget.UI_SRC", "type": "property"}, {"access": "", "host": "Widget", "name": "width", "url": "Widget.html#config_width", "type": "config"}, {"access": "", "host": "Widget", "name": "widthChange", "url": "Widget.html#event_widthChange", "type": "event"}, {"access": "", "host": "Widget", "name": "WRAP_STYLES", "url": "Widget.html#property_WRAP_STYLES", "type": "property"}];
 </script>
 </body>
 </html>
