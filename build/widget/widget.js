@@ -454,9 +454,9 @@ Y.extend(Widget, Y.Base, {
          */
         this.publish(ContentUpdate, { preventable:false });
 
-        srcNode    = this._preParseNode();
+        srcNode = this._getSrcNode();
         parsedConfig = this._parseNode(srcNode);
-        config = this._postParseNode(srcNode, config, parsedConfig);
+        config = this._applyParsedConfig(srcNode, config, parsedConfig);
     },
 
     /**
@@ -698,20 +698,20 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * @method _preParseNode
+     * @method _getSrcNode
      * @protected
      * @return {Node} The Node to apply HTML_PARSER to
      */
-    _preParseNode : function() {
+    _getSrcNode : function() {
         return this.get(SRC_NODE) || this.get(CONTENT_BOX);
     },
 
     /**
-     * @method _postParseNode
+     * @method _applyParsedConfig
      * @protected
      * @return {Object} The merged configuration literal
      */
-    _postParseNode : function(node, cfg, parsedCfg) {
+    _applyParsedConfig : function(node, cfg, parsedCfg) {
         return (parsedCfg) ? Y.aggregate(cfg, parsedCfg, false) : cfg;
     },
 
@@ -1395,10 +1395,19 @@ Y.extend(Widget, Y.Base, {
         return this._HTML_PARSER;
     },
 
+    /**
+     * @method _guid
+     * @protected
+     */
     _guid : function() {
         return Y.guid();
     },
 
+    /**
+     * @method _validTabIndex
+     * @protected
+     * @param {Number} tabIndex
+     */
     _validTabIndex : function (tabIndex) {
         return (L.isNumber(tabIndex) || L.isNull(tabIndex));
     }

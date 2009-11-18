@@ -1,29 +1,47 @@
-3.1.0
+Development Master
 
-Added support for:
+* Added an "id" attribute.
 
-- An "id" attribute
+* Added support for auto-rendering of widgets at the end of construction, 
+  using the "render" attribute.
 
-- A "render" attribute, to auto-render the widget at the end of construction
+* Added support for single-box widgets (contentBox and boundingBox can 
+  point to same node). 
 
-- A "srcNode" attribute, to act as the root for parseHTML. Used doesn't 
-  need to worry about contentBox vs. boundingBox.
+  Widget developers can set CONTENT_TEMPLATE to null if they have a 
+  widget which doesn't need dual-box support.
 
-- Single Box model (contentBox and boundingBox point to same node).
-  activated by setting CONTENT_TEMPLATE to null
+* Added _bindAttrUI and _syncAttrUI sugar methods, to bind after listeners
+  and sync methods, by attribute name.
 
-- Added _bindAttrUI and _syncAttrUI sugar methods (WIP)
+* The widget's bounding box is now and removed from the DOM and destroyed
+  when the widget it destroyed.
 
-- Renamed private _parseHTML to _parseNode
+* Added "srcNode" attribute, which acts as the root for HTML_PARSER.
+ 
+  This allows widgets to support progressive enhancement, without having
+  to put the burden on the user to create and point to bounding boxes,
+  or content boxes.
 
-- Added _preParseNode and _postParseNode methods to allow for easy
-  parseNode customization, by allowing developers to customize
-  node passed in and configuration merge.
+* Renamed private _parseHTML method to _parseNode, to align with srcNode
 
-- All changes should be backward compatible. Existing Widget impls
-  should still work. However HTML_PARSER implementations based on
-  contentBox being the root node should be modified to work off 
-  of srcNode.
+* Added protected _getSrcNode and _applyParsedConfig methods to allow for 
+  HTML_PARSER customization, by allowing Widget developers to customize 
+  the node passed into _parseNode on the input side, and the final merged
+  configuration on the output side of the srcNode parsing process. 
+
+  The default Widget _getSrcNode implementation uses "srcNode" if set, 
+  otherwise falls back to "contentBox", for 3.0.0 compatibility.
+
+  The default Widget _applyParsedConfig implementation aggregates the user
+  configuration literal, with the configuration output from parsed node,
+  with the user configuration taking precedence. 
+
+NOTE: All HTML_PARSER related changes are backward compatible. 
+
+Existing Widget impls should still work. However HTML_PARSER 
+implementations based on contentBox being the root node should be
+modified to work off of srcNode before the 3.1 release.
 
 3.0.0
 
