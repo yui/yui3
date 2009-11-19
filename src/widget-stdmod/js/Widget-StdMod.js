@@ -516,11 +516,11 @@
          */
         _addNodeHTML : function(node, html, where) {
             if (where == AFTER) {
-                node.set(INNER_HTML, node.get(INNER_HTML) + html);
+                node.append(html);
             } else if (where == BEFORE) {
-                node.set(INNER_HTML, html + node.get(INNER_HTML));
+                node.prepend(html);
             } else {
-                node.set(INNER_HTML, html);
+                node.setContent(html);
             }
         },
 
