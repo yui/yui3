@@ -633,7 +633,7 @@ YUI.add('test', function(Y) {
             _buildTestTree : function () {
             
                 this._root = new TestNode(this.masterSuite);
-                this._cur = this._root;
+                //this._cur = this._root;
                 
                 //iterate over the items in the master suite
                 for (var i=0; i < this.masterSuite.items.length; i++){
@@ -691,7 +691,9 @@ YUI.add('test', function(Y) {
              */
             _next : function () {
             
-                if (this._cur.firstChild) {
+                if (this._cur === null){
+                    this._cur = this._root;
+                } else if (this._cur.firstChild) {
                     this._cur = this._cur.firstChild;
                 } else if (this._cur.next) {
                     this._cur = this._cur.next;            
@@ -1078,8 +1080,7 @@ YUI.add('test', function(Y) {
              * @static
              */
             clear : function () {
-                this.masterSuite.items = [];
-                this.masterSuite.name = "yuitests" + (new Date()).getTime();
+                this.masterSuite = new Y.Test.Suite("yuitests" + (new Date()).getTime());
             },
             
             /**
@@ -1159,14 +1160,21 @@ YUI.add('test', function(Y) {
         
             /**
              * Runs the test suite.
+             * @param {Boolean} oldMode (Optional) Specifies that the <= 2.8 way of
+             *      internally managing test suites should be used.             
              * @return {Void}
              * @method run
              * @static
              */
-            run : function (testObject) {
+            run : function (oldMode) {
                 
                 //pointer to runner to avoid scope issues 
                 var runner = Y.Test.Runner;
+                
+                //if there's only one suite on the masterSuite, move it up
+                if (!oldMode && this.masterSuite.items.length == 1 && this.masterSuite.items[0] instanceof Y.Test.Suite){
+                    this.masterSuite = this.masterSuite.items[0];
+                }                
     
                 //build the test tree
                 runner._buildTestTree();
