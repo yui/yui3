@@ -690,9 +690,8 @@ added lazily and still requires initialization.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Utility method to split out simple attribute name/value pairs ("x") 
-from complex attribute name/value pairs ("x.y.z"), so that complex
-attributes can be keyed by the top level attribute name.
+                                            Utility method to normalize attribute values. The base implementation 
+simply merges the hash to protect the original.
                                         </div>
 
                                         <div class="description">
@@ -707,15 +706,6 @@ attributes can be keyed by the top level attribute name.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">An object literal with 2 properties - "simple" and "complex",
-containing simple and complex attribute values respectively keyed 
-by the top level attribute name, or null, if valueHash is falsey.</dd>
-                                                </dl>
 
 
              
