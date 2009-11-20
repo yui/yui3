@@ -114,17 +114,7 @@
         _template: function(main) {
 
             function BuiltClass() {
-
                 BuiltClass.superclass.constructor.apply(this, arguments);
-
-                var f = BuiltClass._yuibuild.exts, 
-                    l = f.length,
-                    i;
-
-                for (i = 0; i < l; i++) {
-                    f[i].apply(this, arguments);
-                }
-
                 return this;
             }
             Y.extend(BuiltClass, main);

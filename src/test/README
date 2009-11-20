@@ -7,7 +7,17 @@ Documentation: http://developer.yahoo.com/yui/3/test
     * Added JUnit XML test results format.
     * Added TAP test results format.
     * Added getResults() method on TestRunner.
-    * Added isRunning() method on TestRunner.    
+    * Added isRunning() method on TestRunner.
+    * Added getName()/setName() method on TestRunner.
+    * Added coverage support, including getCoverage() on TestRunner and CoverageFormat.
+    * Changed master suite default name to be "yuitests" plus a timestamp.
+    * Added test duration tracking.
+    * Updated JUnit XML test format with time information.  
+    * Changed functionality of TestRunner when there's only one suite to run. Internally, the TestRunner uses
+      a TestSuite to manage everything added via add(). Previously, this test suite was always represented
+      in the results. Now, if you've only added one TestSuite to the TestRunner via add(), the specified
+      TestSuite becomes the root. This may affect the reporting of test results if you're using TestReporter.
+      To run tests in the old way, call TestRunner.run(true).    
 
 3.0.0
     * Added missing space in assert failure message (trac #2528058).

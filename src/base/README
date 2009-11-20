@@ -1,3 +1,8 @@
+Development Master
+
+* Dynamic and non-dynamically built classes now have their 
+  extensions instantiated the same way - during _initHierarchy.
+
 3.0.0
 
 * Fixed hasImpl method on built classes, to look up the class

@@ -189,7 +189,7 @@
 				f = Y.io._serialize(c.form, c.data);
 				if (m === 'POST') {
 					c.data = f;
-					_setHeader('Content-Type', 'application/x-www-form-urlencoded');
+					c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded' }, c.headers);
 				}
 				else if (m === 'GET') {
 					uri = _concat(uri, f);
@@ -222,7 +222,7 @@
 		}
 
    		if (c.data && m === 'POST') {
-   			_setHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+   			c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, c.headers);
    		}
 
    		_setHeaders(o.c, c.headers || {});

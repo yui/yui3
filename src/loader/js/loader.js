@@ -116,7 +116,10 @@ var NOT_FOUND = {},
                  'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
     YUI_CSS = ['reset', 'fonts', 'grids', BASE],
     VERSION = Y.version,
+    GALLERY_VERSION = 'gallery-2009-10-19', // @TODO build time
     ROOT = VERSION + '/build/',
+    GALLERY_ROOT = GALLERY_VERSION + '/build/',
+    GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
     CONTEXT = '-context',
 
     ANIMBASE = 'anim-base',
@@ -140,6 +143,7 @@ var NOT_FOUND = {},
     NODEBASE = 'node-base',
     NODESTYLE = 'node-style',
     NODESCREEN = 'node-screen',
+    NODEPLUGINHOST = 'node-pluginhost',
     OOP = 'oop',
     PLUGINHOST = 'pluginhost',
     SELECTORCSS2 = 'selector-css2',
@@ -237,6 +241,14 @@ var NOT_FOUND = {},
             plugins: {
                 'node-event-simulate': {
                     requires: [NODEBASE, 'event-simulate']
+                },
+
+                'align-plugin': {
+                    requires: [NODESCREEN, NODEPLUGINHOST]
+                },
+
+                'shim-plugin': {
+                    requires: [NODESTYLE, NODEPLUGINHOST]
                 }
             }
         },
@@ -641,6 +653,27 @@ var NOT_FOUND = {},
             requires: [SUBSTITUTE, NODE, 'json', 'event-simulate']                                                                                                                     
         }  
 
+    },
+
+    // Patterns are module definitions which will be added with 
+    // the default options if a definition is not found. The
+    // assumption is that the module itself will be in the default
+    // location, and if there are any additional dependencies, they
+    // will have to be fetched with a second request.  This could
+    // happen multiple times, each segment resulting in a new
+    // dependency list.
+    //
+    // types: regex, prefix, function
+    patterns: {
+        'gallery-': { 
+            // http://yui.yahooapis.com/3.0.0/build/
+            // http://yui.yahooapis.com/gallery-/build/
+            base: GALLERY_BASE,  // explicit declaration of the base attribute
+            filter: {
+                'searchExp': VERSION,
+                'replaceStr': GALLERY_VERSION
+            }
+        }
     }
 },
 
@@ -894,6 +927,18 @@ Y.Loader = function(o) {
      * @type {string: boolean}
      */
     this.required = {};
+
+    /**
+     * If a module name is predefined when requested, it is checked againsts
+     * the patterns provided in this property.  If there is a match, the
+     * module is added with the default configuration.
+     *
+     * At the moment only supporting module prefixes, but anticipate supporting
+     * at least regular expressions.
+     * @property patterns
+     * @type Object
+     */
+    this.patterns = Y.Env.meta.patterns;
 
     /**
      * The library metadata
@@ -1506,13 +1551,40 @@ Y.Loader.prototype = {
 
     getModule: function(name) {
 
-        var m = this.moduleInfo[name];
+        var m = this.moduleInfo[name], i, patterns = this.patterns, p, type, add = false;
 
-        // create the default module
-        // if (!m) {
-            // Y.log('Module does not exist: ' + name + ', creating with defaults');
-            // m = this.addModule({ext: false}, name);
-        // }
+        // check the patterns library to see if we should automatically add
+        // the module with defaults
+        if (!m) {
+
+            for (i in patterns) {
+                p = patterns[i];
+                type = p.type;
+
+                // switch (type) {
+                    // case 'regex':
+                    //     break;
+                    // case 'function':
+                    //     break;
+                    // default: // prefix
+                    //     if (name.indexOf(i) > -1) {
+                    //         add = true;
+                    //     }
+                // }
+
+                // use the metadata supplied for the pattern
+                // as the module definition.
+                if (name.indexOf(i) > -1) {
+                    add = p;
+                }
+            }
+
+            if (add) {
+                Y.log('Module does not exist: ' + name + ', but matched a pattern so creating with defaults');
+                // ext true or false?
+                m = this.addModule(add, name);
+            }
+        }
 
         return m;
     },
@@ -1682,7 +1754,8 @@ Y.Loader.prototype = {
             f.call(this.context, {
                 msg: 'success',
                 data: this.data,
-                success: true
+                success: true,
+                skipped: skipped
             });
         }
 
@@ -2088,7 +2161,7 @@ Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader"
                     attr = this.jsAttributes;
                 }
 
-                url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i]);
+                url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i], this.galleryBase || m.base);
 
                 fn(url, {
                     data: s[i],
@@ -2165,8 +2238,8 @@ Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader"
      * @return {string} the full url
      * @private
      */
-    _url: function(path, name) {
-        return this._filter((this.base || "") + path, name);
+    _url: function(path, name, base) {
+        return this._filter((base || this.base || "") + path, name);
     }
 
 };

@@ -62,7 +62,8 @@
                 passed : 0,
                 failed : 0,
                 total : 0,
-                ignored : 0
+                ignored : 0,
+                duration: 0
             };
             
             //initialize results
@@ -116,7 +117,7 @@
              * @static
              * @private
              */
-            this.masterSuite /*:Y.Test.Suite*/ = new Y.Test.Suite("YUI Test Results");        
+            this.masterSuite /*:Y.Test.Suite*/ = new Y.Test.Suite("yuitests" + (new Date()).getTime());        
     
             /**
              * Pointer to the current node in the test tree.
@@ -429,7 +430,7 @@
             _buildTestTree : function () {
             
                 this._root = new TestNode(this.masterSuite);
-                this._cur = this._root;
+                //this._cur = this._root;
                 
                 //iterate over the items in the master suite
                 for (var i=0; i < this.masterSuite.items.length; i++){
@@ -459,13 +460,16 @@
                     node.parent.results.passed += node.results.passed;
                     node.parent.results.failed += node.results.failed;
                     node.parent.results.total += node.results.total;                
-                    node.parent.results.ignored += node.results.ignored;                
+                    node.parent.results.ignored += node.results.ignored;       
+                    //node.parent.results.duration += node.results.duration;
                     node.parent.results[node.testObject.name] = node.results;
                 
                     if (node.testObject instanceof Y.Test.Suite){
                         node.testObject.tearDown();
+                        node.results.duration = (new Date()) - node._start;
                         this.fire(this.TEST_SUITE_COMPLETE_EVENT, { testSuite: node.testObject, results: node.results});
                     } else if (node.testObject instanceof Y.Test.Case){
+                        node.results.duration = (new Date()) - node._start;
                         this.fire(this.TEST_CASE_COMPLETE_EVENT, { testCase: node.testObject, results: node.results});
                     }      
                 } 
@@ -484,7 +488,9 @@
              */
             _next : function () {
             
-                if (this._cur.firstChild) {
+                if (this._cur === null){
+                    this._cur = this._root;
+                } else if (this._cur.firstChild) {
                     this._cur = this._cur.firstChild;
                 } else if (this._cur.next) {
                     this._cur = this._cur.next;            
@@ -497,7 +503,7 @@
                     if (this._cur == this._root){
                         this._cur.results.type = "report";
                         this._cur.results.timestamp = (new Date()).toLocaleString();
-                        this._cur.results.duration = (new Date()) - this._cur.results.duration;   
+                        this._cur.results.duration = (new Date()) - this._cur._start;   
                         this._lastResults = this._cur.results;
                         this._running = false;                         
                         this.fire(this.COMPLETE_EVENT, { results: this._lastResults});
@@ -541,9 +547,11 @@
                     if (Y.Lang.isObject(testObject)){
                         if (testObject instanceof Y.Test.Suite){
                             this.fire(this.TEST_SUITE_BEGIN_EVENT, { testSuite: testObject });
+                            node._start = new Date();
                             testObject.setUp();
                         } else if (testObject instanceof Y.Test.Case){
                             this.fire(this.TEST_CASE_BEGIN_EVENT, { testCase: testObject });
+                            node._start = new Date();
                         }
                         
                         //some environments don't support setTimeout
@@ -690,12 +698,16 @@
                 //run the tear down
                 testCase.tearDown();
                 
+                //calculate duration
+                var duration = (new Date()) - node._start;
+                
                 //update results
                 node.parent.results[testName] = { 
                     result: failed ? "fail" : "pass",
                     message: error ? error.getMessage() : "Test passed",
                     type: "test",
-                    name: testName
+                    name: testName,
+                    duration: duration
                 };
                 
                 if (failed){
@@ -786,6 +798,9 @@
     
                 } else {
                 
+                    //mark the start time
+                    node._start = new Date();
+                
                     //run the setup
                     testCase.setUp();
                     
@@ -793,7 +808,31 @@
                     this._resumeTest(test);                
                 }
     
-            },        
+            },            
+
+            //-------------------------------------------------------------------------
+            // Misc Methods
+            //-------------------------------------------------------------------------   
+
+            /**
+             * Retrieves the name of the current result set.
+             * @return {String} The name of the result set.
+             * @method getName
+             */
+            getName: function(){
+                return this.masterSuite.name;
+            },         
+
+            /**
+             * The name assigned to the master suite of the TestRunner. This is the name
+             * that is output as the root's name when results are retrieved.
+             * @param {String} name The name of the result set.
+             * @return {Void}
+             * @method setName
+             */
+            setName: function(name){
+                this.masterSuite.name = name;
+            },            
             
             //-------------------------------------------------------------------------
             // Protected Methods
@@ -838,7 +877,7 @@
              * @static
              */
             clear : function () {
-                this.masterSuite.items = [];
+                this.masterSuite = new Y.Test.Suite("yuitests" + (new Date()).getTime());
             },
             
             /**
@@ -883,6 +922,28 @@
             },            
             
             /**
+             * Returns the coverage report for the files that have been executed.
+             * This returns only coverage information for files that have been
+             * instrumented using YUI Test Coverage and only those that were run
+             * in the same pass.
+             * @param {Function} format (Optional) A coverage format to return results in.
+             * @return {Object|String} Either the coverage object or, if a coverage
+             *      format is specified, a string representing the results in that format.
+             * @method getCoverage
+             */
+            getCoverage: function(format){
+                if (!this._running && typeof _yuitest_coverage == "object"){
+                    if (Y.Lang.isFunction(format)){
+                        return format(_yuitest_coverage);                    
+                    } else {
+                        return _yuitest_coverage;
+                    }
+                } else {
+                    return null;
+                }            
+            },
+            
+            /**
              * Resumes the TestRunner after wait() was called.
              * @param {Function} segment The function to run as the rest
              *      of the haulted test.
@@ -896,20 +957,27 @@
         
             /**
              * Runs the test suite.
+             * @param {Boolean} oldMode (Optional) Specifies that the <= 2.8 way of
+             *      internally managing test suites should be used.             
              * @return {Void}
              * @method run
              * @static
              */
-            run : function (testObject) {
+            run : function (oldMode) {
                 
                 //pointer to runner to avoid scope issues 
                 var runner = Y.Test.Runner;
+                
+                //if there's only one suite on the masterSuite, move it up
+                if (!oldMode && this.masterSuite.items.length == 1 && this.masterSuite.items[0] instanceof Y.Test.Suite){
+                    this.masterSuite = this.masterSuite.items[0];
+                }                
     
                 //build the test tree
                 runner._buildTestTree();
                             
                 //set when the test started
-                runner._root.results.duration = (new Date()).valueOf();
+                runner._root._start = new Date();
                 
                 //fire the begin event
                 runner.fire(runner.BEGIN_EVENT);

@@ -658,14 +658,31 @@ Y.mix(Node.prototype, {
      */
     replace: function(newNode) {
         var node = this._node;
-        node.parentNode.replaceChild(newNode, node);
+        node.parentNode.replaceChild(Y.Node.getDOMNode(newNode), node);
         return this;
     },
 
+    /**
+     * Removes event listeners from the node and (optionally) its subtree
+     * @method purge
+     * @param {Boolean} recurse (optional) Whether or not to remove listeners from the
+     * node's subtree
+     * @param {String} type (optional) Only remove listeners of the specified type
+     * @chainable
+     *
+     */
     purge: function(recurse, type) {
         Y.Event.purgeElement(this._node, recurse, type);
+        return this;
     },
 
+    /**
+     * Nulls internal node references, removes any plugins and event listeners
+     * @method destroy
+     * @param {Boolean} purge (optional) Whether or not to remove listeners from the
+     * node and its subtree (default is false)
+     *
+     */
     destroy: function(purge) {
         delete Node._instances[this[UID]];
         if (purge) {

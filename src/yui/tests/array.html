@@ -49,17 +49,34 @@
                 Y.ArrayAssert.itemsAreEqual([1, 2, 3, 100], [3, 100, 1, 2].sort(Y.Array.numericSort));
 
             },
-            
-            test_mapAddOne : function () {
-                Y.ArrayAssert.itemsAreEqual(
-                    [1,2,3,4,5,6,7,8,9,10],
-                    Y.Array.map([0,1,2,3,4,5,6,7,8,9], function (n) { return n + 1 })
-                );
-            },
-            test_reduceSum : function () {
-                Y.Assert.areEqual(
-                    15, Y.Array.reduce([1,2,3,4,5], function (l, r) { return l + r })
-                );
+
+            test_some: function() {
+                var a = [1, 2, 3];
+
+                Y.Array.some(a, function(v) {
+                    if (v == 2) {
+                        return 'truthy';
+                    }
+
+                    if (v == 3) {
+                        Y.fail('truthy value did not stop iteration');
+                    }
+                });
+
+                if (a.some) {
+                    Y.log('Using native Array.some support.');
+                    a.some(function(v) {
+                        if (v == 2) {
+                            return v;
+                        }
+
+                        if (v == 3) {
+                            Y.fail('truthy value did not stop iteration');
+                        }
+                    });
+                } else {
+                    Y.log('No native Array.some support.');
+                }
             }
             
         });

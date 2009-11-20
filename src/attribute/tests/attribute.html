@@ -286,29 +286,9 @@
                     value:{
                         a: 5
                     },
-                    getter: function(val, name) {
-                        if (name.indexOf(".") == -1) {
-                            Y.Assert.areEqual("I", name);
-                        } else {
-                            Y.Assert.areEqual("I.a", name);
-                        }
-                        return val;
-                    },
-                    setter: function(val, name) {
-                        if (name.indexOf(".") == -1) {
-                            Y.Assert.areEqual("I", name);
-                        } else {
-                            Y.Assert.areEqual("I.a", name);
-                        }
-                    },
-                    validator: function(val, name) {
-                        if (name.indexOf(".") == -1) {
-                            Y.Assert.areEqual("I", name);
-                        } else {
-                            Y.Assert.areEqual("I.a", name);
-                        }
-                        return true;
-                    }
+                    getter: "_getI",
+                    setter: "_setI",
+                    validator: "_validateI"
                 },
 
                 PassThrough : {
@@ -329,7 +309,33 @@
                 }
             };
 
-            Y.extend(ExtendedAttrHost, AttrHost);
+            Y.extend(ExtendedAttrHost, AttrHost, {
+                _validateI : function(val, name) {
+                        if (name.indexOf(".") == -1) {
+                            Y.Assert.areEqual("I", name);
+                        } else {
+                            Y.Assert.areEqual("I.a", name);
+                        }
+                        return true;
+                },
+                
+                _getI : function(val, name) {
+                    if (name.indexOf(".") == -1) {
+                        Y.Assert.areEqual("I", name);
+                    } else {
+                        Y.Assert.areEqual("I.a", name);
+                    }
+                    return val;
+               },
+
+               _setI : function(val, name) {
+                    if (name.indexOf(".") == -1) {
+                        Y.Assert.areEqual("I", name);
+                    } else {
+                        Y.Assert.areEqual("I.a", name);
+                    }
+               }
+            });
 
             //---
 

@@ -10,9 +10,11 @@
         A  = Y.Array,
         OP = Object.prototype,
         CLONE_MARKER = "_~yuim~_",
+        EACH = 'each',
+        SOME = 'some',
 
         dispatch = function(o, f, c, proto, action) {
-            if (o[action] && o.item) {
+            if (o && o[action] && o.item) {
                 return o[action].call(o, f, c);
             } else {
                 switch (A.test(o)) {
@@ -192,7 +194,7 @@
      * @return {YUI} the YUI instance
      */
     Y.each = function(o, f, c, proto) {
-        return dispatch(o, f, c, proto, 'each');
+        return dispatch(o, f, c, proto, EACH);
     };
 
     /*
@@ -209,7 +211,7 @@
      * @return {boolean} true if the function ever returns true, false otherwise
      */
     Y.some = function(o, f, c, proto) {
-        return dispatch(o, f, c, proto, 'some');
+        return dispatch(o, f, c, proto, SOME);
     };
 
     /**
