@@ -65,14 +65,17 @@ YUI.add('sortable', function(Y) {
                 moveOnEnd: false,
                 cloneNode: true
             });
-
+            
             this._cont = new Y.DD.Drop({
                 node: this.get('cont'),
                 bubbles: del,
                 groups: del.dd.get('groups')
             }).on('drop:over', Y.bind(function(e) {
                 if (!e.drop.get('node').test(this.get('nodes'))) {
-                    e.drop.get('node').append(e.drag.get('node'));
+                    var nodes = e.drop.get('node').all(this.get('nodes'));
+                    if (nodes.size() == 0) {
+                        e.drop.get('node').append(e.drag.get('node'));
+                    }
                 }
             }, this));
 
@@ -83,25 +86,24 @@ YUI.add('sortable', function(Y) {
             }, this));
 
             del.on('drag:over', Y.bind(function(e) {
-                var dp = e.drop.get('node'),
-                    dg = e.drag.get('node');
-                if (!dp.test(this.get('nodes'))) {
+
+                if (!e.drop.get('node').test(this.get('nodes'))) {
                     return;
                 }
-                if (dg === dp) {
+                if (e.drag.get('node') == e.drop.get('node')) {
                     return;
                 }
                 if (this.get('swap')) {
-                    Y.DD.DDM.swapNode(dg, dp);
+                    Y.DD.DDM.swapNode(e.drag, e.drop);
                 } else {
-                    if (dg.get('parentNode').contains(dp)) {
-                        Y.DD.DDM.swapNode(dg, dp);
+                    if (e.drag.get('node').get('parentNode').contains(e.drop.get('node'))) {
+                        Y.DD.DDM.swapNode(e.drag, e.drop);
                     } else {
-                        //Another List
-                        dp.get('parentNode').insertBefore(dg, dp);
+                        e.drop.get('node').get('parentNode').insertBefore(e.drag.get('node'), e.drop.get('node'));
                     }
                 }
             }, this));
+
             del.on('drag:end', Y.bind(function(e) {
                 del.get('dragNode').setStyle('opacity', 1);
                 del.get('currentNode').setStyles({
@@ -119,6 +121,32 @@ YUI.add('sortable', function(Y) {
         },
         destructor: function() {
         },
+        join: function(sel, type) {
+            if (!(sel instanceof Y.Sortable)) {
+                Y.error('Sortable: join needs a Sortable Instance');
+                return;
+            }
+
+            console.log('Type: ', type);
+
+            switch (type) {
+                case 'inner':
+                    this.delegate.dd.addToGroup(sel.get('id'));
+                    this.delegate.syncTargets();
+                    break;
+                case 'outter':
+                    sel.delegate.dd.addToGroup(this.get('id'));
+                    sel.delegate.syncTargets();
+                    break;
+                default: //full
+                    this.delegate.dd.addToGroup(sel.get('id'));
+                    this.delegate.syncTargets();
+                    sel.delegate.dd.addToGroup(this.get('id'));
+                    sel.delegate.syncTargets();
+                    break;
+            }
+        }
+        /*
         bindTo: function(sel, swap) {
             if (!(sel instanceof Y.Sortable)) {
                 Y.error('Sortable: bindTo needs a Sortable Instance');
@@ -151,6 +179,7 @@ YUI.add('sortable', function(Y) {
             this.delegate.dd.removeFromGroup(sel.get('id'));
             this.unBindTo(sel);
         }
+        */
     });
 
     Y.Sortable = S;

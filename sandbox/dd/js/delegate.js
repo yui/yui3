@@ -160,7 +160,7 @@ YUI.add('dd-delegate', function(Y) {
             }
             if (this.get('target')) {
                 var items = Y.one(this.get('cont')).all(this.get('nodes')),
-                    dc = this.get('dragConfig');
+                    groups = this.dd.get('groups');
 
                 items.each(function(i) {
                     if (!i.drop) {
@@ -168,15 +168,9 @@ YUI.add('dd-delegate', function(Y) {
                             useShim: false,
                             bubbles: this
                         };
-                        if (dc && dc.groups) {
-                            config.groups = dc.groups;
-                        }
                         i.plug(Y.Plugin.Drop, config);
-                    } else {
-                        if (dc && dc.groups) {
-                            i.drop.set('groups', this.dd.get('groups'));
-                        }
                     }
+                    i.drop.set('groups', groups);
                 }, this);
             }
             return this;
