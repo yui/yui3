@@ -14,7 +14,7 @@ YUI({
     filter: "debug",
     logInclude: { TestRunner: true }
 }).use('test', 'console', function (Y) {
-    window.YTest = Y.Test;
+    window.YUITest = Y.Test;
 
     Y.namespace("Tests");
     
@@ -45,6 +45,7 @@ YUI({
                     total: 5,
                     type: "report",
                     name: "YUI Test Results",
+                    duration: 500,
                     
                     "Some Suite":{
                         passed: 2,
@@ -53,6 +54,7 @@ YUI({
                         total: 5,
                         type: "testsuite",
                         name: "Some Suite",
+                        duration: 356,
                         
                         "Some Tests": {
                             passed: 2,
@@ -61,40 +63,46 @@ YUI({
                             total: 5,
                             type: "testcase",
                             name: "Some Tests",
+                            duration: 250,
                             
                             test1:{
                                 result: "pass",
                                 message: "Test passed.",
                                 type: "test",
-                                name: "test1"
+                                name: "test1",
+                                duration: 25
                             },
                         
                             test2:{
                                 result: "pass",
                                 message: "Test passed.",
                                 type: "test",
-                                name: "test2"
+                                name: "test2",
+                                duration: 30
                             },
                         
                             test3:{
                                 result: "ignore",
                                 message: "Test ignored.",
                                 type: "test",
-                                name: "test3"
+                                name: "test3",
+                                duration: 35
                             },
                         
                             test4:{
                                 result: "fail",
                                 message: "Test failed.",
                                 type: "test",
-                                name: "test4"
+                                name: "test4",
+                                duration: 45
                             },
                         
                             test5:{
                                 result: "fail",
                                 message: "Test failed.",
                                 type: "test",
-                                name: "test5"
+                                name: "test5",
+                                duration: 50
                             }                    
                         }
                     }
@@ -127,14 +135,14 @@ YUI({
                 var xml = Y.Test.Format.XML(this.simpleReport);
                 var expectedXml = 
                     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                    "<report name=\"YUI Test Results\" passed=\"2\" failed=\"2\" ignored=\"1\" total=\"5\">" +
-                        "<testsuite name=\"Some Suite\" passed=\"2\" failed=\"2\" ignored=\"1\" total=\"5\">" +
-                            "<testcase name=\"Some Tests\" passed=\"2\" failed=\"2\" ignored=\"1\" total=\"5\">" +
-                                "<test name=\"test1\" result=\"pass\" message=\"Test passed.\"></test>" +
-                                "<test name=\"test2\" result=\"pass\" message=\"Test passed.\"></test>" +
-                                "<test name=\"test3\" result=\"ignore\" message=\"Test ignored.\"></test>" +
-                                "<test name=\"test4\" result=\"fail\" message=\"Test failed.\"></test>" +
-                                "<test name=\"test5\" result=\"fail\" message=\"Test failed.\"></test>" +
+                    "<report name=\"YUI Test Results\" duration=\"500\" passed=\"2\" failed=\"2\" ignored=\"1\" total=\"5\">" +
+                        "<testsuite name=\"Some Suite\" duration=\"356\" passed=\"2\" failed=\"2\" ignored=\"1\" total=\"5\">" +
+                            "<testcase name=\"Some Tests\" duration=\"250\" passed=\"2\" failed=\"2\" ignored=\"1\" total=\"5\">" +
+                                "<test name=\"test1\" duration=\"25\" result=\"pass\" message=\"Test passed.\"></test>" +
+                                "<test name=\"test2\" duration=\"30\" result=\"pass\" message=\"Test passed.\"></test>" +
+                                "<test name=\"test3\" duration=\"35\" result=\"ignore\" message=\"Test ignored.\"></test>" +
+                                "<test name=\"test4\" duration=\"45\" result=\"fail\" message=\"Test failed.\"></test>" +
+                                "<test name=\"test5\" duration=\"50\" result=\"fail\" message=\"Test failed.\"></test>" +
                             "</testcase>" +
                         "</testsuite>" + 
                     "</report>";
@@ -148,17 +156,18 @@ YUI({
                 var expectedXml = 
                     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                     "<testsuites>" +
-                        "<testsuite name=\"Some Tests\" tests=\"5\" failures=\"2\">" + 
-                            "<testcase name=\"test1\"></testcase>" +
-                            "<testcase name=\"test2\"></testcase>" + 
-                            "<testcase name=\"test4\">" + 
+                        "<testsuite name=\"Some Tests\" tests=\"5\" failures=\"2\" time=\"0.25\">" + 
+                            "<testcase name=\"test1\" time=\"0.025\"></testcase>" +
+                            "<testcase name=\"test2\" time=\"0.03\"></testcase>" + 
+                            "<testcase name=\"test4\" time=\"0.045\">" + 
                                 "<failure message=\"Test failed.\"><![CDATA[Test failed.]]></failure>" + 
                             "</testcase>" + 
-                            "<testcase name=\"test5\">" + 
+                            "<testcase name=\"test5\" time=\"0.05\">" + 
                                 "<failure message=\"Test failed.\"><![CDATA[Test failed.]]></failure>" + 
                             "</testcase>" + 
                         "</testsuite>" +
                     "</testsuites>";
+                
                 
                 Assert.areEqual(expectedXml, xml, "JUnit XML formatting is incorrect.");
             

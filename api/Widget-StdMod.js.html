@@ -565,11 +565,11 @@
 <span class="c">         */</span>
         <span class="nx">_addNodeHTML</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">html</span><span class="o">,</span> <span class="nx">where</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">where</span> <span class="o">==</span> <span class="nx">AFTER</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">INNER_HTML</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">INNER_HTML</span><span class="o">)</span> <span class="o">+</span> <span class="nx">html</span><span class="o">);</span>
+                <span class="nx">node</span><span class="o">.</span><span class="nx">append</span><span class="o">(</span><span class="nx">html</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">where</span> <span class="o">==</span> <span class="nx">BEFORE</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">INNER_HTML</span><span class="o">,</span> <span class="nx">html</span> <span class="o">+</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">INNER_HTML</span><span class="o">));</span>
+                <span class="nx">node</span><span class="o">.</span><span class="nx">prepend</span><span class="o">(</span><span class="nx">html</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">INNER_HTML</span><span class="o">,</span> <span class="nx">html</span><span class="o">);</span>
+                <span class="nx">node</span><span class="o">.</span><span class="nx">setContent</span><span class="o">(</span><span class="nx">html</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
 
