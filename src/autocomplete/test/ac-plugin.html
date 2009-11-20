@@ -123,14 +123,16 @@ YUI({
         
         return {
             setData : function (d) {
-                if (d.length) data = d;
+                if (d.length) {
+                    data = d;
+                    selected = -1;
+                }
                 return this;
             },
             render : function () {
-                console.log("render");
+                // console.log("render");
                 if (!data.length) return this;
                 this.visible = true;
-                selected = -1;
                 node.set("innerHTML", "");
                 for (var i = 0, l = data.length; i < l; i ++) {
                     node.appendChild(Y.Node.create('<li class="ac-'+i+'">'+data[i]+"</li>"));
@@ -139,14 +141,14 @@ YUI({
                 return this;
             },
             hide : function () {
-                data = [];
                 node.setStyle("display", "none");
                 this.visible = false;
+                selected = -1;
                 return this;
             },
             focus : function (i) {
                 i = i || selected;
-                console.log("focus on ",i, data, data[i]);
+                // console.log("focus on ",i, data, data[i]);
                 if (!data.length) return this;
                 if (i >= data.length) i = 0;
                 if (i < 0) i = data.length - 1;
@@ -154,17 +156,19 @@ YUI({
                 var list = node.all("li"),
                     current = node.one(".selected"),
                     intent = list.item(i);
-                console.log("list", list, "current", current, "intent", intent, intent === current);
+                // console.log("list", list, "current", current, "intent", intent, intent === current);
                 if (!intent || intent === current) return this;
                 selected = i;
                 if (current) current.removeClass("selected");
                 intent.addClass("selected");
+                input.ac.set("queryValue", myWidget.getValue());
                 return this;
             },
             next : function () {
-                console.log("mywidget.next");
+                // console.log("mywidget.next",this.visible,selected);
                 selected = selected || 0;
                 selected ++;
+                if (!this.visible) this.render();
                 return this.focus(selected);
             },
             previous : function () {
@@ -188,12 +192,11 @@ YUI({
         
 
     input.ac.on("ac:load", function (e) {
-        console.log(" ac:load", e, e.results);
         myWidget.setData(e.results).render();
     });
     input.ac.on("ac:query", function (e) {
         if (myWidget.visible && e.value === myWidget.value) {
-            console.log("Cancelling ac:query");
+            // console.log("Cancelling ac:query");
             e.halt();
         }
         myWidget.value = e.value;
