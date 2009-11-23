@@ -1,5 +1,9 @@
 Development Master
 
+* content box now expands to fill bounding box. CSS is used for browsers
+  which box-sizing:border-box. Expansion is handled programmatically for
+  others (currently IE6 & IE7).
+
 * Added an "id" attribute.
 
 * Added support for auto-rendering of widgets at the end of construction, 
