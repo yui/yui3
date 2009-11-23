@@ -163,20 +163,29 @@ YUI.add('sortable', function(Y) {
                 Y.error('Sortable: join needs a Sortable Instance');
                 return;
             }
+            if (!type) {
+                type = 'full';
+            }
+
+
             if (!this._joins) {
                 this._joins = {};
             }
             this._joins[sel] = type;
 
-            switch (type) {
+            switch (type.toLowerCase()) {
                 case 'none':
                     this.delegate.dd.removeFromGroup(sel.get('id'));
                     sel.delegate.dd.removeFromGroup(this.get('id'));
                     break;
-                case 'inner':
+                case 'out':
+                case 'outside':
+                case 'outter':
                     this.delegate.dd.addToGroup(sel.get('id'));
                     break;
-                case 'outter':
+                case 'in':
+                case 'inside':
+                case 'inner':
                     sel.delegate.dd.addToGroup(this.get('id'));
                     break;
                 default: //full

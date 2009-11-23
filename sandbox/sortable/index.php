@@ -148,7 +148,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     //sel2.bindTo(sel);
     //sel2.bindWith(sel);
 
-    sel2.join(sel, 'outter');
+    sel.join(sel2, 'outter');
     
 
     var sel3 = new Y.Sortable({
