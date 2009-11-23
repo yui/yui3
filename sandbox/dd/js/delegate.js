@@ -146,6 +146,7 @@ YUI.add('dd-delegate', function(Y) {
             }, this), this.get('cont'));
 
             this.syncTargets();
+            Y.DD.DDM.regDelegate(this);
         },
         /**
         * @method syncTargets
@@ -153,7 +154,7 @@ YUI.add('dd-delegate', function(Y) {
         * @return {Self}
         * @chainable
         */        
-        syncTargets: function() {
+        syncTargets: function(group) {
             if (!Y.Plugin.Drop) {
                 Y.error('DD.Delegate: Drop Plugin Not Found');
                 return;
@@ -162,18 +163,27 @@ YUI.add('dd-delegate', function(Y) {
                 var items = Y.one(this.get('cont')).all(this.get('nodes')),
                     groups = this.dd.get('groups');
 
+                if (group) {
+                    groups = [group];
+                }
+
                 items.each(function(i) {
-                    if (!i.drop) {
-                        var config = {
-                            useShim: false,
-                            bubbles: this
-                        };
-                        i.plug(Y.Plugin.Drop, config);
-                    }
-                    i.drop.set('groups', groups);
+                    this.createDrop(i, groups);
                 }, this);
             }
             return this;
+        },
+        createDrop: function(node, groups) {
+            var config = {
+                useShim: false,
+                bubbles: this
+            };
+
+            if (!node.drop) {
+                node.plug(Y.Plugin.Drop, config);
+            }
+            node.drop.set('groups', groups);
+            return node;
         },
         //TODO
         plugdd: function(cls, conf) {
@@ -184,6 +194,23 @@ YUI.add('dd-delegate', function(Y) {
             if (this.dd) {
                 this.dd.destroy();
             }
+        }
+    });
+
+    Y.mix(Y.DD.DDM, {
+        _delegates: [],
+        regDelegate: function(del) {
+            this._delegates.push(del);
+        },
+        getDelegate: function(node) {
+            var del = null;
+            node = Y.one(node);
+            Y.each(this._delegates, function(v) {
+                if (node.test(v.get('cont'))) {
+                    del = v;
+                }
+            }, this);
+            return del;
         }
     });
 

@@ -41,13 +41,30 @@ YUI.add('sortable', function(Y) {
         id: {
             value: null
         },
-        swap: {
-            value: true
+        moveType: {
+            value: 'swap'
         }
+    };
+
+    S._sortables = [];
+    S.getSortable = function(node) {
+        var s = null;
+        node = Y.one(node);
+        Y.each(S._sortables, function(v) {
+            if (node.test(v.get('cont'))) {
+                s = v;
+            }
+        });
+        return s;
+    };
+    S.regSortable = function(s) {
+        S._sortables.push(s);
     };
 
     Y.extend(S, Y.Base, {
         delegate: null,
+        _joins: null,
+        _cont: null,
         initializer: function() {
             var id = 'sortable-' + Y.stamp({}),
                 del = new Y.DD.Delegate({
@@ -65,7 +82,7 @@ YUI.add('sortable', function(Y) {
                 moveOnEnd: false,
                 cloneNode: true
             });
-            
+
             this._cont = new Y.DD.Drop({
                 node: this.get('cont'),
                 bubbles: del,
@@ -93,14 +110,33 @@ YUI.add('sortable', function(Y) {
                 if (e.drag.get('node') == e.drop.get('node')) {
                     return;
                 }
-                if (this.get('swap')) {
-                    Y.DD.DDM.swapNode(e.drag, e.drop);
-                } else {
-                    if (e.drag.get('node').get('parentNode').contains(e.drop.get('node'))) {
+                switch (this.get('moveType')) {
+                    case 'swap':
                         Y.DD.DDM.swapNode(e.drag, e.drop);
-                    } else {
-                        e.drop.get('node').get('parentNode').insertBefore(e.drag.get('node'), e.drop.get('node'));
-                    }
+                        break;
+                    case 'move':
+                    case 'copy':
+                        //Same List
+                        if (e.drag.get('node').get('parentNode').contains(e.drop.get('node'))) {
+                            Y.DD.DDM.swapNode(e.drag, e.drop);
+                        } else {
+                            if (this.get('moveType') == 'copy') {
+                                //New List
+                                var oldNode = e.drag.get('node'),
+                                    newNode = oldNode.cloneNode(true),
+                                    sort = Y.Sortable.getSortable(e.drop.get('node').get('parentNode'));
+
+                                newNode.set('id', '');
+                                e.drag.set('node', newNode);
+                                sort.delegate.createDrop(newNode, [sort.get('id')]);
+                                oldNode.setStyles({
+                                    top: '',
+                                    left: ''
+                                });
+                            }
+                            e.drop.get('node').get('parentNode').insertBefore(e.drag.get('node'), e.drop.get('node'));
+                        }
+                        break;
                 }
             }, this));
 
@@ -112,12 +148,13 @@ YUI.add('sortable', function(Y) {
                 });
             }, this));
             this.delegate = del;
+            S.regSortable(this);
         },
         plug: function(cls, config) {
             this.delegate.plugdd(cls, config);
         },
         sync: function() {
-            this.delegate.syncTargets();
+            this.delegate.syncTargets(this.get('id'));
         },
         destructor: function() {
         },
@@ -126,60 +163,28 @@ YUI.add('sortable', function(Y) {
                 Y.error('Sortable: join needs a Sortable Instance');
                 return;
             }
-
-            console.log('Type: ', type);
+            if (!this._joins) {
+                this._joins = {};
+            }
+            this._joins[sel] = type;
 
             switch (type) {
+                case 'none':
+                    this.delegate.dd.removeFromGroup(sel.get('id'));
+                    sel.delegate.dd.removeFromGroup(this.get('id'));
+                    break;
                 case 'inner':
                     this.delegate.dd.addToGroup(sel.get('id'));
-                    this.delegate.syncTargets();
                     break;
                 case 'outter':
                     sel.delegate.dd.addToGroup(this.get('id'));
-                    sel.delegate.syncTargets();
                     break;
                 default: //full
                     this.delegate.dd.addToGroup(sel.get('id'));
-                    this.delegate.syncTargets();
                     sel.delegate.dd.addToGroup(this.get('id'));
-                    sel.delegate.syncTargets();
                     break;
             }
         }
-        /*
-        bindTo: function(sel, swap) {
-            if (!(sel instanceof Y.Sortable)) {
-                Y.error('Sortable: bindTo needs a Sortable Instance');
-                return;
-            }
-            sel.delegate.dd.addToGroup(this.get('id'));
-            this.delegate.syncTargets();
-        },
-        unBindTo: function(sel) {
-            if (!(sel instanceof Y.Sortable)) {
-                Y.error('Sortable: unBindTo needs a Sortable Instance');
-                return;
-            }
-            sel.delegate.dd.removeFromGroup(this.get('id'));
-            this.delegate.syncTargets();
-        },
-        bindWith: function(sel) {
-            if (!(sel instanceof Y.Sortable)) {
-                Y.error('Sortable: bindWith needs a Sortable Instance');
-                return;
-            }
-            this.delegate.dd.addToGroup(sel.get('id'));
-            this.bindTo(sel);
-        },
-        unBindWith: function(sel) {
-            if (!(sel instanceof Y.Sortable)) {
-                Y.error('Sortable: unBindWith needs a Sortable Instance');
-                return;
-            }
-            this.delegate.dd.removeFromGroup(sel.get('id'));
-            this.unBindTo(sel);
-        }
-        */
     });
 
     Y.Sortable = S;
