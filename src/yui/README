@@ -10,6 +10,7 @@ The YUI Global
 3.next
 * Added the ability to define a global configuration object (YUI_config).
 * Added Object.some().
+* Chrome detection
 
 3.0.0
 

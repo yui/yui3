@@ -2008,6 +2008,15 @@ Y.UA = function() {
         webkit: 0,
 
         /**
+         * Chrome will be detected as webkit, but this property will also
+         * be populated with the Chrome version number
+         * @property chrome
+         * @type float
+         * @static
+         */
+        chrome: 0,
+
+        /**
          * The mobile property will be set to a string containing any relevant
          * user agent information when a modern mobile browser is detected.
          * Currently limited to Safari on the iPhone/iPod Touch, Nokia N-series
@@ -2088,11 +2097,15 @@ Y.UA = function() {
                 }
             }
 
-            m=ua.match(/AdobeAIR\/([^\s]*)/);
-            if (m) {
-                o.air = m[0]; // Adobe AIR 1.0 or better
+            m=ua.match(/Chrome\/([^\s]*)/);
+            if (m && m[1]) {
+                o.chrome = numberfy(m[1]); // Chrome
+            } else {
+                m=ua.match(/AdobeAIR\/([^\s]*)/);
+                if (m) {
+                    o.air = m[0]; // Adobe AIR 1.0 or better
+                }
             }
-
         }
 
         if (!o.webkit) { // not webkit
