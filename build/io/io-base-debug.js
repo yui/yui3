@@ -180,7 +180,7 @@ YUI.add('io-base', function(Y) {
    			o = _create(c.xdr || c.form, i);
    			m = c.method ? c.method.toUpperCase() : 'GET';
 
-        if (c.data && Y.Lang.isObject(c.data) && Y.QueryString && Y.QueryString.stringify) {
+        if (Y.Lang.isObject(c.data)) {
             c.data = Y.QueryString.stringify(c.data);
         }
 
@@ -738,4 +738,4 @@ YUI.add('io-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['event-custom-base']});
+}, '@VERSION@' ,{requires:['event-custom-base','querystring-stringify-simple']});
