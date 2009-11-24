@@ -272,4 +272,5 @@ YUI.add('io-upload-iframe', function(Y) {
 	});
 
 
-}, '@VERSION@' ,{requires:['io-base']});
+
+}, '@VERSION@' ,{requires:['io-base','node-base']});

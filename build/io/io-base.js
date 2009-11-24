@@ -179,10 +179,11 @@ YUI.add('io-base', function(Y) {
    			c = Y.Object(c);
    			o = _create(c.xdr || c.form, i);
    			m = c.method ? c.method.toUpperCase() : 'GET';
-        
+
         if (c.data && Y.Lang.isObject(c.data) && Y.QueryString && Y.QueryString.stringify) {
             c.data = Y.QueryString.stringify(c.data);
         }
+
         if (c.form) {
    			if (c.form.upload) {
    				return Y.io._upload(o, uri, c);
@@ -736,4 +737,5 @@ YUI.add('io-base', function(Y) {
 	Y.io.http = _io;
 
 
-}, '@VERSION@' ,{requires:['event-custom-base','querystring-stringify-simple']});
+
+}, '@VERSION@' ,{requires:['event-custom-base']});

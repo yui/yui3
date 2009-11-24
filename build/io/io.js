@@ -179,10 +179,11 @@ YUI.add('io-base', function(Y) {
    			c = Y.Object(c);
    			o = _create(c.xdr || c.form, i);
    			m = c.method ? c.method.toUpperCase() : 'GET';
-        
+
         if (c.data && Y.Lang.isObject(c.data) && Y.QueryString && Y.QueryString.stringify) {
             c.data = Y.QueryString.stringify(c.data);
         }
+
         if (c.form) {
    			if (c.form.upload) {
    				return Y.io._upload(o, uri, c);
@@ -736,7 +737,9 @@ YUI.add('io-base', function(Y) {
 	Y.io.http = _io;
 
 
-}, '@VERSION@' ,{requires:['event-custom-base','querystring-stringify-simple']});
+
+}, '@VERSION@' ,{requires:['event-custom-base']});
+
 YUI.add('io-form', function(Y) {
 
    /**
@@ -829,7 +832,9 @@ YUI.add('io-form', function(Y) {
     }, true);
 
 
-}, '@VERSION@' ,{requires:['io-base','node-base','node-style']});
+
+}, '@VERSION@' ,{requires:['io-base']});
+
 YUI.add('io-xdr', function(Y) {
 
    /**
@@ -1112,7 +1117,9 @@ YUI.add('io-xdr', function(Y) {
 	});
 
 
+
 }, '@VERSION@' ,{requires:['io-base','datatype-xml']});
+
 YUI.add('io-upload-iframe', function(Y) {
 
    /**
@@ -1387,13 +1394,9 @@ YUI.add('io-upload-iframe', function(Y) {
 	});
 
 
-<<<<<<< HEAD
-}, '@VERSION@' ,{requires:['io-base']});
-=======
 
 }, '@VERSION@' ,{requires:['io-base','node-base']});
 
->>>>>>> d340aa2f7655dcd2026c7f21e36cb034cb4e7a74
 YUI.add('io-queue', function(Y) {
 
    /**
@@ -1607,7 +1610,9 @@ YUI.add('io-queue', function(Y) {
     }, true);
 
 
+
 }, '@VERSION@' ,{requires:['io-base','queue-promote']});
+
 
 
 YUI.add('io', function(Y){}, '@VERSION@' ,{use:['io-base', 'io-form', 'io-xdr', 'io-upload-iframe', 'io-queue']});

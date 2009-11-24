@@ -90,4 +90,5 @@ YUI.add('io-form', function(Y) {
     }, true);
 
 
-}, '@VERSION@' ,{requires:['io-base','node-base','node-style']});
+
+}, '@VERSION@' ,{requires:['io-base']});
