@@ -510,12 +510,12 @@ var NOT_FOUND = {},
         imageloader: { 
             requires: [BASEBASE, NODESTYLE, NODESCREEN]
         },
-
+        
         io:{
             submodules: {
 
                 'io-base': {
-                    requires: [EVENTCUSTOMBASE]
+                    requires: [EVENTCUSTOMBASE, 'querystring-stringify-simple']
                 }, 
 
                 'io-xdr': {
@@ -591,6 +591,27 @@ var NOT_FOUND = {},
         'async-queue': {
             requires: [EVENTCUSTOM],
             supersedes: ['queue-run']
+        },
+
+        'querystring-stringify-simple': {
+            requires: [YUIBASE],
+            path: 'querystring/querystring-stringify-simple.js'
+        },
+        'querystring-parse-simple': {
+            requires: [YUIBASE],
+            path: 'querystring/querystring-parse-simple.js'
+        },
+        'querystring': {
+            submodules: {
+                'querystring-parse': {
+                    supersedes: ['querystring-parse-simple'],
+                    requires: [YUIBASE]
+                },
+                'querystring-stringify': {
+                    supersedes: ['querystring-stringify-simple'],
+                    requires: [YUIBASE]
+                },
+            }
         },
 
         slider: {

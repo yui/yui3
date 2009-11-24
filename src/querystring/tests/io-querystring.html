@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link rel="stylesheet" href="../../../build/test/assets/test-console.css">
+    <style>
+    body {
+        font-size:16px;
+    }
+    script.mine {
+        clear:left;
+        white-space:pre;
+        display:block;
+        font-family:monospace;
+        background:#eef;
+    }
+    script::before, script::after {
+        content:"<script>";
+    }
+    script::after {
+        content:"</script>";
+    }
+    script[src]::before {
+        content:"<script src=\"" attr(src) "\">";
+        white-space:nowrap;
+    }
+    script[src] {
+        background:#fff;
+    }
+    .yui-console, .yui-console-bd {
+        height:auto!important;
+        overflow:auto!important;
+        overflow-y:auto!important;
+    }
+
+    </style>
+</head>
+<body class="yui-skin-sam">
+<h1>Query String Tests</h1>
+
+<p>Tests running...</p>
+
+<script src="../../../build/yui/yui.js"></script>
+<script>
+
+var DATA = {
+    foo : "bar",
+    baz : { quux : "foo" },
+    arr : [1,2,3]
+};
+function verify (expected) {
+    return function (_, o) {
+        var actual = o.responseText;
+        if (actual !== expected) throw new Error("Expected: "+expected+"\nActual: "+actual);
+        document.body.appendChild(document.createElement("pre")).innerHTML =
+            "Success! " + expected;
+    };
+};
+
+
+YUI({
+    base : '../../../build/',
+    filter : 'raw'
+}).use( 'io', function (Y) {
+    Y.io("./test.php?simple_qs", {
+        method : "POST",
+        data : DATA,
+        on : {
+            success : verify('{"POST":{"foo":"bar","baz":"[object Object]","arr":"1,2,3"},"GET":{"simple_qs":""}}')
+        }
+    });
+});
+
+YUI({
+    base : '../../../build/',
+    filter : 'raw'
+}).use( 'querystring', 'io', function (Y) {
+    
+    Y.io("./test.php?with_qs", {
+        method : "POST",
+        data : DATA,
+        on : {
+            success : verify('{"POST":{"foo":"bar","baz":{"quux":"foo"},"arr":["1","2","3"]},"GET":{"with_qs":""}}')
+        }
+    });
+        
+});
+</script>
+</body>
+</html>
