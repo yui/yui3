@@ -610,7 +610,7 @@ var NOT_FOUND = {},
                 'querystring-stringify': {
                     supersedes: ['querystring-stringify-simple'],
                     requires: [YUIBASE]
-                },
+                }
             }
         },
 
