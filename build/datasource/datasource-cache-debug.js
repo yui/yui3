@@ -125,5 +125,4 @@ Y.extend(DataSourceCache, Y.Cache, {
 Y.namespace('Plugin').DataSourceCache = DataSourceCache;
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local', 'cache']});
