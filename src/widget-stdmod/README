@@ -1,5 +1,7 @@
 Development Master
 
+* Fixed fillHeight, to work with contentBox height, now that it fills boundingBox
+
 * Fixed setStdModContent("markupString", AFTER | BEFORE) so that it uses 
   node.append, node.prepend instead of innerHTML to maintain listeners.
 
