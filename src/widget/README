@@ -1,8 +1,9 @@
 Development Master
 
 * content box now expands to fill bounding box. CSS is used for browsers
-  which box-sizing:border-box. Expansion is handled programmatically for
-  others (currently IE6 & IE7).
+  which support box-sizing:border-box. Expansion is handled programmatically 
+  for others (currently IE6 & IE7). Maybe some edge cases which need 
+  resolution.
 
 * Added an "id" attribute.
 
