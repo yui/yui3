@@ -364,7 +364,7 @@ Widget.getByNode = function(node) {
     var widget,
         widgetMarker = Widget.getClassName();
 
-    node = Node.get(node);
+    node = Node.one(node);
     if (node) {
         node = (node.hasClass(widgetMarker)) ? node : node.ancestor("." + widgetMarker);
         if (node) {
@@ -534,7 +534,7 @@ Y.extend(Widget, Y.Base, {
              */
             this.publish(RENDER, {queuable:false, defaultFn: this._defRenderFn});
 
-            parentNode = (parentNode) ? Node.get(parentNode) : null;
+            parentNode = (parentNode) ? Node.one(parentNode) : null;
             if (parentNode && !parentNode.inDoc()) {
                 parentNode = null;
             }
@@ -640,7 +640,7 @@ Y.extend(Widget, Y.Base, {
     * @method blur
     * @description Causes the Widget to lose focus by setting the "focused" attribute 
     * to "false"
-    */            
+    */
     blur: function () {
         return this._set(FOCUSED, false);
     },
@@ -685,9 +685,9 @@ Y.extend(Widget, Y.Base, {
                     val = v.call(this, node);
                 } else {
                     if (L.isArray(v)) {
-                        val = node.queryAll(v[0]);
+                        val = node.all(v[0]);
                     } else {
-                        val = node.query(v);
+                        val = node.one(v);
                     }
                 }
 
