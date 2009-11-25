@@ -42,7 +42,13 @@ var L = Y.Lang,
     ContentUpdate = "contentUpdate",
 
     // Widget nodeguid-to-instance map.
-    _instances = {};
+    _instances = {},
+
+    // Map used to keep track of delegated DOM event listeners used to fire
+    // Custom Events of the same type/name (e.g. "click", "mouseover") for 
+    // Widget instances.
+    _delegates = {};
+    
 
 /**
  * A base class for widgets, providing:
@@ -401,6 +407,126 @@ Widget.HTML_PARSER = {};
 
 Y.extend(Widget, Y.Base, {
 
+    /*
+    * Map of DOM events that should be fired as Custom Events by the  
+    * Widget instance.
+    * 
+    * @property DOM_EVENTS
+    * @type Object
+    */
+    DOM_EVENTS: {
+        click: true,
+        contextmenu: true,
+        dblclick: true,
+        keydown: true,
+        keypress: true,
+        keyup: true,
+        mousedown: true,
+        mousemove: true,
+        mouseout: true, 
+        mouseover: true, 
+        mouseup: true,
+        mouseenter: true,
+        mouseleave: true
+    },
+
+    /*
+    * Returns the outtermost DOM element for the Widget instance.
+    * 
+    * @method _getRootNode
+    * @protected     
+    */
+    _getRootNode: function () {
+        return this.get(BOUNDING_BOX);
+    },
+
+	/**
+	 * Binds a delegated DOM event listener of the specified type to the 
+	 * Widget's outtermost DOM element to facilitate the firing of a Custom
+	 * Event of the same type for the Widget instance.  
+	 *
+	 * @method _createDelegate
+	 * @param type {String} String representing the name of the event
+	 */    
+    _createDelegate: function (type) {
+
+        var rootNode = this._getRootNode(),
+            delegates,
+            guid;
+
+        if (rootNode) {
+
+            guid = Y.stamp(rootNode, true);
+
+            if (!_delegates[guid]) {
+                _delegates[guid] = {};
+            }
+
+            delegates = _delegates[guid];
+
+
+            if (!delegates[type]) {
+
+                delegates[type] = rootNode.delegate(type, function (event) {
+
+                    var widget = Y.Widget.getByNode(this);
+
+                    if (widget) {
+                        
+                        //  Can lazy publish the event simply by firing it 
+                        //  since at this point the default configuration 
+                        //  has everything we need:
+                        //  emitFacade is true (set by Attribute)
+                        //  bubbles is true (EventTarget default)
+                        //  preventable is true (EventTarget default)
+                        //  queuable is false (EventTarget default)
+
+                        widget.fire(event.type);                        
+
+                    }
+
+
+                }, ("." + Widget.getClassName()));
+                
+            }
+            
+        }
+        
+    },
+    
+    //  Override of on from Base to facilitate the firing of Widget events
+    //  based on DOM events of the same name/type (e.g. "click", "mouseover").
+    on: function (type) {
+
+        var sType;
+
+        if (L.isString(type)) {
+
+            sType = type.replace(/(\w+):(\w+)/, "$2");
+
+            if (this.DOM_EVENTS[sType]) {
+        
+                if (this.get(RENDERED)) {
+                    this._createDelegate(sType);
+                }
+                else {
+        
+                    this.on(RENDER, function () {
+        
+                        this._createDelegate(sType);  
+        
+                    }, this);
+        
+                }
+        
+            }
+            
+        }
+        
+        return Widget.superclass.on.apply(this, arguments);
+
+    },
+
 	/**
 	 * Returns a class name prefixed with the the value of the 
 	 * <code>YUI.config.classNamePrefix</code> attribute + the instances <code>NAME</code> property.
@@ -477,6 +603,20 @@ Y.extend(Widget, Y.Base, {
         }
 
         boundingBox.remove(true);
+
+
+        //  Node's "remove" method will purge all of the delegated DOM event 
+        //  listeners, the following cleans up references to detach handles
+        //  for delegated event listeners.
+
+        var rootNode = this._getRootNode();
+
+        guid = Y.stamp(rootNode, true);
+        
+        if (_delegates[guid] && rootNode == boundingBox) {
+            delete _delegates[guid];
+        }
+
     },
 
     /**
@@ -550,13 +690,19 @@ Y.extend(Widget, Y.Base, {
      * @param {Node} parentNode The parent node to render to, if passed in to the <code>render</code> method
      */
     _defRenderFn : function(e) {
-        this._renderUI(e.parentNode);
-        this._bindUI();
-        this._syncUI();
 
-        this.renderer();
+        if (e.target === this) {
 
-        this._set(RENDERED, true);
+            this._renderUI(e.parentNode);
+            this._bindUI();
+            this._syncUI();
+
+            this.renderer();
+
+            this._set(RENDERED, true);
+            
+        }
+
     },
 
     /** 
