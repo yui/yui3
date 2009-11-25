@@ -19,13 +19,8 @@ function bind (widget, ac) {
     var h = widget._handles,
         cb = widget.get("contentBox"),
         ac = widget.get("ac");
-    h.click = cb.delegate(
-        "click", function (e) { widget.click(e) }, "li"
-    );
-    h.mouseover = cb.delegate(
-        "mouseover", function (e) { widget.mouseover(e) }, "li"
-    );
-    h.docclick = Y.on("click", function () { widget.hide() }, document);
+    h.click = cb.delegate("click", widget.click, "li", widget);
+    h.docclick = Y.on("click", widget.hide, document);
     h.acload = ac.on("ac:load", function (e) {
         widget
             .set("query", e.query)
@@ -136,8 +131,15 @@ Y.ACWidget = Y.extend(
             return this.get("contentBox")
                 .one(this.get("itemSelector").replace(/\{n\}/g, regexpEscape(n + 1)));
         },
-        click : function (e) {},
-        mouseover : function (e) {}
+        click : function (e) {
+            var ac = this.get("ac"),
+                val = e.currentTarget.get("text");
+            ac.set("queryValue", val);
+            this._selectedIndex = -1;
+            this._currentValue = val;
+            ac.get("host").focus();
+            this.hide();
+        }
     },
     { // statics
         NAME : "ACWidget",
