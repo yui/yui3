@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>ac-plugin</title>
+<title>demo widget</title>
 
 <link rel="stylesheet" href="http://yui.yahooapis.com/3.0.0b1/build/cssfonts/fonts-min.css">
 <style>
@@ -46,10 +46,10 @@ script[src] {
 </head>
 <body>
 
-<div id="demo-widget">
+<!-- <div id="demo-widget">
     <span class="piece">first piece</span>
     <span class="piece">second piece</span>
-</div>
+</div> -->
 
 <script class="mine" src="../../../build/yui/yui.js"></script>
 <script>
@@ -62,16 +62,41 @@ Y.DemoWidget = Y.extend(
     Y.Widget,
     {
         initializer : function () {
-            console.log("initializing!", this.get("piece"), arguments);
+            this.after("focusedChange", function (e) {
+                // console.log("onfocus", this.get("focused"));
+                // window.setTimeout(Y.bind(this.blur, this), 500);
+                e.type = this.get("focused") ? "focus" : "blur";
+                this.fire(e.type, e);
+            });
+            this.publish("focus");
+            this.publish("blur");
+            
+            this.on("focus", function (e) {
+                window.setTimeout(Y.bind(this.blur, this), 250);
+            });
+            this.on("blur", function (e) {
+                window.setTimeout(Y.bind(this.focus, this), 250);
+            });
+            
+            console.log("initializing!", this, arguments);
         },
         renderUI : function () {
             console.log("rendering the UI", arguments);
         },
         bindUI : function () {
             console.log("bindUI", arguments);
+        },
+        syncUI : function () {
+            console.log("syncUI", arguments);
         }
     },
     {
+        _onfocus : function (e) {
+            // console.log("onfocus", this.get("focused"));
+            // window.setTimeout(Y.bind(this.blur, this), 500);
+            e.type = this.get("focused") ? "focus" : "blur";
+            this.fire(e.type, e);
+        },
         NAME : "DemoWidget",
         ATTRS : {
             attrib : {
@@ -105,11 +130,11 @@ YUI({
     filter : "raw"
 }).use('demo-widget', function (Y) {
     window.Y = Y;
-    var d = window.DW = new Y.DemoWidget({contentBox : "#demo-widget"});
-    d.render();
+    var d = window.DW = new Y.DemoWidget();
+    d.render("#demo-widget");
 });
 </script>
 
-
+click on it to make it flash and be super annoying
 </body>
 </html>

@@ -202,7 +202,7 @@ YUI({
         myWidget.value = e.value;
     });
     input.ac.on("ac:show", function () {
-        if (!myWidget.visible) myWidget.render;
+        if (!myWidget.visible) myWidget.render();
     }, myWidget);
     // input.ac.on("ac:show", myWidget.render, myWidget);
     input.ac.on("ac:hide", myWidget.hide, myWidget);
