@@ -46,7 +46,7 @@ Y.extend(
         open : function () { this.fire("ac:show") },
         next : function (e) { e.preventDefault(); this.fire("ac:next") },
         previous : function (e) { e.preventDefault(); this.fire("ac:previous") },
-        close : function () { console.log("close"); this.fire("ac:hide") }
+        close : function () { this.fire("ac:hide") }
     },
     { // statics
         NAME : "ACPlugin",
