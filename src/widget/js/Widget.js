@@ -10,7 +10,6 @@ var L = Y.Lang,
     Node = Y.Node,
     ClassNameManager = Y.ClassNameManager,
 
-    WIDGET = "widget",
     CONTENT = "content",
     VISIBLE = "visible",
     HIDDEN = "hidden",
@@ -23,8 +22,8 @@ var L = Y.Lang,
     BOUNDING_BOX = "boundingBox",
     CONTENT_BOX = "contentBox",
     PARENT_NODE = "parentNode",
-    FIRST_CHILD = "firstChild",
     OWNER_DOCUMENT = "ownerDocument",
+    SRC_NODE = "srcNode",
     BODY = "body",
 	TAB_INDEX = "tabIndex",
     LOCALE = "locale",
@@ -34,9 +33,13 @@ var L = Y.Lang,
     RENDERED = "rendered",
     DESTROYED = "destroyed",
 
+    CHANGE = "Change",
+    _AFTER = "_after",
+    _UISET = "_uiSet",
+
     ContentUpdate = "contentUpdate",
 
-    // Widget nodeid-to-instance map for now, 1-to-1.
+    // Widget nodeguid-to-instance map.
     _instances = {};
 
 /**
@@ -60,10 +63,17 @@ var L = Y.Lang,
 function Widget(config) {
     Y.log('constructor called', 'life', 'widget');
 
-    this._yuid = Y.guid(WIDGET);
     this._strings = {};
 
     Widget.superclass.constructor.apply(this, arguments);
+
+    var render = this.get(RENDER), parentNode;
+    if (render) {
+        if (render !== true) {
+            parentNode = render;
+        }
+        this.render(parentNode);
+    }
 }
 
 /**
@@ -94,7 +104,7 @@ Widget._buildCfg = {
  * @type String
  * @static
  */
-Widget.NAME = WIDGET;
+Widget.NAME = "widget";
 
 /**
  * Constant used to identify state changes originating from
@@ -120,7 +130,18 @@ var UI = Widget.UI_SRC;
 Widget.ATTRS = {
 
     /**
-     * Flag indicating whether or not this object
+     * @attribute id
+     * @writeOnce
+     * @default Generated using guid()
+     * @type String
+     */
+    id: {
+        valueFn: "_guid",
+        writeOnce: true
+    },
+
+    /**
+     * Flag indicating whether or not this Widget
      * has been through the render lifecycle phase.
      *
      * @attribute rendered
@@ -130,7 +151,7 @@ Widget.ATTRS = {
      */
     rendered: {
         value:false,
-        readOnly:true
+        readOnly: true
     },
 
     /**
@@ -138,13 +159,12 @@ Widget.ATTRS = {
     * @description The outermost DOM node for the Widget, used for sizing and positioning 
     * of a Widget as well as a containing element for any decorator elements used 
     * for skinning.
-    * @type Node
+    * @type String | Node
+    * @writeOnce
     */
     boundingBox: {
         value:null,
-        setter: function(node) {
-            return this._setBoundingBox(node);
-        },
+        setter: "_setBoundingBox",
         writeOnce: true
     },
 
@@ -152,13 +172,12 @@ Widget.ATTRS = {
     * @attribute contentBox
     * @description A DOM node that is a direct descendent of a Widget's bounding box that 
     * houses its content.
-    * @type Node
+    * @type String | Node
+    * @writeOnce
     */
     contentBox: {
         value:null,
-        setter: function(node) {
-            return this._setContentBox(node);
-        },
+        setter: "_setContentBox",
         writeOnce: true
     },
 
@@ -174,12 +193,8 @@ Widget.ATTRS = {
 	* @default 0
     */
     tabIndex: {
-
 		value: 0,
-		validator: function (val) {
-            return (L.isNumber(val) || L.isNull(val));
-        }
-
+		validator: "_validTabIndex"
     },
 
     /**
@@ -275,6 +290,31 @@ Widget.ATTRS = {
         getter: function() {
             return this.getStrings(this.get(LOCALE));
         }
+    },
+
+    /**
+     * Whether or not to render the widget automatically after init, and optionally, to which parent node.
+     *
+     * @attribute render
+     * @type boolean | Node
+     * @writeOnce
+     */
+    render: {
+        value:false,
+        writeOnce:true
+    },
+
+    /**
+     * The DOM node to parse for configuration values, passed to the Widget's HTML_PARSER definition
+     *
+     * @attribute srcNode
+     * @type String | Node
+     * @writeOnce
+     */
+    srcNode: {
+        value: null,
+        setter: Y.Node.one,
+        writeOnce: true
     }
 };
 
@@ -285,7 +325,7 @@ Widget.ATTRS = {
  * @private
  * @static
  */
-Widget._NAME_LOWERCASE = Widget.NAME.toLowerCase();
+Widget._NAME = Widget.NAME.toLowerCase();
 
 /**
  * Generate a standard prefixed classname for the Widget, prefixed by the default prefix defined
@@ -302,7 +342,7 @@ Widget._NAME_LOWERCASE = Widget.NAME.toLowerCase();
  */
 Widget.getClassName = function() {
 	var args = Y.Array(arguments, 0, true);
-	args.splice(0, 0, this._NAME_LOWERCASE);
+	args.splice(0, 0, this._NAME);
 	return ClassNameManager.getClassName.apply(ClassNameManager, args);
 };
 
@@ -320,13 +360,13 @@ Widget.getClassName = function() {
  */
 Widget.getByNode = function(node) {
     var widget,
-        bbMarker = Widget.getClassName();
+        widgetMarker = Widget.getClassName();
 
-    node = Node.get(node);
+    node = Node.one(node);
     if (node) {
-        node = (node.hasClass(bbMarker)) ? node : node.ancestor("." + bbMarker);
+        node = (node.hasClass(widgetMarker)) ? node : node.ancestor("." + widgetMarker);
         if (node) {
-            widget = _instances[node.get(ID)];
+            widget = _instances[Y.stamp(node, true)];
         }
     }
 
@@ -371,7 +411,7 @@ Y.extend(Widget, Y.Base, {
 	 *    var scn = slider.getClassName('foo','bar');
 	 *
 	 *    // returns "yui-overlay-foo-bar", for an overlay instance
-	 *    var ocn = slider.getClassName('foo','bar');
+	 *    var ocn = overlay.getClassName('foo','bar');
 	 * </pre>
 	 * </code>
 	 *
@@ -393,7 +433,13 @@ Y.extend(Widget, Y.Base, {
      * @param  config {Object} Configuration object literal for the widget
      */
     initializer: function(config) {
+        var srcNode, parsedConfig;
+
         Y.log('initializer called', 'life', 'widget');
+
+        this._name = this.constructor.NAME.toLowerCase();
+
+        _instances[Y.stamp(this.get(BOUNDING_BOX))] = this;
 
         /**
          * Notification event, which widget implementations can fire, when
@@ -408,17 +454,9 @@ Y.extend(Widget, Y.Base, {
          */
         this.publish(ContentUpdate, { preventable:false });
 
-		this._name = this.constructor.NAME.toLowerCase();
-
-        var nodeId = this.get(BOUNDING_BOX).get(ID);
-        if (nodeId) {
-            _instances[nodeId] = this;
-        }
-
-        var htmlConfig = this._parseHTML(this.get(CONTENT_BOX));
-        if (htmlConfig) {
-            Y.aggregate(config, htmlConfig, false);
-        }
+        srcNode = this._getSrcNode();
+        parsedConfig = this._parseNode(srcNode);
+        config = this._applyParsedConfig(srcNode, config, parsedConfig);
     },
 
     /**
@@ -433,13 +471,13 @@ Y.extend(Widget, Y.Base, {
         Y.log('destructor called', 'life', 'widget');
 
         var boundingBox = this.get(BOUNDING_BOX);
-        
-        Y.Event.purgeElement(boundingBox, true);
 
-        var nodeId = boundingBox.get(ID);
-        if (nodeId && nodeId in _instances) {
-            delete _instances[nodeId];
+        var guid = Y.stamp(boundingBox, true);
+        if (guid && guid in _instances) {
+            delete _instances[guid];
         }
+
+        boundingBox.remove(true);
     },
 
     /**
@@ -484,7 +522,7 @@ Y.extend(Widget, Y.Base, {
              * before the widget is rendered.
              * </p>
              * <p>
-             * Subscribers to the "after" momemt of this event, will be notified
+             * Subscribers to the "after" moment of this event, will be notified
              * after rendering is complete.
              * </p>
              *
@@ -494,7 +532,7 @@ Y.extend(Widget, Y.Base, {
              */
             this.publish(RENDER, {queuable:false, defaultFn: this._defRenderFn});
 
-            parentNode = (parentNode) ? Node.get(parentNode) : null;
+            parentNode = (parentNode) ? Node.one(parentNode) : null;
             if (parentNode && !parentNode.inDoc()) {
                 parentNode = null;
             }
@@ -514,14 +552,13 @@ Y.extend(Widget, Y.Base, {
      * @param {Node} parentNode The parent node to render to, if passed in to the <code>render</code> method
      */
     _defRenderFn : function(e) {
+        this._renderUI(e.parentNode);
+        this._bindUI();
+        this._syncUI();
 
-            this._renderUI(e.parentNode);
-            this._bindUI();
-            this._syncUI();
+        this.renderer();
 
-            this.renderer();
-
-            this._set(RENDERED, true);
+        this._set(RENDERED, true);
     },
 
     /** 
@@ -570,11 +607,11 @@ Y.extend(Widget, Y.Base, {
      * @method syncUI
      * 
      */
-    syncUI: function(){},
+    syncUI: function() {},
 
     /**
     * @method hide
-    * @description Shows the Module element by setting the "visible" attribute to "false".
+    * @description Hides the Widget by setting the "visible" attribute to "false".
     */
     hide: function() {
         return this.set(VISIBLE, false);
@@ -582,7 +619,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
     * @method show
-    * @description Shows the Module element by setting the "visible" attribute to "true".
+    * @description Shows the Widget by setting the "visible" attribute to "true".
     */
     show: function() {
         return this.set(VISIBLE, true);
@@ -601,7 +638,7 @@ Y.extend(Widget, Y.Base, {
     * @method blur
     * @description Causes the Widget to lose focus by setting the "focused" attribute 
     * to "false"
-    */            
+    */
     blur: function () {
         return this._set(FOCUSED, false);
     },
@@ -615,7 +652,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-    * @method disabled
+    * @method disable
     * @description Set the Widget's "disabled" attribute to "true".
     */
     disable: function() {
@@ -625,19 +662,19 @@ Y.extend(Widget, Y.Base, {
     /**
      * Utilitity method used to apply the <code>HTML_PARSER</code> configuration for the 
      * instance, to retrieve config data values.
-     * 
-     * @method _parseHTML
+     *
+     * @method _parseNode
      * @private 
      * @param  node {Node} Root node to use to parse markup for configuration data
      * @return config {Object} configuration object, with values found in the HTML, populated
      */
-    _parseHTML : function(node) {
+    _parseNode : function(node) {
  
         var schema = this._getHtmlParser(),
             data,
             val;
 
-        if (schema && node && node.hasChildNodes()) {
+        if (schema && node) {
 
             O.each(schema, function(v, k, o) {
                 val = null;
@@ -646,9 +683,9 @@ Y.extend(Widget, Y.Base, {
                     val = v.call(this, node);
                 } else {
                     if (L.isArray(v)) {
-                        val = node.queryAll(v[0]);
+                        val = node.all(v[0]);
                     } else {
-                        val = node.query(v);
+                        val = node.one(v);
                     }
                 }
 
@@ -659,8 +696,25 @@ Y.extend(Widget, Y.Base, {
 
             }, this);
         }
-
         return data;
+    },
+
+    /**
+     * @method _getSrcNode
+     * @protected
+     * @return {Node} The Node to apply HTML_PARSER to
+     */
+    _getSrcNode : function() {
+        return this.get(SRC_NODE) || this.get(CONTENT_BOX);
+    },
+
+    /**
+     * @method _applyParsedConfig
+     * @protected
+     * @return {Object} The merged configuration literal
+     */
+    _applyParsedConfig : function(node, cfg, parsedCfg) {
+        return (parsedCfg) ? Y.aggregate(cfg, parsedCfg, false) : cfg;
     },
 
     /**
@@ -724,6 +778,48 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
+     *
+     * @method _uiExpandContentBox
+     * @protected
+     * @param {boolean} expand
+     */
+
+     // TODO: Currently only required for height, but could be easily mirrored for width if required. 
+    _uiExpandContentBox : function(expand) {
+
+        var bb = this.get(BOUNDING_BOX),
+            cb = this.get(CONTENT_BOX),
+
+            cbExpanded = Widget.getClassName("content", "expanded"),
+            bbTempExpanding = Widget.getClassName("tmp", "forcesize"),
+
+            borderBoxSupported = this._bbs,
+            heightReallyMinHeight = Y.UA.ie && Y.UA.ie < 7;
+
+        if (expand) {
+            if (borderBoxSupported) {
+                cb.addClass(cbExpanded);
+            } else {
+                if (heightReallyMinHeight) {
+                    bb.addClass(bbTempExpanding);
+                }
+
+                cb.set("offsetHeight", bb.get("offsetHeight"));
+
+                if (heightReallyMinHeight) {
+                    bb.removeClass(bbTempExpanding);
+                }
+            }
+        } else {
+            if (!borderBoxSupported) {
+                cb.removeClass(cbExpanded);
+            } else {
+                cb.setStyle("height", "");
+            }
+        }
+    },
+
+    /**
     * Helper method to collect the boundingBox and contentBox, set styles and append to the provided parentNode, if not
     * already a child. The owner document of the boundingBox, or the owner document of the contentBox will be used 
     * as the document into which the Widget is rendered if a parentNode is node is not provided. If both the boundingBox and
@@ -737,35 +833,42 @@ Y.extend(Widget, Y.Base, {
     */
     _renderBox: function(parentNode) {
 
+        // TODO: Performance Optimization [ More effective algo to reduce Node refs, compares, replaces? ]
+
         var contentBox = this.get(CONTENT_BOX),
             boundingBox = this.get(BOUNDING_BOX),
-            doc = boundingBox.get(OWNER_DOCUMENT) || contentBox.get(OWNER_DOCUMENT),
+            srcNode = this.get(SRC_NODE),
+
+            doc = (srcNode && srcNode.get(OWNER_DOCUMENT)) || boundingBox.get(OWNER_DOCUMENT) || contentBox.get(OWNER_DOCUMENT),
             body;
 
-        if (!boundingBox.compareTo(contentBox.get(PARENT_NODE))) {
+        // If srcNode (assume it's always in doc), have contentBox take its place (widget render responsible for re-use of srcNode contents)
+        if (srcNode && !srcNode.compareTo(contentBox) && !contentBox.inDoc(doc)) {
+            srcNode.replace(contentBox);
+        }
+
+        if (!boundingBox.compareTo(contentBox.get(PARENT_NODE)) && !boundingBox.compareTo(contentBox)) {
             if (this.get('moveStyles')) {
                 this._moveStyles(contentBox, boundingBox);
             }
+
             // If contentBox box is already in the document, have boundingBox box take it's place
             if (contentBox.inDoc(doc)) {
-                contentBox.get(PARENT_NODE).replaceChild(boundingBox, contentBox);
+                contentBox.replace(boundingBox);
             }
             boundingBox.appendChild(contentBox);
         }
 
         if (!boundingBox.inDoc(doc) && !parentNode) {
-            body = Node.get(BODY);
-            if (body.get(FIRST_CHILD)) {
-                // Special case when handling body as default (no parentNode), always try to insert.
-                body.insertBefore(boundingBox, body.get(FIRST_CHILD));
-            } else {
-                body.appendChild(boundingBox);
-            }
+            // Special case when handling body as default (no parentNode), always try to insert.
+            body = Node.one(BODY).insert(boundingBox, 0);
         } else {
             if (parentNode && !parentNode.compareTo(boundingBox.get(PARENT_NODE))) {
                 parentNode.appendChild(boundingBox);
             }
         }
+
+        this._bbs = !(Y.UA.ie && Y.UA.ie < 8 && doc.compatMode != "BackCompat");
     },
 
     /**
@@ -777,7 +880,7 @@ Y.extend(Widget, Y.Base, {
     * @return Node
     */
     _setBoundingBox: function(node) {
-        return this._setBox(node, this.BOUNDING_TEMPLATE);
+        return this._setBox(this.get(ID), node, this.BOUNDING_TEMPLATE);
     },
 
     /**
@@ -789,7 +892,11 @@ Y.extend(Widget, Y.Base, {
     * @return Node
     */
     _setContentBox: function(node) {
-        return this._setBox(node, this.CONTENT_TEMPLATE);
+        if (this.CONTENT_TEMPLATE === null) {
+            return this.get(BOUNDING_BOX);
+        } else {
+            return this._setBox(null, node, this.CONTENT_TEMPLATE);
+        }
     },
 
     /**
@@ -799,16 +906,16 @@ Y.extend(Widget, Y.Base, {
      * @method _setBox
      * @private
      *
+     * @param {String} id The node's id attribute
      * @param {Node|String} node The node reference
      * @param {String} template HTML string template for the node
      * @return {Node} The node
      */
-    _setBox : function(node, template) {
-        node = Node.get(node) || Node.create(template);
-
-        var sid = Y.stamp(node);
+    _setBox : function(id, node, template) {
+        node = Node.one(node) || Node.create(template);
         if (!node.get(ID)) {
-            node.set(ID, sid);
+            id = id || Y.guid();
+            node.set(ID, id);
         }
         return node;
     },
@@ -825,9 +932,9 @@ Y.extend(Widget, Y.Base, {
         this._renderBox(parentNode);
     },
 
-     /**
+    /**
       * Applies standard class names to the boundingBox and contentBox
-      * 
+      *
       * @method _renderBoxClassNames
       * @protected
       */
@@ -858,12 +965,7 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _bindUI: function() {
-        this.after('visibleChange', this._afterVisibleChange);
-        this.after('disabledChange', this._afterDisabledChange);
-        this.after('heightChange', this._afterHeightChange);
-        this.after('widthChange', this._afterWidthChange);
-        this.after('focusedChange', this._afterFocusedChange);
-
+        this._bindAttrUI([VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED]);
         this._bindDOMListeners();
     },
 
@@ -875,7 +977,10 @@ Y.extend(Widget, Y.Base, {
      */
     _bindDOMListeners : function() {
 
-		var oDocument = this.get(BOUNDING_BOX).get("ownerDocument");
+		var oDocument = this.get(BOUNDING_BOX).get(OWNER_DOCUMENT);
+
+        // TODO: Perf Optimization: Use Widget.getByNode delegation, to get by 
+        // with just one _onFocus subscription per sandbox, instead of one per widget
 
 		oDocument.on("focus", this._onFocus, this);
 
@@ -883,7 +988,6 @@ Y.extend(Widget, Y.Base, {
 		//	Document doesn't receive focus in Webkit when the user mouses 
 		//	down on it, so the "focused" attribute won't get set to the 
 		//	correct value.
-		
 		if (Y.UA.webkit) {
 			oDocument.on("mousedown", this._onDocMouseDown, this);
 		}
@@ -897,12 +1001,33 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _syncUI: function() {
-        this._uiSetVisible(this.get(VISIBLE));
-        this._uiSetDisabled(this.get(DISABLED));
-        this._uiSetHeight(this.get(HEIGHT));
-        this._uiSetWidth(this.get(WIDTH));
-        this._uiSetFocused(this.get(FOCUSED));
-		this._uiSetTabIndex(this.get(TAB_INDEX));
+        this._syncAttrUI([VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED, TAB_INDEX]);
+    },
+
+    // TODO: Sugar method. Optimize Perf. Edge Case checks
+    /**
+     * @method _bindAttrUI
+     * @protected
+     * @param {Object} attrs
+     */
+    _bindAttrUI : function(attrs) {
+        for (var i = 0, l = attrs.length; i < l; i++) {
+            var attr = attrs[i];
+            this.after(attr + CHANGE, this[_AFTER + attr.substring(0, 1).toUpperCase() + attr.substring(1) + CHANGE]);
+        }
+    },
+
+    // TODO: Sugar method. Optimize Perf. Edge Case checks
+    /**
+     * @method _syncAttrUI
+     * @protected
+     * @param {Object} attrs
+     */
+    _syncAttrUI : function(attrs) {
+        for (var i = 0, l = attrs.length; i < l; i++) {
+            var attr = attrs[i];
+            this[_UISET + attr.substring(0, 1).toUpperCase() + attr.substring(1)](this.get(attr));
+        }
     },
 
     /**
@@ -917,6 +1042,8 @@ Y.extend(Widget, Y.Base, {
             val = val + this.DEF_UNIT;
         }
         this.get(BOUNDING_BOX).setStyle(HEIGHT, val);
+
+        this._uiExpandContentBox((val !== "" && val !== "auto"));
     },
 
     /**
@@ -945,7 +1072,7 @@ Y.extend(Widget, Y.Base, {
         var box = this.get(BOUNDING_BOX), 
             sClassName = this.getClassName(HIDDEN);
 
-        if (val === true) { 
+        if (val) { 
             box.removeClass(sClassName); 
         } else {
             box.addClass(sClassName); 
@@ -963,13 +1090,12 @@ Y.extend(Widget, Y.Base, {
         var box = this.get(BOUNDING_BOX), 
             sClassName = this.getClassName(DISABLED);
 
-        if (val === true) {
+        if (val) {
             box.addClass(sClassName);
         } else {
             box.removeClass(sClassName);
         }
     },
-
 
     /**
     * Set the tabIndex on the widget's rendered UI
@@ -991,7 +1117,6 @@ Y.extend(Widget, Y.Base, {
 
     },
 
-
     /**
      * Sets the focused state for the UI
      *
@@ -1005,7 +1130,7 @@ Y.extend(Widget, Y.Base, {
         var box = this.get(BOUNDING_BOX),
             sClassName = this.getClassName(FOCUSED);
 
-        if (val === true) {
+        if (val) {
             box.addClass(sClassName);
             if (src !== UI) {
                 box.focus();
@@ -1017,8 +1142,6 @@ Y.extend(Widget, Y.Base, {
             }
         }
     },
-
-
 
     /**
      * Default visible attribute state change handler
@@ -1083,11 +1206,9 @@ Y.extend(Widget, Y.Base, {
     * @param {EventFacade} evt The event facade for the DOM focus event
 	*/
 	_onDocMouseDown: function (evt) {
-
 		if (this._hasDOMFocus) {
  			this._onFocus(evt);
 		}
-		
 	},
 
     /**
@@ -1115,7 +1236,7 @@ Y.extend(Widget, Y.Base, {
      * @return {String} The default string value for the widget [ displays the NAME of the instance, and the unique id ]
      */
     toString: function() {
-        return this.constructor.NAME + "[" + this._yuid + "]";
+        return this.constructor.NAME + "[" + this.get(ID) + "]";
     },
 
     /**
@@ -1126,7 +1247,9 @@ Y.extend(Widget, Y.Base, {
     DEF_UNIT : "px",
 
     /**
-     * Static property defining the markup template for content box.
+     * Property defining the markup template for content box. If your Widget doesn't
+     * need the dual boundingBox/contentBox structure, set CONTENT_TEMPLATE to null,
+     * and contentBox and boundingBox will both point to the same Node. 
      *
      * @property CONTENT_TEMPLATE
      * @type String
@@ -1134,7 +1257,7 @@ Y.extend(Widget, Y.Base, {
     CONTENT_TEMPLATE : "<div></div>",
 
     /**
-     * Static property defining the markup template for bounding box.
+     * Property defining the markup template for bounding box.
      *
      * @property BOUNDING_TEMPLATE
      * @type String
@@ -1299,6 +1422,7 @@ Y.extend(Widget, Y.Base, {
      * Gets the HTML_PARSER definition for this instance, by merging HTML_PARSER
      * definitions across the class hierarchy.
      *
+     * @private
      * @method _getHtmlParser
      * @return {Object} HTML_PARSER definition for this instance
      */
@@ -1319,6 +1443,23 @@ Y.extend(Widget, Y.Base, {
         }
 
         return this._HTML_PARSER;
+    },
+
+    /**
+     * @method _guid
+     * @protected
+     */
+    _guid : function() {
+        return Y.guid();
+    },
+
+    /**
+     * @method _validTabIndex
+     * @protected
+     * @param {Number} tabIndex
+     */
+    _validTabIndex : function (tabIndex) {
+        return (L.isNumber(tabIndex) || L.isNull(tabIndex));
     }
 });
 

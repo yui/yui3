@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="http://yui.yahooapis.com/3.0.0b1/build/cssfonts/fonts-min.css">
+<style>
+body {
+    font-size:16px;
+}
+.demoified {
+    font-size:200%;
+    border:10px solid red;
+}
+script.mine {
+    clear:left;
+    white-space:pre;
+    display:block;
+    font-family:monospace;
+    background:#eef;
+}
+script::before, script::after {
+    content:"<script>";
+}
+script::after {
+    content:"</script>";
+}
+script[src]::before {
+    content:"<script src=\"" attr(src) "\">";
+    white-space:nowrap;
+}
+script[src] {
+    background:#fff;
+}
+</style>
+    
+<title>A Demonstrative Plugin</title>
+</head>
+<body class="yui-skin-sam">
+
+<form>
+    <input name="ac" id="ac" type="text">
+    <input type="submit" id="log" value="Show times">
+</form>
+<script class="mine" src="../../build/yui/yui.js"></script>
+<script class="mine">
+
+YUI.add('demo-plugin', function (Y) {
+    
+    var logSrc = "demoPlugin", logCat = "info";
+
+    // Create a very demonstrative plugin.
+    
+    function DemoPlugin () {
+        Y.log("Starting DemoPlugin ctor, about to call parent ctor", logCat, logSrc);
+        DemoPlugin.superclass.constructor.apply(this, arguments);
+        Y.log("Done with DemoPlugin ctor, returning", logCat, logSrc);
+    };
+    
+    // define attributes as static properties on the class.
+    DemoPlugin.ATTRS = {
+        onlyForReading : {
+            value : "cannot be changed",
+            readOnly : true
+        },
+        hasGetter : {
+            getter : function () {
+                Y.log("Get the 'hasGetter' property", logCat, logSrc);
+                return "got";
+            }
+        },
+        hasSetter : {
+            setter : function (k) {
+                Y.log("Setting the 'hasSetter' property to "+k, logCat, logSrc);
+                Y.log("About to return " + (k+k), logCat, logSrc);
+                return k + k;
+            }
+        },
+        simpleValue : {
+            value : "simple"
+        },
+        hasGetterAndSetter : {
+            getter : function () {
+                Y.log("Get on hasGetterAndSetter", logCat, logSrc);
+                return "Return from get";
+            },
+            setter : function () {
+                Y.log("Set on hasGetterAndSetter", logCat, logSrc);
+                return "Return from set";
+            }
+        },
+        incrementor : (function () {
+            var i = 0;
+            return {
+                getter : function () {
+                    Y.log("Getting incrementor: "+i, logCat, logSrc);
+                    return i ++;
+                },
+                setter : function (j) {
+                    Y.log("Setting incrementor: "+j, logCat, logSrc);
+                    return i = j;
+                }
+            };
+        })()
+    };
+    Y.extend(DemoPlugin, Y.Plugin.Base, {
+        _privateMember : "pretend-private",
+        _privateMethod : function () {
+            Y.log("Called _privateMethod (which is only pretend-private.)", logCat, logSrc);
+        },
+        publicMember : "public",
+        publicMethod : function () {
+            Y.log("Called publicMethod", logCat, logSrc);
+        },
+        getTheHost : function () {
+            Y.log("My host is: "+this.get("host"), logCat, logSrc);
+            return this.get("host");
+        },
+        initializer : function (config) {
+            Y.log("Initializing: "+config, logCat, logSrc);
+            this._privateMethod();
+            this.get("host").addClass("demoified");
+            Y.log("Done initializing", logCat, logSrc);
+        },
+        destroy : function () {
+            Y.log("Destroying!  Clean up the mess made in initializer()", logCat, logSrc);
+            this.get("host").removeClass("demoified");
+            Y.log("Destroyed!", logCat, logSrc);
+        }
+    });
+    
+    DemoPlugin.NAME = "demoName";
+    DemoPlugin.NS = "demoNS";
+    
+    Y.namespace("Plugin").DemoPlugin = DemoPlugin;
+}, '@VERSION@', {
+    requires : [ 'node', 'plugin' ]
+});
+
+
+YUI({
+    debug: true,
+    base : "../../build/",
+    filter : "raw"
+}).use('console', 'demo-plugin', function (Y) {
+    window.Y = Y;
+    
+    new Y.Console({
+        plugins : [ Y.Plugin.ConsoleFilters ],
+        newestOnTop : false,
+        useBrowserConsole : true
+    }).render();
+    
+    // Now let's plug it into something.
+    
+    window.myNode = Y.get("#ac");
+    myNode.plug(Y.Plugin.DemoPlugin);
+    
+    
+    myNode.demoNS.set("hasSetter", 10);
+    Y.log("getting hasGetter: "+myNode.demoNS.get("hasGetter"));
+
+    Y.log("Incrementor: "+myNode.demoNS.get("incrementor"));
+    Y.log("Incrementor: "+myNode.demoNS.get("incrementor"));
+    Y.log("Incrementor: "+myNode.demoNS.get("incrementor"));
+    Y.log("Incrementor: "+myNode.demoNS.get("incrementor"));
+    
+    myNode.demoNS.set("hasGetterAndSetter", 10);
+    Y.log("now getting... "+myNode.demoNS.get("hasGetterAndSetter"));
+    
+    // myNode.demoNS.getTheHost().set("className", "demoified");
+    
+    Y.log("My eyes! Ze underscores do nussing! "+myNode.demoNS._privateMember);
+    Y.log("Not get()able, since it's not an ATTR: "+myNode.demoNS.get("_privateMember"));
+    Y.log("Get it out in the open: "+myNode.demoNS.publicMember);
+    Y.log("Not get()able, since it's not an ATTR: "+myNode.demoNS.get("publicMember"));
+    
+    myOtherNode = Y.get("#log");
+    Y.log("Hasn't been plugged, so demoNS on other node is: "+myOtherNode.demoNS);
+    myOtherNode.plug(Y.Plugin.DemoPlugin);
+    Y.log("Now it's been plugged, so: "+myOtherNode.demoNS);
+    myOtherNode.unplug(Y.Plugin.DemoPlugin);
+    Y.log("Now it's been unplugged, so it shouldn't be red any more.");
+});
+
+</script>
+</body>
+</html>

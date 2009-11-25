@@ -1,3 +1,10 @@
+Development Master
+
+* Fixed fillHeight, to work with contentBox height, now that it fills boundingBox
+
+* Fixed setStdModContent("markupString", AFTER | BEFORE) so that it uses 
+  node.append, node.prepend instead of innerHTML to maintain listeners.
+
 3.0.0
 * Cleaned up the way headerContent, bodyContent, footerContent are configured,
   so that the actual stored value is always accurate, without the need for a 

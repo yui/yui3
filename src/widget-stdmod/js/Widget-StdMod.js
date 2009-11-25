@@ -19,7 +19,6 @@
         FILL_HEIGHT = "fillHeight",
         STDMOD = "stdmod",
 
-        PX = "px",
         NODE_SUFFIX = "Node",
         CONTENT_SUFFIX = "Content",
         INNER_HTML = "innerHTML",
@@ -29,7 +28,6 @@
         OWNER_DOCUMENT = "ownerDocument",
 
         CONTENT_BOX = "contentBox",
-        BOUNDING_BOX = "boundingBox",
 
         HEIGHT = "height",
         OFFSET_HEIGHT = "offsetHeight",
@@ -477,7 +475,6 @@
                 if (section === STD_HEADER) {
                     contentBox.insertBefore(sectionNode, fc);
                 } else {
-                    // BODY
                     var footer = this[STD_FOOTER + NODE_SUFFIX];
                     if (footer) {
                         contentBox.insertBefore(sectionNode, footer);
@@ -516,11 +513,11 @@
          */
         _addNodeHTML : function(node, html, where) {
             if (where == AFTER) {
-                node.set(INNER_HTML, node.get(INNER_HTML) + html);
+                node.append(html);
             } else if (where == BEFORE) {
-                node.set(INNER_HTML, html + node.get(INNER_HTML));
+                node.prepend(html);
             } else {
-                node.set(INNER_HTML, html);
+                node.setContent(html);
             }
         },
 
@@ -601,7 +598,7 @@
          * @return {Node} The rendered node for the given section, or null if not found.
          */
         _findStdModSection: function(section) {
-            return this.get(CONTENT_BOX).query("> ." + StdMod.SECTION_CLASS_NAMES[section]);
+            return this.get(CONTENT_BOX).one("> ." + StdMod.SECTION_CLASS_NAMES[section]);
         },
 
         /**
@@ -695,12 +692,13 @@
          */
         fillHeight : function(node) {
             if (node) {
-                var boundingBox = this.get(BOUNDING_BOX),
+                var contentBox = this.get(CONTENT_BOX),
                     stdModNodes = [this.headerNode, this.bodyNode, this.footerNode],
                     stdModNode,
-                    total = 0,
+                    cbContentHeight,
                     filled = 0,
                     remaining = 0,
+
                     validNode = false;
 
                 for (var i = 0, l = stdModNodes.length; i < l; i++) {
@@ -717,22 +715,19 @@
                 if (validNode) {
                     if (UA.ie || UA.opera) {
                         // Need to set height to 0, to allow height to be reduced
-                        node.setStyle(HEIGHT, 0 + PX);
+                        node.set(OFFSET_HEIGHT, 0);
                     }
 
-                    total = parseInt(boundingBox.getComputedStyle(HEIGHT), 10);
-                    if (L.isNumber(total)) {
-                        remaining = total - filled;
+                    cbContentHeight = contentBox.get(OFFSET_HEIGHT) -
+                            parseInt(contentBox.getComputedStyle("paddingTop"), 10) - 
+                            parseInt(contentBox.getComputedStyle("paddingBottom"), 10) - 
+                            parseInt(contentBox.getComputedStyle("borderBottomWidth"), 10) - 
+                            parseInt(contentBox.getComputedStyle("borderTopWidth"), 10);
 
+                    if (L.isNumber(cbContentHeight)) {
+                        remaining = cbContentHeight - filled;
                         if (remaining >= 0) {
-                            node.setStyle(HEIGHT, remaining + PX);
-                        }
-
-                        // Re-adjust height if required, to account for el padding and border
-                        var offsetHeight = this.get(CONTENT_BOX).get(OFFSET_HEIGHT); 
-                        if (offsetHeight != total) {
-                            remaining = remaining - (offsetHeight - total);
-                            node.setStyle(HEIGHT, remaining + PX);
+                            node.set(OFFSET_HEIGHT, remaining);
                         }
                     }
                 }

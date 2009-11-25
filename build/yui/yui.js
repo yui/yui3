@@ -1457,7 +1457,7 @@ YArray.numericSort = function(a, b) {
  * @return {boolean} true if the function returns true on
  * any of the items in the array
  */
- YArray.some = (Native.some) ?
+YArray.some = (Native.some) ?
     function (a, f, o) { 
         return Native.some.call(a, f, o);
     } :

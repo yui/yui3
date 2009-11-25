@@ -20,14 +20,13 @@
         }
 
         .yui-overlay {
-            border:1px solid #000;
-            background-color:#eee;
-            padding:5px;
+            background-color:#0000ff;
         }
 
         .yui-overlay .yui-overlay-content {
-            border:2px solid #000000;
-            padding:2px;
+            border:5px solid #000000;
+            padding:0.4em;
+            background-color:#eee;
         }
 
         .yui-overlay .yui-widget-stdmod span {
@@ -137,9 +136,9 @@
                     zIndex:5,
                     headerContent:"Overlay Header",
                     bodyContent:"width:12em, #align, tr, tl, zIndex:5",
-                    footerContent:"Overlay Footer"
+                    footerContent:"Overlay Footer",
+                    render: "#foobar"
                 });
-                widget.render("#foobar");
 
                 widget.after("xyChange", function(e) {
                     Y.log(e.newVal);
@@ -154,9 +153,9 @@
                     width:200,
                     height:200,
                     xy: [800,200],
-                    footerContent: "Footer Content - was in markup, but got over-ridden in constructor"
+                    footerContent: "Footer Content - was in markup, but got over-ridden in constructor",
+                    render:true
                 });
-                widget2.render();
 
                 var stepDelay = 2000;
 
@@ -236,6 +235,9 @@
                         widget.setStdModContent(Y.WidgetStdMod.HEADER, Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
                         widget.setStdModContent(Y.WidgetStdMod.FOOTER, Y.Node.create("<p>Append After Footer Content</p>"), Y.WidgetStdMod.AFTER);
                         widget.setStdModContent(Y.WidgetStdMod.BODY, "Replaced Body - DONE!", Y.WidgetStdMod.REPLACE);
+                    },
+                    function() {
+                        widget.destroy();
                     }
                 ];
 
@@ -248,9 +250,9 @@
                 }
                 // q.run();
 
-                Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
-                Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
-                Y.on('click', Y.bind(q.run, q), Y.Node.get('#control-run'));
+                Y.on('click', Y.bind(widget.show, widget), Y.Node.one('#control-show'));
+                Y.on('click', Y.bind(widget.hide, widget), Y.Node.one('#control-hide'));
+                Y.on('click', Y.bind(q.run, q), Y.Node.one('#control-run'));
 
             });
     </script>

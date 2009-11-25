@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>investigating this scope in custom node events</title>
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/3.0.0b1/build/cssfonts/fonts-min.css">
+<style>
+body {
+    font-size:16px;
+}
+.demoified {
+    font-size:200%;
+    border:10px solid red;
+}
+script.mine {
+    clear:left;
+    white-space:pre;
+    display:block;
+    font-family:monospace;
+    background:#eef;
+}
+script::before, script::after {
+    content:"<script>";
+}
+script::after {
+    content:"</script>";
+}
+script[src]::before {
+    content:"<script src=\"" attr(src) "\">";
+    white-space:nowrap;
+}
+script[src] {
+    background:#fff;
+}
+</style>
+
+</head>
+<body>
+<input class="input" value="change me!" size="100"><br>
+<button id="doit">do it</button>
+
+<ol>
+	<li>Create a custom event name, which the listener is attached to.</li>
+	<li>Listen to a DOM event, and have the listener fire the CE.</li>
+	<li>When the CE handlers are all removed, remove the DOM event handlers.</li>
+	<li>If the DOM event handlers are removed, remove the CE handler.</li>
+</ol>
+
+
+<script class="mine" src="../../../build/yui/yui.js"></script>
+<script>
+function logger () {
+	console.log.apply(console, arguments);
+	return logger;
+};
+function logThis () {
+	logger("logThis!");
+	// logger(this)(arguments);
+};
+</script>
+
+<script>
+YUI.add("custom-dom", function (Y) {
+
+function toNodeList (el) {
+	// el could be a string, a node, a domnode, a nodelist, or an array of domnodes
+	// return a nodelist.
+	if (Y.Lang.isString(el)) return Y.all(el);
+	if (Y.Lang.isArray(el)) return Y.all(el);
+	if (el instanceof Y.Node) return Y.all([el._node]);
+	if (el instanceof Y.NodeList) return el;
+	return Y.all([el]);
+};
+
+var eventName = "customDom",
+	plugins = Y.Env.evt.plugins,
+	domEvents = Y.Node.DOM_EVENTS,
+	eventConfig = {
+		on : function (ev, fn, el, o) {
+			logger
+				("el", el, "o", o)
+				("toNodeList", toNodeList(el), toNodeList(el)._nodes[0]);
+			var CE = eventName + ":" + Y.stamp(el);
+			var handle = [];
+			toNodeList(el).each(function () {
+				handle.push(this.on(CE, fn, o));
+			});
+			return (handle.length === 1) ? handle[0] : handle;
+		}
+	};
+	
+domEvents[eventName] = plugins[eventName] = eventConfig;
+			
+}, '@VERSION@' ,{requires:['node-base']});
+</script>
+
+<script>
+// testy test code below.
+YUI({
+    debug: true,
+    base : "../../../build/",
+    filter : "raw"
+}).use('custom-dom', function (Y) {
+	
+	window.Y=Y;
+	
+	console.info("Y.all('.input').on('customDom', logger)");
+	console.log(Y.all(".input").on("customDom", logThis));
+
+	console.info("Y.one('.input').on('customDom', logger)");
+	console.log(Y.one(".input").on("customDom", logThis));
+	
+	console.info("Y.on('customDom', logger, '.input')");
+	console.log(Y.on("customDom", logThis, ".input"));
+	
+	console.info("Y.on('customDom', logger, Y.all('.input'))");
+	console.log(Y.on('customDom', logThis, Y.all('.input')));
+
+	Y.one("#doit").on("click", function () {
+		logger("clicky!");
+		var i = Y.one(".input");
+		i.fire("customDom", {
+			type : "customDom",
+			target : i,
+			currentTarget : i
+		});
+		logger("fired");
+	});
+	
+});
+</script>
+</body>
+</html>
