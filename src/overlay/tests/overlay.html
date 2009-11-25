@@ -20,14 +20,13 @@
         }
 
         .yui-overlay {
-            border:1px solid #000;
-            background-color:#eee;
-            padding:5px;
+            background-color:#0000ff;
         }
 
         .yui-overlay .yui-overlay-content {
-            border:2px solid #000000;
-            padding:2px;
+            border:5px solid #000000;
+            padding:0.4em;
+            background-color:#eee;
         }
 
         .yui-overlay .yui-widget-stdmod span {
@@ -251,9 +250,9 @@
                 }
                 // q.run();
 
-                Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
-                Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
-                Y.on('click', Y.bind(q.run, q), Y.Node.get('#control-run'));
+                Y.on('click', Y.bind(widget.show, widget), Y.Node.one('#control-show'));
+                Y.on('click', Y.bind(widget.hide, widget), Y.Node.one('#control-hide'));
+                Y.on('click', Y.bind(q.run, q), Y.Node.one('#control-run'));
 
             });
     </script>

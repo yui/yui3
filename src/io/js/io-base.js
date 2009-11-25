@@ -178,7 +178,11 @@
    			o = _create(c.xdr || c.form, i);
    			m = c.method ? c.method.toUpperCase() : 'GET';
 
-   		if (c.form) {
+        if (Y.Lang.isObject(c.data)) {
+            c.data = Y.QueryString.stringify(c.data);
+        }
+
+        if (c.form) {
    			if (c.form.upload) {
    				return Y.io._upload(o, uri, c);
    			}

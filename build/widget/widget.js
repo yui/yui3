@@ -363,7 +363,7 @@ Widget.getByNode = function(node) {
     var widget,
         widgetMarker = Widget.getClassName();
 
-    node = Node.get(node);
+    node = Node.one(node);
     if (node) {
         node = (node.hasClass(widgetMarker)) ? node : node.ancestor("." + widgetMarker);
         if (node) {
@@ -530,7 +530,7 @@ Y.extend(Widget, Y.Base, {
              */
             this.publish(RENDER, {queuable:false, defaultFn: this._defRenderFn});
 
-            parentNode = (parentNode) ? Node.get(parentNode) : null;
+            parentNode = (parentNode) ? Node.one(parentNode) : null;
             if (parentNode && !parentNode.inDoc()) {
                 parentNode = null;
             }
@@ -636,7 +636,7 @@ Y.extend(Widget, Y.Base, {
     * @method blur
     * @description Causes the Widget to lose focus by setting the "focused" attribute 
     * to "false"
-    */            
+    */
     blur: function () {
         return this._set(FOCUSED, false);
     },
@@ -681,9 +681,9 @@ Y.extend(Widget, Y.Base, {
                     val = v.call(this, node);
                 } else {
                     if (L.isArray(v)) {
-                        val = node.queryAll(v[0]);
+                        val = node.all(v[0]);
                     } else {
-                        val = node.query(v);
+                        val = node.one(v);
                     }
                 }
 
@@ -776,6 +776,48 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
+     *
+     * @method _uiExpandContentBox
+     * @protected
+     * @param {boolean} expand
+     */
+
+     // TODO: Currently only required for height, but could be easily mirrored for width if required. 
+    _uiExpandContentBox : function(expand) {
+
+        var bb = this.get(BOUNDING_BOX),
+            cb = this.get(CONTENT_BOX),
+
+            cbExpanded = Widget.getClassName("content", "expanded"),
+            bbTempExpanding = Widget.getClassName("tmp", "forcesize"),
+
+            borderBoxSupported = this._bbs,
+            heightReallyMinHeight = Y.UA.ie && Y.UA.ie < 7;
+
+        if (expand) {
+            if (borderBoxSupported) {
+                cb.addClass(cbExpanded);
+            } else {
+                if (heightReallyMinHeight) {
+                    bb.addClass(bbTempExpanding);
+                }
+
+                cb.set("offsetHeight", bb.get("offsetHeight"));
+
+                if (heightReallyMinHeight) {
+                    bb.removeClass(bbTempExpanding);
+                }
+            }
+        } else {
+            if (!borderBoxSupported) {
+                cb.removeClass(cbExpanded);
+            } else {
+                cb.setStyle("height", "");
+            }
+        }
+    },
+
+    /**
     * Helper method to collect the boundingBox and contentBox, set styles and append to the provided parentNode, if not
     * already a child. The owner document of the boundingBox, or the owner document of the contentBox will be used 
     * as the document into which the Widget is rendered if a parentNode is node is not provided. If both the boundingBox and
@@ -823,6 +865,8 @@ Y.extend(Widget, Y.Base, {
                 parentNode.appendChild(boundingBox);
             }
         }
+
+        this._bbs = !(Y.UA.ie && Y.UA.ie < 8 && doc.compatMode != "BackCompat");
     },
 
     /**
@@ -849,7 +893,7 @@ Y.extend(Widget, Y.Base, {
         if (this.CONTENT_TEMPLATE === null) {
             return this.get(BOUNDING_BOX);
         } else {
-            return this._setBox(this.get(ID) + this.CONTENT_BOX_ID_SUFFIX, node, this.CONTENT_TEMPLATE);
+            return this._setBox(null, node, this.CONTENT_TEMPLATE);
         }
     },
 
@@ -923,32 +967,6 @@ Y.extend(Widget, Y.Base, {
         this._bindDOMListeners();
     },
 
-    // TODO: Sugar method. Optimize Perf. Edge Case checks
-    /**
-     * @method _bindAttrUI
-     * @protected
-     * @param {Object} attrs
-     */
-    _bindAttrUI : function(attrs) {
-        for (var i = 0, l = attrs.length; i < l; i++) {
-            var attr = attrs[i];
-            this.after(attr + CHANGE, this[_AFTER + attr.substring(0, 1).toUpperCase() + attr.substring(1) + CHANGE]);
-        }
-    },
-
-    // TODO: Sugar method. Optimize Perf. Edge Case checks
-    /**
-     * @method _syncAttrUI
-     * @protected
-     * @param {Object} attrs
-     */
-    _syncAttrUI : function(attrs) {
-        for (var i = 0, l = attrs.length; i < l; i++) {
-            var attr = attrs[i];
-            this[_UISET + attr.substring(0, 1).toUpperCase() + attr.substring(1)](this.get(attr));
-        }
-    },
-
     /**
      * Sets up DOM listeners, on elements rendered by the widget.
      * 
@@ -984,6 +1002,32 @@ Y.extend(Widget, Y.Base, {
         this._syncAttrUI([VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED, TAB_INDEX]);
     },
 
+    // TODO: Sugar method. Optimize Perf. Edge Case checks
+    /**
+     * @method _bindAttrUI
+     * @protected
+     * @param {Object} attrs
+     */
+    _bindAttrUI : function(attrs) {
+        for (var i = 0, l = attrs.length; i < l; i++) {
+            var attr = attrs[i];
+            this.after(attr + CHANGE, this[_AFTER + attr.substring(0, 1).toUpperCase() + attr.substring(1) + CHANGE]);
+        }
+    },
+
+    // TODO: Sugar method. Optimize Perf. Edge Case checks
+    /**
+     * @method _syncAttrUI
+     * @protected
+     * @param {Object} attrs
+     */
+    _syncAttrUI : function(attrs) {
+        for (var i = 0, l = attrs.length; i < l; i++) {
+            var attr = attrs[i];
+            this[_UISET + attr.substring(0, 1).toUpperCase() + attr.substring(1)](this.get(attr));
+        }
+    },
+
     /**
      * Sets the height on the widget's bounding box element
      * 
@@ -996,6 +1040,8 @@ Y.extend(Widget, Y.Base, {
             val = val + this.DEF_UNIT;
         }
         this.get(BOUNDING_BOX).setStyle(HEIGHT, val);
+
+        this._uiExpandContentBox((val !== "" && val !== "auto"));
     },
 
     /**
@@ -1215,8 +1261,6 @@ Y.extend(Widget, Y.Base, {
      * @type String
      */
     BOUNDING_TEMPLATE : "<div></div>",
-
-    CONTENT_BOX_ID_SUFFIX : "_c",
 
     /**
      * Static property listing the styles that are mimiced on the bounding box from the content box.

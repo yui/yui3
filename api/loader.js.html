@@ -557,12 +557,12 @@
         <span class="nx">imageloader</span><span class="o">:</span> <span class="o">{</span> 
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASEBASE</span><span class="o">,</span> <span class="nx">NODESTYLE</span><span class="o">,</span> <span class="nx">NODESCREEN</span><span class="o">]</span>
         <span class="o">},</span>
-
+        
         <span class="nx">io</span><span class="o">:{</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
 
                 <span class="s1">&#39;io-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOMBASE</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOMBASE</span><span class="o">,</span> <span class="s1">&#39;querystring-stringify-simple&#39;</span><span class="o">]</span>
                 <span class="o">},</span> 
 
                 <span class="s1">&#39;io-xdr&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -638,6 +638,27 @@
         <span class="s1">&#39;async-queue&#39;</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOM</span><span class="o">],</span>
             <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;queue-run&#39;</span><span class="o">]</span>
+        <span class="o">},</span>
+
+        <span class="s1">&#39;querystring-stringify-simple&#39;</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">],</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;querystring/querystring-stringify-simple.js&#39;</span>
+        <span class="o">},</span>
+        <span class="s1">&#39;querystring-parse-simple&#39;</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">],</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;querystring/querystring-parse-simple.js&#39;</span>
+        <span class="o">},</span>
+        <span class="s1">&#39;querystring&#39;</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
+                <span class="s1">&#39;querystring-parse&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;querystring-parse-simple&#39;</span><span class="o">],</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;querystring-stringify&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;querystring-stringify-simple&#39;</span><span class="o">],</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="nx">slider</span><span class="o">:</span> <span class="o">{</span>

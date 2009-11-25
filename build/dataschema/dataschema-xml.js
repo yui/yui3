@@ -181,5 +181,4 @@ var LANG = Y.Lang,
 Y.DataSchema.XML = Y.mix(SchemaXML, Y.DataSchema.Base);
 
 
-
 }, '@VERSION@' ,{requires:['dataschema-base']});

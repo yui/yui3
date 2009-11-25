@@ -180,7 +180,11 @@ YUI.add('io-base', function(Y) {
    			o = _create(c.xdr || c.form, i);
    			m = c.method ? c.method.toUpperCase() : 'GET';
 
-   		if (c.form) {
+        if (Y.Lang.isObject(c.data)) {
+            c.data = Y.QueryString.stringify(c.data);
+        }
+
+        if (c.form) {
    			if (c.form.upload) {
    				return Y.io._upload(o, uri, c);
    			}
@@ -734,7 +738,7 @@ YUI.add('io-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['event-custom-base']});
+}, '@VERSION@' ,{requires:['event-custom-base','querystring-stringify-simple']});
 
 YUI.add('io-form', function(Y) {
 
@@ -829,7 +833,7 @@ YUI.add('io-form', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['io-base','node-base','node-style']});
+}, '@VERSION@' ,{requires:['io-base','node-base']});
 
 YUI.add('io-xdr', function(Y) {
 
