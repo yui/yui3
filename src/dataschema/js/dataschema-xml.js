@@ -65,7 +65,7 @@ var LANG = Y.Lang,
             try {
                 result = SchemaXML._getXPathResult(locator, context, xmldoc);
                 while(res = result.iterateNext()) {
-                    value = res.textContent;
+                    value = res.textContent || res.value || res.text || res.innerHTML || null;
                 }
 
                 return Y.DataSchema.Base.parse(value, field);
@@ -161,23 +161,7 @@ var LANG = Y.Lang,
                         if (this.index >= this.values.length) {return undefined;}
                         var result = this.values[this.index];
                         this.index += 1;
-                        return {/* commenting out, as none of these properties are used
-                            attributes: result.attributes,
-                            baseURI: result.baseURI,
-                            childNodes: result.childNodes,
-                            firstChild: result.firstChild,
-                            lastChild: result.lastChild,
-                            localName: result.localName,
-                            namespaceURI: result.namespaceURI,
-                            nextSibling: result.nextSibling,
-                            nodeName: result.nodeName,
-                            nodeValue: result.nodeValue,
-                            parentNode: result.parentNode,
-                            prefix: result.prefix,
-                            previousSibling: result.previousSibling,*/
-                            textContent: result.value || result.text || result.innerHTML || null/*,
-                            value: result.value*/
-                        };
+                        return result;
                     },
 
                     values: values
