@@ -19,9 +19,8 @@ YUI({
         Y.log(msg);
     }
 
-    var Event=Y.Event, Dom=Y.DOM, l=Y.Lang;
-
-    Y.on('domready', function() {
+    var Event=Y.Event, Dom=Y.DOM, l=Y.Lang,
+        test = function() {
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -144,6 +143,10 @@ YUI({
 
         ////////////////////////////////////////////////////////////////////////////////
 
+    };
+
+    Y.on('domready', function() {
+        test();
     });
             
 });
