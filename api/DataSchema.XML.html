@@ -133,6 +133,141 @@
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__getXPathResult">
+                                    <h4>
+                                        <a name="method__getXPathResult">_getXPathResult</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                         static 
+                                        
+                                        Object
+                                            <strong property="yui:name">_getXPathResult</strong>
+                                           (
+                                                
+                                                        
+                                                         locator
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         xmldoc
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fetches the XPath-specified result for a given location in an XML node or document.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">locator</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The XPath location.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  XML node or document to search within.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">xmldoc</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  XML document to resolve namespace.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Data collection or null.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__parseField">
+                                    <h4>
+                                        <a name="method__parseField">_parseField</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">_parseField</strong>
+                                           (
+                                                
+                                                        
+                                                         field
+                                                    
+                                                
+                                                        , 
+                                                         result
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Schema-parsed result field.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">field</span>
+                                                        &lt;<span property="yui:type">String | Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Required. Field definition.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">result</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Required. Schema parsed data object.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Required. XML node or document to search within.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__parseMeta">
                                     <h4>
                                         <a name="method__parseMeta">_parseMeta</a></h4>
@@ -194,6 +329,67 @@
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__parseResult">
+                                    <h4>
+                                        <a name="method__parseResult">_parseResult</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                         static 
+                                        
+                                        Object
+                                            <strong property="yui:name">_parseResult</strong>
+                                           (
+                                                
+                                                        
+                                                         fields
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Schema-parsed result to add to results list.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fields</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Required. A collection of field definition.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Required. XML node or document to search within.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Schema-parsed data.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__parseResults">
                                     <h4>
                                         <a name="method__parseResults">_parseResults</a></h4>
@@ -211,7 +407,7 @@
                                                     
                                                 
                                                         , 
-                                                         xmldoc_in
+                                                         context
                                                     
                                                 
                                                         , 
@@ -236,10 +432,10 @@
                                                         <span property="yui:description">  Schema to parse against.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">xmldoc_in</span>
+                                                        <code><span property="yui:name">context</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  XML document parse.</span>
+                                                        <span property="yui:description">  XML node document parse.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">data_out</span>
@@ -436,7 +632,10 @@
                         <h4>Methods</h4>
                         <ul class="content">        
                                 <li class="protected"><a href="#method__getLocationValue" title="_getLocationValue">_getLocationValue</a></li>
+                                <li class="protected"><a href="#method__getXPathResult" title="_getXPathResult">_getXPathResult</a></li>
+                                <li class="protected"><a href="#method__parseField" title="_parseField">_parseField</a></li>
                                 <li class="protected"><a href="#method__parseMeta" title="_parseMeta">_parseMeta</a></li>
+                                <li class="protected"><a href="#method__parseResult" title="_parseResult">_parseResult</a></li>
                                 <li class="protected"><a href="#method__parseResults" title="_parseResults">_parseResults</a></li>
                                 <li class=""><a href="#method_apply" title="apply">apply</a></li>
                         </ul>
@@ -453,7 +652,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DataSchema.Array", "name": "apply", "url": "DataSchema.Array.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "apply", "url": "DataSchema.Base.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "apply", "url": "DataSchema.JSON.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Text", "name": "apply", "url": "DataSchema.Text.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.XML", "name": "apply", "url": "DataSchema.XML.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getLocationValue", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getLocationValue", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getPath", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getPath", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_getFieldValues", "url": "DataSchema.JSON.html#method__getFieldValues", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getLocationValue", "url": "DataSchema.XML.html#method__getLocationValue", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "parse", "url": "DataSchema.Base.html#method_parse", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseMeta", "url": "DataSchema.JSON.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseMeta", "url": "DataSchema.XML.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.Array", "name": "_parseResults", "url": "DataSchema.Array.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseResults", "url": "DataSchema.JSON.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.Text", "name": "_parseResults", "url": "DataSchema.Text.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResults", "url": "DataSchema.XML.html#method__parseResults", "type": "method"}];
+    ALL_YUI_PROPS = [{"access": "", "host": "DataSchema.Array", "name": "apply", "url": "DataSchema.Array.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "apply", "url": "DataSchema.Base.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "apply", "url": "DataSchema.JSON.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Text", "name": "apply", "url": "DataSchema.Text.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.XML", "name": "apply", "url": "DataSchema.XML.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getLocationValue", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getLocationValue", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getPath", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getPath", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_getFieldValues", "url": "DataSchema.JSON.html#method__getFieldValues", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getLocationValue", "url": "DataSchema.XML.html#method__getLocationValue", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getXPathResult", "url": "DataSchema.XML.html#method__getXPathResult", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "parse", "url": "DataSchema.Base.html#method_parse", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseField", "url": "DataSchema.XML.html#method__parseField", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseMeta", "url": "DataSchema.JSON.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseMeta", "url": "DataSchema.XML.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResult", "url": "DataSchema.XML.html#method__parseResult", "type": "method"}, {"access": "protected", "host": "DataSchema.Array", "name": "_parseResults", "url": "DataSchema.Array.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseResults", "url": "DataSchema.JSON.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.Text", "name": "_parseResults", "url": "DataSchema.Text.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResults", "url": "DataSchema.XML.html#method__parseResults", "type": "method"}];
 </script>
 </body>
 </html>
