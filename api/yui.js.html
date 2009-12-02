@@ -231,7 +231,7 @@
             <span class="nx">fetchCSS</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
         
             <span class="c">// base: (Y === YUI) ? Y.Env.cdn : function() {</span>
-<span class="c"></span>            <span class="nx">base</span><span class="o">:</span> <span class="o">(</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">base</span><span class="o">)</span> <span class="o">?</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">base</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+<span class="c"></span>            <span class="nx">base</span><span class="o">:</span> <span class="o">(</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">base</span><span class="o">)</span> <span class="o">||</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">nodes</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">src</span><span class="o">,</span> <span class="nx">match</span><span class="o">;</span>
 
                 <span class="c">// get from querystring</span>
@@ -272,7 +272,7 @@
 
             <span class="o">}(),</span>
 
-            <span class="nx">loaderPath</span><span class="o">:</span> <span class="s1">&#39;loader/loader&#39;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">filter</span> <span class="o">||</span> <span class="s1">&#39;-min.&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;js&#39;</span>
+            <span class="nx">loaderPath</span><span class="o">:</span> <span class="o">(</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">loaderPath</span><span class="o">)</span> <span class="o">||</span> <span class="s1">&#39;loader/loader&#39;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">filter</span> <span class="o">||</span> <span class="s1">&#39;-min.&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;js&#39;</span>
         <span class="o">};</span>
 
     <span class="o">},</span>
