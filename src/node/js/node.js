@@ -58,7 +58,7 @@ var DOT = '.',
                 return Y.Selector.test(n, fn);
             } : 
             function(n) {
-                return fn(Node.get(n));
+                return fn(Y.one(n));
             };
         }
 
@@ -139,7 +139,7 @@ Node.scrubVal = function(val, node) {
     if (node && val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
             if (NODE_TYPE in val || Y.DOM.isWindow(val)) {// node || window
-                val = Node.get(val);
+                val = Y.one(val);
             } else if ((val.item && !val._nodes) || // dom collection or Node instance
                     (val[0] && val[0][NODE_TYPE])) { // array of DOM Nodes
                 val = Y.all(val);
@@ -248,7 +248,7 @@ Node.get = function() {
  * @return {Node} A Node instance bound to a DOM node or fragment 
  */
 Node.create = function() {
-    return Node.get(Y.DOM.create.apply(Y.DOM, arguments));
+    return Y.one(Y.DOM.create.apply(Y.DOM, arguments));
 };
 
 Node.ATTRS = {
@@ -544,7 +544,7 @@ Y.mix(Node.prototype, {
      * @return {Node} The matching Node instance or null if not found
      */
     ancestor: function(fn) {
-        return Node.get(Y.DOM.elementByAxis(this._node, 'parentNode', _wrapFn(fn)));
+        return Y.one(Y.DOM.elementByAxis(this._node, 'parentNode', _wrapFn(fn)));
     },
 
     /**
@@ -556,7 +556,7 @@ Y.mix(Node.prototype, {
      * @return {Node} Node instance or null if not found
      */
     previous: function(fn, all) {
-        return Node.get(Y.DOM.elementByAxis(this._node, 'previousSibling', _wrapFn(fn), all));
+        return Y.one(Y.DOM.elementByAxis(this._node, 'previousSibling', _wrapFn(fn), all));
     }, 
 
     /**
@@ -568,7 +568,7 @@ Y.mix(Node.prototype, {
      * @return {Node} Node instance or null if not found
      */
     next: function(fn, all) {
-        return Node.get(Y.DOM.elementByAxis(this._node, 'nextSibling', _wrapFn(fn), all));
+        return Y.one(Y.DOM.elementByAxis(this._node, 'nextSibling', _wrapFn(fn), all));
     },
         
     /**

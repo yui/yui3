@@ -313,6 +313,8 @@ onload = function() {
 
                 Assert.areEqual(Y.DOM.byId('test-custom-attr'), $("div[foo]", null, true), "div[foo], null, true");
                 ArrayAssert.itemsAreEqual([Y.DOM.byId('test-custom-attr')], $("[foo]"), "[foo]");
+
+                Assert.areEqual(document.body, $('body, div', null, true), "$('body, div', null, true)");
             }
 
         });
