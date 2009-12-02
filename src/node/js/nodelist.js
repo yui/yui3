@@ -17,6 +17,8 @@ var NodeList = function(nodes) {
     if (typeof nodes === 'string') {
         this._query = nodes;
         nodes = Y.Selector.query(nodes);
+    } else if (nodes.nodeType) {
+        nodes = [nodes];
     } else {
         nodes = Y.Array(nodes, 0, true);
     }
