@@ -680,17 +680,15 @@ Y.mix(Node.prototype, {
     /**
      * Nulls internal node references, removes any plugins and event listeners
      * @method destroy
-     * @param {Boolean} purge (optional) Whether or not to remove listeners from the
-     * node and its subtree (default is false)
+     * @param {Boolean} recursivePurge (optional) Whether or not to remove listeners from the
+     * node's subtree (default is false)
      *
      */
-    destroy: function(purge) {
+    destroy: function(recursivePurge) {
         delete Node._instances[this[UID]];
-        if (purge) {
-            this.purge(true);
-        }
+        this.purge(recursivePurge);
 
-        if (this.unplug) {
+        if (this.unplug) { // may not be a PluginHost
             this.unplug();
         }
 
