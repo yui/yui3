@@ -187,7 +187,7 @@
 
         <span class="c">// find targeted window/frame</span>
 <span class="c"></span>        <span class="c">// @TODO create facades</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">,</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+<span class="c"></span>        <span class="k">var</span> <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">,</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="nx">filter</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;@&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">v</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span><span class="o">;</span>
@@ -230,7 +230,8 @@
             <span class="nx">bootstrap</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
             <span class="nx">fetchCSS</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
         
-            <span class="nx">base</span><span class="o">:</span> <span class="o">(</span><span class="nx">Y</span> <span class="o">===</span> <span class="nx">YUI</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">cdn</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="c">// base: (Y === YUI) ? Y.Env.cdn : function() {</span>
+<span class="c"></span>            <span class="nx">base</span><span class="o">:</span> <span class="o">(</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">base</span><span class="o">)</span> <span class="o">||</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">nodes</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">src</span><span class="o">,</span> <span class="nx">match</span><span class="o">;</span>
 
                 <span class="c">// get from querystring</span>
@@ -239,38 +240,39 @@
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">src</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">src</span><span class="o">;</span>
 
-                    <span class="c">// DEBUG</span>
-<span class="c"></span>                    <span class="c">//src = &quot;http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&amp;3.0.0/build/yui/yui-min.js&quot;;</span>
-<span class="c"></span>                    <span class="c">//console.log(&#39;src) &#39; + src);</span>
-<span class="c"></span>                    <span class="c">// DEBUG</span>
-<span class="c"></span>
-                    <span class="nx">match</span> <span class="o">=</span> <span class="nx">src</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/^(.*)yui\/yui[\.\-].*js(\?.*)?$/</span><span class="o">);</span>
-                    <span class="nx">b</span> <span class="o">=</span> <span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nx">match</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">src</span><span class="o">)</span> <span class="o">{</span>
+<span class="c">// DEBUG</span>
+<span class="c">//src = &quot;http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&amp;3.0.0/build/yui/yui-min.js&quot;;</span>
+<span class="c">//console.log(&#39;src) &#39; + src);</span>
+<span class="c">// DEBUG</span>
+<span class="c"></span>                        <span class="nx">match</span> <span class="o">=</span> <span class="nx">src</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/</span><span class="o">);</span>
+                        <span class="nx">b</span> <span class="o">=</span> <span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nx">match</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
 
-                    <span class="c">// First stage base extraction</span>
-<span class="c"></span>                    <span class="c">// console.log(&#39;1) &#39; + b);</span>
-<span class="c"></span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">b</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="c">// extract correct path for mixed combo urls</span>
-<span class="c"></span>                        <span class="c">// http://yuilibrary.com/projects/yui3/ticket/2528423</span>
-<span class="c"></span>                        <span class="c">// http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&amp;3.0.0/build/yui/yui-min.js</span>
-<span class="c"></span>                        <span class="nx">match</span> <span class="o">=</span> <span class="nx">src</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/^(.*\?)(.*\&amp;)(.*)yui\/yui[\.\-].*js(\?.*)?$/</span><span class="o">);</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nx">match</span><span class="o">[</span><span class="m">3</span><span class="o">])</span> <span class="o">{</span>
-                            <span class="nx">b</span> <span class="o">=</span> <span class="nx">match</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">+</span> <span class="nx">match</span><span class="o">[</span><span class="m">3</span><span class="o">];</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">b</span><span class="o">)</span> <span class="o">{</span>
+
+                            <span class="c">// this is to set up the path to the loader.  The file filter for loader should match</span>
+<span class="c"></span>                            <span class="c">// the yui include.</span>
+<span class="c"></span>                            <span class="nx">filter</span> <span class="o">=</span> <span class="nx">match</span><span class="o">[</span><span class="m">2</span><span class="o">];</span>
+
+<span class="c">// extract correct path for mixed combo urls</span>
+<span class="c">// http://yuilibrary.com/projects/yui3/ticket/2528423</span>
+<span class="c">// http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&amp;3.0.0/build/yui/yui-min.js</span>
+<span class="c"></span>                            <span class="nx">match</span> <span class="o">=</span> <span class="nx">src</span><span class="o">.</span><span class="nx">match</span><span class="o">(</span><span class="sr">/^(.*\?)(.*\&amp;)(.*)yui\/yui[\.\-].*js(\?.*)?$/</span><span class="o">);</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nx">match</span><span class="o">[</span><span class="m">3</span><span class="o">])</span> <span class="o">{</span>
+                                <span class="nx">b</span> <span class="o">=</span> <span class="nx">match</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">+</span> <span class="nx">match</span><span class="o">[</span><span class="m">3</span><span class="o">];</span>
+                            <span class="o">}</span>
+
+                            <span class="k">break</span><span class="o">;</span>
                         <span class="o">}</span>
-
-                        <span class="k">break</span><span class="o">;</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
 
-                <span class="c">// console.log(&#39;2) &#39; + b);</span>
-<span class="c"></span>
                 <span class="c">// use CDN default</span>
 <span class="c"></span>                <span class="k">return</span> <span class="nx">b</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">cdn</span><span class="o">;</span>
 
             <span class="o">}(),</span>
 
-            <span class="nx">loaderPath</span><span class="o">:</span> <span class="s1">&#39;loader/loader-min.js&#39;</span>
+            <span class="nx">loaderPath</span><span class="o">:</span> <span class="o">(</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">loaderPath</span><span class="o">)</span> <span class="o">||</span> <span class="s1">&#39;loader/loader&#39;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">filter</span> <span class="o">||</span> <span class="s1">&#39;-min.&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;js&#39;</span>
         <span class="o">};</span>
 
     <span class="o">},</span>

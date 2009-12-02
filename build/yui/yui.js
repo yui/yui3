@@ -138,7 +138,7 @@ YUI.prototype = {
 
         // find targeted window/frame
         // @TODO create facades
-        var v = '@VERSION@', Y = this;
+        var v = '@VERSION@', Y = this, filter;
 
         if (v.indexOf('@') > -1) {
             v = 'test';
@@ -181,7 +181,8 @@ YUI.prototype = {
             bootstrap: true,
             fetchCSS: true,
         
-            base: (Y === YUI) ? Y.Env.cdn : function() {
+            // base: (Y === YUI) ? Y.Env.cdn : function() {
+            base: (YUI.config && YUI.config.base) || function() {
                 var b, nodes, i, src, match;
 
                 // get from querystring
@@ -190,38 +191,39 @@ YUI.prototype = {
                 for (i=0; i<nodes.length; i=i+1) {
                     src = nodes[i].src;
 
-                    // DEBUG
-                    //src = "http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&3.0.0/build/yui/yui-min.js";
-                    //console.log('src) ' + src);
-                    // DEBUG
+                    if (src) {
+// DEBUG
+//src = "http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&3.0.0/build/yui/yui-min.js";
+//console.log('src) ' + src);
+// DEBUG
+                        match = src.match(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/);
+                        b = match && match[1];
 
-                    match = src.match(/^(.*)yui\/yui[\.\-].*js(\?.*)?$/);
-                    b = match && match[1];
+                        if (b) {
 
-                    // First stage base extraction
-                    // console.log('1) ' + b);
+                            // this is to set up the path to the loader.  The file filter for loader should match
+                            // the yui include.
+                            filter = match[2];
 
-                    if (b) {
-                        // extract correct path for mixed combo urls
-                        // http://yuilibrary.com/projects/yui3/ticket/2528423
-                        // http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&3.0.0/build/yui/yui-min.js
-                        match = src.match(/^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
-                        if (match && match[3]) {
-                            b = match[1] + match[3];
+// extract correct path for mixed combo urls
+// http://yuilibrary.com/projects/yui3/ticket/2528423
+// http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&3.0.0/build/yui/yui-min.js
+                            match = src.match(/^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
+                            if (match && match[3]) {
+                                b = match[1] + match[3];
+                            }
+
+                            break;
                         }
-
-                        break;
                     }
                 }
-
-                // console.log('2) ' + b);
 
                 // use CDN default
                 return b || Y.Env.cdn;
 
             }(),
 
-            loaderPath: 'loader/loader-min.js'
+            loaderPath: (YUI.config && YUI.config.loaderPath) || 'loader/loader' + (filter || '-min.') + 'js'
         };
 
     },
