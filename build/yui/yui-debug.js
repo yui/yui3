@@ -182,7 +182,7 @@ YUI.prototype = {
             fetchCSS: true,
         
             // base: (Y === YUI) ? Y.Env.cdn : function() {
-            base: (YUI.config && YUI.config.base) ? YUI.config.base : function() {
+            base: (YUI.config && YUI.config.base) || function() {
                 var b, nodes, i, src, match;
 
                 // get from querystring
