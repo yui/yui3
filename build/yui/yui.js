@@ -223,7 +223,7 @@ YUI.prototype = {
 
             }(),
 
-            loaderPath: 'loader/loader' + (filter || '-min.') + 'js'
+            loaderPath: (YUI.config && YUI.config.loaderPath) || 'loader/loader' + (filter || '-min.') + 'js'
         };
 
     },
