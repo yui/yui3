@@ -655,6 +655,7 @@ Y.mix(Node.prototype, {
      * and does not change the node bound to the Node instance.
      * Shortcut for myNode.get('parentNode').replaceChild(newNode, myNode);
      * @method replace
+     * @param {Y.Node || HTMLNode} newNode Node to be inserted
      * @chainable
      *
      */
