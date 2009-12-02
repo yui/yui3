@@ -393,7 +393,7 @@ Y.mix(Node.prototype, {
     /**
      * Returns an attribute value on the Node instance
      * @method get
-     * @param {String} attr The attribute to be set
+     * @param {String} attr The attribute 
      * @return {any} The current value of the attribute
      */
     get: function(attr) {
