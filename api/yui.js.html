@@ -230,7 +230,8 @@
             <span class="nx">bootstrap</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
             <span class="nx">fetchCSS</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
         
-            <span class="nx">base</span><span class="o">:</span> <span class="o">(</span><span class="nx">Y</span> <span class="o">===</span> <span class="nx">YUI</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">cdn</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="c">// base: (Y === YUI) ? Y.Env.cdn : function() {</span>
+<span class="c"></span>            <span class="nx">base</span><span class="o">:</span> <span class="o">(</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">base</span><span class="o">)</span> <span class="o">?</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">base</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">nodes</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">src</span><span class="o">,</span> <span class="nx">match</span><span class="o">;</span>
 
                 <span class="c">// get from querystring</span>
