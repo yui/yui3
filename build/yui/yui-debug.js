@@ -198,14 +198,11 @@ YUI.prototype = {
                         match = src.match(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/);
                         b = match && match[1];
 
-                        // First stage base extraction
-                        // console.log('1) ' + b);
-
                         if (b) {
 
+                            // this is to set up the path to the loader.  The file filter for loader should match
+                            // the yui include.
                             filter = match[2];
-                            console.log('filter: ' + filter);
-
 
 // extract correct path for mixed combo urls
 // http://yuilibrary.com/projects/yui3/ticket/2528423
@@ -219,8 +216,6 @@ YUI.prototype = {
                         }
                     }
                 }
-
-                // console.log('2) ' + b);
 
                 // use CDN default
                 return b || Y.Env.cdn;
