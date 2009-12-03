@@ -217,11 +217,11 @@ Parent.prototype = {
      * attribute of child Widgets, responsible for setting the value of the 
      * parent's <code>selection</code> attribute.
      *
-     * @method _afterChildSelectedChange
+     * @method _afterItemSelectedChange
      * @protected
      * @param {EventFacade} event The event facade for the attribute change.
      */
-    _afterChildSelectedChange: function (event) {
+    _afterItemSelectedChange: function (event) {
 
         if (event.src != this) {
             this._set("selection", event.target);
@@ -239,7 +239,7 @@ Parent.prototype = {
      * @protected
      * @param {EventFacade} event The event facade for the attribute change.
      */
-    _afterChildFocusedChange: function (event) {
+    _afterItemFocusedChange: function (event) {
 
         var val = null;
         
@@ -329,8 +329,8 @@ Parent.prototype = {
             this._set("selection", item);
         }
 
-        item.after("selectedChange", Y.bind(this._afterChildSelectedChange, this));
-        item.after("focusedChange", Y.bind(this._afterChildFocusedChange, this));
+        item.after("selectedChange", Y.bind(this._afterItemSelectedChange, this));
+        item.after("focusedChange", Y.bind(this._afterItemFocusedChange, this));
         
     },
 
@@ -516,8 +516,7 @@ Parent.prototype = {
         });
         
     },
-    
-    
+
     
     initializer: function (config) {
 
