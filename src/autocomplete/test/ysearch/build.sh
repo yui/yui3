@@ -16,7 +16,7 @@ echo "building"
 rm *.js{,.gz}
 
 for i in "value-change" autocomplete widget; do
-	cp ../../../build/$i/${i}-min.js .
+	cp ../../../../build/$i/${i}-min.js .
 done
 
 cat autocomplete-min.js value-change-min.js > all-min.js
