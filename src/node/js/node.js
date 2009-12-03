@@ -789,6 +789,8 @@ Y.mix(Node.prototype, {
                 }
             }
             Y.DOM.addHTML(node, content, where);
+        } else  {
+            Y.log('unable to insert content ' + content, 'warn', 'node');
         }
         return this;
     },
@@ -820,6 +822,15 @@ Y.mix(Node.prototype, {
      * @chainable
      */
     setContent: function(content) {
+        if (content) {
+            if (content._node) { // map to DOMNode
+                content = content._node;
+            } else if (content._nodes) { // convert DOMNodeList to documentFragment
+                content = Y.DOM._nl2Frag(content._nodes);
+            }
+
+        }
+
         Y.DOM.addHTML(this._node, content, 'replace');
         return this;
     },
