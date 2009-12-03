@@ -1,3 +1,26 @@
+
+
+var autocomplete = "autocomplete",
+    YLang = Y.Lang,
+    YArrayeach = Y.Array.each,
+    eventDefaultBehavior = {
+        query : function (e) {
+            var self = this,
+                ds = self.get("dataSource"),
+                query = e.value,
+                handler = Y.bind(handleQueryResponse, self);
+            // if we have a datasource, then make the request.
+            if (ds) ds.sendRequest({
+                request : self.get("queryTemplate")(query),
+                callback : {
+                    success : handler,
+                    failure : handler
+                }
+            });
+        }
+    };
+
+
 function ACPlugin () { ACPlugin.superclass.constructor.apply(this, arguments) };
 
 Y.extend(
@@ -8,7 +31,7 @@ Y.extend(
             var self = this,
                 host = self.get("host");
             self.handles = attachHandles(self, host);
-            
+
             // publish events:
             // keep it simple
             // "query" for when value changes.
@@ -16,7 +39,7 @@ Y.extend(
             // "show" for when it's time to show something
             // "hide" for when it's time to hide
             var defaults = eventDefaultBehavior;
-            Y.Array.each([
+            YArrayeach([
                 "query",
                 "load",
                 "show",
@@ -31,7 +54,7 @@ Y.extend(
                 defaultFn : defaults[ev] || null,
                 prefix : "ac"
             }) }, self);
-        
+
             // manage the browser's autocomplete, since that'll interefere,
             // but we need to make sure that we don't prevent pre-filling 
             // when the user navs back to the page, unless the developer has
@@ -39,11 +62,11 @@ Y.extend(
             manageBrowserAC(host);
         },
         destructor : function () {
-            Y.Array.each(this.handles, function (h) { h.detach() });
+            YArrayeach(this.handles, function (h) { h.detach() });
         },
         open : function () { this.fire("ac:show") },
-        next : function () { this.fire("ac:next") },
-        previous : function () { this.fire("ac:previous") },
+        next : function (e) { e.preventDefault(); this.fire("ac:next") },
+        previous : function (e) { e.preventDefault(); this.fire("ac:previous") },
         close : function () { this.fire("ac:hide") }
     },
     { // statics
@@ -65,21 +88,21 @@ Y.extend(
                     return (this._cachedValue = q);
                 }
             },
-    
+
             // data source object
             dataSource : {
                 validator : function (ds) {
                     // quack.
-                    return ds && Y.Lang.isFunction(ds.sendRequest);
+                    return ds && YLang.isFunction(ds.sendRequest);
                 }
             },
-    
+
             // minimum number of chars before we'll query
             minQueryLength : {
                 value : 3,
-                validator : Y.Lang.isNumber
+                validator : YLang.isNumber
             },
-    
+
             // convert a value into a request for the DS
             // Can be either a string containg "{query}" somewhere,
             // or a function that takes and returns a string.
@@ -87,7 +110,7 @@ Y.extend(
                 value : encodeURIComponent,
                 setter : function (q) {
                     return (
-                        Y.Lang.isFunction(q) ? q
+                        YLang.isFunction(q) ? q
                         : function (query) {
                             // exchange {query} with the query,
                             // but turn \{query} into {query}, if for some reason that
@@ -104,7 +127,7 @@ Y.extend(
                     );
                 }
             }
-    
+
         } // end attrs
     } // end statics
 );
@@ -132,6 +155,7 @@ function valueChangeHandler (e) {
     this.fire( "ac:query", { value : e.value });
 };
 
+
 function browserACFixer (domnode) { return function () {
     if (domnode) domnode.setAttribute(autocomplete, "on");
     domnode = null;
@@ -141,9 +165,8 @@ function manageBrowserAC (host) {
     // turn off the browser's autocomplete, but take note of it to turn
     // it back on later.
     var domnode = Y.Node.getDOMNode(host),
-        autocomplete = "autocomplete",
         bac = domnode.getAttribute(autocomplete);
-    
+
     // turn the autocomplete back on so back button works, but only
     // if the user hasn't disabled it in the first place.
     if ((bac && bac !== "off") || bac === null || bac === undefined) {
@@ -152,29 +175,18 @@ function manageBrowserAC (host) {
         Y.on("beforeunload", bacf, window);
         Y.on("unload", bacf, window);
     }
-    
+
     // turn off the browser's autocomplete feature, since that'll interfere.
     domnode.setAttribute(autocomplete, "off");
 };
 
 function handleQueryResponse (e) {
-    this.fire("ac:load", {
-        results : (e && e.response && e.response.results) ? e.response.results : e
+    var res = (e && e.response && e.response.results) ? e.response.results : e;
+    
+    // if there is a result, and it's not an empty array
+    if (res && !(res && ("length" in res) && res.length === 0)) this.fire("ac:load", {
+        results : res,
+        query : this.get("queryValue")
     });
-};
-
-var eventDefaultBehavior = {
-    query : function (e) {
-        var self = this,
-            ds = self.get("dataSource"),
-            query = e.value,
-            handler = Y.bind(handleQueryResponse, self);
-        
-        // if we have a datasource, then make the request.
-        if (ds) ds.sendRequest(self.get("queryTemplate")(query), {
-            success : handler,
-            failure : handler
-        });
-    }
 };
 
