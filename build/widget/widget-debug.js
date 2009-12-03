@@ -455,6 +455,8 @@ Y.extend(Widget, Y.Base, {
             delegates,
             guid;
 
+
+
         if (rootNode) {
 
             guid = Y.stamp(rootNode, true);
@@ -481,8 +483,14 @@ Y.extend(Widget, Y.Base, {
                         //  bubbles is true (EventTarget default)
                         //  preventable is true (EventTarget default)
                         //  queuable is false (EventTarget default)
+                        
+                        //  TO DO: talk to Adam about why this step is 
+                        //  necessary when EventTargets are supposed to 
+                        //  lazy publish
 
-                        widget.fire(event.type);                        
+                        widget.publish(event.type);
+
+                        widget.fire(event.type);
 
                     }
 
@@ -512,7 +520,7 @@ Y.extend(Widget, Y.Base, {
                 }
                 else {
         
-                    this.on(RENDER, function () {
+                    this.after(RENDER, function () {
         
                         this._createDelegate(sType);  
         
