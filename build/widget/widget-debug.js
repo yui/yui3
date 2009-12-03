@@ -490,7 +490,11 @@ Y.extend(Widget, Y.Base, {
 
                         widget.publish(event.type);
 
-                        widget.fire(event.type);
+                        //  Pass in the DOM event to merge the DOM event 
+                        //  properties into the event facade of the custom 
+                        //  event.
+
+                        widget.fire(event.type, event);
 
                     }
 
