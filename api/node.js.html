@@ -107,7 +107,7 @@
                 <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">n</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
             <span class="o">}</span> <span class="o">:</span> 
             <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">n</span><span class="o">));</span>
+                <span class="k">return</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">n</span><span class="o">));</span>
             <span class="o">};</span>
         <span class="o">}</span>
 
@@ -188,7 +188,7 @@
     <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span> <span class="c">// only truthy values are risky</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// safari nodeList === function</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">NODE_TYPE</span> <span class="k">in</span> <span class="nx">val</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">isWindow</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span><span class="c">// node || window</span>
-<span class="c"></span>                <span class="nx">val</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+<span class="c"></span>                <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">((</span><span class="nx">val</span><span class="o">.</span><span class="nx">item</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">val</span><span class="o">.</span><span class="nx">_nodes</span><span class="o">)</span> <span class="o">||</span> <span class="c">// dom collection or Node instance</span>
 <span class="c"></span>                    <span class="o">(</span><span class="nx">val</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span><span class="o">[</span><span class="m">0</span><span class="o">][</span><span class="nx">NODE_TYPE</span><span class="o">]))</span> <span class="o">{</span> <span class="c">// array of DOM Nodes</span>
 <span class="c"></span>                <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
@@ -297,7 +297,7 @@
 <span class="c"> * @return {Node} A Node instance bound to a DOM node or fragment </span>
 <span class="c"> */</span>
 <span class="nx">Node</span><span class="o">.</span><span class="nx">create</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">create</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">));</span>
+    <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">create</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">));</span>
 <span class="o">};</span>
 
 <span class="nx">Node</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
@@ -440,7 +440,7 @@
     <span class="c">/**</span>
 <span class="c">     * Returns an attribute value on the Node instance</span>
 <span class="c">     * @method get</span>
-<span class="c">     * @param {String} attr The attribute to be set</span>
+<span class="c">     * @param {String} attr The attribute </span>
 <span class="c">     * @return {any} The current value of the attribute</span>
 <span class="c">     */</span>
     <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
@@ -593,7 +593,7 @@
 <span class="c">     * @return {Node} The matching Node instance or null if not found</span>
 <span class="c">     */</span>
     <span class="nx">ancestor</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="s1">&#39;parentNode&#39;</span><span class="o">,</span> <span class="nx">_wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">)));</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="s1">&#39;parentNode&#39;</span><span class="o">,</span> <span class="nx">_wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">)));</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -605,7 +605,7 @@
 <span class="c">     * @return {Node} Node instance or null if not found</span>
 <span class="c">     */</span>
     <span class="nx">previous</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="s1">&#39;previousSibling&#39;</span><span class="o">,</span> <span class="nx">_wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">),</span> <span class="nx">all</span><span class="o">));</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="s1">&#39;previousSibling&#39;</span><span class="o">,</span> <span class="nx">_wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">),</span> <span class="nx">all</span><span class="o">));</span>
     <span class="o">},</span> 
 
     <span class="c">/**</span>
@@ -617,7 +617,7 @@
 <span class="c">     * @return {Node} Node instance or null if not found</span>
 <span class="c">     */</span>
     <span class="nx">next</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="s1">&#39;nextSibling&#39;</span><span class="o">,</span> <span class="nx">_wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">),</span> <span class="nx">all</span><span class="o">));</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="s1">&#39;nextSibling&#39;</span><span class="o">,</span> <span class="nx">_wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">),</span> <span class="nx">all</span><span class="o">));</span>
     <span class="o">},</span>
         
     <span class="c">/**</span>
@@ -702,6 +702,7 @@
 <span class="c">     * and does not change the node bound to the Node instance.</span>
 <span class="c">     * Shortcut for myNode.get(&#39;parentNode&#39;).replaceChild(newNode, myNode);</span>
 <span class="c">     * @method replace</span>
+<span class="c">     * @param {Y.Node || HTMLNode} newNode Node to be inserted</span>
 <span class="c">     * @chainable</span>
 <span class="c">     *</span>
 <span class="c">     */</span>
@@ -935,7 +936,8 @@
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
-                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
