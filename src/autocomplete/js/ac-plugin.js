@@ -1,9 +1,18 @@
+/**
+ * ACPlugin - A plugin that exposes the proper events to make AutoComplete work
+ * on a form element (input or textarea, typically).
+ * 
+ * This utility is not intended to be used in isolation, but rather as a glue
+ * layer to work with ACWidget or some other display mechanism.
+ **/
 
-
+// shorthands
 var autocomplete = "autocomplete",
     YLang = Y.Lang,
     YArrayeach = Y.Array.each,
     eventDefaultBehavior = {
+        // the default behavior of the query event is to check for a datasource,
+        // and then make a request with it.
         query : function (e) {
             var self = this,
                 ds = self.get("dataSource"),
@@ -20,11 +29,11 @@ var autocomplete = "autocomplete",
         }
     };
 
-
 function ACPlugin () { ACPlugin.superclass.constructor.apply(this, arguments) };
 
-Y.extend(
-    (Y.Plugin.ACPlugin = Y.augment(ACPlugin, Y.EventTarget)),
+
+Y.Plugin.ACPlugin = Y.extend(
+    ACPlugin,
     Y.Plugin.Base,
     { // prototype
         initializer : function () {
