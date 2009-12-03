@@ -16,6 +16,12 @@ var Lang = Y.Lang;
  * @param {Object} config User configuration object.
 */
 function Child() {
+
+    // Widget method overlap
+
+    Y.after(this._syncUIChild, this, "syncUI");
+    Y.after(this._bindUIChild, this, "bindUI");
+
 }
 
 Child.ATTRS = {
@@ -29,8 +35,8 @@ Child.ATTRS = {
      * values are:
      * <dl>
      * <dt>0</dt> <dd>(Default) Not selected</dd>
-     * <dt>1</dt> <dd>Partially selected</dd>
-     * <dt>2</dt> <dd>Fully selected</dd>
+     * <dt>1</dt> <dd>Fully selected</dd>
+     * <dt>2</dt> <dd>Partially selected</dd>
      * </dl>
     */
     selected: {   
@@ -254,6 +260,70 @@ Child.prototype = {
 
         return parent;
 
+    },
+
+
+    /**
+     * Updates the UI to reflect the <code>selected</code> attribute value.
+     *
+     * @method _uiSetChildSelected
+     * @protected
+     * @param {number} selected The selected value to be reflected in the UI.
+     */    
+    _uiSetChildSelected: function (selected) {
+
+        var box = this.get("boundingBox"),
+            sClassName = this.getClassName("selected");
+
+        if (selected === 0) {
+            box.removeClass(sClassName);
+        }
+        else {
+            box.addClass(sClassName);
+        }
+        
+    },
+
+
+    /**
+     * Default attribute change listener for the <code>selected</code> 
+     * attribute, responsible for updating the UI, in response to 
+     * attribute changes.
+     *
+     * @method _afterChildSelectedChange
+     * @protected
+     * @param {EventFacade} event The event facade for the attribute change.
+     */    
+    _afterChildSelectedChange: function (event) {
+        this._uiSetChildSelected(event.newVal);
+    },
+    
+
+    /**
+     * Synchronizes the UI to match the WidgetChild state. This method in 
+     * invoked after syncUI is invoked for the Widget class using YUI's aop 
+     * infrastructure.
+     *
+     * @method _syncUIChild
+     * @protected
+     */    
+    _syncUIChild: function () {
+        this._uiSetChildSelected(this.get("selected"));
+    },
+
+
+    /**
+     * Binds event listeners responsible for updating the UI state in response 
+     * to WidgetChild related state changes.
+     * <p>
+     * This method is invoked after bindUI is invoked for the Widget class
+     * using YUI's aop infrastructure.
+     * </p>
+     * @method _bindUIChild
+     * @protected
+     */    
+    _bindUIChild: function () {
+        this.after("selectedChange", this._afterChildSelectedChange);
     }
     
 };

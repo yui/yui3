@@ -77,10 +77,14 @@ Parent.ATTRS = {
      *
      * @description Returns the currently selected child Widget.  If the 
      * <code>mulitple</code> attribte is set to <code>true</code> will 
-     * return an array of the currently selected children.
+     * return an array of the currently selected children.  If no children 
+     * are selection, will return null.
      */
     selection: {
-       readOnly: true
+        readOnly: true,
+        setter: function (val) {
+            return this._setSelection(val);
+        }
     },
     
     
@@ -103,35 +107,96 @@ Parent.ATTRS = {
 
 Parent.prototype = {
 
-    _afterSelectedChange: function (event) {
-        this._setSelection(event.target);
+    /**
+     * Attribute change listener for the <code>selection</code> 
+     * attribute, responsible for setting the value of the 
+     * parent's <code>selected</code> attribute.
+     *
+     * @method _afterSelectionChange
+     * @protected
+     * @param {EventFacade} event The event facade for the attribute change.
+     */
+    _afterSelectionChange: function (event) {
+        
+        var prevSelection = event.prevVal,
+            selection = event.newVal;
+
+        if (selection) {
+
+            if (Lang.isArray(selection)) {
+
+                if (selection.length === this.get("items").length) {
+                    this.set("selected", 1, { src: this });
+                }
+                else {
+                    this.set("selected", 2, { src: this });
+                }
+
+            }
+            else {
+
+                if (prevSelection) {
+                    //  Set src equal to the current context to prevent
+                    //  unnecessary re-calculation of the selection.
+                    prevSelection.set("selected", 0, { src: this });
+                }
+
+            }
+            
+        }
+        
     },
 
+
+    /**
+     * Attribute change listener for the <code>selected</code> 
+     * attribute.
+     *
+     * @method _afterParentSelectedChange
+     * @protected
+     * @param {EventFacade} event The event facade for the attribute change.
+     */
+    _afterParentSelectedChange: function (event) {
+
+        var value = event.newVal,
+            items = this.get("items");
+
+        if (event.src != this && this == event.target && items.length > 0 && 
+            (value === 0 || value === 1)) {
+
+            Y.each(items, function (item) {
+                item.set("selected", value);
+            });
+            
+        }
+        
+    },
+
+
+    /**
+     * Default setter for <code>selection</code> attribute changes.
+     *
+     * @method _setSelection
+     * @protected
+     * @param {Array|Widget} zIndex
+     * @return {Widget} 
+     */
     _setSelection: function (item) {
 
-        var selection;
+        var selection = null,
+            items = this.get("items");
 
-        if (this.get("root").get("multiple")) {
+        if (this.get("root").get("multiple") && items.length > 0) {
 
             selection = [];
             
-            Y.each(this.get("items"), function (v) {
+            Y.each(items, function (v) {
             
                if (v.get("selected") > 0) {
                    selection.push(v);
                }
             
             });
-            
-            
-            if (selection.length === this.get("items").length) {
-                //  Fully selected
-                this.set("selected", 1);
-            }
-            else {
-                //  Partially selected
-                this.set("selected", 2);
-            }
 
         }
         else {
@@ -141,13 +206,40 @@ Parent.prototype = {
             }
 
         }
-
-        this._set("selection", selection);
+        
+        return selection;
             
     },
 
 
-    _setActiveItem: function (event) {
+    /**
+     * Attribute change listener for the <code>selected</code> 
+     * attribute of child Widgets, responsible for setting the value of the 
+     * parent's <code>selection</code> attribute.
+     *
+     * @method _afterChildSelectedChange
+     * @protected
+     * @param {EventFacade} event The event facade for the attribute change.
+     */
+    _afterChildSelectedChange: function (event) {
+
+        if (event.src != this) {
+            this._set("selection", event.target);
+        }
+
+    },
+
+
+    /**
+     * Attribute change listener for the <code>focused</code> 
+     * attribute of child Widgets, responsible for setting the value of the 
+     * parent's <code>activeItem</code> attribute.
+     *
+     * @method _afterSelectedChange
+     * @protected
+     * @param {EventFacade} event The event facade for the attribute change.
+     */
+    _afterChildFocusedChange: function (event) {
 
         var val = null;
         
@@ -177,23 +269,19 @@ Parent.prototype = {
         var item,
             sType,
             fnConstructor;
-
-        if (!(config instanceof Y.Widget)) {
             
-            if (config.type) {
-                sType = config.type;
-                delete config[sType];
-            }
-            else {
-                sType = this.get("defaultItemType");
-            }
+        if (config.type) {
+            sType = config.type;
+            delete config[sType];
+        }
+        else {
+            sType = this.get("defaultItemType");
+        }
 
-            fnConstructor = Y[sType];
+        fnConstructor = Y[sType];
 
-            if (fnConstructor) {
-                item = new fnConstructor(config);
-            }
-
+        if (fnConstructor) {
+            item = new fnConstructor(config);
         }
 
         return item;
@@ -238,11 +326,11 @@ Parent.prototype = {
 
 
         if (item.get("selected")) {
-            this._setSelection(item);
+            this._set("selection", item);
         }
 
-        item.after("selectedChange", Y.bind(this._afterSelectedChange, this));
-        item.after("focusedChange", Y.bind(this._setActiveItem, this));
+        item.after("selectedChange", Y.bind(this._afterChildSelectedChange, this));
+        item.after("focusedChange", Y.bind(this._afterChildFocusedChange, this));
         
     },
 
@@ -322,11 +410,14 @@ Parent.prototype = {
         }
         else {
 
-            oItem = this._createItem(item);
-
-            if (oItem instanceof Y.Widget) {
-                success = this.fire("itemAdded", { item: oItem, index: index });
+            if (item instanceof Y.Widget) {
+                oItem = item;
             }
+            else {
+                oItem = this._createItem(item);
+            }
+
+            success = this.fire("itemAdded", { item: oItem, index: index });
 
             returnVal = success ? oItem : null;
 
@@ -405,9 +496,18 @@ Parent.prototype = {
         return items ? items[index] : null;
         
     },
+    
 
-
-    renderUI: function () {
+    /**
+     * Renders all child Widgets for the parent.
+     * <p>
+     * This method in invoked after renderUI is invoked for the Widget class
+     * using YUI's aop infrastructure.
+     * </p>
+     * @method _renderUIParent
+     * @protected
+     */
+    _renderUIParent: function () {
               
         var content = this.get("contentBox");
         
@@ -417,7 +517,8 @@ Parent.prototype = {
         
     },
     
-
+    
+    
     initializer: function (config) {
 
         /**
@@ -458,10 +559,12 @@ Parent.prototype = {
             this.add(config.items);
         }
 
-    },
+        Y.after(this._renderUIParent, this, "renderUI");
 
-    destructor: function () {
-    }    
+        this.after("selectionChange", this._afterSelectionChange);
+        this.after("selectedChange", this._afterParentSelectedChange);
+        
+    }
 
 };
 
