@@ -171,13 +171,17 @@ Child.prototype = {
 	* @description Returns the Widget's next sibling.
 	* @return {Widget} Widget instance. 
 	*/
-    next: function () {
+    next: function (circular) {
 
         var parent = this.get("parent"),
             sibling;
 
         if (parent) {
             sibling = parent.item((this.get("index")+1));
+        }
+
+        if (circular && !sibling) {
+            sibling = parent.item(0);
         }
 
         return sibling;
@@ -190,14 +194,18 @@ Child.prototype = {
 	* @description Returns the Widget's previous sibling.
 	* @return {Widget} Widget instance. 
 	*/
-    previous: function () {
+    previous: function (circular) {
 
         var parent = this.get("parent"),
             index = this.get("index"),
             sibling;
         
         if (parent && index > 0) {
-            sibling = parent.item([(index+1)]);
+            sibling = parent.item([(index-1)]);
+        }
+
+        if (circular && !sibling) {
+            sibling = parent.item((parent.get("items").length - 1));
         }
 
         return sibling; 
