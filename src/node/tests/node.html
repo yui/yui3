@@ -775,6 +775,16 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
                 html + content,
                 "node.insert(" + html + ", 0)");
 
+            node.setContent('<em>foo</em><span>bar</span>');
+
+            node.insert('<strong>baz</strong>', node.one('span'));
+            Assert.areEqual(node._node.childNodes[1].tagName, 'STRONG',
+                "node.insert('<strong>bar</strong>', node.one('span')");
+
+            node.insert('<code>var lorem</code>', node.one('em')._node);
+            Assert.areEqual(node._node.childNodes[0].tagName, 'CODE',
+                "node.insert('<code>var lorem</code>', node.one('em')._node)");
+
             // insert Node instance
             html = Y.Node.create('<div>foo</div>');
             node.insert(html, 2);

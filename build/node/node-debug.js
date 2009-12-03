@@ -777,12 +777,15 @@ Y.mix(Node.prototype, {
         if (content) {
             if (typeof where === 'number') { // allow index
                 where = this._node.childNodes[where];
+            } else if (where && where._node) { // Node
+                where = where._node;
             }
 
             if (typeof content !== 'string') { // allow Node or NodeList/Array instances
                 if (content._node) { // Node
                     content = content._node;
                 } else if (content._nodes || (!content.nodeType && content.length)) { // NodeList or Array
+                    content = Y.all(content);
                     Y.each(content._nodes, function(n) {
                         Y.DOM.addHTML(node, n, where);
                     });
