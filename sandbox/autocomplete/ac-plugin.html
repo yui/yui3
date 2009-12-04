@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="http://yui.yahooapis.com/3.0.0b1/build/cssfonts/fonts-min.css">
+<style>
+body {
+    font-size:16px;
+}
+.demoified {
+    font-size:200%;
+    border:10px solid red;
+}
+script.mine {
+    clear:left;
+    white-space:pre;
+    display:block;
+    font-family:monospace;
+    background:#eef;
+}
+script::before, script::after {
+    content:"<script>";
+}
+script::after {
+    content:"</script>";
+}
+script[src]::before {
+    content:"<script src=\"" attr(src) "\">";
+    white-space:nowrap;
+}
+script[src] {
+    background:#fff;
+}
+</style>
+    
+<title>A Demonstrative Plugin</title>
+</head>
+<body class="yui-skin-sam">
+
+<form>
+    <input name="ac" id="ac" type="text">
+    <input type="submit" id="log" value="Show times">
+</form>
+
+<a href="//example.com">go away</a>
+
+<pre id="res">results go here</pre>
+
+<script class="mine" src="../../build/yui/yui.js"></script>
+<script class="mine" src="../../sandbox/value-change/js/value-change.js"></script>
+<script class="mine">
+YUI.add('ac-plugin', function (Y) {
+
+    
+    var PRIVATE = {},
+        HANDLE = "handle";
+    
+    function attachTCHandler (who, host, id, delay) {
+        // if we're changing something, remove the pre-existing listener.
+        if (
+            (HANDLE in PRIVATE[id]) &&
+            PRIVATE[id][HANDLE].detach
+        ) {
+            if (delay === who.get("keyDelay")) {
+                // console.log("no need, because "+delay+" === "+who.get("keyDelay"));
+                return;
+            }
+            
+            // console.log("detach, because "+delay+" !== "+who.get("keyDelay"));
+            // Y.log("detaching pre-existing one");
+            // console.log(PRIVATE[id][HANDLE]);
+            PRIVATE[id][HANDLE].detach();
+        }
+        
+        // console.log("set delay to", delay, "pre-existing:", PRIVATE[id][HANDLE]);
+        
+        PRIVATE[id][HANDLE] = Y.on(
+            "textchange",
+            tcHandler,
+            Y.one(host),
+            who,
+            { delay : delay }
+        );
+        // PRIVATE[id][HANDLE]._delay = delay;
+    };
+    function tcHandler () {
+        // see if we got enough to make a query.
+        var val = this.get("queryValue");
+        if ( val.length < this.get("minQueryLength") ) return;
+        this.fire("ac:query", val);
+    };
+    
+    function handleQuery (e, val) {
+        // check for a dataSource, and if there is one, then make the query.
+        
+        var ds = this.get("dataSource"),
+            tpl = this.get("queryTemplate"),
+            query = this.get("queryValue");
+        
+        query = tpl.replace(/(^|[^\\])\{query\}/, '$1'+encodeURIComponent(query)).replace(/\\([\{|\}])/, '$1');
+        
+        // console.log("handleQuery", e, val, query);
+        ds.sendRequest(query, {
+            success : this.handleQueryResponse,
+            failure : this.handleQueryResponse
+        });
+    };
+    
+    function handleQueryResponse (e) {
+        // doSomething
+        // console.log("handleQueryResponse", this, e);
+        var data = (e && e.response && e.response.results) ? e.response.results : e;
+        this.fire("ac:render", {results : data});
+    };
+    
+    function showResults (e) {
+        var widget = this.get("widget");
+        // console.log("showResults", e, widget);
+        
+        if (widget) widget.render(e.results);
+    };
+    
+    function manageBrowserAC (host) {
+        // turn off the browser's autocomplete, but take note of it to turn
+        // it back on later.
+        var domnode = Y.Node.getDOMNode(host),
+            bac = domnode.getAttribute("autocomplete");
+        
+        // turn the autocomplete back on so back button works, but only
+        // if the user hasn't disabled it in the first place.
+        if ((bac && bac !== "off") || bac === null || bac === undefined) {
+            var browserACFixer = function () {
+                if (domnode) domnode.setAttribute("autocomplete", "on");
+                domnode = null;
+            }
+            // hook onto both.  Concession to browser craziness.
+            Y.on("beforeunload", browserACFixer, window);
+            Y.on("unload", browserACFixer, window);
+        }
+        
+        // turn off the browser's autocomplete feature, since that'll interfere.
+        domnode.setAttribute("autocomplete", "off");
+    };
+    
+    function ACPlugin () {
+        ACPlugin.superclass.constructor.apply(this, arguments);
+    };
+
+    ACPlugin.ATTRS = {
+        queryValue     : {
+            // @TODO: Support delimiters here.
+            // Split, get the cursor position, and return just the one that's active.
+            getter : function () {
+                return this.get("host").get("value");
+            },
+            setter : function (q) {
+                this.get("host").set("value", q);
+                return q;
+            }
+        },
+        keyDelay     : {
+            value : 50,
+            setter : function (t) {
+                attachTCHandler(this, this.get("host"), Y.stamp(this), t);
+                return t;
+            }
+        },
+        dataSource     : { value : null },
+        delimiter      : { value : null },
+        minQueryLength : { value : 3 },
+        renderer       : { value : null },
+        queryTemplate  : { value : "{query}" },
+        widget         : { value : null }
+    };
+    
+    Y.extend(ACPlugin, Y.Plugin.Base, {
+        initializer : function () {
+            Y.log("initializing");
+            
+            var host = this.get("host"),
+                id = Y.stamp(this);
+            
+            // stash the private textchange handle, so we can remove it later.
+            // FIXME: there are some issues with removing textchange. That needs
+            // to be reworked, but as long as there's no unplugging, it works
+            // for now.
+            if (!(id in PRIVATE)) {
+                PRIVATE[id] = {};
+            }
+            
+            // console.log("assigning tcHandler with ", this, this.get("keyDelay"));
+            attachTCHandler(this, host, id, this.get("keyDelay"));
+            
+            // in addition to the textchange event, pressing down or enter will force it to trigger a query
+            // right now, even if the timeout has not happened yet.
+            Y.on("key", Y.bind(tcHandler, this), host, "down:13,10,40");
+            
+            // manage the browser's autocomplete, since that'll interefere,
+            // but we need to make sure that we don't prevent pre-filling 
+            // when the user navs back to the page, unless the developer has
+            // specifically disabled that feature in the markup.
+            manageBrowserAC(host);
+            
+            // publish the events
+            this.publish("ac:query", {
+                broadcast : true,
+                defaultFn : handleQuery,
+                prefix : "ac"
+            });
+            this.publish("ac:render", {
+                broadcase : true,
+                defaultFn : showResults,
+                prefix : "ac"
+            });
+            
+            // bind the query response handler to this.
+            this.handleQueryResponse = Y.bind(handleQueryResponse, this);
+        },
+        destroy : function () {
+            // remove the textchange handler.
+            var id = Y.stamp(this),
+                priv = PRIVATE[id];
+            priv[HANDLE].detach();
+            delete PRIVATE[id];
+        }
+    });
+    
+    // support events.
+    Y.augment(ACPlugin, Y.EventTarget);
+    
+    ACPlugin.NAME = "ACPlugin";
+    ACPlugin.NS = "ac";
+    
+    Y.namespace("Plugin").ACPlugin = ACPlugin;
+    
+}, '@VERSION@', {
+    requires : [ 'node', 'plugin', 'text-change', 'event-key' ]
+});
+</script>
+
+
+<script>
+// testy test code below.
+YUI({
+    debug: true,
+    base : "../../build/",
+    filter : "debug"
+}).use('console', 'console-filters', 'datasource', 'ac-plugin', function (Y) {
+    window.Y = Y;
+    
+    new Y.Console({
+        plugins : [ Y.Plugin.ConsoleFilters ],
+        newestOnTop : false,
+        useBrowserConsole : false
+    }).render();
+    
+    window.myNode = Y.one("#ac");
+    
+    var myDS = new Y.DataSource.Get({
+        source : "http://query.yahooapis.com/v1/public/yql?" +
+            "format=json&" +
+            "env=http%3A%2F%2Fdatatables.org%2Falltables.env&",
+        scriptCallbackParam : "callback"
+    });
+    
+    myDS.plug({fn : Y.Plugin.DataSourceJSONSchema, cfg : {
+        schema : {
+            resultListLocator : "query.results.Result"
+        }
+    }});
+    
+    myNode.plug(Y.Plugin.ACPlugin, {
+        keyDelay : 1000,
+        queryTemplate : "q=" +
+            encodeURIComponent("select * from search.suggest where query =\"") +
+            "{query}" +
+            encodeURIComponent("\" limit 10"),
+        dataSource : myDS,
+        widget : { render : function (results) {
+            // console.log("widget.render", results);
+            Y.one("#res").set("innerHTML", results.join("\n"));
+        }}
+    });
+    
+    // myNode.ac.set("keyDelay", 1);
+    
+    myNode.ac.on("ac:query", function (e, q) {
+        console.log(" ac:query", e, q);
+    });
+    myNode.ac.on("ac:render", function (e) {
+        console.log(" ac:render", e);
+    });
+    
+});
+
+</script>
+</body>
+</html>

@@ -147,11 +147,16 @@ YUI.add('io-base', function(Y) {
    	*	  Each property can reference a function or be written as an
    	*     inline function.
    	*
-   	*     context: Object reference for an event handler when it is implemented
-   	*              as a method of a base object. Defining "context" will preserve
-   	*              the proper reference of "this" used in the event handler.
+   	*     context: Object reference for all defined transaction event handlers
+   	*              when it is implemented as a method of a base object. Defining
+   	*              "context" will set the reference of "this," used in the
+   	*              event handlers, to the context value.  In the case where
+   	*              different event handlers all have different contexts,
+   	*              use Y.bind() to set the execution context, bypassing this
+   	*              configuration.
+   	*
    	*     headers: This is a defined object of client headers, as many as.
-   	*              desired for the transaction.  These headers are sentThe object
+   	*              desired for the transaction.  The object
    	*              pattern is:
    	*              {
    	*		         header: value
@@ -175,12 +180,17 @@ YUI.add('io-base', function(Y) {
 	* @return object
    	*/
    	function _io(uri, c, i) {
-   		var f, o, m;
+   		var f, o, d, m, r, s;
    			c = Y.Object(c);
    			o = _create(c.xdr || c.form, i);
    			m = c.method ? c.method.toUpperCase() : 'GET';
+   			s = c.sync;
 
-   		if (c.form) {
+        if (Y.Lang.isObject(c.data)) {
+            c.data = Y.QueryString.stringify(c.data);
+        }
+
+        if (c.form) {
    			if (c.form.upload) {
    				return Y.io._upload(o, uri, c);
    			}
@@ -208,11 +218,14 @@ YUI.add('io-base', function(Y) {
 			}
    		}
 
-   		o.c.onreadystatechange = function() { _readyState(o, c); };
+		if (!s) {
+   			o.c.onreadystatechange = function() { _readyState(o, c); };
+		}
+
    		try {
-			o.c.open(m, uri, true);
+			o.c.open(m, uri, s ? false : true);
    		}
-   		catch(e0){
+   		catch(a){
 			if (c.xdr) {
 				// This exception is usually thrown by browsers
 				// that do not support native XDR transactions.
@@ -225,20 +238,31 @@ YUI.add('io-base', function(Y) {
    		}
 
    		_setHeaders(o.c, c.headers || {});
+   		_ioStart(o.id, c);
 		try {
 			// Using "null" will result in a POST request with
 			// no Content-Length defined.
 	   		o.c.send(c.data || '');
+	   		if (s) {
+				d = o.c;
+				r = c.arguments ? { id: o.id, arguments: c.arguments } : { id: o.id };
+   				r = Y.mix(r, d, false, ['status', 'statusText', 'responseText', 'responseXML']);
+				r.getAllResponseHeaders = function() { return d.getAllResponseHeaders(); };
+				r.getResponseHeader = function(h) { return d.getResponseHeader(h); };
+
+   				_ioComplete(o, c);
+   				_handleResponse(o, c);
+
+   				return r;
+			}
 		}
-   		catch(e1) {
+   		catch(b) {
 			if (c.xdr) {
 				// This exception is usually thrown by browsers
 				// that do not support native XDR transactions.
 				return _resend(o, uri, c);
 			}
 		}
-
-   		_ioStart(o.id, c);
 
    		// If config.timeout is defined, and the request is standard XHR,
    		// initialize timeout polling.
@@ -260,7 +284,7 @@ YUI.add('io-base', function(Y) {
    /**
    	* @description Method for creating and subscribing transaction events.
    	*
-   	* @method _subscribe
+   	* @method _tE
    	* @private
    	* @static
    	* @param {string} e - event to be published
@@ -268,11 +292,14 @@ YUI.add('io-base', function(Y) {
    	*
 	* @return void
    	*/
-   	function _subscribe(e, c){
-   		var evt = new Y.EventTarget().publish('transaction:' + e);
-		evt.subscribe(c.on[e], (c.context || Y), c.arguments);
+   	function _tE(e, c) {
+   		var eT = new Y.EventTarget().publish('transaction:' + e),
+   			a = c.arguments,
+   			cT = c.context || Y;
 
-   		return evt;
+		a ? eT.subscribe(c.on[e], cT, a) : eT.subscribe(c.on[e], cT);
+
+		return eT;
    	}
 
    /**
@@ -289,15 +316,14 @@ YUI.add('io-base', function(Y) {
     * @return void
    	*/
    	function _ioStart(id, c) {
-   		var evt;
-   			// Set default value of argument c, property "on" to Object if
-   			// the property is null or undefined.
-   			c.on = c.on || {};
+		var a = c.arguments;
+			// Set default value of argument c, property "on" to Object if
+			// the property is null or undefined.
+			c.on = c.on || {};
 
-   		Y.fire(E_START, id);
+		a ? Y.fire(E_START, id, a) : Y.fire(E_START, id);
    		if (c.on.start) {
-   			evt = _subscribe('start', c);
-   			evt.fire(id);
+			_tE('start', c).fire(id);
    		}
    	}
 
@@ -316,16 +342,15 @@ YUI.add('io-base', function(Y) {
     * @return void
    	*/
    	function _ioComplete(o, c) {
-   		var evt,
-			r = o.status ? { status: 0, statusText: o.status } : o.c;
+   		var r = o.status ? { status: 0, statusText: o.status } : o.c,
+   			a = c.arguments;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-   		Y.fire(E_COMPLETE, o.id, r);
+		a ? Y.fire(E_COMPLETE, o.id, r, a) : Y.fire(E_COMPLETE, o.id, r);
    		if (c.on.complete) {
-   			evt = _subscribe('complete', c);
-   			evt.fire(o.id, r);
+   			_tE('complete', c).fire(o.id, r);
    		}
    	}
 
@@ -343,15 +368,14 @@ YUI.add('io-base', function(Y) {
     * @return void
    	*/
    	function _ioSuccess(o, c) {
-   		var evt;
+   		var a = c.arguments;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-   		Y.fire(E_SUCCESS, o.id, o.c);
+		a ? Y.fire(E_SUCCESS, o.id, o.c, a) : Y.fire(E_SUCCESS, o.id, o.c);
    		if (c.on.success) {
-   			evt = _subscribe('success', c);
-   			evt.fire(o.id, o.c);
+			_tE('success', c).fire(o.id, o.c);
    		}
 
    		_ioEnd(o, c);
@@ -371,16 +395,15 @@ YUI.add('io-base', function(Y) {
     * @return void
    	*/
    	function _ioFailure(o, c) {
-   		var evt,
- 			r = o.status ? { status: 0, statusText: o.status } : o.c;
+   		var r = o.status ? { status: 0, statusText: o.status } : o.c,
+			a = c.arguments;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-   		Y.fire(E_FAILURE, o.id, r);
+		a ? Y.fire(E_FAILURE, o.id, r, a) : Y.fire(E_FAILURE, o.id, r);
    		if (c.on.failure) {
-   			evt = _subscribe('failure', c);
-   			evt.fire(o.id, r);
+			_tE('failure', c).fire(o.id, r);
    		}
 
    		_ioEnd(o, c);
@@ -400,15 +423,14 @@ YUI.add('io-base', function(Y) {
     * @return void
    	*/
    	function _ioEnd(o, c) {
-   		var evt;
+   		var a = c.arguments;
    			// Set default value of argument c, property "on" to Object if
    			// the property is null or undefined.
    			c.on = c.on || {};
 
-   		Y.fire(E_END, o.id);
+		a ? Y.fire(E_END, o.id, a) : Y.fire(E_END, o.id);
    		if (c.on.end) {
-   			evt = _subscribe('end', c);
-   			evt.fire(o.id);
+			_tE('end', c).fire(o.id);
    		}
 
    		_destroy(o, c.xdr ? true : false );
@@ -575,7 +597,7 @@ YUI.add('io-base', function(Y) {
    		for (p in _headers) {
    			if (_headers.hasOwnProperty(p)) {
    				if (h[p]) {
-   					// Configuration headers will supersede IO preset headers,
+   					// Configuration headers will supersede io preset headers,
    					// if headers match.
    					break;
    				}
@@ -600,11 +622,11 @@ YUI.add('io-base', function(Y) {
    	* @private
    	* @static
 	* @param {object} o - Transaction object generated by _create().
-	* @param {object} c - Configuration object passed to YUI.io().
+	* @param {object} t - Timeout in milliseconds.
 	* @return void
    	*/
-   	function _startTimeout(o, timeout) {
-   		_timeout[o.id] = w.setTimeout(function() { _ioCancel(o, 'timeout'); }, timeout);
+   	function _startTimeout(o, t) {
+   		_timeout[o.id] = w.setTimeout(function() { _ioCancel(o, 'timeout'); }, t);
    	}
 
    /**
@@ -680,10 +702,10 @@ YUI.add('io-base', function(Y) {
    		}
    	}
 
-   	function _destroy(o, transport) {
+   	function _destroy(o, t) {
    		// IE, when using XMLHttpRequest as an ActiveX Object, will throw
    		// a "Type Mismatch" error if the event handler is set to "null".
-   		if(w.XMLHttpRequest && !transport) {
+   		if(w.XMLHttpRequest && !t) {
    			if (o.c) {
    				o.c.onreadystatechange = null;
    			}
@@ -734,7 +756,7 @@ YUI.add('io-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['event-custom-base']});
+}, '@VERSION@' ,{requires:['event-custom-base','querystring-stringify-simple']});
 
 YUI.add('io-form', function(Y) {
 
@@ -830,7 +852,7 @@ YUI.add('io-form', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['io-base','node-base','node-style']});
+}, '@VERSION@' ,{requires:['io-base','node-base']});
 
 YUI.add('io-xdr', function(Y) {
 

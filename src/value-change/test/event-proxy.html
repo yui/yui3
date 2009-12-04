@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>investigating this scope in custom node events</title>
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/3.0.0b1/build/cssfonts/fonts-min.css">
+<style>
+body {
+    font-size:16px;
+}
+.demoified {
+    font-size:200%;
+    border:10px solid red;
+}
+script.mine {
+    clear:left;
+    white-space:pre;
+    display:block;
+    font-family:monospace;
+    background:#eef;
+}
+script::before, script::after {
+    content:"<script>";
+}
+script::after {
+    content:"</script>";
+}
+script[src]::before {
+    content:"<script src=\"" attr(src) "\">";
+    white-space:nowrap;
+}
+script[src] {
+    background:#fff;
+}
+</style>
+
+</head>
+<body>
+<input class="input" value="change me!" size="100"><br>
+
+<ol>
+	<li>Create a custom event name, which the listener is attached to.</li>
+	<li>Listen to a DOM event, and have the listener fire the CE.</li>
+	<li>When the CE handlers are all removed, remove the DOM event handlers.</li>
+	<li>If the DOM event handlers are removed, remove the CE handler.</li>
+</ol>
+
+
+<script class="mine" src="../../../build/yui/yui.js"></script>
+<script>
+function logger () {
+	console.log.apply(console, arguments);
+	return logger;
+};
+function logThis () {
+	logger("logThis!");
+	// logger(this)(arguments);
+};
+</script>
+
+<script>
+YUI.add("event-proxy", function (Y) {
+
+/**
+ * A way to yoke multiple events into a single custom event proxy, and then
+ * expose a new event name as a way to assign listeners to it.
+ **/
+Y.EventProxy = EventProxy;
+
+
+/**
+ * Take a selector string, or a node, or a domnode, or a nodelist, or an array of domnodes,
+ * and return a nodelist.
+ **/
+function toNodeList (el) {
+	if (Y.Lang.isString(el)) return Y.all(el);
+	if (Y.Lang.isArray(el)) return Y.all(el);
+	if (el instanceof Y.Node) return Y.all([el._node]);
+	if (el instanceof Y.NodeList) return el;
+	return Y.all([el]);
+};
+
+function EventProxy (o) {
+	// if it's already been built, then return the one that's already there.
+	if (o.name in Y.Env.evt.plugins) return Y.Env.evt.plugins[o.name];
+	
+	// switch into ctor mode.
+	if (!(this instanceof EventProxy)) return new EventProxy(o);
+	
+	o.trigger = Y.Lang.isArray(o.trigger) ? o.trigger : [o.trigger];
+	
+	for (var i in o) this[i] = o[i];
+	
+	// make it real.
+	EventProxy[this.name] = Y.Node.DOM_EVENTS[this.name] = Y.Env.evt.plugins[this.name] = this;
+};
+
+
+function bindApply (fn, o, args) {
+	args = Y.Array(args,0);
+	return function () {
+		return fn.apply(o, args.concat(Y.Array(arguments,0)));
+	};
+};
+
+// get a key and an OA handle.  When the detach() method of the handle
+// is called, it'll prevent the EP.on method from being called.
+// If EP.on is fired again, when the promise resolves, it'll be cleared out.
+EventProxy.prototype.promise = function (key, handle) {
+	var p = this.promises = this.promises || {};
+	if (!handle) delete p[key];
+	else p[key] = handle;
+	return handle;
+};
+EventProxy.prototype.getPromise = function (key) {
+	var p = this.promises;
+	return p && p.hasOwnProperty(key) && p[key];
+};
+
+EventProxy.prototype.on = function (ev, fn, el, o) {
+	
+	// first, normalize the element to a nodelist.
+	var target = toNodeList(el);
+	
+	// handle empty selector lists using onAvailable.
+	if (Y.Lang.isString(el)) {
+		if (target.size() === 0) return this.promise(
+			el, Y.Event.onAvailable(el, bindApply(EventProxy.prototype.on, this, arguments))
+		);
+		var p = this.getPromise(el);
+		if (p) {
+			// fulfill the promise, by changing the handle's detach method to the right detacher
+			// and then disavow all knowledge of it.  This way, collisions are highly unlikely.
+			
+			// this.promises[el].detach = detacher(this, target, fn);
+			Y.after("detach", detacher(this, target, fn), p);
+			// no second arg clears it out.
+			this.promise(el);
+		}
+	}
+	
+	// attach to each node in the list.
+	var attach = attacher(EventProxy[ev], arguments),
+		handles = [];
+	target.each(function (node) {
+		handles.push(attach(node));
+	}, this);
+	
+	// now we need to return the thing that can be detached.
+	return new Y.EventHandle(handles);
+};
+
+function detacher (self, nodeList, fn) {
+	return Y.bind("each", nodeList, function (node) {
+		var proxyHandle = self.getProxyHandle(Y.stamp(node)+Y.stamp(fn));
+		if (proxyHandle) proxyHandle.detach();
+	});
+};
+
+function attacher (self, args) {
+	args = Y.Array(args, 0);
+	var ev = args.shift(),
+		fn = args.shift(),
+		el = args.shift(),
+		o = args.shift();
+		// now args is JUST the extra bits and bobs.
+	
+	return function (node) {
+		// create the proxy event name
+		var proxyName = self.proxyName(node);
+		
+		// if this node hasn't already been set up, then attach the appropriate triggers.
+		// Listen to a DOM event, and have the listener fire the CE.
+		// If all the DOM event handlers are removed, remove the CE handler.
+		if (!node.getEvent(proxyName)) {
+			// attach listeners to node for all of the events in the this.trigger array
+			// the handler should call this.proxyFn, supplying it with a context object
+			// and a "fire" function that, when called, fires the proxy CE, triggering
+			// the user functions appropriately.
+			console.log("setting up triggers", self.trigger, self);
+			Y.Array.each(self.trigger, attachTrigger(node, self));
+		}
+		
+		// attach the fn to the proxyName event
+		// append the rest of the args to the three that matter most.
+		var proxyHandle = node.on.apply(node, [proxyName, fn, o || node].concat(args));
+		
+		// When the CE handlers are all removed, remove the DOM event handlers.
+		Y.after("detach", Y.bind(removeTriggers, self, node), proxyHandle);
+		
+		self.saveProxyHandle(Y.stamp(node)+Y.stamp(fn), proxyHandle);
+		
+		return proxyHandle;
+	};
+};
+
+EventProxy.prototype.saveProxyHandle = function (key, handle) {
+	var ph = this.proxyHandles = this.proxyHandles || {};
+	return ph[key] = handle;
+};
+EventProxy.prototype.getProxyHandle = function (key) {
+	var ph = this.proxyHandles = this.proxyHandles || {};
+	return ph[key];
+};
+
+
+EventProxy.prototype.proxyName = function (node) {
+	return Y.stamp(node) + "-" + this.name;
+};
+
+function attachTrigger (node, self) {
+	console.log("attach triggers to ", node, self.trigger);
+	return function (trigger) {
+		// TODO: save this handle!
+		// if the triggers are all removed, then detach the proxy CE as well.
+		// add to a registry so that we know triggers have been attached.
+		console.log("attaching", trigger, "to", node);
+		var triggerHandles = self.triggerHandles = self.triggerHandles || {};
+		var stamp = Y.stamp(node);
+		triggerHandles = triggerHandles[stamp] = triggerHandles[stamp] || {};
+		if (!triggerHandles[trigger]) {
+			triggerHandles[trigger] = node.on(trigger, fireProxy(node, self), this);
+		}
+	};
+};
+function fireProxy (node, self) {
+	// "self" is the EventProxy object.
+	// "this" is whatever the user decided to make it when they subscribed.
+	return function (e) {
+		function fire (extraContext) {
+			// build up the context object, and fire the proxy CE.
+			node.fire(proxyName, Y.merge(e, extraContext, context));
+		};
+		var proxyName = self.proxyName(node);
+		var context = {
+			originalEvent : e,
+			type : self.name,
+			proxyName : proxyName,
+			target : node
+		};
+		self.proxyFn(context, fire);
+	};
+};
+
+// private member of the EventProxy class.
+// remove the triggers, and (if it's not been done already) detach the proxy
+function removeTriggers (node) {
+	// if it's in the registry, then remove it, call detach, and abort.
+	// the second pass will remove the triggers themselves, if it's not cancelled.
+	// for each of the trigger handlers, call detach() to remove them.
+	var self = this;
+	var triggerHandles = self.triggerHandles[Y.stamp(node)];
+	for (var trigger in triggerHandles) triggerHandles[trigger].detach();
+};
+
+
+}, '@VERSION@' ,{requires:['node-base']});
+
+</script>
+
+<script>
+YUI.add("value-change", function (Y) {
+	
+	var getListener = (function () {
+		var listeners = {};
+		return function (key) {
+			return listeners[key] = listeners[key] || { value : null, timeout : null };
+		};
+	})();
+	
+	Y.EventProxy({
+		name : "valueChange",
+		trigger : [ "change", "keypress", "paste", "keydown", "keyup" ],
+		proxyFn : function (context, fire) {
+			var target = context.target;
+			var key = Y.stamp(target);
+			var listener = getListener(target);
+			if (listener.timeout) listener.timeout.cancel();
+			listener.timeout = Y.later(10, this, function () {
+				// if the value is different, then execute!
+				var currentValue = target.get("value"),
+					oldValue = listener.value;
+				listener.value = currentValue;				
+				// console.log("in the valueChange timeout", listener.value, target.get("value"), currentValue);
+				if (currentValue !== oldValue) fire({
+					oldValue : oldValue,
+					value : currentValue
+				});
+			});
+		}
+	});
+	
+}, '@VERSION@', {requires:['event-proxy']});
+
+
+// testy test code below.
+YUI({
+    debug: true,
+    base : "../../../build/",
+    filter : "raw"
+}).use('value-change', function (Y) {
+	
+	window.Y=Y;
+	
+	Y.one(".input").on("valueChange", function (e) {
+		console.log(e, this);
+	});
+	
+	
+	// console.info("Y.all('.input').on('customDom', logger)");
+	// console.log(Y.all(".input").on("customDom", logThis));
+	// 
+	// console.info("Y.one('.input').on('customDom', logger)");
+	// console.log(Y.one(".input").on("customDom", logThis));
+	// 
+	// console.info("Y.on('customDom', logger, '.input')");
+	// console.log(Y.on("customDom", logThis, ".input"));
+	// 
+	// console.info("Y.on('customDom', logger, Y.all('.input'))");
+	// console.log(Y.on('customDom', logThis, Y.all('.input')));
+	// 
+	// Y.one("#doit").on("click", function () {
+	// 	logger("clicky!");
+	// 	var i = Y.one(".input");
+	// 	i.fire("customDom", {
+	// 		type : "customDom",
+	// 		target : i,
+	// 		currentTarget : i
+	// 	});
+	// 	logger("fired");
+	// });
+	
+});
+</script>
+</body>
+</html>

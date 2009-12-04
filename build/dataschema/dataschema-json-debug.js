@@ -73,7 +73,10 @@ var LANG = Y.Lang,
             var i = 0,
                 len = path.length;
             for (;i<len;i++) {
-                if(!LANG.isUndefined(data[path[i]])) {
+                if(
+                    LANG.isObject(data) &&
+                    (path[i] in data)
+                ) {
                     data = data[path[i]];
                 }
                 else {
@@ -152,8 +155,16 @@ var LANG = Y.Lang,
                         error = new Error("JSON results retrieval failure");
                     }
                     else {
-                        if(LANG.isArray(schema.resultFields) && LANG.isArray(results)) {
-                            data_out = SchemaJSON._getFieldValues(schema.resultFields, results, data_out);
+                        if(LANG.isArray(results)) {
+                            // if no result fields are passed in, then just take the results array whole-hog
+                            // Sometimes you're getting an array of strings, or want the whole object,
+                            // so resultFields don't make sense.
+                            if (LANG.isArray(schema.resultFields)) {
+                                data_out = SchemaJSON._getFieldValues(schema.resultFields, results, data_out);
+                            }
+                            else {
+                                data_out.results = results;
+                            }
                         }
                         else {
                             data_out.results = [];

@@ -138,7 +138,7 @@ YUI.prototype = {
 
         // find targeted window/frame
         // @TODO create facades
-        var v = '@VERSION@', Y = this;
+        var v = '@VERSION@', Y = this, filter;
 
         if (v.indexOf('@') > -1) {
             v = 'test';
@@ -181,17 +181,40 @@ YUI.prototype = {
             bootstrap: true,
             fetchCSS: true,
         
-            base: function() {
-                var b, nodes, i, match;
+            // base: (Y === YUI) ? Y.Env.cdn : function() {
+            base: (YUI.config && YUI.config.base) || function() {
+                var b, nodes, i, src, match;
 
                 // get from querystring
                 nodes = document.getElementsByTagName('script');
 
                 for (i=0; i<nodes.length; i=i+1) {
-                    match = nodes[i].src.match(/^(.*)yui\/yui[\.\-].*js(\?.*)?$/);
-                    b = match && match[1];
-                    if (b) {
-                        break;
+                    src = nodes[i].src;
+
+                    if (src) {
+// DEBUG
+//src = "http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&3.0.0/build/yui/yui-min.js";
+//console.log('src) ' + src);
+// DEBUG
+                        match = src.match(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/);
+                        b = match && match[1];
+
+                        if (b) {
+
+                            // this is to set up the path to the loader.  The file filter for loader should match
+                            // the yui include.
+                            filter = match[2];
+
+// extract correct path for mixed combo urls
+// http://yuilibrary.com/projects/yui3/ticket/2528423
+// http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&3.0.0/build/yui/yui-min.js
+                            match = src.match(/^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
+                            if (match && match[3]) {
+                                b = match[1] + match[3];
+                            }
+
+                            break;
+                        }
                     }
                 }
 
@@ -200,7 +223,7 @@ YUI.prototype = {
 
             }(),
 
-            loaderPath: 'loader/loader-min.js'
+            loaderPath: (YUI.config && YUI.config.loaderPath) || 'loader/loader' + (filter || '-min.') + 'js'
         };
 
     },
@@ -1457,7 +1480,7 @@ YArray.numericSort = function(a, b) {
  * @return {boolean} true if the function returns true on
  * any of the items in the array
  */
- YArray.some = (Native.some) ?
+YArray.some = (Native.some) ?
     function (a, f, o) { 
         return Native.some.call(a, f, o);
     } :
@@ -1993,6 +2016,15 @@ Y.UA = function() {
         webkit: 0,
 
         /**
+         * Chrome will be detected as webkit, but this property will also
+         * be populated with the Chrome version number
+         * @property chrome
+         * @type float
+         * @static
+         */
+        chrome: 0,
+
+        /**
          * The mobile property will be set to a string containing any relevant
          * user agent information when a modern mobile browser is detected.
          * Currently limited to Safari on the iPhone/iPod Touch, Nokia N-series
@@ -2073,11 +2105,15 @@ Y.UA = function() {
                 }
             }
 
-            m=ua.match(/AdobeAIR\/([^\s]*)/);
-            if (m) {
-                o.air = m[0]; // Adobe AIR 1.0 or better
+            m=ua.match(/Chrome\/([^\s]*)/);
+            if (m && m[1]) {
+                o.chrome = numberfy(m[1]); // Chrome
+            } else {
+                m=ua.match(/AdobeAIR\/([^\s]*)/);
+                if (m) {
+                    o.air = m[0]; // Adobe AIR 1.0 or better
+                }
             }
-
         }
 
         if (!o.webkit) { // not webkit

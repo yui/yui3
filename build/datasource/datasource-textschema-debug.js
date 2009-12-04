@@ -102,5 +102,4 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceTextSchema = DataSourceTextSchema;
 
 
-
 }, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-text']});

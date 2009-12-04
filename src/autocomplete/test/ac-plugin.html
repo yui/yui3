@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ac-plugin</title>
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/3.0.0b1/build/cssfonts/fonts-min.css">
+<style>
+body {
+    font-size:16px;
+}
+.demoified {
+    font-size:200%;
+    border:10px solid red;
+}
+script.mine {
+    clear:left;
+    white-space:pre;
+    display:block;
+    font-family:monospace;
+    background:#eef;
+}
+script::before, script::after {
+    content:"<script>";
+}
+script::after {
+    content:"</script>";
+}
+script[src]::before {
+    content:"<script src=\"" attr(src) "\">";
+    white-space:nowrap;
+}
+script[src] {
+    background:#fff;
+}
+.lipsum { display:none; }
+</style>
+
+<style>
+form {
+    position:relative;
+}
+#aclist {
+    position:absolute;
+    display:none;
+    list-style:none;
+    border:1px solid #ccc;
+    border-width:1px 1px 0;
+    padding:0;
+    margin:0;
+    background:#fff;
+}
+#aclist li {
+    display:block;
+    list-style:none;
+    border-bottom:1px solid #ccc;
+    padding:3px;
+    margin:0;
+}
+#aclist .selected {
+    background:#900;
+    color:#fff;
+}
+</style>
+
+</head>
+<body>
+    <form>
+        <input class="input" id="input" size="100"><ul id="aclist"></ul>
+    </form>
+</body>
+
+<script class="mine" src="../../../build/yui/yui.js"></script>
+<script class="mine" src="./ac-plugin.js"></script>
+<script class="mine" src="../../value-change/build_tmp/value-change.js"></script>
+
+<script>
+YUI({
+    debug: true,
+    base : "../../../build/",
+    filter : "raw"
+}).use('ac-plugin', 'plugin', 'node-base', 'datasource', function (Y) {
+    window.Y = Y;
+
+    var input = window.input = Y.get("#input");
+    input.plug(Y.Plugin.ACPlugin);
+    
+  
+    var myDS = new Y.DataSource.Get({
+        source : "http://query.yahooapis.com/v1/public/yql?" +
+            "format=json&" +
+            "env=http%3A%2F%2Fdatatables.org%2Falltables.env&",
+        scriptCallbackParam : "callback"
+    });
+
+    myDS.plug({fn : Y.Plugin.DataSourceJSONSchema, cfg : {
+        schema : {
+            resultListLocator : "query.results.Result"
+        }
+    }});
+
+    input.plug(Y.Plugin.ACPlugin, {
+        queryTemplate : function (q) { return "q=" + encodeURIComponent(
+            "select * from search.suggest where query =\"" +
+            q.replace(/(["\\])/g, '\\$1') +
+            "\" limit 10"
+        )},
+        dataSource : myDS
+    });
+    
+    var myWidget = (function () {
+        var data = [],
+            node = Y.one('#aclist'),
+            selected = -1;
+        node.delegate("click", function (e) {
+            var target = e.currentTarget, index = target.get("className").split('-')[1];
+            myWidget.focus(index).select(e);
+        }, "li");
+        node.delegate("mouseover", function (e) {
+            var target = e.currentTarget, index = target.get("className").split('-')[1];
+            myWidget.focus(index);
+        }, "li");
+        Y.on("click", function () { myWidget.hide() }, document);
+        
+        return {
+            setData : function (d) {
+                if (d.length) {
+                    data = d;
+                    selected = -1;
+                }
+                return this;
+            },
+            render : function () {
+                // console.log("render");
+                if (!data.length) return this;
+                this.visible = true;
+                node.set("innerHTML", "");
+                for (var i = 0, l = data.length; i < l; i ++) {
+                    node.appendChild(Y.Node.create('<li class="ac-'+i+'">'+data[i]+"</li>"));
+                }
+                node.setStyle("display", "block");
+                return this;
+            },
+            hide : function () {
+                node.setStyle("display", "none");
+                this.visible = false;
+                selected = -1;
+                return this;
+            },
+            focus : function (i) {
+                i = i || selected;
+                // console.log("focus on ",i, data, data[i]);
+                if (!data.length) return this;
+                if (i >= data.length) i = 0;
+                if (i < 0) i = data.length - 1;
+                
+                var list = node.all("li"),
+                    current = node.one(".selected"),
+                    intent = list.item(i);
+                // console.log("list", list, "current", current, "intent", intent, intent === current);
+                if (!intent || intent === current) return this;
+                selected = i;
+                if (current) current.removeClass("selected");
+                intent.addClass("selected");
+                input.ac.set("queryValue", myWidget.getValue());
+                return this;
+            },
+            next : function () {
+                // console.log("mywidget.next",this.visible,selected);
+                selected = selected || 0;
+                selected ++;
+                if (!this.visible) this.render();
+                return this.focus(selected);
+            },
+            previous : function () {
+                selected = selected || data.length;
+                selected --;
+                return this.focus(selected);
+            },
+            getValue : function () {
+                if (!data.length || !data[selected]) return "";
+                return data[selected];
+            },
+            select : function (e) {
+                // console.log("enter!", e);
+                input.ac.set("queryValue", myWidget.getValue());
+                myWidget.hide();
+                input.focus();
+                e && e.preventDefault();
+            }
+        };
+    })();
+        
+
+    input.ac.on("ac:load", function (e) {
+        myWidget.setData(e.results).render();
+    });
+    input.ac.on("ac:query", function (e) {
+        if (myWidget.visible && e.value === myWidget.value) {
+            // console.log("Cancelling ac:query");
+            e.halt();
+        }
+        myWidget.value = e.value;
+    });
+    input.ac.on("ac:show", function () {
+        if (!myWidget.visible) myWidget.render();
+    }, myWidget);
+    // input.ac.on("ac:show", myWidget.render, myWidget);
+    input.ac.on("ac:hide", myWidget.hide, myWidget);
+    input.ac.on("ac:next", myWidget.next, myWidget);
+    input.ac.on("ac:previous", myWidget.previous, myWidget);
+    Y.on("key", myWidget.select, input, "down:13,10");
+    
+});
+</script>
+
+
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: widget-position   (YUI Library)</title>
+	<title>API: widget-child   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>widget-position&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>widget-child&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_widget-position.html" title="widget-position">widget-position</a>
+            &gt; <a href="./module_widget-child.html" title="widget-child">widget-child</a>
                 
                 
         <form onsubmit="return false">
@@ -44,13 +44,13 @@
             </form>
 
                    
-                    <h3>Module: widget-position
+                    <h3>Module: widget-child
                     
 
 
                     </h3>
                     <div class="description summary">
-                        Provides basic XY positioning support for Widgets, though an extension
+                        Provides an extension enabling a Widget to be a child of another Widget.
                     </div>
 
 
@@ -60,11 +60,11 @@
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Widget extension, which can be used to add positioning support to the base Widget class, \nthrough the <a href=\"Base.html#method_build\">Base.build</a> method.", "guessedname": "WidgetPosition", "name": "WidgetPosition"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Widget extension providing functionality enabling a Widget to be a \nchild of another Widget.", "guessedname": "WidgetChild", "name": "WidgetChild"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
-                                    <li><a href="WidgetPosition.html" title="WidgetPosition" id="class_0">WidgetPosition</a></li>
+                                    <li><a href="WidgetChild.html" title="WidgetChild" id="class_0">WidgetChild</a></li>
                                 </ul>
                             </div>
                     </div>
@@ -121,7 +121,8 @@
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
-                                <li class="selected"><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class="selected"><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
@@ -132,14 +133,14 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="WidgetPosition.html" title="WidgetPosition">WidgetPosition</a></li>
+                                <li class=""><a href="WidgetChild.html" title="WidgetChild">WidgetChild</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="Widget-Position.js.html" title="Widget-Position.js">Widget-Position.js</a></li>
+                                <li class=""><a href="Widget-Child.js.html" title="Widget-Child.js">Widget-Child.js</a></li>
                         </ul>
                     </div>
 
@@ -156,7 +157,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetPosition", "name": "_afterXYChange", "url": "WidgetPosition.html#method__afterXYChange", "type": "method"}, {"access": "protected", "host": "WidgetPosition", "name": "_bindUIPosition", "url": "WidgetPosition.html#method__bindUIPosition", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "_getX", "url": "WidgetPosition.html#method__getX", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "_getY", "url": "WidgetPosition.html#method__getY", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "move", "url": "WidgetPosition.html#method_move", "type": "method"}, {"access": "protected", "host": "WidgetPosition", "name": "_renderUIPosition", "url": "WidgetPosition.html#method__renderUIPosition", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "_setX", "url": "WidgetPosition.html#method__setX", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "_setY", "url": "WidgetPosition.html#method__setY", "type": "method"}, {"access": "protected", "host": "WidgetPosition", "name": "_syncUIPosition", "url": "WidgetPosition.html#method__syncUIPosition", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "syncXY", "url": "WidgetPosition.html#method_syncXY", "type": "method"}, {"access": "protected", "host": "WidgetPosition", "name": "_uiSetXY", "url": "WidgetPosition.html#method__uiSetXY", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "_validateXY", "url": "WidgetPosition.html#method__validateXY", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "WidgetPosition.ATTRS", "url": "WidgetPosition.html#property_WidgetPosition.ATTRS", "type": "property"}, {"access": "", "host": "WidgetPosition", "name": "WidgetPosition.POSITIONED_CLASS_NAME", "url": "WidgetPosition.html#property_WidgetPosition.POSITIONED_CLASS_NAME", "type": "property"}, {"access": "", "host": "WidgetPosition", "name": "x", "url": "WidgetPosition.html#config_x", "type": "config"}, {"access": "", "host": "WidgetPosition", "name": "xChange", "url": "WidgetPosition.html#event_xChange", "type": "event"}, {"access": "", "host": "WidgetPosition", "name": "xy", "url": "WidgetPosition.html#config_xy", "type": "config"}, {"access": "", "host": "WidgetPosition", "name": "xyChange", "url": "WidgetPosition.html#event_xyChange", "type": "event"}, {"access": "", "host": "WidgetPosition", "name": "y", "url": "WidgetPosition.html#config_y", "type": "config"}, {"access": "", "host": "WidgetPosition", "name": "yChange", "url": "WidgetPosition.html#event_yChange", "type": "event"}];
+    ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetChild", "name": "_afterChildSelectedChange", "url": "WidgetChild.html#method__afterChildSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_bindUIChild", "url": "WidgetChild.html#method__bindUIChild", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "depth", "url": "WidgetChild.html#config_depth", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "depthChange", "url": "WidgetChild.html#event_depthChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "index", "url": "WidgetChild.html#config_index", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "indexChange", "url": "WidgetChild.html#event_indexChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "isRoot", "url": "WidgetChild.html#method_isRoot", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "next", "url": "WidgetChild.html#method_next", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "parent", "url": "WidgetChild.html#config_parent", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "parentChange", "url": "WidgetChild.html#event_parentChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "previous", "url": "WidgetChild.html#method_previous", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "root", "url": "WidgetChild.html#config_root", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "rootChange", "url": "WidgetChild.html#event_rootChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "selected", "url": "WidgetChild.html#config_selected", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "selectedChange", "url": "WidgetChild.html#event_selectedChange", "type": "event"}, {"access": "protected", "host": "WidgetChild", "name": "_syncUIChild", "url": "WidgetChild.html#method__syncUIChild", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_uiSetChildSelected", "url": "WidgetChild.html#method__uiSetChildSelected", "type": "method"}];
 </script>
 </body>
 </html>

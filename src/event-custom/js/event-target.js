@@ -424,7 +424,7 @@ ET.prototype = {
      *    </li>
      *  </ul>
      *
-     *  @return {Event.Custom} the custom event
+     *  @return {CustomEvent} the custom event
      *
      */
     publish: function(type, opts) {
@@ -511,7 +511,7 @@ ET.prototype = {
      * configured to emit an event facade, the event facade will replace that
      * parameter after the properties the object literal contains are copied to
      * the event facade.
-     * @return {Event.Target} the event host
+     * @return {EventTarget} the event host
      *                   
      */
     fire: function(type) {
@@ -552,7 +552,7 @@ ET.prototype = {
      * @method getEvent
      * @param type {string} the type, or name of the event
      * @param prefixed {string} if true, the type is prefixed already
-     * @return {Event.Custom} the custom event or null
+     * @return {CustomEvent} the custom event or null
      */
     getEvent: function(type, prefixed) {
         var pre, e;
