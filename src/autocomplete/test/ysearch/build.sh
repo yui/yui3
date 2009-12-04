@@ -5,7 +5,7 @@ here=$(pwd)
 echo "building"
 
 (
-	cd ../../value-change
+	cd ../../../value-change
 	ant all
 	cd $here
 	cd ..
