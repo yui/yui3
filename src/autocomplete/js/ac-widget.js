@@ -1,8 +1,17 @@
-// just a default display widget for the autocomplete component
-// this is the one you expect when you say "autocomplete"
+
+
+
+/**
+ * The default display widget for the AutoComplete component.
+ * This is what is expected when you say "autocomplete".
+ * @class ACWidget
+ * @inherits Widget
+ **/
 
 function ACWidget () { ACWidget.superclass.constructor.apply(this, arguments) };
 
+// shorthands
+// TODO: Uppercase all of these.
 var HANDLES = "_handles",
     selectedIndex = "selectedIndex",
     _selectedIndex = "_selectedIndex",
@@ -17,10 +26,19 @@ Y.ACWidget = Y.extend(
     { // prototype
         initializer : function () {
             var self = this;
-            self.after("queryChanged", self.syncUI, self);
-            self.after("dataChanged", self.syncUI, self);
+            self.after({
+                queryChanged : self.syncUI,
+                dataChanged : self.syncUI
+            });
             self.hide();
         },
+        /**
+         * Method to display the widget.  Just inserts the widget after
+         * the ACPlugin's host object and sets the size appropriately.
+         *
+         * @for ACWidget
+         * @public
+         **/
         renderUI : function () {
             var ac = this.get("ac");
             if (!ac) {
@@ -29,29 +47,56 @@ Y.ACWidget = Y.extend(
             }
             var input = ac.get("host");
             insertAfter(this.get("boundingBox"), input);
-            return this.setSize();
+            this.setSize();
+            return;
         },
+        /**
+         * Get the size of the ACPlugin's host object, and then set the widget's width
+         * to the same size.  Defined thusly so that it's easy to override.
+         *
+         * @public
+         * @for ACWidget
+         **/
         setSize : function () {            
             return this.set("width", this.get("ac").get("host").getComputedStyle("width"));
         },
+        /**
+         * Bind the necessary event handles, unbinding if there were any other handles
+         * in place already.
+         *
+         * @param ac {Object} Optionally set the ACPlugin object at the same time,
+         * that it can be easily re-bound in the ac setter.
+         **/
         bindUI : function (ac) {
             var widget = this,
                 cb = widget.get("contentBox"), //INHERITED
-                ac = ac || widget.get("ac");
-            if (widget[HANDLES]) {
+                currentAC = widget.get("ac");
+            
+            if (ac && currentAC !== ac && widget[HANDLES]) {
+                // supplied something, it's new, and we're bound to something else.
                 YArrayeach(widget[HANDLES], function (handle) { handle.detach() });
                 widget[HANDLES] = 0; // small and falsey
             }
-            if (ac) widget[HANDLES] = [
+            ac = ac || currentAC;
+            
+            // TODO:
+            // if we have an ac, and we're not bound right now, then bind.
+            // use a detach category rather than using handles here.
+            
+            if (ac && !widget[HANDLES]) widget[HANDLES] = [
                 cb.delegate("click", widget.click, "li", widget),
                 Y.on("click", widget.hide, document), //INHERITED
                 ac.on("ac:load", function (e) {
                     widget
-                        .set("query", e.query)
-                        .set("data", e.results)
+                        .setAttrs({
+                            query : e.query,
+                            data : e.results
+                        })
                         .syncUI()
                         .show();
                 }),
+                // TODO: ac: should be superfluous
+                // if it's not, then file a bug, because that would mean it broken
                 ac.on("ac:query", function (e) {
                     widget.set("query", e.value).syncUI();
                 }),
@@ -61,6 +106,10 @@ Y.ACWidget = Y.extend(
             ];
             return widget;
         },
+        /**
+         * If there is data, then set the markup.
+         * Otherwise, do nothing.
+         **/
         syncUI : function () {
             var self = this,
                 data = self.get("data"),
@@ -71,6 +120,11 @@ Y.ACWidget = Y.extend(
             self.get("contentBox").set("innerHTML", self.getListMarkup(data)); //INHERITED
             return self;
         },
+        /**
+         * Given a set of data, return the markup that should go in the widget.
+         * @param {Array} The data object, some array-ish thing.
+         * @return {String} The markup that goes in the widget.
+         **/
         getListMarkup : function (data) {
             var self = this,
                 listTemplate = self.get("listTpl"),
@@ -80,16 +134,29 @@ Y.ACWidget = Y.extend(
             });
             return listTemplate.replace(/\{list\}/g, markup.join(""));
         },
+        /**
+         * Given a single item, return the markup for that item.
+         * @param {String} the data item
+         * @return {String} The markup, generated based on the itemTpl
+         **/
         getItemMarkup : function (item) {
             return this.get("itemTpl")
                 .replace(/\{term\}/g, item)
                 .replace(/\{hilite\}/g, this.getHiliteMarkup(item))
                 // .replace(/<([^<>]*)<[^>]*>([^<>]*)>/g, '<$1$2>');
         },
+        /**
+         * Given a single item, return the markup with the query terms hilighted.
+         * @param {String} The data item
+         * @return {String} The string with the query terms hilighted, according to the
+         * hiliteTpl attr.
+         **/
         getHiliteMarkup : function (item) {
             var self = this,
                 queryTerms = self.get("query").split(/\s+/)
                 out = item;
+            //TODO: use Y.cache on this fn so that the regexp is only created
+            // once per term/queryTerms
             YArrayeach(queryTerms, function (term) {
                 if (!term) return;
                 term = regexpEscape(term);
@@ -100,28 +167,52 @@ Y.ACWidget = Y.extend(
             });
             return out;
         },
+        /**
+         * The handler for the ACPlugin's ac:next event.
+         **/
         next : function () {
             var self = this;
-            if (self.get("visible")) return self.selectNext();
-            if (self.get("data")) self.show();
-            return self;
+            
+            return (
+                self.get("visible") ? self.selectNext()
+                : self.get("data") ? self.show()
+                : self
+            );
         },
+        /**
+         * Select the next item in the list.  Called by next() when the widget is visible.
+         */
         selectNext : function () {
-            var si = this.get(selectedIndex);
-            return this.set(selectedIndex, si + 1);
+            return this.set(selectedIndex, this.get(selectedIndex) + 1);
         },
+        /**
+         * Select the previous item in the list. Called by previous() when the widget is visible.
+         **/
         selectPrevious : function () {
-            var si = this.get(selectedIndex);
-            return this.set(selectedIndex, si - 1);
+            return this.set(selectedIndex, this.get(selectedIndex) - 1);
         },
+        /**
+         * Select the previous item in the list if the widget is visible.
+         **/
         previous : function () {
-            if (this.get("visible")) this.selectPrevious();
-            return this;
+            return this.get("visible") ? this.selectPrevious() : this;
         },
+        /**
+         * Get the nth item in the list using the itemSelector attr.
+         * Note that, for compatibility with NodeList.item(), this is zero-indexed.
+         * However, the CSS nth-item selector is one-indexed, so we add 1 to the arg.
+         * @param n {Number} The item to retrieve (zero-indexed)
+         **/
         item : function (n) {
             return this.get("contentBox")
                 .one(this.get("itemSelector").replace(/\{n\}/g, regexpEscape(n + 1)));
         },
+        /**
+         * The click handler, set the ACPlugin queryValue to the text of the clicked element,
+         * and then hides the widget.
+         *
+         * @param e {Object} The event object, or anything with a currentTarget.get("text")
+         **/
         click : function (e) {
             var self = this,
                 ac = self.get("ac"),
@@ -136,6 +227,9 @@ Y.ACWidget = Y.extend(
     { // statics
         NAME : "ACWidget",
         ATTRS : {
+            /**
+             * The ACPlugin object to hook into.
+             **/
             ac : {
                 setter : function (ac) {
                     if (!this[HANDLES]) return; // it'll get bound when it renders
@@ -146,20 +240,53 @@ Y.ACWidget = Y.extend(
                     return true
                 }
             },
+            /**
+             * The data provided by an ac:load event
+             **/
             data : {
                 validator : function (d) { return d && d.length > 0 }
             },
+            /**
+             * The query provided along with the data set in an ac:load event.
+             * This is used to hilite the items in the list.
+             **/
             query : { value : "" },
+            /**
+             * The markup template for the list of items.
+             **/
             listTpl : { value : "<ul>{list}</ul>" },
+            /**
+             * The item template for each item in the list
+             **/
             itemTpl : { value : "<li>{hilite}</li>" },
+            /**
+             * The CSS selector used to find items in the list.
+             * Note that {n} in this case is one-indexed, not zero-indexed.
+             **/
             itemSelector : { value : "ul li:nth-child({n})" },
+            /**
+             * The template used to hilite terms
+             **/
             hiliteTpl : { value : "<em>{term}</em>" }
         } // ATTRS
     } // statics
 );
+/**
+ * The item that is selected, for example when the user presses the down arrow to cycle
+ * through the available results.
+ * 
+ * Changing this value causes the ACPlugin to set its queryValue to the new setting.
+ * Setting it to -1 makes it go back to what the user had entered.
+ * Setting it to less than -1 or greater than the number of items will cause it to wrap around.
+ *
+ * @attr selectedIndex
+ * @for ACWidget
+ **/
 // don't define this one inline, so that we can compress the key
+// 
 ACWidget.ATTRS[selectedIndex] = {
     value : -1,
+    // validator should be the name to of an instance method
     validator : function (si) {
         var d = this.get("data");
         return d && Y.Lang.isNumber(si);
@@ -212,11 +339,25 @@ ACWidget.ATTRS[selectedIndex] = {
     }
 }; // selectedIndex
 
+/**
+ * Escape the characters that regexes care about.
+ * @private
+ **/
+//TODO: Feature request (with code) to put this in Lang.
 function regexpEscape (text) {
-    return (""+text).replace(/([\/\.\*\+\?\|\(\)\[\]\{\}\\])/g, '\\$1');
+    return (""+text).replace(/([\^\/.*+?|()[\]{}\\])/g, '\\$1');
 }
 
+/**
+ * Insert a node after the reference node.
+ * @private
+ **/
+//TODO: Get rid of this fn
 function insertAfter (node, ref) {
+    ref.insert(node, "after");
+    return;
+    
+    
     var p = ref.get("parentNode");
     p.insertBefore(node, ref);
     p.insertBefore(ref, node);
