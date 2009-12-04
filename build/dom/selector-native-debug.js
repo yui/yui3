@@ -151,7 +151,7 @@ var Selector = {
             // enforce for element scoping
             if (node.tagName) {
                 node.id = node.id || Y.guid();
-                prefix = '#' + node.id + ' ';
+                prefix = '[id="' + node.id + '"] ';
             }
 
             for (i = 0, len = groups.length; i < len; ++i) {
@@ -204,7 +204,8 @@ var Selector = {
                 node.id = TMP_PREFIX + g_counter++;
             }
             for (i = 0; (group = groups[i++]);) { // TODO: off-dom test
-                group += '#' + node.id; // add ID for uniqueness
+                //group += '#' + node.id; // add ID for uniqueness
+                group += '[id="' + node.id + '"]';
                 item = Y.Selector.query(group, root, true);
                 ret = (item === node);
                 if (ret) {

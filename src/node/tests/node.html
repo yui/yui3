@@ -142,6 +142,13 @@ button {
     </ol>
 <iframe src="test-frame.html"></iframe>
 <div id="test-insert-html">foo</div>
+<div id="test:colon">
+    <h2>test</h2>
+</div>
+
+<div id="_funky:id{$400}">
+    <h2>test</h2>
+</div>
 <div id="yui-log"></div>
 <script type="text/javascript">
 YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim', function(Y) {
@@ -972,6 +979,27 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             nodelist.item(1).remove();
 
             ArrayAssert.itemsAreEqual( node.one('li'), nodelist, "Y.one('#test-node').all('li')");
+        },
+
+        test_one: function() {
+            var node = Y.DOM.byId('test:colon');
+            Assert.areEqual(node.getElementsByTagName('h2')[0], Y.one(node).one('h2')._node,
+                "Y.one(Y.DOM.byId('test:colon')).one(h2)");
+
+            node = Y.DOM.byId('_funky:id{$400}');
+            Assert.areEqual(node.getElementsByTagName('h2')[0], Y.one(node).one('h2')._node,
+                "Y.one(Y.DOM.byId('_funky:id{$400}')).one(h2)");
+        },
+        test_all: function() {
+            var node = Y.DOM.byId('test:colon');
+            ArrayAssert.itemsAreEqual(node.getElementsByTagName('h2'),
+                Y.one(node).all('h2')._nodes,
+                "Y.one(Y.DOM.byId('test:colon')).all(h2)");
+
+            node = Y.DOM.byId('_funky:id{$400}');
+            ArrayAssert.itemsAreEqual(node.getElementsByTagName('h2'),
+                Y.one(node).all('h2')._nodes,
+                "Y.one(Y.DOM.byId('_funky:id{$400}')).all(h2)");
         }
     })); 
 

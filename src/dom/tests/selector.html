@@ -191,6 +191,10 @@ onload = function() {
                 Assert.areEqual(node.getElementsByTagName('em')[0], $('li em', node, true), 'off-dom: li em');
                 Assert.isNull($('div li em', node, true), 'off-dom: div li em');
 
+                Assert.areEqual(Y.DOM.byId('test:colon').getElementsByTagName('h2')[0], 
+                    $('h2', Y.DOM.byId('test:colon'), true),
+                    "$('h2', Y.DOM.byId('test:colon'), true)");
+
                 // standard: no element-scoped query
                 //ArrayAssert.itemsAreEqual(document.body.getElementsByTagName('p'), $('body p', document.body), "$('body p', document.body)");
 
@@ -515,6 +519,7 @@ onload = function() {
         <dd class="test-dd2">dd2</dd>
 
     </dl>
+    <div id="test:colon"><h2>test</h2></div>
     <div id="test-custom-attr" foo="bar">custom attribute</div>
 
 </body>

@@ -46,7 +46,8 @@ var PARENT_NODE = 'parentNode',
         _regexCache: {},
 
         _re: {
-            attr: /(\[.*\])/g,
+            //attr: /(\[.*\])/g,
+            attr: /(\[[^\]]*\])/g,
             pseudos: /:([\-\w]+(?:\(?:['"]?(.+)['"]?\)))*/i
         },
 
