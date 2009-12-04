@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>demo widget</title>
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/3.0.0b1/build/cssfonts/fonts-min.css">
+<style>
+body {
+    font-size:16px;
+}
+.demoified {
+    font-size:200%;
+    border:10px solid red;
+}
+script.mine {
+    clear:left;
+    white-space:pre;
+    display:block;
+    font-family:monospace;
+    background:#eef;
+}
+script::before, script::after {
+    content:"<script>";
+}
+script::after {
+    content:"</script>";
+}
+script[src]::before {
+    content:"<script src=\"" attr(src) "\">";
+    white-space:nowrap;
+}
+script[src] {
+    background:#fff;
+}
+.lipsum { display:none; }
+</style>
+
+<style>
+.yui-demowidget { border:10px solid blue; padding:10px; float:left }
+.yui-demowidget-content { border : 10px solid red; padding:10px; float:left }
+.yui-demowidget .piece { border: 10px solid green; display:block; padding:10px; float:left; margin-right:10px }
+.yui-demowidget .piece:last-child { margin-right:0 }
+.yui-demowidget-focused, .yui-demowidget-focused * { border-color: yellow !important }
+</style>
+
+</head>
+<body>
+
+<!-- <div id="demo-widget">
+    <span class="piece">first piece</span>
+    <span class="piece">second piece</span>
+</div> -->
+
+<script class="mine" src="../../../build/yui/yui.js"></script>
+<script>
+YUI.add("demo-widget", function (Y) {
+
+function DemoWidget () { DemoWidget.superclass.constructor.apply(this, arguments) };
+
+Y.DemoWidget = Y.extend(
+    DemoWidget,
+    Y.Widget,
+    {
+        initializer : function () {
+            this.after("focusedChange", function (e) {
+                // console.log("onfocus", this.get("focused"));
+                // window.setTimeout(Y.bind(this.blur, this), 500);
+                e.type = this.get("focused") ? "focus" : "blur";
+                this.fire(e.type, e);
+            });
+            this.publish("focus");
+            this.publish("blur");
+            
+            this.on("focus", function (e) {
+                window.setTimeout(Y.bind(this.blur, this), 250);
+            });
+            this.on("blur", function (e) {
+                window.setTimeout(Y.bind(this.focus, this), 250);
+            });
+            
+            console.log("initializing!", this, arguments);
+        },
+        renderUI : function () {
+            console.log("rendering the UI", arguments);
+        },
+        bindUI : function () {
+            console.log("bindUI", arguments);
+        },
+        syncUI : function () {
+            console.log("syncUI", arguments);
+        }
+    },
+    {
+        _onfocus : function (e) {
+            // console.log("onfocus", this.get("focused"));
+            // window.setTimeout(Y.bind(this.blur, this), 500);
+            e.type = this.get("focused") ? "focus" : "blur";
+            this.fire(e.type, e);
+        },
+        NAME : "DemoWidget",
+        ATTRS : {
+            attrib : {
+                value : 0,
+                setter : function (n) {
+                    console.log("setting attrib", n);
+                    return n;
+                }
+            },
+            piece : {
+                value : null,
+                setter : function (p) {
+                    console.log("setting piece", p);
+                    return p;
+                }
+            }
+        },
+        HTML_PARSER : {
+            piece : ".piece"
+        }
+    }
+);
+    
+}, '@VERSION@', {requires:["widget"]});
+</script>
+
+<script>
+YUI({
+    debug: true,
+    base : "../../../build/",
+    filter : "raw"
+}).use('demo-widget', function (Y) {
+    window.Y = Y;
+    var d = window.DW = new Y.DemoWidget();
+    d.render("#demo-widget");
+});
+</script>
+
+click on it to make it flash and be super annoying
+</body>
+</html>

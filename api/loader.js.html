@@ -557,12 +557,12 @@
         <span class="nx">imageloader</span><span class="o">:</span> <span class="o">{</span> 
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASEBASE</span><span class="o">,</span> <span class="nx">NODESTYLE</span><span class="o">,</span> <span class="nx">NODESCREEN</span><span class="o">]</span>
         <span class="o">},</span>
-
+        
         <span class="nx">io</span><span class="o">:{</span>
             <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
 
                 <span class="s1">&#39;io-base&#39;</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOMBASE</span><span class="o">]</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">EVENTCUSTOMBASE</span><span class="o">,</span> <span class="s1">&#39;querystring-stringify-simple&#39;</span><span class="o">]</span>
                 <span class="o">},</span> 
 
                 <span class="s1">&#39;io-xdr&#39;</span><span class="o">:</span> <span class="o">{</span>
@@ -640,6 +640,27 @@
             <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;queue-run&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
+        <span class="s1">&#39;querystring-stringify-simple&#39;</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">],</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;querystring/querystring-stringify-simple.js&#39;</span>
+        <span class="o">},</span>
+        <span class="s1">&#39;querystring-parse-simple&#39;</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">],</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;querystring/querystring-parse-simple.js&#39;</span>
+        <span class="o">},</span>
+        <span class="s1">&#39;querystring&#39;</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">submodules</span><span class="o">:</span> <span class="o">{</span>
+                <span class="s1">&#39;querystring-parse&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;querystring-parse-simple&#39;</span><span class="o">],</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;querystring-stringify&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;querystring-stringify-simple&#39;</span><span class="o">],</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">YUIBASE</span><span class="o">]</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
         <span class="nx">slider</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">WIDGET</span><span class="o">,</span> <span class="s1">&#39;dd-constrain&#39;</span><span class="o">],</span>
             <span class="nx">skinnable</span><span class="o">:</span> <span class="kc">true</span>
@@ -656,6 +677,8 @@
         <span class="nx">widget</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">ATTRIBUTE</span><span class="o">,</span> <span class="s1">&#39;event-focus&#39;</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">,</span> <span class="nx">NODE</span><span class="o">,</span> <span class="s1">&#39;classnamemanager&#39;</span><span class="o">],</span>
             <span class="nx">plugins</span><span class="o">:</span> <span class="o">{</span>
+                <span class="s1">&#39;widget-parent&#39;</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+                <span class="s1">&#39;widget-child&#39;</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>                
                 <span class="s1">&#39;widget-position&#39;</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
                 <span class="s1">&#39;widget-position-ext&#39;</span><span class="o">:</span> <span class="o">{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">WIDGETPOSITION</span><span class="o">]</span>
@@ -2324,7 +2347,8 @@
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
-                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>

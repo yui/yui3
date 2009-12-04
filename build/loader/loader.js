@@ -510,12 +510,12 @@ var NOT_FOUND = {},
         imageloader: { 
             requires: [BASEBASE, NODESTYLE, NODESCREEN]
         },
-
+        
         io:{
             submodules: {
 
                 'io-base': {
-                    requires: [EVENTCUSTOMBASE]
+                    requires: [EVENTCUSTOMBASE, 'querystring-stringify-simple']
                 }, 
 
                 'io-xdr': {
@@ -593,6 +593,27 @@ var NOT_FOUND = {},
             supersedes: ['queue-run']
         },
 
+        'querystring-stringify-simple': {
+            requires: [YUIBASE],
+            path: 'querystring/querystring-stringify-simple.js'
+        },
+        'querystring-parse-simple': {
+            requires: [YUIBASE],
+            path: 'querystring/querystring-parse-simple.js'
+        },
+        'querystring': {
+            submodules: {
+                'querystring-parse': {
+                    supersedes: ['querystring-parse-simple'],
+                    requires: [YUIBASE]
+                },
+                'querystring-stringify': {
+                    supersedes: ['querystring-stringify-simple'],
+                    requires: [YUIBASE]
+                }
+            }
+        },
+
         slider: {
             requires: [WIDGET, 'dd-constrain'],
             skinnable: true
@@ -609,6 +630,8 @@ var NOT_FOUND = {},
         widget: {
             requires: [ATTRIBUTE, 'event-focus', BASE, NODE, 'classnamemanager'],
             plugins: {
+                'widget-parent': { },
+                'widget-child': { },                
                 'widget-position': { },
                 'widget-position-ext': {
                     requires: [WIDGETPOSITION]
