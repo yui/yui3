@@ -608,7 +608,7 @@ var NOT_FOUND = {},
                 'querystring-stringify': {
                     supersedes: ['querystring-stringify-simple'],
                     requires: [YUIBASE]
-                },
+                }
             }
         },
 
@@ -628,6 +628,8 @@ var NOT_FOUND = {},
         widget: {
             requires: [ATTRIBUTE, 'event-focus', BASE, NODE, 'classnamemanager'],
             plugins: {
+                'widget-parent': { },
+                'widget-child': { },                
                 'widget-position': { },
                 'widget-position-ext': {
                     requires: [WIDGETPOSITION]

@@ -1,5 +1,24 @@
 Development Master
 
+* Widget will now fire user-generated events like DOM elements do (e.g. 
+  'click', 'mouseover').  Like all other Widget events, these events are 
+  prefixed with the Widget name (e.g. 'menuitem:click') and the default 
+  context of the event listener will be the Widget that fired the event.
+
+  The set of user-generated events published by widget is defined by the 
+  DOM_EVENTS prototype property.  Widget developers can use this property to 
+  pair down or extend the number of events.
+  
+  For performance, these events are only created when someone is listening, and
+  the actual firing of these events is facilitated by a single, delegated 
+  DOM event listener.  
+
+
+* content box now expands to fill bounding box. CSS is used for browsers
+  which support box-sizing:border-box. Expansion is handled programmatically 
+  for others (currently IE6 & IE7). Maybe some edge cases which need 
+  resolution.
+
 * Added an "id" attribute.
 
 * Added support for auto-rendering of widgets at the end of construction, 

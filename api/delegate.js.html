@@ -109,7 +109,7 @@
 				<span class="nx">matched</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
 
-				<span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">target</span><span class="o">,</span> <span class="nx">spec</span><span class="o">,</span> <span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="o">(</span><span class="nx">target</span> <span class="o">==</span> <span class="nx">el</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">target</span><span class="o">,</span> <span class="nx">spec</span><span class="o">,</span> <span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
 					<span class="nx">matched</span> <span class="o">=</span> <span class="nx">target</span><span class="o">;</span>
 				<span class="o">}</span>
 				<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">target</span><span class="o">,</span> <span class="o">((</span><span class="nx">spec</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/,/gi</span><span class="o">,</span> <span class="s2">&quot; *,&quot;</span><span class="o">))</span> <span class="o">+</span> <span class="s2">&quot; *&quot;</span><span class="o">),</span> <span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
@@ -456,7 +456,8 @@
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
-                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>

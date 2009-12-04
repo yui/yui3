@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Widget Class</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../build/cssfonts/fonts.css" />
+
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+
+    <style>
+        body {
+            padding:0;
+            margin:0;
+        }
+
+        .yui-widget {
+            background-color:green;
+            position:absolute;
+            top:50px;
+            left:50px;
+        }
+
+        .yui-widget-content {
+            background-color:#ccc;
+            padding:20px;
+            border:10px solid blue;
+        }
+
+        .yui-slider {
+            position:absolute;
+            background-color:transparent;
+        }
+
+        #x {
+            top:10px;
+            left:50px;
+        }
+
+        #y {
+            top:50px;
+            left:10px;
+        }
+    </style>
+</head>
+<body class="yui-skin-sam">
+
+    <div class="yui-widget-content">
+        <p>Some content which will drive size when</p>
+        <p>slider is set to 0 (translated to height/width = "");</p>
+    </div>
+
+    <script type="text/javascript">
+        YUI({filter:"raw"}).use("widget", "slider", function(Y) {
+
+            w = new Y.Widget({
+                    contentBox: ".yui-widget-content",
+                    width:150,
+                    height:150
+                }).render();
+
+            sh = new Y.Slider({
+                    id:"y",
+                    axis: 'y',
+                    thumbImage: Y.config.base + 'slider/assets/skins/sam/thumb-classic-y.png',
+                    railSize: "1000px",
+                    max:1000,
+                    value: 150
+                }).render();
+
+            sw = new Y.Slider({
+                    id:"x",
+                    thumbImage: Y.config.base + 'slider/assets/skins/sam/thumb-classic-x.png',
+                    railSize: "1000px",
+                    max:1000,
+                    value:150
+                }).render();
+
+            sw.after("valueChange", function(e) {
+                w.set("width", e.newVal || "");
+            });
+
+            sh.after("valueChange", function(e) {
+                w.set("height", e.newVal || "");
+            });
+        });
+    </script>
+    
+</body>
+</html>

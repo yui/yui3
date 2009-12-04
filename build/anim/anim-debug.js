@@ -130,7 +130,7 @@ YUI.add('anim-base', function(Y) {
          */
         node: {
             setter: function(node) {
-                node = Y.get(node);
+                node = Y.one(node);
                 this._node = node;
                 if (!node) {
                     Y.log(node + ' is not a valid node', 'warn', 'Anim');
