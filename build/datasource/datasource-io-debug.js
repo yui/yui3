@@ -145,5 +145,4 @@ Y.DataSource.IO = DSIO;
     
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local', 'io']});

@@ -502,6 +502,8 @@
             <span class="nx">delegates</span><span class="o">,</span>
             <span class="nx">guid</span><span class="o">;</span>
 
+
+
         <span class="k">if</span> <span class="o">(</span><span class="nx">rootNode</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="nx">guid</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">rootNode</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
@@ -528,8 +530,18 @@
 <span class="c"></span>                        <span class="c">//  bubbles is true (EventTarget default)</span>
 <span class="c"></span>                        <span class="c">//  preventable is true (EventTarget default)</span>
 <span class="c"></span>                        <span class="c">//  queuable is false (EventTarget default)</span>
+<span class="c"></span>                        
+                        <span class="c">//  TO DO: talk to Adam about why this step is </span>
+<span class="c"></span>                        <span class="c">//  necessary when EventTargets are supposed to </span>
+<span class="c"></span>                        <span class="c">//  lazy publish</span>
 <span class="c"></span>
-                        <span class="nx">widget</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">type</span><span class="o">);</span>                        
+                        <span class="nx">widget</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">type</span><span class="o">);</span>
+
+                        <span class="c">//  Pass in the DOM event to merge the DOM event </span>
+<span class="c"></span>                        <span class="c">//  properties into the event facade of the custom </span>
+<span class="c"></span>                        <span class="c">//  event.</span>
+<span class="c"></span>
+                        <span class="nx">widget</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span> <span class="nx">event</span><span class="o">);</span>
 
                     <span class="o">}</span>
 
@@ -559,7 +571,7 @@
                 <span class="o">}</span>
                 <span class="k">else</span> <span class="o">{</span>
         
-                    <span class="k">this</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">RENDER</span><span class="o">,</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">RENDER</span><span class="o">,</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         
                         <span class="k">this</span><span class="o">.</span><span class="nx">_createDelegate</span><span class="o">(</span><span class="nx">sType</span><span class="o">);</span>  
         
@@ -1710,7 +1722,8 @@
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class="selected"><a href="module_widget.html" title="widget">widget</a></li>
-                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>

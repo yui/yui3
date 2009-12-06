@@ -44,8 +44,8 @@ Y.extend(
             Y.Array.each(this.handles, function (h) { h.detach() });
         },
         open : function () { this.fire("ac:show") },
-        next : function () { this.fire("ac:next") },
-        previous : function () { this.fire("ac:previous") },
+        next : function (e) { e.preventDefault(); this.fire("ac:next") },
+        previous : function (e) { e.preventDefault(); this.fire("ac:previous") },
         close : function () { this.fire("ac:hide") }
     },
     { // statics
@@ -160,8 +160,12 @@ function manageBrowserAC (host) {
 };
 
 function handleQueryResponse (e) {
-    this.fire("ac:load", {
-        results : (e && e.response && e.response.results) ? e.response.results : e
+    var res = (e && e.response && e.response.results) ? e.response.results : e;
+    
+    // if there is a result, and it's not an empty array
+    if (res && !(res && ("length" in res) && res.length === 0)) this.fire("ac:load", {
+        results : res,
+        query : this.get("queryValue")
     });
 };
 
@@ -171,12 +175,15 @@ var eventDefaultBehavior = {
             ds = self.get("dataSource"),
             query = e.value,
             handler = Y.bind(handleQueryResponse, self);
-
+        var request = {
+            request : self.get("queryTemplate")(query),
+            callback : {
+                success : handler,
+                failure : handler
+            }
+        };
         // if we have a datasource, then make the request.
-        if (ds) ds.sendRequest(self.get("queryTemplate")(query), {
-            success : handler,
-            failure : handler
-        });
+        if (ds) ds.sendRequest(request);
     }
 };
 

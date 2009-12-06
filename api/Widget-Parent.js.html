@@ -1,0 +1,710 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: widget-parent   Widget-Parent.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>widget-parent&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_widget-parent.html" title="widget-parent">widget-parent</a>
+                
+                 &gt; Widget-Parent.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight" ><pre><span class="c">//  TO DO</span>
+<span class="c">//  -   Ask Adam about &quot;queuable&quot; configuration for events</span>
+<span class="c">//  -   Confirm implementation of the &quot;items&quot; Attribute.  Goals were/are:</span>
+<span class="c">//      1.  Provide convience of being able to set once via the constructor only</span>
+<span class="c">//      2.  Disallow setting via &quot;set&quot;</span>
+<span class="c">//      3.  Provide get access through standard &quot;get()&quot;</span>
+<span class="c">//  -   Talk to Adam about being able to listen for &quot;selectedChange&quot; and </span>
+<span class="c">//      and &quot;focusedChange&quot; at the parent level</span>
+<span class="c">//  -   Future performance optimization, if add() is passed a config, </span>
+<span class="c">//      defer the instance creation until the instance is needed </span>
+<span class="c"></span>
+
+<span class="c">/**</span>
+<span class="c"> * Provides an extension enabling a Widget to be a parent of another Widget.</span>
+<span class="c"> *</span>
+<span class="c"> * @module widget-parent</span>
+<span class="c"> */</span>
+
+<span class="k">var</span> <span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
+
+<span class="c">/**</span>
+<span class="c"> * Widget extension providing functionality enabling a Widget to be a </span>
+<span class="c"> * parent of another Widget.</span>
+<span class="c"> *</span>
+<span class="c"> * @class WidgetParent</span>
+<span class="c"> * @param {Object} config User configuration object.</span>
+<span class="c"> */</span>
+<span class="k">function</span> <span class="nx">Parent</span><span class="o">()</span> <span class="o">{</span>
+<span class="o">}</span>
+
+<span class="nx">Parent</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
+
+    <span class="c">/**</span>
+<span class="c">     * @attribute defaultItemType</span>
+<span class="c">     * @type String</span>
+<span class="c">     *</span>
+<span class="c">     * @description String representing the default type of the children </span>
+<span class="c">     * managed by this Widget.</span>
+<span class="c">     */</span>
+    <span class="nx">defaultItemType</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">validator</span><span class="o">:</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span>        
+    <span class="o">},</span>
+
+
+    <span class="c">/**</span>
+<span class="c">     * @attribute activeItem</span>
+<span class="c">     * @type Widget</span>
+<span class="c">     * @readOnly</span>
+<span class="c">     *</span>
+<span class="c">     * @description Returns the Widget&#39;s currently focused descendant Widget.</span>
+<span class="c">     */</span>
+    <span class="nx">activeItem</span><span class="o">:</span> <span class="o">{</span>    
+        <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="o">},</span>
+
+
+    <span class="c">/**</span>
+<span class="c">     * @attribute multiple</span>
+<span class="c">     * @type Boolean</span>
+<span class="c">     * @default false</span>
+<span class="c">     * @writeOnce </span>
+<span class="c">     *</span>
+<span class="c">     * @description Boolean indicating if multiple children can be selected at </span>
+<span class="c">     * once.</span>
+<span class="c">     */</span>
+    <span class="nx">multiple</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
+        <span class="nx">validator</span><span class="o">:</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isBoolean</span><span class="o">,</span>
+        <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>        
+    <span class="o">},</span>
+
+
+    <span class="c">/**</span>
+<span class="c">     * @attribute selection</span>
+<span class="c">     * @type {Array|Widget}</span>
+<span class="c">     * @readOnly  </span>
+<span class="c">     *</span>
+<span class="c">     * @description Returns the currently selected child Widget.  If the </span>
+<span class="c">     * &lt;code&gt;mulitple&lt;/code&gt; attribte is set to &lt;code&gt;true&lt;/code&gt; will </span>
+<span class="c">     * return an array of the currently selected children.  If no children </span>
+<span class="c">     * are selection, will return null.</span>
+<span class="c">     */</span>
+    <span class="nx">selection</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setSelection</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+    
+    
+    <span class="c">/**</span>
+<span class="c">     * @attribute items</span>
+<span class="c">     * @type Array</span>
+<span class="c">     * @readOnly  </span>
+<span class="c">     *</span>
+<span class="c">     * @description Returns an array of all of the children that are </span>
+<span class="c">     * direct descendants.</span>
+<span class="c">     */</span>
+    <span class="nx">items</span><span class="o">:</span> <span class="o">{</span>
+       <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+       <span class="nx">valueFn</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+           <span class="k">return</span> <span class="o">[];</span>
+       <span class="o">}</span>
+    <span class="o">}</span>
+
+<span class="o">};</span>
+
+<span class="nx">Parent</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Attribute change listener for the &lt;code&gt;selection&lt;/code&gt; </span>
+<span class="c">     * attribute, responsible for setting the value of the </span>
+<span class="c">     * parent&#39;s &lt;code&gt;selected&lt;/code&gt; attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterSelectionChange</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {EventFacade} event The event facade for the attribute change.</span>
+<span class="c">     */</span>
+    <span class="nx">_afterSelectionChange</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+        
+        <span class="k">var</span> <span class="nx">prevSelection</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">prevVal</span><span class="o">,</span>
+            <span class="nx">selection</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">newVal</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">selection</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">selection</span><span class="o">))</span> <span class="o">{</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">selection</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;items&quot;</span><span class="o">).</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;selected&quot;</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="o">{</span> <span class="nx">src</span><span class="o">:</span> <span class="k">this</span> <span class="o">});</span>
+                <span class="o">}</span>
+                <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;selected&quot;</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="o">{</span> <span class="nx">src</span><span class="o">:</span> <span class="k">this</span> <span class="o">});</span>
+                <span class="o">}</span>
+
+            <span class="o">}</span>
+            <span class="k">else</span> <span class="o">{</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">prevSelection</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c">//  Set src equal to the current context to prevent</span>
+<span class="c"></span>                    <span class="c">//  unnecessary re-calculation of the selection.</span>
+<span class="c"></span>                    <span class="nx">prevSelection</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;selected&quot;</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="o">{</span> <span class="nx">src</span><span class="o">:</span> <span class="k">this</span> <span class="o">});</span>
+                <span class="o">}</span>
+
+            <span class="o">}</span>
+            
+        <span class="o">}</span>
+        
+    <span class="o">},</span>
+
+
+    <span class="c">/**</span>
+<span class="c">     * Attribute change listener for the &lt;code&gt;selected&lt;/code&gt; </span>
+<span class="c">     * attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterParentSelectedChange</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {EventFacade} event The event facade for the attribute change.</span>
+<span class="c">     */</span>
+    <span class="nx">_afterParentSelectedChange</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">newVal</span><span class="o">,</span>
+            <span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;items&quot;</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">src</span> <span class="o">!=</span> <span class="k">this</span> <span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="o">==</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span> <span class="o">&amp;&amp;</span> <span class="nx">items</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> 
+            <span class="o">(</span><span class="nx">value</span> <span class="o">===</span> <span class="m">0</span> <span class="o">||</span> <span class="nx">value</span> <span class="o">===</span> <span class="m">1</span><span class="o">))</span> <span class="o">{</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">items</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">item</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;selected&quot;</span><span class="o">,</span> <span class="nx">value</span><span class="o">);</span>
+            <span class="o">});</span>
+            
+        <span class="o">}</span>
+        
+    <span class="o">},</span>
+
+
+    <span class="c">/**</span>
+<span class="c">     * Default setter for &lt;code&gt;selection&lt;/code&gt; attribute changes.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _setSelection</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {Array|Widget} zIndex</span>
+<span class="c">     * @return {Widget} </span>
+<span class="c">     */</span>
+    <span class="nx">_setSelection</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">selection</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
+            <span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;items&quot;</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;root&quot;</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;multiple&quot;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">items</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="nx">selection</span> <span class="o">=</span> <span class="o">[];</span>
+            
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">items</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+            
+               <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;selected&quot;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+                   <span class="nx">selection</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+               <span class="o">}</span>
+            
+            <span class="o">});</span>
+
+        <span class="o">}</span>
+        <span class="k">else</span> <span class="o">{</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">item</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;selected&quot;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">selection</span> <span class="o">=</span> <span class="nx">item</span><span class="o">;</span>
+            <span class="o">}</span>
+
+        <span class="o">}</span>
+        
+        <span class="k">return</span> <span class="nx">selection</span><span class="o">;</span>
+            
+    <span class="o">},</span>
+
+
+    <span class="c">/**</span>
+<span class="c">     * Attribute change listener for the &lt;code&gt;selected&lt;/code&gt; </span>
+<span class="c">     * attribute of child Widgets, responsible for setting the value of the </span>
+<span class="c">     * parent&#39;s &lt;code&gt;selection&lt;/code&gt; attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterItemSelectedChange</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {EventFacade} event The event facade for the attribute change.</span>
+<span class="c">     */</span>
+    <span class="nx">_afterItemSelectedChange</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">src</span> <span class="o">!=</span> <span class="k">this</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="s2">&quot;selection&quot;</span><span class="o">,</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">);</span>
+        <span class="o">}</span>
+
+    <span class="o">},</span>
+
+
+    <span class="c">/**</span>
+<span class="c">     * Attribute change listener for the &lt;code&gt;focused&lt;/code&gt; </span>
+<span class="c">     * attribute of child Widgets, responsible for setting the value of the </span>
+<span class="c">     * parent&#39;s &lt;code&gt;activeItem&lt;/code&gt; attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _afterSelectedChange</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param {EventFacade} event The event facade for the attribute change.</span>
+<span class="c">     */</span>
+    <span class="nx">_afterItemFocusedChange</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        
+        <span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">newVal</span> <span class="o">===</span> <span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="s2">&quot;activeItem&quot;</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
+
+    <span class="o">},</span>
+
+
+    <span class="c">/**</span>
+<span class="c">     * Creates an instance of a child Widget using the specified configuration.</span>
+<span class="c">     * By default Widget instances will be created of the type specified </span>
+<span class="c">     * by the &lt;code&gt;defaultItemType&lt;/code&gt; attribute.  Types can be explicitly</span>
+<span class="c">     * defined via the &lt;code&gt;type&lt;/code&gt; property of the configuration object</span>
+<span class="c">     * literal.</span>
+<span class="c">     *</span>
+<span class="c">     * @method _createItem</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param config {Object} Object literal representing the configuration </span>
+<span class="c">     * used to create an instance of a Widget.</span>
+<span class="c">     */</span>
+    <span class="nx">_createItem</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">item</span><span class="o">,</span>
+            <span class="nx">sType</span><span class="o">,</span>
+            <span class="nx">fnConstructor</span><span class="o">;</span>
+            
+        <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">sType</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">type</span><span class="o">;</span>
+            <span class="nx">delete</span> <span class="nx">config</span><span class="o">[</span><span class="nx">sType</span><span class="o">];</span>
+        <span class="o">}</span>
+        <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">sType</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;defaultItemType&quot;</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nx">fnConstructor</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">[</span><span class="nx">sType</span><span class="o">];</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">fnConstructor</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">item</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">fnConstructor</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="nx">item</span><span class="o">;</span>
+        
+    <span class="o">},</span>
+
+
+    <span class="c">/**</span>
+<span class="c">     * Default itemAdded handler</span>
+<span class="c">     *</span>
+<span class="c">     * @method _defItemAdded</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param event {EventFacade} The Event object</span>
+<span class="c">     * @param item {Widget} The Widget instance, or configuration </span>
+<span class="c">     * object for the Widget to be added as a child.</span>
+<span class="c">     * @param index {Number} Number representing the position at </span>
+<span class="c">     * which the child will be inserted.</span>
+<span class="c">     */</span>
+    <span class="nx">_defItemAdded</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">item</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">item</span><span class="o">,</span>
+            <span class="nx">index</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">index</span><span class="o">,</span>
+            <span class="nx">aItems</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;items&quot;</span><span class="o">);</span>
+        
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">item</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;parent&quot;</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">item</span><span class="o">.</span><span class="nx">remove</span><span class="o">();</span>
+        <span class="o">}</span>
+
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">index</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">aItems</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">index</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">item</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">aItems</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">item</span><span class="o">);</span>
+        <span class="o">}</span>
+
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="s2">&quot;items&quot;</span><span class="o">,</span> <span class="nx">aItems</span><span class="o">);</span>
+        <span class="nx">item</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="s2">&quot;parent&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+        <span class="nx">item</span><span class="o">.</span><span class="nx">addTarget</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">item</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;selected&quot;</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="s2">&quot;selection&quot;</span><span class="o">,</span> <span class="nx">item</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nx">item</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;selectedChange&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_afterItemSelectedChange</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
+        <span class="nx">item</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;focusedChange&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_afterItemFocusedChange</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
+        
+    <span class="o">},</span>
+
+
+    <span class="c">/**</span>
+<span class="c">     * Default itemRemoved handler</span>
+<span class="c">     *</span>
+<span class="c">     * @method _defItemRemoved</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @param event {EventFacade} The Event object</span>
+<span class="c">     * @param item {Widget} The Widget instance to be removed.</span>
+<span class="c">     * @param index {Number} Number representing the index of the Widget to </span>
+<span class="c">     * be removed.</span>
+<span class="c">     */</span>    
+    <span class="nx">_defItemRemoved</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">item</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">item</span><span class="o">,</span>
+            <span class="nx">index</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">index</span><span class="o">,</span>
+            <span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;items&quot;</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">item</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;focused&quot;</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">item</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;focused&quot;</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">item</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;selected&quot;</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">item</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s2">&quot;selected&quot;</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nx">items</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">index</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="s2">&quot;items&quot;</span><span class="o">,</span> <span class="nx">items</span><span class="o">);</span>
+
+        <span class="nx">item</span><span class="o">.</span><span class="nx">removeTarget</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="nx">item</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="s2">&quot;parent&quot;</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+        
+    <span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method add</span>
+<span class="c">    * @param item {Widget|Object} The Widget instance, or configuration </span>
+<span class="c">    * object for the Widget to be added as a child.</span>
+<span class="c">    * @param index {Number} (Optional.)  Number representing the position at </span>
+<span class="c">    * which the child should be inserted.</span>
+<span class="c">	* @description Adds a Widget as a child.  If the specified Widget already</span>
+<span class="c">	* has a parent it will be removed from its current parent before</span>
+<span class="c">	* being added as a child.</span>
+<span class="c">	* @return {Widget} Widget instance that was successfully added, otherwise</span>
+<span class="c">	* null.</span>
+<span class="c">	*/</span>
+    <span class="nx">add</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>   
+
+        <span class="k">var</span> <span class="nx">aItems</span><span class="o">,</span>
+            <span class="nx">oItem</span><span class="o">,</span>
+            <span class="nx">returnVal</span><span class="o">,</span>
+            <span class="nx">success</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">item</span><span class="o">))</span> <span class="o">{</span>
+
+            <span class="nx">aItems</span> <span class="o">=</span> <span class="o">[];</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">item</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="nx">oItem</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">oItem</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">aItems</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oItem</span><span class="o">);</span>
+                <span class="o">}</span>
+                
+            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+            
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">aItems</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">aItems</span><span class="o">;</span>
+            <span class="o">}</span>
+
+        <span class="o">}</span>
+        <span class="k">else</span> <span class="o">{</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">item</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Widget</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">oItem</span> <span class="o">=</span> <span class="nx">item</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">oItem</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_createItem</span><span class="o">(</span><span class="nx">item</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="nx">success</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;itemAdded&quot;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">item</span><span class="o">:</span> <span class="nx">oItem</span><span class="o">,</span> <span class="nx">index</span><span class="o">:</span> <span class="nx">index</span> <span class="o">});</span>
+
+            <span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">success</span> <span class="o">?</span> <span class="nx">oItem</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="nx">returnVal</span><span class="o">;</span>
+
+    <span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method remove</span>
+<span class="c">    * @param index {Number} (Optional.)  Number representing the index of the </span>
+<span class="c">    * child to be removed.</span>
+<span class="c">	* @description Removes the Widget from its parent.  Optionally, can remove</span>
+<span class="c">	* a child by specifying its index.</span>
+<span class="c">	* @return {Widget} Widget instance that was successfully removed, otherwise</span>
+<span class="c">	* null.</span>
+<span class="c">	*/</span>
+    <span class="nx">remove</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;items&quot;</span><span class="o">),</span>
+            <span class="nx">item</span><span class="o">,</span>
+            <span class="nx">success</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">index</span><span class="o">))</span> <span class="o">{</span>
+
+            <span class="nx">item</span> <span class="o">=</span> <span class="nx">items</span><span class="o">[</span><span class="nx">index</span><span class="o">];</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">success</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;itemRemoved&quot;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">item</span><span class="o">:</span> <span class="nx">item</span><span class="o">,</span> <span class="nx">index</span><span class="o">:</span> <span class="nx">index</span> <span class="o">});</span>
+            <span class="o">}</span>
+
+        <span class="o">}</span>
+        
+        <span class="k">return</span> <span class="nx">success</span> <span class="o">?</span> <span class="nx">item</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+
+    <span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method removeAll</span>
+<span class="c">	* @description Removes all of the children from the Widget.</span>
+<span class="c">	* @return {Array} Array of Widgets that were successfully removed.</span>
+<span class="c">	*/</span>
+    <span class="nx">removeAll</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;items&quot;</span><span class="o">),</span>
+            <span class="nx">aRemoved</span> <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">item</span><span class="o">;</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">items</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="nx">item</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="nx">k</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">aRemoved</span><span class="o">.</span><span class="nx">push</span><span class="o">();</span>                
+            <span class="o">}</span>
+
+        <span class="o">});</span>
+
+        <span class="k">return</span> <span class="o">(</span><span class="nx">aRemoved</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">0</span> <span class="o">?</span> <span class="nx">aRemoved</span> <span class="o">:</span> <span class="kc">null</span><span class="o">);</span>
+
+    <span class="o">},</span>
+
+
+	<span class="c">/**</span>
+<span class="c">	* @method item</span>
+<span class="c">	* @description Retrieves the child Widget at the specified index.</span>
+<span class="c">	* @return {Widget} Widget instance.</span>
+<span class="c">	*/</span>
+    <span class="nx">item</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
+        
+        <span class="k">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;items&quot;</span><span class="o">);</span>
+        
+        <span class="k">return</span> <span class="nx">items</span> <span class="o">?</span> <span class="nx">items</span><span class="o">[</span><span class="nx">index</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+        
+    <span class="o">},</span>
+    
+
+    <span class="c">/**</span>
+<span class="c">     * Renders all child Widgets for the parent.</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * This method in invoked after renderUI is invoked for the Widget class</span>
+<span class="c">     * using YUI&#39;s aop infrastructure.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * @method _renderUIParent</span>
+<span class="c">     * @protected</span>
+<span class="c">     */</span>
+    <span class="nx">_renderUIParent</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+              
+        <span class="k">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;contentBox&quot;</span><span class="o">);</span>
+        
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;items&quot;</span><span class="o">),</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">item</span><span class="o">.</span><span class="nx">render</span><span class="o">(</span><span class="nx">content</span><span class="o">);</span>
+        <span class="o">});</span>
+        
+    <span class="o">},</span>
+
+    
+    <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c">/**</span>
+<span class="c">        * Fires when a Widget is add as a child.</span>
+<span class="c">        * &lt;p&gt;</span>
+<span class="c">        * Subscribers to the &quot;on&quot; moment of this event, will be notified </span>
+<span class="c">        * before a child is added.</span>
+<span class="c">        * &lt;/p&gt;</span>
+<span class="c">        * &lt;p&gt;</span>
+<span class="c">        * Subscribers to the &quot;after&quot; moment of this event, will be notified</span>
+<span class="c">        * after a child is added.</span>
+<span class="c">        * &lt;/p&gt;</span>
+<span class="c">        *</span>
+<span class="c">        * @event widget:itemAdded</span>
+<span class="c">        * @preventable _defItemAdded</span>
+<span class="c">        * @param {EventFacade} e The Event Facade</span>
+<span class="c">        */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;itemAdded&quot;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_defItemAdded</span> <span class="o">});</span>
+
+        <span class="c">/**</span>
+<span class="c">        * Fires when a child Widget is removed.</span>
+<span class="c">        * &lt;p&gt;</span>
+<span class="c">        * Subscribers to the &quot;on&quot; moment of this event, will be notified </span>
+<span class="c">        * before a child is removed.</span>
+<span class="c">        * &lt;/p&gt;</span>
+<span class="c">        * &lt;p&gt;</span>
+<span class="c">        * Subscribers to the &quot;after&quot; moment of this event, will be notified</span>
+<span class="c">        * after a child is removed.</span>
+<span class="c">        * &lt;/p&gt;</span>
+<span class="c">        *</span>
+<span class="c">        * @event widget:itemRemoved</span>
+<span class="c">        * @preventable _defItemAdded</span>
+<span class="c">        * @param {EventFacade} e The Event Facade</span>
+<span class="c">        */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;itemRemoved&quot;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_defItemRemoved</span> <span class="o">});</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="o">.</span><span class="nx">items</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">items</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_renderUIParent</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="s2">&quot;renderUI&quot;</span><span class="o">);</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;selectionChange&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterSelectionChange</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;selectedChange&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterParentSelectedChange</span><span class="o">);</span>
+        
+    <span class="o">}</span>
+
+<span class="o">};</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">WidgetParent</span> <span class="o">=</span> <span class="nx">Parent</span><span class="o">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class="selected"><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="WidgetParent.html" title="WidgetParent">WidgetParent</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="Widget-Parent.js.html" title="Widget-Parent.js">Widget-Parent.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeItem", "url": "WidgetParent.html#config_activeItem", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeItemChange", "url": "WidgetParent.html#event_activeItemChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterItemSelectedChange", "url": "WidgetParent.html#method__afterItemSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectedChange", "url": "WidgetParent.html#method__afterSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_createItem", "url": "WidgetParent.html#method__createItem", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultItemType", "url": "WidgetParent.html#config_defaultItemType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultItemTypeChange", "url": "WidgetParent.html#event_defaultItemTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defItemAdded", "url": "WidgetParent.html#method__defItemAdded", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defItemRemoved", "url": "WidgetParent.html#method__defItemRemoved", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "item", "url": "WidgetParent.html#method_item", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "items", "url": "WidgetParent.html#config_items", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "itemsChange", "url": "WidgetParent.html#event_itemsChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_renderUIParent", "url": "WidgetParent.html#method__renderUIParent", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "widget:itemAdded", "url": "WidgetParent.html#event_widget:itemAdded", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "widget:itemRemoved", "url": "WidgetParent.html#event_widget:itemRemoved", "type": "event"}];
+</script>
+</body>
+</html>
