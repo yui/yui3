@@ -47,6 +47,9 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         #demo .yui-dd-drop-over {
             border: 2px solid green;
         }
+        #demo li.disabled {
+            opacity: .25;
+        }
 	</style>
 </head>
 <body class="yui-skin-sam">
@@ -56,7 +59,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <ul id="one">
 <?php
 foreach (range(1, $count) as $k) {
-    echo('  <li class="item list-item1">'.$k.'</li>'."\n");
+    echo('  <li class="item list-item1'.(($k % 2) ? ' disabled' : '').'">'.$k.'</li>'."\n");
 }
 ?>
 </ul>
@@ -125,7 +128,8 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
         cont: '#one',
         nodes: '.item',
         opacity: '.5',
-        moveType: 'copy'
+        moveType: 'copy',
+        invalid: '.disabled'
     });
     sel.plug(Y.Plugin.DDConstrained, {
         constrain2node: '#demo'

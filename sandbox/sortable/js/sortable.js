@@ -64,6 +64,14 @@ YUI.add('sortable', function(Y) {
         */        
         moveType: {
             value: 'swap'
+        },
+        /**
+        * @attribute invalid
+        * @description A selector string to test if a list item is invalid and not sortable
+        * @type String
+        */        
+        invalid: {
+            value: ''
         }
     };
 
@@ -125,16 +133,18 @@ YUI.add('sortable', function(Y) {
         delegate: null,
         initializer: function() {
             var id = 'sortable-' + Y.stamp({}), c,
+                self = this,
                 del = new Y.DD.Delegate({
-                    cont: this.get('cont'),
-                    nodes: this.get('nodes'),
+                    cont: self.get('cont'),
+                    nodes: self.get('nodes'),
                     target: true,
+                    invalid: self.get('invalid'),
                     dragConfig: {
                         groups: [ id ]
                     }
                 });
 
-            this.set(ID, id);
+            self.set(ID, id);
 
             del.plugdd(Y.Plugin.DDProxy, {
                 moveOnEnd: false,
@@ -142,17 +152,17 @@ YUI.add('sortable', function(Y) {
             });
 
             c = new Y.DD.Drop({
-                node: this.get('cont'),
+                node: self.get('cont'),
                 bubbles: del,
                 groups: del.dd.get('groups')
-            }).on('drop:over', Y.bind(this._handleDropOver, this));
+            }).on('drop:over', Y.bind(self._handleDropOver, self));
 
-            del.on('drag:start', Y.bind(this._handleDragStart, this));
-            del.on('drag:end', Y.bind(this._handleDragEnd, del));
-            del.on('drag:over', Y.bind(this._handleDragOver, this));
+            del.on('drag:start', Y.bind(self._handleDragStart, self));
+            del.on('drag:end', Y.bind(self._handleDragEnd, del));
+            del.on('drag:over', Y.bind(self._handleDragOver, self));
 
-            this.delegate = del;
-            S.regSortable(this);
+            self.delegate = del;
+            S.regSortable(self);
         },
         /**
         * @private
