@@ -495,6 +495,10 @@
                 <span class="o">},</span>
                 <span class="s1">&#39;dd-drop-plugin&#39;</span><span class="o">:{</span>
                     <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dd-drop&#39;</span><span class="o">]</span>
+                <span class="o">},</span>
+                <span class="s1">&#39;dd-delegate&#39;</span><span class="o">:</span> <span class="o">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">DDDRAG</span><span class="o">,</span> <span class="s1">&#39;event-mouseenter&#39;</span><span class="o">],</span>
+                    <span class="nx">optional</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dd-drop-plugin&#39;</span><span class="o">]</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -664,6 +668,10 @@
         <span class="nx">slider</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">WIDGET</span><span class="o">,</span> <span class="s1">&#39;dd-constrain&#39;</span><span class="o">],</span>
             <span class="nx">skinnable</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="o">},</span>
+
+        <span class="nx">sortable</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dd-delegate&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-drop-plugin&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-proxy&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">stylesheet</span><span class="o">:</span> <span class="o">{</span> 
