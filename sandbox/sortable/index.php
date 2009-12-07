@@ -148,13 +148,13 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     //sel2.bindTo(sel);
     //sel2.bindWith(sel);
 
-    sel.join(sel2, 'outter');
+    sel.join(sel2, 'outer');
     
 
     var sel3 = new Y.Sortable({
         cont: '#three',
         nodes: '.item',
-        moveType: 'copy'
+        moveType: 'move'
     });
     sel3.plug(Y.Plugin.DDConstrained, {
         constrain2node: '#demo'
