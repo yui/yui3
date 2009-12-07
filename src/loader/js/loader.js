@@ -446,6 +446,10 @@ var NOT_FOUND = {},
                 },
                 'dd-drop-plugin':{
                     requires: ['dd-drop']
+                },
+                'dd-delegate': {
+                    requires: [DDDRAG, 'event-mouseenter'],
+                    optional: ['dd-drop-plugin']
                 }
             }
         },
@@ -615,6 +619,10 @@ var NOT_FOUND = {},
         slider: {
             requires: [WIDGET, 'dd-constrain'],
             skinnable: true
+        },
+
+        sortable: {
+            requires: ['dd-delegate', 'dd-drop-plugin']
         },
 
         stylesheet: { 
