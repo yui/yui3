@@ -488,11 +488,10 @@ Y.extend(Widget, Y.Base, {
 
                         widget.publish(event.type);
 
-                        //  Pass in the DOM event to merge the DOM event 
-                        //  properties into the event facade of the custom 
-                        //  event.
+                        //  Make the DOM event a property of the custom event
+                        //  so that developers still have access to it.
 
-                        widget.fire(event.type, event);
+                        widget.fire(event.type, { domEvent: event });
 
                     }
 
