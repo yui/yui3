@@ -97,6 +97,11 @@ YUI.add('dd-delegate', function(Y) {
         dragConfig: {
             value: null
         },
+        /**
+        * @attribute handles
+        * @description The handles config option added to the temp DD instance.
+        * @type Array
+        */        
         handles: {
             value: null
         }
