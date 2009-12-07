@@ -129,17 +129,19 @@ YUI.add('dd-delegate', function(Y) {
         * @param {Event} e The MouseDown Event.
         */
         _handleDelegate: function(e) {
-            this._shimState = Y.DD.DDM._noShim;
-            Y.DD.DDM._noShim = true;
-            this.set('currentNode', e.currentTarget);
-            this.dd.set('node', e.currentTarget);
-            if (this.dd.proxy) {
-                this.dd.set('dragNode', Y.DD.DDM._proxy);
-            } else {
-                this.dd.set('dragNode', e.currentTarget);
+            if (e.currentTarget.test(this.get('nodes'))) {
+                this._shimState = Y.DD.DDM._noShim;
+                Y.DD.DDM._noShim = true;
+                this.set('currentNode', e.currentTarget);
+                this.dd.set('node', e.currentTarget);
+                if (this.dd.proxy) {
+                    this.dd.set('dragNode', Y.DD.DDM._proxy);
+                } else {
+                    this.dd.set('dragNode', e.currentTarget);
+                }
+                this.dd._prep();
+                this.dd.fire.call(this.dd, 'drag:mouseDown', { ev: e });
             }
-            this.dd._prep();
-            this.dd.fire.call(this.dd, 'drag:mouseDown', { ev: e });
         },
         /**
         * @private
@@ -238,6 +240,13 @@ YUI.add('dd-delegate', function(Y) {
         destructor: function() {
             if (this.dd) {
                 this.dd.destroy();
+            }
+            if (Y.Plugin.Drop) {
+                var targets = Y.one(this.get('cont')).all(this.get('nodes'));
+                targets.each(function(node) {
+                    node.drop.destroy();
+                    node.unplug(Y.Plugin.Drop);
+                });
             }
         }
     });
