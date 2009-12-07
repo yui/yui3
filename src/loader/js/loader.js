@@ -622,7 +622,7 @@ var NOT_FOUND = {},
         },
 
         sortable: {
-            requires: ['dd-delegate', 'dd-drop-plugin']
+            requires: ['dd-delegate', 'dd-drop-plugin', 'dd-proxy']
         },
 
         stylesheet: { 
