@@ -82,5 +82,4 @@ Pollable.prototype = {
 Y.augment(Y.DataSource.Local, Pollable);
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local']});
