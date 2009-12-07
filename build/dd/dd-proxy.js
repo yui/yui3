@@ -73,6 +73,9 @@ YUI.add('dd-proxy', function(Y) {
         */
         borderStyle: {
             value: '1px solid #808080'
+        },
+        cloneNode: {
+            value: false
         }
     };
 
@@ -118,6 +121,10 @@ YUI.add('dd-proxy', function(Y) {
                     if (this.get('hideOnEnd')) {
                         host.get(DRAG_NODE).setStyle('display', 'none');
                     }
+                    if (this.get('cloneNode')) {
+                        host.get(DRAG_NODE).remove();
+                        host.set(DRAG_NODE, DDM._proxy);
+                    }
                 }
             }, this));
             this._hands = [h, h1];
@@ -131,6 +138,18 @@ YUI.add('dd-proxy', function(Y) {
                 v.detach();
             });
             host.set(DRAG_NODE, host.get(NODE));
+        },
+        clone: function() {
+            var host = this.get(HOST),
+                n = host.get(NODE),
+                c = n.cloneNode(true);
+            c.set('id', '');
+            c.setStyle('position', 'absolute');
+            delete c._yuid;
+            Y.stamp(c);
+            n.get('parentNode').appendChild(c);
+            host.set(DRAG_NODE, c);
+            return c;
         }
     };
     
@@ -193,7 +212,6 @@ YUI.add('dd-proxy', function(Y) {
                 cur = DDM.get('dragCursor');
             }
 
-
             d.setStyles({
                 visibility: 'hidden',
                 display: 'block',
@@ -201,7 +219,9 @@ YUI.add('dd-proxy', function(Y) {
                 border: drag.proxy.get('borderStyle')
             });
 
-
+            if (drag.proxy.get('cloneNode')) {
+                d = drag.proxy.clone();
+            }
 
             if (drag.proxy.get('positionProxy')) {
                 d.setXY(drag.nodeXY);

@@ -699,7 +699,7 @@ YUI.add('dd-drag', function(Y) {
                     }
                 });
             } else {
-                n = this.get(NODE)
+                n = this.get(NODE);
                 if (n.contains(tar) || n.compareTo(tar)) {
                     r = true;
                 }
