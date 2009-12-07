@@ -102,6 +102,21 @@ YUI.add('sortable', function(Y) {
         S._sortables.push(s);
     };
 
+    /**
+    * @static
+    * @method unregSortable
+    * @param Sortable s A Sortable instance.
+    * @description Unregister a Sortable instance with the singleton.
+    */
+    S.unregSortable = function(s) {
+        Y.each(S._sortables, function(v, k) {
+            if (v === s) {
+                S._sortables[k] = null;
+                delete S._sortables[k];
+            }
+        });
+    };
+
     Y.extend(S, Y.Base, {
         /**
         * @property delegate
@@ -241,6 +256,8 @@ YUI.add('sortable', function(Y) {
             return this;
         },
         destructor: function() {
+            this.delegate.destroy();
+            S.unregSortable(this);
         },
         /**
         * @method join
@@ -262,7 +279,6 @@ YUI.add('sortable', function(Y) {
             if (!type) {
                 type = 'full';
             }
-
 
             switch (type.toLowerCase()) {
                 case 'none':
@@ -293,4 +309,4 @@ YUI.add('sortable', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-delegate']});
+}, '@VERSION@' ,{requires:['dd-delegate', 'dd-drop-plugin']});
