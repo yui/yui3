@@ -1113,6 +1113,8 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
+     * TODO: Protected? on "destroy"?
+     * 
      * @private
      * @method _unbindUI
      */
@@ -1143,10 +1145,11 @@ Y.extend(Widget, Y.Base, {
 		if (Y.UA.webkit) {
 			this._hDocMouseDown = oDocument.on("mousedown", this._onDocMouseDown, this);
 		}
-
     },
 
     /**
+     * TODO: Protected?
+     * 
      * @private
      * @method _unbindDOMListeners
      */   
