@@ -609,28 +609,16 @@ Y.extend(Widget, Y.Base, {
     destructor: function() {
         Y.log('destructor called', 'life', 'widget');
 
-        var boundingBox = this.get(BOUNDING_BOX);
+        var boundingBox = this.get(BOUNDING_BOX),
+            guid = Y.stamp(boundingBox, true);
 
-        var guid = Y.stamp(boundingBox, true);
         if (guid && guid in _instances) {
             delete _instances[guid];
         }
 
+        this._unbindUI(boundingBox);
+
         boundingBox.remove(true);
-
-
-        //  Node's "remove" method will purge all of the delegated DOM event 
-        //  listeners, the following cleans up references to detach handles
-        //  for delegated event listeners.
-
-        var rootNode = this._getRootNode();
-
-        guid = Y.stamp(rootNode, true);
-        
-        if (_delegates[guid] && rootNode == boundingBox) {
-            delete _delegates[guid];
-        }
-
     },
 
     /**
@@ -1129,6 +1117,15 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
+     * @private
+     * @method _unbindUI
+     */
+    _unbindUI : function(boundingBox) {
+        this._unbindAttrUI([VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED]);
+        this._unbindDOMListeners(boundingBox);
+    },
+ 
+    /**
      * Sets up DOM listeners, on elements rendered by the widget.
      * 
      * @method _bindDOMListeners
@@ -1141,16 +1138,41 @@ Y.extend(Widget, Y.Base, {
         // TODO: Perf Optimization: Use Widget.getByNode delegation, to get by 
         // with just one _onFocus subscription per sandbox, instead of one per widget
 
-		oDocument.on("focus", this._onFocus, this);
+		this._hDocFocus = oDocument.on("focus", this._onFocus, this);
 
 		//	Fix for Webkit:
 		//	Document doesn't receive focus in Webkit when the user mouses 
 		//	down on it, so the "focused" attribute won't get set to the 
 		//	correct value.
 		if (Y.UA.webkit) {
-			oDocument.on("mousedown", this._onDocMouseDown, this);
+			this._hDocMouseDown = oDocument.on("mousedown", this._onDocMouseDown, this);
 		}
 
+    },
+
+    /**
+     * @private
+     * @method _unbindDOMListeners
+     */   
+    _unbindDOMListeners : function(boundingBox) {
+
+        //  Node's "remove" method will purge all of the delegated DOM event 
+        //  listeners, the following cleans up references to detach handles
+        //  for delegated event listeners.
+        var rootNode = this._getRootNode(), 
+            guid = Y.stamp(rootNode, true);
+
+        if (_delegates[guid] && rootNode == boundingBox) {
+            delete _delegates[guid];
+        }
+
+        if (this._hDocFocus) {
+            this._hDocFocus.detach();
+        }
+
+        if (this._hDocMouseDown) {
+            this._hDocMouseDown.detach();
+        }
     },
 
     /**
@@ -1173,6 +1195,20 @@ Y.extend(Widget, Y.Base, {
         for (var i = 0, l = attrs.length; i < l; i++) {
             var attr = attrs[i];
             this.after(attr + CHANGE, this[_AFTER + attr.substring(0, 1).toUpperCase() + attr.substring(1) + CHANGE]);
+        }
+    },
+
+    /**
+     * TODO: Protected? on "destroy"?
+     *
+     * @method _unbindAttrUI
+     * @private
+     * @param {Object} attrs
+     */
+    _unbindAttrUI : function(attrs) {
+        for (var i = 0, l = attrs.length; i < l; i++) {
+            var attr = attrs[i];
+            this.detach(attr + CHANGE, this[_AFTER + attr.substring(0, 1).toUpperCase() + attr.substring(1) + CHANGE]);
         }
     },
 
