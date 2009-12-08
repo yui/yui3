@@ -102,5 +102,4 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceXMLSchema = DataSourceXMLSchema;
 
 
-
 }, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-xml']});

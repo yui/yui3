@@ -537,11 +537,10 @@
 <span class="c"></span>
                         <span class="nx">widget</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">type</span><span class="o">);</span>
 
-                        <span class="c">//  Pass in the DOM event to merge the DOM event </span>
-<span class="c"></span>                        <span class="c">//  properties into the event facade of the custom </span>
-<span class="c"></span>                        <span class="c">//  event.</span>
+                        <span class="c">//  Make the DOM event a property of the custom event</span>
+<span class="c"></span>                        <span class="c">//  so that developers still have access to it.</span>
 <span class="c"></span>
-                        <span class="nx">widget</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span> <span class="nx">event</span><span class="o">);</span>
+                        <span class="nx">widget</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span> <span class="o">{</span> <span class="nx">domEvent</span><span class="o">:</span> <span class="nx">event</span> <span class="o">});</span>
 
                     <span class="o">}</span>
 

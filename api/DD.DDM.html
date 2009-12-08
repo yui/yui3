@@ -129,6 +129,21 @@
 
                                     <hr />
                                     </div>
+                                    <div class="private" rel="yui:property" resource="#property__delegates">
+                                    <h4><a name="property__delegates" property="yui:name">_delegates</a>
+                                        - <code>private <span property="yui:type">Array</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Holder for all Y.DD.Delegate instances
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="private" rel="yui:property" resource="#property__drags">
                                     <h4><a name="property__drags" property="yui:name">_drags</a>
                                         - <code>private <span property="yui:type">{Array}</span></code>
@@ -1690,6 +1705,36 @@ If positionProxy is set to true (default) it will position the proxy element in 
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_getDelegate">
+                                    <h4>
+                                        <a name="method_getDelegate">getDelegate</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">getDelegate</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Get a delegate instance from a container node
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_getDrag">
                                     <h4>
                                         <a name="method_getDrag">getDrag</a></h4>
@@ -1778,6 +1823,50 @@ If positionProxy is set to true (default) it will position the proxy element in 
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_getNode">
+                                    <h4>
+                                        <a name="method_getNode">getNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">getNode</strong>
+                                           (
+                                                
+                                                        
+                                                         n
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Return a node instance from the given node, selector string or Y.Base extended object.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">n</span>
+                                                        &lt;<span property="yui:type">Node/Object/String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The node to resolve.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_isOverTarget">
                                     <h4>
                                         <a name="method_isOverTarget">isOverTarget</a></h4>
@@ -1822,6 +1911,36 @@ If positionProxy is set to true (default) it will position the proxy element in 
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_regDelegate">
+                                    <h4>
+                                        <a name="method_regDelegate">regDelegate</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">regDelegate</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Register a Delegate with the DDM
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_stopDrag">
                                     <h4>
                                         <a name="method_stopDrag">stopDrag</a></h4>
@@ -1847,6 +1966,114 @@ If positionProxy is set to true (default) it will position the proxy element in 
                                             <div class="chainable">
                                                 <strong>Chainable:</strong> This method is chainable.
                                             </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_swapNode">
+                                    <h4>
+                                        <a name="method_swapNode">swapNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">swapNode</strong>
+                                           (
+                                                
+                                                        
+                                                         n1
+                                                    
+                                                
+                                                        , 
+                                                         n2
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Swap the position of 2 nodes based on their DOM location.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">n1</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The first node to swap</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">n2</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The first node to swap</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_swapPosition">
+                                    <h4>
+                                        <a name="method_swapPosition">swapPosition</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">swapPosition</strong>
+                                           (
+                                                
+                                                        
+                                                         n1
+                                                    
+                                                
+                                                        , 
+                                                         n2
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Swap the position of 2 nodes based on their CSS positioning.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">n1</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The first node to swap</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">n2</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The first node to swap</span>
+                                                        </dd>
+                                                </dl>
+
+
 
              
 
@@ -2526,6 +2753,7 @@ If positionProxy is set to true (default) it will position the proxy element in 
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class="selected"><a href="DD.DDM.html" title="DD.DDM">DD.DDM</a></li>
+                                <li class=""><a href="DD.Delegate.html" title="DD.Delegate">DD.Delegate</a></li>
                                 <li class=""><a href="DD.Drag.html" title="DD.Drag">DD.Drag</a></li>
                                 <li class=""><a href="DD.Drop.html" title="DD.Drop">DD.Drop</a></li>
                                 <li class=""><a href="DD.Scroll.html" title="DD.Scroll">DD.Scroll</a></li>
@@ -2547,6 +2775,7 @@ If positionProxy is set to true (default) it will position the proxy element in 
                                 <li class=""><a href="ddm-base.js.html" title="ddm-base.js">ddm-base.js</a></li>
                                 <li class=""><a href="ddm-drop.js.html" title="ddm-drop.js">ddm-drop.js</a></li>
                                 <li class=""><a href="ddm.js.html" title="ddm.js">ddm.js</a></li>
+                                <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
                                 <li class=""><a href="drag.js.html" title="drag.js">drag.js</a></li>
                                 <li class=""><a href="drop.js.html" title="drop.js">drop.js</a></li>
                                 <li class=""><a href="proxy.js.html" title="proxy.js">proxy.js</a></li>
@@ -2560,6 +2789,7 @@ If positionProxy is set to true (default) it will position the proxy element in 
                                 <li class=""><a href="#property__active" title="_active">_active</a></li>
                                 <li class="private"><a href="#property__activeShims" title="_activeShims">_activeShims</a></li>
                                 <li class="private"><a href="#property__debugShim" title="_debugShim">_debugShim</a></li>
+                                <li class="private"><a href="#property__delegates" title="_delegates">_delegates</a></li>
                                 <li class="private"><a href="#property__drags" title="_drags">_drags</a></li>
                                 <li class="private"><a href="#property__noShim" title="_noShim">_noShim</a></li>
                                 <li class="private"><a href="#property__pg" title="_pg">_pg</a></li>
@@ -2612,10 +2842,15 @@ If positionProxy is set to true (default) it will position the proxy element in 
                                 <li class=""><a href="#method_clearCache" title="clearCache">clearCache</a></li>
                                 <li class="private"><a href="#method_cssSizestoObject" title="cssSizestoObject">cssSizestoObject</a></li>
                                 <li class=""><a href="#method_getBestMatch" title="getBestMatch">getBestMatch</a></li>
+                                <li class=""><a href="#method_getDelegate" title="getDelegate">getDelegate</a></li>
                                 <li class=""><a href="#method_getDrag" title="getDrag">getDrag</a></li>
                                 <li class=""><a href="#method_getDrop" title="getDrop">getDrop</a></li>
+                                <li class=""><a href="#method_getNode" title="getNode">getNode</a></li>
                                 <li class=""><a href="#method_isOverTarget" title="isOverTarget">isOverTarget</a></li>
+                                <li class=""><a href="#method_regDelegate" title="regDelegate">regDelegate</a></li>
                                 <li class=""><a href="#method_stopDrag" title="stopDrag">stopDrag</a></li>
+                                <li class=""><a href="#method_swapNode" title="swapNode">swapNode</a></li>
+                                <li class=""><a href="#method_swapPosition" title="swapPosition">swapPosition</a></li>
                                 <li class=""><a href="#method_syncActiveShims" title="syncActiveShims">syncActiveShims</a></li>
                         </ul>
                     </div>
@@ -2651,7 +2886,7 @@ If positionProxy is set to true (default) it will position the proxy element in 
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "DD.DDM", "name": "_activateTargets", "url": "DD.DDM.html#method__activateTargets", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "_active", "url": "DD.DDM.html#property__active", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "activeDrag", "url": "DD.DDM.html#property_activeDrag", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "activeDrop", "url": "DD.DDM.html#property_activeDrop", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_activeShims", "url": "DD.DDM.html#property__activeShims", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_addActiveShim", "url": "DD.DDM.html#method__addActiveShim", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_addValid", "url": "DD.DDM.html#method__addValid", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "align", "url": "Plugin.DragConstrained.html#method_align", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_cacheRegion", "url": "Plugin.DragConstrained.html#method__cacheRegion", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_calcTickArray", "url": "DD.DDM.html#method__calcTickArray", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_calcTicks", "url": "DD.DDM.html#method__calcTicks", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_checkRegion", "url": "Plugin.DragConstrained.html#method__checkRegion", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_checkTicks", "url": "Plugin.DragConstrained.html#method__checkTicks", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "clearCache", "url": "DD.DDM.html#method_clearCache", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "clickPixelThresh", "url": "DD.DDM.html#config_clickPixelThresh", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "clickPixelThreshChange", "url": "DD.DDM.html#event_clickPixelThreshChange", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "clickTimeThresh", "url": "DD.DDM.html#config_clickTimeThresh", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "clickTimeThreshChange", "url": "DD.DDM.html#event_clickTimeThreshChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "con", "url": "Plugin.DragConstrained.html#property_con", "type": "property"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2node", "url": "Plugin.DragConstrained.html#config_constrain2node", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2nodeChange", "url": "Plugin.DragConstrained.html#event_constrain2nodeChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2region", "url": "Plugin.DragConstrained.html#config_constrain2region", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2regionChange", "url": "Plugin.DragConstrained.html#event_constrain2regionChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2view", "url": "Plugin.DragConstrained.html#config_constrain2view", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2viewChange", "url": "Plugin.DragConstrained.html#event_constrain2viewChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_createFrame", "url": "DD.DDM.html#method__createFrame", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_createPG", "url": "DD.DDM.html#method__createPG", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "CSS_PREFIX", "url": "DD.DDM.html#property_CSS_PREFIX", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "cssSizestoObject", "url": "DD.DDM.html#method_cssSizestoObject", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "ddm:end", "url": "DD.DDM.html#event_ddm:end", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "ddm:start", "url": "DD.DDM.html#event_ddm:start", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_deactivateTargets", "url": "DD.DDM.html#method__deactivateTargets", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_debugShim", "url": "DD.DDM.html#property__debugShim", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "dragCursor", "url": "DD.DDM.html#config_dragCursor", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "dragCursorChange", "url": "DD.DDM.html#event_dragCursorChange", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "dragMode", "url": "DD.DDM.html#config_dragMode", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "dragModeChange", "url": "DD.DDM.html#event_dragModeChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_drags", "url": "DD.DDM.html#property__drags", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_dropMove", "url": "DD.DDM.html#method__dropMove", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_end", "url": "DD.DDM.html#method__end", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_endDrag", "url": "DD.DDM.html#method__endDrag", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getBestMatch", "url": "DD.DDM.html#method_getBestMatch", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getDrag", "url": "DD.DDM.html#method_getDrag", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getDrop", "url": "DD.DDM.html#method_getDrop", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "getRegion", "url": "Plugin.DragConstrained.html#method_getRegion", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "gutter", "url": "Plugin.DragConstrained.html#config_gutter", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "gutterChange", "url": "Plugin.DragConstrained.html#event_gutterChange", "type": "event"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_handleStart", "url": "Plugin.DragConstrained.html#method__handleStart", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_handleTargetOver", "url": "DD.DDM.html#method__handleTargetOver", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_hasActiveShim", "url": "DD.DDM.html#method__hasActiveShim", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "inRegion", "url": "Plugin.DragConstrained.html#method_inRegion", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "INTERSECT", "url": "DD.DDM.html#property_INTERSECT", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "isOverTarget", "url": "DD.DDM.html#method_isOverTarget", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_lookup", "url": "DD.DDM.html#method__lookup", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "mode", "url": "DD.DDM.html#property_mode", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_move", "url": "DD.DDM.html#method__move", "type": "method"}, {"access": "", "host": "Plugin.Drop", "name": "NAME", "url": "Plugin.Drop.html#property_NAME", "type": "property"}, {"access": "", "host": "Plugin.Drag", "name": "NAME", "url": "Plugin.Drag.html#property_NAME", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_noShim", "url": "DD.DDM.html#property__noShim", "type": "property"}, {"access": "", "host": "Plugin.Drop", "name": "NS", "url": "Plugin.Drop.html#property_NS", "type": "property"}, {"access": "", "host": "Plugin.Drag", "name": "NS", "url": "Plugin.Drag.html#property_NS", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "otherDrops", "url": "DD.DDM.html#property_otherDrops", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_pg", "url": "DD.DDM.html#property__pg", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_pg_activate", "url": "DD.DDM.html#method__pg_activate", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_pg_deactivate", "url": "DD.DDM.html#method__pg_deactivate", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_pg_size", "url": "DD.DDM.html#method__pg_size", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "POINT", "url": "DD.DDM.html#property_POINT", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_regDrag", "url": "DD.DDM.html#method__regDrag", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_regionCache", "url": "Plugin.DragConstrained.html#property__regionCache", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_regTarget", "url": "DD.DDM.html#method__regTarget", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_removeActiveShim", "url": "DD.DDM.html#method__removeActiveShim", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_removeValid", "url": "DD.DDM.html#method__removeValid", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_setDragMode", "url": "DD.DDM.html#method__setDragMode", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_setFrame", "url": "DD.DDM.html#method__setFrame", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_setupListeners", "url": "DD.DDM.html#method__setupListeners", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_start", "url": "DD.DDM.html#method__start", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_startDrag", "url": "DD.DDM.html#method__startDrag", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickX", "url": "Plugin.DragConstrained.html#config_stickX", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickXChange", "url": "Plugin.DragConstrained.html#event_stickXChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickY", "url": "Plugin.DragConstrained.html#config_stickY", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickYChange", "url": "Plugin.DragConstrained.html#event_stickYChange", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "stopDrag", "url": "DD.DDM.html#method_stopDrag", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "STRICT", "url": "DD.DDM.html#property_STRICT", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "syncActiveShims", "url": "DD.DDM.html#method_syncActiveShims", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "targets", "url": "DD.DDM.html#property_targets", "type": "property"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickX", "url": "Plugin.DragConstrained.html#config_tickX", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickXArray", "url": "Plugin.DragConstrained.html#config_tickXArray", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickXArrayChange", "url": "Plugin.DragConstrained.html#event_tickXArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickXChange", "url": "Plugin.DragConstrained.html#event_tickXChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickY", "url": "Plugin.DragConstrained.html#config_tickY", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickYArray", "url": "Plugin.DragConstrained.html#config_tickYArray", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickYArrayChange", "url": "Plugin.DragConstrained.html#event_tickYArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickYChange", "url": "Plugin.DragConstrained.html#event_tickYChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_unregDrag", "url": "DD.DDM.html#method__unregDrag", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_unregTarget", "url": "DD.DDM.html#method__unregTarget", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "useHash", "url": "DD.DDM.html#property_useHash", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "validDrops", "url": "DD.DDM.html#property_validDrops", "type": "property"}];
+    ALL_YUI_PROPS = [{"access": "private", "host": "DD.DDM", "name": "_activateTargets", "url": "DD.DDM.html#method__activateTargets", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "_active", "url": "DD.DDM.html#property__active", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "activeDrag", "url": "DD.DDM.html#property_activeDrag", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "activeDrop", "url": "DD.DDM.html#property_activeDrop", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_activeShims", "url": "DD.DDM.html#property__activeShims", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_addActiveShim", "url": "DD.DDM.html#method__addActiveShim", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_addValid", "url": "DD.DDM.html#method__addValid", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "align", "url": "Plugin.DragConstrained.html#method_align", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_cacheRegion", "url": "Plugin.DragConstrained.html#method__cacheRegion", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "cacheRegion", "url": "Plugin.DragConstrained.html#config_cacheRegion", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "cacheRegionChange", "url": "Plugin.DragConstrained.html#event_cacheRegionChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_calcTickArray", "url": "DD.DDM.html#method__calcTickArray", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_calcTicks", "url": "DD.DDM.html#method__calcTicks", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_checkRegion", "url": "Plugin.DragConstrained.html#method__checkRegion", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_checkTicks", "url": "Plugin.DragConstrained.html#method__checkTicks", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "clearCache", "url": "DD.DDM.html#method_clearCache", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "clickPixelThresh", "url": "DD.DDM.html#config_clickPixelThresh", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "clickPixelThreshChange", "url": "DD.DDM.html#event_clickPixelThreshChange", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "clickTimeThresh", "url": "DD.DDM.html#config_clickTimeThresh", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "clickTimeThreshChange", "url": "DD.DDM.html#event_clickTimeThreshChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "con", "url": "Plugin.DragConstrained.html#property_con", "type": "property"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2node", "url": "Plugin.DragConstrained.html#config_constrain2node", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2nodeChange", "url": "Plugin.DragConstrained.html#event_constrain2nodeChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2region", "url": "Plugin.DragConstrained.html#config_constrain2region", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2regionChange", "url": "Plugin.DragConstrained.html#event_constrain2regionChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2view", "url": "Plugin.DragConstrained.html#config_constrain2view", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2viewChange", "url": "Plugin.DragConstrained.html#event_constrain2viewChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_createFrame", "url": "DD.DDM.html#method__createFrame", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_createPG", "url": "DD.DDM.html#method__createPG", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "CSS_PREFIX", "url": "DD.DDM.html#property_CSS_PREFIX", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "cssSizestoObject", "url": "DD.DDM.html#method_cssSizestoObject", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "ddm:end", "url": "DD.DDM.html#event_ddm:end", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "ddm:start", "url": "DD.DDM.html#event_ddm:start", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_deactivateTargets", "url": "DD.DDM.html#method__deactivateTargets", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_debugShim", "url": "DD.DDM.html#property__debugShim", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_delegates", "url": "DD.DDM.html#property__delegates", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "dragCursor", "url": "DD.DDM.html#config_dragCursor", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "dragCursorChange", "url": "DD.DDM.html#event_dragCursorChange", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "dragMode", "url": "DD.DDM.html#config_dragMode", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "dragModeChange", "url": "DD.DDM.html#event_dragModeChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_drags", "url": "DD.DDM.html#property__drags", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_dropMove", "url": "DD.DDM.html#method__dropMove", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_end", "url": "DD.DDM.html#method__end", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_endDrag", "url": "DD.DDM.html#method__endDrag", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getBestMatch", "url": "DD.DDM.html#method_getBestMatch", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getDelegate", "url": "DD.DDM.html#method_getDelegate", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getDrag", "url": "DD.DDM.html#method_getDrag", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getDrop", "url": "DD.DDM.html#method_getDrop", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getNode", "url": "DD.DDM.html#method_getNode", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "getRegion", "url": "Plugin.DragConstrained.html#method_getRegion", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "gutter", "url": "Plugin.DragConstrained.html#config_gutter", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "gutterChange", "url": "Plugin.DragConstrained.html#event_gutterChange", "type": "event"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_handleStart", "url": "Plugin.DragConstrained.html#method__handleStart", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_handleTargetOver", "url": "DD.DDM.html#method__handleTargetOver", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_hasActiveShim", "url": "DD.DDM.html#method__hasActiveShim", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "inRegion", "url": "Plugin.DragConstrained.html#method_inRegion", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "INTERSECT", "url": "DD.DDM.html#property_INTERSECT", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "isOverTarget", "url": "DD.DDM.html#method_isOverTarget", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_lookup", "url": "DD.DDM.html#method__lookup", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "mode", "url": "DD.DDM.html#property_mode", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_move", "url": "DD.DDM.html#method__move", "type": "method"}, {"access": "", "host": "Plugin.Drop", "name": "NAME", "url": "Plugin.Drop.html#property_NAME", "type": "property"}, {"access": "", "host": "Plugin.Drag", "name": "NAME", "url": "Plugin.Drag.html#property_NAME", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_noShim", "url": "DD.DDM.html#property__noShim", "type": "property"}, {"access": "", "host": "Plugin.Drop", "name": "NS", "url": "Plugin.Drop.html#property_NS", "type": "property"}, {"access": "", "host": "Plugin.Drag", "name": "NS", "url": "Plugin.Drag.html#property_NS", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "otherDrops", "url": "DD.DDM.html#property_otherDrops", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_pg", "url": "DD.DDM.html#property__pg", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_pg_activate", "url": "DD.DDM.html#method__pg_activate", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_pg_deactivate", "url": "DD.DDM.html#method__pg_deactivate", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_pg_size", "url": "DD.DDM.html#method__pg_size", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "POINT", "url": "DD.DDM.html#property_POINT", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "regDelegate", "url": "DD.DDM.html#method_regDelegate", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_regDrag", "url": "DD.DDM.html#method__regDrag", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_regionCache", "url": "Plugin.DragConstrained.html#property__regionCache", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_regTarget", "url": "DD.DDM.html#method__regTarget", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_removeActiveShim", "url": "DD.DDM.html#method__removeActiveShim", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_removeValid", "url": "DD.DDM.html#method__removeValid", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "resetCache", "url": "Plugin.DragConstrained.html#method_resetCache", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_setDragMode", "url": "DD.DDM.html#method__setDragMode", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_setFrame", "url": "DD.DDM.html#method__setFrame", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_setupListeners", "url": "DD.DDM.html#method__setupListeners", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_start", "url": "DD.DDM.html#method__start", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_startDrag", "url": "DD.DDM.html#method__startDrag", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickX", "url": "Plugin.DragConstrained.html#config_stickX", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickXChange", "url": "Plugin.DragConstrained.html#event_stickXChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickY", "url": "Plugin.DragConstrained.html#config_stickY", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickYChange", "url": "Plugin.DragConstrained.html#event_stickYChange", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "stopDrag", "url": "DD.DDM.html#method_stopDrag", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "STRICT", "url": "DD.DDM.html#property_STRICT", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "swapNode", "url": "DD.DDM.html#method_swapNode", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "swapPosition", "url": "DD.DDM.html#method_swapPosition", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "syncActiveShims", "url": "DD.DDM.html#method_syncActiveShims", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "targets", "url": "DD.DDM.html#property_targets", "type": "property"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickX", "url": "Plugin.DragConstrained.html#config_tickX", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickXArray", "url": "Plugin.DragConstrained.html#config_tickXArray", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickXArrayChange", "url": "Plugin.DragConstrained.html#event_tickXArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickXChange", "url": "Plugin.DragConstrained.html#event_tickXChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickY", "url": "Plugin.DragConstrained.html#config_tickY", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickYArray", "url": "Plugin.DragConstrained.html#config_tickYArray", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickYArrayChange", "url": "Plugin.DragConstrained.html#event_tickYArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickYChange", "url": "Plugin.DragConstrained.html#event_tickYChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_unregDrag", "url": "DD.DDM.html#method__unregDrag", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_unregTarget", "url": "DD.DDM.html#method__unregTarget", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "useHash", "url": "DD.DDM.html#property_useHash", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "validDrops", "url": "DD.DDM.html#property_validDrops", "type": "property"}];
 </script>
 </body>
 </html>

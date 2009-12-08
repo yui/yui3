@@ -135,6 +135,13 @@ YUI.add('dd-drop', function(Y) {
         bubbles: {
             writeOnce: true,
             value: Y.DD.DDM
+        },
+        useShim: {
+            value: true,
+            setter: function(v) {
+                Y.DD.DDM._noShim = !v;
+                return v;
+            }
         }
     };
 
@@ -263,11 +270,14 @@ YUI.add('dd-drop', function(Y) {
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-valid');
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-invalid');
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-over');
-            this.shim.setStyles({
-                top: '-999px',
-                left: '-999px',
-                zIndex: '1'
-            });
+
+            if (this.get('useShim')) {
+                this.shim.setStyles({
+                    top: '-999px',
+                    left: '-999px',
+                    zIndex: '1'
+                });
+            }
             this.overTarget = false;
         },
         /**
@@ -293,7 +303,9 @@ YUI.add('dd-drop', function(Y) {
                 node.addClass(DDM.CSS_PREFIX + '-drop-active-valid');
                 DDM._addValid(this);
                 this.overTarget = false;
-                this.sizeShim();
+                if (this.get('useShim')) {
+                    this.sizeShim();
+                }
             } else {
                 DDM._removeValid(this);
                 node.removeClass(DDM.CSS_PREFIX + '-drop-active-valid');
@@ -311,7 +323,7 @@ YUI.add('dd-drop', function(Y) {
             if (this.get(NODE) === DDM.activeDrag.get(NODE)) {
                 return false;
             }
-            if (this.get('lock')) {
+            if (this.get('lock') || !this.get('useShim')) {
                 return false;
             }
             if (!this.shim) {
@@ -380,24 +392,30 @@ YUI.add('dd-drop', function(Y) {
             if (this.shim) {
                 return;
             }
-            var s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
+            var s = this.get('node');
 
-            s.setStyles({
-                height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
-                width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
-                backgroundColor: 'yellow',
-                opacity: '.5',
-                zIndex: '1',
-                overflow: 'hidden',
-                top: '-900px',
-                left: '-900px',
-                position:  'absolute'
-            });
-            DDM._pg.appendChild(s);
+            if (this.get('useShim')) {
+                s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
+                s.setStyles({
+                    height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
+                    width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
+                    backgroundColor: 'yellow',
+                    opacity: '.5',
+                    zIndex: '1',
+                    overflow: 'hidden',
+                    top: '-900px',
+                    left: '-900px',
+                    position:  'absolute'
+                });
+
+                DDM._pg.appendChild(s);
+
+                s.on('mouseover', Y.bind(this._handleOverEvent, this));
+                s.on('mouseout', Y.bind(this._handleOutEvent, this));
+            }
+
+
             this.shim = s;
-
-            s.on('mouseover', Y.bind(this._handleOverEvent, this));
-            s.on('mouseout', Y.bind(this._handleOutEvent, this));
         },
         /**
         * @private
@@ -460,9 +478,6 @@ YUI.add('dd-drop', function(Y) {
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];
-                        //if (DDM.activeDrop === this) {
-                        //    DDM.activeDrop = null;
-                        //}
                     }
                 }
             }

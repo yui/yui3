@@ -25,15 +25,13 @@ YUI.add('value-change', function(Y) {
  **/
 
 function toNodeList (el) { return (
-    
-    (Lang.isString(el) || Lang.isArray(el))
+    (Y.Lang.isString(el) || Y.Lang.isArray(el))
         ? Y.all(el)
     : (el instanceof Y.Node)
         ? Y.all([el._node])
     : (el instanceof Y.NodeList)
         ? el
     : Y.all([el])
-    
 )};
 
 function onAvail (el, args) {
@@ -104,7 +102,6 @@ function afterDetach (node, force) {
 };
 
 var registry = {},
-    Lang = Y.Lang,
     event = {
         on : function (type, fn, el, o) {
             var args = Y.Array(arguments, 0, true),
@@ -132,7 +129,7 @@ var registry = {},
     eventName = "valueChange",
     domEventHandlers = (function () {
         var valueHistory = {}, intervals = {}, timeouts = {};
-            
+        
         function startPolling (node, e) {
             var key = ceName(node);
             // avoid duplicates

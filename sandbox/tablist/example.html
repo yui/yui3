@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>TabList Widget Example</title>
+
+	<link rel="stylesheet" type="text/css" href="../../build/cssreset/reset-min.css">
+	<link rel="stylesheet" type="text/css" href="../../build/cssfonts/fonts-min.css">
+	<link rel="stylesheet" type="text/css" href="./build_files/tablist.css">
+
+	<script src="../../build/yui/yui-min.js" type="text/javascript"></script>
+	
+</head>
+<body class="yui-skin-sam">
+
+	<script type="text/javascript">
+
+		YUI({ 
+
+    		base: "../../build/",
+		    filter: "debug", 
+    		modules: {
+    			"tablist": {
+    				fullpath: "./build_files/tablist-debug.js",
+    				requires: ["widget", "widget-parent", "widget-child", "node-focusmanager"]
+    			}			    
+    		}                
+		    
+		 }).use("tablist", function (Y) {
+
+            //  Three different ways to add a Tab
+
+            //  1)  Via the constructor
+            var tablist = new Y.TabList({ items: [ 
+            
+                    { label: "Tab One", content: "Tab one content" },
+                    { label: "Tab Two", content: "Tab two content" } 
+            
+                 ] });
+
+            //  2)  Via creating a new instance of Y.Tab
+            var tab = new Y.Tab({ label: "Item Four", content: "Tab four content" });
+            tablist.add(tab);
+
+            //  3)  Via passing the configuration for a Y.Tab instance
+            //      directly to the add() method
+            tablist.add({ label: "Item Three", content: "Tab three content" });
+
+            tablist.render(Y.one("body"));
+
+		});
+
+	</script>
+
+</body>
+</html>
