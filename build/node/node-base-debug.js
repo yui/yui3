@@ -1022,7 +1022,7 @@ Y.mix(NodeList.prototype, {
 
     /**
      * Creates a documenFragment from the nodes bound to the NodeList instance 
-     * @method toDocFrag
+     * @method toFrag
      * @return Node a Node instance bound to the documentFragment
      */
     toFrag: function() {
