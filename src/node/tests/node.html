@@ -451,6 +451,20 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             // TODO: test deep clone with bound descendant
             Assert.isTrue(node.get('childNodes').size() === node.cloneNode(true).get('childNodes').size(), 'node.get("childNodes").size() === node.cloneNode(true).get("childNodes").size()');
 
+            Assert.isTrue(Y.one('.bar').test('.bar'), "Y.one('.bar').test('.bar')");
+            clone = Y.one('.bar').cloneNode(true);
+            Assert.isTrue(clone.hasClass('bar'), "clone.hasClass('bar') (before appending)");
+            Y.one('body').appendChild(clone);
+            Assert.isTrue(clone.test('.bar'), "clone.test('.bar') (after appending)");
+
+            Assert.isTrue(
+                Y.Node.create('<div id="foo" class="bar"></div>').test('.bar'),
+                "Y.Node.create('<div id=\"foo\" class=\"bar\"></div>').test('.bar')");
+
+            Assert.isTrue(
+                Y.Node.create('<div id="foo" class="bar"></div>').test('#foo.bar'),
+                "Y.Node.create('<div id=\"foo\" class=\"bar\"></div>').test('#foo.bar')");
+
             Assert.isTrue(node.hasChildNodes(), 'hasChildNodes()');
 
             Assert.isTrue(node.compareTo(node), 'compareTo(node)');
