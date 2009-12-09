@@ -25,9 +25,15 @@ YUI({
     }
 }).use('dd', 'console', 'test', 'substitute', function(Y) {
         var myConsole = new Y.Console({
-            height: Y.get(window).get('winHeight') + 'px'
+            height: Y.one(window).get('winHeight') + 'px'
         }).render();    
             
+        var _count = {},
+        _resetCount = function() {
+            Y.each(_count, function(v, k) {
+                _count[k] = 0;
+            });
+        },
         _fakeStart = function(node) {
             _resetCount();
             Y.DD.DDM._noShim = true;
@@ -37,50 +43,42 @@ YUI({
             Y.DD.DDM.activeDrag = node;
             Y.DD.DDM._start();
             node.start();
-        }
+        },
         _fakeEnd = function(node) {
             Y.DD.DDM._end();
             node.end();
             node._handleMouseUp();
             Y.DD.DDM._noShim = false;
-        }
-
-        _fakeMove = function(node, max, flip) {
-            _fakeStart(node);
-            _moveNodeAll(node, max, flip);
-            _fakeEnd(node);
-        }
+        },
         _moveNode = function(node, num, flip) {
             if (flip) {
                 Y.DD.DDM._move({ pageX: 110, pageY: num });
             } else {
                 Y.DD.DDM._move({ pageX: num, pageY: 110 });
             }
-        }
+        },
         _moveNodeAll = function(node, max, flip) {
             for (var i = 0; i < max; i++) {
                 _moveNode(node, i, flip);
             }
-        };
-
-        _count = {};
+        },
+        _fakeMove = function(node, max, flip) {
+            _fakeStart(node);
+            _moveNodeAll(node, max, flip);
+            _fakeEnd(node);
+        },
         _data = {
             one: 1,
             two: 2,
             three: 3
-        };
-        _resetCount = function() {
-            Y.each(_count, function(v, k) {
-                _count[k] = 0;
-            });
-        };
-        var _handleCount = function(e) {
+        },
+        _handleCount = function(e) {
             if (!_count[e.type]) {
                 _count[e.type] = 0;
             }
             _count[e.type]++;
-        };
-
+        },
+        dd, drop, proxy, del,
 
     template = {
         setUp : function() {
@@ -221,11 +219,11 @@ YUI({
             Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
         },
         test_constrain_node_move: function() {
-            var inRegion_before = dd.get('node').inRegion(Y.get('#wrap'));
+            var inRegion_before = dd.get('node').inRegion(Y.one('#wrap'));
 
             _fakeMove(dd, 25);
 
-            var inRegion_after = dd.get('node').inRegion(Y.get('#wrap'));
+            var inRegion_after = dd.get('node').inRegion(Y.one('#wrap'));
             Y.Assert.isFalse(inRegion_before, 'Drag Node is in the region of #wrap');
             Y.Assert.isTrue(inRegion_after, 'Drag Node is NOT in the region of #wrap');
             dd.destroy();
@@ -253,7 +251,7 @@ YUI({
             dd.destroy();
         },
         test_window_scroll: function() {
-            Y.get('body').setStyle('height', '3000px');
+            Y.one('body').setStyle('height', '3000px');
             Y.Node.get('#drag').setStyles({ top: '', left: '' });
             dd = new Y.DD.Drag({
                 node: '#drag'
@@ -261,30 +259,82 @@ YUI({
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
             Y.Assert.isInstanceOf(Y.Plugin.DDWinScroll, dd.winscroll, 'WinScroll: WinScroll Instance');
 
-            Y.get(window).set('scrollTop', 0);
-            Y.get(window).set('scrollLeft', 0);
+            Y.one(window).set('scrollTop', 0);
+            Y.one(window).set('scrollLeft', 0);
             _fakeStart(dd);
             var self = this,
-            winHeight = Y.get(window).get('winHeight'),
+            winHeight = Y.one(window).get('winHeight'),
             i = (winHeight - dd.get('node').get('offsetHeight') - 100),
             wait = function() {
-                if (i < (Y.get(window).get('winHeight') - 30)) {
+                if (i < (Y.one(window).get('winHeight') - 30)) {
                     _moveNode(dd, i, true);
                     i++;
                     self.wait.call(self, wait, 0);
                 } else {
                     self.wait.call(self, function() {
                         _fakeEnd(dd);
-                        Y.Assert.isTrue((Y.get(window).get('scrollTop') > 0), 'window.scrollTop is not greater than 0');
+                        Y.Assert.isTrue((Y.one(window).get('scrollTop') > 0), 'window.scrollTop is not greater than 0');
                         dd.destroy();
                         Y.Node.get('#drag').setStyles({ top: '', left: '' });
-                        Y.get(window).set('scrollTop', 0);
-                        Y.get(window).set('scrollLeft', 0);
-                        Y.get('body').setStyle('height', '');
+                        Y.one(window).set('scrollTop', 0);
+                        Y.one(window).set('scrollLeft', 0);
+                        Y.one('body').setStyle('height', '');
                     }, 1500);
                 }
             };
             this.wait(wait, 0);
+        },
+        test_delegate: function() {
+            Y.one('#wrap').setStyle('display', 'none');
+            Y.one('#del').setStyle('display', 'block');
+            del = new Y.DD.Delegate({
+                cont: '#del',
+                nodes: 'li',
+                invalid: '.disabled'
+            });
+            Y.Assert.isInstanceOf(Y.DD.Delegate, del, 'del: Delegate Instance');
+            Y.Assert.isInstanceOf(Y.DD.Drag, del.dd, 'del.dd: Drag Instance');
+        },
+        test_delegate_setup_events: function() {
+            Y.each(dd_events, function(v) {
+                _count[v] = 0;
+                var handle = del.on(v, _handleCount);
+                Y.Assert.isInstanceOf(Y.EventHandle, handle, 'drag:handle [' + v + ']: Handle Instance');
+            });
+        },
+        test_delegate_move: function() {
+            _resetCount();
+            del.on('drag:end', function() {
+                Y.Assert.areSame(moveCount, _count['drag:drag'], 'drag:drag should fire ' + moveCount + ' times');
+                Y.Assert.areSame(1, _count['drag:end'], 'drag:end should fire 1 time');
+                Y.Assert.areSame(1, _count['drag:start'], 'drag:start should fire 1 time');
+                del.get('currentNode').setStyles({
+                    top: 0, left: 0
+                });
+            });
+            del._handleDelegate({
+                currentTarget: Y.one('#del ul li')
+            });
+            _fakeMove(del.dd, moveCount);
+        },
+        test_delegate_move2: function() {
+            _resetCount();
+            del._handleDelegate({
+                currentTarget: Y.one('#del ul li:nth-child(4)')
+            });
+            _fakeMove(del.dd, moveCount);
+        },
+        test_delegate_disabled: function() {
+            del.detachAll();
+            _resetCount();
+            var mDown = false;
+            del.on('drag:mouseDown', function() {
+                mDown = true;
+            });
+            del._handleDelegate({
+                currentTarget: Y.one('#del ul li:nth-child(6)')
+            });
+            Y.Assert.isFalse(mDown, 'Delegate mouseDown fired on a disabled item');
         }
     };
     
