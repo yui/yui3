@@ -65,9 +65,7 @@
 <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;Selector&#39;</span><span class="o">);</span> <span class="c">// allow native module to standalone</span>
 <span class="c"></span>
 <span class="k">var</span> <span class="nx">COMPARE_DOCUMENT_POSITION</span> <span class="o">=</span> <span class="s1">&#39;compareDocumentPosition&#39;</span><span class="o">,</span>
-    <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s1">&#39;ownerDocument&#39;</span><span class="o">,</span>
-    <span class="nx">TMP_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;yui-tmp-&#39;</span><span class="o">,</span>
-    <span class="nx">g_counter</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+    <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s1">&#39;ownerDocument&#39;</span><span class="o">;</span>
 
 <span class="k">var</span> <span class="nx">Selector</span> <span class="o">=</span> <span class="o">{</span>
     <span class="nx">_foundCache</span><span class="o">:</span> <span class="o">[],</span>
@@ -245,10 +243,10 @@
             <span class="nx">i</span><span class="o">,</span> <span class="nx">group</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">)</span> <span class="o">{</span> <span class="c">// only test HTMLElements</span>
-<span class="c"></span>            <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">ownerDocument</span><span class="o">;</span>
+<span class="c"></span>            <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">];</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">node</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">TMP_PREFIX</span> <span class="o">+</span> <span class="nx">g_counter</span><span class="o">++;</span>
+                <span class="nx">node</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
             <span class="o">}</span>
             <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="o">(</span><span class="nx">group</span> <span class="o">=</span> <span class="nx">groups</span><span class="o">[</span><span class="nx">i</span><span class="o">++]);)</span> <span class="o">{</span> <span class="c">// TODO: off-dom test</span>
 <span class="c"></span>                <span class="c">//group += &#39;#&#39; + node.id; // add ID for uniqueness</span>
