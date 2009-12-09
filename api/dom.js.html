@@ -417,7 +417,7 @@
             
         <span class="k">if</span> <span class="o">(</span><span class="nx">newNode</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">newNode</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">content</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">content</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span> <span class="c">// domNode</span>
 <span class="c"></span>                <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">content</span><span class="o">;</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// create from string and cache</span>
@@ -435,7 +435,9 @@
                         <span class="k">while</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">firstChild</span><span class="o">)</span> <span class="o">{</span>
                             <span class="nx">node</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">firstChild</span><span class="o">);</span>
                         <span class="o">}</span>
-                        <span class="nx">node</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">newNode</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">node</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
+                        <span class="o">}</span>
                         <span class="k">break</span><span class="o">;</span>
                     <span class="nx">case</span> <span class="s1">&#39;before&#39;</span><span class="o">:</span>
                         <span class="nx">nodeParent</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">);</span>
