@@ -142,11 +142,13 @@
 
 
             <span class="c">// if we have an initial ID, set to root when in document</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">tokens</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">rootDoc</span> <span class="o">===</span> <span class="nx">root</span> <span class="o">&amp;&amp;</span>  
-                    <span class="o">(</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">tokens</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">id</span><span class="o">)</span> <span class="o">&amp;&amp;</span>
-                    <span class="nx">rootDoc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">root</span> <span class="o">=</span> <span class="nx">rootDoc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
-            <span class="o">}</span>
+<span class="c"></span>            <span class="c">/*</span>
+<span class="c">            if (tokens[0] &amp;&amp; rootDoc === root &amp;&amp;  </span>
+<span class="c">                    (id = tokens[0].id) &amp;&amp;</span>
+<span class="c">                    rootDoc.getElementById(id)) {</span>
+<span class="c">                root = rootDoc.getElementById(id);</span>
+<span class="c">            }</span>
+<span class="c">            */</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">token</span><span class="o">)</span> <span class="o">{</span>
                 <span class="c">// prefilter nodes</span>
@@ -156,14 +158,12 @@
 
                 <span class="c">// try ID first</span>
 <span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">rootDoc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">))</span> <span class="o">{</span> <span class="c">// if in document</span>
-<span class="c"></span>                    <span class="nx">nodes</span> <span class="o">=</span> <span class="o">[</span><span class="nx">rootDoc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">)];</span> <span class="c">// TODO: DOM.byId?</span>
-<span class="c"></span>                <span class="o">}</span>
+                    <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">allById</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">root</span><span class="o">);</span>
                 <span class="c">// try className if supported</span>
-<span class="c"></span>                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">className</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">className</span> <span class="o">&amp;&amp;</span> <span class="nx">root</span><span class="o">.</span><span class="nx">getElementsByClassName</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">getElementsByClassName</span><span class="o">(</span><span class="nx">className</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">tagName</span><span class="o">)</span> <span class="o">{</span> <span class="c">// default to tagName</span>
-<span class="c"></span>                    <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="nx">tagName</span> <span class="o">||</span> <span class="s1">&#39;*&#39;</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// default to tagName</span>
+<span class="c"></span>                    <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="nx">tagName</span><span class="o">);</span>
                 <span class="o">}</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
@@ -394,7 +394,7 @@
                 <span class="nx">found</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span> <span class="c">// reset after full pass</span>
 <span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="o">(</span><span class="nx">parser</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">_parsers</span><span class="o">[</span><span class="nx">i</span><span class="o">++]);)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="nx">match</span> <span class="o">=</span> <span class="nx">parser</span><span class="o">.</span><span class="nx">re</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">selector</span><span class="o">))</span> <span class="o">)</span> <span class="o">{</span> <span class="c">// note assignment</span>
-<span class="c"></span>                        <span class="k">if</span> <span class="o">(</span><span class="nx">parser</span> <span class="o">!==</span> <span class="nx">COMBINATOR</span> <span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>                        <span class="k">if</span> <span class="o">(</span><span class="nx">parser</span><span class="o">.</span><span class="nx">name</span> <span class="o">!==</span> <span class="nx">COMBINATOR</span> <span class="o">)</span> <span class="o">{</span>
                             <span class="nx">token</span><span class="o">.</span><span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">;</span>
                         <span class="o">}</span>
                         <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">match</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="s1">&#39;&#39;</span><span class="o">);</span> <span class="c">// strip current match from selector</span>
