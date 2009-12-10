@@ -743,9 +743,9 @@
 
     <span class="c1">// inheritance utilities are not available yet</span>
     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// if (1) { // intenionally ignoring hasOwnProperty check</span>
-        <span class="nx">YUI</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">p</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-        <span class="c1">// }</span>
+        <span class="k">if</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// intenionally ignoring hasOwnProperty check</span>
+            <span class="nx">YUI</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">p</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="c1">// set up the environment</span>
