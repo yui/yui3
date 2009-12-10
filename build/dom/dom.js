@@ -369,7 +369,7 @@ Y.DOM = {
             
         if (newNode) {
             newNode = newNode.cloneNode(true);
-        } else {
+        } else if (content) {
             if (content.nodeType) { // domNode
                 newNode = content;
             } else { // create from string and cache
@@ -387,7 +387,9 @@ Y.DOM = {
                         while (node.firstChild) {
                             node.removeChild(node.firstChild);
                         }
-                        node.appendChild(newNode);
+                        if (newNode) {
+                            node.appendChild(newNode);
+                        }
                         break;
                     case 'before':
                         nodeParent.insertBefore(newNode, node);
@@ -1982,7 +1984,7 @@ var Selector = {
             // enforce for element scoping
             if (node.tagName) {
                 node.id = node.id || Y.guid();
-                prefix = '#' + node.id + ' ';
+                prefix = '[id="' + node.id + '"] ';
             }
 
             for (i = 0, len = groups.length; i < len; ++i) {
@@ -2031,7 +2033,8 @@ var Selector = {
                 node.id = TMP_PREFIX + g_counter++;
             }
             for (i = 0; (group = groups[i++]);) { // TODO: off-dom test
-                group += '#' + node.id; // add ID for uniqueness
+                //group += '#' + node.id; // add ID for uniqueness
+                group += '[id="' + node.id + '"]';
                 item = Y.Selector.query(group, root, true);
                 ret = (item === node);
                 if (ret) {
@@ -2100,7 +2103,8 @@ var PARENT_NODE = 'parentNode',
         _regexCache: {},
 
         _re: {
-            attr: /(\[.*\])/g,
+            //attr: /(\[.*\])/g,
+            attr: /(\[[^\]]*\])/g,
             pseudos: /:([\-\w]+(?:\(?:['"]?(.+)['"]?\)))*/i
         },
 
@@ -2295,7 +2299,7 @@ var PARENT_NODE = 'parentNode',
         _parsers: [
             {
                 name: ATTRIBUTES,
-                re: /^\[([a-z]+\w*)+([~\|\^\$\*!=]=?)?['"]?([^\]]*?)['"]?\]/i,
+                re: /^\[(-?[a-z]+[\w\-]*)+([~\|\^\$\*!=]=?)?['"]?([^\]]*?)['"]?\]/i,
                 fn: function(match, token) {
                     var operator = match[2] || '',
                         operators = Y.Selector.operators,

@@ -369,7 +369,7 @@ Y.DOM = {
             
         if (newNode) {
             newNode = newNode.cloneNode(true);
-        } else {
+        } else if (content) {
             if (content.nodeType) { // domNode
                 newNode = content;
             } else { // create from string and cache
@@ -387,7 +387,9 @@ Y.DOM = {
                         while (node.firstChild) {
                             node.removeChild(node.firstChild);
                         }
-                        node.appendChild(newNode);
+                        if (newNode) {
+                            node.appendChild(newNode);
+                        }
                         break;
                     case 'before':
                         nodeParent.insertBefore(newNode, node);

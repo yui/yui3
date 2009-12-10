@@ -140,8 +140,15 @@ button {
         <li>item 3</li>
         <li>item 4</li>
     </ol>
-<iframe src="test-frame"></iframe>
+<iframe src="test-frame.html"></iframe>
 <div id="test-insert-html">foo</div>
+<div id="test:colon">
+    <h2>test</h2>
+</div>
+
+<div id="_funky:id{$400}">
+    <h2>test</h2>
+</div>
 <div id="yui-log"></div>
 <script type="text/javascript">
 YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim', function(Y) {
@@ -193,12 +200,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.areEqual(byId('test-nodes').getElementsByTagName('li')[1],
                     Y.Node.getDOMNode(Y.get('#test-nodes li:nth-child(2)')), 'Y.get("#test-nodes:nth-child(2)")');
 
-            Assert.areEqual(document.body, Y.Node.getDOMNode(Y.get('div, .foo, body')), "Y.get('div, .foo, body')");
-
-            var frameDoc = Y.get('iframe').get('contentWindow.document');
-            Assert.areEqual('iframe foo', frameDoc.query('#demo li').get('innerHTML'),
-                "frameDoc.query('#demo li').get('innerHTML')");
-
             Assert.areEqual(document.getElementById('form.foo@bar:baz'), Y.Node.getDOMNode(Y.get('[id="form.foo@bar:baz"]')), "[id=form.foo@bar:baz]");
 
             var firstChild = Y.get('body :first-child');
@@ -217,12 +218,21 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.areEqual(1, Y.all('.bar').size(), 'Y.get(".bar")');
             Assert.areNotEqual(nodes, Y.all('#test-nodes *'), 'nodes === Y.all("#test-nodes")');
             Assert.areEqual(nodes.size(), Y.all('#test-nodes *').size(), 'nodes.size() === Y.all("#test-nodes").size()'); 
+
             ArrayAssert.itemsAreEqual(Y.Selector.query('div'), Y.all(Y.Selector.query('div'))._nodes, "Y.all(Y.Selector.query('div'))");
-            ArrayAssert.itemsAreEqual(document.getElementsByTagName('div'), Y.all(Y.Selector.query('div'))._nodes, "Y.all(Y.Selector.query('div'))");
+
+            // Firefox fails due to Firebug pollutes document.queryAll but not document.getElementsByTagName
+            //ArrayAssert.itemsAreEqual(document.getElementsByTagName('div'), Y.all(Y.Selector.query('div'))._nodes, "Y.all(Y.Selector.query('div'))");
 
             ArrayAssert.itemsAreEqual(Y.Selector.query('input[name]'), Y.all(Y.Selector.query('input[name]'))._nodes, "Y.all(Y.Selector.query('input[name]'))");
 
             ArrayAssert.itemsAreEqual(Y.Selector.query('.foo'), Y.all(Y.Selector.query('.foo'))._nodes, "Y.all(Y.Selector.query('.foo'))");
+
+            var frameDoc = Y.get('iframe').get('contentWindow.document');
+            Assert.areEqual('iframe foo', frameDoc.query('#demo li').get('innerHTML'),
+                "frameDoc.query('#demo li').get('innerHTML')");
+
+            ArrayAssert.itemsAreEqual([document.body], Y.all(document.body)._nodes, "Y.all(document.body)");
         },
 
         test_each: function() {
@@ -440,6 +450,20 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
 
             // TODO: test deep clone with bound descendant
             Assert.isTrue(node.get('childNodes').size() === node.cloneNode(true).get('childNodes').size(), 'node.get("childNodes").size() === node.cloneNode(true).get("childNodes").size()');
+
+            Assert.isTrue(Y.one('.bar').test('.bar'), "Y.one('.bar').test('.bar')");
+            clone = Y.one('.bar').cloneNode(true);
+            Assert.isTrue(clone.hasClass('bar'), "clone.hasClass('bar') (before appending)");
+            Y.one('body').appendChild(clone);
+            Assert.isTrue(clone.test('.bar'), "clone.test('.bar') (after appending)");
+
+            Assert.isTrue(
+                Y.Node.create('<div id="foo" class="bar"></div>').test('.bar'),
+                "Y.Node.create('<div id=\"foo\" class=\"bar\"></div>').test('.bar')");
+
+            Assert.isTrue(
+                Y.Node.create('<div id="foo" class="bar"></div>').test('#foo.bar'),
+                "Y.Node.create('<div id=\"foo\" class=\"bar\"></div>').test('#foo.bar')");
 
             Assert.isTrue(node.hasChildNodes(), 'hasChildNodes()');
 
@@ -674,53 +698,144 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             window.scrollTo(0, 0);
         },
 
-        test_inject: function() {
-            var html = '<strong>bar</strong>';
-            Y.get('#test-insert-html').append(html);
-            Assert.areEqual(Y.DOM.byId('test-insert-html').innerHTML,
-                'foo' + html,
-                "Y.get('#test-insert-html').append('<strong>bar</strong>')");
-
-            Y.get('#test-insert-html').prepend('<em>baz</em>');
-            Assert.areEqual('<em>baz</em>foo<strong>bar</strong>',
+        test_setContent: function() {
+            var content = '<strong>foo</strong>';
+            Y.get('#test-insert-html').setContent(content);
+            Assert.areEqual(content,
                 Y.DOM.byId('test-insert-html').innerHTML,
-                "Y.get('#test-insert-html').prepend('<em>baz</em>')");
+                "Y.get('#test-insert-html').setContent(" + content + ")");
 
-            var html = '<strong>baz</strong>';
-            Y.get('#test-insert-html').setContent(html);
-            Assert.areEqual(html,
+            Y.get('#test-insert-html').setContent(Y.Node.create(content));
+            Assert.areEqual(content,
                 Y.DOM.byId('test-insert-html').innerHTML,
-                "Y.get('#test-insert-html').setContent('<strong>baz</strong>')");
+                "Y.get('#test-insert-html').setContent(Y.Node.create(" + content + "))");
 
-            // append Node instance
-            html = Y.Node.create('<div>foo</div>');
-            Y.get('#test-insert-html').append(html);
-            Assert.areEqual(Y.get('#test-insert-html')._node.lastChild, html._node, 'node.append(someNode)');
+            content = '<strong>foo</strong><em>bar</em>';
+            Y.get('#test-insert-html').setContent(Y.Node.create(content));
+            Assert.areEqual(content,
+                Y.DOM.byId('test-insert-html').innerHTML,
+                "Y.get('#test-insert-html').setContent(Y.Node.create(" + content + "))");
 
-            // append DOM node
-            html = document.createElement('div');
-            Y.get('#test-insert-html').append(html);
-            Assert.areEqual(Y.get('#test-insert-html')._node.lastChild, html, 'node.append(someDOMNode)');
+            var element = document.createElement('strong');
+            element.innerHTML = 'bar';
+            content = '<strong>bar</strong>';
+            Y.get('#test-insert-html').setContent(element);
+            Assert.areEqual(content,
+                Y.DOM.byId('test-insert-html').innerHTML,
+                "Y.get('#test-insert-html').setContent(element)");
 
-            // prepend Node instance
-            html = Y.Node.create('<div>foo</div>');
-            Y.get('#test-insert-html').prepend(html);
-            Assert.areEqual(Y.get('#test-insert-html')._node.firstChild, html._node, 'node.prepend(someNode)');
+            content = '';
+            Y.get('#test-insert-html').setContent(content);
+            Assert.areEqual(content,
+                Y.DOM.byId('test-insert-html').innerHTML,
+                "Y.get('#test-insert-html').setContent(" + content + ")");
 
-            // prepend DOM node
-            html = document.createElement('div');
-            Y.get('#test-insert-html').prepend(html);
-            Assert.areEqual(Y.get('#test-insert-html')._node.firstChild, html, 'node.prepend(someDOMNode)');
+            content = null;
+            Y.get('#test-insert-html').setContent(content);
+            Assert.areEqual('',
+                Y.DOM.byId('test-insert-html').innerHTML,
+                "Y.get('#test-insert-html').setContent(" + content + ")");
+
+        },
+
+        test_insert: function() {
+            var node = Y.get('#test-insert-html'),
+                html = '<strong>foo</strong>',
+                content = node.get('innerHTML');
+
+            node.insert(html);
+            Assert.areEqual(node._node.innerHTML,
+                content + html,
+                "node.insert('" + html + "')");
+
+            html = '<em>bar</em>';
+            content = node.get('innerHTML');
+
+            node.insert(html, 0);
+            Assert.areEqual(node._node.innerHTML,
+                html + content,
+                "node.insert(" + html + ", 0)");
+
+            html = '<span>baz</span>';
+            node.insert(html, 1);
+            Assert.areEqual(node.all('> *').item(1).get('tagName'),
+                'SPAN',
+                "node.insert(" + html + ", 1)");
+
+            html = '';
+            content = node.get('innerHTML');
+
+            node.insert(html);
+            Assert.areEqual(node._node.innerHTML,
+                content,
+                "node.insert(" + html + ")");
+
+            html = null;
+            content = node.get('innerHTML');
+
+            node.insert(html);
+            Assert.areEqual(node._node.innerHTML,
+                content,
+                "node.insert(" + html + ")");
+
+            // test fragment insertion
+
+            html = '<a>bar</a><h2>foo</h2>';
+            content = node.get('innerHTML');
+
+            node.insert(html);
+            Assert.areEqual(node._node.innerHTML,
+                content + html,
+                "node.insert(" + html + ")");
+
+            html = '<label>foo</label><input>';
+            content = node.get('innerHTML');
+
+            node.insert(html, 0);
+            Assert.areEqual(node._node.innerHTML,
+                html + content,
+                "node.insert(" + html + ", 0)");
+
+            node.setContent('<em>foo</em><span>bar</span>');
+
+            node.insert('<strong>baz</strong>', node.one('span'));
+            Assert.areEqual(node._node.childNodes[1].tagName, 'STRONG',
+                "node.insert('<strong>bar</strong>', node.one('span')");
+
+            node.insert('<code>var lorem</code>', node.one('em')._node);
+            Assert.areEqual(node._node.childNodes[0].tagName, 'CODE',
+                "node.insert('<code>var lorem</code>', node.one('em')._node)");
 
             // insert Node instance
             html = Y.Node.create('<div>foo</div>');
-            Y.get('#test-insert-html').insert(html, 2);
-            Assert.areEqual(Y.get('#test-insert-html')._node.childNodes[2], html._node, 'node.insert(someNode)');
+            node.insert(html, 2);
+            Assert.areEqual(node._node.childNodes[2], html._node,
+                "node.insert(Y.Node.create('<div>foo</div>'))");
 
             // insert DOM node
             html = document.createElement('div');
             Y.get('#test-insert-html').insert(html, 2);
             Assert.areEqual(Y.get('#test-insert-html')._node.childNodes[2], html, 'node.insert(someDOMNode, 2)');
+
+        },
+
+        test_inject: function() {
+            var node = Y.get('#test-insert-html'),
+                html = '<strong>foo</strong>',
+                content = node.get('innerHTML');
+
+            node.prepend(html);
+            Assert.areEqual(node._node.innerHTML,
+                html + content,
+                "node.prepend('" + html + "')");
+
+            html = '<em>bar</em>';
+            content = node.get('innerHTML');
+
+            node.append(html);
+            Assert.areEqual(node._node.innerHTML,
+                content + html,
+                "node.append('" + html + "')");
         },
 
         test_getValue: function() {
@@ -796,7 +911,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
 
             node = Y.get('#test-replace').get('firstChild');
             newNode = Y.Node.create('<div/>');
-            console.log(node);
             node.replace(newNode);
             Assert.areEqual(newNode, Y.get('#test-replace').get('firstChild'), 'node.replace()');
             Assert.areEqual(newNode._node, Y.get('#test-replace').get('firstChild')._node, 'node.replace()');
@@ -879,6 +993,27 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             nodelist.item(1).remove();
 
             ArrayAssert.itemsAreEqual( node.one('li'), nodelist, "Y.one('#test-node').all('li')");
+        },
+
+        test_one: function() {
+            var node = Y.DOM.byId('test:colon');
+            Assert.areEqual(node.getElementsByTagName('h2')[0], Y.one(node).one('h2')._node,
+                "Y.one(Y.DOM.byId('test:colon')).one(h2)");
+
+            node = Y.DOM.byId('_funky:id{$400}');
+            Assert.areEqual(node.getElementsByTagName('h2')[0], Y.one(node).one('h2')._node,
+                "Y.one(Y.DOM.byId('_funky:id{$400}')).one(h2)");
+        },
+        test_all: function() {
+            var node = Y.DOM.byId('test:colon');
+            ArrayAssert.itemsAreEqual(node.getElementsByTagName('h2'),
+                Y.one(node).all('h2')._nodes,
+                "Y.one(Y.DOM.byId('test:colon')).all(h2)");
+
+            node = Y.DOM.byId('_funky:id{$400}');
+            ArrayAssert.itemsAreEqual(node.getElementsByTagName('h2'),
+                Y.one(node).all('h2')._nodes,
+                "Y.one(Y.DOM.byId('_funky:id{$400}')).all(h2)");
         }
     })); 
 

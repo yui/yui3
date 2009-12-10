@@ -16,9 +16,7 @@
 Y.namespace('Selector'); // allow native module to standalone
 
 var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
-    OWNER_DOCUMENT = 'ownerDocument',
-    TMP_PREFIX = 'yui-tmp-',
-    g_counter = 0;
+    OWNER_DOCUMENT = 'ownerDocument';
 
 var Selector = {
     _foundCache: [],
@@ -149,7 +147,7 @@ var Selector = {
             // enforce for element scoping
             if (node.tagName) {
                 node.id = node.id || Y.guid();
-                prefix = '#' + node.id + ' ';
+                prefix = '[id="' + node.id + '"] ';
             }
 
             for (i = 0, len = groups.length; i < len; ++i) {
@@ -196,13 +194,14 @@ var Selector = {
             i, group;
 
         if (node && node.tagName) { // only test HTMLElements
-            root = root || node.ownerDocument;
+            root = root || node[OWNER_DOCUMENT];
 
             if (!node.id) {
-                node.id = TMP_PREFIX + g_counter++;
+                node.id = Y.guid();
             }
             for (i = 0; (group = groups[i++]);) { // TODO: off-dom test
-                group += '#' + node.id; // add ID for uniqueness
+                //group += '#' + node.id; // add ID for uniqueness
+                group += '[id="' + node.id + '"]';
                 item = Y.Selector.query(group, root, true);
                 ret = (item === node);
                 if (ret) {

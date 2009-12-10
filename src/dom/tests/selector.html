@@ -191,6 +191,10 @@ onload = function() {
                 Assert.areEqual(node.getElementsByTagName('em')[0], $('li em', node, true), 'off-dom: li em');
                 Assert.isNull($('div li em', node, true), 'off-dom: div li em');
 
+                Assert.areEqual(Y.DOM.byId('test:colon').getElementsByTagName('h2')[0], 
+                    $('h2', Y.DOM.byId('test:colon'), true),
+                    "$('h2', Y.DOM.byId('test:colon'), true)");
+
                 // standard: no element-scoped query
                 //ArrayAssert.itemsAreEqual(document.body.getElementsByTagName('p'), $('body p', document.body), "$('body p', document.body)");
 
@@ -315,6 +319,22 @@ onload = function() {
                 ArrayAssert.itemsAreEqual([Y.DOM.byId('test-custom-attr')], $("[foo]"), "[foo]");
 
                 Assert.areEqual(document.body, $('body, div', null, true), "$('body, div', null, true)");
+
+                Assert.areEqual(document.getElementById('foo-bar'),
+                    $('[id=foo-bar]', null, true),
+                    "$('[id=foo-bar]', null, true)");
+
+                Assert.areEqual(document.getElementById('test-custom-attr'),
+                    $('[foo-bar]', null, true),
+                    "$('[foo-bar]', null, true)");
+
+                Assert.areEqual(document.getElementById('foo-bar'),
+                    $('[aria-controls]', null, true),
+                    "$('[aria-controls]', null, true)");
+
+                Assert.areEqual(document.getElementById('foo-bar'),
+                    $('[-hyphen-start]', null, true),
+                    "$('[-hyphen-start]', null, true)");
             }
 
         });
@@ -490,7 +510,7 @@ onload = function() {
         <input type="radio" id="radio-unchecked" class="not-button">
         <input type="radio" checked="true" id="radio-checked" class="not-button">
         <input type="button" value="foo">
-        <input id="foo-bar" name="foo.bar" class="not-button">
+        <input id="foo-bar" name="foo.bar" class="not-button" aria-controls="foo-bar" -hyphen-start="true">
     </form>
 
     <form id="form-root">
@@ -515,7 +535,8 @@ onload = function() {
         <dd class="test-dd2">dd2</dd>
 
     </dl>
-    <div id="test-custom-attr" foo="bar">custom attribute</div>
+    <div id="test:colon"><h2>test</h2></div>
+    <div id="test-custom-attr" foo="bar" foo-bar="bar">custom attribute</div>
 
 </body>
 </html>
