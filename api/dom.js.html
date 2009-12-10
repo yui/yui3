@@ -253,14 +253,53 @@
 <span class="c">     * @return {Boolean} Whether or not the element is attached to the document. </span>
 <span class="c">     */</span>
     <span class="nx">inDoc</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">element</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">];</span>
-        <span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">id</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span> <span class="c">// TODO: remove when done?</span>
-<span class="c"></span>            <span class="nx">id</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
+        <span class="c">// there may be multiple elements with the same ID</span>
+<span class="c"></span>        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">element</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">];</span>
+        <span class="k">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
+            <span class="nx">i</span><span class="o">,</span>
+            <span class="nx">node</span><span class="o">,</span>
+            <span class="nx">query</span><span class="o">;</span>
+                
+        <span class="nx">element</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span> 
+
+        <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">allById</span><span class="o">(</span><span class="nx">element</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span> <span class="c">// check for a match</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">===</span> <span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="k">break</span><span class="o">;</span>
+            <span class="o">}</span>
         <span class="o">}</span>
 
-        <span class="k">return</span> <span class="o">!!</span> <span class="o">(</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">));</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+
     <span class="o">},</span>
+
+   <span class="nx">allById</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">root</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">i</span><span class="o">,</span>
+            <span class="nx">node</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">root</span><span class="o">.</span><span class="nx">querySelectorAll</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">querySelectorAll</span><span class="o">(</span><span class="s1">&#39;[id=&quot;&#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;&quot;]&#39;</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">root</span><span class="o">.</span><span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span> <span class="c">// root.all may return one or many</span>
+<span class="c"></span>                <span class="nx">nodes</span> <span class="o">=</span> <span class="o">[</span><span class="nx">nodes</span><span class="o">];</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span> <span class="c">// check for a match</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span><span class="o">)</span> <span class="o">{</span> <span class="c">// avoid false positive for node.name</span>
+<span class="c"></span>                        <span class="nx">ret</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+   <span class="o">},</span>
 
     <span class="c">/**</span>
 <span class="c">     * Creates a new dom node using the provided markup string. </span>
@@ -271,10 +310,6 @@
     <span class="nx">create</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">html</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">html</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">html</span><span class="o">);</span> <span class="c">// match IE which trims whitespace from innerHTML</span>
-<span class="c"></span>        <span class="o">}</span>
-
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">doc</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_cloneCache</span><span class="o">[</span><span class="nx">html</span><span class="o">])</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_cloneCache</span><span class="o">[</span><span class="nx">html</span><span class="o">].</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span> <span class="c">// NOTE: return</span>
 <span class="c"></span>        <span class="o">}</span>
 
         <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
@@ -300,9 +335,6 @@
 <span class="c"></span>             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_nl2frag</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">ret</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_cloneCache</span><span class="o">[</span><span class="nx">html</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-        <span class="o">}</span>
         <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
     <span class="o">},</span>
 
@@ -375,9 +407,7 @@
         <span class="k">return</span> <span class="nx">obj</span><span class="o">.</span><span class="nx">alert</span> <span class="o">&amp;&amp;</span> <span class="nx">obj</span><span class="o">.</span><span class="nb">document</span><span class="o">;</span>
     <span class="o">},</span>
 
-    <span class="nx">_fragClones</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">div</span><span class="o">:</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s1">&#39;div&#39;</span><span class="o">)</span>
-    <span class="o">},</span>
+    <span class="nx">_fragClones</span><span class="o">:</span> <span class="o">{},</span>
 
     <span class="nx">_create</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">,</span> <span class="nx">tag</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">tag</span> <span class="o">=</span> <span class="nx">tag</span> <span class="o">||</span> <span class="s1">&#39;div&#39;</span><span class="o">;</span>
@@ -398,8 +428,6 @@
         <span class="o">}</span>
     <span class="o">},</span>
 
-    <span class="nx">_cloneCache</span><span class="o">:</span> <span class="o">{},</span>
-
     <span class="c">/**</span>
 <span class="c">     * Inserts content in a node at the given location </span>
 <span class="c">     * @method addHTML</span>
@@ -412,12 +440,10 @@
             <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">content</span><span class="o">);</span> <span class="c">// match IE which trims whitespace from innerHTML</span>
 <span class="c"></span>        <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_cloneCache</span><span class="o">[</span><span class="nx">content</span><span class="o">],</span>
-            <span class="nx">nodeParent</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">nodeParent</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span>
+            <span class="nx">newNode</span><span class="o">;</span>
             
-        <span class="k">if</span> <span class="o">(</span><span class="nx">newNode</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">newNode</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">content</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">content</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span> <span class="c">// domNode</span>
 <span class="c"></span>                <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">content</span><span class="o">;</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// create from string and cache</span>
@@ -435,7 +461,9 @@
                         <span class="k">while</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">firstChild</span><span class="o">)</span> <span class="o">{</span>
                             <span class="nx">node</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">firstChild</span><span class="o">);</span>
                         <span class="o">}</span>
-                        <span class="nx">node</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">newNode</span><span class="o">)</span> <span class="o">{</span> <span class="c">// allow empty content to clear node</span>
+<span class="c"></span>                            <span class="nx">node</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
+                        <span class="o">}</span>
                         <span class="k">break</span><span class="o">;</span>
                     <span class="nx">case</span> <span class="s1">&#39;before&#39;</span><span class="o">:</span>
                         <span class="nx">nodeParent</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">);</span>
@@ -796,7 +824,8 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addHTML", "url": "DOM.html#method_addHTML", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "PARENT_NODE", "url": "Selector.html#property_PARENT_NODE", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setHeight", "url": "DOM.html#method_setHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setWidth", "url": "DOM.html#method_setWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addHTML", "url": "DOM.html#method_addHTML", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "PARENT_NODE", "url": "Selector.html#property_PARENT_NODE", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setHeight", "url": "DOM.html#method_setHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setWidth", "url": "DOM.html#method_setWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

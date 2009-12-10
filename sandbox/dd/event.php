@@ -52,25 +52,34 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('node', function(Y) {
+YUI(yConfig).use('node', 'base', function(Y) {
     
-    var str1 = 'Click again, listener was removed..',
-        str2 = 'Click again, listener was removed..',
-        str3 = 'Seeing this means the listener was not removed.';
+    var Test = function() {
+        Test.superclass.constructor.apply(this, arguments);
+    };
 
-    var node = Y.get('#test');
-    node.on('click', function() {
-        alert(str1);
-        str1 = str3;
-        node.detachAll();
+    Test.NAME = 'test';
+
+    Y.extend(Test, Y.Base, {
+        foo: function() {
+            console.log('test.foo()');
+            this.fire('test:foo');
+        }
     });
 
-    var node2 = Y.get('#test2');
-    var handle = node2.on('click', function() {
-        alert(str2);
-        str2 = str3;
-        handle.detach();
+    var test = new Test();
+    test.on('test:foo', function() {
+        console.log('test:foo listener');
     });
+
+    test.foo();
+    console.log('Detaching all..');
+    test.detachAll();
+    test.foo();
+    console.log('Detaching all by name..');
+    test.detachAll('test:foo');
+    test.foo();
+
 
 });
 

@@ -216,9 +216,11 @@
 	<span class="c">/**</span>
 <span class="c">	* @method next</span>
 <span class="c">	* @description Returns the Widget&#39;s next sibling.</span>
+<span class="c">    * @param {Boolean} circular Boolean indicating if the parent&#39;s first child </span>
+<span class="c">    * should be returned if the child has no next sibling.	</span>
 <span class="c">	* @return {Widget} Widget instance. </span>
 <span class="c">	*/</span>
-    <span class="nx">next</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+    <span class="nx">next</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">circular</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;parent&quot;</span><span class="o">),</span>
             <span class="nx">sibling</span><span class="o">;</span>
@@ -227,24 +229,34 @@
             <span class="nx">sibling</span> <span class="o">=</span> <span class="nx">parent</span><span class="o">.</span><span class="nx">item</span><span class="o">((</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;index&quot;</span><span class="o">)+</span><span class="m">1</span><span class="o">));</span>
         <span class="o">}</span>
 
+        <span class="k">if</span> <span class="o">(</span><span class="nx">circular</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">sibling</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">sibling</span> <span class="o">=</span> <span class="nx">parent</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="m">0</span><span class="o">);</span>
+        <span class="o">}</span>
+
         <span class="k">return</span> <span class="nx">sibling</span><span class="o">;</span>
 
     <span class="o">},</span>
 
 
 	<span class="c">/**</span>
-<span class="c">	* @method previous</span>
+<span class="c">    * @method previous</span>
 <span class="c">	* @description Returns the Widget&#39;s previous sibling.</span>
+<span class="c">    * @param {Boolean} circular Boolean indicating if the parent&#39;s last child </span>
+<span class="c">    * should be returned if the child has no previous sibling.</span>
 <span class="c">	* @return {Widget} Widget instance. </span>
 <span class="c">	*/</span>
-    <span class="nx">previous</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+    <span class="nx">previous</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">circular</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;parent&quot;</span><span class="o">),</span>
             <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;index&quot;</span><span class="o">),</span>
             <span class="nx">sibling</span><span class="o">;</span>
         
         <span class="k">if</span> <span class="o">(</span><span class="nx">parent</span> <span class="o">&amp;&amp;</span> <span class="nx">index</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">sibling</span> <span class="o">=</span> <span class="nx">parent</span><span class="o">.</span><span class="nx">item</span><span class="o">([(</span><span class="nx">index</span><span class="o">+</span><span class="m">1</span><span class="o">)]);</span>
+            <span class="nx">sibling</span> <span class="o">=</span> <span class="nx">parent</span><span class="o">.</span><span class="nx">item</span><span class="o">([(</span><span class="nx">index</span><span class="o">-</span><span class="m">1</span><span class="o">)]);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">circular</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">sibling</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">sibling</span> <span class="o">=</span> <span class="nx">parent</span><span class="o">.</span><span class="nx">item</span><span class="o">((</span><span class="nx">parent</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;items&quot;</span><span class="o">).</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">));</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">sibling</span><span class="o">;</span> 
@@ -463,7 +475,8 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetChild", "name": "_afterChildSelectedChange", "url": "WidgetChild.html#method__afterChildSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_bindUIChild", "url": "WidgetChild.html#method__bindUIChild", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "depth", "url": "WidgetChild.html#config_depth", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "depthChange", "url": "WidgetChild.html#event_depthChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "index", "url": "WidgetChild.html#config_index", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "indexChange", "url": "WidgetChild.html#event_indexChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "isRoot", "url": "WidgetChild.html#method_isRoot", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "next", "url": "WidgetChild.html#method_next", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "parent", "url": "WidgetChild.html#config_parent", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "parentChange", "url": "WidgetChild.html#event_parentChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "previous", "url": "WidgetChild.html#method_previous", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "root", "url": "WidgetChild.html#config_root", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "rootChange", "url": "WidgetChild.html#event_rootChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "selected", "url": "WidgetChild.html#config_selected", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "selectedChange", "url": "WidgetChild.html#event_selectedChange", "type": "event"}, {"access": "protected", "host": "WidgetChild", "name": "_syncUIChild", "url": "WidgetChild.html#method__syncUIChild", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_uiSetChildSelected", "url": "WidgetChild.html#method__uiSetChildSelected", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetChild", "name": "_afterChildSelectedChange", "url": "WidgetChild.html#method__afterChildSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_bindUIChild", "url": "WidgetChild.html#method__bindUIChild", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "depth", "url": "WidgetChild.html#config_depth", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "depthChange", "url": "WidgetChild.html#event_depthChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "index", "url": "WidgetChild.html#config_index", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "indexChange", "url": "WidgetChild.html#event_indexChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "isRoot", "url": "WidgetChild.html#method_isRoot", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "next", "url": "WidgetChild.html#method_next", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "parent", "url": "WidgetChild.html#config_parent", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "parentChange", "url": "WidgetChild.html#event_parentChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "previous", "url": "WidgetChild.html#method_previous", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "root", "url": "WidgetChild.html#config_root", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "rootChange", "url": "WidgetChild.html#event_rootChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "selected", "url": "WidgetChild.html#config_selected", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "selectedChange", "url": "WidgetChild.html#event_selectedChange", "type": "event"}, {"access": "protected", "host": "WidgetChild", "name": "_syncUIChild", "url": "WidgetChild.html#method__syncUIChild", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_uiSetChildSelected", "url": "WidgetChild.html#method__uiSetChildSelected", "type": "method"}];
+    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>
