@@ -253,14 +253,53 @@
 <span class="c">     * @return {Boolean} Whether or not the element is attached to the document. </span>
 <span class="c">     */</span>
     <span class="nx">inDoc</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">element</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">];</span>
-        <span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">id</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span> <span class="c">// TODO: remove when done?</span>
-<span class="c"></span>            <span class="nx">id</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
+        <span class="c">// there may be multiple elements with the same ID</span>
+<span class="c"></span>        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">element</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">];</span>
+        <span class="k">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
+            <span class="nx">i</span><span class="o">,</span>
+            <span class="nx">node</span><span class="o">,</span>
+            <span class="nx">query</span><span class="o">;</span>
+                
+        <span class="nx">element</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span> 
+
+        <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">allById</span><span class="o">(</span><span class="nx">element</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span> <span class="c">// check for a match</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">===</span> <span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="k">break</span><span class="o">;</span>
+            <span class="o">}</span>
         <span class="o">}</span>
 
-        <span class="k">return</span> <span class="o">!!</span> <span class="o">(</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">));</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+
     <span class="o">},</span>
+
+   <span class="nx">allById</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">root</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">i</span><span class="o">,</span>
+            <span class="nx">node</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">root</span><span class="o">.</span><span class="nx">querySelectorAll</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">querySelectorAll</span><span class="o">(</span><span class="s1">&#39;[id=&quot;&#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;&quot;]&#39;</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">root</span><span class="o">.</span><span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span> <span class="c">// root.all may return one or many</span>
+<span class="c"></span>                <span class="nx">nodes</span> <span class="o">=</span> <span class="o">[</span><span class="nx">nodes</span><span class="o">];</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span> <span class="c">// check for a match</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span><span class="o">)</span> <span class="o">{</span> <span class="c">// avoid false positive for node.name</span>
+<span class="c"></span>                        <span class="nx">ret</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+   <span class="o">},</span>
 
     <span class="c">/**</span>
 <span class="c">     * Creates a new dom node using the provided markup string. </span>
