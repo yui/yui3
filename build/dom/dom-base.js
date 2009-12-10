@@ -206,14 +206,53 @@ Y.DOM = {
      * @return {Boolean} Whether or not the element is attached to the document. 
      */
     inDoc: function(element, doc) {
+        // there may be multiple elements with the same ID
         doc = doc || element[OWNER_DOCUMENT];
-        var id = element.id;
-        if (!id) { // TODO: remove when done?
-            id = element.id = Y.guid();
+        var nodes = [],
+            ret = false,
+            i,
+            node,
+            query;
+                
+        element.id = element.id || Y.guid(); 
+
+        nodes = Y.DOM.allById(element.id, doc);
+        for (i = 0; node = nodes[i++];) { // check for a match
+            if (node === element) {
+                ret = true;
+                break;
+            }
         }
 
-        return !! (doc.getElementById(id));
+        return ret;
+
     },
+
+   allById: function(id, root) {
+        root = root || Y.config.doc;
+        var nodes = [],
+            ret = [],
+            i,
+            node;
+
+        if (root.querySelectorAll) {
+            ret = root.querySelectorAll('[id="' + id + '"]');
+        } else if (root.all) {
+            nodes = root.all(id);
+            if (nodes && nodes.nodeType) { // root.all may return one or many
+                nodes = [nodes];
+            }
+
+            if (nodes && nodes.length) {
+                for (i = 0; node = nodes[i++];) { // check for a match
+                    if (node.id === id) { // avoid false positive for node.name
+                        ret.push(node);
+                    }
+                }
+            }
+        }
+        return ret;
+   },
 
     /**
      * Creates a new dom node using the provided markup string. 

@@ -18,9 +18,7 @@ YUI.add('selector-native', function(Y) {
 Y.namespace('Selector'); // allow native module to standalone
 
 var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
-    OWNER_DOCUMENT = 'ownerDocument',
-    TMP_PREFIX = 'yui-tmp-',
-    g_counter = 0;
+    OWNER_DOCUMENT = 'ownerDocument';
 
 var Selector = {
     _foundCache: [],
@@ -189,23 +187,49 @@ var Selector = {
     test: function(node, selector, root) {
         var ret = false,
             groups = selector.split(','),
+            useFrag = false,
+            parent,
             item,
-            i, group;
+            items,
+            frag,
+            i, j, group;
 
         if (node && node.tagName) { // only test HTMLElements
-            root = root || node.ownerDocument;
+
+            // we need a root if off-doc
+            if (!root && !Y.DOM.inDoc(node)) {
+                parent = node.parentNode;
+                if (parent) { 
+                    root = parent;
+                } else { // only use frag when no parent to query
+                    frag = node[OWNER_DOCUMENT].createDocumentFragment();
+                    frag.appendChild(node);
+                    root = frag;
+                    useFrag = true;
+                }
+            }
+            root = root || node[OWNER_DOCUMENT];
 
             if (!node.id) {
-                node.id = TMP_PREFIX + g_counter++;
+                node.id = Y.guid();
             }
             for (i = 0; (group = groups[i++]);) { // TODO: off-dom test
-                //group += '#' + node.id; // add ID for uniqueness
                 group += '[id="' + node.id + '"]';
-                item = Y.Selector.query(group, root, true);
-                ret = (item === node);
+                items = Y.Selector.query(group, root);
+
+                for (j = 0; item = items[j++];) {
+                    if (item === node) {
+                        ret = true;
+                        break;
+                    }
+                }
                 if (ret) {
                     break;
                 }
+            }
+
+            if (useFrag) { // cleanup
+                frag.removeChild(node);
             }
         }
 

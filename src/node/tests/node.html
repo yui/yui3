@@ -199,7 +199,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
 
             Assert.areEqual(byId('test-nodes').getElementsByTagName('li')[1],
                     Y.Node.getDOMNode(Y.get('#test-nodes li:nth-child(2)')), 'Y.get("#test-nodes:nth-child(2)")');
-
             Assert.areEqual(document.getElementById('form.foo@bar:baz'), Y.Node.getDOMNode(Y.get('[id="form.foo@bar:baz"]')), "[id=form.foo@bar:baz]");
 
             var firstChild = Y.get('body :first-child');
@@ -229,7 +228,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             ArrayAssert.itemsAreEqual(Y.Selector.query('.foo'), Y.all(Y.Selector.query('.foo'))._nodes, "Y.all(Y.Selector.query('.foo'))");
 
             var frameDoc = Y.get('iframe').get('contentWindow.document');
-            Assert.areEqual('iframe foo', frameDoc.query('#demo li').get('innerHTML'),
+            Assert.areEqual('iframe foo', Y.Lang.trim(frameDoc.query('#demo li').get('innerHTML')),
                 "frameDoc.query('#demo li').get('innerHTML')");
 
             ArrayAssert.itemsAreEqual([document.body], Y.all(document.body)._nodes, "Y.all(document.body)");
@@ -702,18 +701,18 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             var content = '<strong>foo</strong>';
             Y.get('#test-insert-html').setContent(content);
             Assert.areEqual(content,
-                Y.DOM.byId('test-insert-html').innerHTML,
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
                 "Y.get('#test-insert-html').setContent(" + content + ")");
 
             Y.get('#test-insert-html').setContent(Y.Node.create(content));
             Assert.areEqual(content,
-                Y.DOM.byId('test-insert-html').innerHTML,
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
                 "Y.get('#test-insert-html').setContent(Y.Node.create(" + content + "))");
 
             content = '<strong>foo</strong><em>bar</em>';
             Y.get('#test-insert-html').setContent(Y.Node.create(content));
             Assert.areEqual(content,
-                Y.DOM.byId('test-insert-html').innerHTML,
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
                 "Y.get('#test-insert-html').setContent(Y.Node.create(" + content + "))");
 
             var element = document.createElement('strong');
@@ -721,19 +720,19 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             content = '<strong>bar</strong>';
             Y.get('#test-insert-html').setContent(element);
             Assert.areEqual(content,
-                Y.DOM.byId('test-insert-html').innerHTML,
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
                 "Y.get('#test-insert-html').setContent(element)");
 
             content = '';
             Y.get('#test-insert-html').setContent(content);
             Assert.areEqual(content,
-                Y.DOM.byId('test-insert-html').innerHTML,
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
                 "Y.get('#test-insert-html').setContent(" + content + ")");
 
             content = null;
             Y.get('#test-insert-html').setContent(content);
             Assert.areEqual('',
-                Y.DOM.byId('test-insert-html').innerHTML,
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
                 "Y.get('#test-insert-html').setContent(" + content + ")");
 
         },

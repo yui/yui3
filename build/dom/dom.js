@@ -206,14 +206,53 @@ Y.DOM = {
      * @return {Boolean} Whether or not the element is attached to the document. 
      */
     inDoc: function(element, doc) {
+        // there may be multiple elements with the same ID
         doc = doc || element[OWNER_DOCUMENT];
-        var id = element.id;
-        if (!id) { // TODO: remove when done?
-            id = element.id = Y.guid();
+        var nodes = [],
+            ret = false,
+            i,
+            node,
+            query;
+                
+        element.id = element.id || Y.guid(); 
+
+        nodes = Y.DOM.allById(element.id, doc);
+        for (i = 0; node = nodes[i++];) { // check for a match
+            if (node === element) {
+                ret = true;
+                break;
+            }
         }
 
-        return !! (doc.getElementById(id));
+        return ret;
+
     },
+
+   allById: function(id, root) {
+        root = root || Y.config.doc;
+        var nodes = [],
+            ret = [],
+            i,
+            node;
+
+        if (root.querySelectorAll) {
+            ret = root.querySelectorAll('[id="' + id + '"]');
+        } else if (root.all) {
+            nodes = root.all(id);
+            if (nodes && nodes.nodeType) { // root.all may return one or many
+                nodes = [nodes];
+            }
+
+            if (nodes && nodes.length) {
+                for (i = 0; node = nodes[i++];) { // check for a match
+                    if (node.id === id) { // avoid false positive for node.name
+                        ret.push(node);
+                    }
+                }
+            }
+        }
+        return ret;
+   },
 
     /**
      * Creates a new dom node using the provided markup string. 
@@ -1852,9 +1891,7 @@ YUI.add('selector-native', function(Y) {
 Y.namespace('Selector'); // allow native module to standalone
 
 var COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
-    OWNER_DOCUMENT = 'ownerDocument',
-    TMP_PREFIX = 'yui-tmp-',
-    g_counter = 0;
+    OWNER_DOCUMENT = 'ownerDocument';
 
 var Selector = {
     _foundCache: [],
@@ -2023,23 +2060,49 @@ var Selector = {
     test: function(node, selector, root) {
         var ret = false,
             groups = selector.split(','),
+            useFrag = false,
+            parent,
             item,
-            i, group;
+            items,
+            frag,
+            i, j, group;
 
         if (node && node.tagName) { // only test HTMLElements
-            root = root || node.ownerDocument;
+
+            // we need a root if off-doc
+            if (!root && !Y.DOM.inDoc(node)) {
+                parent = node.parentNode;
+                if (parent) { 
+                    root = parent;
+                } else { // only use frag when no parent to query
+                    frag = node[OWNER_DOCUMENT].createDocumentFragment();
+                    frag.appendChild(node);
+                    root = frag;
+                    useFrag = true;
+                }
+            }
+            root = root || node[OWNER_DOCUMENT];
 
             if (!node.id) {
-                node.id = TMP_PREFIX + g_counter++;
+                node.id = Y.guid();
             }
             for (i = 0; (group = groups[i++]);) { // TODO: off-dom test
-                //group += '#' + node.id; // add ID for uniqueness
                 group += '[id="' + node.id + '"]';
-                item = Y.Selector.query(group, root, true);
-                ret = (item === node);
+                items = Y.Selector.query(group, root);
+
+                for (j = 0; item = items[j++];) {
+                    if (item === node) {
+                        ret = true;
+                        break;
+                    }
+                }
                 if (ret) {
                     break;
                 }
+            }
+
+            if (useFrag) { // cleanup
+                frag.removeChild(node);
             }
         }
 
@@ -2150,11 +2213,13 @@ var PARENT_NODE = 'parentNode',
 
 
             // if we have an initial ID, set to root when in document
+            /*
             if (tokens[0] && rootDoc === root &&  
                     (id = tokens[0].id) &&
                     rootDoc.getElementById(id)) {
                 root = rootDoc.getElementById(id);
             }
+            */
 
             if (token) {
                 // prefilter nodes
@@ -2164,14 +2229,12 @@ var PARENT_NODE = 'parentNode',
 
                 // try ID first
                 if (id) {
-                    if (rootDoc.getElementById(id)) { // if in document
-                    nodes = [rootDoc.getElementById(id)]; // TODO: DOM.byId?
-                }
+                    nodes = Y.DOM.allById(id, root);
                 // try className if supported
-                } else if (className) {
+                } else if (className && root.getElementsByClassName) {
                     nodes = root.getElementsByClassName(className);
-                } else if (tagName) { // default to tagName
-                    nodes = root.getElementsByTagName(tagName || '*');
+                } else { // default to tagName
+                    nodes = root.getElementsByTagName(tagName);
                 }
 
                 if (nodes.length) {
@@ -2402,7 +2465,7 @@ var PARENT_NODE = 'parentNode',
                 found = false; // reset after full pass
                 for (i = 0; (parser = Selector._parsers[i++]);) {
                     if ( (match = parser.re.exec(selector)) ) { // note assignment
-                        if (parser !== COMBINATOR ) {
+                        if (parser.name !== COMBINATOR ) {
                             token.selector = selector;
                         }
                         selector = selector.replace(match[0], ''); // strip current match from selector

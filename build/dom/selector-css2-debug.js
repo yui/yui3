@@ -95,11 +95,13 @@ var PARENT_NODE = 'parentNode',
 
 
             // if we have an initial ID, set to root when in document
+            /*
             if (tokens[0] && rootDoc === root &&  
                     (id = tokens[0].id) &&
                     rootDoc.getElementById(id)) {
                 root = rootDoc.getElementById(id);
             }
+            */
 
             if (token) {
                 // prefilter nodes
@@ -109,14 +111,12 @@ var PARENT_NODE = 'parentNode',
 
                 // try ID first
                 if (id) {
-                    if (rootDoc.getElementById(id)) { // if in document
-                    nodes = [rootDoc.getElementById(id)]; // TODO: DOM.byId?
-                }
+                    nodes = Y.DOM.allById(id, root);
                 // try className if supported
-                } else if (className) {
+                } else if (className && root.getElementsByClassName) {
                     nodes = root.getElementsByClassName(className);
-                } else if (tagName) { // default to tagName
-                    nodes = root.getElementsByTagName(tagName || '*');
+                } else { // default to tagName
+                    nodes = root.getElementsByTagName(tagName);
                 }
 
                 if (nodes.length) {
@@ -347,7 +347,7 @@ var PARENT_NODE = 'parentNode',
                 found = false; // reset after full pass
                 for (i = 0; (parser = Selector._parsers[i++]);) {
                     if ( (match = parser.re.exec(selector)) ) { // note assignment
-                        if (parser !== COMBINATOR ) {
+                        if (parser.name !== COMBINATOR ) {
                             token.selector = selector;
                         }
                         selector = selector.replace(match[0], ''); // strip current match from selector
