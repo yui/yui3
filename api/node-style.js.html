@@ -47,84 +47,84 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-<span class="c">/**</span>
-<span class="c"> * Extended Node interface for managing node styles.</span>
-<span class="c"> * @module node</span>
-<span class="c"> * @submodule node-style</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+<span class="cm">/**</span>
+<span class="cm"> * Extended Node interface for managing node styles.</span>
+<span class="cm"> * @module node</span>
+<span class="cm"> * @submodule node-style</span>
+<span class="cm"> */</span>
 
-<span class="k">var</span> <span class="nx">methods</span> <span class="o">=</span> <span class="o">[</span>
-    <span class="c">/**</span>
-<span class="c">     * Returns the style&#39;s current value.</span>
-<span class="c">     * @method getStyle</span>
-<span class="c">     * @for Node</span>
-<span class="c">     * @param {String} attr The style attribute to retrieve. </span>
-<span class="c">     * @return {String} The current value of the style property for the element.</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;getStyle&#39;</span><span class="o">,</span>
+<span class="kd">var</span> <span class="nx">methods</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the style&#39;s current value.</span>
+<span class="cm">     * @method getStyle</span>
+<span class="cm">     * @for Node</span>
+<span class="cm">     * @param {String} attr The style attribute to retrieve. </span>
+<span class="cm">     * @return {String} The current value of the style property for the element.</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;getStyle&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Returns the computed value for the given style property.</span>
-<span class="c">     * @method getComputedStyle</span>
-<span class="c">     * @param {String} attr The style attribute to retrieve. </span>
-<span class="c">     * @return {String} The computed value of the style property for the element.</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;getComputedStyle&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the computed value for the given style property.</span>
+<span class="cm">     * @method getComputedStyle</span>
+<span class="cm">     * @param {String} attr The style attribute to retrieve. </span>
+<span class="cm">     * @return {String} The computed value of the style property for the element.</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;getComputedStyle&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Sets a style property of the node.</span>
-<span class="c">     * @method setStyle</span>
-<span class="c">     * @param {String} attr The style attribute to set. </span>
-<span class="c">     * @param {String|Number} val The value. </span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;setStyle&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Sets a style property of the node.</span>
+<span class="cm">     * @method setStyle</span>
+<span class="cm">     * @param {String} attr The style attribute to set. </span>
+<span class="cm">     * @param {String|Number} val The value. </span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;setStyle&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Sets multiple style properties on the node.</span>
-<span class="c">     * @method setStyles</span>
-<span class="c">     * @param {Object} hash An object literal of property:value pairs. </span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Sets multiple style properties on the node.</span>
+<span class="cm">     * @method setStyles</span>
+<span class="cm">     * @param {Object} hash An object literal of property:value pairs. </span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
     <span class="s1">&#39;setStyles&#39;</span>
-<span class="o">];</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="nx">methods</span><span class="o">);</span>
-<span class="c">/**</span>
-<span class="c"> * Returns an array of values for each node.</span>
-<span class="c"> * @method getStyle</span>
-<span class="c"> * @for NodeList</span>
-<span class="c"> * @see Node.getStyle</span>
-<span class="c"> * @param {String} attr The style attribute to retrieve. </span>
-<span class="c"> * @return {Array} The current values of the style property for the element.</span>
-<span class="c"> */</span>
+<span class="p">];</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">importMethod</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="nx">methods</span><span class="p">);</span>
+<span class="cm">/**</span>
+<span class="cm"> * Returns an array of values for each node.</span>
+<span class="cm"> * @method getStyle</span>
+<span class="cm"> * @for NodeList</span>
+<span class="cm"> * @see Node.getStyle</span>
+<span class="cm"> * @param {String} attr The style attribute to retrieve. </span>
+<span class="cm"> * @return {Array} The current values of the style property for the element.</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Returns an array of the computed value for each node.</span>
-<span class="c"> * @method getComputedStyle</span>
-<span class="c"> * @see Node.getComputedStyle</span>
-<span class="c"> * @param {String} attr The style attribute to retrieve. </span>
-<span class="c"> * @return {Array} The computed values for each node.</span>
-<span class="c"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * Returns an array of the computed value for each node.</span>
+<span class="cm"> * @method getComputedStyle</span>
+<span class="cm"> * @see Node.getComputedStyle</span>
+<span class="cm"> * @param {String} attr The style attribute to retrieve. </span>
+<span class="cm"> * @return {Array} The computed values for each node.</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Sets a style property on each node.</span>
-<span class="c"> * @method setStyle</span>
-<span class="c"> * @see Node.setStyle</span>
-<span class="c"> * @param {String} attr The style attribute to set. </span>
-<span class="c"> * @param {String|Number} val The value. </span>
-<span class="c"> * @chainable</span>
-<span class="c"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * Sets a style property on each node.</span>
+<span class="cm"> * @method setStyle</span>
+<span class="cm"> * @see Node.setStyle</span>
+<span class="cm"> * @param {String} attr The style attribute to set. </span>
+<span class="cm"> * @param {String|Number} val The value. </span>
+<span class="cm"> * @chainable</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Sets multiple style properties on each node.</span>
-<span class="c"> * @method setStyles</span>
-<span class="c"> * @see Node.setStyles</span>
-<span class="c"> * @param {Object} hash An object literal of property:value pairs. </span>
-<span class="c"> * @chainable</span>
-<span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">methods</span><span class="o">);</span>
-<span class="o">})(</span><span class="nx">Y</span><span class="o">);</span>
+<span class="cm">/**</span>
+<span class="cm"> * Sets multiple style properties on each node.</span>
+<span class="cm"> * @method setStyles</span>
+<span class="cm"> * @see Node.setStyles</span>
+<span class="cm"> * @param {Object} hash An object literal of property:value pairs. </span>
+<span class="cm"> * @chainable</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">.</span><span class="nx">importMethod</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">methods</span><span class="p">);</span>
+<span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>
 </pre></div>
 
                     </div>

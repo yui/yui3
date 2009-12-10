@@ -47,1057 +47,1057 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c">* &lt;p&gt;The Focus Manager Node Plugin makes it easy to manage focus among  </span>
-<span class="c">* a Node&#39;s descendants.  Primarily intended to help with widget development, </span>
-<span class="c">* the Focus Manager Node Plugin can be used to improve the keyboard </span>
-<span class="c">* accessibility of widgets.&lt;/p&gt;</span>
-<span class="c">* </span>
-<span class="c">* &lt;p&gt;</span>
-<span class="c">* When designing widgets that manage a set of descendant controls (i.e. buttons</span>
-<span class="c">* in a toolbar, tabs in a tablist, menuitems in a menu, etc.) it is important to </span>
-<span class="c">* limit the number of descendants in the browser&#39;s default tab flow.  The fewer </span>
-<span class="c">* number of descendants in the default tab flow, the easier it is for keyboard </span>
-<span class="c">* users to navigate between widgets by pressing the tab key.  When a widget has </span>
-<span class="c">* focus it should provide a set of shortcut keys (typically the arrow keys) </span>
-<span class="c">* to move focus among its descendants.</span>
-<span class="c">* &lt;/p&gt;</span>
-<span class="c">* </span>
-<span class="c">* &lt;p&gt;</span>
-<span class="c">* To this end, the Focus Manager Node Plugin makes it easy to define a Node&#39;s </span>
-<span class="c">* focusable descendants, define which descendant should be in the default tab </span>
-<span class="c">* flow, and define the keys that move focus among each descendant.</span>
-<span class="c">* Additionally, as the CSS </span>
-<span class="c">* &lt;a href=&quot;http://www.w3.org/TR/CSS21/selector.html#x38&quot;&gt;&lt;code&gt;:focus&lt;/code&gt;&lt;/a&gt; </span>
-<span class="c">* pseudo class is not supported on all elements in all </span>
-<span class="c">* &lt;a href=&quot;http://developer.yahoo.com/yui/articles/gbs/&quot;&gt;A-Grade browsers&lt;/a&gt;,</span>
-<span class="c">* the Focus Manager Node Plugin provides an easy, cross-browser means of </span>
-<span class="c">* styling focus.</span>
-<span class="c">* &lt;/p&gt;</span>
-<span class="c">*  </span>
-<span class="c">* @module node-focusmanager</span>
-<span class="c">*/</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm">* &lt;p&gt;The Focus Manager Node Plugin makes it easy to manage focus among  </span>
+<span class="cm">* a Node&#39;s descendants.  Primarily intended to help with widget development, </span>
+<span class="cm">* the Focus Manager Node Plugin can be used to improve the keyboard </span>
+<span class="cm">* accessibility of widgets.&lt;/p&gt;</span>
+<span class="cm">* </span>
+<span class="cm">* &lt;p&gt;</span>
+<span class="cm">* When designing widgets that manage a set of descendant controls (i.e. buttons</span>
+<span class="cm">* in a toolbar, tabs in a tablist, menuitems in a menu, etc.) it is important to </span>
+<span class="cm">* limit the number of descendants in the browser&#39;s default tab flow.  The fewer </span>
+<span class="cm">* number of descendants in the default tab flow, the easier it is for keyboard </span>
+<span class="cm">* users to navigate between widgets by pressing the tab key.  When a widget has </span>
+<span class="cm">* focus it should provide a set of shortcut keys (typically the arrow keys) </span>
+<span class="cm">* to move focus among its descendants.</span>
+<span class="cm">* &lt;/p&gt;</span>
+<span class="cm">* </span>
+<span class="cm">* &lt;p&gt;</span>
+<span class="cm">* To this end, the Focus Manager Node Plugin makes it easy to define a Node&#39;s </span>
+<span class="cm">* focusable descendants, define which descendant should be in the default tab </span>
+<span class="cm">* flow, and define the keys that move focus among each descendant.</span>
+<span class="cm">* Additionally, as the CSS </span>
+<span class="cm">* &lt;a href=&quot;http://www.w3.org/TR/CSS21/selector.html#x38&quot;&gt;&lt;code&gt;:focus&lt;/code&gt;&lt;/a&gt; </span>
+<span class="cm">* pseudo class is not supported on all elements in all </span>
+<span class="cm">* &lt;a href=&quot;http://developer.yahoo.com/yui/articles/gbs/&quot;&gt;A-Grade browsers&lt;/a&gt;,</span>
+<span class="cm">* the Focus Manager Node Plugin provides an easy, cross-browser means of </span>
+<span class="cm">* styling focus.</span>
+<span class="cm">* &lt;/p&gt;</span>
+<span class="cm">*  </span>
+<span class="cm">* @module node-focusmanager</span>
+<span class="cm">*/</span>
 
-	<span class="c">//	Frequently used strings</span>
-<span class="c"></span>
-<span class="k">var</span> <span class="nx">ACTIVE_DESCENDANT</span> <span class="o">=</span> <span class="s2">&quot;activeDescendant&quot;</span><span class="o">,</span>
-	<span class="nx">ID</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span><span class="o">,</span>
-	<span class="nx">DISABLED</span> <span class="o">=</span> <span class="s2">&quot;disabled&quot;</span><span class="o">,</span>
-	<span class="nx">TAB_INDEX</span> <span class="o">=</span> <span class="s2">&quot;tabIndex&quot;</span><span class="o">,</span>
-	<span class="nx">FOCUSED</span> <span class="o">=</span> <span class="s2">&quot;focused&quot;</span><span class="o">,</span>
-	<span class="nx">FOCUS_CLASS</span> <span class="o">=</span> <span class="s2">&quot;focusClass&quot;</span><span class="o">,</span>
-	<span class="nx">CIRCULAR</span> <span class="o">=</span> <span class="s2">&quot;circular&quot;</span><span class="o">,</span>
-	<span class="nx">UI</span> <span class="o">=</span> <span class="s2">&quot;UI&quot;</span><span class="o">,</span>
-	<span class="nx">KEY</span> <span class="o">=</span> <span class="s2">&quot;key&quot;</span><span class="o">,</span>
-	<span class="nx">ACTIVE_DESCENDANT_CHANGE</span> <span class="o">=</span> <span class="nx">ACTIVE_DESCENDANT</span> <span class="o">+</span> <span class="s2">&quot;Change&quot;</span><span class="o">,</span>
-	<span class="nx">HOST</span> <span class="o">=</span> <span class="s2">&quot;host&quot;</span><span class="o">,</span>
+	<span class="c1">//	Frequently used strings</span>
 
-	<span class="c">//	Collection of keys that, when pressed, cause the browser viewport</span>
-<span class="c"></span>	<span class="c">//	to scroll.</span>
-<span class="c"></span>	<span class="nx">scrollKeys</span> <span class="o">=</span> <span class="o">{</span>
-		<span class="m">37</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-		<span class="m">38</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-		<span class="m">39</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-		<span class="m">40</span><span class="o">:</span> <span class="kc">true</span>
-	<span class="o">},</span>
+<span class="kd">var</span> <span class="nx">ACTIVE_DESCENDANT</span> <span class="o">=</span> <span class="s2">&quot;activeDescendant&quot;</span><span class="p">,</span>
+	<span class="nx">ID</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+	<span class="nx">DISABLED</span> <span class="o">=</span> <span class="s2">&quot;disabled&quot;</span><span class="p">,</span>
+	<span class="nx">TAB_INDEX</span> <span class="o">=</span> <span class="s2">&quot;tabIndex&quot;</span><span class="p">,</span>
+	<span class="nx">FOCUSED</span> <span class="o">=</span> <span class="s2">&quot;focused&quot;</span><span class="p">,</span>
+	<span class="nx">FOCUS_CLASS</span> <span class="o">=</span> <span class="s2">&quot;focusClass&quot;</span><span class="p">,</span>
+	<span class="nx">CIRCULAR</span> <span class="o">=</span> <span class="s2">&quot;circular&quot;</span><span class="p">,</span>
+	<span class="nx">UI</span> <span class="o">=</span> <span class="s2">&quot;UI&quot;</span><span class="p">,</span>
+	<span class="nx">KEY</span> <span class="o">=</span> <span class="s2">&quot;key&quot;</span><span class="p">,</span>
+	<span class="nx">ACTIVE_DESCENDANT_CHANGE</span> <span class="o">=</span> <span class="nx">ACTIVE_DESCENDANT</span> <span class="o">+</span> <span class="s2">&quot;Change&quot;</span><span class="p">,</span>
+	<span class="nx">HOST</span> <span class="o">=</span> <span class="s2">&quot;host&quot;</span><span class="p">,</span>
+
+	<span class="c1">//	Collection of keys that, when pressed, cause the browser viewport</span>
+	<span class="c1">//	to scroll.</span>
+	<span class="nx">scrollKeys</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="mi">37</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+		<span class="mi">38</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+		<span class="mi">39</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+		<span class="mi">40</span><span class="o">:</span> <span class="kc">true</span>
+	<span class="p">},</span>
 	
-	<span class="nx">clickableElements</span> <span class="o">=</span> <span class="o">{</span>
-		<span class="s2">&quot;a&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-		<span class="s2">&quot;button&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-		<span class="s2">&quot;input&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+	<span class="nx">clickableElements</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;a&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+		<span class="s2">&quot;button&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+		<span class="s2">&quot;input&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
 		<span class="s2">&quot;object&quot;</span><span class="o">:</span> <span class="kc">true</span>
-	<span class="o">},</span>	
+	<span class="p">},</span>	
 
-	<span class="c">//	Library shortcuts</span>
-<span class="c"></span>
-	<span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
- 	<span class="nx">UA</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">,</span>
+	<span class="c1">//	Library shortcuts</span>
 
-	<span class="c">/**</span>
-<span class="c">	* The NodeFocusManager class is a plugin for a Node instance.  The class is used </span>
-<span class="c">	* via the &lt;a href=&quot;Node.html#method_plug&quot;&gt;&lt;code&gt;plug&lt;/code&gt;&lt;/a&gt; method of Node </span>
-<span class="c">	* and should not be instantiated directly.</span>
-<span class="c">	* @namespace plugin</span>
-<span class="c">	* @class NodeFocusManager</span>
-<span class="c">	*/</span>	
-	<span class="nx">NodeFocusManager</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+	<span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+ 	<span class="nx">UA</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">,</span>
 
-		<span class="nx">NodeFocusManager</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+	<span class="cm">/**</span>
+<span class="cm">	* The NodeFocusManager class is a plugin for a Node instance.  The class is used </span>
+<span class="cm">	* via the &lt;a href=&quot;Node.html#method_plug&quot;&gt;&lt;code&gt;plug&lt;/code&gt;&lt;/a&gt; method of Node </span>
+<span class="cm">	* and should not be instantiated directly.</span>
+<span class="cm">	* @namespace plugin</span>
+<span class="cm">	* @class NodeFocusManager</span>
+<span class="cm">	*/</span>	
+	<span class="nx">NodeFocusManager</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-	<span class="o">};</span>
+		<span class="nx">NodeFocusManager</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+
+	<span class="p">};</span>
 
 
-<span class="nx">NodeFocusManager</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
+<span class="nx">NodeFocusManager</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
 
-	<span class="c">/**</span>
-<span class="c">	* Boolean indicating that one of the descendants is focused.</span>
-<span class="c">	*</span>
-<span class="c">	* @attribute focused</span>
-<span class="c">	* @readOnly</span>
-<span class="c">	* @default false</span>
-<span class="c">	* @type boolean</span>
-<span class="c">	*/</span>
-	<span class="nx">focused</span><span class="o">:</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* Boolean indicating that one of the descendants is focused.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @attribute focused</span>
+<span class="cm">	* @readOnly</span>
+<span class="cm">	* @default false</span>
+<span class="cm">	* @type boolean</span>
+<span class="cm">	*/</span>
+	<span class="nx">focused</span><span class="o">:</span> <span class="p">{</span>
 		
-		<span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
+		<span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
 		<span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
 		
-	<span class="o">},</span>
+	<span class="p">},</span>
 
 
-	<span class="c">/**</span>
-<span class="c">	* String representing the CSS selector used to define the descendant Nodes </span>
-<span class="c">	* whose focus should be managed.</span>
-<span class="c">	*</span>
-<span class="c">	* @attribute descendants</span>
-<span class="c">	* @type Y.NodeList</span>
-<span class="c">	*/</span>
-	<span class="nx">descendants</span><span class="o">:</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* String representing the CSS selector used to define the descendant Nodes </span>
+<span class="cm">	* whose focus should be managed.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @attribute descendants</span>
+<span class="cm">	* @type Y.NodeList</span>
+<span class="cm">	*/</span>
+	<span class="nx">descendants</span><span class="o">:</span> <span class="p">{</span>
 
-		<span class="nx">getter</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
+		<span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
 
-			<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">).</span><span class="nx">all</span><span class="o">(</span><span class="nx">value</span><span class="o">);</span>
+			<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">).</span><span class="nx">all</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
 			
-		<span class="o">}</span>
+		<span class="p">}</span>
 
-	<span class="o">},</span>
+	<span class="p">},</span>
 
 
-	<span class="c">/**</span>
-<span class="c">	* &lt;p&gt;Node, or index of the Node, representing the descendant that is either </span>
-<span class="c">	* focused or is focusable (&lt;code&gt;tabIndex&lt;/code&gt; attribute is set to 0).  </span>
-<span class="c">	* The value cannot represent a disabled descendant Node.  Use a value of -1</span>
-<span class="c">	* to remove all descendant Nodes from the default tab flow.</span>
-<span class="c">	* If no value is specified, the active descendant will be inferred using </span>
-<span class="c">	* the following criteria:&lt;/p&gt;</span>
-<span class="c">	* &lt;ol&gt;</span>
-<span class="c">	* &lt;li&gt;Examining the &lt;code&gt;tabIndex&lt;/code&gt; attribute of each descendant and </span>
-<span class="c">	* using the first descendant whose &lt;code&gt;tabIndex&lt;/code&gt; attribute is set </span>
-<span class="c">	* to 0&lt;/li&gt;</span>
-<span class="c">	* &lt;li&gt;If no default can be inferred then the value is set to either 0 or </span>
-<span class="c">	* the index of the first enabled descendant.&lt;/li&gt;</span>
-<span class="c">	* &lt;/ol&gt;</span>
-<span class="c">	* </span>
-<span class="c">	* @attribute activeDescendant</span>
-<span class="c">	* @type Number</span>
-<span class="c">	*/</span>
-	<span class="nx">activeDescendant</span><span class="o">:</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* &lt;p&gt;Node, or index of the Node, representing the descendant that is either </span>
+<span class="cm">	* focused or is focusable (&lt;code&gt;tabIndex&lt;/code&gt; attribute is set to 0).  </span>
+<span class="cm">	* The value cannot represent a disabled descendant Node.  Use a value of -1</span>
+<span class="cm">	* to remove all descendant Nodes from the default tab flow.</span>
+<span class="cm">	* If no value is specified, the active descendant will be inferred using </span>
+<span class="cm">	* the following criteria:&lt;/p&gt;</span>
+<span class="cm">	* &lt;ol&gt;</span>
+<span class="cm">	* &lt;li&gt;Examining the &lt;code&gt;tabIndex&lt;/code&gt; attribute of each descendant and </span>
+<span class="cm">	* using the first descendant whose &lt;code&gt;tabIndex&lt;/code&gt; attribute is set </span>
+<span class="cm">	* to 0&lt;/li&gt;</span>
+<span class="cm">	* &lt;li&gt;If no default can be inferred then the value is set to either 0 or </span>
+<span class="cm">	* the index of the first enabled descendant.&lt;/li&gt;</span>
+<span class="cm">	* &lt;/ol&gt;</span>
+<span class="cm">	* </span>
+<span class="cm">	* @attribute activeDescendant</span>
+<span class="cm">	* @type Number</span>
+<span class="cm">	*/</span>
+	<span class="nx">activeDescendant</span><span class="o">:</span> <span class="p">{</span>
 
-		<span class="nx">setter</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">value</span><span class="o">)</span> <span class="o">{</span>
+		<span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
 			
-			<span class="k">var</span> <span class="nx">isNumber</span> <span class="o">=</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">,</span>
-				<span class="nx">INVALID_VALUE</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">INVALID_VALUE</span><span class="o">,</span>
-				<span class="nx">descendantsMap</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_descendantsMap</span><span class="o">,</span>
-				<span class="nx">descendants</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_descendants</span><span class="o">,</span>
-				<span class="nx">nodeIndex</span><span class="o">,</span>
-				<span class="nx">returnValue</span><span class="o">,</span>
-				<span class="nx">oNode</span><span class="o">;</span>
+			<span class="kd">var</span> <span class="nx">isNumber</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">,</span>
+				<span class="nx">INVALID_VALUE</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Attribute</span><span class="p">.</span><span class="nx">INVALID_VALUE</span><span class="p">,</span>
+				<span class="nx">descendantsMap</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendantsMap</span><span class="p">,</span>
+				<span class="nx">descendants</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span><span class="p">,</span>
+				<span class="nx">nodeIndex</span><span class="p">,</span>
+				<span class="nx">returnValue</span><span class="p">,</span>
+				<span class="nx">oNode</span><span class="p">;</span>
 			
 
-			<span class="k">if</span> <span class="o">(</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">value</span><span class="o">))</span> <span class="o">{</span>
-				<span class="nx">nodeIndex</span> <span class="o">=</span> <span class="nx">value</span><span class="o">;</span>
-				<span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">nodeIndex</span><span class="o">;</span>
-			<span class="o">}</span>
-			<span class="k">else</span> <span class="k">if</span> <span class="o">((</span><span class="nx">value</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">descendantsMap</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">nodeIndex</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+				<span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">nodeIndex</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="k">else</span> <span class="k">if</span> <span class="p">((</span><span class="nx">value</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">descendantsMap</span><span class="p">)</span> <span class="p">{</span>
 
-				<span class="nx">nodeIndex</span> <span class="o">=</span> <span class="nx">descendantsMap</span><span class="o">[</span><span class="nx">value</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">)];</span>
+				<span class="nx">nodeIndex</span> <span class="o">=</span> <span class="nx">descendantsMap</span><span class="p">[</span><span class="nx">value</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">)];</span>
 
-				<span class="k">if</span> <span class="o">(</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">nodeIndex</span><span class="o">))</span> <span class="o">{</span>
-					<span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">nodeIndex</span><span class="o">;</span>
-				<span class="o">}</span>
-				<span class="k">else</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="p">(</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">nodeIndex</span><span class="p">))</span> <span class="p">{</span>
+					<span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">nodeIndex</span><span class="p">;</span>
+				<span class="p">}</span>
+				<span class="k">else</span> <span class="p">{</span>
 
-					<span class="c">//	The user passed a reference to a Node that wasn&#39;t one</span>
-<span class="c"></span>					<span class="c">//	of the descendants.</span>
-<span class="c"></span>					<span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">INVALID_VALUE</span><span class="o">;</span>					
+					<span class="c1">//	The user passed a reference to a Node that wasn&#39;t one</span>
+					<span class="c1">//	of the descendants.</span>
+					<span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">INVALID_VALUE</span><span class="p">;</span>					
 
-				<span class="o">}</span>
+				<span class="p">}</span>
 
-			<span class="o">}</span>
-			<span class="k">else</span> <span class="o">{</span>
-				<span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">INVALID_VALUE</span><span class="o">;</span>
-			<span class="o">}</span>
+			<span class="p">}</span>
+			<span class="k">else</span> <span class="p">{</span>
+				<span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">INVALID_VALUE</span><span class="p">;</span>
+			<span class="p">}</span>
 
 
-			<span class="k">if</span> <span class="o">(</span><span class="nx">descendants</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">descendants</span><span class="p">)</span> <span class="p">{</span>
 
-				<span class="nx">oNode</span> <span class="o">=</span> <span class="nx">descendants</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="nx">nodeIndex</span><span class="o">);</span>
+				<span class="nx">oNode</span> <span class="o">=</span> <span class="nx">descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">nodeIndex</span><span class="p">);</span>
 			
-				<span class="k">if</span> <span class="o">(</span><span class="nx">oNode</span> <span class="o">&amp;&amp;</span> <span class="nx">oNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;disabled&quot;</span><span class="o">))</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span> <span class="o">&amp;&amp;</span> <span class="nx">oNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;disabled&quot;</span><span class="p">))</span> <span class="p">{</span>
 
-					<span class="c">//	Setting the &quot;activeDescendant&quot; attribute to the index</span>
-<span class="c"></span>					<span class="c">//	of a disabled descendant is invalid.</span>
-<span class="c"></span>					<span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">INVALID_VALUE</span><span class="o">;</span>
+					<span class="c1">//	Setting the &quot;activeDescendant&quot; attribute to the index</span>
+					<span class="c1">//	of a disabled descendant is invalid.</span>
+					<span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">INVALID_VALUE</span><span class="p">;</span>
 					
-				<span class="o">}</span>
+				<span class="p">}</span>
 
-			<span class="o">}</span>
+			<span class="p">}</span>
 
-			<span class="k">return</span> <span class="nx">returnValue</span><span class="o">;</span>
+			<span class="k">return</span> <span class="nx">returnValue</span><span class="p">;</span>
 			
-		<span class="o">}</span>		
+		<span class="p">}</span>		
 
-	<span class="o">},</span>
+	<span class="p">},</span>
 
 
-	<span class="c">/**</span>
-<span class="c">	* Object literal representing the keys to be used to navigate between the </span>
-<span class="c">	* next/previous descendant.  The format for the attribute&#39;s value is </span>
-<span class="c">	* &lt;code&gt;{ next: &quot;down:40&quot;, previous: &quot;down:38&quot; }&lt;/code&gt;.  The value for the </span>
-<span class="c">	* &quot;next&quot; and &quot;previous&quot; properties are used to attach </span>
-<span class="c">	* &lt;a href=&quot;event/#keylistener&quot;&gt;&lt;code&gt;key&lt;/code&gt;&lt;/a&gt; event listeners. See </span>
-<span class="c">	* the &lt;a href=&quot;event/#keylistener&quot;&gt;Using the key Event&lt;/a&gt; section of </span>
-<span class="c">	* the Event documentation for more information on &quot;key&quot; event listeners.</span>
-<span class="c">	* </span>
-<span class="c">	* @attribute keys</span>
-<span class="c">	* @type Object</span>
-<span class="c">	*/</span>
-	<span class="nx">keys</span><span class="o">:</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* Object literal representing the keys to be used to navigate between the </span>
+<span class="cm">	* next/previous descendant.  The format for the attribute&#39;s value is </span>
+<span class="cm">	* &lt;code&gt;{ next: &quot;down:40&quot;, previous: &quot;down:38&quot; }&lt;/code&gt;.  The value for the </span>
+<span class="cm">	* &quot;next&quot; and &quot;previous&quot; properties are used to attach </span>
+<span class="cm">	* &lt;a href=&quot;event/#keylistener&quot;&gt;&lt;code&gt;key&lt;/code&gt;&lt;/a&gt; event listeners. See </span>
+<span class="cm">	* the &lt;a href=&quot;event/#keylistener&quot;&gt;Using the key Event&lt;/a&gt; section of </span>
+<span class="cm">	* the Event documentation for more information on &quot;key&quot; event listeners.</span>
+<span class="cm">	* </span>
+<span class="cm">	* @attribute keys</span>
+<span class="cm">	* @type Object</span>
+<span class="cm">	*/</span>
+	<span class="nx">keys</span><span class="o">:</span> <span class="p">{</span>
 	
-		<span class="nx">value</span><span class="o">:</span> <span class="o">{</span>
+		<span class="nx">value</span><span class="o">:</span> <span class="p">{</span>
 
-			<span class="nx">next</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+			<span class="nx">next</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
 			<span class="nx">previous</span><span class="o">:</span> <span class="kc">null</span>
 			
-		<span class="o">}</span>
+		<span class="p">}</span>
 
 		
-	<span class="o">},</span>
+	<span class="p">},</span>
 
 
-	<span class="c">/**</span>
-<span class="c">	* String representing the name of class applied to the focused active  </span>
-<span class="c">	* descendant Node.  Can also be an object literal used to define both the </span>
-<span class="c">	* class name, and the Node to which the class should be applied.  If using </span>
-<span class="c">	* an object literal, the format is:</span>
-<span class="c">	* &lt;code&gt;{ className: &quot;focus&quot;, fn: myFunction }&lt;/code&gt;.  The function </span>
-<span class="c">	* referenced by the &lt;code&gt;fn&lt;/code&gt; property in the object literal will be</span>
-<span class="c">	* passed a reference to the currently focused active descendant Node.</span>
-<span class="c">	* </span>
-<span class="c">	* @attribute focusClass</span>
-<span class="c">	* @type String|Object</span>
-<span class="c">	*/</span>
-	<span class="nx">focusClass</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+	<span class="cm">/**</span>
+<span class="cm">	* String representing the name of class applied to the focused active  </span>
+<span class="cm">	* descendant Node.  Can also be an object literal used to define both the </span>
+<span class="cm">	* class name, and the Node to which the class should be applied.  If using </span>
+<span class="cm">	* an object literal, the format is:</span>
+<span class="cm">	* &lt;code&gt;{ className: &quot;focus&quot;, fn: myFunction }&lt;/code&gt;.  The function </span>
+<span class="cm">	* referenced by the &lt;code&gt;fn&lt;/code&gt; property in the object literal will be</span>
+<span class="cm">	* passed a reference to the currently focused active descendant Node.</span>
+<span class="cm">	* </span>
+<span class="cm">	* @attribute focusClass</span>
+<span class="cm">	* @type String|Object</span>
+<span class="cm">	*/</span>
+	<span class="nx">focusClass</span><span class="o">:</span> <span class="p">{</span> <span class="p">},</span>
 
 
-	<span class="c">/**</span>
-<span class="c">	* Boolean indicating if focus should be set to the first/last descendant </span>
-<span class="c">	* when the end or beginning of the descendants has been reached.</span>
-<span class="c">	* </span>
-<span class="c">	* @attribute circular</span>
-<span class="c">	* @type Boolean</span>
-<span class="c">	*/</span>
-	<span class="nx">circular</span><span class="o">:</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* Boolean indicating if focus should be set to the first/last descendant </span>
+<span class="cm">	* when the end or beginning of the descendants has been reached.</span>
+<span class="cm">	* </span>
+<span class="cm">	* @attribute circular</span>
+<span class="cm">	* @type Boolean</span>
+<span class="cm">	*/</span>
+	<span class="nx">circular</span><span class="o">:</span> <span class="p">{</span>
 		<span class="nx">value</span><span class="o">:</span> <span class="kc">true</span>
-	<span class="o">}</span>
+	<span class="p">}</span>
 	
-<span class="o">};</span>
+<span class="p">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">NodeFocusManager</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span> <span class="o">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">NodeFocusManager</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
 
-	<span class="c">//	Protected properties</span>
-<span class="c"></span>
-	<span class="c">//	Boolean indicating if the NodeFocusManager is active.</span>
-<span class="c"></span>	<span class="nx">_stopped</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+	<span class="c1">//	Protected properties</span>
 
-	<span class="c">//	NodeList representing the descendants selected via the </span>
-<span class="c"></span>	<span class="c">//	&quot;descendants&quot; attribute.</span>
-<span class="c"></span>	<span class="nx">_descendants</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+	<span class="c1">//	Boolean indicating if the NodeFocusManager is active.</span>
+	<span class="nx">_stopped</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+
+	<span class="c1">//	NodeList representing the descendants selected via the </span>
+	<span class="c1">//	&quot;descendants&quot; attribute.</span>
+	<span class="nx">_descendants</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
 	
-	<span class="c">//	Object literal mapping the IDs of each descendant to its index in the </span>
-<span class="c"></span>	<span class="c">//	&quot;_descendants&quot; NodeList.</span>
-<span class="c"></span>	<span class="nx">_descendantsMap</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+	<span class="c1">//	Object literal mapping the IDs of each descendant to its index in the </span>
+	<span class="c1">//	&quot;_descendants&quot; NodeList.</span>
+	<span class="nx">_descendantsMap</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
 
-	<span class="c">//	Reference to the Node instance to which the focused class (defined </span>
-<span class="c"></span>	<span class="c">//	by the &quot;focusClass&quot; attribute) is currently applied.</span>
-<span class="c"></span>	<span class="nx">_focusedNode</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+	<span class="c1">//	Reference to the Node instance to which the focused class (defined </span>
+	<span class="c1">//	by the &quot;focusClass&quot; attribute) is currently applied.</span>
+	<span class="nx">_focusedNode</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
 	
-	<span class="c">//	Number representing the index of the last descendant Node.</span>
-<span class="c"></span>	<span class="nx">_lastNodeIndex</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+	<span class="c1">//	Number representing the index of the last descendant Node.</span>
+	<span class="nx">_lastNodeIndex</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
 
-	<span class="c">//	Array of handles for event handlers used for a NodeFocusManager instance.</span>
-<span class="c"></span>	<span class="nx">_eventHandlers</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-
-
-
-	<span class="c">//	Protected methods</span>
-<span class="c"></span>
-	<span class="c">/**</span>
-<span class="c">	* @method _initDescendants</span>
-<span class="c">	* @description Sets the &lt;code&gt;tabIndex&lt;/code&gt; attribute of all of the </span>
-<span class="c">	* descendants to -1, except the active descendant, whose </span>
-<span class="c">	* &lt;code&gt;tabIndex&lt;/code&gt; attribute is set to 0.</span>
-<span class="c">	* @protected</span>
-<span class="c">	*/</span>
-	<span class="nx">_initDescendants</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-
-		<span class="k">var</span> <span class="nx">descendants</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;descendants&quot;</span><span class="o">),</span>
-			<span class="nx">descendantsMap</span> <span class="o">=</span> <span class="o">{},</span>
-			<span class="nx">nFirstEnabled</span> <span class="o">=</span> <span class="o">-</span><span class="m">1</span><span class="o">,</span>
-			<span class="nx">nDescendants</span><span class="o">,</span>
-			<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">),</span>
-			<span class="nx">oNode</span><span class="o">,</span>
-			<span class="nx">sID</span><span class="o">,</span>
-			<span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+	<span class="c1">//	Array of handles for event handlers used for a NodeFocusManager instance.</span>
+	<span class="nx">_eventHandlers</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
 
 
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">nActiveDescendant</span><span class="o">))</span> <span class="o">{</span>
-			<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="o">-</span><span class="m">1</span><span class="o">;</span>
-		<span class="o">}</span>
+	<span class="c1">//	Protected methods</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* @method _initDescendants</span>
+<span class="cm">	* @description Sets the &lt;code&gt;tabIndex&lt;/code&gt; attribute of all of the </span>
+<span class="cm">	* descendants to -1, except the active descendant, whose </span>
+<span class="cm">	* &lt;code&gt;tabIndex&lt;/code&gt; attribute is set to 0.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	*/</span>
+	<span class="nx">_initDescendants</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+		<span class="kd">var</span> <span class="nx">descendants</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;descendants&quot;</span><span class="p">),</span>
+			<span class="nx">descendantsMap</span> <span class="o">=</span> <span class="p">{},</span>
+			<span class="nx">nFirstEnabled</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+			<span class="nx">nDescendants</span><span class="p">,</span>
+			<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="p">),</span>
+			<span class="nx">oNode</span><span class="p">,</span>
+			<span class="nx">sID</span><span class="p">,</span>
+			<span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">descendants</span><span class="o">)</span> <span class="o">{</span>
 
-			<span class="nx">nDescendants</span> <span class="o">=</span> <span class="nx">descendants</span><span class="o">.</span><span class="nx">size</span><span class="o">();</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">))</span> <span class="p">{</span>
+			<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+		<span class="p">}</span>
+
+
+		<span class="k">if</span> <span class="p">(</span><span class="nx">descendants</span><span class="p">)</span> <span class="p">{</span>
+
+			<span class="nx">nDescendants</span> <span class="o">=</span> <span class="nx">descendants</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
 			
 
-			<span class="k">if</span> <span class="o">(</span><span class="nx">nDescendants</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">nDescendants</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
 
-				<span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nDescendants</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+				<span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nDescendants</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
 
-					<span class="nx">oNode</span> <span class="o">=</span> <span class="nx">descendants</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="nx">i</span><span class="o">);</span>
+					<span class="nx">oNode</span> <span class="o">=</span> <span class="nx">descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
 
-					<span class="k">if</span> <span class="o">(</span><span class="nx">nFirstEnabled</span> <span class="o">===</span> <span class="o">-</span><span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">oNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">))</span> <span class="o">{</span>
-						<span class="nx">nFirstEnabled</span> <span class="o">=</span> <span class="nx">i</span><span class="o">;</span>
-					<span class="o">}</span>
+					<span class="k">if</span> <span class="p">(</span><span class="nx">nFirstEnabled</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">oNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DISABLED</span><span class="p">))</span> <span class="p">{</span>
+						<span class="nx">nFirstEnabled</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
+					<span class="p">}</span>
 
 
-					<span class="c">//	If the user didn&#39;t specify a value for the </span>
-<span class="c"></span>					<span class="c">//	&quot;activeDescendant&quot; attribute try to infer it from </span>
-<span class="c"></span>					<span class="c">//	the markup.</span>
-<span class="c"></span>
-					<span class="c">//	Need to pass &quot;2&quot; when using &quot;getAttribute&quot; for IE to get</span>
-<span class="c"></span>					<span class="c">//	the attribute value as it is set in the markup.</span>
-<span class="c"></span>					<span class="c">//	Need to use &quot;parseInt&quot; because IE always returns the </span>
-<span class="c"></span>					<span class="c">//	value as a number, whereas all other browsers return</span>
-<span class="c"></span>					<span class="c">//	the attribute as a string when accessed </span>
-<span class="c"></span>					<span class="c">//	via &quot;getAttribute&quot;.</span>
-<span class="c"></span>
-					<span class="k">if</span> <span class="o">(</span><span class="nx">nActiveDescendant</span> <span class="o">&lt;</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> 
-							<span class="nb">parseInt</span><span class="o">(</span><span class="nx">oNode</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">,</span> <span class="m">2</span><span class="o">),</span> <span class="m">10</span><span class="o">)</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+					<span class="c1">//	If the user didn&#39;t specify a value for the </span>
+					<span class="c1">//	&quot;activeDescendant&quot; attribute try to infer it from </span>
+					<span class="c1">//	the markup.</span>
 
-						<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">i</span><span class="o">;</span>
+					<span class="c1">//	Need to pass &quot;2&quot; when using &quot;getAttribute&quot; for IE to get</span>
+					<span class="c1">//	the attribute value as it is set in the markup.</span>
+					<span class="c1">//	Need to use &quot;parseInt&quot; because IE always returns the </span>
+					<span class="c1">//	value as a number, whereas all other browsers return</span>
+					<span class="c1">//	the attribute as a string when accessed </span>
+					<span class="c1">//	via &quot;getAttribute&quot;.</span>
 
-					<span class="o">}</span>
+					<span class="k">if</span> <span class="p">(</span><span class="nx">nActiveDescendant</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> 
+							<span class="nb">parseInt</span><span class="p">(</span><span class="nx">oNode</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="nx">TAB_INDEX</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
 
-					<span class="nx">oNode</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">,</span> <span class="o">-</span><span class="m">1</span><span class="o">);</span>
+						<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
 
-					<span class="nx">sID</span> <span class="o">=</span> <span class="nx">oNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">);</span>
+					<span class="p">}</span>
 
-					<span class="k">if</span> <span class="o">(!</span><span class="nx">sID</span><span class="o">)</span> <span class="o">{</span>
-						<span class="nx">sID</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
-						<span class="nx">oNode</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ID</span><span class="o">,</span> <span class="nx">sID</span><span class="o">);</span>
-					<span class="o">}</span>
+					<span class="nx">oNode</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">TAB_INDEX</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+
+					<span class="nx">sID</span> <span class="o">=</span> <span class="nx">oNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">);</span>
+
+					<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sID</span><span class="p">)</span> <span class="p">{</span>
+						<span class="nx">sID</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">();</span>
+						<span class="nx">oNode</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ID</span><span class="p">,</span> <span class="nx">sID</span><span class="p">);</span>
+					<span class="p">}</span>
 					
-					<span class="nx">descendantsMap</span><span class="o">[</span><span class="nx">sID</span><span class="o">]</span> <span class="o">=</span> <span class="nx">i</span><span class="o">;</span>
+					<span class="nx">descendantsMap</span><span class="p">[</span><span class="nx">sID</span><span class="p">]</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
 					
-				<span class="o">}</span>
+				<span class="p">}</span>
 				
 
-				<span class="c">//	If the user didn&#39;t specify a value for the  </span>
-<span class="c"></span>				<span class="c">//	&quot;activeDescendant&quot; attribute and no default value could be </span>
-<span class="c"></span>				<span class="c">//	determined from the markup, then default to 0.</span>
-<span class="c"></span>				
-				<span class="k">if</span> <span class="o">(</span><span class="nx">nActiveDescendant</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-					<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-				<span class="o">}</span>
+				<span class="c1">//	If the user didn&#39;t specify a value for the  </span>
+				<span class="c1">//	&quot;activeDescendant&quot; attribute and no default value could be </span>
+				<span class="c1">//	determined from the markup, then default to 0.</span>
+				
+				<span class="k">if</span> <span class="p">(</span><span class="nx">nActiveDescendant</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+				<span class="p">}</span>
 				
 
-				<span class="nx">oNode</span> <span class="o">=</span> <span class="nx">descendants</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="nx">nActiveDescendant</span><span class="o">);</span>
+				<span class="nx">oNode</span> <span class="o">=</span> <span class="nx">descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">);</span>
 
-				<span class="c">//	Check to make sure the active descendant isn&#39;t disabled, </span>
-<span class="c"></span>				<span class="c">//	and fall back to the first enabled descendant if it is.</span>
-<span class="c"></span>
-				<span class="k">if</span> <span class="o">(!</span><span class="nx">oNode</span> <span class="o">||</span> <span class="nx">oNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">))</span> <span class="o">{</span>
-					<span class="nx">oNode</span> <span class="o">=</span> <span class="nx">descendants</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="nx">nFirstEnabled</span><span class="o">);</span>
-					<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">nFirstEnabled</span><span class="o">;</span>
-				<span class="o">}</span>
+				<span class="c1">//	Check to make sure the active descendant isn&#39;t disabled, </span>
+				<span class="c1">//	and fall back to the first enabled descendant if it is.</span>
 
-				<span class="k">this</span><span class="o">.</span><span class="nx">_lastNodeIndex</span> <span class="o">=</span> <span class="nx">nDescendants</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span>
-				<span class="k">this</span><span class="o">.</span><span class="nx">_descendants</span> <span class="o">=</span> <span class="nx">descendants</span><span class="o">;</span>
-				<span class="k">this</span><span class="o">.</span><span class="nx">_descendantsMap</span> <span class="o">=</span> <span class="nx">descendantsMap</span><span class="o">;</span>
+				<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">oNode</span> <span class="o">||</span> <span class="nx">oNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DISABLED</span><span class="p">))</span> <span class="p">{</span>
+					<span class="nx">oNode</span> <span class="o">=</span> <span class="nx">descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">nFirstEnabled</span><span class="p">);</span>
+					<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">nFirstEnabled</span><span class="p">;</span>
+				<span class="p">}</span>
 
-				<span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">,</span> <span class="nx">nActiveDescendant</span><span class="o">);</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">_lastNodeIndex</span> <span class="o">=</span> <span class="nx">nDescendants</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span> <span class="o">=</span> <span class="nx">descendants</span><span class="p">;</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">_descendantsMap</span> <span class="o">=</span> <span class="nx">descendantsMap</span><span class="p">;</span>
 
-				<span class="c">//	Need to set the &quot;tabIndex&quot; attribute here, since the </span>
-<span class="c"></span>				<span class="c">//	&quot;activeDescendantChange&quot; event handler used to manage</span>
-<span class="c"></span>				<span class="c">//	the setting of the &quot;tabIndex&quot; attribute isn&#39;t wired up yet.</span>
-<span class="c"></span>
-				<span class="nx">oNode</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="p">,</span> <span class="nx">nActiveDescendant</span><span class="p">);</span>
 
-			<span class="o">}</span>
+				<span class="c1">//	Need to set the &quot;tabIndex&quot; attribute here, since the </span>
+				<span class="c1">//	&quot;activeDescendantChange&quot; event handler used to manage</span>
+				<span class="c1">//	the setting of the &quot;tabIndex&quot; attribute isn&#39;t wired up yet.</span>
+
+				<span class="nx">oNode</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">TAB_INDEX</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+			<span class="p">}</span>
 			
-		<span class="o">}</span>
+		<span class="p">}</span>
 
-	<span class="o">},</span>
+	<span class="p">},</span>
 
 
-	<span class="c">/**</span>
-<span class="c">	* @method _isDescendant</span>
-<span class="c">	* @description Determines if the specified Node instance is a descendant</span>
-<span class="c">	* managed by the Focus Manager.</span>
-<span class="c">	* @param node {Node} Node instance to be checked.</span>
-<span class="c">	* @return {Boolean} Boolean indicating if the specified Node instance is a </span>
-<span class="c">	* descendant managed by the Focus Manager.</span>
-<span class="c">	* @protected</span>
-<span class="c">	*/</span>
-	<span class="nx">_isDescendant</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* @method _isDescendant</span>
+<span class="cm">	* @description Determines if the specified Node instance is a descendant</span>
+<span class="cm">	* managed by the Focus Manager.</span>
+<span class="cm">	* @param node {Node} Node instance to be checked.</span>
+<span class="cm">	* @return {Boolean} Boolean indicating if the specified Node instance is a </span>
+<span class="cm">	* descendant managed by the Focus Manager.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	*/</span>
+	<span class="nx">_isDescendant</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-		<span class="k">return</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ID</span><span class="o">)</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">_descendantsMap</span><span class="o">);</span>
+		<span class="k">return</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">)</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendantsMap</span><span class="p">);</span>
 		
-	<span class="o">},</span>
+	<span class="p">},</span>
 	
 
-	<span class="c">/**</span>
-<span class="c">	* @method _removeFocusClass</span>
-<span class="c">	* @description Removes the class name representing focus (as specified by </span>
-<span class="c">	* the &quot;focusClass&quot; attribute) from the Node instance to which it is </span>
-<span class="c">	* currently applied.</span>
-<span class="c">	* @protected</span>
-<span class="c">	*/</span>
-	<span class="nx">_removeFocusClass</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* @method _removeFocusClass</span>
+<span class="cm">	* @description Removes the class name representing focus (as specified by </span>
+<span class="cm">	* the &quot;focusClass&quot; attribute) from the Node instance to which it is </span>
+<span class="cm">	* currently applied.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	*/</span>
+	<span class="nx">_removeFocusClass</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-		<span class="k">var</span> <span class="nx">oFocusedNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_focusedNode</span><span class="o">,</span>
-			<span class="nx">focusClass</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FOCUS_CLASS</span><span class="o">),</span>
-			<span class="nx">sClassName</span><span class="o">;</span>
+		<span class="kd">var</span> <span class="nx">oFocusedNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_focusedNode</span><span class="p">,</span>
+			<span class="nx">focusClass</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FOCUS_CLASS</span><span class="p">),</span>
+			<span class="nx">sClassName</span><span class="p">;</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">focusClass</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">sClassName</span> <span class="o">=</span> <span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">focusClass</span><span class="o">)</span> <span class="o">?</span> 
-				<span class="nx">focusClass</span> <span class="o">:</span> <span class="nx">focusClass</span><span class="o">.</span><span class="nx">className</span><span class="o">;</span>		
-		<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">focusClass</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">sClassName</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">focusClass</span><span class="p">)</span> <span class="o">?</span> 
+				<span class="nx">focusClass</span> <span class="o">:</span> <span class="nx">focusClass</span><span class="p">.</span><span class="nx">className</span><span class="p">;</span>		
+		<span class="p">}</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">oFocusedNode</span> <span class="o">&amp;&amp;</span> <span class="nx">sClassName</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">oFocusedNode</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">(</span><span class="nx">sClassName</span><span class="o">);</span>
-		<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">oFocusedNode</span> <span class="o">&amp;&amp;</span> <span class="nx">sClassName</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">oFocusedNode</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">sClassName</span><span class="p">);</span>
+		<span class="p">}</span>
 		
-	<span class="o">},</span>
+	<span class="p">},</span>
 
 
-	<span class="c">/**</span>
-<span class="c">	* @method _detachKeyHandler</span>
-<span class="c">	* @description Detaches the &quot;key&quot; event handlers used to support the &quot;keys&quot;</span>
-<span class="c">	* attribute.</span>
-<span class="c">	* @protected</span>
-<span class="c">	*/</span>
-	<span class="nx">_detachKeyHandler</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* @method _detachKeyHandler</span>
+<span class="cm">	* @description Detaches the &quot;key&quot; event handlers used to support the &quot;keys&quot;</span>
+<span class="cm">	* attribute.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	*/</span>
+	<span class="nx">_detachKeyHandler</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-		<span class="k">var</span> <span class="nx">prevKeyHandler</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prevKeyHandler</span><span class="o">,</span>
-			<span class="nx">nextKeyHandler</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_nextKeyHandler</span><span class="o">;</span>
+		<span class="kd">var</span> <span class="nx">prevKeyHandler</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_prevKeyHandler</span><span class="p">,</span>
+			<span class="nx">nextKeyHandler</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_nextKeyHandler</span><span class="p">;</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">prevKeyHandler</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">prevKeyHandler</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-		<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">prevKeyHandler</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">prevKeyHandler</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+		<span class="p">}</span>
 		
-		<span class="k">if</span> <span class="o">(</span><span class="nx">nextKeyHandler</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">nextKeyHandler</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-		<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">nextKeyHandler</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">nextKeyHandler</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+		<span class="p">}</span>
 		
-	<span class="o">},</span>
+	<span class="p">},</span>
 
 
-	<span class="c">/**</span>
-<span class="c">	* @method _preventScroll</span>
-<span class="c">	* @description Prevents the viewport from scolling when the user presses </span>
-<span class="c">	* the up, down, left, or right key.</span>
-<span class="c">	* @protected</span>
-<span class="c">	*/</span>
-	<span class="nx">_preventScroll</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* @method _preventScroll</span>
+<span class="cm">	* @description Prevents the viewport from scolling when the user presses </span>
+<span class="cm">	* the up, down, left, or right key.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	*/</span>
+	<span class="nx">_preventScroll</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">scrollKeys</span><span class="o">[</span><span class="nx">event</span><span class="o">.</span><span class="nx">keyCode</span><span class="o">])</span> <span class="o">{</span>
-			<span class="nx">event</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
-		<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">scrollKeys</span><span class="p">[</span><span class="nx">event</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">])</span> <span class="p">{</span>
+			<span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+		<span class="p">}</span>
 		
-	<span class="o">},</span>
+	<span class="p">},</span>
 
 
-	<span class="c">/**</span>
-<span class="c">	* @method _preventScroll</span>
-<span class="c">	* @description Fires the click event if the enter key is pressed while </span>
-<span class="c">	* focused on an HTML element that is not natively clickable.</span>
-<span class="c">	* @protected</span>
-<span class="c">	*/</span>
-	<span class="nx">_fireClick</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* @method _preventScroll</span>
+<span class="cm">	* @description Fires the click event if the enter key is pressed while </span>
+<span class="cm">	* focused on an HTML element that is not natively clickable.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	*/</span>
+	<span class="nx">_fireClick</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
 		
-		<span class="k">var</span> <span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span>
-			<span class="nx">sNodeName</span> <span class="o">=</span> <span class="nx">oTarget</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;nodeName&quot;</span><span class="o">).</span><span class="nx">toLowerCase</span><span class="o">();</span>
+		<span class="kd">var</span> <span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span>
+			<span class="nx">sNodeName</span> <span class="o">=</span> <span class="nx">oTarget</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;nodeName&quot;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">();</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="m">13</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">clickableElements</span><span class="o">[</span><span class="nx">sNodeName</span><span class="o">]</span> <span class="o">||</span> 
-				<span class="o">(</span><span class="nx">sNodeName</span> <span class="o">===</span> <span class="s2">&quot;a&quot;</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">oTarget</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="s2">&quot;href&quot;</span><span class="o">))))</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="mi">13</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">clickableElements</span><span class="p">[</span><span class="nx">sNodeName</span><span class="p">]</span> <span class="o">||</span> 
+				<span class="p">(</span><span class="nx">sNodeName</span> <span class="o">===</span> <span class="s2">&quot;a&quot;</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">oTarget</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">))))</span> <span class="p">{</span>
 
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">((</span><span class="s2">&quot;Firing click event for node:&quot;</span> <span class="o">+</span> <span class="nx">oTarget</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;id&quot;</span><span class="o">)),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;nodeFocusManager&quot;</span><span class="o">);</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">((</span><span class="s2">&quot;Firing click event for node:&quot;</span> <span class="o">+</span> <span class="nx">oTarget</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)),</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;nodeFocusManager&quot;</span><span class="p">);</span>
 
-			<span class="nx">oTarget</span><span class="o">.</span><span class="nx">simulate</span><span class="o">(</span><span class="s2">&quot;click&quot;</span><span class="o">);</span>
+			<span class="nx">oTarget</span><span class="p">.</span><span class="nx">simulate</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">);</span>
 			
-		<span class="o">}</span>
+		<span class="p">}</span>
 		
-	<span class="o">},</span>
+	<span class="p">},</span>
 
 
-	<span class="c">/**</span>
-<span class="c">	* @method _attachKeyHandler</span>
-<span class="c">	* @description Attaches the &quot;key&quot; event handlers used to support the &quot;keys&quot;</span>
-<span class="c">	* attribute.</span>
-<span class="c">	* @protected</span>
-<span class="c">	*/</span>
-	<span class="nx">_attachKeyHandler</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* @method _attachKeyHandler</span>
+<span class="cm">	* @description Attaches the &quot;key&quot; event handlers used to support the &quot;keys&quot;</span>
+<span class="cm">	* attribute.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	*/</span>
+	<span class="nx">_attachKeyHandler</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-		<span class="k">this</span><span class="o">.</span><span class="nx">_detachKeyHandler</span><span class="o">();</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">_detachKeyHandler</span><span class="p">();</span>
 
-		<span class="k">var</span> <span class="nx">sNextKey</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;keys.next&quot;</span><span class="o">),</span>
-			<span class="nx">sPrevKey</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;keys.previous&quot;</span><span class="o">),</span>
-			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">),</span>
-			<span class="nx">aHandlers</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_eventHandlers</span><span class="o">;</span>
+		<span class="kd">var</span> <span class="nx">sNextKey</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;keys.next&quot;</span><span class="p">),</span>
+			<span class="nx">sPrevKey</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;keys.previous&quot;</span><span class="p">),</span>
+			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span>
+			<span class="nx">aHandlers</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_eventHandlers</span><span class="p">;</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">sPrevKey</span><span class="o">)</span> <span class="o">{</span>
- 			<span class="k">this</span><span class="o">.</span><span class="nx">_prevKeyHandler</span> <span class="o">=</span> 
-				<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEY</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_focusPrevious</span><span class="o">,</span> <span class="k">this</span><span class="o">),</span> <span class="nx">oNode</span><span class="o">,</span> <span class="nx">sPrevKey</span><span class="o">);</span>
-		<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">sPrevKey</span><span class="p">)</span> <span class="p">{</span>
+ 			<span class="k">this</span><span class="p">.</span><span class="nx">_prevKeyHandler</span> <span class="o">=</span> 
+				<span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">KEY</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_focusPrevious</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="nx">oNode</span><span class="p">,</span> <span class="nx">sPrevKey</span><span class="p">);</span>
+		<span class="p">}</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">sNextKey</span><span class="o">)</span> <span class="o">{</span>
- 			<span class="k">this</span><span class="o">.</span><span class="nx">_nextKeyHandler</span> <span class="o">=</span> 
-				<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">KEY</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_focusNext</span><span class="o">,</span> <span class="k">this</span><span class="o">),</span> <span class="nx">oNode</span><span class="o">,</span> <span class="nx">sNextKey</span><span class="o">);</span>
-		<span class="o">}</span>
-
-
-		<span class="c">//	In Opera it is necessary to call the &quot;preventDefault&quot; method in  </span>
-<span class="c"></span>		<span class="c">//	response to the user pressing the arrow keys in order to prevent </span>
-<span class="c"></span>		<span class="c">//	the viewport from scrolling when the user is moving focus among </span>
-<span class="c"></span>		<span class="c">//	the focusable descendants.</span>
-<span class="c"></span>		
-		<span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span><span class="o">)</span> <span class="o">{</span>	
-			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oNode</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;keypress&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_preventScroll</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
-		<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">sNextKey</span><span class="p">)</span> <span class="p">{</span>
+ 			<span class="k">this</span><span class="p">.</span><span class="nx">_nextKeyHandler</span> <span class="o">=</span> 
+				<span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">KEY</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_focusNext</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="nx">oNode</span><span class="p">,</span> <span class="nx">sNextKey</span><span class="p">);</span>
+		<span class="p">}</span>
 
 
-		<span class="c">//	For all browsers except Opera: HTML elements that are not natively</span>
-<span class="c"></span>		<span class="c">//	focusable but made focusable via the tabIndex attribute don&#39;t </span>
-<span class="c"></span>		<span class="c">//	fire a click event when the user presses the enter key.  It is </span>
-<span class="c"></span>		<span class="c">//	possible to work around this problem by simplying dispatching a </span>
-<span class="c"></span>		<span class="c">//	click event in response to the user pressing the enter key.</span>
-<span class="c"></span>
-		<span class="k">if</span> <span class="o">(!</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oNode</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;keypress&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_fireClick</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
-		<span class="o">}</span>
-
-	<span class="o">},</span>
-
-
-	<span class="c">/**</span>
-<span class="c">	* @method _detachEventHandlers</span>
-<span class="c">	* @description Detaches all event handlers used by the Focus Manager.</span>
-<span class="c">	* @protected</span>
-<span class="c">	*/</span>
-	<span class="nx">_detachEventHandlers</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-
-		<span class="k">this</span><span class="o">.</span><span class="nx">_detachKeyHandler</span><span class="o">();</span>
-
-		<span class="k">var</span> <span class="nx">aHandlers</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_eventHandlers</span><span class="o">;</span>
-
-		<span class="k">if</span> <span class="o">(</span><span class="nx">aHandlers</span><span class="o">)</span> <span class="o">{</span>
-
-			<span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">aHandlers</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">handle</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">handle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-			<span class="o">});</span>
-
-			<span class="k">this</span><span class="o">.</span><span class="nx">_eventHandlers</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-
-		<span class="o">}</span>
+		<span class="c1">//	In Opera it is necessary to call the &quot;preventDefault&quot; method in  </span>
+		<span class="c1">//	response to the user pressing the arrow keys in order to prevent </span>
+		<span class="c1">//	the viewport from scrolling when the user is moving focus among </span>
+		<span class="c1">//	the focusable descendants.</span>
 		
-	<span class="o">},</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">UA</span><span class="p">.</span><span class="nx">opera</span><span class="p">)</span> <span class="p">{</span>	
+			<span class="nx">aHandlers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">oNode</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;keypress&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_preventScroll</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+		<span class="p">}</span>
 
 
-	<span class="c">/**</span>
-<span class="c">	* @method _detachEventHandlers</span>
-<span class="c">	* @description Attaches all event handlers used by the Focus Manager.</span>
-<span class="c">	* @protected	</span>
-<span class="c">	*/</span>
-	<span class="nx">_attachEventHandlers</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+		<span class="c1">//	For all browsers except Opera: HTML elements that are not natively</span>
+		<span class="c1">//	focusable but made focusable via the tabIndex attribute don&#39;t </span>
+		<span class="c1">//	fire a click event when the user presses the enter key.  It is </span>
+		<span class="c1">//	possible to work around this problem by simplying dispatching a </span>
+		<span class="c1">//	click event in response to the user pressing the enter key.</span>
 
-		<span class="k">var</span> <span class="nx">descendants</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_descendants</span><span class="o">,</span>
-			<span class="nx">aHandlers</span><span class="o">,</span>
-			<span class="nx">oDocument</span><span class="o">,</span>
-			<span class="nx">handle</span><span class="o">;</span>
+		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">UA</span><span class="p">.</span><span class="nx">opera</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">aHandlers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">oNode</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;keypress&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fireClick</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+		<span class="p">}</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">descendants</span> <span class="o">&amp;&amp;</span> <span class="nx">descendants</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-
-			<span class="nx">aHandlers</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_eventHandlers</span> <span class="o">||</span> <span class="o">[];</span>
-			<span class="nx">oDocument</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="o">);</span>
+	<span class="p">},</span>
 
 
-			<span class="k">if</span> <span class="o">(</span><span class="nx">aHandlers</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* @method _detachEventHandlers</span>
+<span class="cm">	* @description Detaches all event handlers used by the Focus Manager.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	*/</span>
+	<span class="nx">_detachEventHandlers</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-		        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Attaching base set of event handlers.&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;nodeFocusManager&quot;</span><span class="o">);</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">_detachKeyHandler</span><span class="p">();</span>
 
-				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oDocument</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;focus&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
+		<span class="kd">var</span> <span class="nx">aHandlers</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_eventHandlers</span><span class="p">;</span>
 
-				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">oDocument</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;mousedown&quot;</span><span class="o">,</span> 
-					<span class="k">this</span><span class="o">.</span><span class="nx">_onDocMouseDown</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">aHandlers</span><span class="p">)</span> <span class="p">{</span>
 
-				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span>
-						<span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;keysChange&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_attachKeyHandler</span><span class="o">));</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">aHandlers</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">handle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+			<span class="p">});</span>
 
-				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span>
-						<span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;descendantsChange&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_initDescendants</span><span class="o">));</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">_eventHandlers</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
-				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span>
-						<span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT_CHANGE</span><span class="o">,</span> 
-								<span class="k">this</span><span class="o">.</span><span class="nx">_afterActiveDescendantChange</span><span class="o">));</span>
+		<span class="p">}</span>
+		
+	<span class="p">},</span>
 
 
-				<span class="c">//	For performance: defer attaching all key-related event </span>
-<span class="c"></span>				<span class="c">//	handlers until the first time one of the specified </span>
-<span class="c"></span>				<span class="c">//	descendants receives focus.</span>
-<span class="c"></span>
-				<span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="s2">&quot;focusedChange&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* @method _detachEventHandlers</span>
+<span class="cm">	* @description Attaches all event handlers used by the Focus Manager.</span>
+<span class="cm">	* @protected	</span>
+<span class="cm">	*/</span>
+	<span class="nx">_attachEventHandlers</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+		<span class="kd">var</span> <span class="nx">descendants</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span><span class="p">,</span>
+			<span class="nx">aHandlers</span><span class="p">,</span>
+			<span class="nx">oDocument</span><span class="p">,</span>
+			<span class="nx">handle</span><span class="p">;</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="nx">descendants</span> <span class="o">&amp;&amp;</span> <span class="nx">descendants</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+
+			<span class="nx">aHandlers</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_eventHandlers</span> <span class="o">||</span> <span class="p">[];</span>
+			<span class="nx">oDocument</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;ownerDocument&quot;</span><span class="p">);</span>
+
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">aHandlers</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+
+		        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Attaching base set of event handlers.&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;nodeFocusManager&quot;</span><span class="p">);</span>
+
+				<span class="nx">aHandlers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">oDocument</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;focus&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_onDocFocus</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+
+				<span class="nx">aHandlers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">oDocument</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;mousedown&quot;</span><span class="p">,</span> 
+					<span class="k">this</span><span class="p">.</span><span class="nx">_onDocMouseDown</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+
+				<span class="nx">aHandlers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span>
+						<span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;keysChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_attachKeyHandler</span><span class="p">));</span>
+
+				<span class="nx">aHandlers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span>
+						<span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;descendantsChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_initDescendants</span><span class="p">));</span>
+
+				<span class="nx">aHandlers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span>
+						<span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">ACTIVE_DESCENDANT_CHANGE</span><span class="p">,</span> 
+								<span class="k">this</span><span class="p">.</span><span class="nx">_afterActiveDescendantChange</span><span class="p">));</span>
+
+
+				<span class="c1">//	For performance: defer attaching all key-related event </span>
+				<span class="c1">//	handlers until the first time one of the specified </span>
+				<span class="c1">//	descendants receives focus.</span>
+
+				<span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;focusedChange&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
 					
-					<span class="k">if</span> <span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">newVal</span><span class="o">)</span> <span class="o">{</span>
+					<span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">newVal</span><span class="p">)</span> <span class="p">{</span>
 						
-				        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Attaching key event handlers.&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;nodeFocusManager&quot;</span><span class="o">);</span>
+				        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Attaching key event handlers.&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;nodeFocusManager&quot;</span><span class="p">);</span>
 						
-						<span class="k">this</span><span class="o">.</span><span class="nx">_attachKeyHandler</span><span class="o">();</span>
+						<span class="k">this</span><span class="p">.</span><span class="nx">_attachKeyHandler</span><span class="p">();</span>
 
-						<span class="c">//	Detach this &quot;focusedChange&quot; handler so that the </span>
-<span class="c"></span>						<span class="c">//	key-related handlers only get attached once.</span>
-<span class="c"></span>
-						<span class="nx">handle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
+						<span class="c1">//	Detach this &quot;focusedChange&quot; handler so that the </span>
+						<span class="c1">//	key-related handlers only get attached once.</span>
 
-					<span class="o">}</span>
+						<span class="nx">handle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+
+					<span class="p">}</span>
 					
-				<span class="o">},</span> <span class="k">this</span><span class="o">));</span>
+				<span class="p">},</span> <span class="k">this</span><span class="p">));</span>
 				
-				<span class="nx">aHandlers</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">handle</span><span class="o">);</span>
+				<span class="nx">aHandlers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
 				
-			<span class="o">}</span>
+			<span class="p">}</span>
 
 
-			<span class="k">this</span><span class="o">.</span><span class="nx">_eventHandlers</span> <span class="o">=</span> <span class="nx">aHandlers</span><span class="o">;</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">_eventHandlers</span> <span class="o">=</span> <span class="nx">aHandlers</span><span class="p">;</span>
 			
-		<span class="o">}</span>
+		<span class="p">}</span>
 		
-	<span class="o">},</span>	
+	<span class="p">},</span>	
 	
 	
-	<span class="c">//	Protected event handlers</span>
-<span class="c"></span>
-	<span class="c">/**</span>
-<span class="c">	* @method _onDocMouseDown</span>
-<span class="c">	* @description &quot;mousedown&quot; event handler for the owner document of the </span>
-<span class="c">	* Focus Manager&#39;s Node.</span>
-<span class="c">	* @protected</span>
-<span class="c">	* @param event {Object} Object representing the DOM event.</span>
-<span class="c">	*/</span>
-	<span class="nx">_onDocMouseDown</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+	<span class="c1">//	Protected event handlers</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* @method _onDocMouseDown</span>
+<span class="cm">	* @description &quot;mousedown&quot; event handler for the owner document of the </span>
+<span class="cm">	* Focus Manager&#39;s Node.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	* @param event {Object} Object representing the DOM event.</span>
+<span class="cm">	*/</span>
+	<span class="nx">_onDocMouseDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
 	
-		<span class="k">var</span> <span class="nx">oHost</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">),</span>
-			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span>
-			<span class="nx">bChildNode</span> <span class="o">=</span> <span class="nx">oHost</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">),</span>
-			<span class="nx">node</span><span class="o">,</span>
+		<span class="kd">var</span> <span class="nx">oHost</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span>
+			<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span>
+			<span class="nx">bChildNode</span> <span class="o">=</span> <span class="nx">oHost</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">oTarget</span><span class="p">),</span>
+			<span class="nx">node</span><span class="p">,</span>
 
-			<span class="nx">getFocusable</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">getFocusable</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-				<span class="k">var</span> <span class="nx">returnVal</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+				<span class="kd">var</span> <span class="nx">returnVal</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-				<span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oHost</span><span class="o">))</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">compareTo</span><span class="p">(</span><span class="nx">oHost</span><span class="p">))</span> <span class="p">{</span>
 					
-					<span class="nx">returnVal</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_isDescendant</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> 
-									<span class="nx">getFocusable</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;parentNode&quot;</span><span class="o">));</span>
+					<span class="nx">returnVal</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_isDescendant</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> 
+									<span class="nx">getFocusable</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parentNode&quot;</span><span class="p">));</span>
 
-				<span class="o">}</span>
+				<span class="p">}</span>
 		
-				<span class="k">return</span> <span class="nx">returnVal</span><span class="o">;</span>
+				<span class="k">return</span> <span class="nx">returnVal</span><span class="p">;</span>
 
-			<span class="o">};</span>
+			<span class="p">};</span>
 		
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">bChildNode</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">bChildNode</span><span class="p">)</span> <span class="p">{</span>
 
-			<span class="c">//	Check to make sure that the target isn&#39;t a child node of one </span>
-<span class="c"></span>			<span class="c">//	of the focusable descendants.</span>
-<span class="c"></span>
-			<span class="nx">node</span> <span class="o">=</span> <span class="nx">getFocusable</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">oTarget</span><span class="o">);</span>
+			<span class="c1">//	Check to make sure that the target isn&#39;t a child node of one </span>
+			<span class="c1">//	of the focusable descendants.</span>
 
-			<span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">node</span><span class="o">;</span>
-			<span class="o">}</span>
-			<span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FOCUSED</span><span class="o">))</span> <span class="o">{</span>
+			<span class="nx">node</span> <span class="o">=</span> <span class="nx">getFocusable</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">oTarget</span><span class="p">);</span>
 
-				<span class="c">//	The target was a non-focusable descendant of the root </span>
-<span class="c"></span>				<span class="c">//	node, so the &quot;focused&quot; attribute should be set to false.</span>
-<span class="c"></span>
-	 			<span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">FOCUSED</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
-	 			<span class="k">this</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">(</span><span class="nx">event</span><span class="o">);</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FOCUSED</span><span class="p">))</span> <span class="p">{</span>
+
+				<span class="c1">//	The target was a non-focusable descendant of the root </span>
+				<span class="c1">//	node, so the &quot;focused&quot; attribute should be set to false.</span>
+
+	 			<span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">FOCUSED</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+	 			<span class="k">this</span><span class="p">.</span><span class="nx">_onDocFocus</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
 								
-			<span class="o">}</span>
+			<span class="p">}</span>
 
-		<span class="o">}</span>
+		<span class="p">}</span>
 		
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">bChildNode</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">_isDescendant</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">))</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">bChildNode</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_isDescendant</span><span class="p">(</span><span class="nx">oTarget</span><span class="p">))</span> <span class="p">{</span>
 
-			<span class="c">//	Fix general problem in Webkit: mousing down on a button or an </span>
-<span class="c"></span>			<span class="c">//	anchor element doesn&#39;t focus it.</span>
-<span class="c"></span>
-			<span class="c">//	For all browsers: makes sure that the descendant that </span>
-<span class="c"></span>			<span class="c">//	was the target of the mousedown event is now considered the</span>
-<span class="c"></span>			<span class="c">//	active descendant.</span>
-<span class="c"></span>
-			<span class="k">this</span><span class="o">.</span><span class="nx">focus</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">);</span>
-		<span class="o">}</span>
-		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FOCUSED</span><span class="o">)</span> <span class="o">&amp;&amp;</span> 
-			<span class="o">(!</span><span class="nx">bChildNode</span> <span class="o">||</span> <span class="o">(</span><span class="nx">bChildNode</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">_isDescendant</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">))))</span> <span class="o">{</span>
+			<span class="c1">//	Fix general problem in Webkit: mousing down on a button or an </span>
+			<span class="c1">//	anchor element doesn&#39;t focus it.</span>
 
-			<span class="c">//	Fix for Webkit:</span>
-<span class="c"></span>			
-			<span class="c">//	Document doesn&#39;t receive focus in Webkit when the user mouses </span>
-<span class="c"></span>			<span class="c">//	down on it, so the &quot;focused&quot; attribute won&#39;t get set to the </span>
-<span class="c"></span>			<span class="c">//	correct value.</span>
-<span class="c"></span>
-			<span class="c">//	The goal is to force a blur if the user moused down on </span>
-<span class="c"></span>			<span class="c">//	either: 1) A descendant node, but not one that managed by </span>
-<span class="c"></span>			<span class="c">//	the FocusManager, or 2) an element outside of the </span>
-<span class="c"></span>			<span class="c">//	FocusManager</span>
-<span class="c"></span>
- 			<span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">FOCUSED</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
- 			<span class="k">this</span><span class="o">.</span><span class="nx">_onDocFocus</span><span class="o">(</span><span class="nx">event</span><span class="o">);</span>
+			<span class="c1">//	For all browsers: makes sure that the descendant that </span>
+			<span class="c1">//	was the target of the mousedown event is now considered the</span>
+			<span class="c1">//	active descendant.</span>
 
-		<span class="o">}</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">focus</span><span class="p">(</span><span class="nx">oTarget</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">UA</span><span class="p">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FOCUSED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> 
+			<span class="p">(</span><span class="o">!</span><span class="nx">bChildNode</span> <span class="o">||</span> <span class="p">(</span><span class="nx">bChildNode</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_isDescendant</span><span class="p">(</span><span class="nx">oTarget</span><span class="p">))))</span> <span class="p">{</span>
+
+			<span class="c1">//	Fix for Webkit:</span>
+			
+			<span class="c1">//	Document doesn&#39;t receive focus in Webkit when the user mouses </span>
+			<span class="c1">//	down on it, so the &quot;focused&quot; attribute won&#39;t get set to the </span>
+			<span class="c1">//	correct value.</span>
+
+			<span class="c1">//	The goal is to force a blur if the user moused down on </span>
+			<span class="c1">//	either: 1) A descendant node, but not one that managed by </span>
+			<span class="c1">//	the FocusManager, or 2) an element outside of the </span>
+			<span class="c1">//	FocusManager</span>
+
+ 			<span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">FOCUSED</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+ 			<span class="k">this</span><span class="p">.</span><span class="nx">_onDocFocus</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+
+		<span class="p">}</span>
 	
-	<span class="o">},</span>
+	<span class="p">},</span>
 
 
-	<span class="c">/**</span>
-<span class="c">	* @method _onDocFocus</span>
-<span class="c">	* @description &quot;focus&quot; event handler for the owner document of the </span>
-<span class="c">	* Focus Manager&#39;s Node.</span>
-<span class="c">	* @protected</span>
-<span class="c">	* @param event {Object} Object representing the DOM event.</span>
-<span class="c">	*/</span>
-	<span class="nx">_onDocFocus</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	* @method _onDocFocus</span>
+<span class="cm">	* @description &quot;focus&quot; event handler for the owner document of the </span>
+<span class="cm">	* Focus Manager&#39;s Node.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	* @param event {Object} Object representing the DOM event.</span>
+<span class="cm">	*/</span>
+	<span class="nx">_onDocFocus</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
 
-		<span class="k">var</span> <span class="nx">oTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_focusTarget</span> <span class="o">||</span> <span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">,</span>
-			<span class="nx">bFocused</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FOCUSED</span><span class="o">),</span>
-			<span class="nx">focusClass</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FOCUS_CLASS</span><span class="o">),</span>
-			<span class="nx">oFocusedNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_focusedNode</span><span class="o">,</span>
-			<span class="nx">bInCollection</span><span class="o">;</span>
+		<span class="kd">var</span> <span class="nx">oTarget</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_focusTarget</span> <span class="o">||</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span>
+			<span class="nx">bFocused</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FOCUSED</span><span class="p">),</span>
+			<span class="nx">focusClass</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FOCUS_CLASS</span><span class="p">),</span>
+			<span class="nx">oFocusedNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_focusedNode</span><span class="p">,</span>
+			<span class="nx">bInCollection</span><span class="p">;</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_focusTarget</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">this</span><span class="o">.</span><span class="nx">_focusTarget</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-		<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_focusTarget</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">_focusTarget</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+		<span class="p">}</span>
 
 
-		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">).</span><span class="nx">contains</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">))</span> <span class="o">{</span>	
+		<span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">).</span><span class="nx">contains</span><span class="p">(</span><span class="nx">oTarget</span><span class="p">))</span> <span class="p">{</span>	
 
-			<span class="c">//	The target is a descendant of the root Node.</span>
-<span class="c"></span>
-			<span class="nx">bInCollection</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_isDescendant</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">);</span>
+			<span class="c1">//	The target is a descendant of the root Node.</span>
 
-			<span class="k">if</span> <span class="o">(!</span><span class="nx">bFocused</span> <span class="o">&amp;&amp;</span> <span class="nx">bInCollection</span><span class="o">)</span> <span class="o">{</span>
+			<span class="nx">bInCollection</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_isDescendant</span><span class="p">(</span><span class="nx">oTarget</span><span class="p">);</span>
 
-				<span class="c">//	The user has focused a focusable descendant.</span>
-<span class="c"></span>
-				<span class="nx">bFocused</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+			<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">bFocused</span> <span class="o">&amp;&amp;</span> <span class="nx">bInCollection</span><span class="p">)</span> <span class="p">{</span>
 
-			<span class="o">}</span>
-			<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">bFocused</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">bInCollection</span><span class="o">)</span> <span class="o">{</span>  
+				<span class="c1">//	The user has focused a focusable descendant.</span>
+
+				<span class="nx">bFocused</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+			<span class="p">}</span>
+			<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">bFocused</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">bInCollection</span><span class="p">)</span> <span class="p">{</span>  
 			
-				<span class="c">//	The user has focused a child of the root Node that is </span>
-<span class="c"></span>				<span class="c">//	not one of the descendants managed by this Focus Manager</span>
-<span class="c"></span>				<span class="c">//	so clear the currently focused descendant.</span>
-<span class="c"></span>				
-				<span class="nx">bFocused</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-			
-			<span class="o">}</span>
-			
-		<span class="o">}</span>
-		<span class="k">else</span> <span class="o">{</span> 
-		
-			<span class="c">// The target is some other node in the document.</span>
-<span class="c"></span>
-			<span class="nx">bFocused</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-			
-		<span class="o">}</span>
-
-
-		<span class="k">if</span> <span class="o">(</span><span class="nx">focusClass</span><span class="o">)</span> <span class="o">{</span>
-
-			<span class="k">if</span> <span class="o">(</span><span class="nx">oFocusedNode</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">oFocusedNode</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">bFocused</span><span class="o">))</span> <span class="o">{</span>
-				<span class="k">this</span><span class="o">.</span><span class="nx">_removeFocusClass</span><span class="o">();</span>
-			<span class="o">}</span>
-
-			<span class="k">if</span> <span class="o">(</span><span class="nx">bInCollection</span> <span class="o">&amp;&amp;</span> <span class="nx">bFocused</span><span class="o">)</span> <span class="o">{</span>
-
-				<span class="k">if</span> <span class="o">(</span><span class="nx">focusClass</span><span class="o">.</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-					<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">focusClass</span><span class="o">.</span><span class="nx">fn</span><span class="o">(</span><span class="nx">oTarget</span><span class="o">);</span>
-					<span class="nx">oTarget</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">focusClass</span><span class="o">.</span><span class="nx">className</span><span class="o">);</span>
-				<span class="o">}</span>
-				<span class="k">else</span> <span class="o">{</span>
-					<span class="nx">oTarget</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">focusClass</span><span class="o">);</span>
-				<span class="o">}</span>
-
-				<span class="k">this</span><span class="o">.</span><span class="nx">_focusedNode</span> <span class="o">=</span> <span class="nx">oTarget</span><span class="o">;</span>
-
-			<span class="o">}</span>
-			
-		<span class="o">}</span>
-
-
-		<span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">FOCUSED</span><span class="o">,</span> <span class="nx">bFocused</span><span class="o">);</span>			
-
-	<span class="o">},</span>
-
-
-	<span class="c">/**</span>
-<span class="c">	* @method _focusNext</span>
-<span class="c">	* @description Keydown event handler that moves focus to the next </span>
-<span class="c">	* enabled descendant.</span>
-<span class="c">	* @protected</span>
-<span class="c">	* @param event {Object} Object representing the DOM event.</span>
-<span class="c">	* @param activeDescendant {Number} Number representing the index of the </span>
-<span class="c">	* next descendant to be focused</span>
-<span class="c">	*/</span>
-	<span class="nx">_focusNext</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="nx">activeDescendant</span><span class="o">)</span> <span class="o">{</span>
-
-		<span class="k">var</span> <span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">activeDescendant</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">),</span>
-			<span class="nx">oNode</span><span class="o">;</span>
-
-
-		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_isDescendant</span><span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">)</span> <span class="o">&amp;&amp;</span> 
-			<span class="o">(</span><span class="nx">nActiveDescendant</span> <span class="o">&lt;=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lastNodeIndex</span><span class="o">))</span> <span class="o">{</span>
-
-			<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">nActiveDescendant</span> <span class="o">+</span> <span class="m">1</span><span class="o">;</span>
-
-			<span class="k">if</span> <span class="o">(</span><span class="nx">nActiveDescendant</span> <span class="o">===</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_lastNodeIndex</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">&amp;&amp;</span> 
-				<span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CIRCULAR</span><span class="o">))</span> <span class="o">{</span>
-
-				<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-
-			<span class="o">}</span>
-
-			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_descendants</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="nx">nActiveDescendant</span><span class="o">);</span>
-			
-			<span class="k">if</span> <span class="o">(</span><span class="nx">oNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">))</span> <span class="o">{</span>
-				<span class="k">this</span><span class="o">.</span><span class="nx">_focusNext</span><span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="nx">nActiveDescendant</span><span class="o">);</span>
-			<span class="o">}</span>
-			<span class="k">else</span> <span class="o">{</span>
-				<span class="k">this</span><span class="o">.</span><span class="nx">focus</span><span class="o">(</span><span class="nx">nActiveDescendant</span><span class="o">);</span>
-			<span class="o">}</span>
-
-		<span class="o">}</span>
-		
-		<span class="k">this</span><span class="o">.</span><span class="nx">_preventScroll</span><span class="o">(</span><span class="nx">event</span><span class="o">);</span>
-
-	<span class="o">},</span>
-
-
-	<span class="c">/**</span>
-<span class="c">	* @method _focusPrevious</span>
-<span class="c">	* @description Keydown event handler that moves focus to the previous </span>
-<span class="c">	* enabled descendant.</span>
-<span class="c">	* @protected</span>
-<span class="c">	* @param event {Object} Object representing the DOM event.</span>
-<span class="c">	* @param activeDescendant {Number} Number representing the index of the </span>
-<span class="c">	* next descendant to be focused.</span>
-<span class="c">	*/</span>
-	<span class="nx">_focusPrevious</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="nx">activeDescendant</span><span class="o">)</span> <span class="o">{</span>
-	
-		<span class="k">var</span> <span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">activeDescendant</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">),</span>
-			<span class="nx">oNode</span><span class="o">;</span>
-	
-		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_isDescendant</span><span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">target</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">nActiveDescendant</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-
-			<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">nActiveDescendant</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span>
-
-			<span class="k">if</span> <span class="o">(</span><span class="nx">nActiveDescendant</span> <span class="o">===</span> <span class="o">-</span><span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CIRCULAR</span><span class="o">))</span> <span class="o">{</span>
-				<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lastNodeIndex</span><span class="o">;</span>
-			<span class="o">}</span>
-
-			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_descendants</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="nx">nActiveDescendant</span><span class="o">);</span>
-
-			<span class="k">if</span> <span class="o">(</span><span class="nx">oNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DISABLED</span><span class="o">))</span> <span class="o">{</span>
-				<span class="k">this</span><span class="o">.</span><span class="nx">_focusPrevious</span><span class="o">(</span><span class="nx">event</span><span class="o">,</span> <span class="nx">nActiveDescendant</span><span class="o">);</span>
-			<span class="o">}</span>
-			<span class="k">else</span> <span class="o">{</span>
-				<span class="k">this</span><span class="o">.</span><span class="nx">focus</span><span class="o">(</span><span class="nx">nActiveDescendant</span><span class="o">);</span>				
-			<span class="o">}</span>
-
-		<span class="o">}</span>
-		
-		<span class="k">this</span><span class="o">.</span><span class="nx">_preventScroll</span><span class="o">(</span><span class="nx">event</span><span class="o">);</span>			
-	
-	<span class="o">},</span>
-
-
-	<span class="c">/**</span>
-<span class="c">	* @method _afterActiveDescendantChange</span>
-<span class="c">	* @description afterChange event handler for the </span>
-<span class="c">	* &quot;activeDescendant&quot; attribute.</span>
-<span class="c">	* @protected</span>
-<span class="c">	* @param event {Object} Object representing the change event.</span>
-<span class="c">	*/</span>	
-	<span class="nx">_afterActiveDescendantChange</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">event</span><span class="o">)</span> <span class="o">{</span>
-
-		<span class="k">var</span> <span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_descendants</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">prevVal</span><span class="o">);</span>
-		
-		<span class="k">if</span> <span class="o">(</span><span class="nx">oNode</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">oNode</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">,</span> <span class="o">-</span><span class="m">1</span><span class="o">);</span>
-		<span class="o">}</span>
-
-		<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_descendants</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="nx">event</span><span class="o">.</span><span class="nx">newVal</span><span class="o">);</span>
-
-		<span class="k">if</span> <span class="o">(</span><span class="nx">oNode</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">oNode</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">TAB_INDEX</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
-		<span class="o">}</span>
-		
-	<span class="o">},</span>
-
-
-
-	<span class="c">//	Public methods</span>
-<span class="c"></span>
-    <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-
-		<span class="k">this</span><span class="o">.</span><span class="nx">start</span><span class="o">();</span>
-
-    <span class="o">},</span>
-
-	<span class="nx">destructor</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-		
-		<span class="k">this</span><span class="o">.</span><span class="nx">stop</span><span class="o">();</span>
-		<span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">).</span><span class="nx">focusManager</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-		
-    <span class="o">},</span>
-
-
-	<span class="c">/**</span>
-<span class="c">	* @method focus</span>
-<span class="c">	* @description Focuses the active descendant and sets the  </span>
-<span class="c">	* &lt;code&gt;focused&lt;/code&gt; attribute to true.</span>
-<span class="c">	* @param index {Number} Optional. Number representing the index of the </span>
-<span class="c">	* descendant to be set as the active descendant.</span>
-<span class="c">	* @param index {Node} Optional. Node instance representing the </span>
-<span class="c">	* descendant to be set as the active descendant.</span>
-<span class="c">	*/</span>
-	<span class="nx">focus</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
-
-		<span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">index</span><span class="o">))</span> <span class="o">{</span>
-			<span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">);</span>
-		<span class="o">}</span>
-
-		<span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="o">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="o">});</span>
-
-		<span class="k">var</span> <span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_descendants</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">));</span>
-
-		<span class="k">if</span> <span class="o">(</span><span class="nx">oNode</span><span class="o">)</span> <span class="o">{</span>
-
-			<span class="nx">oNode</span><span class="o">.</span><span class="nx">focus</span><span class="o">();</span>
-
-			<span class="c">//	In Opera focusing a &lt;BUTTON&gt; element programmatically </span>
-<span class="c"></span>			<span class="c">//	will result in the document-level focus event handler </span>
-<span class="c"></span>			<span class="c">//	&quot;_onDocFocus&quot; being called, resulting in the handler </span>
-<span class="c"></span>			<span class="c">//	incorrectly setting the &quot;focused&quot; Attribute to false.  To fix </span>
-<span class="c"></span>			<span class="c">//	this, set a flag (&quot;_focusTarget&quot;) that the &quot;_onDocFocus&quot; method </span>
-<span class="c"></span>			<span class="c">//	can look for to properly handle this edge case.</span>
-<span class="c"></span>
-			<span class="k">if</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span> <span class="o">&amp;&amp;</span> <span class="nx">oNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;nodeName&quot;</span><span class="o">).</span><span class="nx">toLowerCase</span><span class="o">()</span> <span class="o">===</span> <span class="s2">&quot;button&quot;</span><span class="o">)</span> <span class="o">{</span>
-				<span class="k">this</span><span class="o">.</span><span class="nx">_focusTarget</span> <span class="o">=</span> <span class="nx">oNode</span><span class="o">;</span>
-			<span class="o">}</span>
-
-		<span class="o">}</span>
-
-	<span class="o">},</span>
-
-
-	<span class="c">/**</span>
-<span class="c">	* @method blur</span>
-<span class="c">	* @description Blurs the current active descendant and sets the </span>
-<span class="c">	* &lt;code&gt;focused&lt;/code&gt; attribute to false.</span>
-<span class="c">	*/</span>
-	<span class="nx">blur</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-
-		<span class="k">var</span> <span class="nx">oNode</span><span class="o">;</span>
-
-		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FOCUSED</span><span class="o">))</span> <span class="o">{</span>
-
-			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_descendants</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="o">));</span>
-
-			<span class="k">if</span> <span class="o">(</span><span class="nx">oNode</span><span class="o">)</span> <span class="o">{</span>
-
-				<span class="nx">oNode</span><span class="o">.</span><span class="nx">blur</span><span class="o">();</span>
-
-				<span class="c">//	For Opera and Webkit:  Blurring an element in either browser</span>
-<span class="c"></span>				<span class="c">//	doesn&#39;t result in another element (such as the document)</span>
-<span class="c"></span>				<span class="c">//	being focused.  Therefore, the &quot;_onDocFocus&quot; method </span>
-<span class="c"></span>				<span class="c">//	responsible for managing the application and removal of the </span>
-<span class="c"></span>				<span class="c">//	focus indicator class name is never called.</span>
-<span class="c"></span>
-				<span class="k">this</span><span class="o">.</span><span class="nx">_removeFocusClass</span><span class="o">();</span>
+				<span class="c1">//	The user has focused a child of the root Node that is </span>
+				<span class="c1">//	not one of the descendants managed by this Focus Manager</span>
+				<span class="c1">//	so clear the currently focused descendant.</span>
 				
-			<span class="o">}</span>
-
-			<span class="k">this</span><span class="o">.</span><span class="nx">_set</span><span class="o">(</span><span class="nx">FOCUSED</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="o">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="o">});</span>
-		<span class="o">}</span>
-		
-	<span class="o">},</span>
-
-
-	<span class="c">/**</span>
-<span class="c">	* @method start</span>
-<span class="c">	* @description Enables the Focus Manager.</span>
-<span class="c">	*/</span>
-	<span class="nx">start</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-
-		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_stopped</span><span class="o">)</span> <span class="o">{</span>
-
-			<span class="k">this</span><span class="o">.</span><span class="nx">_initDescendants</span><span class="o">();</span>
-			<span class="k">this</span><span class="o">.</span><span class="nx">_attachEventHandlers</span><span class="o">();</span>
-
-			<span class="k">this</span><span class="o">.</span><span class="nx">_stopped</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-
-		<span class="o">}</span>
-		
-	<span class="o">},</span>
-
-
-	<span class="c">/**</span>
-<span class="c">	* @method stop</span>
-<span class="c">	* @description Disables the Focus Manager by detaching all event handlers.</span>
-<span class="c">	*/</span>	
-	<span class="nx">stop</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-
-		<span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_stopped</span><span class="o">)</span> <span class="o">{</span>
-
-			<span class="k">this</span><span class="o">.</span><span class="nx">_detachEventHandlers</span><span class="o">();</span>
-
-			<span class="k">this</span><span class="o">.</span><span class="nx">_descendants</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-			<span class="k">this</span><span class="o">.</span><span class="nx">_focusedNode</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-			<span class="k">this</span><span class="o">.</span><span class="nx">_lastNodeIndex</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-			<span class="k">this</span><span class="o">.</span><span class="nx">_stopped</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+				<span class="nx">bFocused</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 			
-		<span class="o">}</span>
-
-	<span class="o">},</span>
-
-
-	<span class="c">/**</span>
-<span class="c">	* @method refresh</span>
-<span class="c">	* @description Refreshes the Focus Manager&#39;s descendants by re-executing the </span>
-<span class="c">	* CSS selector query specified by the &lt;code&gt;descendants&lt;/code&gt; attribute.</span>
-<span class="c">	*/</span>
-	<span class="nx">refresh</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-
-		<span class="k">this</span><span class="o">.</span><span class="nx">_initDescendants</span><span class="o">();</span>
+			<span class="p">}</span>
+			
+		<span class="p">}</span>
+		<span class="k">else</span> <span class="p">{</span> 
 		
-	<span class="o">}</span>
+			<span class="c1">// The target is some other node in the document.</span>
+
+			<span class="nx">bFocused</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+			
+		<span class="p">}</span>
+
+
+		<span class="k">if</span> <span class="p">(</span><span class="nx">focusClass</span><span class="p">)</span> <span class="p">{</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">oFocusedNode</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">oFocusedNode</span><span class="p">.</span><span class="nx">compareTo</span><span class="p">(</span><span class="nx">oTarget</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">bFocused</span><span class="p">))</span> <span class="p">{</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">_removeFocusClass</span><span class="p">();</span>
+			<span class="p">}</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">bInCollection</span> <span class="o">&amp;&amp;</span> <span class="nx">bFocused</span><span class="p">)</span> <span class="p">{</span>
+
+				<span class="k">if</span> <span class="p">(</span><span class="nx">focusClass</span><span class="p">.</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">oTarget</span> <span class="o">=</span> <span class="nx">focusClass</span><span class="p">.</span><span class="nx">fn</span><span class="p">(</span><span class="nx">oTarget</span><span class="p">);</span>
+					<span class="nx">oTarget</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">focusClass</span><span class="p">.</span><span class="nx">className</span><span class="p">);</span>
+				<span class="p">}</span>
+				<span class="k">else</span> <span class="p">{</span>
+					<span class="nx">oTarget</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">focusClass</span><span class="p">);</span>
+				<span class="p">}</span>
+
+				<span class="k">this</span><span class="p">.</span><span class="nx">_focusedNode</span> <span class="o">=</span> <span class="nx">oTarget</span><span class="p">;</span>
+
+			<span class="p">}</span>
+			
+		<span class="p">}</span>
+
+
+		<span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">FOCUSED</span><span class="p">,</span> <span class="nx">bFocused</span><span class="p">);</span>			
+
+	<span class="p">},</span>
+
+
+	<span class="cm">/**</span>
+<span class="cm">	* @method _focusNext</span>
+<span class="cm">	* @description Keydown event handler that moves focus to the next </span>
+<span class="cm">	* enabled descendant.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	* @param event {Object} Object representing the DOM event.</span>
+<span class="cm">	* @param activeDescendant {Number} Number representing the index of the </span>
+<span class="cm">	* next descendant to be focused</span>
+<span class="cm">	*/</span>
+	<span class="nx">_focusNext</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">activeDescendant</span><span class="p">)</span> <span class="p">{</span>
+
+		<span class="kd">var</span> <span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">activeDescendant</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="p">),</span>
+			<span class="nx">oNode</span><span class="p">;</span>
+
+
+		<span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_isDescendant</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span> <span class="o">&amp;&amp;</span> 
+			<span class="p">(</span><span class="nx">nActiveDescendant</span> <span class="o">&lt;=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_lastNodeIndex</span><span class="p">))</span> <span class="p">{</span>
+
+			<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">nActiveDescendant</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">nActiveDescendant</span> <span class="o">===</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_lastNodeIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> 
+				<span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CIRCULAR</span><span class="p">))</span> <span class="p">{</span>
+
+				<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+			<span class="p">}</span>
+
+			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">);</span>
+			
+			<span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DISABLED</span><span class="p">))</span> <span class="p">{</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">_focusNext</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">nActiveDescendant</span><span class="p">);</span>
+			<span class="p">}</span>
+			<span class="k">else</span> <span class="p">{</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">focus</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">);</span>
+			<span class="p">}</span>
+
+		<span class="p">}</span>
+		
+		<span class="k">this</span><span class="p">.</span><span class="nx">_preventScroll</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+
+	<span class="p">},</span>
+
+
+	<span class="cm">/**</span>
+<span class="cm">	* @method _focusPrevious</span>
+<span class="cm">	* @description Keydown event handler that moves focus to the previous </span>
+<span class="cm">	* enabled descendant.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	* @param event {Object} Object representing the DOM event.</span>
+<span class="cm">	* @param activeDescendant {Number} Number representing the index of the </span>
+<span class="cm">	* next descendant to be focused.</span>
+<span class="cm">	*/</span>
+	<span class="nx">_focusPrevious</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">activeDescendant</span><span class="p">)</span> <span class="p">{</span>
 	
-<span class="o">});</span>
+		<span class="kd">var</span> <span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">activeDescendant</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="p">),</span>
+			<span class="nx">oNode</span><span class="p">;</span>
+	
+		<span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_isDescendant</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">nActiveDescendant</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+
+			<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="nx">nActiveDescendant</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">nActiveDescendant</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CIRCULAR</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">nActiveDescendant</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_lastNodeIndex</span><span class="p">;</span>
+			<span class="p">}</span>
+
+			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">);</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DISABLED</span><span class="p">))</span> <span class="p">{</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">_focusPrevious</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">nActiveDescendant</span><span class="p">);</span>
+			<span class="p">}</span>
+			<span class="k">else</span> <span class="p">{</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">focus</span><span class="p">(</span><span class="nx">nActiveDescendant</span><span class="p">);</span>				
+			<span class="p">}</span>
+
+		<span class="p">}</span>
+		
+		<span class="k">this</span><span class="p">.</span><span class="nx">_preventScroll</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>			
+	
+	<span class="p">},</span>
 
 
-<span class="nx">NodeFocusManager</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s2">&quot;nodeFocusManager&quot;</span><span class="o">;</span>
-<span class="nx">NodeFocusManager</span><span class="o">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s2">&quot;focusManager&quot;</span><span class="o">;</span>
+	<span class="cm">/**</span>
+<span class="cm">	* @method _afterActiveDescendantChange</span>
+<span class="cm">	* @description afterChange event handler for the </span>
+<span class="cm">	* &quot;activeDescendant&quot; attribute.</span>
+<span class="cm">	* @protected</span>
+<span class="cm">	* @param event {Object} Object representing the change event.</span>
+<span class="cm">	*/</span>	
+	<span class="nx">_afterActiveDescendantChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Plugin&quot;</span><span class="o">);</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">NodeFocusManager</span> <span class="o">=</span> <span class="nx">NodeFocusManager</span><span class="o">;</span>
+		<span class="kd">var</span> <span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">prevVal</span><span class="p">);</span>
+		
+		<span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">oNode</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">TAB_INDEX</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+		<span class="p">}</span>
+
+		<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">newVal</span><span class="p">);</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">oNode</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">TAB_INDEX</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+		<span class="p">}</span>
+		
+	<span class="p">},</span>
+
+
+
+	<span class="c1">//	Public methods</span>
+
+    <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+
+		<span class="k">this</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+
+    <span class="p">},</span>
+
+	<span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		
+		<span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">).</span><span class="nx">focusManager</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+		
+    <span class="p">},</span>
+
+
+	<span class="cm">/**</span>
+<span class="cm">	* @method focus</span>
+<span class="cm">	* @description Focuses the active descendant and sets the  </span>
+<span class="cm">	* &lt;code&gt;focused&lt;/code&gt; attribute to true.</span>
+<span class="cm">	* @param index {Number} Optional. Number representing the index of the </span>
+<span class="cm">	* descendant to be set as the active descendant.</span>
+<span class="cm">	* @param index {Node} Optional. Node instance representing the </span>
+<span class="cm">	* descendant to be set as the active descendant.</span>
+<span class="cm">	*/</span>
+	<span class="nx">focus</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">index</span><span class="p">))</span> <span class="p">{</span>
+			<span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="p">);</span>
+		<span class="p">}</span>
+
+		<span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="p">});</span>
+
+		<span class="kd">var</span> <span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="p">));</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span><span class="p">)</span> <span class="p">{</span>
+
+			<span class="nx">oNode</span><span class="p">.</span><span class="nx">focus</span><span class="p">();</span>
+
+			<span class="c1">//	In Opera focusing a &lt;BUTTON&gt; element programmatically </span>
+			<span class="c1">//	will result in the document-level focus event handler </span>
+			<span class="c1">//	&quot;_onDocFocus&quot; being called, resulting in the handler </span>
+			<span class="c1">//	incorrectly setting the &quot;focused&quot; Attribute to false.  To fix </span>
+			<span class="c1">//	this, set a flag (&quot;_focusTarget&quot;) that the &quot;_onDocFocus&quot; method </span>
+			<span class="c1">//	can look for to properly handle this edge case.</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">UA</span><span class="p">.</span><span class="nx">opera</span> <span class="o">&amp;&amp;</span> <span class="nx">oNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;nodeName&quot;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;button&quot;</span><span class="p">)</span> <span class="p">{</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">_focusTarget</span> <span class="o">=</span> <span class="nx">oNode</span><span class="p">;</span>
+			<span class="p">}</span>
+
+		<span class="p">}</span>
+
+	<span class="p">},</span>
+
+
+	<span class="cm">/**</span>
+<span class="cm">	* @method blur</span>
+<span class="cm">	* @description Blurs the current active descendant and sets the </span>
+<span class="cm">	* &lt;code&gt;focused&lt;/code&gt; attribute to false.</span>
+<span class="cm">	*/</span>
+	<span class="nx">blur</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+		<span class="kd">var</span> <span class="nx">oNode</span><span class="p">;</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FOCUSED</span><span class="p">))</span> <span class="p">{</span>
+
+			<span class="nx">oNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ACTIVE_DESCENDANT</span><span class="p">));</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">oNode</span><span class="p">)</span> <span class="p">{</span>
+
+				<span class="nx">oNode</span><span class="p">.</span><span class="nx">blur</span><span class="p">();</span>
+
+				<span class="c1">//	For Opera and Webkit:  Blurring an element in either browser</span>
+				<span class="c1">//	doesn&#39;t result in another element (such as the document)</span>
+				<span class="c1">//	being focused.  Therefore, the &quot;_onDocFocus&quot; method </span>
+				<span class="c1">//	responsible for managing the application and removal of the </span>
+				<span class="c1">//	focus indicator class name is never called.</span>
+
+				<span class="k">this</span><span class="p">.</span><span class="nx">_removeFocusClass</span><span class="p">();</span>
+				
+			<span class="p">}</span>
+
+			<span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">FOCUSED</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span> <span class="p">});</span>
+		<span class="p">}</span>
+		
+	<span class="p">},</span>
+
+
+	<span class="cm">/**</span>
+<span class="cm">	* @method start</span>
+<span class="cm">	* @description Enables the Focus Manager.</span>
+<span class="cm">	*/</span>
+	<span class="nx">start</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_stopped</span><span class="p">)</span> <span class="p">{</span>
+
+			<span class="k">this</span><span class="p">.</span><span class="nx">_initDescendants</span><span class="p">();</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">_attachEventHandlers</span><span class="p">();</span>
+
+			<span class="k">this</span><span class="p">.</span><span class="nx">_stopped</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+		<span class="p">}</span>
+		
+	<span class="p">},</span>
+
+
+	<span class="cm">/**</span>
+<span class="cm">	* @method stop</span>
+<span class="cm">	* @description Disables the Focus Manager by detaching all event handlers.</span>
+<span class="cm">	*/</span>	
+	<span class="nx">stop</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_stopped</span><span class="p">)</span> <span class="p">{</span>
+
+			<span class="k">this</span><span class="p">.</span><span class="nx">_detachEventHandlers</span><span class="p">();</span>
+
+			<span class="k">this</span><span class="p">.</span><span class="nx">_descendants</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">_focusedNode</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">_lastNodeIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">_stopped</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+			
+		<span class="p">}</span>
+
+	<span class="p">},</span>
+
+
+	<span class="cm">/**</span>
+<span class="cm">	* @method refresh</span>
+<span class="cm">	* @description Refreshes the Focus Manager&#39;s descendants by re-executing the </span>
+<span class="cm">	* CSS selector query specified by the &lt;code&gt;descendants&lt;/code&gt; attribute.</span>
+<span class="cm">	*/</span>
+	<span class="nx">refresh</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+		<span class="k">this</span><span class="p">.</span><span class="nx">_initDescendants</span><span class="p">();</span>
+		
+	<span class="p">}</span>
+	
+<span class="p">});</span>
+
+
+<span class="nx">NodeFocusManager</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s2">&quot;nodeFocusManager&quot;</span><span class="p">;</span>
+<span class="nx">NodeFocusManager</span><span class="p">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s2">&quot;focusManager&quot;</span><span class="p">;</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;Plugin&quot;</span><span class="p">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">NodeFocusManager</span> <span class="o">=</span> <span class="nx">NodeFocusManager</span><span class="p">;</span>
 </pre></div>
 
                     </div>

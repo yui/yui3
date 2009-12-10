@@ -47,157 +47,157 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Extended Node interface for managing regions and screen positioning.</span>
-<span class="c"> * Adds support for positioning elements and normalizes window size and scroll detection. </span>
-<span class="c"> * @module node</span>
-<span class="c"> * @submodule node-screen</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Extended Node interface for managing regions and screen positioning.</span>
+<span class="cm"> * Adds support for positioning elements and normalizes window size and scroll detection. </span>
+<span class="cm"> * @module node</span>
+<span class="cm"> * @submodule node-screen</span>
+<span class="cm"> */</span>
 
-<span class="c">// these are all &quot;safe&quot; returns, no wrapping required</span>
-<span class="c"></span><span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">([</span>
-    <span class="c">/**</span>
-<span class="c">     * Returns the inner width of the viewport (exludes scrollbar). </span>
-<span class="c">     * @config winWidth</span>
-<span class="c">     * @for Node</span>
-<span class="c">     * @type {Int}</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;winWidth&#39;</span><span class="o">,</span>
+<span class="c1">// these are all &quot;safe&quot; returns, no wrapping required</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">([</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the inner width of the viewport (exludes scrollbar). </span>
+<span class="cm">     * @config winWidth</span>
+<span class="cm">     * @for Node</span>
+<span class="cm">     * @type {Int}</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;winWidth&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Returns the inner height of the viewport (exludes scrollbar). </span>
-<span class="c">     * @config winHeight</span>
-<span class="c">     * @type {Int}</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;winHeight&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the inner height of the viewport (exludes scrollbar). </span>
+<span class="cm">     * @config winHeight</span>
+<span class="cm">     * @type {Int}</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;winHeight&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Document width </span>
-<span class="c">     * @config winHeight</span>
-<span class="c">     * @type {Int}</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;docWidth&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Document width </span>
+<span class="cm">     * @config winHeight</span>
+<span class="cm">     * @type {Int}</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;docWidth&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Document height </span>
-<span class="c">     * @config docHeight</span>
-<span class="c">     * @type {Int}</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;docHeight&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Document height </span>
+<span class="cm">     * @config docHeight</span>
+<span class="cm">     * @type {Int}</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;docHeight&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Amount page has been scroll vertically </span>
-<span class="c">     * @config docScrollX</span>
-<span class="c">     * @type {Int}</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;docScrollX&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Amount page has been scroll vertically </span>
+<span class="cm">     * @config docScrollX</span>
+<span class="cm">     * @type {Int}</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;docScrollX&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Amount page has been scroll horizontally </span>
-<span class="c">     * @config docScrollY</span>
-<span class="c">     * @type {Int}</span>
-<span class="c">     */</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Amount page has been scroll horizontally </span>
+<span class="cm">     * @config docScrollY</span>
+<span class="cm">     * @type {Int}</span>
+<span class="cm">     */</span>
     <span class="s1">&#39;docScrollY&#39;</span>
-    <span class="o">],</span>
-    <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span>
-            <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">);</span>
-                <span class="nx">args</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">));</span>
+    <span class="p">],</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
+                <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
 
-                <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">[</span><span class="nx">name</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">};</span>
-    <span class="o">}</span>
-<span class="o">);</span>
+                <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+<span class="p">);</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">.</span><span class="nx">scrollLeft</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="k">return</span> <span class="o">(</span><span class="s1">&#39;scrollLeft&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span><span class="o">.</span><span class="nx">scrollLeft</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollX</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-    <span class="o">},</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">.</span><span class="nx">scrollLeft</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;scrollLeft&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">scrollLeft</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">docScrollX</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="s1">&#39;scrollLeft&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">node</span><span class="o">.</span><span class="nx">scrollLeft</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nb">document</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getWin</span><span class="o">(</span><span class="nx">node</span><span class="o">).</span><span class="nx">scrollTo</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollY</span><span class="o">(</span><span class="nx">node</span><span class="o">));</span> <span class="c">// scroll window if win or doc</span>
-<span class="c"></span>            <span class="o">}</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;unable to set scrollLeft for &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;Node&#39;</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+    <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;scrollLeft&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">scrollLeft</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nb">document</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="mi">9</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getWin</span><span class="p">(</span><span class="nx">node</span><span class="p">).</span><span class="nx">scrollTo</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">docScrollY</span><span class="p">(</span><span class="nx">node</span><span class="p">));</span> <span class="c1">// scroll window if win or doc</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;unable to set scrollLeft for &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;Node&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">.</span><span class="nx">scrollTop</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="k">return</span> <span class="o">(</span><span class="s1">&#39;scrollTop&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span><span class="o">.</span><span class="nx">scrollTop</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollY</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-    <span class="o">},</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">.</span><span class="nx">scrollTop</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;scrollTop&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">scrollTop</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">docScrollY</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="s1">&#39;scrollTop&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">node</span><span class="o">.</span><span class="nx">scrollTop</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nb">document</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getWin</span><span class="o">(</span><span class="nx">node</span><span class="o">).</span><span class="nx">scrollTo</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">docScrollX</span><span class="o">(</span><span class="nx">node</span><span class="o">),</span> <span class="nx">val</span><span class="o">);</span> <span class="c">// scroll window if win or doc</span>
-<span class="c"></span>            <span class="o">}</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;unable to set scrollTop for &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;Node&#39;</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+    <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;scrollTop&#39;</span> <span class="k">in</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">scrollTop</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nb">document</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="mi">9</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getWin</span><span class="p">(</span><span class="nx">node</span><span class="p">).</span><span class="nx">scrollTo</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">docScrollX</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span> <span class="nx">val</span><span class="p">);</span> <span class="c1">// scroll window if win or doc</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;unable to set scrollTop for &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;Node&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="o">[</span>
-<span class="c">/**</span>
-<span class="c"> * Gets the current position of the node in page coordinates. </span>
-<span class="c"> * @method getXY</span>
-<span class="c"> * @for Node</span>
-<span class="c"> * @return {Array} The XY position of the node</span>
-<span class="c">*/</span>
-    <span class="s1">&#39;getXY&#39;</span><span class="o">,</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">importMethod</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="p">[</span>
+<span class="cm">/**</span>
+<span class="cm"> * Gets the current position of the node in page coordinates. </span>
+<span class="cm"> * @method getXY</span>
+<span class="cm"> * @for Node</span>
+<span class="cm"> * @return {Array} The XY position of the node</span>
+<span class="cm">*/</span>
+    <span class="s1">&#39;getXY&#39;</span><span class="p">,</span>
 
-<span class="c">/**</span>
-<span class="c"> * Set the position of the node in page coordinates, regardless of how the node is positioned.</span>
-<span class="c"> * @method setXY</span>
-<span class="c"> * @param {Array} xy Contains X &amp; Y values for new position (coordinates are page-based)</span>
-<span class="c"> * @chainable</span>
-<span class="c"> */</span>
-    <span class="s1">&#39;setXY&#39;</span><span class="o">,</span>
+<span class="cm">/**</span>
+<span class="cm"> * Set the position of the node in page coordinates, regardless of how the node is positioned.</span>
+<span class="cm"> * @method setXY</span>
+<span class="cm"> * @param {Array} xy Contains X &amp; Y values for new position (coordinates are page-based)</span>
+<span class="cm"> * @chainable</span>
+<span class="cm"> */</span>
+    <span class="s1">&#39;setXY&#39;</span><span class="p">,</span>
 
-<span class="c">/**</span>
-<span class="c"> * Gets the current position of the node in page coordinates. </span>
-<span class="c"> * @method getX</span>
-<span class="c"> * @return {Int} The X position of the node</span>
-<span class="c">*/</span>
-    <span class="s1">&#39;getX&#39;</span><span class="o">,</span>
+<span class="cm">/**</span>
+<span class="cm"> * Gets the current position of the node in page coordinates. </span>
+<span class="cm"> * @method getX</span>
+<span class="cm"> * @return {Int} The X position of the node</span>
+<span class="cm">*/</span>
+    <span class="s1">&#39;getX&#39;</span><span class="p">,</span>
 
-<span class="c">/**</span>
-<span class="c"> * Set the position of the node in page coordinates, regardless of how the node is positioned.</span>
-<span class="c"> * @method setX</span>
-<span class="c"> * @param {Int} x X value for new position (coordinates are page-based)</span>
-<span class="c"> * @chainable</span>
-<span class="c"> */</span>
-    <span class="s1">&#39;setX&#39;</span><span class="o">,</span>
+<span class="cm">/**</span>
+<span class="cm"> * Set the position of the node in page coordinates, regardless of how the node is positioned.</span>
+<span class="cm"> * @method setX</span>
+<span class="cm"> * @param {Int} x X value for new position (coordinates are page-based)</span>
+<span class="cm"> * @chainable</span>
+<span class="cm"> */</span>
+    <span class="s1">&#39;setX&#39;</span><span class="p">,</span>
 
-<span class="c">/**</span>
-<span class="c"> * Gets the current position of the node in page coordinates. </span>
-<span class="c"> * @method getY</span>
-<span class="c"> * @return {Int} The Y position of the node</span>
-<span class="c">*/</span>
-    <span class="s1">&#39;getY&#39;</span><span class="o">,</span>
+<span class="cm">/**</span>
+<span class="cm"> * Gets the current position of the node in page coordinates. </span>
+<span class="cm"> * @method getY</span>
+<span class="cm"> * @return {Int} The Y position of the node</span>
+<span class="cm">*/</span>
+    <span class="s1">&#39;getY&#39;</span><span class="p">,</span>
 
-<span class="c">/**</span>
-<span class="c"> * Set the position of the node in page coordinates, regardless of how the node is positioned.</span>
-<span class="c"> * @method setY</span>
-<span class="c"> * @param {Int} y Y value for new position (coordinates are page-based)</span>
-<span class="c"> * @chainable</span>
-<span class="c"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * Set the position of the node in page coordinates, regardless of how the node is positioned.</span>
+<span class="cm"> * @method setY</span>
+<span class="cm"> * @param {Int} y Y value for new position (coordinates are page-based)</span>
+<span class="cm"> * @chainable</span>
+<span class="cm"> */</span>
     <span class="s1">&#39;setY&#39;</span>
-<span class="o">]);</span>
+<span class="p">]);</span>
 </pre></div>
 
                     </div>

@@ -47,169 +47,169 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * Creates a new mock object.</span>
-<span class="c">     * @class Mock</span>
-<span class="c">     * @constructor</span>
-<span class="c">     * @param {Object} template (Optional) An object whose methods</span>
-<span class="c">     *      should be stubbed out on the mock object.</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">template</span><span class="o">){</span>
+                        <div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * Creates a new mock object.</span>
+<span class="cm">     * @class Mock</span>
+<span class="cm">     * @constructor</span>
+<span class="cm">     * @param {Object} template (Optional) An object whose methods</span>
+<span class="cm">     *      should be stubbed out on the mock object.</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">template</span><span class="p">){</span>
     
-        <span class="c">//use blank object is nothing is passed in</span>
-<span class="c"></span>        <span class="nx">template</span> <span class="o">=</span> <span class="nx">template</span> <span class="o">||</span> <span class="o">{};</span>
+        <span class="c1">//use blank object is nothing is passed in</span>
+        <span class="nx">template</span> <span class="o">=</span> <span class="nx">template</span> <span class="o">||</span> <span class="p">{};</span>
         
-        <span class="k">var</span> <span class="nx">mock</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="kd">var</span> <span class="nx">mock</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         
-        <span class="c">//try to create mock that keeps prototype chain intact</span>
-<span class="c"></span>        <span class="k">try</span> <span class="o">{</span>
-            <span class="nx">mock</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">(</span><span class="nx">template</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">ex</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">mock</span> <span class="o">=</span> <span class="o">{};</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Couldn&#39;t create mock with prototype.&quot;</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;Mock&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="c1">//try to create mock that keeps prototype chain intact</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="nx">mock</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">(</span><span class="nx">template</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">mock</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t create mock with prototype.&quot;</span><span class="p">,</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;Mock&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
         
-        <span class="c">//create new versions of the methods so that they don&#39;t actually do anything</span>
-<span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">template</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">){</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">template</span><span class="o">[</span><span class="nx">name</span><span class="o">])){</span>
-                <span class="nx">mock</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">(){</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;() was called but was not expected to be.&quot;</span><span class="o">);</span>
-                <span class="o">};</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
+        <span class="c1">//create new versions of the methods so that they don&#39;t actually do anything</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">template</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">template</span><span class="p">[</span><span class="nx">name</span><span class="p">])){</span>
+                <span class="nx">mock</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;() was called but was not expected to be.&quot;</span><span class="p">);</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
         
-        <span class="c">//return it</span>
-<span class="c"></span>        <span class="k">return</span> <span class="nx">mock</span><span class="o">;</span>    
-    <span class="o">};</span>
+        <span class="c1">//return it</span>
+        <span class="k">return</span> <span class="nx">mock</span><span class="p">;</span>    
+    <span class="p">};</span>
         
-    <span class="c">/**</span>
-<span class="c">     * Assigns an expectation to a mock object. This is used to create</span>
-<span class="c">     * methods and properties on the mock object that are monitored for</span>
-<span class="c">     * calls and changes, respectively.</span>
-<span class="c">     * @param {Object} mock The object to add the expectation to.</span>
-<span class="c">     * @param {Object} expectation An object defining the expectation. For</span>
-<span class="c">     *      a method, the keys &quot;method&quot; and &quot;args&quot; are required with</span>
-<span class="c">     *      an optional &quot;returns&quot; key available. For properties, the keys</span>
-<span class="c">     *      &quot;property&quot; and &quot;value&quot; are required.</span>
-<span class="c">     * @return {void}</span>
-<span class="c">     * @method expect</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span> 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">expect</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">mock</span> <span class="c">/*:Object*/</span><span class="o">,</span> <span class="nx">expectation</span> <span class="c">/*:Object*/</span><span class="o">){</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Assigns an expectation to a mock object. This is used to create</span>
+<span class="cm">     * methods and properties on the mock object that are monitored for</span>
+<span class="cm">     * calls and changes, respectively.</span>
+<span class="cm">     * @param {Object} mock The object to add the expectation to.</span>
+<span class="cm">     * @param {Object} expectation An object defining the expectation. For</span>
+<span class="cm">     *      a method, the keys &quot;method&quot; and &quot;args&quot; are required with</span>
+<span class="cm">     *      an optional &quot;returns&quot; key available. For properties, the keys</span>
+<span class="cm">     *      &quot;property&quot; and &quot;value&quot; are required.</span>
+<span class="cm">     * @return {void}</span>
+<span class="cm">     * @method expect</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span> 
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">expect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mock</span> <span class="cm">/*:Object*/</span><span class="p">,</span> <span class="nx">expectation</span> <span class="cm">/*:Object*/</span><span class="p">){</span>
 
-        <span class="c">//make sure there&#39;s a place to store the expectations</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="nx">mock</span><span class="o">.</span><span class="nx">__expectations</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">mock</span><span class="o">.</span><span class="nx">__expectations</span> <span class="o">=</span> <span class="o">{};</span>
-        <span class="o">}</span>
+        <span class="c1">//make sure there&#39;s a place to store the expectations</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">mock</span><span class="p">.</span><span class="nx">__expectations</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">mock</span><span class="p">.</span><span class="nx">__expectations</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="p">}</span>
 
-        <span class="c">//method expectation</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">method</span><span class="o">){</span>
-            <span class="k">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">method</span><span class="o">,</span>
-                <span class="nx">args</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">args</span> <span class="o">||</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">arguments</span> <span class="o">||</span> <span class="o">[],</span>
-                <span class="nx">result</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">returns</span><span class="o">,</span>
-                <span class="nx">callCount</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">callCount</span><span class="o">)</span> <span class="o">?</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">callCount</span> <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
-                <span class="nx">error</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">error</span><span class="o">,</span>
-                <span class="nx">run</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">run</span> <span class="o">||</span> <span class="k">function</span><span class="o">(){};</span>
+        <span class="c1">//method expectation</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">expectation</span><span class="p">.</span><span class="nx">method</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">expectation</span><span class="p">.</span><span class="nx">method</span><span class="p">,</span>
+                <span class="nx">args</span> <span class="o">=</span> <span class="nx">expectation</span><span class="p">.</span><span class="nx">args</span> <span class="o">||</span> <span class="nx">expectation</span><span class="p">.</span><span class="nx">arguments</span> <span class="o">||</span> <span class="p">[],</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="nx">expectation</span><span class="p">.</span><span class="nx">returns</span><span class="p">,</span>
+                <span class="nx">callCount</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">expectation</span><span class="p">.</span><span class="nx">callCount</span><span class="p">)</span> <span class="o">?</span> <span class="nx">expectation</span><span class="p">.</span><span class="nx">callCount</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="nx">error</span> <span class="o">=</span> <span class="nx">expectation</span><span class="p">.</span><span class="nx">error</span><span class="p">,</span>
+                <span class="nx">run</span> <span class="o">=</span> <span class="nx">expectation</span><span class="p">.</span><span class="nx">run</span> <span class="o">||</span> <span class="kd">function</span><span class="p">(){};</span>
                 
-            <span class="c">//save expectations</span>
-<span class="c"></span>            <span class="nx">mock</span><span class="o">.</span><span class="nx">__expectations</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">;</span>
-            <span class="nx">expectation</span><span class="o">.</span><span class="nx">callCount</span> <span class="o">=</span> <span class="nx">callCount</span><span class="o">;</span>
-            <span class="nx">expectation</span><span class="o">.</span><span class="nx">actualCallCount</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+            <span class="c1">//save expectations</span>
+            <span class="nx">mock</span><span class="p">.</span><span class="nx">__expectations</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">expectation</span><span class="p">;</span>
+            <span class="nx">expectation</span><span class="p">.</span><span class="nx">callCount</span> <span class="o">=</span> <span class="nx">callCount</span><span class="p">;</span>
+            <span class="nx">expectation</span><span class="p">.</span><span class="nx">actualCallCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
                 
-            <span class="c">//process arguments</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">arg</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">array</span><span class="o">){</span>
-                <span class="k">if</span> <span class="o">(!(</span><span class="nx">array</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">)){</span>
-                    <span class="nx">array</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">areSame</span><span class="o">,</span> <span class="o">[</span><span class="nx">arg</span><span class="o">],</span> <span class="s2">&quot;Argument &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; of &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;() is incorrect.&quot;</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">});</span>
+            <span class="c1">//process arguments</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">arg</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">array</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">array</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">)){</span>
+                    <span class="nx">array</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">areSame</span><span class="p">,</span> <span class="p">[</span><span class="nx">arg</span><span class="p">],</span> <span class="s2">&quot;Argument &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; of &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;() is incorrect.&quot;</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
         
-            <span class="c">//if the method is expected to be called</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">callCount</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">){</span>
-                <span class="nx">mock</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">(){</span>   
-                    <span class="k">try</span> <span class="o">{</span>
-                        <span class="nx">expectation</span><span class="o">.</span><span class="nx">actualCallCount</span><span class="o">++;</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">areEqual</span><span class="o">(</span><span class="nx">args</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;() passed incorrect number of arguments.&quot;</span><span class="o">);</span>
-                        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">len</span><span class="o">=</span><span class="nx">args</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">++){</span>
-                            <span class="c">//if (args[i]){</span>
-<span class="c"></span>                                <span class="nx">args</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">verify</span><span class="o">(</span><span class="nx">arguments</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-                            <span class="c">//} else {</span>
-<span class="c"></span>                            <span class="c">//    Y.Assert.fail(&quot;Argument &quot; + i + &quot; (&quot; + arguments[i] + &quot;) was not expected to be used.&quot;);</span>
-<span class="c"></span>                            <span class="c">//}</span>
-<span class="c"></span>                            
-                        <span class="o">}</span>                
+            <span class="c1">//if the method is expected to be called</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">callCount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+                <span class="nx">mock</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>   
+                    <span class="k">try</span> <span class="p">{</span>
+                        <span class="nx">expectation</span><span class="p">.</span><span class="nx">actualCallCount</span><span class="o">++</span><span class="p">;</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">areEqual</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;() passed incorrect number of arguments.&quot;</span><span class="p">);</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">len</span><span class="o">=</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+                            <span class="c1">//if (args[i]){</span>
+                                <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">verify</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                            <span class="c1">//} else {</span>
+                            <span class="c1">//    Y.Assert.fail(&quot;Argument &quot; + i + &quot; (&quot; + arguments[i] + &quot;) was not expected to be used.&quot;);</span>
+                            <span class="c1">//}</span>
+                            
+                        <span class="p">}</span>                
     
-                        <span class="nx">run</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                        <span class="nx">run</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
                         
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">error</span><span class="o">){</span>
-                            <span class="k">throw</span> <span class="nx">error</span><span class="o">;</span>
-                        <span class="o">}</span>
-                    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">ex</span><span class="o">){</span>
-                        <span class="c">//route through TestRunner for proper handling</span>
-<span class="c"></span>                        <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Runner</span><span class="o">.</span><span class="nx">_handleError</span><span class="o">(</span><span class="nx">ex</span><span class="o">);</span>
-                    <span class="o">}</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">){</span>
+                            <span class="k">throw</span> <span class="nx">error</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">){</span>
+                        <span class="c1">//route through TestRunner for proper handling</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Runner</span><span class="p">.</span><span class="nx">_handleError</span><span class="p">(</span><span class="nx">ex</span><span class="p">);</span>
+                    <span class="p">}</span>
                     
-                    <span class="k">return</span> <span class="nx">result</span><span class="o">;</span>
-                <span class="o">};</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+                <span class="p">};</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             
-                <span class="c">//method should fail if called when not expected</span>
-<span class="c"></span>                <span class="nx">mock</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">(){</span>
-                    <span class="k">try</span> <span class="o">{</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;() should not have been called.&quot;</span><span class="o">);</span>
-                    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">ex</span><span class="o">){</span>
-                        <span class="c">//route through TestRunner for proper handling</span>
-<span class="c"></span>                        <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Runner</span><span class="o">.</span><span class="nx">_handleError</span><span class="o">(</span><span class="nx">ex</span><span class="o">);</span>
-                    <span class="o">}</span>                    
-                <span class="o">};</span>
-            <span class="o">}</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">property</span><span class="o">){</span>
-            <span class="c">//save expectations</span>
-<span class="c"></span>            <span class="nx">mock</span><span class="o">.</span><span class="nx">__expectations</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">expectation</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
+                <span class="c1">//method should fail if called when not expected</span>
+                <span class="nx">mock</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+                    <span class="k">try</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;() should not have been called.&quot;</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">){</span>
+                        <span class="c1">//route through TestRunner for proper handling</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Runner</span><span class="p">.</span><span class="nx">_handleError</span><span class="p">(</span><span class="nx">ex</span><span class="p">);</span>
+                    <span class="p">}</span>                    
+                <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">expectation</span><span class="p">.</span><span class="nx">property</span><span class="p">){</span>
+            <span class="c1">//save expectations</span>
+            <span class="nx">mock</span><span class="p">.</span><span class="nx">__expectations</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">expectation</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Verifies that all expectations of a mock object have been met and</span>
-<span class="c">     * throws an assertion error if not.</span>
-<span class="c">     * @param {Object} mock The object to verify..</span>
-<span class="c">     * @return {void}</span>
-<span class="c">     * @method verify</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span> 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">verify</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">mock</span> <span class="c">/*:Object*/</span><span class="o">){</span>    
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">mock</span><span class="o">.</span><span class="nx">__expectations</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">expectation</span><span class="o">){</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">method</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">areEqual</span><span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">callCount</span><span class="o">,</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">actualCallCount</span><span class="o">,</span> <span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">method</span> <span class="o">+</span> <span class="s2">&quot;() wasn&#39;t called the expected number of times.&quot;</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">property</span><span class="o">){</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">areEqual</span><span class="o">(</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">value</span><span class="o">,</span> <span class="nx">mock</span><span class="o">[</span><span class="nx">expectation</span><span class="o">.</span><span class="nx">property</span><span class="o">],</span> <span class="s2">&quot;Property &quot;</span> <span class="o">+</span> <span class="nx">expectation</span><span class="o">.</span><span class="nx">property</span> <span class="o">+</span> <span class="s2">&quot; wasn&#39;t set to the correct value.&quot;</span><span class="o">);</span> 
-                <span class="o">}</span>
-            <span class="o">});</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nx">ex</span><span class="o">){</span>
-            <span class="c">//route through TestRunner for proper handling</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Runner</span><span class="o">.</span><span class="nx">_handleError</span><span class="o">(</span><span class="nx">ex</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Verifies that all expectations of a mock object have been met and</span>
+<span class="cm">     * throws an assertion error if not.</span>
+<span class="cm">     * @param {Object} mock The object to verify..</span>
+<span class="cm">     * @return {void}</span>
+<span class="cm">     * @method verify</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span> 
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">verify</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mock</span> <span class="cm">/*:Object*/</span><span class="p">){</span>    
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">mock</span><span class="p">.</span><span class="nx">__expectations</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">expectation</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">expectation</span><span class="p">.</span><span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">areEqual</span><span class="p">(</span><span class="nx">expectation</span><span class="p">.</span><span class="nx">callCount</span><span class="p">,</span> <span class="nx">expectation</span><span class="p">.</span><span class="nx">actualCallCount</span><span class="p">,</span> <span class="s2">&quot;Method &quot;</span> <span class="o">+</span> <span class="nx">expectation</span><span class="p">.</span><span class="nx">method</span> <span class="o">+</span> <span class="s2">&quot;() wasn&#39;t called the expected number of times.&quot;</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">expectation</span><span class="p">.</span><span class="nx">property</span><span class="p">){</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">areEqual</span><span class="p">(</span><span class="nx">expectation</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span> <span class="nx">mock</span><span class="p">[</span><span class="nx">expectation</span><span class="p">.</span><span class="nx">property</span><span class="p">],</span> <span class="s2">&quot;Property &quot;</span> <span class="o">+</span> <span class="nx">expectation</span><span class="p">.</span><span class="nx">property</span> <span class="o">+</span> <span class="s2">&quot; wasn&#39;t set to the correct value.&quot;</span><span class="p">);</span> 
+                <span class="p">}</span>
+            <span class="p">});</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">){</span>
+            <span class="c1">//route through TestRunner for proper handling</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Runner</span><span class="p">.</span><span class="nx">_handleError</span><span class="p">(</span><span class="nx">ex</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">method</span><span class="o">,</span> <span class="nx">originalArgs</span><span class="o">,</span> <span class="nx">message</span><span class="o">){</span>
-        <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">){</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">verify</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">){</span>
-                <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="o">[].</span><span class="nx">concat</span><span class="o">(</span><span class="nx">originalArgs</span> <span class="o">||</span> <span class="o">[]);</span>
-                <span class="nx">args</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">value</span><span class="o">);</span>
-                <span class="nx">args</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">message</span><span class="o">);</span>
-                <span class="nx">method</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
-            <span class="o">};</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">method</span><span class="o">,</span> <span class="nx">originalArgs</span><span class="o">,</span> <span class="nx">message</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">originalArgs</span><span class="p">,</span> <span class="nx">message</span><span class="p">){</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">){</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">verify</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+                <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="p">[].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">originalArgs</span> <span class="o">||</span> <span class="p">[]);</span>
+                <span class="nx">args</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+                <span class="nx">args</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">message</span><span class="p">);</span>
+                <span class="nx">method</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="p">};</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">originalArgs</span><span class="p">,</span> <span class="nx">message</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
     
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">.</span><span class="nx">Any</span>        <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="k">function</span><span class="o">(){});</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">.</span><span class="nb">Boolean</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">isBoolean</span><span class="o">);</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">.</span><span class="nb">Number</span>     <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">);</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">.</span><span class="nb">String</span>     <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">isString</span><span class="o">);</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">.</span><span class="nb">Object</span>     <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">isObject</span><span class="o">);</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">.</span><span class="nb">Function</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Mock</span><span class="o">.</span><span class="nx">Value</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">.</span><span class="nx">Any</span>        <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">(</span><span class="kd">function</span><span class="p">(){});</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">.</span><span class="nb">Boolean</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">isBoolean</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">.</span><span class="nb">Number</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">.</span><span class="nb">String</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">isString</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">.</span><span class="nb">Object</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">isObject</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">.</span><span class="nb">Function</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="nx">Value</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">);</span>
 </pre></div>
 
                     </div>

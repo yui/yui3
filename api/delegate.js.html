@@ -47,364 +47,364 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Adds event delegation support to the library.</span>
-<span class="c"> * </span>
-<span class="c"> * @module event</span>
-<span class="c"> * @submodule event-delegate</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Adds event delegation support to the library.</span>
+<span class="cm"> * </span>
+<span class="cm"> * @module event</span>
+<span class="cm"> * @submodule event-delegate</span>
+<span class="cm"> */</span>
 
-<span class="k">var</span> <span class="nx">Event</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span>
-	<span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+<span class="kd">var</span> <span class="nx">Event</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span>
+	<span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
 
-	<span class="nx">delegates</span> <span class="o">=</span> <span class="o">{},</span>
+	<span class="nx">delegates</span> <span class="o">=</span> <span class="p">{},</span>
 	
-	<span class="nx">specialTypes</span> <span class="o">=</span> <span class="o">{</span>
-		<span class="nx">mouseenter</span><span class="o">:</span> <span class="s2">&quot;mouseover&quot;</span><span class="o">,</span>
+	<span class="nx">specialTypes</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="nx">mouseenter</span><span class="o">:</span> <span class="s2">&quot;mouseover&quot;</span><span class="p">,</span>
 		<span class="nx">mouseleave</span><span class="o">:</span> <span class="s2">&quot;mouseout&quot;</span>
-	<span class="o">},</span>
+	<span class="p">},</span>
 
-	<span class="nx">resolveTextNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
-	    <span class="k">try</span> <span class="o">{</span>
-	        <span class="k">if</span> <span class="o">(</span><span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="m">3</span> <span class="o">==</span> <span class="nx">n</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span>
-	            <span class="k">return</span> <span class="nx">n</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
-	        <span class="o">}</span>
-	    <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span> <span class="o">}</span>
-	    <span class="k">return</span> <span class="nx">n</span><span class="o">;</span>
-	<span class="o">},</span>
+	<span class="nx">resolveTextNode</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+	    <span class="k">try</span> <span class="p">{</span>
+	        <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="mi">3</span> <span class="o">==</span> <span class="nx">n</span><span class="p">.</span><span class="nx">nodeType</span><span class="p">)</span> <span class="p">{</span>
+	            <span class="k">return</span> <span class="nx">n</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+	        <span class="p">}</span>
+	    <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+	    <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
+	<span class="p">},</span>
 
-    <span class="nx">delegateHandler</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">delegateKey</span><span class="o">,</span> <span class="nx">e</span><span class="o">,</span> <span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">delegateHandler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">delegateKey</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">resolveTextNode</span><span class="o">((</span><span class="nx">e</span><span class="o">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">srcElement</span><span class="o">)),</span> 
-            <span class="nx">tests</span>  <span class="o">=</span> <span class="nx">delegates</span><span class="o">[</span><span class="nx">delegateKey</span><span class="o">],</span>
-            <span class="nx">spec</span><span class="o">,</span> 
-			<span class="nx">ename</span><span class="o">,</span>
-			<span class="nx">matched</span><span class="o">,</span>
-			<span class="nx">fn</span><span class="o">,</span>
-			<span class="nx">ev</span><span class="o">;</span>
+        <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">resolveTextNode</span><span class="p">((</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">srcElement</span><span class="p">)),</span> 
+            <span class="nx">tests</span>  <span class="o">=</span> <span class="nx">delegates</span><span class="p">[</span><span class="nx">delegateKey</span><span class="p">],</span>
+            <span class="nx">spec</span><span class="p">,</span> 
+			<span class="nx">ename</span><span class="p">,</span>
+			<span class="nx">matched</span><span class="p">,</span>
+			<span class="nx">fn</span><span class="p">,</span>
+			<span class="nx">ev</span><span class="p">;</span>
 
 
-		<span class="k">var</span> <span class="nx">getMatch</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">selector</span><span class="o">,</span> <span class="nx">container</span><span class="o">)</span> <span class="o">{</span>
+		<span class="kd">var</span> <span class="nx">getMatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">selector</span><span class="p">,</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
 			
-			<span class="k">var</span> <span class="nx">returnVal</span><span class="o">;</span>
+			<span class="kd">var</span> <span class="nx">returnVal</span><span class="p">;</span>
 			
-			<span class="k">if</span> <span class="o">(!</span><span class="nx">el</span> <span class="o">||</span> <span class="nx">el</span> <span class="o">===</span> <span class="nx">container</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">returnVal</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-			<span class="o">}</span>
-			<span class="k">else</span> <span class="o">{</span>
-				<span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">selector</span><span class="o">)</span> <span class="o">?</span> <span class="nx">el</span><span class="o">:</span> <span class="nx">getMatch</span><span class="o">(</span><span class="nx">el</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span> <span class="nx">selector</span><span class="o">,</span> <span class="nx">container</span><span class="o">);</span>
-			<span class="o">}</span>
+			<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span> <span class="o">||</span> <span class="nx">el</span> <span class="o">===</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">returnVal</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="k">else</span> <span class="p">{</span>
+				<span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">selector</span><span class="p">)</span> <span class="o">?</span> <span class="nx">el</span><span class="o">:</span> <span class="nx">getMatch</span><span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">,</span> <span class="nx">selector</span><span class="p">,</span> <span class="nx">container</span><span class="p">);</span>
+			<span class="p">}</span>
 			
-			<span class="k">return</span> <span class="nx">returnVal</span><span class="o">;</span>
+			<span class="k">return</span> <span class="nx">returnVal</span><span class="p">;</span>
 			
-		<span class="o">};</span>
+		<span class="p">};</span>
 
 
-        <span class="k">for</span> <span class="o">(</span><span class="nx">spec</span> <span class="k">in</span> <span class="nx">tests</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">spec</span> <span class="k">in</span> <span class="nx">tests</span><span class="p">)</span> <span class="p">{</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">tests</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">spec</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tests</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">spec</span><span class="p">))</span> <span class="p">{</span>
 
-                <span class="nx">ename</span>  <span class="o">=</span> <span class="nx">tests</span><span class="o">[</span><span class="nx">spec</span><span class="o">];</span>
-				<span class="nx">fn</span>	<span class="o">=</span> <span class="nx">tests</span><span class="o">.</span><span class="nx">fn</span><span class="o">;</span>
-				<span class="nx">matched</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                <span class="nx">ename</span>  <span class="o">=</span> <span class="nx">tests</span><span class="p">[</span><span class="nx">spec</span><span class="p">];</span>
+				<span class="nx">fn</span>	<span class="o">=</span> <span class="nx">tests</span><span class="p">.</span><span class="nx">fn</span><span class="p">;</span>
+				<span class="nx">matched</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
 
-				<span class="k">if</span> <span class="o">(</span><span class="nx">target</span> <span class="o">==</span> <span class="nx">el</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">target</span><span class="o">,</span> <span class="nx">spec</span><span class="o">,</span> <span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
-					<span class="nx">matched</span> <span class="o">=</span> <span class="nx">target</span><span class="o">;</span>
-				<span class="o">}</span>
-				<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">target</span><span class="o">,</span> <span class="o">((</span><span class="nx">spec</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/,/gi</span><span class="o">,</span> <span class="s2">&quot; *,&quot;</span><span class="o">))</span> <span class="o">+</span> <span class="s2">&quot; *&quot;</span><span class="o">),</span> <span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="p">(</span><span class="nx">target</span> <span class="o">==</span> <span class="nx">el</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">spec</span><span class="p">,</span> <span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
+					<span class="nx">matched</span> <span class="o">=</span> <span class="nx">target</span><span class="p">;</span>
+				<span class="p">}</span>
+				<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="p">((</span><span class="nx">spec</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/,/gi</span><span class="p">,</span> <span class="s2">&quot; *,&quot;</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; *&quot;</span><span class="p">),</span> <span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
 						
-					<span class="c">//	The target is a descendant of an element matching </span>
-<span class="c"></span>					<span class="c">//	the selector, so crawl up to find the ancestor that </span>
-<span class="c"></span>					<span class="c">//	matches the selector</span>
-<span class="c"></span>					
-					<span class="nx">matched</span> <span class="o">=</span> <span class="nx">getMatch</span><span class="o">(</span><span class="nx">target</span><span class="o">,</span> <span class="nx">spec</span><span class="o">,</span> <span class="nx">el</span><span class="o">);</span>
+					<span class="c1">//	The target is a descendant of an element matching </span>
+					<span class="c1">//	the selector, so crawl up to find the ancestor that </span>
+					<span class="c1">//	matches the selector</span>
 					
-				<span class="o">}</span>
-
-
-				<span class="k">if</span> <span class="o">(</span><span class="nx">matched</span><span class="o">)</span> <span class="o">{</span>
-
-                    <span class="k">if</span> <span class="o">(!</span><span class="nx">ev</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">ev</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOMEventFacade</span><span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">el</span><span class="o">);</span>
-                        <span class="nx">ev</span><span class="o">.</span><span class="nx">container</span> <span class="o">=</span> <span class="nx">ev</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">;</span>
-                    <span class="o">}</span>
-
-                    <span class="nx">ev</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">matched</span><span class="o">);</span>
-
-					<span class="nx">Y</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">ename</span><span class="o">,</span> <span class="o">{</span>
-			               <span class="nx">contextFn</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-			                   <span class="k">return</span> <span class="nx">ev</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">;</span>
-			               <span class="o">}</span>
-			           <span class="o">});</span>
-
-					<span class="k">if</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-						<span class="nx">fn</span><span class="o">(</span><span class="nx">ev</span><span class="o">,</span> <span class="nx">ename</span><span class="o">);</span>
-					<span class="o">}</span>
-					<span class="k">else</span> <span class="o">{</span>
-                    	<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">ename</span><span class="o">,</span> <span class="nx">ev</span><span class="o">);</span>								
-					<span class="o">}</span>
+					<span class="nx">matched</span> <span class="o">=</span> <span class="nx">getMatch</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">spec</span><span class="p">,</span> <span class="nx">el</span><span class="p">);</span>
 					
-				<span class="o">}</span>
-
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-    <span class="o">},</span>
-
-	<span class="nx">attach</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-
-		<span class="k">var</span> <span class="nx">focusMethods</span> <span class="o">=</span> <span class="o">{</span>
-				<span class="nx">focus</span><span class="o">:</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">_attachFocus</span><span class="o">,</span>
-				<span class="nx">blur</span><span class="o">:</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">_attachBlur</span>
-			<span class="o">},</span>
-
-			<span class="nx">attachFn</span> <span class="o">=</span> <span class="nx">focusMethods</span><span class="o">[</span><span class="nx">type</span><span class="o">],</span>
-
-			<span class="nx">args</span> <span class="o">=</span> <span class="o">[</span><span class="nx">type</span><span class="o">,</span> 
-			<span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-	            <span class="nx">delegateHandler</span><span class="o">(</span><span class="nx">key</span><span class="o">,</span> <span class="o">(</span><span class="nx">e</span> <span class="o">||</span> <span class="nb">window</span><span class="o">.</span><span class="nx">event</span><span class="o">),</span> <span class="nx">element</span><span class="o">);</span>
-			<span class="o">},</span> 
-			<span class="nx">element</span><span class="o">];</span>
+				<span class="p">}</span>
 
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">attachFn</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">return</span> <span class="nx">attachFn</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="o">{</span> <span class="nx">capture</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">facade</span><span class="o">:</span> <span class="kc">false</span> <span class="o">});</span>
-		<span class="o">}</span>
-		<span class="k">else</span> <span class="o">{</span>
-			<span class="k">return</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="o">{</span> <span class="nx">facade</span><span class="o">:</span> <span class="kc">false</span> <span class="o">});</span>
-		<span class="o">}</span>
+				<span class="k">if</span> <span class="p">(</span><span class="nx">matched</span><span class="p">)</span> <span class="p">{</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ev</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">ev</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">el</span><span class="p">);</span>
+                        <span class="nx">ev</span><span class="p">.</span><span class="nx">container</span> <span class="o">=</span> <span class="nx">ev</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">ev</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">matched</span><span class="p">);</span>
+
+					<span class="nx">Y</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">ename</span><span class="p">,</span> <span class="p">{</span>
+			               <span class="nx">contextFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			                   <span class="k">return</span> <span class="nx">ev</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
+			               <span class="p">}</span>
+			           <span class="p">});</span>
+
+					<span class="k">if</span> <span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+						<span class="nx">fn</span><span class="p">(</span><span class="nx">ev</span><span class="p">,</span> <span class="nx">ename</span><span class="p">);</span>
+					<span class="p">}</span>
+					<span class="k">else</span> <span class="p">{</span>
+                    	<span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">ename</span><span class="p">,</span> <span class="nx">ev</span><span class="p">);</span>								
+					<span class="p">}</span>
+					
+				<span class="p">}</span>
+
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="p">},</span>
+
+	<span class="nx">attach</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+
+		<span class="kd">var</span> <span class="nx">focusMethods</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="nx">focus</span><span class="o">:</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attachFocus</span><span class="p">,</span>
+				<span class="nx">blur</span><span class="o">:</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attachBlur</span>
+			<span class="p">},</span>
+
+			<span class="nx">attachFn</span> <span class="o">=</span> <span class="nx">focusMethods</span><span class="p">[</span><span class="nx">type</span><span class="p">],</span>
+
+			<span class="nx">args</span> <span class="o">=</span> <span class="p">[</span><span class="nx">type</span><span class="p">,</span> 
+			<span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+	            <span class="nx">delegateHandler</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="p">(</span><span class="nx">e</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">event</span><span class="p">),</span> <span class="nx">element</span><span class="p">);</span>
+			<span class="p">},</span> 
+			<span class="nx">element</span><span class="p">];</span>
+
+
+		<span class="k">if</span> <span class="p">(</span><span class="nx">attachFn</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">attachFn</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="p">{</span> <span class="nx">capture</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">facade</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+		<span class="p">}</span>
+		<span class="k">else</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="p">{</span> <span class="nx">facade</span><span class="o">:</span> <span class="kc">false</span> <span class="p">});</span>
+		<span class="p">}</span>
 		
-	<span class="o">},</span>
+	<span class="p">},</span>
 
-    <span class="nx">sanitize</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">str</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">str</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/[|,:]/g</span><span class="o">,</span> <span class="s1">&#39;~&#39;</span><span class="o">);</span>
-    <span class="o">});</span>
+    <span class="nx">sanitize</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[|,:]/g</span><span class="p">,</span> <span class="s1">&#39;~&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
 
-<span class="c">/**</span>
-<span class="c"> * Sets up event delegation on a container element.  The delegated event</span>
-<span class="c"> * will use a supplied selector to test if the target or one of the</span>
-<span class="c"> * descendants of the target match it.  The supplied callback function </span>
-<span class="c"> * will only be executed if a match was encountered, and, in fact, </span>
-<span class="c"> * will be executed for each element that matches if you supply an </span>
-<span class="c"> * ambiguous selector.</span>
-<span class="c"> *</span>
-<span class="c"> * The event object for the delegated event is supplied to the callback</span>
-<span class="c"> * function.  It is modified slightly in order to support all properties</span>
-<span class="c"> * that may be needed for event delegation.  &#39;currentTarget&#39; is set to</span>
-<span class="c"> * the element that matched the delegation specifcation.  &#39;container&#39; is</span>
-<span class="c"> * set to the element that the listener is bound to (this normally would</span>
-<span class="c"> * be the &#39;currentTarget&#39;).</span>
-<span class="c"> *</span>
-<span class="c"> * @event delegate</span>
-<span class="c"> * @param type {string} &#39;delegate&#39;</span>
-<span class="c"> * @param fn {function} the callback function to execute.  This function</span>
-<span class="c"> * will be provided the event object for the delegated event.</span>
-<span class="c"> * @param el {string|node} the element that is the delegation container</span>
-<span class="c"> * @param delegateType {string} the event type to delegate</span>
-<span class="c"> * @param spec {string} a selector that must match the target of the</span>
-<span class="c"> * event.</span>
-<span class="c"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
-<span class="c"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
-<span class="c"> * These arguments will be added after the event object.</span>
-<span class="c"> * @return {EventHandle} the detach handle</span>
-<span class="c"> * @for YUI</span>
-<span class="c"> * @deprecated use Y.delegate</span>
-<span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="o">{</span>
+<span class="cm">/**</span>
+<span class="cm"> * Sets up event delegation on a container element.  The delegated event</span>
+<span class="cm"> * will use a supplied selector to test if the target or one of the</span>
+<span class="cm"> * descendants of the target match it.  The supplied callback function </span>
+<span class="cm"> * will only be executed if a match was encountered, and, in fact, </span>
+<span class="cm"> * will be executed for each element that matches if you supply an </span>
+<span class="cm"> * ambiguous selector.</span>
+<span class="cm"> *</span>
+<span class="cm"> * The event object for the delegated event is supplied to the callback</span>
+<span class="cm"> * function.  It is modified slightly in order to support all properties</span>
+<span class="cm"> * that may be needed for event delegation.  &#39;currentTarget&#39; is set to</span>
+<span class="cm"> * the element that matched the delegation specifcation.  &#39;container&#39; is</span>
+<span class="cm"> * set to the element that the listener is bound to (this normally would</span>
+<span class="cm"> * be the &#39;currentTarget&#39;).</span>
+<span class="cm"> *</span>
+<span class="cm"> * @event delegate</span>
+<span class="cm"> * @param type {string} &#39;delegate&#39;</span>
+<span class="cm"> * @param fn {function} the callback function to execute.  This function</span>
+<span class="cm"> * will be provided the event object for the delegated event.</span>
+<span class="cm"> * @param el {string|node} the element that is the delegation container</span>
+<span class="cm"> * @param delegateType {string} the event type to delegate</span>
+<span class="cm"> * @param spec {string} a selector that must match the target of the</span>
+<span class="cm"> * event.</span>
+<span class="cm"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
+<span class="cm"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
+<span class="cm"> * These arguments will be added after the event object.</span>
+<span class="cm"> * @return {EventHandle} the detach handle</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> * @deprecated use Y.delegate</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="p">{</span>
 
-    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">delegateType</span><span class="o">,</span> <span class="nx">spec</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">delegateType</span><span class="p">,</span> <span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;delegate event is deprecated, use Y.delegate()&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;delegate event is deprecated, use Y.delegate()&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
 
-		<span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+		<span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 		
-		<span class="nx">args</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">3</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+		<span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 		
-		<span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">delegateType</span><span class="o">;</span>
+		<span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">delegateType</span><span class="p">;</span>
 
-		<span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">delegate</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+		<span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
 
-    <span class="o">}</span>
+    <span class="p">}</span>
 
-<span class="o">};</span>
-
-
-<span class="c">/**</span>
-<span class="c"> * Sets up event delegation on a container element.  The delegated event</span>
-<span class="c"> * will use a supplied selector to test if the target or one of the</span>
-<span class="c"> * descendants of the target match it.  The supplied callback function </span>
-<span class="c"> * will only be executed if a match was encountered, and, in fact, </span>
-<span class="c"> * will be executed for each element that matches if you supply an </span>
-<span class="c"> * ambiguous selector.</span>
-<span class="c"> *</span>
-<span class="c"> * The event object for the delegated event is supplied to the callback</span>
-<span class="c"> * function.  It is modified slightly in order to support all properties</span>
-<span class="c"> * that may be needed for event delegation.  &#39;currentTarget&#39; is set to</span>
-<span class="c"> * the element that matched the delegation specifcation.  &#39;container&#39; is</span>
-<span class="c"> * set to the element that the listener is bound to (this normally would</span>
-<span class="c"> * be the &#39;currentTarget&#39;).</span>
-<span class="c"> *</span>
-<span class="c"> * @method delegate</span>
-<span class="c"> * @param type {string} the event type to delegate</span>
-<span class="c"> * @param fn {function} the callback function to execute.  This function</span>
-<span class="c"> * will be provided the event object for the delegated event.</span>
-<span class="c"> * @param el {string|node} the element that is the delegation container</span>
-<span class="c"> * @param spec {string} a selector that must match the target of the</span>
-<span class="c"> * event.</span>
-<span class="c"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
-<span class="c"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
-<span class="c"> * These arguments will be added after the event object.</span>
-<span class="c"> * @return {EventHandle} the detach handle</span>
-<span class="c"> * @for YUI</span>
-<span class="c"> */</span>
-<span class="nx">Event</span><span class="o">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">spec</span><span class="o">)</span> <span class="o">{</span>
-
-    <span class="k">if</span> <span class="o">(!</span><span class="nx">spec</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;delegate: no spec, nothing to do&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;event&#39;</span><span class="o">);</span>
-        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-    <span class="o">}</span>
+<span class="p">};</span>
 
 
-    <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span>	    
-		<span class="nx">element</span> <span class="o">=</span> <span class="nx">el</span><span class="o">,</span>	<span class="c">// HTML element serving as the delegation container</span>
-<span class="c"></span>		<span class="nx">availHandle</span><span class="o">;</span>	
+<span class="cm">/**</span>
+<span class="cm"> * Sets up event delegation on a container element.  The delegated event</span>
+<span class="cm"> * will use a supplied selector to test if the target or one of the</span>
+<span class="cm"> * descendants of the target match it.  The supplied callback function </span>
+<span class="cm"> * will only be executed if a match was encountered, and, in fact, </span>
+<span class="cm"> * will be executed for each element that matches if you supply an </span>
+<span class="cm"> * ambiguous selector.</span>
+<span class="cm"> *</span>
+<span class="cm"> * The event object for the delegated event is supplied to the callback</span>
+<span class="cm"> * function.  It is modified slightly in order to support all properties</span>
+<span class="cm"> * that may be needed for event delegation.  &#39;currentTarget&#39; is set to</span>
+<span class="cm"> * the element that matched the delegation specifcation.  &#39;container&#39; is</span>
+<span class="cm"> * set to the element that the listener is bound to (this normally would</span>
+<span class="cm"> * be the &#39;currentTarget&#39;).</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method delegate</span>
+<span class="cm"> * @param type {string} the event type to delegate</span>
+<span class="cm"> * @param fn {function} the callback function to execute.  This function</span>
+<span class="cm"> * will be provided the event object for the delegated event.</span>
+<span class="cm"> * @param el {string|node} the element that is the delegation container</span>
+<span class="cm"> * @param spec {string} a selector that must match the target of the</span>
+<span class="cm"> * event.</span>
+<span class="cm"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
+<span class="cm"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
+<span class="cm"> * These arguments will be added after the event object.</span>
+<span class="cm"> * @return {EventHandle} the detach handle</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> */</span>
+<span class="nx">Event</span><span class="p">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;delegate: no spec, nothing to do&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
 
 
-	<span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
+    <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>	    
+		<span class="nx">element</span> <span class="o">=</span> <span class="nx">el</span><span class="p">,</span>	<span class="c1">// HTML element serving as the delegation container</span>
+		<span class="nx">availHandle</span><span class="p">;</span>	
+
+
+	<span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
 		
-		<span class="c">//	Y.Selector.query returns an array of matches unless specified </span>
-<span class="c"></span>		<span class="c">//	to return just the first match.  Since the primary use case for</span>
-<span class="c"></span>		<span class="c">//	event delegation is to use a single event handler on a container,</span>
-<span class="c"></span>		<span class="c">//	Y.delegate doesn&#39;t currently support being able to bind a </span>
-<span class="c"></span>		<span class="c">//	single listener to multiple containers.</span>
-<span class="c"></span>		
-		<span class="nx">element</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+		<span class="c1">//	Y.Selector.query returns an array of matches unless specified </span>
+		<span class="c1">//	to return just the first match.  Since the primary use case for</span>
+		<span class="c1">//	event delegation is to use a single event handler on a container,</span>
+		<span class="c1">//	Y.delegate doesn&#39;t currently support being able to bind a </span>
+		<span class="c1">//	single listener to multiple containers.</span>
 		
-		<span class="k">if</span> <span class="o">(!</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span> <span class="c">// Not found, check using onAvailable</span>
-<span class="c"></span>
-			<span class="nx">availHandle</span> <span class="o">=</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+		<span class="nx">element</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+		
+		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Not found, check using onAvailable</span>
 
-				<span class="nx">availHandle</span><span class="o">.</span><span class="nx">handle</span> <span class="o">=</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">delegate</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+			<span class="nx">availHandle</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">onAvailable</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-            <span class="o">},</span> <span class="nx">Event</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+				<span class="nx">availHandle</span><span class="p">.</span><span class="nx">handle</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Event</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
 
-            <span class="k">return</span> <span class="nx">availHandle</span><span class="o">;</span>
+            <span class="p">},</span> <span class="nx">Event</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="nx">availHandle</span><span class="p">;</span>
 			
-		<span class="o">}</span>
+		<span class="p">}</span>
 		
-	<span class="o">}</span>
+	<span class="p">}</span>
 
 
-	<span class="nx">element</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">element</span><span class="o">);</span>
+	<span class="nx">element</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
 
 
-	<span class="k">var</span>	<span class="nx">guid</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">element</span><span class="o">),</span>
+	<span class="kd">var</span>	<span class="nx">guid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">element</span><span class="p">),</span>
             
-        <span class="c">// The Custom Event for the delegation spec</span>
-<span class="c"></span>        <span class="nx">ename</span> <span class="o">=</span> <span class="s1">&#39;delegate:&#39;</span> <span class="o">+</span> <span class="nx">guid</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="nx">sanitize</span><span class="o">(</span><span class="nx">spec</span><span class="o">),</span>
+        <span class="c1">// The Custom Event for the delegation spec</span>
+        <span class="nx">ename</span> <span class="o">=</span> <span class="s1">&#39;delegate:&#39;</span> <span class="o">+</span> <span class="nx">guid</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="nx">sanitize</span><span class="p">(</span><span class="nx">spec</span><span class="p">),</span>
 
-        <span class="c">// The key to the listener for the event type and container</span>
-<span class="c"></span>        <span class="nx">delegateKey</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="nx">guid</span><span class="o">,</span>
+        <span class="c1">// The key to the listener for the event type and container</span>
+        <span class="nx">delegateKey</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="nx">guid</span><span class="p">,</span>
 
-		<span class="nx">delegate</span> <span class="o">=</span> <span class="nx">delegates</span><span class="o">[</span><span class="nx">delegateKey</span><span class="o">],</span>
+		<span class="nx">delegate</span> <span class="o">=</span> <span class="nx">delegates</span><span class="p">[</span><span class="nx">delegateKey</span><span class="p">],</span>
 
-		<span class="nx">domEventHandle</span><span class="o">,</span>
+		<span class="nx">domEventHandle</span><span class="p">,</span>
 		
-		<span class="nx">ceHandle</span><span class="o">,</span>
+		<span class="nx">ceHandle</span><span class="p">,</span>
 		
-		<span class="nx">listeners</span><span class="o">;</span>
+		<span class="nx">listeners</span><span class="p">;</span>
 	
 
-    <span class="k">if</span> <span class="o">(!</span><span class="nx">delegate</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
 
-		<span class="nx">delegate</span> <span class="o">=</span> <span class="o">{};</span>
+		<span class="nx">delegate</span> <span class="o">=</span> <span class="p">{};</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">specialTypes</span><span class="o">[</span><span class="nx">type</span><span class="o">])</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">specialTypes</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
 			
-			<span class="k">if</span> <span class="o">(!</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_fireMouseEnter</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Delegating a &quot;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot; event requires the event-mouseenter submodule.&quot;</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;Event&quot;</span><span class="o">);</span>
-				<span class="k">return</span> <span class="kc">false</span><span class="o">;</span>				
-			<span class="o">}</span>
+			<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_fireMouseEnter</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Delegating a &quot;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot; event requires the event-mouseenter submodule.&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;Event&quot;</span><span class="p">);</span>
+				<span class="k">return</span> <span class="kc">false</span><span class="p">;</span>				
+			<span class="p">}</span>
 			
-			<span class="nx">type</span> <span class="o">=</span> <span class="nx">specialTypes</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
-			<span class="nx">delegate</span><span class="o">.</span><span class="nx">fn</span> <span class="o">=</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">_fireMouseEnter</span><span class="o">;</span>
+			<span class="nx">type</span> <span class="o">=</span> <span class="nx">specialTypes</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
+			<span class="nx">delegate</span><span class="p">.</span><span class="nx">fn</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_fireMouseEnter</span><span class="p">;</span>
 			
-		<span class="o">}</span>
+		<span class="p">}</span>
 
-		<span class="c">//	Create the DOM Event wrapper that will fire the Custom Event</span>
-<span class="c"></span>
-		<span class="nx">domEventHandle</span> <span class="o">=</span> <span class="nx">attach</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">delegateKey</span><span class="o">,</span> <span class="nx">element</span><span class="o">);</span>
+		<span class="c1">//	Create the DOM Event wrapper that will fire the Custom Event</span>
+
+		<span class="nx">domEventHandle</span> <span class="o">=</span> <span class="nx">attach</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">delegateKey</span><span class="p">,</span> <span class="nx">element</span><span class="p">);</span>
 
 
-		<span class="c">//	Hook into the _delete method for the Custom Event wrapper of this</span>
-<span class="c"></span>		<span class="c">//	DOM Event in order to clean up the &#39;delegates&#39; map and unsubscribe</span>
-<span class="c"></span>		<span class="c">//	the associated Custom Event listeners fired by this DOM event</span>
-<span class="c"></span>		<span class="c">//	listener if/when the user calls &quot;purgeElement&quot; OR removes all </span>
-<span class="c"></span>		<span class="c">//	listeners of the Custom Event.</span>
-<span class="c"></span>		
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">sub</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">//	Hook into the _delete method for the Custom Event wrapper of this</span>
+		<span class="c1">//	DOM Event in order to clean up the &#39;delegates&#39; map and unsubscribe</span>
+		<span class="c1">//	the associated Custom Event listeners fired by this DOM event</span>
+		<span class="c1">//	listener if/when the user calls &quot;purgeElement&quot; OR removes all </span>
+		<span class="c1">//	listeners of the Custom Event.</span>
+		
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
 
-			<span class="k">if</span> <span class="o">(</span><span class="nx">domEventHandle</span><span class="o">.</span><span class="nx">sub</span> <span class="o">==</span> <span class="nx">sub</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">domEventHandle</span><span class="p">.</span><span class="nx">sub</span> <span class="o">==</span> <span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
 
-				<span class="c">//	Delete this event from the map of known delegates</span>
-<span class="c"></span>				<span class="nx">delete</span> <span class="nx">delegates</span><span class="o">[</span><span class="nx">delegateKey</span><span class="o">];</span>
+				<span class="c1">//	Delete this event from the map of known delegates</span>
+				<span class="k">delete</span> <span class="nx">delegates</span><span class="p">[</span><span class="nx">delegateKey</span><span class="p">];</span>
 
-				<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;DOM event listener associated with the &quot;</span> <span class="o">+</span> <span class="nx">ename</span> <span class="o">+</span> <span class="s2">&quot; Custom Event removed.  Removing all &quot;</span> <span class="o">+</span> <span class="nx">ename</span> <span class="o">+</span> <span class="s2">&quot; listeners.&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;Event&quot;</span><span class="o">);</span>
+				<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;DOM event listener associated with the &quot;</span> <span class="o">+</span> <span class="nx">ename</span> <span class="o">+</span> <span class="s2">&quot; Custom Event removed.  Removing all &quot;</span> <span class="o">+</span> <span class="nx">ename</span> <span class="o">+</span> <span class="s2">&quot; listeners.&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;Event&quot;</span><span class="p">);</span>
 
-				<span class="c">//	Unsubscribe all listeners of the Custom Event fired </span>
-<span class="c"></span>				<span class="c">//	by this DOM event.</span>
-<span class="c"></span>				<span class="nx">Y</span><span class="o">.</span><span class="nx">detachAll</span><span class="o">(</span><span class="nx">ename</span><span class="o">);</span>
+				<span class="c1">//	Unsubscribe all listeners of the Custom Event fired </span>
+				<span class="c1">//	by this DOM event.</span>
+				<span class="nx">Y</span><span class="p">.</span><span class="nx">detachAll</span><span class="p">(</span><span class="nx">ename</span><span class="p">);</span>
 				
-			<span class="o">}</span>
+			<span class="p">}</span>
 
-		<span class="o">},</span> <span class="nx">domEventHandle</span><span class="o">.</span><span class="nx">evt</span><span class="o">,</span> <span class="s2">&quot;_delete&quot;</span><span class="o">);</span>
+		<span class="p">},</span> <span class="nx">domEventHandle</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span> <span class="s2">&quot;_delete&quot;</span><span class="p">);</span>
 			
-		<span class="nx">delegate</span><span class="o">.</span><span class="nx">handle</span> <span class="o">=</span> <span class="nx">domEventHandle</span><span class="o">;</span>
+		<span class="nx">delegate</span><span class="p">.</span><span class="nx">handle</span> <span class="o">=</span> <span class="nx">domEventHandle</span><span class="p">;</span>
 
-        <span class="nx">delegates</span><span class="o">[</span><span class="nx">delegateKey</span><span class="o">]</span> <span class="o">=</span> <span class="nx">delegate</span><span class="o">;</span>
+        <span class="nx">delegates</span><span class="p">[</span><span class="nx">delegateKey</span><span class="p">]</span> <span class="o">=</span> <span class="nx">delegate</span><span class="p">;</span>
 
-    <span class="o">}</span>
-
-
-	<span class="nx">listeners</span> <span class="o">=</span> <span class="nx">delegate</span><span class="o">.</span><span class="nx">listeners</span><span class="o">;</span>
-
-	<span class="nx">delegate</span><span class="o">.</span><span class="nx">listeners</span> <span class="o">=</span> <span class="nx">listeners</span> <span class="o">?</span> <span class="o">(</span><span class="nx">listeners</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">:</span> <span class="m">1</span><span class="o">;</span>
-    <span class="nx">delegate</span><span class="o">[</span><span class="nx">spec</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ename</span><span class="o">;</span>
+    <span class="p">}</span>
 
 
-    <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ename</span><span class="o">;</span>
+	<span class="nx">listeners</span> <span class="o">=</span> <span class="nx">delegate</span><span class="p">.</span><span class="nx">listeners</span><span class="p">;</span>
 
-    <span class="c">// Remove element, delegation spec</span>
-<span class="c"></span>    <span class="nx">args</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">2</span><span class="o">);</span>
+	<span class="nx">delegate</span><span class="p">.</span><span class="nx">listeners</span> <span class="o">=</span> <span class="nx">listeners</span> <span class="o">?</span> <span class="p">(</span><span class="nx">listeners</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="nx">delegate</span><span class="p">[</span><span class="nx">spec</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ename</span><span class="p">;</span>
+
+
+    <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ename</span><span class="p">;</span>
+
+    <span class="c1">// Remove element, delegation spec</span>
+    <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
         
 
-    <span class="c">// Subscribe to the Custom Event for the delegation spec</span>
-<span class="c"></span>
-	<span class="nx">ceHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+    <span class="c1">// Subscribe to the Custom Event for the delegation spec</span>
+
+	<span class="nx">ceHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
 
 
-	<span class="c">//	Hook into the detach method of the handle in order to clean up the </span>
-<span class="c"></span>	<span class="c">//	&#39;delegates&#39; map and remove the associated DOM event handler </span>
-<span class="c"></span>	<span class="c">//	responsible for firing this Custom Event if all listener for this </span>
-<span class="c"></span>	<span class="c">//	event have been removed.</span>
-<span class="c"></span>
-	<span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+	<span class="c1">//	Hook into the detach method of the handle in order to clean up the </span>
+	<span class="c1">//	&#39;delegates&#39; map and remove the associated DOM event handler </span>
+	<span class="c1">//	responsible for firing this Custom Event if all listener for this </span>
+	<span class="c1">//	event have been removed.</span>
+
+	<span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 			
-		<span class="nx">delegate</span><span class="o">.</span><span class="nx">listeners</span> <span class="o">=</span> <span class="o">(</span><span class="nx">delegate</span><span class="o">.</span><span class="nx">listeners</span> <span class="o">-</span> <span class="m">1</span><span class="o">);</span>
+		<span class="nx">delegate</span><span class="p">.</span><span class="nx">listeners</span> <span class="o">=</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">listeners</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
 		
-		<span class="k">if</span> <span class="o">(</span><span class="nx">delegate</span><span class="o">.</span><span class="nx">listeners</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;No more listeners for the &quot;</span> <span class="o">+</span> <span class="nx">ename</span> <span class="o">+</span> <span class="s2">&quot; Custom Event.  Removing its associated DOM event listener.&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;Event&quot;</span><span class="o">);</span>
-			<span class="nx">delegate</span><span class="o">.</span><span class="nx">handle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-		<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">listeners</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;No more listeners for the &quot;</span> <span class="o">+</span> <span class="nx">ename</span> <span class="o">+</span> <span class="s2">&quot; Custom Event.  Removing its associated DOM event listener.&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;Event&quot;</span><span class="p">);</span>
+			<span class="nx">delegate</span><span class="p">.</span><span class="nx">handle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+		<span class="p">}</span>
 
-	<span class="o">},</span> <span class="nx">ceHandle</span><span class="o">,</span> <span class="s2">&quot;detach&quot;</span><span class="o">);</span>
+	<span class="p">},</span> <span class="nx">ceHandle</span><span class="p">,</span> <span class="s2">&quot;detach&quot;</span><span class="p">);</span>
 
-    <span class="k">return</span> <span class="nx">ceHandle</span><span class="o">;</span>
+    <span class="k">return</span> <span class="nx">ceHandle</span><span class="p">;</span>
 	
-<span class="o">};</span>
+<span class="p">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">delegate</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">delegate</span><span class="p">;</span>
 </pre></div>
 
                     </div>

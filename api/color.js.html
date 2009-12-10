@@ -47,79 +47,79 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-<span class="k">var</span> <span class="nx">PARSE_INT</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">,</span>
-    <span class="nx">RE</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="o">;</span>
+                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">PARSE_INT</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">,</span>
+    <span class="nx">RE</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="p">;</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">KEYWORDS</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">black</span><span class="o">:</span> <span class="s1">&#39;000&#39;</span><span class="o">,</span>
-        <span class="nx">silver</span><span class="o">:</span> <span class="s1">&#39;c0c0c0&#39;</span><span class="o">,</span>
-        <span class="nx">gray</span><span class="o">:</span> <span class="s1">&#39;808080&#39;</span><span class="o">,</span>
-        <span class="nx">white</span><span class="o">:</span> <span class="s1">&#39;fff&#39;</span><span class="o">,</span>
-        <span class="nx">maroon</span><span class="o">:</span> <span class="s1">&#39;800000&#39;</span><span class="o">,</span>
-        <span class="nx">red</span><span class="o">:</span> <span class="s1">&#39;f00&#39;</span><span class="o">,</span>
-        <span class="nx">purple</span><span class="o">:</span> <span class="s1">&#39;800080&#39;</span><span class="o">,</span>
-        <span class="nx">fuchsia</span><span class="o">:</span> <span class="s1">&#39;f0f&#39;</span><span class="o">,</span>
-        <span class="nx">green</span><span class="o">:</span> <span class="s1">&#39;008000&#39;</span><span class="o">,</span>
-        <span class="nx">lime</span><span class="o">:</span> <span class="s1">&#39;0f0&#39;</span><span class="o">,</span>
-        <span class="nx">olive</span><span class="o">:</span> <span class="s1">&#39;808000&#39;</span><span class="o">,</span>
-        <span class="nx">yellow</span><span class="o">:</span> <span class="s1">&#39;ff0&#39;</span><span class="o">,</span>
-        <span class="nx">navy</span><span class="o">:</span> <span class="s1">&#39;000080&#39;</span><span class="o">,</span>
-        <span class="nx">blue</span><span class="o">:</span> <span class="s1">&#39;00f&#39;</span><span class="o">,</span>
-        <span class="nx">teal</span><span class="o">:</span> <span class="s1">&#39;008080&#39;</span><span class="o">,</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">KEYWORDS</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">black</span><span class="o">:</span> <span class="s1">&#39;000&#39;</span><span class="p">,</span>
+        <span class="nx">silver</span><span class="o">:</span> <span class="s1">&#39;c0c0c0&#39;</span><span class="p">,</span>
+        <span class="nx">gray</span><span class="o">:</span> <span class="s1">&#39;808080&#39;</span><span class="p">,</span>
+        <span class="nx">white</span><span class="o">:</span> <span class="s1">&#39;fff&#39;</span><span class="p">,</span>
+        <span class="nx">maroon</span><span class="o">:</span> <span class="s1">&#39;800000&#39;</span><span class="p">,</span>
+        <span class="nx">red</span><span class="o">:</span> <span class="s1">&#39;f00&#39;</span><span class="p">,</span>
+        <span class="nx">purple</span><span class="o">:</span> <span class="s1">&#39;800080&#39;</span><span class="p">,</span>
+        <span class="nx">fuchsia</span><span class="o">:</span> <span class="s1">&#39;f0f&#39;</span><span class="p">,</span>
+        <span class="nx">green</span><span class="o">:</span> <span class="s1">&#39;008000&#39;</span><span class="p">,</span>
+        <span class="nx">lime</span><span class="o">:</span> <span class="s1">&#39;0f0&#39;</span><span class="p">,</span>
+        <span class="nx">olive</span><span class="o">:</span> <span class="s1">&#39;808000&#39;</span><span class="p">,</span>
+        <span class="nx">yellow</span><span class="o">:</span> <span class="s1">&#39;ff0&#39;</span><span class="p">,</span>
+        <span class="nx">navy</span><span class="o">:</span> <span class="s1">&#39;000080&#39;</span><span class="p">,</span>
+        <span class="nx">blue</span><span class="o">:</span> <span class="s1">&#39;00f&#39;</span><span class="p">,</span>
+        <span class="nx">teal</span><span class="o">:</span> <span class="s1">&#39;008080&#39;</span><span class="p">,</span>
         <span class="nx">aqua</span><span class="o">:</span> <span class="s1">&#39;0ff&#39;</span>
-    <span class="o">},</span>
+    <span class="p">},</span>
 
-    <span class="nx">re_RGB</span><span class="o">:</span> <span class="sr">/^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i</span><span class="o">,</span>
-    <span class="nx">re_hex</span><span class="o">:</span> <span class="sr">/^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i</span><span class="o">,</span>
-    <span class="nx">re_hex3</span><span class="o">:</span> <span class="sr">/([0-9A-F])/gi</span><span class="o">,</span>
+    <span class="nx">re_RGB</span><span class="o">:</span> <span class="sr">/^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i</span><span class="p">,</span>
+    <span class="nx">re_hex</span><span class="o">:</span> <span class="sr">/^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i</span><span class="p">,</span>
+    <span class="nx">re_hex3</span><span class="o">:</span> <span class="sr">/([0-9A-F])/gi</span><span class="p">,</span>
 
-    <span class="nx">toRGB</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">re_RGB</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toHex</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
-        <span class="o">}</span>
+    <span class="nx">toRGB</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">re_RGB</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">toHex</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">re_hex</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;rgb(&#39;</span> <span class="o">+</span> <span class="o">[</span>
-                <span class="nx">PARSE_INT</span><span class="o">(</span><span class="nx">RE</span><span class="o">.</span><span class="nx">$1</span><span class="o">,</span> <span class="m">16</span><span class="o">),</span>
-                <span class="nx">PARSE_INT</span><span class="o">(</span><span class="nx">RE</span><span class="o">.</span><span class="nx">$2</span><span class="o">,</span> <span class="m">16</span><span class="o">),</span>
-                <span class="nx">PARSE_INT</span><span class="o">(</span><span class="nx">RE</span><span class="o">.</span><span class="nx">$3</span><span class="o">,</span> <span class="m">16</span><span class="o">)</span>
-            <span class="o">].</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;, &#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">re_hex</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;rgb(&#39;</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="nx">PARSE_INT</span><span class="p">(</span><span class="nx">RE</span><span class="p">.</span><span class="nx">$1</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+                <span class="nx">PARSE_INT</span><span class="p">(</span><span class="nx">RE</span><span class="p">.</span><span class="nx">$2</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+                <span class="nx">PARSE_INT</span><span class="p">(</span><span class="nx">RE</span><span class="p">.</span><span class="nx">$3</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+            <span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="nx">toHex</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">KEYWORDS</span><span class="o">[</span><span class="nx">val</span><span class="o">]</span> <span class="o">||</span> <span class="nx">val</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">re_RGB</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="o">[</span>
-                <span class="nb">Number</span><span class="o">(</span><span class="nx">RE</span><span class="o">.</span><span class="nx">$1</span><span class="o">).</span><span class="nx">toString</span><span class="o">(</span><span class="m">16</span><span class="o">),</span>
-                <span class="nb">Number</span><span class="o">(</span><span class="nx">RE</span><span class="o">.</span><span class="nx">$2</span><span class="o">).</span><span class="nx">toString</span><span class="o">(</span><span class="m">16</span><span class="o">),</span>
-                <span class="nb">Number</span><span class="o">(</span><span class="nx">RE</span><span class="o">.</span><span class="nx">$3</span><span class="o">).</span><span class="nx">toString</span><span class="o">(</span><span class="m">16</span><span class="o">)</span>
-            <span class="o">];</span>
+    <span class="nx">toHex</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">KEYWORDS</span><span class="p">[</span><span class="nx">val</span><span class="p">]</span> <span class="o">||</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">re_RGB</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">Number</span><span class="p">(</span><span class="nx">RE</span><span class="p">.</span><span class="nx">$1</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span>
+                <span class="nb">Number</span><span class="p">(</span><span class="nx">RE</span><span class="p">.</span><span class="nx">$2</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span>
+                <span class="nb">Number</span><span class="p">(</span><span class="nx">RE</span><span class="p">.</span><span class="nx">$3</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+            <span class="p">];</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">val</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">val</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">val</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">re_hex3</span><span class="o">,</span> <span class="s1">&#39;$1$1&#39;</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">val</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">val</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">replace</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">re_hex3</span><span class="p">,</span> <span class="s1">&#39;$1$1&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
 
-            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">);</span>
-        <span class="o">}</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span><span class="o">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="m">6</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">re_hex3</span><span class="o">,</span> <span class="s1">&#39;$1$1&#39;</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">re_hex3</span><span class="p">,</span> <span class="s1">&#39;$1$1&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">!==</span> <span class="s1">&#39;transparent&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;#&#39;</span><span class="o">)</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">;</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">!==</span> <span class="s1">&#39;transparent&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">val</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">};</span>
-<span class="o">})(</span><span class="nx">Y</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">val</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>
 </pre></div>
 
                     </div>

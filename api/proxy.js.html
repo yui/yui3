@@ -47,237 +47,237 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * The Drag &amp; Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.</span>
-<span class="c">     * @module dd</span>
-<span class="c">     * @submodule dd-proxy</span>
-<span class="c">     */</span>
-    <span class="c">/**</span>
-<span class="c">     * This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.</span>
-<span class="c">     * @class DDProxy</span>
-<span class="c">     * @extends Base</span>
-<span class="c">     * @constructor</span>
-<span class="c">     * @namespace Plugin     </span>
-<span class="c">     */</span>
-    <span class="k">var</span> <span class="nx">DDM</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">,</span>
-        <span class="nx">NODE</span> <span class="o">=</span> <span class="s1">&#39;node&#39;</span><span class="o">,</span>
-        <span class="nx">DRAG_NODE</span> <span class="o">=</span> <span class="s1">&#39;dragNode&#39;</span><span class="o">,</span>
-        <span class="nx">HOST</span> <span class="o">=</span> <span class="s1">&#39;host&#39;</span><span class="o">,</span>
-        <span class="nx">TRUE</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                        <div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * The Drag &amp; Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.</span>
+<span class="cm">     * @module dd</span>
+<span class="cm">     * @submodule dd-proxy</span>
+<span class="cm">     */</span>
+    <span class="cm">/**</span>
+<span class="cm">     * This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.</span>
+<span class="cm">     * @class DDProxy</span>
+<span class="cm">     * @extends Base</span>
+<span class="cm">     * @constructor</span>
+<span class="cm">     * @namespace Plugin     </span>
+<span class="cm">     */</span>
+    <span class="kd">var</span> <span class="nx">DDM</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">DDM</span><span class="p">,</span>
+        <span class="nx">NODE</span> <span class="o">=</span> <span class="s1">&#39;node&#39;</span><span class="p">,</span>
+        <span class="nx">DRAG_NODE</span> <span class="o">=</span> <span class="s1">&#39;dragNode&#39;</span><span class="p">,</span>
+        <span class="nx">HOST</span> <span class="o">=</span> <span class="s1">&#39;host&#39;</span><span class="p">,</span>
+        <span class="nx">TRUE</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
-    <span class="k">var</span> <span class="nx">P</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">P</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-    <span class="o">};</span>
+    <span class="kd">var</span> <span class="nx">P</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">P</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">};</span>
     
-    <span class="nx">P</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;DDProxy&#39;</span><span class="o">;</span>
-    <span class="c">/**</span>
-<span class="c">    * @property proxy</span>
-<span class="c">    * @description The Proxy instance will be placed on the Drag instance under the proxy namespace.</span>
-<span class="c">    * @type {String}</span>
-<span class="c">    */</span>
-    <span class="nx">P</span><span class="o">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s1">&#39;proxy&#39;</span><span class="o">;</span>
+    <span class="nx">P</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;DDProxy&#39;</span><span class="p">;</span>
+    <span class="cm">/**</span>
+<span class="cm">    * @property proxy</span>
+<span class="cm">    * @description The Proxy instance will be placed on the Drag instance under the proxy namespace.</span>
+<span class="cm">    * @type {String}</span>
+<span class="cm">    */</span>
+    <span class="nx">P</span><span class="p">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s1">&#39;proxy&#39;</span><span class="p">;</span>
 
-    <span class="nx">P</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
-        <span class="nx">host</span><span class="o">:</span> <span class="o">{</span>
-        <span class="o">},</span>
-        <span class="c">/**</span>
-<span class="c">        * @attribute moveOnEnd</span>
-<span class="c">        * @description Move the original node at the end of the drag. Default: true</span>
-<span class="c">        * @type Boolean</span>
-<span class="c">        */</span>
-        <span class="nx">moveOnEnd</span><span class="o">:</span> <span class="o">{</span>
+    <span class="nx">P</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">host</span><span class="o">:</span> <span class="p">{</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute moveOnEnd</span>
+<span class="cm">        * @description Move the original node at the end of the drag. Default: true</span>
+<span class="cm">        * @type Boolean</span>
+<span class="cm">        */</span>
+        <span class="nx">moveOnEnd</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="nx">TRUE</span>
-        <span class="o">},</span>
-        <span class="c">/**</span>
-<span class="c">        * @attribute hideOnEnd</span>
-<span class="c">        * @description Hide the drag node at the end of the drag. Default: true</span>
-<span class="c">        * @type Boolean</span>
-<span class="c">        */</span>
-        <span class="nx">hideOnEnd</span><span class="o">:</span> <span class="o">{</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute hideOnEnd</span>
+<span class="cm">        * @description Hide the drag node at the end of the drag. Default: true</span>
+<span class="cm">        * @type Boolean</span>
+<span class="cm">        */</span>
+        <span class="nx">hideOnEnd</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="nx">TRUE</span>
-        <span class="o">},</span>
-        <span class="c">/**</span>
-<span class="c">        * @attribute resizeFrame</span>
-<span class="c">        * @description Make the Proxy node assume the size of the original node. Default: true</span>
-<span class="c">        * @type Boolean</span>
-<span class="c">        */</span>
-        <span class="nx">resizeFrame</span><span class="o">:</span> <span class="o">{</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute resizeFrame</span>
+<span class="cm">        * @description Make the Proxy node assume the size of the original node. Default: true</span>
+<span class="cm">        * @type Boolean</span>
+<span class="cm">        */</span>
+        <span class="nx">resizeFrame</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="nx">TRUE</span>
-        <span class="o">},</span>
-        <span class="c">/**</span>
-<span class="c">        * @attribute positionProxy</span>
-<span class="c">        * @description Make the Proxy node appear in the same place as the original node. Default: true</span>
-<span class="c">        * @type Boolean</span>
-<span class="c">        */</span>
-        <span class="nx">positionProxy</span><span class="o">:</span> <span class="o">{</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute positionProxy</span>
+<span class="cm">        * @description Make the Proxy node appear in the same place as the original node. Default: true</span>
+<span class="cm">        * @type Boolean</span>
+<span class="cm">        */</span>
+        <span class="nx">positionProxy</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="nx">TRUE</span>
-        <span class="o">},</span>
-        <span class="c">/**</span>
-<span class="c">        * @attribute borderStyle</span>
-<span class="c">        * @description The default border style for the border of the proxy. Default: 1px solid #808080</span>
-<span class="c">        * @type Boolean</span>
-<span class="c">        */</span>
-        <span class="nx">borderStyle</span><span class="o">:</span> <span class="o">{</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute borderStyle</span>
+<span class="cm">        * @description The default border style for the border of the proxy. Default: 1px solid #808080</span>
+<span class="cm">        * @type Boolean</span>
+<span class="cm">        */</span>
+        <span class="nx">borderStyle</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;1px solid #808080&#39;</span>
-        <span class="o">},</span>
-        <span class="nx">cloneNode</span><span class="o">:</span> <span class="o">{</span>
+        <span class="p">},</span>
+        <span class="nx">cloneNode</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
 
-    <span class="k">var</span> <span class="nx">proto</span> <span class="o">=</span> <span class="o">{</span>
-        <span class="c">/**</span>
-<span class="c">        * @private</span>
-<span class="c">        * @property _hands</span>
-<span class="c">        * @description Holds the event handles for setting the proxy</span>
-<span class="c">        */</span>
-        <span class="nx">_hands</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-        <span class="c">/**</span>
-<span class="c">        * @private</span>
-<span class="c">        * @method _init</span>
-<span class="c">        * @description Handler for the proxy config attribute</span>
-<span class="c">        */</span>
-        <span class="nx">_init</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;domready&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_init</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
-                <span class="k">return</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_hands</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_hands</span> <span class="o">=</span> <span class="o">[];</span>
-            <span class="o">}</span>
-            <span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">h</span><span class="o">,</span> <span class="nx">h1</span><span class="o">,</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">),</span> <span class="nx">dnode</span> <span class="o">=</span> <span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">dnode</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">)))</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">host</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">,</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_hands</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">v</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-            <span class="o">});</span>
-            <span class="nx">h</span> <span class="o">=</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;ddm:start&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span> <span class="o">===</span> <span class="nx">host</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">DDM</span><span class="o">.</span><span class="nx">_setFrame</span><span class="o">(</span><span class="nx">host</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">},</span> <span class="k">this</span><span class="o">));</span>
-            <span class="nx">h1</span> <span class="o">=</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;ddm:end&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragging&#39;</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;moveOnEnd&#39;</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">setXY</span><span class="o">(</span><span class="nx">host</span><span class="o">.</span><span class="nx">lastXY</span><span class="o">);</span>
-                    <span class="o">}</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;hideOnEnd&#39;</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;display&#39;</span><span class="o">,</span> <span class="s1">&#39;none&#39;</span><span class="o">);</span>
-                    <span class="o">}</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;cloneNode&#39;</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">remove</span><span class="o">();</span>
-                        <span class="nx">host</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">,</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">},</span> <span class="k">this</span><span class="o">));</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_hands</span> <span class="o">=</span> <span class="o">[</span><span class="nx">h</span><span class="o">,</span> <span class="nx">h1</span><span class="o">];</span>
-        <span class="o">},</span>
-        <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_init</span><span class="o">();</span>
-        <span class="o">},</span>
-        <span class="nx">destructor</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">);</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_hands</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">v</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-            <span class="o">});</span>
-            <span class="nx">host</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">,</span> <span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">));</span>
-        <span class="o">},</span>
-        <span class="nx">clone</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">HOST</span><span class="o">),</span>
-                <span class="nx">n</span> <span class="o">=</span> <span class="nx">host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">),</span>
-                <span class="nx">c</span> <span class="o">=</span> <span class="nx">n</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-            <span class="nx">c</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;id&#39;</span><span class="o">,</span> <span class="s1">&#39;&#39;</span><span class="o">);</span>
-            <span class="nx">c</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;position&#39;</span><span class="o">,</span> <span class="s1">&#39;absolute&#39;</span><span class="o">);</span>
-            <span class="nx">delete</span> <span class="nx">c</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">;</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">c</span><span class="o">);</span>
-            <span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;parentNode&#39;</span><span class="o">).</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">c</span><span class="o">);</span>
-            <span class="nx">host</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-            <span class="k">return</span> <span class="nx">c</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
+    <span class="kd">var</span> <span class="nx">proto</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @property _hands</span>
+<span class="cm">        * @description Holds the event handles for setting the proxy</span>
+<span class="cm">        */</span>
+        <span class="nx">_hands</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @method _init</span>
+<span class="cm">        * @description Handler for the proxy config attribute</span>
+<span class="cm">        */</span>
+        <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">_proxy</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_hands</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_hands</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="p">}</span>
+            <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">h1</span><span class="p">,</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span> <span class="nx">dnode</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DRAG_NODE</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">dnode</span><span class="p">.</span><span class="nx">compareTo</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">)))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">_proxy</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">DRAG_NODE</span><span class="p">,</span> <span class="nx">DDM</span><span class="p">.</span><span class="nx">_proxy</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_hands</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">v</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+            <span class="p">});</span>
+            <span class="nx">h</span> <span class="o">=</span> <span class="nx">DDM</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;ddm:start&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">activeDrag</span> <span class="o">===</span> <span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">DDM</span><span class="p">.</span><span class="nx">_setFrame</span><span class="p">(</span><span class="nx">host</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="k">this</span><span class="p">));</span>
+            <span class="nx">h1</span> <span class="o">=</span> <span class="nx">DDM</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;ddm:end&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;dragging&#39;</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;moveOnEnd&#39;</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">).</span><span class="nx">setXY</span><span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">lastXY</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;hideOnEnd&#39;</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DRAG_NODE</span><span class="p">).</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;display&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;cloneNode&#39;</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DRAG_NODE</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
+                        <span class="nx">host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">DRAG_NODE</span><span class="p">,</span> <span class="nx">DDM</span><span class="p">.</span><span class="nx">_proxy</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="k">this</span><span class="p">));</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_hands</span> <span class="o">=</span> <span class="p">[</span><span class="nx">h</span><span class="p">,</span> <span class="nx">h1</span><span class="p">];</span>
+        <span class="p">},</span>
+        <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
+        <span class="p">},</span>
+        <span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_hands</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">v</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+            <span class="p">});</span>
+            <span class="nx">host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">DRAG_NODE</span><span class="p">,</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">));</span>
+        <span class="p">},</span>
+        <span class="nx">clone</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span>
+                <span class="nx">n</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">),</span>
+                <span class="nx">c</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+            <span class="nx">c</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+            <span class="nx">c</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;position&#39;</span><span class="p">,</span> <span class="s1">&#39;absolute&#39;</span><span class="p">);</span>
+            <span class="k">delete</span> <span class="nx">c</span><span class="p">.</span><span class="nx">_yuid</span><span class="p">;</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
+            <span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
+            <span class="nx">host</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">DRAG_NODE</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">c</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
     
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;Plugin&#39;</span><span class="o">);</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">P</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span> <span class="nx">proto</span><span class="o">);</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">DDProxy</span> <span class="o">=</span> <span class="nx">P</span><span class="o">;</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Plugin&#39;</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">P</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="nx">proto</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">DDProxy</span> <span class="o">=</span> <span class="nx">P</span><span class="p">;</span>
 
-    <span class="c">//Add a couple of methods to the DDM</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">DDM</span><span class="o">,</span> <span class="o">{</span>
-        <span class="c">/**</span>
-<span class="c">        * @private</span>
-<span class="c">        * @for DDM</span>
-<span class="c">        * @namespace DD</span>
-<span class="c">        * @method _createFrame</span>
-<span class="c">        * @description Create the proxy element if it doesn&#39;t already exist and set the DD.DDM._proxy value</span>
-<span class="c">        */</span>
-        <span class="nx">_createFrame</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="o">;</span>
+    <span class="c1">//Add a couple of methods to the DDM</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">DDM</span><span class="p">,</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @for DDM</span>
+<span class="cm">        * @namespace DD</span>
+<span class="cm">        * @method _createFrame</span>
+<span class="cm">        * @description Create the proxy element if it doesn&#39;t already exist and set the DD.DDM._proxy value</span>
+<span class="cm">        */</span>
+        <span class="nx">_createFrame</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">_proxy</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">DDM</span><span class="p">.</span><span class="nx">_proxy</span> <span class="o">=</span> <span class="nx">TRUE</span><span class="p">;</span>
 
-                <span class="k">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;div&gt;&lt;/div&gt;&#39;</span><span class="o">),</span>
-                <span class="nx">b</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;body&#39;</span><span class="o">);</span>
+                <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;div&gt;&lt;/div&gt;&#39;</span><span class="p">),</span>
+                <span class="nx">b</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">);</span>
 
-                <span class="nx">p</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
-                    <span class="nx">position</span><span class="o">:</span> <span class="s1">&#39;absolute&#39;</span><span class="o">,</span>
-                    <span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;none&#39;</span><span class="o">,</span>
-                    <span class="nx">zIndex</span><span class="o">:</span> <span class="s1">&#39;999&#39;</span><span class="o">,</span>
-                    <span class="nx">top</span><span class="o">:</span> <span class="s1">&#39;-999px&#39;</span><span class="o">,</span>
+                <span class="nx">p</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">({</span>
+                    <span class="nx">position</span><span class="o">:</span> <span class="s1">&#39;absolute&#39;</span><span class="p">,</span>
+                    <span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                    <span class="nx">zIndex</span><span class="o">:</span> <span class="s1">&#39;999&#39;</span><span class="p">,</span>
+                    <span class="nx">top</span><span class="o">:</span> <span class="s1">&#39;-999px&#39;</span><span class="p">,</span>
                     <span class="nx">left</span><span class="o">:</span> <span class="s1">&#39;-999px&#39;</span>
-                <span class="o">});</span>
+                <span class="p">});</span>
 
-                <span class="nx">b</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">p</span><span class="o">,</span> <span class="nx">b</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;firstChild&#39;</span><span class="o">));</span>
-                <span class="nx">p</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;id&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">p</span><span class="o">));</span>
-                <span class="nx">p</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">CSS_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;-proxy&#39;</span><span class="o">);</span>
-                <span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span> <span class="o">=</span> <span class="nx">p</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
-        <span class="c">/**</span>
-<span class="c">        * @private</span>
-<span class="c">        * @for DDM</span>
-<span class="c">        * @namespace DD</span>
-<span class="c">        * @method _setFrame</span>
-<span class="c">        * @description If resizeProxy is set to true (default) it will resize the proxy element to match the size of the Drag Element.</span>
-<span class="c">        * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.</span>
-<span class="c">        */</span>
-        <span class="nx">_setFrame</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">drag</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">drag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">),</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">drag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">),</span> <span class="nx">ah</span><span class="o">,</span> <span class="nx">cur</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">drag</span><span class="o">.</span><span class="nx">proxy</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;resizeFrame&#39;</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
-                    <span class="nx">height</span><span class="o">:</span> <span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="o">,</span>
-                    <span class="nx">width</span><span class="o">:</span> <span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;offsetWidth&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
-                <span class="o">});</span>
-            <span class="o">}</span>
+                <span class="nx">b</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">b</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">));</span>
+                <span class="nx">p</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">p</span><span class="p">));</span>
+                <span class="nx">p</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">CSS_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;-proxy&#39;</span><span class="p">);</span>
+                <span class="nx">DDM</span><span class="p">.</span><span class="nx">_proxy</span> <span class="o">=</span> <span class="nx">p</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @for DDM</span>
+<span class="cm">        * @namespace DD</span>
+<span class="cm">        * @method _setFrame</span>
+<span class="cm">        * @description If resizeProxy is set to true (default) it will resize the proxy element to match the size of the Drag Element.</span>
+<span class="cm">        * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.</span>
+<span class="cm">        */</span>
+        <span class="nx">_setFrame</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">drag</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">),</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DRAG_NODE</span><span class="p">),</span> <span class="nx">ah</span><span class="p">,</span> <span class="nx">cur</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">drag</span><span class="p">.</span><span class="nx">proxy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resizeFrame&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">DDM</span><span class="p">.</span><span class="nx">_proxy</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">({</span>
+                    <span class="nx">height</span><span class="o">:</span> <span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+                    <span class="nx">width</span><span class="o">:</span> <span class="nx">n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetWidth&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
             
-            <span class="nx">ah</span> <span class="o">=</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;activeHandle&#39;</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">ah</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">cur</span> <span class="o">=</span> <span class="nx">ah</span><span class="o">.</span><span class="nx">getStyle</span><span class="o">(</span><span class="s1">&#39;cursor&#39;</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">cur</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">cur</span> <span class="o">=</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragCursor&#39;</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="nx">ah</span> <span class="o">=</span> <span class="nx">DDM</span><span class="p">.</span><span class="nx">activeDrag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;activeHandle&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ah</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cur</span> <span class="o">=</span> <span class="nx">ah</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="s1">&#39;cursor&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cur</span> <span class="o">=</span> <span class="nx">DDM</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;dragCursor&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
 
-            <span class="nx">d</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
-                <span class="nx">visibility</span><span class="o">:</span> <span class="s1">&#39;hidden&#39;</span><span class="o">,</span>
-                <span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;block&#39;</span><span class="o">,</span>
-                <span class="nx">cursor</span><span class="o">:</span> <span class="nx">cur</span><span class="o">,</span>
-                <span class="nx">border</span><span class="o">:</span> <span class="nx">drag</span><span class="o">.</span><span class="nx">proxy</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;borderStyle&#39;</span><span class="o">)</span>
-            <span class="o">});</span>
+            <span class="nx">d</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">({</span>
+                <span class="nx">visibility</span><span class="o">:</span> <span class="s1">&#39;hidden&#39;</span><span class="p">,</span>
+                <span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;block&#39;</span><span class="p">,</span>
+                <span class="nx">cursor</span><span class="o">:</span> <span class="nx">cur</span><span class="p">,</span>
+                <span class="nx">border</span><span class="o">:</span> <span class="nx">drag</span><span class="p">.</span><span class="nx">proxy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;borderStyle&#39;</span><span class="p">)</span>
+            <span class="p">});</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">drag</span><span class="o">.</span><span class="nx">proxy</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;cloneNode&#39;</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">d</span> <span class="o">=</span> <span class="nx">drag</span><span class="o">.</span><span class="nx">proxy</span><span class="o">.</span><span class="nx">clone</span><span class="o">();</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">drag</span><span class="p">.</span><span class="nx">proxy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;cloneNode&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">d</span> <span class="o">=</span> <span class="nx">drag</span><span class="p">.</span><span class="nx">proxy</span><span class="p">.</span><span class="nx">clone</span><span class="p">();</span>
+            <span class="p">}</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">drag</span><span class="o">.</span><span class="nx">proxy</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;positionProxy&#39;</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">d</span><span class="o">.</span><span class="nx">setXY</span><span class="o">(</span><span class="nx">drag</span><span class="o">.</span><span class="nx">nodeXY</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="nx">d</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;visibility&#39;</span><span class="o">,</span> <span class="s1">&#39;visible&#39;</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">});</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">drag</span><span class="p">.</span><span class="nx">proxy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;positionProxy&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">d</span><span class="p">.</span><span class="nx">setXY</span><span class="p">(</span><span class="nx">drag</span><span class="p">.</span><span class="nx">nodeXY</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">d</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;visibility&#39;</span><span class="p">,</span> <span class="s1">&#39;visible&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
 
-    <span class="c">//Create the frame when DOM is ready</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;domready&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">_createFrame</span><span class="o">,</span> <span class="nx">DDM</span><span class="o">));</span>
+    <span class="c1">//Create the frame when DOM is ready</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">_createFrame</span><span class="p">,</span> <span class="nx">DDM</span><span class="p">));</span>
 </pre></div>
 
                     </div>

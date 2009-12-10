@@ -47,107 +47,107 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Provides a DataSource implementation which can be used to retrieve data from a custom function.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datasource</span>
-<span class="c"> * @submodule datasource-function</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides a DataSource implementation which can be used to retrieve data from a custom function.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datasource</span>
+<span class="cm"> * @submodule datasource-function</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Function subclass for the DataSource Utility.</span>
-<span class="c"> * @class DataSource.Function</span>
-<span class="c"> * @extends DataSource.Local</span>
-<span class="c"> * @constructor</span>
-<span class="c"> */</span>    
-<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+<span class="cm">/**</span>
+<span class="cm"> * Function subclass for the DataSource Utility.</span>
+<span class="cm"> * @class DataSource.Function</span>
+<span class="cm"> * @extends DataSource.Local</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> */</span>    
+<span class="kd">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
 
-    <span class="nx">DSFn</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="nx">DSFn</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-    <span class="o">};</span>
+    <span class="nx">DSFn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">DSFn</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">};</span>
     
 
-    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSource.Function static properties</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span><span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">DSFn</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Class name.</span>
-<span class="c">     *</span>
-<span class="c">     * @property NAME</span>
-<span class="c">     * @type String</span>
-<span class="c">     * @static     </span>
-<span class="c">     * @final</span>
-<span class="c">     * @value &quot;dataSourceFunction&quot;</span>
-<span class="c">     */</span>
-    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceFunction&quot;</span><span class="o">,</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+    <span class="c1">//</span>
+    <span class="c1">// DataSource.Function static properties</span>
+    <span class="c1">//</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">DSFn</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Class name.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property NAME</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static     </span>
+<span class="cm">     * @final</span>
+<span class="cm">     * @value &quot;dataSourceFunction&quot;</span>
+<span class="cm">     */</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceFunction&quot;</span><span class="p">,</span>
 
 
-    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSource.Function Attributes</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>
-    <span class="nx">ATTRS</span><span class="o">:</span> <span class="o">{</span>
-        <span class="c">/**</span>
-<span class="c">        * @attribute source</span>
-<span class="c">        * @description Pointer to live data.</span>
-<span class="c">        * @type MIXED</span>
-<span class="c">        * @default null</span>
-<span class="c">        */</span>
-        <span class="nx">source</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">validator</span><span class="o">:</span> <span class="nx">LANG</span><span class="o">.</span><span class="nx">isFunction</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+    <span class="c1">//</span>
+    <span class="c1">// DataSource.Function Attributes</span>
+    <span class="c1">//</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+
+    <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute source</span>
+<span class="cm">        * @description Pointer to live data.</span>
+<span class="cm">        * @type MIXED</span>
+<span class="cm">        * @default null</span>
+<span class="cm">        */</span>
+        <span class="nx">source</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">validator</span><span class="o">:</span> <span class="nx">LANG</span><span class="p">.</span><span class="nx">isFunction</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
     
-<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">DSFn</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nx">Local</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Passes query string to IO. Fires &lt;code&gt;response&lt;/code&gt; event when</span>
-<span class="c">     * response is received asynchronously.</span>
-<span class="c">     *</span>
-<span class="c">     * @method _defRequestFn</span>
-<span class="c">     * @param e {Event.Facade} Event Facade with the following properties:</span>
-<span class="c">     * &lt;dl&gt;</span>
-<span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
-<span class="c">     *     &lt;dl&gt;</span>
-<span class="c">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;/dl&gt;</span>
-<span class="c">     * &lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
-<span class="c">     * &lt;/dl&gt;</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_defRequestFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;source&quot;</span><span class="o">),</span>
-            <span class="nx">response</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">DSFn</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataSource</span><span class="p">.</span><span class="nx">Local</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes query string to IO. Fires &lt;code&gt;response&lt;/code&gt; event when</span>
+<span class="cm">     * response is received asynchronously.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defRequestFn</span>
+<span class="cm">     * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     * &lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defRequestFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">),</span>
+            <span class="nx">response</span><span class="p">;</span>
             
-            <span class="k">if</span><span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">try</span> <span class="o">{</span>
-                    <span class="nx">response</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
-                <span class="o">}</span>
-                <span class="k">catch</span><span class="o">(</span><span class="nx">error</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="nx">error</span><span class="o">;</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-            <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;Function data failure&quot;</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">try</span> <span class="p">{</span>
+                    <span class="nx">response</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">request</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="p">},</span> <span class="nx">e</span><span class="p">));</span>
+                <span class="p">}</span>
+                <span class="k">catch</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="nx">error</span><span class="p">;</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">e</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Function data failure&quot;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+            <span class="p">}</span>
             
-        <span class="k">return</span> <span class="nx">e</span><span class="o">.</span><span class="nx">tId</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+        <span class="k">return</span> <span class="nx">e</span><span class="p">.</span><span class="nx">tId</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
   
-<span class="nx">Y</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nb">Function</span> <span class="o">=</span> <span class="nx">DSFn</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DataSource</span><span class="p">.</span><span class="nb">Function</span> <span class="o">=</span> <span class="nx">DSFn</span><span class="p">;</span>
     
 </pre></div>
 

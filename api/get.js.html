@@ -47,749 +47,749 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-<span class="c">/**</span>
-<span class="c"> * Provides a mechanism to fetch remote resources and</span>
-<span class="c"> * insert them into a document.</span>
-<span class="c"> * @module yui</span>
-<span class="c"> * @submodule get</span>
-<span class="c"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * Provides a mechanism to fetch remote resources and</span>
+<span class="cm"> * insert them into a document.</span>
+<span class="cm"> * @module yui</span>
+<span class="cm"> * @submodule get</span>
+<span class="cm"> */</span>
 
-<span class="k">var</span> <span class="nx">ua</span>         <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">,</span> 
-    <span class="nx">L</span>          <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
-    <span class="c">// PREFIX     = Y.guid(),</span>
-<span class="c"></span>    <span class="nx">TYPE_JS</span>    <span class="o">=</span> <span class="s2">&quot;text/javascript&quot;</span><span class="o">,</span>
-    <span class="nx">TYPE_CSS</span>   <span class="o">=</span> <span class="s2">&quot;text/css&quot;</span><span class="o">,</span>
-    <span class="nx">STYLESHEET</span> <span class="o">=</span> <span class="s2">&quot;stylesheet&quot;</span><span class="o">;</span>
+<span class="kd">var</span> <span class="nx">ua</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">,</span> 
+    <span class="nx">L</span>          <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+    <span class="c1">// PREFIX     = Y.guid(),</span>
+    <span class="nx">TYPE_JS</span>    <span class="o">=</span> <span class="s2">&quot;text/javascript&quot;</span><span class="p">,</span>
+    <span class="nx">TYPE_CSS</span>   <span class="o">=</span> <span class="s2">&quot;text/css&quot;</span><span class="p">,</span>
+    <span class="nx">STYLESHEET</span> <span class="o">=</span> <span class="s2">&quot;stylesheet&quot;</span><span class="p">;</span>
 
-<span class="c">/**</span>
-<span class="c"> * Fetches and inserts one or more script or link nodes into the document </span>
-<span class="c"> * @class Get</span>
-<span class="c"> * @static</span>
-<span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+<span class="cm">/**</span>
+<span class="cm"> * Fetches and inserts one or more script or link nodes into the document </span>
+<span class="cm"> * @class Get</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-    <span class="c">/**</span>
-<span class="c">     * hash of queues to manage multiple requests</span>
-<span class="c">     * @property queues</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="k">var</span> <span class="nx">queues</span><span class="o">={},</span> 
+    <span class="cm">/**</span>
+<span class="cm">     * hash of queues to manage multiple requests</span>
+<span class="cm">     * @property queues</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="kd">var</span> <span class="nx">queues</span><span class="o">=</span><span class="p">{},</span> 
         
-    <span class="c">/**</span>
-<span class="c">     * queue index used to generate transaction ids</span>
-<span class="c">     * @property qidx</span>
-<span class="c">     * @type int</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-        <span class="nx">qidx</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> 
+    <span class="cm">/**</span>
+<span class="cm">     * queue index used to generate transaction ids</span>
+<span class="cm">     * @property qidx</span>
+<span class="cm">     * @type int</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+        <span class="nx">qidx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
         
-    <span class="c">/**</span>
-<span class="c">     * interal property used to prevent multiple simultaneous purge </span>
-<span class="c">     * processes</span>
-<span class="c">     * @property purging</span>
-<span class="c">     * @type boolean</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-        <span class="nx">purging</span><span class="o">=</span><span class="kc">false</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * interal property used to prevent multiple simultaneous purge </span>
+<span class="cm">     * processes</span>
+<span class="cm">     * @property purging</span>
+<span class="cm">     * @type boolean</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+        <span class="nx">purging</span><span class="o">=</span><span class="kc">false</span><span class="p">,</span>
 
     
-    <span class="c">/** </span>
-<span class="c">     * Generates an HTML element, this is not appended to a document</span>
-<span class="c">     * @method _node</span>
-<span class="c">     * @param type {string} the type of element</span>
-<span class="c">     * @param attr {string} the attributes</span>
-<span class="c">     * @param win {Window} optional window to create the element in</span>
-<span class="c">     * @return {HTMLElement} the generated node</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_node</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">win</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="nx">win</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">,</span> <span class="nx">d</span><span class="o">=</span><span class="nx">w</span><span class="o">.</span><span class="nb">document</span><span class="o">,</span> <span class="nx">n</span><span class="o">=</span><span class="nx">d</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="nx">type</span><span class="o">),</span>
-            <span class="nx">i</span><span class="o">;</span>
+    <span class="cm">/** </span>
+<span class="cm">     * Generates an HTML element, this is not appended to a document</span>
+<span class="cm">     * @method _node</span>
+<span class="cm">     * @param type {string} the type of element</span>
+<span class="cm">     * @param attr {string} the attributes</span>
+<span class="cm">     * @param win {Window} optional window to create the element in</span>
+<span class="cm">     * @return {HTMLElement} the generated node</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_node</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">win</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="nx">win</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span> <span class="nx">d</span><span class="o">=</span><span class="nx">w</span><span class="p">.</span><span class="nb">document</span><span class="p">,</span> <span class="nx">n</span><span class="o">=</span><span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="nx">type</span><span class="p">),</span>
+            <span class="nx">i</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">attr</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">attr</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">n</span><span class="o">.</span><span class="nx">setAttribute</span><span class="o">(</span><span class="nx">i</span><span class="o">,</span> <span class="nx">attr</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">attr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">n</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">attr</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">n</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Generates a link node</span>
-<span class="c">     * @method _linkNode</span>
-<span class="c">     * @param url {string} the url for the css file</span>
-<span class="c">     * @param win {Window} optional window to create the node in</span>
-<span class="c">     * @param attributes optional attributes collection to apply to the new node</span>
-<span class="c">     * @return {HTMLElement} the generated node</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_linkNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">win</span><span class="o">,</span> <span class="nx">attributes</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{</span>
-            <span class="nx">id</span><span class="o">:</span>   <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(),</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="nx">TYPE_CSS</span><span class="o">,</span>
-            <span class="nx">rel</span><span class="o">:</span>  <span class="nx">STYLESHEET</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Generates a link node</span>
+<span class="cm">     * @method _linkNode</span>
+<span class="cm">     * @param url {string} the url for the css file</span>
+<span class="cm">     * @param win {Window} optional window to create the node in</span>
+<span class="cm">     * @param attributes optional attributes collection to apply to the new node</span>
+<span class="cm">     * @return {HTMLElement} the generated node</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_linkNode</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">win</span><span class="p">,</span> <span class="nx">attributes</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">id</span><span class="o">:</span>   <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(),</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="nx">TYPE_CSS</span><span class="p">,</span>
+            <span class="nx">rel</span><span class="o">:</span>  <span class="nx">STYLESHEET</span><span class="p">,</span>
             <span class="nx">href</span><span class="o">:</span> <span class="nx">url</span>
-        <span class="o">};</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">attributes</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">attributes</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">_node</span><span class="o">(</span><span class="s2">&quot;link&quot;</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">win</span><span class="o">);</span>
-    <span class="o">},</span>
+        <span class="p">};</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">attributes</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">attributes</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">_node</span><span class="p">(</span><span class="s2">&quot;link&quot;</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">win</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Generates a script node</span>
-<span class="c">     * @method _scriptNode</span>
-<span class="c">     * @param url {string} the url for the script file</span>
-<span class="c">     * @param win {Window} optional window to create the node in</span>
-<span class="c">     * @param attributes optional attributes collection to apply to the new node</span>
-<span class="c">     * @return {HTMLElement} the generated node</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_scriptNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">win</span><span class="o">,</span> <span class="nx">attributes</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{</span>
-            <span class="nx">id</span><span class="o">:</span>   <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(),</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Generates a script node</span>
+<span class="cm">     * @method _scriptNode</span>
+<span class="cm">     * @param url {string} the url for the script file</span>
+<span class="cm">     * @param win {Window} optional window to create the node in</span>
+<span class="cm">     * @param attributes optional attributes collection to apply to the new node</span>
+<span class="cm">     * @return {HTMLElement} the generated node</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_scriptNode</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">win</span><span class="p">,</span> <span class="nx">attributes</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">id</span><span class="o">:</span>   <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(),</span>
             <span class="nx">type</span><span class="o">:</span> <span class="nx">TYPE_JS</span>
-        <span class="o">};</span>
+        <span class="p">};</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">attributes</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">attributes</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">attributes</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">attributes</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="nx">o</span><span class="o">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">url</span><span class="o">;</span>
+        <span class="nx">o</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">url</span><span class="p">;</span>
 
-        <span class="k">return</span> <span class="nx">_node</span><span class="o">(</span><span class="s2">&quot;script&quot;</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">win</span><span class="o">);</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="nx">_node</span><span class="p">(</span><span class="s2">&quot;script&quot;</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">win</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Removes the nodes for the specified queue</span>
-<span class="c">     * @method _purge</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_purge</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">tId</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">q</span><span class="o">=</span><span class="nx">queues</span><span class="o">[</span><span class="nx">tId</span><span class="o">],</span> <span class="nx">n</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">h</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">attr</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">n</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">nodes</span><span class="o">;</span> 
-            <span class="nx">l</span> <span class="o">=</span> <span class="nx">n</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
-            <span class="nx">d</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nb">document</span><span class="o">;</span>
-            <span class="nx">h</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="s2">&quot;head&quot;</span><span class="o">)[</span><span class="m">0</span><span class="o">];</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Removes the nodes for the specified queue</span>
+<span class="cm">     * @method _purge</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_purge</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tId</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">q</span><span class="o">=</span><span class="nx">queues</span><span class="p">[</span><span class="nx">tId</span><span class="p">],</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">attr</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">n</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">nodes</span><span class="p">;</span> 
+            <span class="nx">l</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="nx">d</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">win</span><span class="p">.</span><span class="nb">document</span><span class="p">;</span>
+            <span class="nx">h</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;head&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">s</span> <span class="o">=</span> <span class="nx">_get</span><span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">,</span> <span class="nx">tId</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">h</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">s</span> <span class="o">=</span> <span class="nx">_get</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">,</span> <span class="nx">tId</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">h</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">node</span> <span class="o">=</span> <span class="nx">n</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">clearAttributes</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">node</span><span class="o">.</span><span class="nx">clearAttributes</span><span class="o">();</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="c">// This is a hostile delete</span>
-<span class="c"></span>                    <span class="c">// operation attempting to improve</span>
-<span class="c"></span>                    <span class="c">// memory performance.  As such, the</span>
-<span class="c"></span>                    <span class="c">// hasOwnProperty check is intentionally</span>
-<span class="c"></span>                    <span class="c">// ommitted.</span>
-<span class="c"></span>                    <span class="k">for</span> <span class="o">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">delete</span> <span class="nx">node</span><span class="o">[</span><span class="nx">attr</span><span class="o">];</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="nx">n</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">clearAttributes</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">clearAttributes</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="c1">// This is a hostile delete</span>
+                    <span class="c1">// operation attempting to improve</span>
+                    <span class="c1">// memory performance.  As such, the</span>
+                    <span class="c1">// hasOwnProperty check is intentionally</span>
+                    <span class="c1">// ommitted.</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">delete</span> <span class="nx">node</span><span class="p">[</span><span class="nx">attr</span><span class="p">];</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
 
-                <span class="nx">h</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="nx">q</span><span class="o">.</span><span class="nx">nodes</span> <span class="o">=</span> <span class="o">[];</span>
-    <span class="o">},</span>
+                <span class="nx">h</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">q</span><span class="p">.</span><span class="nx">nodes</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Returns the data payload for callback functions</span>
-<span class="c">     * @method _returnData</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_returnData</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">q</span><span class="o">,</span> <span class="nx">msg</span><span class="o">,</span> <span class="nx">result</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="o">{</span>
-                <span class="nx">tId</span><span class="o">:</span> <span class="nx">q</span><span class="o">.</span><span class="nx">tId</span><span class="o">,</span>
-                <span class="nx">win</span><span class="o">:</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span><span class="o">,</span>
-                <span class="nx">data</span><span class="o">:</span> <span class="nx">q</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
-                <span class="nx">nodes</span><span class="o">:</span> <span class="nx">q</span><span class="o">.</span><span class="nx">nodes</span><span class="o">,</span>
-                <span class="nx">msg</span><span class="o">:</span> <span class="nx">msg</span><span class="o">,</span>
-                <span class="nx">statusText</span><span class="o">:</span> <span class="nx">result</span><span class="o">,</span>
-                <span class="nx">purge</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                    <span class="nx">_purge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">tId</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">};</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the data payload for callback functions</span>
+<span class="cm">     * @method _returnData</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_returnData</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">q</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+                <span class="nx">tId</span><span class="o">:</span> <span class="nx">q</span><span class="p">.</span><span class="nx">tId</span><span class="p">,</span>
+                <span class="nx">win</span><span class="o">:</span> <span class="nx">q</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="nx">q</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span>
+                <span class="nx">nodes</span><span class="o">:</span> <span class="nx">q</span><span class="p">.</span><span class="nx">nodes</span><span class="p">,</span>
+                <span class="nx">msg</span><span class="o">:</span> <span class="nx">msg</span><span class="p">,</span>
+                <span class="nx">statusText</span><span class="o">:</span> <span class="nx">result</span><span class="p">,</span>
+                <span class="nx">purge</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">_purge</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">tId</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * The transaction is finished</span>
-<span class="c">     * @method _end</span>
-<span class="c">     * @param id {string} the id of the request</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_end</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">msg</span><span class="o">,</span> <span class="nx">result</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">],</span> <span class="nx">sc</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span> <span class="o">&amp;&amp;</span> <span class="nx">q</span><span class="o">.</span><span class="nx">onEnd</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">sc</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
-            <span class="nx">q</span><span class="o">.</span><span class="nx">onEnd</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">sc</span><span class="o">,</span> <span class="nx">_returnData</span><span class="o">(</span><span class="nx">q</span><span class="o">,</span> <span class="nx">msg</span><span class="o">,</span> <span class="nx">result</span><span class="o">));</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * The transaction is finished</span>
+<span class="cm">     * @method _end</span>
+<span class="cm">     * @param id {string} the id of the request</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_end</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">],</span> <span class="nx">sc</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span> <span class="o">&amp;&amp;</span> <span class="nx">q</span><span class="p">.</span><span class="nx">onEnd</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sc</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="p">;</span>
+            <span class="nx">q</span><span class="p">.</span><span class="nx">onEnd</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">sc</span><span class="p">,</span> <span class="nx">_returnData</span><span class="p">(</span><span class="nx">q</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">result</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
 
-    <span class="c">/*</span>
-<span class="c">     * The request failed, execute fail handler with whatever</span>
-<span class="c">     * was accomplished.  There isn&#39;t a failure case at the</span>
-<span class="c">     * moment unless you count aborted transactions</span>
-<span class="c">     * @method _fail</span>
-<span class="c">     * @param id {string} the id of the request</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_fail</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">msg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="cm">/*</span>
+<span class="cm">     * The request failed, execute fail handler with whatever</span>
+<span class="cm">     * was accomplished.  There isn&#39;t a failure case at the</span>
+<span class="cm">     * moment unless you count aborted transactions</span>
+<span class="cm">     * @method _fail</span>
+<span class="cm">     * @param id {string} the id of the request</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_fail</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;get failure: &quot;</span> <span class="o">+</span> <span class="nx">msg</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;get failure: &quot;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">,</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
 
-        <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">],</span> <span class="nx">sc</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">timer</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// q.timer.cancel();</span>
-<span class="c"></span>            <span class="nx">clearTimeout</span><span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">timer</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">],</span> <span class="nx">sc</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// q.timer.cancel();</span>
+            <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">timer</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="c">// execute failure callback</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">onFailure</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">sc</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
-            <span class="nx">q</span><span class="o">.</span><span class="nx">onFailure</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">sc</span><span class="o">,</span> <span class="nx">_returnData</span><span class="o">(</span><span class="nx">q</span><span class="o">,</span> <span class="nx">msg</span><span class="o">));</span>
-        <span class="o">}</span>
+        <span class="c1">// execute failure callback</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">onFailure</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sc</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="p">;</span>
+            <span class="nx">q</span><span class="p">.</span><span class="nx">onFailure</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">sc</span><span class="p">,</span> <span class="nx">_returnData</span><span class="p">(</span><span class="nx">q</span><span class="p">,</span> <span class="nx">msg</span><span class="p">));</span>
+        <span class="p">}</span>
 
-        <span class="nx">_end</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">msg</span><span class="o">,</span> <span class="s1">&#39;failure&#39;</span><span class="o">);</span>
-    <span class="o">},</span>
+        <span class="nx">_end</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;failure&#39;</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="nx">_get</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">nId</span><span class="o">,</span> <span class="nx">tId</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">tId</span><span class="o">],</span>
-            <span class="nx">n</span> <span class="o">=</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">nId</span><span class="o">))</span> <span class="o">?</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span><span class="o">.</span><span class="nb">document</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">nId</span><span class="o">)</span> <span class="o">:</span> <span class="nx">nId</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">_fail</span><span class="o">(</span><span class="nx">tId</span><span class="o">,</span> <span class="s2">&quot;target node not found: &quot;</span> <span class="o">+</span> <span class="nx">nId</span><span class="o">);</span>
-        <span class="o">}</span>
+    <span class="nx">_get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">nId</span><span class="p">,</span> <span class="nx">tId</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">tId</span><span class="p">],</span>
+            <span class="nx">n</span> <span class="o">=</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">nId</span><span class="p">))</span> <span class="o">?</span> <span class="nx">q</span><span class="p">.</span><span class="nx">win</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">nId</span><span class="p">)</span> <span class="o">:</span> <span class="nx">nId</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_fail</span><span class="p">(</span><span class="nx">tId</span><span class="p">,</span> <span class="s2">&quot;target node not found: &quot;</span> <span class="o">+</span> <span class="nx">nId</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">n</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="nx">n</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * The request is complete, so executing the requester&#39;s callback</span>
-<span class="c">     * @method _finish</span>
-<span class="c">     * @param id {string} the id of the request</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_finish</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Finishing transaction &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
-        <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">],</span> <span class="nx">msg</span><span class="o">,</span> <span class="nx">sc</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">timer</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// q.timer.cancel();</span>
-<span class="c"></span>            <span class="nx">clearTimeout</span><span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">timer</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="nx">q</span><span class="o">.</span><span class="nx">finished</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="cm">/**</span>
+<span class="cm">     * The request is complete, so executing the requester&#39;s callback</span>
+<span class="cm">     * @method _finish</span>
+<span class="cm">     * @param id {string} the id of the request</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_finish</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Finishing transaction &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">],</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">sc</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// q.timer.cancel();</span>
+            <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">timer</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">q</span><span class="p">.</span><span class="nx">finished</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">aborted</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;transaction &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; was aborted&quot;</span><span class="o">;</span>
-            <span class="nx">_fail</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">msg</span><span class="o">);</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">aborted</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;transaction &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; was aborted&quot;</span><span class="p">;</span>
+            <span class="nx">_fail</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
 
-        <span class="c">// execute success callback</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">onSuccess</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">sc</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
-            <span class="nx">q</span><span class="o">.</span><span class="nx">onSuccess</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">sc</span><span class="o">,</span> <span class="nx">_returnData</span><span class="o">(</span><span class="nx">q</span><span class="o">));</span>
-        <span class="o">}</span>
+        <span class="c1">// execute success callback</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">onSuccess</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sc</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="p">;</span>
+            <span class="nx">q</span><span class="p">.</span><span class="nx">onSuccess</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">sc</span><span class="p">,</span> <span class="nx">_returnData</span><span class="p">(</span><span class="nx">q</span><span class="p">));</span>
+        <span class="p">}</span>
 
-        <span class="nx">_end</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">msg</span><span class="o">,</span> <span class="s1">&#39;OK&#39;</span><span class="o">);</span>
-    <span class="o">},</span>
+        <span class="nx">_end</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;OK&#39;</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Timeout detected</span>
-<span class="c">     * @method _timeout</span>
-<span class="c">     * @param id {string} the id of the request</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_timeout</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Timeout &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
-        <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">],</span> <span class="nx">sc</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">onTimeout</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">sc</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
-            <span class="nx">q</span><span class="o">.</span><span class="nx">onTimeout</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">sc</span><span class="o">,</span> <span class="nx">_returnData</span><span class="o">(</span><span class="nx">q</span><span class="o">));</span>
-        <span class="o">}</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Timeout detected</span>
+<span class="cm">     * @method _timeout</span>
+<span class="cm">     * @param id {string} the id of the request</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_timeout</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Timeout &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">],</span> <span class="nx">sc</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">onTimeout</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sc</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="p">;</span>
+            <span class="nx">q</span><span class="p">.</span><span class="nx">onTimeout</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">sc</span><span class="p">,</span> <span class="nx">_returnData</span><span class="p">(</span><span class="nx">q</span><span class="p">));</span>
+        <span class="p">}</span>
 
-        <span class="nx">_end</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;timeout&#39;</span><span class="o">,</span> <span class="s1">&#39;timeout&#39;</span><span class="o">);</span>
-    <span class="o">},</span>
+        <span class="nx">_end</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;timeout&#39;</span><span class="p">,</span> <span class="s1">&#39;timeout&#39;</span><span class="p">);</span>
+    <span class="p">},</span>
     
 
-    <span class="c">/**</span>
-<span class="c">     * Loads the next item for a given request</span>
-<span class="c">     * @method _next</span>
-<span class="c">     * @param id {string} the id of the request</span>
-<span class="c">     * @param loaded {string} the url that was just loaded, if any</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_next</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">loaded</span><span class="o">)</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Loads the next item for a given request</span>
+<span class="cm">     * @method _next</span>
+<span class="cm">     * @param id {string} the id of the request</span>
+<span class="cm">     * @param loaded {string} the url that was just loaded, if any</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_next</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">loaded</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;_next: &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot;, loaded: &quot;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">loaded</span> <span class="o">||</span> <span class="s2">&quot;nothing&quot;</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;_next: &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot;, loaded: &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">loaded</span> <span class="o">||</span> <span class="s2">&quot;nothing&quot;</span><span class="p">),</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
 
-        <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">],</span> <span class="nx">msg</span><span class="o">,</span> <span class="nx">w</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">h</span><span class="o">,</span> <span class="nx">n</span><span class="o">,</span> <span class="nx">url</span><span class="o">,</span> <span class="nx">s</span><span class="o">;</span>
+        <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">],</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">s</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">timer</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// Y.log(&#39;cancel timer&#39;);</span>
-<span class="c"></span>            <span class="c">// q.timer.cancel();</span>
-<span class="c"></span>            <span class="nx">clearTimeout</span><span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">timer</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Y.log(&#39;cancel timer&#39;);</span>
+            <span class="c1">// q.timer.cancel();</span>
+            <span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">timer</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">aborted</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;transaction &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; was aborted&quot;</span><span class="o">;</span>
-            <span class="nx">_fail</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">msg</span><span class="o">);</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">aborted</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;transaction &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; was aborted&quot;</span><span class="p">;</span>
+            <span class="nx">_fail</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">loaded</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">q</span><span class="o">.</span><span class="nx">url</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span> 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">varName</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">q</span><span class="o">.</span><span class="nx">varName</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span> 
-            <span class="o">}</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="c">// This is the first pass: make sure the url is an array</span>
-<span class="c"></span>            <span class="nx">q</span><span class="o">.</span><span class="nx">url</span> <span class="o">=</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">url</span><span class="o">))</span> <span class="o">?</span> <span class="o">[</span><span class="nx">q</span><span class="o">.</span><span class="nx">url</span><span class="o">]</span> <span class="o">:</span> <span class="nx">q</span><span class="o">.</span><span class="nx">url</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">varName</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">q</span><span class="o">.</span><span class="nx">varName</span> <span class="o">=</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">varName</span><span class="o">))</span> <span class="o">?</span> <span class="o">[</span><span class="nx">q</span><span class="o">.</span><span class="nx">varName</span><span class="o">]</span> <span class="o">:</span> <span class="nx">q</span><span class="o">.</span><span class="nx">varName</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">loaded</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">q</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span> 
+            <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">varName</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">q</span><span class="p">.</span><span class="nx">varName</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span> 
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="c1">// This is the first pass: make sure the url is an array</span>
+            <span class="nx">q</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">url</span><span class="p">))</span> <span class="o">?</span> <span class="p">[</span><span class="nx">q</span><span class="p">.</span><span class="nx">url</span><span class="p">]</span> <span class="o">:</span> <span class="nx">q</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">varName</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">q</span><span class="p">.</span><span class="nx">varName</span> <span class="o">=</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">varName</span><span class="p">))</span> <span class="o">?</span> <span class="p">[</span><span class="nx">q</span><span class="p">.</span><span class="nx">varName</span><span class="p">]</span> <span class="o">:</span> <span class="nx">q</span><span class="p">.</span><span class="nx">varName</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-        <span class="nx">w</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span> 
-        <span class="nx">d</span> <span class="o">=</span> <span class="nx">w</span><span class="o">.</span><span class="nb">document</span><span class="o">;</span> 
-        <span class="nx">h</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="s2">&quot;head&quot;</span><span class="o">)[</span><span class="m">0</span><span class="o">];</span>
+        <span class="nx">w</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">win</span><span class="p">;</span> 
+        <span class="nx">d</span> <span class="o">=</span> <span class="nx">w</span><span class="p">.</span><span class="nb">document</span><span class="p">;</span> 
+        <span class="nx">h</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;head&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">url</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">_finish</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span> 
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_finish</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span> 
 
-        <span class="nx">url</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">url</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+        <span class="nx">url</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">url</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
 
-        <span class="c">// if the url is undefined, this is probably a trailing comma problem in IE</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="nx">url</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">q</span><span class="o">.</span><span class="nx">url</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span> 
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;skipping empty url&#39;</span><span class="o">);</span>
-            <span class="k">return</span> <span class="nx">_next</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="c1">// if the url is undefined, this is probably a trailing comma problem in IE</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">q</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span> 
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;skipping empty url&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">_next</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;attempting to load &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;attempting to load &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">timeout</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// Y.log(&#39;create timer&#39;);</span>
-<span class="c"></span>            <span class="c">// q.timer = L.later(q.timeout, q, _timeout, id);</span>
-<span class="c"></span>            <span class="nx">q</span><span class="o">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span> 
-                <span class="nx">_timeout</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
-            <span class="o">},</span> <span class="nx">q</span><span class="o">.</span><span class="nx">timeout</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Y.log(&#39;create timer&#39;);</span>
+            <span class="c1">// q.timer = L.later(q.timeout, q, _timeout, id);</span>
+            <span class="nx">q</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> 
+                <span class="nx">_timeout</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+            <span class="p">},</span> <span class="nx">q</span><span class="p">.</span><span class="nx">timeout</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">n</span> <span class="o">=</span> <span class="nx">_scriptNode</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">w</span><span class="o">,</span> <span class="nx">q</span><span class="o">.</span><span class="nx">attributes</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">n</span> <span class="o">=</span> <span class="nx">_linkNode</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">w</span><span class="o">,</span> <span class="nx">q</span><span class="o">.</span><span class="nx">attributes</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">n</span> <span class="o">=</span> <span class="nx">_scriptNode</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">n</span> <span class="o">=</span> <span class="nx">_linkNode</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="c">// track this node&#39;s load progress</span>
-<span class="c"></span>        <span class="nx">_track</span><span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span> <span class="nx">n</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">url</span><span class="o">,</span> <span class="nx">w</span><span class="o">,</span> <span class="nx">q</span><span class="o">.</span><span class="nx">url</span><span class="o">.</span><span class="nx">length</span><span class="o">);</span>
+        <span class="c1">// track this node&#39;s load progress</span>
+        <span class="nx">_track</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">q</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
 
-        <span class="c">// add the node to the queue so we can return it to the user supplied callback</span>
-<span class="c"></span>        <span class="nx">q</span><span class="o">.</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
+        <span class="c1">// add the node to the queue so we can return it to the user supplied callback</span>
+        <span class="nx">q</span><span class="p">.</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
 
-        <span class="c">// add it to the head or insert it before &#39;insertBefore&#39;</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">_get</span><span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">s</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">n</span><span class="o">,</span> <span class="nx">s</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">h</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="c1">// add it to the head or insert it before &#39;insertBefore&#39;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">_get</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">s</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">h</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+        <span class="p">}</span>
         
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Appending node: &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Appending node: &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
 
-        <span class="c">// FireFox does not support the onload event for link nodes, so there is</span>
-<span class="c"></span>        <span class="c">// no way to make the css requests synchronous. This means that the css </span>
-<span class="c"></span>        <span class="c">// rules in multiple files could be applied out of order in this browser</span>
-<span class="c"></span>        <span class="c">// if a later request returns before an earlier one.  Safari too.</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">((</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">||</span> <span class="nx">ua</span><span class="o">.</span><span class="nx">gecko</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">q</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;css&quot;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">_next</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">url</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
+        <span class="c1">// FireFox does not support the onload event for link nodes, so there is</span>
+        <span class="c1">// no way to make the css requests synchronous. This means that the css </span>
+        <span class="c1">// rules in multiple files could be applied out of order in this browser</span>
+        <span class="c1">// if a later request returns before an earlier one.  Safari too.</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nx">ua</span><span class="p">.</span><span class="nx">webkit</span> <span class="o">||</span> <span class="nx">ua</span><span class="p">.</span><span class="nx">gecko</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">q</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;css&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_next</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Removes processed queues and corresponding nodes</span>
-<span class="c">     * @method _autoPurge</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_autoPurge</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Removes processed queues and corresponding nodes</span>
+<span class="cm">     * @method _autoPurge</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_autoPurge</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">purging</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span><span class="o">;</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">purging</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
 
-        <span class="nx">purging</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="nx">purging</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
-        <span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">q</span><span class="o">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">q</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">queues</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">queues</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">autopurge</span> <span class="o">&amp;&amp;</span> <span class="nx">q</span><span class="o">.</span><span class="nx">finished</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">_purge</span><span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">tId</span><span class="o">);</span>
-                    <span class="nx">delete</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">queues</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">queues</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">autopurge</span> <span class="o">&amp;&amp;</span> <span class="nx">q</span><span class="p">.</span><span class="nx">finished</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">_purge</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">tId</span><span class="p">);</span>
+                    <span class="k">delete</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-        <span class="nx">purging</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="nx">purging</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Saves the state for the request and begins loading</span>
-<span class="c">     * the requested urls</span>
-<span class="c">     * @method queue</span>
-<span class="c">     * @param type {string} the type of node to insert</span>
-<span class="c">     * @param url {string} the url to load</span>
-<span class="c">     * @param opts the hash of options for this request</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_queue</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">url</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Saves the state for the request and begins loading</span>
+<span class="cm">     * the requested urls</span>
+<span class="cm">     * @method queue</span>
+<span class="cm">     * @param type {string} the type of node to insert</span>
+<span class="cm">     * @param url {string} the url to load</span>
+<span class="cm">     * @param opts the hash of options for this request</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_queue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="nx">opts</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="o">{};</span>
+        <span class="nx">opts</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="p">{};</span>
 
-        <span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="s2">&quot;q&quot;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">qidx</span><span class="o">++),</span> <span class="nx">q</span><span class="o">,</span>
-            <span class="nx">thresh</span> <span class="o">=</span> <span class="nx">opts</span><span class="o">.</span><span class="nx">purgethreshold</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">.</span><span class="nx">PURGE_THRESH</span><span class="o">;</span>
+        <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="s2">&quot;q&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">qidx</span><span class="o">++</span><span class="p">),</span> <span class="nx">q</span><span class="p">,</span>
+            <span class="nx">thresh</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">purgethreshold</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Get</span><span class="p">.</span><span class="nx">PURGE_THRESH</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">qidx</span> <span class="o">%</span> <span class="nx">thresh</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">_autoPurge</span><span class="o">();</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">qidx</span> <span class="o">%</span> <span class="nx">thresh</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_autoPurge</span><span class="p">();</span>
+        <span class="p">}</span>
 
-        <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">opts</span><span class="o">,</span> <span class="o">{</span>
-            <span class="nx">tId</span><span class="o">:</span> <span class="nx">id</span><span class="o">,</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span><span class="o">,</span>
-            <span class="nx">url</span><span class="o">:</span> <span class="nx">url</span><span class="o">,</span>
-            <span class="nx">finished</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
-            <span class="nx">nodes</span><span class="o">:</span> <span class="o">[]</span>
-        <span class="o">});</span>
+        <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">tId</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span><span class="p">,</span>
+            <span class="nx">url</span><span class="o">:</span> <span class="nx">url</span><span class="p">,</span>
+            <span class="nx">finished</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">nodes</span><span class="o">:</span> <span class="p">[]</span>
+        <span class="p">});</span>
 
-        <span class="nx">q</span>           <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
-        <span class="nx">q</span><span class="o">.</span><span class="nx">win</span>       <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
-        <span class="nx">q</span><span class="o">.</span><span class="nx">context</span>   <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
-        <span class="nx">q</span><span class="o">.</span><span class="nx">autopurge</span> <span class="o">=</span> <span class="o">(</span><span class="s2">&quot;autopurge&quot;</span> <span class="k">in</span> <span class="nx">q</span><span class="o">)</span> <span class="o">?</span> <span class="nx">q</span><span class="o">.</span><span class="nx">autopurge</span> <span class="o">:</span> 
-                      <span class="o">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="o">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="nx">q</span>           <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+        <span class="nx">q</span><span class="p">.</span><span class="nx">win</span>       <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">win</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">;</span>
+        <span class="nx">q</span><span class="p">.</span><span class="nx">context</span>   <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="p">;</span>
+        <span class="nx">q</span><span class="p">.</span><span class="nx">autopurge</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;autopurge&quot;</span> <span class="k">in</span> <span class="nx">q</span><span class="p">)</span> <span class="o">?</span> <span class="nx">q</span><span class="p">.</span><span class="nx">autopurge</span> <span class="o">:</span> 
+                      <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">opts</span><span class="o">.</span><span class="nx">charset</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">q</span><span class="o">.</span><span class="nx">attributes</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">attributes</span> <span class="o">||</span> <span class="o">{};</span>
-            <span class="nx">q</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">charset</span> <span class="o">=</span> <span class="nx">opts</span><span class="o">.</span><span class="nx">charset</span><span class="o">;</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">charset</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">||</span> <span class="p">{};</span>
+            <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">charset</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">charset</span><span class="p">;</span>
+        <span class="p">}</span>
 
-        <span class="c">// L.later(0, q, _next, id);</span>
-<span class="c"></span>        <span class="nx">setTimeout</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="nx">_next</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
-        <span class="o">},</span> <span class="m">0</span><span class="o">);</span>
+        <span class="c1">// L.later(0, q, _next, id);</span>
+        <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">_next</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+        <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
 
-        <span class="k">return</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="p">{</span>
             <span class="nx">tId</span><span class="o">:</span> <span class="nx">id</span>
-        <span class="o">};</span>
-    <span class="o">},</span>
+        <span class="p">};</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Detects when a node has been loaded.  In the case of</span>
-<span class="c">     * script nodes, this does not guarantee that contained</span>
-<span class="c">     * script is ready to use.</span>
-<span class="c">     * @method _track</span>
-<span class="c">     * @param type {string} the type of node to track</span>
-<span class="c">     * @param n {HTMLElement} the node to track</span>
-<span class="c">     * @param id {string} the id of the request</span>
-<span class="c">     * @param url {string} the url that is being loaded</span>
-<span class="c">     * @param win {Window} the targeted window</span>
-<span class="c">     * @param qlength the number of remaining items in the queue,</span>
-<span class="c">     * including this one</span>
-<span class="c">     * @param trackfn {Function} function to execute when finished</span>
-<span class="c">     * the default is _next</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">_track</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">n</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">url</span><span class="o">,</span> <span class="nx">win</span><span class="o">,</span> <span class="nx">qlength</span><span class="o">,</span> <span class="nx">trackfn</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">trackfn</span> <span class="o">||</span> <span class="nx">_next</span><span class="o">;</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Detects when a node has been loaded.  In the case of</span>
+<span class="cm">     * script nodes, this does not guarantee that contained</span>
+<span class="cm">     * script is ready to use.</span>
+<span class="cm">     * @method _track</span>
+<span class="cm">     * @param type {string} the type of node to track</span>
+<span class="cm">     * @param n {HTMLElement} the node to track</span>
+<span class="cm">     * @param id {string} the id of the request</span>
+<span class="cm">     * @param url {string} the url that is being loaded</span>
+<span class="cm">     * @param win {Window} the targeted window</span>
+<span class="cm">     * @param qlength the number of remaining items in the queue,</span>
+<span class="cm">     * including this one</span>
+<span class="cm">     * @param trackfn {Function} function to execute when finished</span>
+<span class="cm">     * the default is _next</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_track</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">win</span><span class="p">,</span> <span class="nx">qlength</span><span class="p">,</span> <span class="nx">trackfn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">trackfn</span> <span class="o">||</span> <span class="nx">_next</span><span class="p">;</span>
 
-        <span class="c">// IE supports the readystatechange event for script and css nodes</span>
-<span class="c"></span>        <span class="c">// Opera only for script nodes.  Opera support onload for script</span>
-<span class="c"></span>        <span class="c">// nodes, but this doesn&#39;t fire when there is a load failure.</span>
-<span class="c"></span>        <span class="c">// The onreadystatechange appears to be a better way to respond</span>
-<span class="c"></span>        <span class="c">// to both success and failure.</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">n</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">rs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">readyState</span><span class="o">;</span>
-                <span class="k">if</span> <span class="o">(</span><span class="s2">&quot;loaded&quot;</span> <span class="o">===</span> <span class="nx">rs</span> <span class="o">||</span> <span class="s2">&quot;complete&quot;</span> <span class="o">===</span> <span class="nx">rs</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; onreadstatechange &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
-                    <span class="nx">n</span><span class="o">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-                    <span class="nx">f</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">url</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">};</span>
+        <span class="c1">// IE supports the readystatechange event for script and css nodes</span>
+        <span class="c1">// Opera only for script nodes.  Opera support onload for script</span>
+        <span class="c1">// nodes, but this doesn&#39;t fire when there is a load failure.</span>
+        <span class="c1">// The onreadystatechange appears to be a better way to respond</span>
+        <span class="c1">// to both success and failure.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">ua</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">n</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">rs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">readyState</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;loaded&quot;</span> <span class="o">===</span> <span class="nx">rs</span> <span class="o">||</span> <span class="s2">&quot;complete&quot;</span> <span class="o">===</span> <span class="nx">rs</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; onreadstatechange &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+                    <span class="nx">n</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                    <span class="nx">f</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
 
-        <span class="c">// webkit prior to 3.x is no longer supported</span>
-<span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// webkit prior to 3.x is no longer supported</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">ua</span><span class="p">.</span><span class="nx">webkit</span><span class="p">)</span> <span class="p">{</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// Safari 3.x supports the load event for script nodes (DOM2)</span>
-<span class="c"></span>                <span class="nx">n</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">(</span><span class="s2">&quot;load&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; DOM2 onload &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
-                    <span class="nx">f</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">url</span><span class="o">);</span>
-                <span class="o">});</span>
-            <span class="o">}</span> 
+            <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Safari 3.x supports the load event for script nodes (DOM2)</span>
+                <span class="nx">n</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; DOM2 onload &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+                    <span class="nx">f</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">}</span> 
 
-        <span class="c">// FireFox and Opera support onload (but not DOM2 in FF) handlers for</span>
-<span class="c"></span>        <span class="c">// script nodes.  Opera, but not FF, supports the onload event for link</span>
-<span class="c"></span>        <span class="c">// nodes.</span>
-<span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> 
+        <span class="c1">// FireFox and Opera support onload (but not DOM2 in FF) handlers for</span>
+        <span class="c1">// script nodes.  Opera, but not FF, supports the onload event for link</span>
+        <span class="c1">// nodes.</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> 
 
-            <span class="nx">n</span><span class="o">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; onload &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
-                <span class="nx">f</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">url</span><span class="o">);</span>
-            <span class="o">};</span>
+            <span class="nx">n</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; onload &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+                <span class="nx">f</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>
+            <span class="p">};</span>
 
-            <span class="nx">n</span><span class="o">.</span><span class="nx">onerror</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">_fail</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">e</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="o">);</span>
-            <span class="o">};</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
+            <span class="nx">n</span><span class="p">.</span><span class="nx">onerror</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">_fail</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">e</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">);</span>
+            <span class="p">};</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
 
-    <span class="k">return</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="p">{</span>
 
-        <span class="c">/**</span>
-<span class="c">         * The number of request required before an automatic purge.</span>
-<span class="c">         * Can be configured via the &#39;purgethreshold&#39; config</span>
-<span class="c">         * property PURGE_THRESH</span>
-<span class="c">         * @static</span>
-<span class="c">         * @type int</span>
-<span class="c">         * @default 20</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="nx">PURGE_THRESH</span><span class="o">:</span> <span class="m">20</span><span class="o">,</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The number of request required before an automatic purge.</span>
+<span class="cm">         * Can be configured via the &#39;purgethreshold&#39; config</span>
+<span class="cm">         * property PURGE_THRESH</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @type int</span>
+<span class="cm">         * @default 20</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">PURGE_THRESH</span><span class="o">:</span> <span class="mi">20</span><span class="p">,</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Called by the the helper for detecting script load in Safari</span>
-<span class="c">         * @method _finalize</span>
-<span class="c">         * @static</span>
-<span class="c">         * @param id {string} the transaction id</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="nx">_finalize</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; finalized &quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
-            <span class="c">// L.later(0, null, _finish, id);</span>
-<span class="c"></span>            <span class="nx">setTimeout</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="nx">_finish</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
-            <span class="o">},</span> <span class="m">0</span><span class="o">);</span>
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Called by the the helper for detecting script load in Safari</span>
+<span class="cm">         * @method _finalize</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @param id {string} the transaction id</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">_finalize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; finalized &quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+            <span class="c1">// L.later(0, null, _finish, id);</span>
+            <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">_finish</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+            <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="p">},</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Abort a transaction</span>
-<span class="c">         * @method abort</span>
-<span class="c">         * @static</span>
-<span class="c">         * @param o {string|object} Either the tId or the object returned from</span>
-<span class="c">         * script() or css()</span>
-<span class="c">         */</span>
-        <span class="nx">abort</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">?</span> <span class="nx">o</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">tId</span><span class="o">,</span>
-                <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Aborting &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;get&quot;</span><span class="o">);</span>
-                <span class="nx">q</span><span class="o">.</span><span class="nx">aborted</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">},</span> 
+        <span class="cm">/**</span>
+<span class="cm">         * Abort a transaction</span>
+<span class="cm">         * @method abort</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @param o {string|object} Either the tId or the object returned from</span>
+<span class="cm">         * script() or css()</span>
+<span class="cm">         */</span>
+        <span class="nx">abort</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">o</span><span class="p">))</span> <span class="o">?</span> <span class="nx">o</span> <span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">tId</span><span class="p">,</span>
+                <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Aborting &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+                <span class="nx">q</span><span class="p">.</span><span class="nx">aborted</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">},</span> 
 
-        <span class="c">/**</span>
-<span class="c">         * Fetches and inserts one or more script nodes into the head</span>
-<span class="c">         * of the current document or the document in a specified window.</span>
-<span class="c">         *</span>
-<span class="c">         * @method script</span>
-<span class="c">         * @static</span>
-<span class="c">         * @param url {string|string[]} the url or urls to the script(s)</span>
-<span class="c">         * @param opts {object} Options: </span>
-<span class="c">         * &lt;dl&gt;</span>
-<span class="c">         * &lt;dt&gt;onSuccess&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;</span>
-<span class="c">         * callback to execute when the script(s) are finished loading</span>
-<span class="c">         * The callback receives an object back with the following</span>
-<span class="c">         * data:</span>
-<span class="c">         * &lt;dl&gt;</span>
-<span class="c">         * &lt;dt&gt;win&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;the window the script(s) were inserted into&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;data&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;the data object passed in when the request was made&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;nodes&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;An array containing references to the nodes that were</span>
-<span class="c">         * inserted&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;purge&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;A function that, when executed, will remove the nodes</span>
-<span class="c">         * that were inserted&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;</span>
-<span class="c">         * &lt;/dl&gt;</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;onTimeout&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;</span>
-<span class="c">         * callback to execute when a timeout occurs.</span>
-<span class="c">         * The callback receives an object back with the following</span>
-<span class="c">         * data:</span>
-<span class="c">         * &lt;dl&gt;</span>
-<span class="c">         * &lt;dt&gt;win&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;the window the script(s) were inserted into&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;data&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;the data object passed in when the request was made&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;nodes&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;An array containing references to the nodes that were</span>
-<span class="c">         * inserted&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;purge&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;A function that, when executed, will remove the nodes</span>
-<span class="c">         * that were inserted&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;</span>
-<span class="c">         * &lt;/dl&gt;</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;onEnd&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;a function that executes when the transaction finishes, regardless of the exit path&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;onFailure&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;</span>
-<span class="c">         * callback to execute when the script load operation fails</span>
-<span class="c">         * The callback receives an object back with the following</span>
-<span class="c">         * data:</span>
-<span class="c">         * &lt;dl&gt;</span>
-<span class="c">         * &lt;dt&gt;win&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;the window the script(s) were inserted into&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;data&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;the data object passed in when the request was made&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;nodes&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;An array containing references to the nodes that were</span>
-<span class="c">         * inserted successfully&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;purge&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;A function that, when executed, will remove any nodes</span>
-<span class="c">         * that were inserted&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;</span>
-<span class="c">         * &lt;/dl&gt;</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;context&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;the execution context for the callbacks&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;win&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;a window other than the one the utility occupies&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;autopurge&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;</span>
-<span class="c">         * setting to true will let the utilities cleanup routine purge </span>
-<span class="c">         * the script once loaded</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;purgethreshold&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;</span>
-<span class="c">         * The number of transaction before autopurge should be initiated</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;data&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;</span>
-<span class="c">         * data that is supplied to the callback when the script(s) are</span>
-<span class="c">         * loaded.</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;insertBefore&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;node or node id that will become the new node&#39;s nextSibling&lt;/dd&gt;</span>
-<span class="c">         * &lt;/dl&gt;</span>
-<span class="c">         * &lt;dt&gt;charset&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;Node charset, default utf-8 (deprecated, use the attributes config)&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;attributes&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;An object literal containing additional attributes to add to the link tags&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;timeout&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;Number of milliseconds to wait before aborting and firing the timeout event&lt;/dd&gt;</span>
-<span class="c">         * &lt;pre&gt;</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;Y.Get.script(</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;[&quot;http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js&quot;,</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&quot;http://yui.yahooapis.com/2.5.2/build/event/event-min.js&quot;], &amp;#123;</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;onSuccess: function(o) &amp;#123;</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;this.log(&quot;won&#39;t cause error because Y is the context&quot;);</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Y.log(o.data); // foo</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Y.log(o.nodes.length === 2) // true</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// o.purge(); // optionally remove the script nodes immediately</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;#125;,</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;onFailure: function(o) &amp;#123;</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Y.log(&quot;transaction failed&quot;);</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;#125;,</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;onTimeout: function(o) &amp;#123;</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Y.log(&quot;transaction timed out&quot;);</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;#125;,</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;data: &quot;foo&quot;,</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;timeout: 10000, // 10 second timeout</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;context: Y, // make the YUI instance</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// win: otherframe // target another window/frame</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;autopurge: true // allow the utility to choose when to remove the nodes</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;purgetheshold: 1 // purge previous transaction before next transaction</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;#125;);</span>
-<span class="c">         * &lt;/pre&gt;</span>
-<span class="c">         * @return {tId: string} an object containing info about the transaction</span>
-<span class="c">         */</span>
-        <span class="nx">script</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span> 
-            <span class="k">return</span> <span class="nx">_queue</span><span class="o">(</span><span class="s2">&quot;script&quot;</span><span class="o">,</span> <span class="nx">url</span><span class="o">,</span> <span class="nx">opts</span><span class="o">);</span> 
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Fetches and inserts one or more script nodes into the head</span>
+<span class="cm">         * of the current document or the document in a specified window.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method script</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @param url {string|string[]} the url or urls to the script(s)</span>
+<span class="cm">         * @param opts {object} Options: </span>
+<span class="cm">         * &lt;dl&gt;</span>
+<span class="cm">         * &lt;dt&gt;onSuccess&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;</span>
+<span class="cm">         * callback to execute when the script(s) are finished loading</span>
+<span class="cm">         * The callback receives an object back with the following</span>
+<span class="cm">         * data:</span>
+<span class="cm">         * &lt;dl&gt;</span>
+<span class="cm">         * &lt;dt&gt;win&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;the window the script(s) were inserted into&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;data&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;the data object passed in when the request was made&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;nodes&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;An array containing references to the nodes that were</span>
+<span class="cm">         * inserted&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;purge&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;A function that, when executed, will remove the nodes</span>
+<span class="cm">         * that were inserted&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;</span>
+<span class="cm">         * &lt;/dl&gt;</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;onTimeout&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;</span>
+<span class="cm">         * callback to execute when a timeout occurs.</span>
+<span class="cm">         * The callback receives an object back with the following</span>
+<span class="cm">         * data:</span>
+<span class="cm">         * &lt;dl&gt;</span>
+<span class="cm">         * &lt;dt&gt;win&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;the window the script(s) were inserted into&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;data&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;the data object passed in when the request was made&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;nodes&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;An array containing references to the nodes that were</span>
+<span class="cm">         * inserted&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;purge&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;A function that, when executed, will remove the nodes</span>
+<span class="cm">         * that were inserted&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;</span>
+<span class="cm">         * &lt;/dl&gt;</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;onEnd&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;a function that executes when the transaction finishes, regardless of the exit path&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;onFailure&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;</span>
+<span class="cm">         * callback to execute when the script load operation fails</span>
+<span class="cm">         * The callback receives an object back with the following</span>
+<span class="cm">         * data:</span>
+<span class="cm">         * &lt;dl&gt;</span>
+<span class="cm">         * &lt;dt&gt;win&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;the window the script(s) were inserted into&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;data&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;the data object passed in when the request was made&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;nodes&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;An array containing references to the nodes that were</span>
+<span class="cm">         * inserted successfully&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;purge&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;A function that, when executed, will remove any nodes</span>
+<span class="cm">         * that were inserted&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;</span>
+<span class="cm">         * &lt;/dl&gt;</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;context&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;the execution context for the callbacks&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;win&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;a window other than the one the utility occupies&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;autopurge&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;</span>
+<span class="cm">         * setting to true will let the utilities cleanup routine purge </span>
+<span class="cm">         * the script once loaded</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;purgethreshold&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;</span>
+<span class="cm">         * The number of transaction before autopurge should be initiated</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;data&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;</span>
+<span class="cm">         * data that is supplied to the callback when the script(s) are</span>
+<span class="cm">         * loaded.</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;insertBefore&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;node or node id that will become the new node&#39;s nextSibling&lt;/dd&gt;</span>
+<span class="cm">         * &lt;/dl&gt;</span>
+<span class="cm">         * &lt;dt&gt;charset&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;Node charset, default utf-8 (deprecated, use the attributes config)&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;attributes&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;An object literal containing additional attributes to add to the link tags&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;timeout&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;Number of milliseconds to wait before aborting and firing the timeout event&lt;/dd&gt;</span>
+<span class="cm">         * &lt;pre&gt;</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;Y.Get.script(</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;[&quot;http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js&quot;,</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&quot;http://yui.yahooapis.com/2.5.2/build/event/event-min.js&quot;], &amp;#123;</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;onSuccess: function(o) &amp;#123;</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;this.log(&quot;won&#39;t cause error because Y is the context&quot;);</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Y.log(o.data); // foo</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Y.log(o.nodes.length === 2) // true</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// o.purge(); // optionally remove the script nodes immediately</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;#125;,</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;onFailure: function(o) &amp;#123;</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Y.log(&quot;transaction failed&quot;);</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;#125;,</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;onTimeout: function(o) &amp;#123;</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Y.log(&quot;transaction timed out&quot;);</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;#125;,</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;data: &quot;foo&quot;,</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;timeout: 10000, // 10 second timeout</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;context: Y, // make the YUI instance</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// win: otherframe // target another window/frame</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;autopurge: true // allow the utility to choose when to remove the nodes</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;purgetheshold: 1 // purge previous transaction before next transaction</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;#125;);</span>
+<span class="cm">         * &lt;/pre&gt;</span>
+<span class="cm">         * @return {tId: string} an object containing info about the transaction</span>
+<span class="cm">         */</span>
+        <span class="nx">script</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span> 
+            <span class="k">return</span> <span class="nx">_queue</span><span class="p">(</span><span class="s2">&quot;script&quot;</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">opts</span><span class="p">);</span> 
+        <span class="p">},</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Fetches and inserts one or more css link nodes into the </span>
-<span class="c">         * head of the current document or the document in a specified</span>
-<span class="c">         * window.</span>
-<span class="c">         * @method css</span>
-<span class="c">         * @static</span>
-<span class="c">         * @param url {string} the url or urls to the css file(s)</span>
-<span class="c">         * @param opts Options: </span>
-<span class="c">         * &lt;dl&gt;</span>
-<span class="c">         * &lt;dt&gt;onSuccess&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;</span>
-<span class="c">         * callback to execute when the css file(s) are finished loading</span>
-<span class="c">         * The callback receives an object back with the following</span>
-<span class="c">         * data:</span>
-<span class="c">         * &lt;dl&gt;win&lt;/dl&gt;</span>
-<span class="c">         * &lt;dd&gt;the window the link nodes(s) were inserted into&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;data&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;the data object passed in when the request was made&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;nodes&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;An array containing references to the nodes that were</span>
-<span class="c">         * inserted&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;purge&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;A function that, when executed, will remove the nodes</span>
-<span class="c">         * that were inserted&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;</span>
-<span class="c">         * &lt;/dl&gt;</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;context&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;the execution context for the callbacks&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;win&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;a window other than the one the utility occupies&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;data&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;</span>
-<span class="c">         * data that is supplied to the callbacks when the nodes(s) are</span>
-<span class="c">         * loaded.</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;insertBefore&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;node or node id that will become the new node&#39;s nextSibling&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;charset&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;Node charset, default utf-8 (deprecated, use the attributes config)&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;attributes&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;An object literal containing additional attributes to add to the link tags&lt;/dd&gt;</span>
-<span class="c">         * &lt;/dl&gt;</span>
-<span class="c">         * &lt;pre&gt;</span>
-<span class="c">         *      Y.Get.css(&quot;http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css&quot;);</span>
-<span class="c">         * &lt;/pre&gt;</span>
-<span class="c">         * &lt;pre&gt;</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;Y.Get.css(</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;[&quot;http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css&quot;,</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&quot;http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css&quot;], &amp;#123;</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;insertBefore: &#39;custom-styles&#39; // nodes will be inserted before the specified node</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;#125;);</span>
-<span class="c">         * &lt;/pre&gt;</span>
-<span class="c">         * @return {tId: string} an object containing info about the transaction</span>
-<span class="c">         */</span>
-        <span class="nx">css</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">_queue</span><span class="o">(</span><span class="s2">&quot;css&quot;</span><span class="o">,</span> <span class="nx">url</span><span class="o">,</span> <span class="nx">opts</span><span class="o">);</span> 
-        <span class="o">}</span>
-    <span class="o">};</span>
-<span class="o">}();</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Fetches and inserts one or more css link nodes into the </span>
+<span class="cm">         * head of the current document or the document in a specified</span>
+<span class="cm">         * window.</span>
+<span class="cm">         * @method css</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @param url {string} the url or urls to the css file(s)</span>
+<span class="cm">         * @param opts Options: </span>
+<span class="cm">         * &lt;dl&gt;</span>
+<span class="cm">         * &lt;dt&gt;onSuccess&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;</span>
+<span class="cm">         * callback to execute when the css file(s) are finished loading</span>
+<span class="cm">         * The callback receives an object back with the following</span>
+<span class="cm">         * data:</span>
+<span class="cm">         * &lt;dl&gt;win&lt;/dl&gt;</span>
+<span class="cm">         * &lt;dd&gt;the window the link nodes(s) were inserted into&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;data&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;the data object passed in when the request was made&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;nodes&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;An array containing references to the nodes that were</span>
+<span class="cm">         * inserted&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;purge&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;A function that, when executed, will remove the nodes</span>
+<span class="cm">         * that were inserted&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;</span>
+<span class="cm">         * &lt;/dl&gt;</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;context&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;the execution context for the callbacks&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;win&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;a window other than the one the utility occupies&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;data&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;</span>
+<span class="cm">         * data that is supplied to the callbacks when the nodes(s) are</span>
+<span class="cm">         * loaded.</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;insertBefore&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;node or node id that will become the new node&#39;s nextSibling&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;charset&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;Node charset, default utf-8 (deprecated, use the attributes config)&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;attributes&lt;/dt&gt;</span>
+<span class="cm">         * &lt;dd&gt;An object literal containing additional attributes to add to the link tags&lt;/dd&gt;</span>
+<span class="cm">         * &lt;/dl&gt;</span>
+<span class="cm">         * &lt;pre&gt;</span>
+<span class="cm">         *      Y.Get.css(&quot;http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css&quot;);</span>
+<span class="cm">         * &lt;/pre&gt;</span>
+<span class="cm">         * &lt;pre&gt;</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;Y.Get.css(</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;[&quot;http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css&quot;,</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&quot;http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css&quot;], &amp;#123;</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;insertBefore: &#39;custom-styles&#39; // nodes will be inserted before the specified node</span>
+<span class="cm">         * &amp;nbsp;&amp;nbsp;&amp;#125;);</span>
+<span class="cm">         * &lt;/pre&gt;</span>
+<span class="cm">         * @return {tId: string} an object containing info about the transaction</span>
+<span class="cm">         */</span>
+        <span class="nx">css</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">_queue</span><span class="p">(</span><span class="s2">&quot;css&quot;</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">opts</span><span class="p">);</span> 
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">}();</span>
 
-<span class="o">})();</span>
+<span class="p">})();</span>
 </pre></div>
 
                     </div>

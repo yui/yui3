@@ -47,97 +47,97 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">methods</span> <span class="o">=</span> <span class="o">[</span>
-    <span class="c">/**</span>
-<span class="c">     * Determines whether each node has the given className.</span>
-<span class="c">     * @method hasClass</span>
-<span class="c">     * @for Node</span>
-<span class="c">     * @param {String} className the class name to search for</span>
-<span class="c">     * @return {Array} An array of booleans for each node bound to the NodeList. </span>
-<span class="c">     */</span>
-     <span class="s1">&#39;hasClass&#39;</span><span class="o">,</span>
+                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">methods</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Determines whether each node has the given className.</span>
+<span class="cm">     * @method hasClass</span>
+<span class="cm">     * @for Node</span>
+<span class="cm">     * @param {String} className the class name to search for</span>
+<span class="cm">     * @return {Array} An array of booleans for each node bound to the NodeList. </span>
+<span class="cm">     */</span>
+     <span class="s1">&#39;hasClass&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Adds a class name to each node.</span>
-<span class="c">     * @method addClass         </span>
-<span class="c">     * @param {String} className the class name to add to the node&#39;s class attribute</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-     <span class="s1">&#39;addClass&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Adds a class name to each node.</span>
+<span class="cm">     * @method addClass         </span>
+<span class="cm">     * @param {String} className the class name to add to the node&#39;s class attribute</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+     <span class="s1">&#39;addClass&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Removes a class name from each node.</span>
-<span class="c">     * @method removeClass         </span>
-<span class="c">     * @param {String} className the class name to remove from the node&#39;s class attribute</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-     <span class="s1">&#39;removeClass&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Removes a class name from each node.</span>
+<span class="cm">     * @method removeClass         </span>
+<span class="cm">     * @param {String} className the class name to remove from the node&#39;s class attribute</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+     <span class="s1">&#39;removeClass&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Replace a class with another class for each node.</span>
-<span class="c">     * If no oldClassName is present, the newClassName is simply added.</span>
-<span class="c">     * @method replaceClass  </span>
-<span class="c">     * @param {String} oldClassName the class name to be replaced</span>
-<span class="c">     * @param {String} newClassName the class name that will be replacing the old class name</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-     <span class="s1">&#39;replaceClass&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Replace a class with another class for each node.</span>
+<span class="cm">     * If no oldClassName is present, the newClassName is simply added.</span>
+<span class="cm">     * @method replaceClass  </span>
+<span class="cm">     * @param {String} oldClassName the class name to be replaced</span>
+<span class="cm">     * @param {String} newClassName the class name that will be replacing the old class name</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+     <span class="s1">&#39;replaceClass&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * If the className exists on the node it is removed, if it doesn&#39;t exist it is added.</span>
-<span class="c">     * @method toggleClass  </span>
-<span class="c">     * @param {String} className the class name to be toggled</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
+    <span class="cm">/**</span>
+<span class="cm">     * If the className exists on the node it is removed, if it doesn&#39;t exist it is added.</span>
+<span class="cm">     * @method toggleClass  </span>
+<span class="cm">     * @param {String} className the class name to be toggled</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
      <span class="s1">&#39;toggleClass&#39;</span>
-    <span class="o">];</span>
+    <span class="p">];</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="nx">methods</span><span class="o">);</span>
-    <span class="c">/**</span>
-<span class="c">     * Determines whether each node has the given className.</span>
-<span class="c">     * @method hasClass</span>
-<span class="c">     * @see Node.hasClass</span>
-<span class="c">     * @for NodeList</span>
-<span class="c">     * @param {String} className the class name to search for</span>
-<span class="c">     * @return {Array} An array of booleans for each node bound to the NodeList. </span>
-<span class="c">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">importMethod</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="nx">methods</span><span class="p">);</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Determines whether each node has the given className.</span>
+<span class="cm">     * @method hasClass</span>
+<span class="cm">     * @see Node.hasClass</span>
+<span class="cm">     * @for NodeList</span>
+<span class="cm">     * @param {String} className the class name to search for</span>
+<span class="cm">     * @return {Array} An array of booleans for each node bound to the NodeList. </span>
+<span class="cm">     */</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Adds a class name to each node.</span>
-<span class="c">     * @method addClass         </span>
-<span class="c">     * @see Node.addClass</span>
-<span class="c">     * @param {String} className the class name to add to the node&#39;s class attribute</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Adds a class name to each node.</span>
+<span class="cm">     * @method addClass         </span>
+<span class="cm">     * @see Node.addClass</span>
+<span class="cm">     * @param {String} className the class name to add to the node&#39;s class attribute</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Removes a class name from each node.</span>
-<span class="c">     * @method removeClass         </span>
-<span class="c">     * @see Node.removeClass</span>
-<span class="c">     * @param {String} className the class name to remove from the node&#39;s class attribute</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Removes a class name from each node.</span>
+<span class="cm">     * @method removeClass         </span>
+<span class="cm">     * @see Node.removeClass</span>
+<span class="cm">     * @param {String} className the class name to remove from the node&#39;s class attribute</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Replace a class with another class for each node.</span>
-<span class="c">     * If no oldClassName is present, the newClassName is simply added.</span>
-<span class="c">     * @method replaceClass  </span>
-<span class="c">     * @see Node.replaceClass</span>
-<span class="c">     * @param {String} oldClassName the class name to be replaced</span>
-<span class="c">     * @param {String} newClassName the class name that will be replacing the old class name</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Replace a class with another class for each node.</span>
+<span class="cm">     * If no oldClassName is present, the newClassName is simply added.</span>
+<span class="cm">     * @method replaceClass  </span>
+<span class="cm">     * @see Node.replaceClass</span>
+<span class="cm">     * @param {String} oldClassName the class name to be replaced</span>
+<span class="cm">     * @param {String} newClassName the class name that will be replacing the old class name</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
 
-    <span class="c">/**</span>
-<span class="c">     * If the className exists on the node it is removed, if it doesn&#39;t exist it is added.</span>
-<span class="c">     * @method toggleClass  </span>
-<span class="c">     * @see Node.toggleClass</span>
-<span class="c">     * @param {String} className the class name to be toggled</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">methods</span><span class="o">);</span>
-<span class="o">})(</span><span class="nx">Y</span><span class="o">);</span>
+    <span class="cm">/**</span>
+<span class="cm">     * If the className exists on the node it is removed, if it doesn&#39;t exist it is added.</span>
+<span class="cm">     * @method toggleClass  </span>
+<span class="cm">     * @see Node.toggleClass</span>
+<span class="cm">     * @param {String} className the class name to be toggled</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">.</span><span class="nx">importMethod</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">methods</span><span class="p">);</span>
+<span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>
 </pre></div>
 
                     </div>

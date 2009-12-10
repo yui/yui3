@@ -47,79 +47,79 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The YUI module contains the components required for building the YUI seed file.</span>
-<span class="c"> * This includes the script loading mechanism, a simple queue, and the core utilities for the library.</span>
-<span class="c"> * @module yui</span>
-<span class="c"> * @submodule yui-base</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The YUI module contains the components required for building the YUI seed file.</span>
+<span class="cm"> * This includes the script loading mechanism, a simple queue, and the core utilities for the library.</span>
+<span class="cm"> * @module yui</span>
+<span class="cm"> * @submodule yui-base</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and</span>
-<span class="c"> * removed using next().</span>
-<span class="c"> *</span>
-<span class="c"> * @class Queue</span>
-<span class="c"> * @param item* {MIXED} 0..n items to seed the queue</span>
-<span class="c"> */</span>
-<span class="k">function</span> <span class="nx">Queue</span><span class="o">()</span> <span class="o">{</span>
-    <span class="k">this</span><span class="o">.</span><span class="nx">_init</span><span class="o">();</span>
-    <span class="k">this</span><span class="o">.</span><span class="nx">add</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-<span class="o">}</span>
+<span class="cm">/**</span>
+<span class="cm"> * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and</span>
+<span class="cm"> * removed using next().</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class Queue</span>
+<span class="cm"> * @param item* {MIXED} 0..n items to seed the queue</span>
+<span class="cm"> */</span>
+<span class="kd">function</span> <span class="nx">Queue</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">}</span>
 
-<span class="nx">Queue</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Initialize the queue</span>
-<span class="c">     *</span>
-<span class="c">     * @method _init</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_init</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="c">/**</span>
-<span class="c">         * The collection of enqueued items</span>
-<span class="c">         *</span>
-<span class="c">         * @property _q</span>
-<span class="c">         * @type {Array}</span>
-<span class="c">         * @protected</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_q</span> <span class="o">=</span> <span class="o">[];</span>
-    <span class="o">},</span>
+<span class="nx">Queue</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Initialize the queue</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _init</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_init</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The collection of enqueued items</span>
+<span class="cm">         *</span>
+<span class="cm">         * @property _q</span>
+<span class="cm">         * @type {Array}</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_q</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Get the next item in the queue.</span>
-<span class="c">     *</span>
-<span class="c">     * @method next</span>
-<span class="c">     * @return {MIXED} the next item in the queue</span>
-<span class="c">     */</span>
-    <span class="nx">next</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Get the next item in the queue.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method next</span>
+<span class="cm">     * @return {MIXED} the next item in the queue</span>
+<span class="cm">     */</span>
+    <span class="nx">next</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Add 0..n items to the end of the queue</span>
-<span class="c">     *</span>
-<span class="c">     * @method add</span>
-<span class="c">     * @param item* {MIXED} 0..n items</span>
-<span class="c">     */</span>
-    <span class="nx">add</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="kc">true</span><span class="o">),</span><span class="k">function</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">fn</span><span class="o">);</span>
-        <span class="o">},</span><span class="k">this</span><span class="o">);</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Add 0..n items to the end of the queue</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method add</span>
+<span class="cm">     * @param item* {MIXED} 0..n items</span>
+<span class="cm">     */</span>
+    <span class="nx">add</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="kc">true</span><span class="p">),</span><span class="kd">function</span> <span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
+        <span class="p">},</span><span class="k">this</span><span class="p">);</span>
 
-        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Returns the current number of queued items</span>
-<span class="c">     *</span>
-<span class="c">     * @method size</span>
-<span class="c">     * @return {Number}</span>
-<span class="c">     */</span>
-    <span class="nx">size</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the current number of queued items</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method size</span>
+<span class="cm">     * @return {Number}</span>
+<span class="cm">     */</span>
+    <span class="nx">size</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Queue</span> <span class="o">=</span> <span class="nx">Queue</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Queue</span> <span class="o">=</span> <span class="nx">Queue</span><span class="p">;</span>
 </pre></div>
 
                     </div>

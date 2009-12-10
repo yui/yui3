@@ -47,284 +47,284 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>   <span class="c">/**</span>
-<span class="c">   	* Extends the IO base class to enable file uploads, with HTML forms,</span>
-<span class="c">   	* using an iframe as the transport medium.</span>
-<span class="c">	* @module io</span>
-<span class="c">	* @submodule io-upload-iframe</span>
-<span class="c">	*/</span>
+                        <div class="highlight"><pre>   <span class="cm">/**</span>
+<span class="cm">   	* Extends the IO base class to enable file uploads, with HTML forms,</span>
+<span class="cm">   	* using an iframe as the transport medium.</span>
+<span class="cm">	* @module io</span>
+<span class="cm">	* @submodule io-upload-iframe</span>
+<span class="cm">	*/</span>
 
-	<span class="k">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
-   <span class="c">/**</span>
-<span class="c">	* @description Parses the POST data object and creates hidden form elements</span>
-<span class="c">	* for each key-value, and appends them to the HTML form object.</span>
-<span class="c">	* @method appendData</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {object} f HTML form object.</span>
-<span class="c">	* @param {string} s The key-value POST data.</span>
-<span class="c">	* @return {array} e Array of created fields.</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_addData</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">[],</span>
-			<span class="nx">m</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;=&#39;</span><span class="o">),</span>
-			<span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">;</span>
+	<span class="kd">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Parses the POST data object and creates hidden form elements</span>
+<span class="cm">	* for each key-value, and appends them to the HTML form object.</span>
+<span class="cm">	* @method appendData</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {object} f HTML form object.</span>
+<span class="cm">	* @param {string} s The key-value POST data.</span>
+<span class="cm">	* @return {array} e Array of created fields.</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_addData</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">[],</span>
+			<span class="nx">m</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">),</span>
+			<span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">;</span>
 
-		<span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-			<span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s1">&#39;input&#39;</span><span class="o">);</span>
-			<span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;hidden&#39;</span><span class="o">;</span>
-			<span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">substring</span><span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="s1">&#39;&amp;&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="m">1</span><span class="o">);</span>
-			<span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">value</span> <span class="o">=</span> <span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span> <span class="o">===</span> <span class="nx">l</span><span class="o">)</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">]</span> <span class="o">:</span> <span class="nx">m</span><span class="o">[</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">].</span><span class="nx">substring</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="o">(</span><span class="nx">m</span><span class="o">[</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">].</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="s1">&#39;&amp;&#39;</span><span class="o">)));</span>
-			<span class="nx">f</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;key: &#39;</span> <span class="o">+</span>  <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; and value: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">value</span> <span class="o">+</span> <span class="s1">&#39; added as form data.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-		<span class="o">}</span>
+		<span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">);</span>
+			<span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;hidden&#39;</span><span class="p">;</span>
+			<span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">m</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">substring</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+			<span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">value</span> <span class="o">=</span> <span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">===</span> <span class="nx">l</span><span class="p">)</span> <span class="o">?</span> <span class="nx">m</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="nx">m</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">].</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">].</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">)));</span>
+			<span class="nx">f</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;key: &#39;</span> <span class="o">+</span>  <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; and value: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">value</span> <span class="o">+</span> <span class="s1">&#39; added as form data.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+		<span class="p">}</span>
 
-		<span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
-	<span class="o">}</span>
+		<span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Removes the custom fields created to pass additional POST</span>
-<span class="c">	* data, along with the HTML form fields.</span>
-<span class="c">	* @method f</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {object} f HTML form object.</span>
-<span class="c">	* @param {object} o HTML form fields created from configuration.data.</span>
-<span class="c">	* @return {void}</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_removeData</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Removes the custom fields created to pass additional POST</span>
+<span class="cm">	* data, along with the HTML form fields.</span>
+<span class="cm">	* @method f</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {object} f HTML form object.</span>
+<span class="cm">	* @param {object} o HTML form fields created from configuration.data.</span>
+<span class="cm">	* @return {void}</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_removeData</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">;</span>
 
-		<span class="k">for</span><span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++){</span>
-			<span class="nx">f</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-		<span class="o">}</span>
-	<span class="o">}</span>
+		<span class="k">for</span><span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+			<span class="nx">f</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Sets the appropriate attributes and values to the HTML</span>
-<span class="c">	* form, in preparation of a file upload transaction.</span>
-<span class="c">	* @method _setAttrs</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {object} f HTML form object.</span>
-<span class="c">	* @param {object} id The Transaction ID.</span>
-<span class="c">	* @param {object} uri Qualified path to transaction resource.</span>
-<span class="c">	* @return {void}</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_setAttrs</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">uri</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">ie8</span> <span class="o">=</span> <span class="o">(</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentMode</span> <span class="o">&amp;&amp;</span> <span class="nb">document</span><span class="o">.</span><span class="nx">documentMode</span> <span class="o">===</span> <span class="m">8</span><span class="o">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Sets the appropriate attributes and values to the HTML</span>
+<span class="cm">	* form, in preparation of a file upload transaction.</span>
+<span class="cm">	* @method _setAttrs</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {object} f HTML form object.</span>
+<span class="cm">	* @param {object} id The Transaction ID.</span>
+<span class="cm">	* @param {object} uri Qualified path to transaction resource.</span>
+<span class="cm">	* @return {void}</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_setAttrs</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">uri</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">ie8</span> <span class="o">=</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">documentMode</span> <span class="o">&amp;&amp;</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentMode</span> <span class="o">===</span> <span class="mi">8</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
 
-		<span class="nx">f</span><span class="o">.</span><span class="nx">setAttribute</span><span class="o">(</span><span class="s1">&#39;action&#39;</span><span class="o">,</span> <span class="nx">uri</span><span class="o">);</span>
-		<span class="nx">f</span><span class="o">.</span><span class="nx">setAttribute</span><span class="o">(</span><span class="s1">&#39;method&#39;</span><span class="o">,</span> <span class="s1">&#39;POST&#39;</span><span class="o">);</span>
-		<span class="nx">f</span><span class="o">.</span><span class="nx">setAttribute</span><span class="o">(</span><span class="s1">&#39;target&#39;</span><span class="o">,</span> <span class="s1">&#39;ioupload&#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">);</span>
-		<span class="nx">f</span><span class="o">.</span><span class="nx">setAttribute</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">ie8</span> <span class="o">?</span> <span class="s1">&#39;encoding&#39;</span> <span class="o">:</span> <span class="s1">&#39;enctype&#39;</span><span class="o">,</span> <span class="s1">&#39;multipart/form-data&#39;</span><span class="o">);</span>
-	<span class="o">}</span>
+		<span class="nx">f</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">,</span> <span class="nx">uri</span><span class="p">);</span>
+		<span class="nx">f</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">);</span>
+		<span class="nx">f</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;ioupload&#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="p">);</span>
+		<span class="nx">f</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">ie8</span> <span class="o">?</span> <span class="s1">&#39;encoding&#39;</span> <span class="o">:</span> <span class="s1">&#39;enctype&#39;</span><span class="p">,</span> <span class="s1">&#39;multipart/form-data&#39;</span><span class="p">);</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Sets the appropriate attributes and values to the HTML</span>
-<span class="c">	* form, in preparation of a file upload transaction.</span>
-<span class="c">	* @method _resetAttrs</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {object} f HTML form object.</span>
-<span class="c">	* @param {object} a Object of original attributes.</span>
-<span class="c">	* @return {void}</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_resetAttrs</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">a</span><span class="o">){</span>
-		<span class="k">var</span> <span class="nx">p</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Sets the appropriate attributes and values to the HTML</span>
+<span class="cm">	* form, in preparation of a file upload transaction.</span>
+<span class="cm">	* @method _resetAttrs</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {object} f HTML form object.</span>
+<span class="cm">	* @param {object} a Object of original attributes.</span>
+<span class="cm">	* @return {void}</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_resetAttrs</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">a</span><span class="p">){</span>
+		<span class="kd">var</span> <span class="nx">p</span><span class="p">;</span>
 
-		<span class="k">for</span> <span class="o">(</span><span class="nx">p</span> <span class="k">in</span> <span class="nx">a</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">if</span> <span class="o">(</span><span class="nx">a</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">p</span><span class="o">))</span> <span class="o">{</span>
-				<span class="k">if</span> <span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="nx">p</span><span class="o">])</span> <span class="o">{</span>
-					<span class="nx">f</span><span class="o">.</span><span class="nx">setAttribute</span><span class="o">(</span><span class="nx">p</span><span class="o">,</span> <span class="nx">f</span><span class="o">[</span><span class="nx">p</span><span class="o">]);</span>
-				<span class="o">}</span>
-				<span class="k">else</span> <span class="o">{</span>
-					<span class="nx">f</span><span class="o">.</span><span class="nx">removeAttribute</span><span class="o">(</span><span class="nx">p</span><span class="o">);</span>
-				<span class="o">}</span>
-			<span class="o">}</span>
-		<span class="o">}</span>
-	<span class="o">}</span>
+		<span class="k">for</span> <span class="p">(</span><span class="nx">p</span> <span class="k">in</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">p</span><span class="p">))</span> <span class="p">{</span>
+				<span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">p</span><span class="p">])</span> <span class="p">{</span>
+					<span class="nx">f</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">f</span><span class="p">[</span><span class="nx">p</span><span class="p">]);</span>
+				<span class="p">}</span>
+				<span class="k">else</span> <span class="p">{</span>
+					<span class="nx">f</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="nx">p</span><span class="p">);</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Creates the iframe transported used in file upload</span>
-<span class="c">	* transactions, and binds the response event handler.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _create</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">    * @param {object} o Transaction object generated by _create().</span>
-<span class="c">    * @param {object} c Configuration object passed to YUI.io().</span>
-<span class="c">    * @return {void}</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_create</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;iframe id=&quot;ioupload&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;&quot; name=&quot;ioupload&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;&quot; /&gt;&#39;</span><span class="o">);</span>
-			<span class="nx">i</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s1">&#39;absolute&#39;</span><span class="o">;</span>
-			<span class="nx">i</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">top</span> <span class="o">=</span> <span class="s1">&#39;-1000px&#39;</span><span class="o">;</span>
-			<span class="nx">i</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">left</span> <span class="o">=</span> <span class="s1">&#39;-1000px&#39;</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Creates the iframe transported used in file upload</span>
+<span class="cm">	* transactions, and binds the response event handler.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _create</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">    * @param {object} o Transaction object generated by _create().</span>
+<span class="cm">    * @param {object} c Configuration object passed to YUI.io().</span>
+<span class="cm">    * @return {void}</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_create</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;iframe id=&quot;ioupload&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;&quot; name=&quot;ioupload&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;&quot; /&gt;&#39;</span><span class="p">);</span>
+			<span class="nx">i</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s1">&#39;absolute&#39;</span><span class="p">;</span>
+			<span class="nx">i</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="s1">&#39;-1000px&#39;</span><span class="p">;</span>
+			<span class="nx">i</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="s1">&#39;-1000px&#39;</span><span class="p">;</span>
 
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="s1">&#39;body&#39;</span><span class="o">).</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">i</span><span class="o">);</span>
-		<span class="c">// Bind the onload handler to the iframe to detect the file upload response.</span>
-<span class="c"></span>		<span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;load&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="nx">_handle</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">},</span> <span class="s1">&#39;#ioupload&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
-	<span class="o">}</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+		<span class="c1">// Bind the onload handler to the iframe to detect the file upload response.</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">_handle</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">},</span> <span class="s1">&#39;#ioupload&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Bound to the iframe&#39;s Load event and processes</span>
-<span class="c">	* the response data.</span>
-<span class="c">	* @method _handle</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {o} o The transaction object</span>
-<span class="c">	* @param {object} c Configuration object for the transaction.</span>
-<span class="c">	* @return {void}</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_handle</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="s1">&#39;#ioupload&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;contentWindow.document&#39;</span><span class="o">),</span>
-			<span class="nx">b</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="s1">&#39;body&#39;</span><span class="o">),</span>
-			<span class="nx">xml</span> <span class="o">=</span> <span class="o">(</span><span class="nx">d</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span><span class="o">),</span>
-			<span class="nx">p</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Bound to the iframe&#39;s Load event and processes</span>
+<span class="cm">	* the response data.</span>
+<span class="cm">	* @method _handle</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {o} o The transaction object</span>
+<span class="cm">	* @param {object} c Configuration object for the transaction.</span>
+<span class="cm">	* @return {void}</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_handle</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;#ioupload&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentWindow.document&#39;</span><span class="p">),</span>
+			<span class="nx">b</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">),</span>
+			<span class="nx">xml</span> <span class="o">=</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="mi">9</span><span class="p">),</span>
+			<span class="nx">p</span><span class="p">;</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">_clearTimeout</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
-		<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">_clearTimeout</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+		<span class="p">}</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">b</span><span class="o">)</span> <span class="o">{</span>
-			<span class="c">// When a response Content-Type of &quot;text/plain&quot; is used, Firefox and Safari</span>
-<span class="c"></span>			<span class="c">// will wrap the response string with &lt;pre&gt;&lt;/pre&gt;.</span>
-<span class="c"></span>			<span class="nx">p</span> <span class="o">=</span> <span class="nx">b</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="s1">&#39;pre:first-child&#39;</span><span class="o">);</span>
-			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseText</span> <span class="o">=</span> <span class="nx">p</span> <span class="o">?</span> <span class="nx">p</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="o">)</span> <span class="o">:</span> <span class="nx">b</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="o">);</span>
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;The responseText value for transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; is: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseText</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-		<span class="o">}</span>
-		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">xml</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseXML</span> <span class="o">=</span>  <span class="nx">d</span><span class="o">.</span><span class="nx">_node</span><span class="o">;</span>
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;The response for transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; is an XML document.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-		<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+			<span class="c1">// When a response Content-Type of &quot;text/plain&quot; is used, Firefox and Safari</span>
+			<span class="c1">// will wrap the response string with &lt;pre&gt;&lt;/pre&gt;.</span>
+			<span class="nx">p</span> <span class="o">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;pre:first-child&#39;</span><span class="p">);</span>
+			<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">responseText</span> <span class="o">=</span> <span class="nx">p</span> <span class="o">?</span> <span class="nx">p</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nx">b</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">);</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;The responseText value for transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; is: &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">responseText</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">xml</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">responseXML</span> <span class="o">=</span>  <span class="nx">d</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;The response for transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; is an XML document.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+		<span class="p">}</span>
 
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">complete</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">end</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-		<span class="c">// The transaction is complete, so call _destroy to remove</span>
-<span class="c"></span>		<span class="c">// the event listener bound to the iframe transport, and then</span>
-<span class="c"></span>		<span class="c">// destroy the iframe.</span>
-<span class="c"></span>		<span class="nx">w</span><span class="o">.</span><span class="nx">setTimeout</span><span class="o">(</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="nx">_destroy</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span> <span class="o">},</span> <span class="m">0</span><span class="o">);</span>
-	<span class="o">}</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">complete</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+		<span class="c1">// The transaction is complete, so call _destroy to remove</span>
+		<span class="c1">// the event listener bound to the iframe transport, and then</span>
+		<span class="c1">// destroy the iframe.</span>
+		<span class="nx">w</span><span class="p">.</span><span class="nx">setTimeout</span><span class="p">(</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">_destroy</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span> <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Starts timeout count if the configuration object</span>
-<span class="c">	* has a defined timeout property.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _startTimeout</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">    * @param {object} o Transaction object generated by _create().</span>
-<span class="c">    * @param {object} c Configuration object passed to YUI.io().</span>
-<span class="c">    * @return {void}</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_startTimeout</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_timeout</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">w</span><span class="o">.</span><span class="nx">setTimeout</span><span class="o">(</span>
-			<span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-				<span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">status</span><span class="o">:</span> <span class="s1">&#39;timeout&#39;</span> <span class="o">};</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Starts timeout count if the configuration object</span>
+<span class="cm">	* has a defined timeout property.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _startTimeout</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">    * @param {object} o Transaction object generated by _create().</span>
+<span class="cm">    * @param {object} c Configuration object passed to YUI.io().</span>
+<span class="cm">    * @return {void}</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_startTimeout</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">_timeout</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">setTimeout</span><span class="p">(</span>
+			<span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">status</span><span class="o">:</span> <span class="s1">&#39;timeout&#39;</span> <span class="p">};</span>
 
-				<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">complete</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-				<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">end</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-				<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; timeout.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-			<span class="o">},</span> <span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span><span class="o">);</span>
-	<span class="o">}</span>
+				<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">complete</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+				<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+				<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; timeout.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+			<span class="p">},</span> <span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span><span class="p">);</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Clears the timeout interval started by _startTimeout().</span>
-<span class="c">	* @method _clearTimeout</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">    * @param {number} id - Transaction ID.</span>
-<span class="c">    * @return {void}</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_clearTimeout</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-		<span class="nx">w</span><span class="o">.</span><span class="nx">clearTimeout</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_timeout</span><span class="o">[</span><span class="nx">id</span><span class="o">]);</span>
-		<span class="nx">delete</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_timeout</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
-	<span class="o">}</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Clears the timeout interval started by _startTimeout().</span>
+<span class="cm">	* @method _clearTimeout</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">    * @param {number} id - Transaction ID.</span>
+<span class="cm">    * @return {void}</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_clearTimeout</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">w</span><span class="p">.</span><span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">_timeout</span><span class="p">[</span><span class="nx">id</span><span class="p">]);</span>
+		<span class="k">delete</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">_timeout</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description</span>
-<span class="c">	* @method _destroy</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {o} o The transaction object</span>
-<span class="c">	* @param {object} uri Qualified path to transaction resource.</span>
-<span class="c">	* @param {object} c Configuration object for the transaction.</span>
-<span class="c">	* @return {void}</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_destroy</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">purgeElement</span><span class="o">(</span><span class="s1">&#39;#ioupload&#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="s1">&#39;body&#39;</span><span class="o">).</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="s1">&#39;#ioupload&#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">));</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;The iframe transport for transaction &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; has been destroyed.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-	<span class="o">}</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description</span>
+<span class="cm">	* @method _destroy</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {o} o The transaction object</span>
+<span class="cm">	* @param {object} uri Qualified path to transaction resource.</span>
+<span class="cm">	* @param {object} c Configuration object for the transaction.</span>
+<span class="cm">	* @return {void}</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_destroy</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">purgeElement</span><span class="p">(</span><span class="s1">&#39;#ioupload&#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;#ioupload&#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">));</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;The iframe transport for transaction &#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; has been destroyed.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+	<span class="p">}</span>
 
-	<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">,</span> <span class="o">{</span>
-	   <span class="c">/**</span>
-<span class="c">		* @description Uploads HTML form data, inclusive of files/attachments,</span>
-<span class="c">		* using the iframe created in _create to facilitate the transaction.</span>
-<span class="c">		* @method _upload</span>
-<span class="c">		* @private</span>
-<span class="c">		* @static</span>
-<span class="c">		* @param {o} o The transaction object</span>
-<span class="c">		* @param {object} uri Qualified path to transaction resource.</span>
-<span class="c">		* @param {object} c Configuration object for the transaction.</span>
-<span class="c">		* @return {void}</span>
-<span class="c">		*/</span>
-		<span class="nx">_upload</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">c</span><span class="o">.</span><span class="nx">form</span><span class="o">.</span><span class="nx">id</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">form</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">:</span> <span class="nx">c</span><span class="o">.</span><span class="nx">form</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span>
-				<span class="nx">fields</span><span class="o">,</span>
-				<span class="c">// Track original HTML form attribute values.</span>
-<span class="c"></span>				<span class="nx">attr</span> <span class="o">=</span> <span class="o">{</span>
-					<span class="nx">action</span><span class="o">:</span> <span class="nx">f</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="s1">&#39;action&#39;</span><span class="o">),</span>
-					<span class="nx">target</span><span class="o">:</span> <span class="nx">f</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="s1">&#39;target&#39;</span><span class="o">)</span>
-				<span class="o">};</span>
+	<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">,</span> <span class="p">{</span>
+	   <span class="cm">/**</span>
+<span class="cm">		* @description Uploads HTML form data, inclusive of files/attachments,</span>
+<span class="cm">		* using the iframe created in _create to facilitate the transaction.</span>
+<span class="cm">		* @method _upload</span>
+<span class="cm">		* @private</span>
+<span class="cm">		* @static</span>
+<span class="cm">		* @param {o} o The transaction object</span>
+<span class="cm">		* @param {object} uri Qualified path to transaction resource.</span>
+<span class="cm">		* @param {object} c Configuration object for the transaction.</span>
+<span class="cm">		* @return {void}</span>
+<span class="cm">		*/</span>
+		<span class="nx">_upload</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">uri</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">c</span><span class="p">.</span><span class="nx">form</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">form</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="o">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">form</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+				<span class="nx">fields</span><span class="p">,</span>
+				<span class="c1">// Track original HTML form attribute values.</span>
+				<span class="nx">attr</span> <span class="o">=</span> <span class="p">{</span>
+					<span class="nx">action</span><span class="o">:</span> <span class="nx">f</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">),</span>
+					<span class="nx">target</span><span class="o">:</span> <span class="nx">f</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">)</span>
+				<span class="p">};</span>
 
-			<span class="nx">_create</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-			<span class="c">// Initialize the HTML form properties in case they are</span>
-<span class="c"></span>			<span class="c">// not defined in the HTML form.</span>
-<span class="c"></span>			<span class="nx">_setAttrs</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">uri</span><span class="o">);</span>
-			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">fields</span> <span class="o">=</span> <span class="nx">_addData</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">.</span><span class="nx">data</span><span class="o">);</span>
-			<span class="o">}</span>
+			<span class="nx">_create</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+			<span class="c1">// Initialize the HTML form properties in case they are</span>
+			<span class="c1">// not defined in the HTML form.</span>
+			<span class="nx">_setAttrs</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">uri</span><span class="p">);</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">fields</span> <span class="o">=</span> <span class="nx">_addData</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+			<span class="p">}</span>
 
-			<span class="c">// Start polling if a callback is present and the timeout</span>
-<span class="c"></span>			<span class="c">// property has been defined.</span>
-<span class="c"></span>			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">_startTimeout</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-        		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction timeout started for transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-			<span class="o">}</span>
+			<span class="c1">// Start polling if a callback is present and the timeout</span>
+			<span class="c1">// property has been defined.</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">_startTimeout</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+        		<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Transaction timeout started for transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+			<span class="p">}</span>
 
-			<span class="c">// Start file upload.</span>
-<span class="c"></span>			<span class="nx">f</span><span class="o">.</span><span class="nx">submit</span><span class="o">();</span>
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">start</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">_removeData</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">fields</span><span class="o">);</span>
-			<span class="o">}</span>
-			<span class="c">// Restore HTML form attributes to their original values.</span>
-<span class="c"></span>			<span class="nx">_resetAttrs</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">attr</span><span class="o">);</span>
+			<span class="c1">// Start file upload.</span>
+			<span class="nx">f</span><span class="p">.</span><span class="nx">submit</span><span class="p">();</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">start</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">_removeData</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">fields</span><span class="p">);</span>
+			<span class="p">}</span>
+			<span class="c1">// Restore HTML form attributes to their original values.</span>
+			<span class="nx">_resetAttrs</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">attr</span><span class="p">);</span>
 
-			<span class="k">return</span> <span class="o">{</span>
-				<span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span>
-				<span class="nx">abort</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-					<span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">status</span><span class="o">:</span> <span class="s1">&#39;abort&#39;</span> <span class="o">};</span>
+			<span class="k">return</span> <span class="p">{</span>
+				<span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+				<span class="nx">abort</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+					<span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">status</span><span class="o">:</span> <span class="s1">&#39;abort&#39;</span> <span class="p">};</span>
 
-					<span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="s1">&#39;#ioupload&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">))</span> <span class="o">{</span>
-						<span class="nx">_destroy</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
-						<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">complete</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-						<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">end</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-        				<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; aborted.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-					<span class="o">}</span>
-					<span class="k">else</span> <span class="o">{</span>
-        				<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attempted to abort transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; but transaction has completed.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-						<span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-					<span class="o">}</span>
-				<span class="o">},</span>
-				<span class="nx">isInProgress</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-					<span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="s1">&#39;#ioupload&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
-				<span class="o">}</span>
-			<span class="o">}</span>
-		<span class="o">}</span>
-	<span class="o">});</span>
+					<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;#ioupload&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+						<span class="nx">_destroy</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+						<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">complete</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+						<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+        				<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; aborted.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+					<span class="p">}</span>
+					<span class="k">else</span> <span class="p">{</span>
+        				<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Attempted to abort transaction &#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; but transaction has completed.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+						<span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+					<span class="p">}</span>
+				<span class="p">},</span>
+				<span class="nx">isInProgress</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+					<span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;#ioupload&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">});</span>
 </pre></div>
 
                     </div>

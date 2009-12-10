@@ -47,685 +47,685 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-<span class="c">/** </span>
-<span class="c"> * The DOM utility provides a cross-browser abtraction layer</span>
-<span class="c"> * normalizing DOM tasks, and adds extra helper functionality</span>
-<span class="c"> * for other common tasks. </span>
-<span class="c"> * @module dom</span>
-<span class="c"> * @submodule dom-base</span>
-<span class="c"> *</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+<span class="cm">/** </span>
+<span class="cm"> * The DOM utility provides a cross-browser abtraction layer</span>
+<span class="cm"> * normalizing DOM tasks, and adds extra helper functionality</span>
+<span class="cm"> * for other common tasks. </span>
+<span class="cm"> * @module dom</span>
+<span class="cm"> * @submodule dom-base</span>
+<span class="cm"> *</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Provides DOM helper methods.</span>
-<span class="c"> * @class DOM</span>
-<span class="c"> *</span>
-<span class="c"> */</span>
-<span class="k">var</span> <span class="nx">NODE_TYPE</span> <span class="o">=</span> <span class="s1">&#39;nodeType&#39;</span><span class="o">,</span>
-    <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s1">&#39;ownerDocument&#39;</span><span class="o">,</span>
-    <span class="nx">DEFAULT_VIEW</span> <span class="o">=</span> <span class="s1">&#39;defaultView&#39;</span><span class="o">,</span>
-    <span class="nx">PARENT_WINDOW</span> <span class="o">=</span> <span class="s1">&#39;parentWindow&#39;</span><span class="o">,</span>
-    <span class="nx">TAG_NAME</span> <span class="o">=</span> <span class="s1">&#39;tagName&#39;</span><span class="o">,</span>
-    <span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s1">&#39;parentNode&#39;</span><span class="o">,</span>
-    <span class="nx">FIRST_CHILD</span> <span class="o">=</span> <span class="s1">&#39;firstChild&#39;</span><span class="o">,</span>
-    <span class="nx">PREVIOUS_SIBLING</span> <span class="o">=</span> <span class="s1">&#39;previousSibling&#39;</span><span class="o">,</span>
-    <span class="nx">NEXT_SIBLING</span> <span class="o">=</span> <span class="s1">&#39;nextSibling&#39;</span><span class="o">,</span>
-    <span class="nx">CONTAINS</span> <span class="o">=</span> <span class="s1">&#39;contains&#39;</span><span class="o">,</span>
-    <span class="nx">COMPARE_DOCUMENT_POSITION</span> <span class="o">=</span> <span class="s1">&#39;compareDocumentPosition&#39;</span><span class="o">,</span>
+<span class="cm">/**</span>
+<span class="cm"> * Provides DOM helper methods.</span>
+<span class="cm"> * @class DOM</span>
+<span class="cm"> *</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">NODE_TYPE</span> <span class="o">=</span> <span class="s1">&#39;nodeType&#39;</span><span class="p">,</span>
+    <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s1">&#39;ownerDocument&#39;</span><span class="p">,</span>
+    <span class="nx">DEFAULT_VIEW</span> <span class="o">=</span> <span class="s1">&#39;defaultView&#39;</span><span class="p">,</span>
+    <span class="nx">PARENT_WINDOW</span> <span class="o">=</span> <span class="s1">&#39;parentWindow&#39;</span><span class="p">,</span>
+    <span class="nx">TAG_NAME</span> <span class="o">=</span> <span class="s1">&#39;tagName&#39;</span><span class="p">,</span>
+    <span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s1">&#39;parentNode&#39;</span><span class="p">,</span>
+    <span class="nx">FIRST_CHILD</span> <span class="o">=</span> <span class="s1">&#39;firstChild&#39;</span><span class="p">,</span>
+    <span class="nx">PREVIOUS_SIBLING</span> <span class="o">=</span> <span class="s1">&#39;previousSibling&#39;</span><span class="p">,</span>
+    <span class="nx">NEXT_SIBLING</span> <span class="o">=</span> <span class="s1">&#39;nextSibling&#39;</span><span class="p">,</span>
+    <span class="nx">CONTAINS</span> <span class="o">=</span> <span class="s1">&#39;contains&#39;</span><span class="p">,</span>
+    <span class="nx">COMPARE_DOCUMENT_POSITION</span> <span class="o">=</span> <span class="s1">&#39;compareDocumentPosition&#39;</span><span class="p">,</span>
 
-    <span class="nx">documentElement</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">,</span>
+    <span class="nx">documentElement</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
 
-    <span class="nx">re_tag</span> <span class="o">=</span> <span class="sr">/&lt;([a-z]+)/i</span><span class="o">;</span>
+    <span class="nx">re_tag</span> <span class="o">=</span> <span class="sr">/&lt;([a-z]+)/i</span><span class="p">;</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Returns the HTMLElement with the given ID (Wrapper for document.getElementById).</span>
-<span class="c">     * @method byId         </span>
-<span class="c">     * @param {String} id the id attribute </span>
-<span class="c">     * @param {Object} doc optional The document to search. Defaults to current document </span>
-<span class="c">     * @return {HTMLElement | null} The HTMLElement with the id, or null if none found. </span>
-<span class="c">     */</span>
-    <span class="nx">byId</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
-        <span class="c">// TODO: IE Name</span>
-<span class="c"></span>        <span class="k">return</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
-    <span class="o">},</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the HTMLElement with the given ID (Wrapper for document.getElementById).</span>
+<span class="cm">     * @method byId         </span>
+<span class="cm">     * @param {String} id the id attribute </span>
+<span class="cm">     * @param {Object} doc optional The document to search. Defaults to current document </span>
+<span class="cm">     * @return {HTMLElement | null} The HTMLElement with the id, or null if none found. </span>
+<span class="cm">     */</span>
+    <span class="nx">byId</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
+        <span class="c1">// TODO: IE Name</span>
+        <span class="k">return</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="c">// @deprecated</span>
-<span class="c"></span>    <span class="nx">children</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">tag</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="o">[];</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">tag</span> <span class="o">=</span> <span class="nx">tag</span> <span class="o">||</span> <span class="s1">&#39;*&#39;</span><span class="o">;</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="s1">&#39;&gt; &#39;</span> <span class="o">+</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">node</span><span class="o">);</span> 
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="c1">// @deprecated</span>
+    <span class="nx">children</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">tag</span> <span class="o">=</span> <span class="nx">tag</span> <span class="o">||</span> <span class="s1">&#39;*&#39;</span><span class="p">;</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;&gt; &#39;</span> <span class="o">+</span> <span class="nx">tag</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span> 
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">// @deprecated</span>
-<span class="c"></span>    <span class="nx">firstByTag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">tag</span><span class="o">,</span> <span class="nx">root</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">ret</span><span class="o">;</span>
-        <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
+    <span class="c1">// @deprecated</span>
+    <span class="nx">firstByTag</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tag</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ret</span><span class="p">;</span>
+        <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="nx">root</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="nx">tag</span><span class="o">)[</span><span class="m">0</span><span class="o">];</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="nx">root</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="nx">tag</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">ret</span> <span class="o">||</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="nx">ret</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Returns the text content of the HTMLElement. </span>
-<span class="c">     * @method getText         </span>
-<span class="c">     * @param {HTMLElement} element The html element. </span>
-<span class="c">     * @return {String} The text content of the element (includes text of any descending elements).</span>
-<span class="c">     */</span>
-    <span class="nx">getText</span><span class="o">:</span> <span class="o">(</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">textContent</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">?</span>
-        <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">textContent</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="nx">ret</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
-        <span class="o">}</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">innerText</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="nx">ret</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
-        <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the text content of the HTMLElement. </span>
+<span class="cm">     * @method getText         </span>
+<span class="cm">     * @param {HTMLElement} element The html element. </span>
+<span class="cm">     * @return {String} The text content of the element (includes text of any descending elements).</span>
+<span class="cm">     */</span>
+    <span class="nx">getText</span><span class="o">:</span> <span class="p">(</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="o">?</span>
+        <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">textContent</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">ret</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="p">}</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">innerText</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">ret</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Sets the text content of the HTMLElement. </span>
-<span class="c">     * @method setText         </span>
-<span class="c">     * @param {HTMLElement} element The html element. </span>
-<span class="c">     * @param {String} content The content to add. </span>
-<span class="c">     */</span>
-    <span class="nx">setText</span><span class="o">:</span> <span class="o">(</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">textContent</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">?</span>
-        <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">content</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">element</span><span class="o">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="nx">content</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">content</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">element</span><span class="o">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="nx">content</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Sets the text content of the HTMLElement. </span>
+<span class="cm">     * @method setText         </span>
+<span class="cm">     * @param {HTMLElement} element The html element. </span>
+<span class="cm">     * @param {String} content The content to add. </span>
+<span class="cm">     */</span>
+    <span class="nx">setText</span><span class="o">:</span> <span class="p">(</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="o">?</span>
+        <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">element</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">=</span> <span class="nx">content</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">element</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="nx">content</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
 
-    <span class="c">/*</span>
-<span class="c">     * Finds the previous sibling of the element.</span>
-<span class="c">     * @method previous</span>
-<span class="c">     * @deprecated Use elementByAxis</span>
-<span class="c">     * @param {HTMLElement} element The html element.</span>
-<span class="c">     * @param {Function} fn optional An optional boolean test to apply.</span>
-<span class="c">     * The optional function is passed the current DOM node being tested as its only argument.</span>
-<span class="c">     * If no function is given, the first sibling is returned.</span>
-<span class="c">     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.</span>
-<span class="c">     * @return {HTMLElement | null} The matching DOM node or null if none found. </span>
-<span class="c">     */</span>
-    <span class="nx">previous</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">PREVIOUS_SIBLING</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="cm">/*</span>
+<span class="cm">     * Finds the previous sibling of the element.</span>
+<span class="cm">     * @method previous</span>
+<span class="cm">     * @deprecated Use elementByAxis</span>
+<span class="cm">     * @param {HTMLElement} element The html element.</span>
+<span class="cm">     * @param {Function} fn optional An optional boolean test to apply.</span>
+<span class="cm">     * The optional function is passed the current DOM node being tested as its only argument.</span>
+<span class="cm">     * If no function is given, the first sibling is returned.</span>
+<span class="cm">     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.</span>
+<span class="cm">     * @return {HTMLElement | null} The matching DOM node or null if none found. </span>
+<span class="cm">     */</span>
+    <span class="nx">previous</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">elementByAxis</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">PREVIOUS_SIBLING</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="c">/*</span>
-<span class="c">     * Finds the next sibling of the element.</span>
-<span class="c">     * @method next</span>
-<span class="c">     * @deprecated Use elementByAxis</span>
-<span class="c">     * @param {HTMLElement} element The html element.</span>
-<span class="c">     * @param {Function} fn optional An optional boolean test to apply.</span>
-<span class="c">     * The optional function is passed the current DOM node being tested as its only argument.</span>
-<span class="c">     * If no function is given, the first sibling is returned.</span>
-<span class="c">     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.</span>
-<span class="c">     * @return {HTMLElement | null} The matching DOM node or null if none found. </span>
-<span class="c">     */</span>
-    <span class="nx">next</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">NEXT_SIBLING</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="cm">/*</span>
+<span class="cm">     * Finds the next sibling of the element.</span>
+<span class="cm">     * @method next</span>
+<span class="cm">     * @deprecated Use elementByAxis</span>
+<span class="cm">     * @param {HTMLElement} element The html element.</span>
+<span class="cm">     * @param {Function} fn optional An optional boolean test to apply.</span>
+<span class="cm">     * The optional function is passed the current DOM node being tested as its only argument.</span>
+<span class="cm">     * If no function is given, the first sibling is returned.</span>
+<span class="cm">     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.</span>
+<span class="cm">     * @return {HTMLElement | null} The matching DOM node or null if none found. </span>
+<span class="cm">     */</span>
+    <span class="nx">next</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">elementByAxis</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">NEXT_SIBLING</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="c">/*</span>
-<span class="c">     * Finds the ancestor of the element.</span>
-<span class="c">     * @method ancestor</span>
-<span class="c">     * @deprecated Use elementByAxis</span>
-<span class="c">     * @param {HTMLElement} element The html element.</span>
-<span class="c">     * @param {Function} fn optional An optional boolean test to apply.</span>
-<span class="c">     * The optional function is passed the current DOM node being tested as its only argument.</span>
-<span class="c">     * If no function is given, the parentNode is returned.</span>
-<span class="c">     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.</span>
-<span class="c">     * @return {HTMLElement | null} The matching DOM node or null if none found. </span>
-<span class="c">     */</span>
-     <span class="c">// TODO: optional stopAt node?</span>
-<span class="c"></span>    <span class="nx">ancestor</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">PARENT_NODE</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="cm">/*</span>
+<span class="cm">     * Finds the ancestor of the element.</span>
+<span class="cm">     * @method ancestor</span>
+<span class="cm">     * @deprecated Use elementByAxis</span>
+<span class="cm">     * @param {HTMLElement} element The html element.</span>
+<span class="cm">     * @param {Function} fn optional An optional boolean test to apply.</span>
+<span class="cm">     * The optional function is passed the current DOM node being tested as its only argument.</span>
+<span class="cm">     * If no function is given, the parentNode is returned.</span>
+<span class="cm">     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.</span>
+<span class="cm">     * @return {HTMLElement | null} The matching DOM node or null if none found. </span>
+<span class="cm">     */</span>
+     <span class="c1">// TODO: optional stopAt node?</span>
+    <span class="nx">ancestor</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">elementByAxis</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">PARENT_NODE</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Searches the element by the given axis for the first matching element.</span>
-<span class="c">     * @method elementByAxis</span>
-<span class="c">     * @param {HTMLElement} element The html element.</span>
-<span class="c">     * @param {String} axis The axis to search (parentNode, nextSibling, previousSibling).</span>
-<span class="c">     * @param {Function} fn optional An optional boolean test to apply.</span>
-<span class="c">     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.</span>
-<span class="c">     * The optional function is passed the current HTMLElement being tested as its only argument.</span>
-<span class="c">     * If no function is given, the first element is returned.</span>
-<span class="c">     * @return {HTMLElement | null} The matching element or null if none found.</span>
-<span class="c">     */</span>
-    <span class="nx">elementByAxis</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">axis</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">while</span> <span class="o">(</span><span class="nx">element</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">element</span> <span class="o">=</span> <span class="nx">element</span><span class="o">[</span><span class="nx">axis</span><span class="o">]))</span> <span class="o">{</span> <span class="c">// NOTE: assignment</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="nx">all</span> <span class="o">||</span> <span class="nx">element</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">])</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">element</span><span class="o">))</span> <span class="o">)</span> <span class="o">{</span>
-                    <span class="k">return</span> <span class="nx">element</span><span class="o">;</span>
-                <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Searches the element by the given axis for the first matching element.</span>
+<span class="cm">     * @method elementByAxis</span>
+<span class="cm">     * @param {HTMLElement} element The html element.</span>
+<span class="cm">     * @param {String} axis The axis to search (parentNode, nextSibling, previousSibling).</span>
+<span class="cm">     * @param {Function} fn optional An optional boolean test to apply.</span>
+<span class="cm">     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.</span>
+<span class="cm">     * The optional function is passed the current HTMLElement being tested as its only argument.</span>
+<span class="cm">     * If no function is given, the first element is returned.</span>
+<span class="cm">     * @return {HTMLElement | null} The matching element or null if none found.</span>
+<span class="cm">     */</span>
+    <span class="nx">elementByAxis</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">axis</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">all</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nx">element</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">element</span> <span class="o">=</span> <span class="nx">element</span><span class="p">[</span><span class="nx">axis</span><span class="p">]))</span> <span class="p">{</span> <span class="c1">// NOTE: assignment</span>
+                <span class="k">if</span> <span class="p">(</span> <span class="p">(</span><span class="nx">all</span> <span class="o">||</span> <span class="nx">element</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">element</span><span class="p">))</span> <span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">element</span><span class="p">;</span>
+                <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Determines whether or not one HTMLElement is or contains another HTMLElement.</span>
-<span class="c">     * @method contains</span>
-<span class="c">     * @param {HTMLElement} element The containing html element.</span>
-<span class="c">     * @param {HTMLElement} needle The html element that may be contained.</span>
-<span class="c">     * @return {Boolean} Whether or not the element is or contains the needle.</span>
-<span class="c">     */</span>
-    <span class="nx">contains</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">needle</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Determines whether or not one HTMLElement is or contains another HTMLElement.</span>
+<span class="cm">     * @method contains</span>
+<span class="cm">     * @param {HTMLElement} element The containing html element.</span>
+<span class="cm">     * @param {HTMLElement} needle The html element that may be contained.</span>
+<span class="cm">     * @return {Boolean} Whether or not the element is or contains the needle.</span>
+<span class="cm">     */</span>
+    <span class="nx">contains</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">needle</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span> <span class="o">!</span><span class="nx">needle</span> <span class="o">||</span> <span class="o">!</span><span class="nx">element</span> <span class="o">||</span> <span class="o">!</span><span class="nx">needle</span><span class="o">[</span><span class="nx">NODE_TYPE</span><span class="o">]</span> <span class="o">||</span> <span class="o">!</span><span class="nx">element</span><span class="o">[</span><span class="nx">NODE_TYPE</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">[</span><span class="nx">CONTAINS</span><span class="o">])</span>  <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span> <span class="o">||</span> <span class="nx">needle</span><span class="o">[</span><span class="nx">NODE_TYPE</span><span class="o">]</span> <span class="o">===</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span> <span class="c">// IE &amp; SAF contains fail if needle not an ELEMENT_NODE</span>
-<span class="c"></span>                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">element</span><span class="o">[</span><span class="nx">CONTAINS</span><span class="o">](</span><span class="nx">needle</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_bruteContains</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">needle</span><span class="o">);</span> 
-            <span class="o">}</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">[</span><span class="nx">COMPARE_DOCUMENT_POSITION</span><span class="o">])</span> <span class="o">{</span> <span class="c">// gecko</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">element</span> <span class="o">===</span> <span class="nx">needle</span> <span class="o">||</span> <span class="o">!!(</span><span class="nx">element</span><span class="o">[</span><span class="nx">COMPARE_DOCUMENT_POSITION</span><span class="o">](</span><span class="nx">needle</span><span class="o">)</span> <span class="o">&amp;</span> <span class="m">16</span><span class="o">))</span> <span class="o">{</span> 
-                <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">needle</span> <span class="o">||</span> <span class="o">!</span><span class="nx">element</span> <span class="o">||</span> <span class="o">!</span><span class="nx">needle</span><span class="p">[</span><span class="nx">NODE_TYPE</span><span class="p">]</span> <span class="o">||</span> <span class="o">!</span><span class="nx">element</span><span class="p">[</span><span class="nx">NODE_TYPE</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">[</span><span class="nx">CONTAINS</span><span class="p">])</span>  <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">opera</span> <span class="o">||</span> <span class="nx">needle</span><span class="p">[</span><span class="nx">NODE_TYPE</span><span class="p">]</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// IE &amp; SAF contains fail if needle not an ELEMENT_NODE</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">element</span><span class="p">[</span><span class="nx">CONTAINS</span><span class="p">](</span><span class="nx">needle</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_bruteContains</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">needle</span><span class="p">);</span> 
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">[</span><span class="nx">COMPARE_DOCUMENT_POSITION</span><span class="p">])</span> <span class="p">{</span> <span class="c1">// gecko</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">element</span> <span class="o">===</span> <span class="nx">needle</span> <span class="o">||</span> <span class="o">!!</span><span class="p">(</span><span class="nx">element</span><span class="p">[</span><span class="nx">COMPARE_DOCUMENT_POSITION</span><span class="p">](</span><span class="nx">needle</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">16</span><span class="p">))</span> <span class="p">{</span> 
+                <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Determines whether or not the HTMLElement is part of the document.</span>
-<span class="c">     * @method inDoc</span>
-<span class="c">     * @param {HTMLElement} element The containing html element.</span>
-<span class="c">     * @param {HTMLElement} doc optional The document to check.</span>
-<span class="c">     * @return {Boolean} Whether or not the element is attached to the document. </span>
-<span class="c">     */</span>
-    <span class="nx">inDoc</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">// there may be multiple elements with the same ID</span>
-<span class="c"></span>        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">element</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">];</span>
-        <span class="k">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
-            <span class="nx">i</span><span class="o">,</span>
-            <span class="nx">node</span><span class="o">,</span>
-            <span class="nx">query</span><span class="o">;</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Determines whether or not the HTMLElement is part of the document.</span>
+<span class="cm">     * @method inDoc</span>
+<span class="cm">     * @param {HTMLElement} element The containing html element.</span>
+<span class="cm">     * @param {HTMLElement} doc optional The document to check.</span>
+<span class="cm">     * @return {Boolean} Whether or not the element is attached to the document. </span>
+<span class="cm">     */</span>
+    <span class="nx">inDoc</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// there may be multiple elements with the same ID</span>
+        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">element</span><span class="p">[</span><span class="nx">OWNER_DOCUMENT</span><span class="p">];</span>
+        <span class="kd">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">i</span><span class="p">,</span>
+            <span class="nx">node</span><span class="p">,</span>
+            <span class="nx">query</span><span class="p">;</span>
                 
-        <span class="nx">element</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">element</span><span class="o">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span> 
+        <span class="nx">element</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">();</span> 
 
-        <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">allById</span><span class="o">(</span><span class="nx">element</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span> <span class="c">// check for a match</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">===</span> <span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+        <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">allById</span><span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="o">++</span><span class="p">];)</span> <span class="p">{</span> <span class="c1">// check for a match</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">===</span> <span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
 
-    <span class="o">},</span>
+    <span class="p">},</span>
 
-   <span class="nx">allById</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">root</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
-        <span class="k">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="o">[],</span>
-            <span class="nx">i</span><span class="o">,</span>
-            <span class="nx">node</span><span class="o">;</span>
+   <span class="nx">allById</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">i</span><span class="p">,</span>
+            <span class="nx">node</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">root</span><span class="o">.</span><span class="nx">querySelectorAll</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">querySelectorAll</span><span class="o">(</span><span class="s1">&#39;[id=&quot;&#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;&quot;]&#39;</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">root</span><span class="o">.</span><span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span> <span class="c">// root.all may return one or many</span>
-<span class="c"></span>                <span class="nx">nodes</span> <span class="o">=</span> <span class="o">[</span><span class="nx">nodes</span><span class="o">];</span>
-            <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">root</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">&#39;[id=&quot;&#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;&quot;]&#39;</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">root</span><span class="p">.</span><span class="nx">all</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">nodeType</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// root.all may return one or many</span>
+                <span class="nx">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="nx">nodes</span><span class="p">];</span>
+            <span class="p">}</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">++];)</span> <span class="o">{</span> <span class="c">// check for a match</span>
-<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span><span class="o">)</span> <span class="o">{</span> <span class="c">// avoid false positive for node.name</span>
-<span class="c"></span>                        <span class="nx">ret</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-   <span class="o">},</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="o">++</span><span class="p">];)</span> <span class="p">{</span> <span class="c1">// check for a match</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// avoid false positive for node.name</span>
+                        <span class="nx">ret</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+   <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Creates a new dom node using the provided markup string. </span>
-<span class="c">     * @method create</span>
-<span class="c">     * @param {String} html The markup used to create the element</span>
-<span class="c">     * @param {HTMLDocument} doc An optional document context </span>
-<span class="c">     */</span>
-    <span class="nx">create</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">html</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">html</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">html</span><span class="o">);</span> <span class="c">// match IE which trims whitespace from innerHTML</span>
-<span class="c"></span>        <span class="o">}</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Creates a new dom node using the provided markup string. </span>
+<span class="cm">     * @method create</span>
+<span class="cm">     * @param {String} html The markup used to create the element</span>
+<span class="cm">     * @param {HTMLDocument} doc An optional document context </span>
+<span class="cm">     */</span>
+    <span class="nx">create</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">html</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">html</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span> <span class="c1">// match IE which trims whitespace from innerHTML</span>
+        <span class="p">}</span>
 
-        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
-        <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">re_tag</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">html</span><span class="o">),</span>
-            <span class="nx">create</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_create</span><span class="o">,</span>
-            <span class="nx">custom</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">creators</span><span class="o">,</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">tag</span><span class="o">,</span> <span class="nx">nodes</span><span class="o">;</span>
+        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">re_tag</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">html</span><span class="p">),</span>
+            <span class="nx">create</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_create</span><span class="p">,</span>
+            <span class="nx">custom</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">,</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">tag</span><span class="p">,</span> <span class="nx">nodes</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">custom</span><span class="o">[</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]])</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">custom</span><span class="o">[</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]]</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">create</span> <span class="o">=</span> <span class="nx">custom</span><span class="o">[</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]];</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">tag</span> <span class="o">=</span> <span class="nx">custom</span><span class="o">[</span><span class="nx">m</span><span class="o">[</span><span class="m">1</span><span class="o">]];</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">custom</span><span class="p">[</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">custom</span><span class="p">[</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">create</span> <span class="o">=</span> <span class="nx">custom</span><span class="p">[</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]];</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">tag</span> <span class="o">=</span> <span class="nx">custom</span><span class="p">[</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-        <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">create</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">,</span> <span class="nx">tag</span><span class="o">).</span><span class="nx">childNodes</span><span class="o">;</span>
+        <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">create</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">,</span> <span class="nx">tag</span><span class="p">).</span><span class="nx">childNodes</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span> <span class="c">// return single node, breaking parentNode ref from &quot;fragment&quot;</span>
-<span class="c"></span>            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// return multiple nodes as a fragment</span>
-<span class="c"></span>             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_nl2frag</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// return single node, breaking parentNode ref from &quot;fragment&quot;</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// return multiple nodes as a fragment</span>
+             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_nl2frag</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="nx">_nl2frag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span>
-            <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">;</span>
+    <span class="nx">_nl2frag</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">push</span> <span class="o">||</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">item</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">nodes</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">ownerDocument</span><span class="o">;</span> 
-            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">createDocumentFragment</span><span class="o">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">nodes</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">push</span> <span class="o">||</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">ownerDocument</span><span class="p">;</span> 
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createDocumentFragment</span><span class="p">();</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">item</span><span class="o">)</span> <span class="o">{</span> <span class="c">// convert live list to static array</span>
-<span class="c"></span>                <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// convert live list to static array</span>
+                <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="p">}</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">nodes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                <span class="nx">ret</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">nodes</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span> 
-            <span class="o">}</span>
-        <span class="o">}</span> <span class="c">// else inline with log for minification</span>
-<span class="c"></span>        <span class="k">else</span> <span class="o">{</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;unable to convert &#39;</span> <span class="o">+</span> <span class="nx">nodes</span> <span class="o">+</span> <span class="s1">&#39; to fragment&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dom&#39;</span><span class="o">);</span> <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-    <span class="o">},</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ret</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span> 
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="c1">// else inline with log for minification</span>
+        <span class="k">else</span> <span class="p">{</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;unable to convert &#39;</span> <span class="o">+</span> <span class="nx">nodes</span> <span class="o">+</span> <span class="s1">&#39; to fragment&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;dom&#39;</span><span class="p">);</span> <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+    <span class="p">},</span>
 
 
-    <span class="nx">CUSTOM_ATTRIBUTES</span><span class="o">:</span> <span class="o">(!</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">hasAttribute</span><span class="o">)</span> <span class="o">?</span> <span class="o">{</span> <span class="c">// IE &lt; 8</span>
-<span class="c"></span>        <span class="s1">&#39;for&#39;</span><span class="o">:</span> <span class="s1">&#39;htmlFor&#39;</span><span class="o">,</span>
+    <span class="nx">CUSTOM_ATTRIBUTES</span><span class="o">:</span> <span class="p">(</span><span class="o">!</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">hasAttribute</span><span class="p">)</span> <span class="o">?</span> <span class="p">{</span> <span class="c1">// IE &lt; 8</span>
+        <span class="s1">&#39;for&#39;</span><span class="o">:</span> <span class="s1">&#39;htmlFor&#39;</span><span class="p">,</span>
         <span class="s1">&#39;class&#39;</span><span class="o">:</span> <span class="s1">&#39;className&#39;</span>
-    <span class="o">}</span> <span class="o">:</span> <span class="o">{</span> <span class="c">// w3c</span>
-<span class="c"></span>        <span class="s1">&#39;htmlFor&#39;</span><span class="o">:</span> <span class="s1">&#39;for&#39;</span><span class="o">,</span>
+    <span class="p">}</span> <span class="o">:</span> <span class="p">{</span> <span class="c1">// w3c</span>
+        <span class="s1">&#39;htmlFor&#39;</span><span class="o">:</span> <span class="s1">&#39;for&#39;</span><span class="p">,</span>
         <span class="s1">&#39;className&#39;</span><span class="o">:</span> <span class="s1">&#39;class&#39;</span>
-    <span class="o">},</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Provides a normalized attribute interface. </span>
-<span class="c">     * @method setAttibute</span>
-<span class="c">     * @param {String | HTMLElement} el The target element for the attribute.</span>
-<span class="c">     * @param {String} attr The attribute to set.</span>
-<span class="c">     * @param {String} val The value of the attribute.</span>
-<span class="c">     */</span>
-    <span class="nx">setAttribute</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">ieAttr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">el</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="o">.</span><span class="nx">setAttribute</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_ATTRIBUTES</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">||</span> <span class="nx">attr</span><span class="o">;</span>
-            <span class="nx">el</span><span class="o">.</span><span class="nx">setAttribute</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">ieAttr</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Provides a normalized attribute interface. </span>
+<span class="cm">     * @method setAttibute</span>
+<span class="cm">     * @param {String | HTMLElement} el The target element for the attribute.</span>
+<span class="cm">     * @param {String} attr The attribute to set.</span>
+<span class="cm">     * @param {String} val The value of the attribute.</span>
+<span class="cm">     */</span>
+    <span class="nx">setAttribute</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">ieAttr</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">el</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_ATTRIBUTES</span><span class="p">[</span><span class="nx">attr</span><span class="p">]</span> <span class="o">||</span> <span class="nx">attr</span><span class="p">;</span>
+            <span class="nx">el</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">attr</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">ieAttr</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
 
 
-    <span class="c">/**</span>
-<span class="c">     * Provides a normalized attribute interface. </span>
-<span class="c">     * @method getAttibute</span>
-<span class="c">     * @param {String | HTMLElement} el The target element for the attribute.</span>
-<span class="c">     * @param {String} attr The attribute to get.</span>
-<span class="c">     * @return {String} The current value of the attribute. </span>
-<span class="c">     */</span>
-    <span class="nx">getAttribute</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">attr</span><span class="o">,</span> <span class="nx">ieAttr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">ieAttr</span> <span class="o">=</span> <span class="o">(</span><span class="nx">ieAttr</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ieAttr</span> <span class="o">:</span> <span class="m">2</span><span class="o">;</span>
-        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">el</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_ATTRIBUTES</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">||</span> <span class="nx">attr</span><span class="o">;</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">el</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="nx">ieAttr</span><span class="o">);</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Provides a normalized attribute interface. </span>
+<span class="cm">     * @method getAttibute</span>
+<span class="cm">     * @param {String | HTMLElement} el The target element for the attribute.</span>
+<span class="cm">     * @param {String} attr The attribute to get.</span>
+<span class="cm">     * @return {String} The current value of the attribute. </span>
+<span class="cm">     */</span>
+    <span class="nx">getAttribute</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">ieAttr</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">ieAttr</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ieAttr</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="o">?</span> <span class="nx">ieAttr</span> <span class="o">:</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">el</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_ATTRIBUTES</span><span class="p">[</span><span class="nx">attr</span><span class="p">]</span> <span class="o">||</span> <span class="nx">attr</span><span class="p">;</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="nx">attr</span><span class="p">,</span> <span class="nx">ieAttr</span><span class="p">);</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">ret</span> <span class="o">===</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span> <span class="c">// per DOM spec</span>
-<span class="c"></span>            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-    <span class="o">},</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span> <span class="c1">// per DOM spec</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="nx">isWindow</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">obj</span><span class="o">.</span><span class="nx">alert</span> <span class="o">&amp;&amp;</span> <span class="nx">obj</span><span class="o">.</span><span class="nb">document</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="nx">isWindow</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">alert</span> <span class="o">&amp;&amp;</span> <span class="nx">obj</span><span class="p">.</span><span class="nb">document</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="nx">_fragClones</span><span class="o">:</span> <span class="o">{},</span>
+    <span class="nx">_fragClones</span><span class="o">:</span> <span class="p">{},</span>
 
-    <span class="nx">_create</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">,</span> <span class="nx">tag</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">tag</span> <span class="o">=</span> <span class="nx">tag</span> <span class="o">||</span> <span class="s1">&#39;div&#39;</span><span class="o">;</span>
+    <span class="nx">_create</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">,</span> <span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">tag</span> <span class="o">=</span> <span class="nx">tag</span> <span class="o">||</span> <span class="s1">&#39;div&#39;</span><span class="p">;</span>
 
-        <span class="k">var</span> <span class="nx">frag</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_fragClones</span><span class="o">[</span><span class="nx">tag</span><span class="o">];</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">frag</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">frag</span> <span class="o">=</span> <span class="nx">frag</span><span class="o">.</span><span class="nx">cloneNode</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">frag</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_fragClones</span><span class="o">[</span><span class="nx">tag</span><span class="o">]</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="nx">tag</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="nx">frag</span><span class="o">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">html</span><span class="o">;</span>
-        <span class="k">return</span> <span class="nx">frag</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="kd">var</span> <span class="nx">frag</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_fragClones</span><span class="p">[</span><span class="nx">tag</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">frag</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">frag</span> <span class="o">=</span> <span class="nx">frag</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">frag</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_fragClones</span><span class="p">[</span><span class="nx">tag</span><span class="p">]</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="nx">tag</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">frag</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">html</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">frag</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="nx">_removeChildNodes</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">while</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">firstChild</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">node</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">firstChild</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
+    <span class="nx">_removeChildNodes</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Inserts content in a node at the given location </span>
-<span class="c">     * @method addHTML</span>
-<span class="c">     * @param {HTMLElement} node The node to insert into</span>
-<span class="c">     * @param {String} content The content to be inserted </span>
-<span class="c">     * @param {String} where Where to insert the content; default is after lastChild </span>
-<span class="c">     */</span>
-    <span class="nx">addHTML</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">content</span><span class="o">,</span> <span class="nx">where</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">content</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">content</span><span class="o">);</span> <span class="c">// match IE which trims whitespace from innerHTML</span>
-<span class="c"></span>        <span class="o">}</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Inserts content in a node at the given location </span>
+<span class="cm">     * @method addHTML</span>
+<span class="cm">     * @param {HTMLElement} node The node to insert into</span>
+<span class="cm">     * @param {String} content The content to be inserted </span>
+<span class="cm">     * @param {String} where Where to insert the content; default is after lastChild </span>
+<span class="cm">     */</span>
+    <span class="nx">addHTML</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">content</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span> <span class="c1">// match IE which trims whitespace from innerHTML</span>
+        <span class="p">}</span>
 
-        <span class="k">var</span> <span class="nx">nodeParent</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span>
-            <span class="nx">newNode</span><span class="o">;</span>
+        <span class="kd">var</span> <span class="nx">nodeParent</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">,</span>
+            <span class="nx">newNode</span><span class="p">;</span>
             
-        <span class="k">if</span> <span class="o">(</span><span class="nx">content</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">content</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span> <span class="c">// domNode</span>
-<span class="c"></span>                <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">content</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// create from string and cache</span>
-<span class="c"></span>                <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="nx">content</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">nodeType</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// domNode</span>
+                <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">content</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// create from string and cache</span>
+                <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">where</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">where</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span> <span class="c">// insert regardless of relationship to node</span>
-<span class="c"></span>                <span class="c">// TODO: check if node.contains(where)?</span>
-<span class="c"></span>                <span class="nx">where</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">where</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">switch</span> <span class="o">(</span><span class="nx">where</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">case</span> <span class="s1">&#39;replace&#39;</span><span class="o">:</span>
-                        <span class="k">while</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">firstChild</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">node</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">firstChild</span><span class="o">);</span>
-                        <span class="o">}</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">newNode</span><span class="o">)</span> <span class="o">{</span> <span class="c">// allow empty content to clear node</span>
-<span class="c"></span>                            <span class="nx">node</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
-                        <span class="o">}</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="nx">case</span> <span class="s1">&#39;before&#39;</span><span class="o">:</span>
-                        <span class="nx">nodeParent</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">);</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="nx">case</span> <span class="s1">&#39;after&#39;</span><span class="o">:</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">nextSibling</span><span class="o">)</span> <span class="o">{</span> <span class="c">// IE errors if refNode is null</span>
-<span class="c"></span>                            <span class="nx">nodeParent</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">newNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">nextSibling</span><span class="o">);</span>
-                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                            <span class="nx">nodeParent</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
-                        <span class="o">}</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="nx">default</span><span class="o">:</span>
-                        <span class="nx">node</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">node</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">newNode</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">where</span><span class="p">.</span><span class="nx">nodeType</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// insert regardless of relationship to node</span>
+                <span class="c1">// TODO: check if node.contains(where)?</span>
+                <span class="nx">where</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">newNode</span><span class="p">,</span> <span class="nx">where</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">switch</span> <span class="p">(</span><span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">case</span> <span class="s1">&#39;replace&#39;</span><span class="o">:</span>
+                        <span class="k">while</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">node</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">);</span>
+                        <span class="p">}</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">newNode</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// allow empty content to clear node</span>
+                            <span class="nx">node</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+                        <span class="p">}</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="k">case</span> <span class="s1">&#39;before&#39;</span><span class="o">:</span>
+                        <span class="nx">nodeParent</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">newNode</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="k">case</span> <span class="s1">&#39;after&#39;</span><span class="o">:</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">nextSibling</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// IE errors if refNode is null</span>
+                            <span class="nx">nodeParent</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">newNode</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nextSibling</span><span class="p">);</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">nodeParent</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+                        <span class="p">}</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="k">default</span><span class="o">:</span>
+                        <span class="nx">node</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">newNode</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="nx">newNode</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="nx">VALUE_SETTERS</span><span class="o">:</span> <span class="o">{},</span>
+    <span class="nx">VALUE_SETTERS</span><span class="o">:</span> <span class="p">{},</span>
 
-    <span class="nx">VALUE_GETTERS</span><span class="o">:</span> <span class="o">{},</span>
+    <span class="nx">VALUE_GETTERS</span><span class="o">:</span> <span class="p">{},</span>
 
-    <span class="nx">getValue</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">,</span> <span class="c">// TODO: return null?</span>
-<span class="c"></span>            <span class="nx">getter</span><span class="o">;</span>
+    <span class="nx">getValue</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="c1">// TODO: return null?</span>
+            <span class="nx">getter</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">getter</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">VALUE_GETTERS</span><span class="o">[</span><span class="nx">node</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">].</span><span class="nx">toLowerCase</span><span class="o">()];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">getter</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">VALUE_GETTERS</span><span class="p">[</span><span class="nx">node</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">].</span><span class="nx">toLowerCase</span><span class="p">()];</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">getter</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">getter</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">getter</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">getter</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">ret</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ret</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">ret</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">ret</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="nx">setValue</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">setter</span><span class="o">;</span>
+    <span class="nx">setValue</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">setter</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">setter</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">VALUE_SETTERS</span><span class="o">[</span><span class="nx">node</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">].</span><span class="nx">toLowerCase</span><span class="o">()];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">setter</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">VALUE_SETTERS</span><span class="p">[</span><span class="nx">node</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">].</span><span class="nx">toLowerCase</span><span class="p">()];</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">setter</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">setter</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">node</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">setter</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">setter</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Brute force version of contains.</span>
-<span class="c">     * Used for browsers without contains support for non-HTMLElement Nodes (textNodes, etc).</span>
-<span class="c">     * @method _bruteContains</span>
-<span class="c">     * @private</span>
-<span class="c">     * @param {HTMLElement} element The containing html element.</span>
-<span class="c">     * @param {HTMLElement} needle The html element that may be contained.</span>
-<span class="c">     * @return {Boolean} Whether or not the element is or contains the needle.</span>
-<span class="c">     */</span>
-    <span class="nx">_bruteContains</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">needle</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">while</span> <span class="o">(</span><span class="nx">needle</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">element</span> <span class="o">===</span> <span class="nx">needle</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="nx">needle</span> <span class="o">=</span> <span class="nx">needle</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Brute force version of contains.</span>
+<span class="cm">     * Used for browsers without contains support for non-HTMLElement Nodes (textNodes, etc).</span>
+<span class="cm">     * @method _bruteContains</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @param {HTMLElement} element The containing html element.</span>
+<span class="cm">     * @param {HTMLElement} needle The html element that may be contained.</span>
+<span class="cm">     * @return {Boolean} Whether or not the element is or contains the needle.</span>
+<span class="cm">     */</span>
+    <span class="nx">_bruteContains</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">needle</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nx">needle</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">element</span> <span class="o">===</span> <span class="nx">needle</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">needle</span> <span class="o">=</span> <span class="nx">needle</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">},</span>
 
-<span class="c">// TODO: move to Lang?</span>
-<span class="c"></span>    <span class="c">/**</span>
-<span class="c">     * Memoizes dynamic regular expressions to boost runtime performance. </span>
-<span class="c">     * @method _getRegExp</span>
-<span class="c">     * @private</span>
-<span class="c">     * @param {String} str The string to convert to a regular expression.</span>
-<span class="c">     * @param {String} flags optional An optinal string of flags.</span>
-<span class="c">     * @return {RegExp} An instance of RegExp</span>
-<span class="c">     */</span>
-    <span class="nx">_getRegExp</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">str</span><span class="o">,</span> <span class="nx">flags</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">flags</span> <span class="o">=</span> <span class="nx">flags</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_regexCache</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_regexCache</span> <span class="o">||</span> <span class="o">{};</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_regexCache</span><span class="o">[</span><span class="nx">str</span> <span class="o">+</span> <span class="nx">flags</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_regexCache</span><span class="o">[</span><span class="nx">str</span> <span class="o">+</span> <span class="nx">flags</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="nx">str</span><span class="o">,</span> <span class="nx">flags</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_regexCache</span><span class="o">[</span><span class="nx">str</span> <span class="o">+</span> <span class="nx">flags</span><span class="o">];</span>
-    <span class="o">},</span>
+<span class="c1">// TODO: move to Lang?</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Memoizes dynamic regular expressions to boost runtime performance. </span>
+<span class="cm">     * @method _getRegExp</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @param {String} str The string to convert to a regular expression.</span>
+<span class="cm">     * @param {String} flags optional An optinal string of flags.</span>
+<span class="cm">     * @return {RegExp} An instance of RegExp</span>
+<span class="cm">     */</span>
+    <span class="nx">_getRegExp</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="nx">flags</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">flags</span> <span class="o">=</span> <span class="nx">flags</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_regexCache</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_regexCache</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_regexCache</span><span class="p">[</span><span class="nx">str</span> <span class="o">+</span> <span class="nx">flags</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_regexCache</span><span class="p">[</span><span class="nx">str</span> <span class="o">+</span> <span class="nx">flags</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="nx">flags</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_regexCache</span><span class="p">[</span><span class="nx">str</span> <span class="o">+</span> <span class="nx">flags</span><span class="p">];</span>
+    <span class="p">},</span>
 
-<span class="c">// TODO: make getDoc/Win true privates?</span>
-<span class="c"></span>    <span class="c">/**</span>
-<span class="c">     * returns the appropriate document.</span>
-<span class="c">     * @method _getDoc</span>
-<span class="c">     * @private</span>
-<span class="c">     * @param {HTMLElement} element optional Target element.</span>
-<span class="c">     * @return {Object} The document for the given element or the default document. </span>
-<span class="c">     */</span>
-    <span class="nx">_getDoc</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">element</span> <span class="o">=</span> <span class="nx">element</span> <span class="o">||</span> <span class="o">{};</span>
+<span class="c1">// TODO: make getDoc/Win true privates?</span>
+    <span class="cm">/**</span>
+<span class="cm">     * returns the appropriate document.</span>
+<span class="cm">     * @method _getDoc</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @param {HTMLElement} element optional Target element.</span>
+<span class="cm">     * @return {Object} The document for the given element or the default document. </span>
+<span class="cm">     */</span>
+    <span class="nx">_getDoc</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">element</span> <span class="o">=</span> <span class="nx">element</span> <span class="o">||</span> <span class="p">{};</span>
 
-        <span class="k">return</span> <span class="o">(</span><span class="nx">element</span><span class="o">[</span><span class="nx">NODE_TYPE</span><span class="o">]</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">?</span> <span class="nx">element</span> <span class="o">:</span> <span class="c">// element === document</span>
-<span class="c"></span>                <span class="nx">element</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">]</span> <span class="o">||</span> <span class="c">// element === DOM node</span>
-<span class="c"></span>                <span class="nx">element</span><span class="o">.</span><span class="nb">document</span> <span class="o">||</span> <span class="c">// element === window</span>
-<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span> <span class="c">// default</span>
-<span class="c"></span>    <span class="o">},</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">element</span><span class="p">[</span><span class="nx">NODE_TYPE</span><span class="p">]</span> <span class="o">===</span> <span class="mi">9</span><span class="p">)</span> <span class="o">?</span> <span class="nx">element</span> <span class="o">:</span> <span class="c1">// element === document</span>
+                <span class="nx">element</span><span class="p">[</span><span class="nx">OWNER_DOCUMENT</span><span class="p">]</span> <span class="o">||</span> <span class="c1">// element === DOM node</span>
+                <span class="nx">element</span><span class="p">.</span><span class="nb">document</span> <span class="o">||</span> <span class="c1">// element === window</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span> <span class="c1">// default</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * returns the appropriate window.</span>
-<span class="c">     * @method _getWin</span>
-<span class="c">     * @private</span>
-<span class="c">     * @param {HTMLElement} element optional Target element.</span>
-<span class="c">     * @return {Object} The window for the given element or the default window. </span>
-<span class="c">     */</span>
-    <span class="nx">_getWin</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getDoc</span><span class="o">(</span><span class="nx">element</span><span class="o">);</span>
-        <span class="k">return</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">DEFAULT_VIEW</span><span class="o">]</span> <span class="o">||</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">PARENT_WINDOW</span><span class="o">]</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * returns the appropriate window.</span>
+<span class="cm">     * @method _getWin</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @param {HTMLElement} element optional Target element.</span>
+<span class="cm">     * @return {Object} The window for the given element or the default window. </span>
+<span class="cm">     */</span>
+    <span class="nx">_getWin</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">doc</span><span class="p">[</span><span class="nx">DEFAULT_VIEW</span><span class="p">]</span> <span class="o">||</span> <span class="nx">doc</span><span class="p">[</span><span class="nx">PARENT_WINDOW</span><span class="p">]</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="nx">_batch</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">arg1</span><span class="o">,</span> <span class="nx">arg2</span><span class="o">,</span> <span class="nx">arg3</span><span class="o">,</span> <span class="nx">etc</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">fn</span> <span class="o">=</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">name</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">[</span><span class="nx">fn</span><span class="o">]</span> <span class="o">:</span> <span class="nx">fn</span><span class="o">;</span>
-        <span class="k">var</span> <span class="nx">result</span><span class="o">,</span>
-            <span class="nx">ret</span> <span class="o">=</span> <span class="o">[];</span>
+    <span class="nx">_batch</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">,</span> <span class="nx">etc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">fn</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">name</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">[</span><span class="nx">fn</span><span class="p">]</span> <span class="o">:</span> <span class="nx">fn</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">result</span><span class="p">,</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="p">[];</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">fn</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">((</span><span class="nx">result</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">arg1</span><span class="o">,</span> <span class="nx">arg2</span><span class="o">,</span> <span class="nx">arg3</span><span class="o">,</span> <span class="nx">etc</span><span class="o">))</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">ret</span><span class="o">[</span><span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">result</span><span class="o">;</span>
-                <span class="o">}</span>
-            <span class="o">});</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">fn</span> <span class="o">&amp;&amp;</span> <span class="nx">nodes</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">((</span><span class="nx">result</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">,</span> <span class="nx">etc</span><span class="p">))</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">ret</span><span class="p">[</span><span class="nx">ret</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span> <span class="o">=</span> <span class="nx">result</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">length</span> <span class="o">?</span> <span class="nx">ret</span> <span class="o">:</span> <span class="nx">nodes</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">.</span><span class="nx">length</span> <span class="o">?</span> <span class="nx">ret</span> <span class="o">:</span> <span class="nx">nodes</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="nx">_testElement</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">element</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">tag</span> <span class="o">=</span> <span class="o">(</span><span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="nx">tag</span> <span class="o">!==</span> <span class="s1">&#39;*&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">tag</span><span class="o">.</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="k">return</span> <span class="o">(</span><span class="nx">element</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">]</span> <span class="o">&amp;&amp;</span>
-                <span class="o">(!</span><span class="nx">tag</span> <span class="o">||</span> <span class="nx">element</span><span class="o">[</span><span class="nx">TAG_NAME</span><span class="o">].</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">===</span> <span class="nx">tag</span><span class="o">)</span> <span class="o">&amp;&amp;</span>
-                <span class="o">(!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">element</span><span class="o">)));</span>
-    <span class="o">},</span>
+    <span class="nx">_testElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">tag</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">tag</span> <span class="o">=</span> <span class="p">(</span><span class="nx">tag</span> <span class="o">&amp;&amp;</span> <span class="nx">tag</span> <span class="o">!==</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">tag</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">element</span> <span class="o">&amp;&amp;</span> <span class="nx">element</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">]</span> <span class="o">&amp;&amp;</span>
+                <span class="p">(</span><span class="o">!</span><span class="nx">tag</span> <span class="o">||</span> <span class="nx">element</span><span class="p">[</span><span class="nx">TAG_NAME</span><span class="p">].</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">===</span> <span class="nx">tag</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+                <span class="p">(</span><span class="o">!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">element</span><span class="p">)));</span>
+    <span class="p">},</span>
 
-    <span class="nx">creators</span><span class="o">:</span> <span class="o">{},</span>
+    <span class="nx">creators</span><span class="o">:</span> <span class="p">{},</span>
 
-    <span class="nx">_IESimpleCreate</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
-        <span class="k">return</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="nx">html</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+    <span class="nx">_IESimpleCreate</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
 
-<span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">creators</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">creators</span><span class="o">,</span>
-        <span class="nx">create</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">create</span><span class="o">,</span>
-        <span class="nx">re_tbody</span> <span class="o">=</span> <span class="sr">/(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)&gt;)+\s*&lt;tbody/</span><span class="o">,</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">creators</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">creators</span><span class="p">,</span>
+        <span class="nx">create</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">create</span><span class="p">,</span>
+        <span class="nx">re_tbody</span> <span class="o">=</span> <span class="sr">/(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)&gt;)+\s*&lt;tbody/</span><span class="p">,</span>
 
-        <span class="nx">TABLE_OPEN</span> <span class="o">=</span> <span class="s1">&#39;&lt;table&gt;&#39;</span><span class="o">,</span>
-        <span class="nx">TABLE_CLOSE</span> <span class="o">=</span> <span class="s1">&#39;&lt;/table&gt;&#39;</span><span class="o">;</span>
+        <span class="nx">TABLE_OPEN</span> <span class="o">=</span> <span class="s1">&#39;&lt;table&gt;&#39;</span><span class="p">,</span>
+        <span class="nx">TABLE_CLOSE</span> <span class="o">=</span> <span class="s1">&#39;&lt;/table&gt;&#39;</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">creators</span><span class="o">,</span> <span class="o">{</span>
-        <span class="c">// TODO: thead/tfoot with nested tbody</span>
-<span class="c"></span>            <span class="c">// IE adds TBODY when creating TABLE elements (which may share this impl)</span>
-<span class="c"></span>            <span class="nx">tbody</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">frag</span> <span class="o">=</span> <span class="nx">create</span><span class="o">(</span><span class="nx">TABLE_OPEN</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="nx">TABLE_CLOSE</span><span class="o">,</span> <span class="nx">doc</span><span class="o">),</span>
-                    <span class="nx">tb</span> <span class="o">=</span> <span class="nx">frag</span><span class="o">.</span><span class="nx">children</span><span class="o">.</span><span class="nx">tags</span><span class="o">(</span><span class="s1">&#39;tbody&#39;</span><span class="o">)[</span><span class="m">0</span><span class="o">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">creators</span><span class="p">,</span> <span class="p">{</span>
+        <span class="c1">// TODO: thead/tfoot with nested tbody</span>
+            <span class="c1">// IE adds TBODY when creating TABLE elements (which may share this impl)</span>
+            <span class="nx">tbody</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">frag</span> <span class="o">=</span> <span class="nx">create</span><span class="p">(</span><span class="nx">TABLE_OPEN</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="nx">TABLE_CLOSE</span><span class="p">,</span> <span class="nx">doc</span><span class="p">),</span>
+                    <span class="nx">tb</span> <span class="o">=</span> <span class="nx">frag</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">tags</span><span class="p">(</span><span class="s1">&#39;tbody&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">frag</span><span class="o">.</span><span class="nx">children</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="nx">tb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">re_tbody</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">html</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">tb</span><span class="o">[</span><span class="nx">PARENT_NODE</span><span class="o">].</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">tb</span><span class="o">);</span> <span class="c">// strip extraneous tbody</span>
-<span class="c"></span>                <span class="o">}</span>
-                <span class="k">return</span> <span class="nx">frag</span><span class="o">;</span>
-            <span class="o">},</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">frag</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">tb</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">re_tbody</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">tb</span><span class="p">[</span><span class="nx">PARENT_NODE</span><span class="p">].</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">tb</span><span class="p">);</span> <span class="c1">// strip extraneous tbody</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="nx">frag</span><span class="p">;</span>
+            <span class="p">},</span>
 
-            <span class="nx">script</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">frag</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s1">&#39;div&#39;</span><span class="o">);</span>
+            <span class="nx">script</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">frag</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
 
-                <span class="nx">frag</span><span class="o">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">html</span><span class="o">;</span>
-                <span class="nx">frag</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="nx">frag</span><span class="o">[</span><span class="nx">FIRST_CHILD</span><span class="o">]);</span>
-                <span class="k">return</span> <span class="nx">frag</span><span class="o">;</span>
-            <span class="o">}</span>
+                <span class="nx">frag</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">html</span><span class="p">;</span>
+                <span class="nx">frag</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">frag</span><span class="p">[</span><span class="nx">FIRST_CHILD</span><span class="p">]);</span>
+                <span class="k">return</span> <span class="nx">frag</span><span class="p">;</span>
+            <span class="p">}</span>
 
-        <span class="o">},</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">VALUE_GETTERS</span><span class="o">,</span> <span class="o">{</span>
-            <span class="nx">button</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">attributes</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">value</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">value</span><span class="o">.</span><span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">VALUE_GETTERS</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">button</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">VALUE_SETTERS</span><span class="o">,</span> <span class="o">{</span>
-            <span class="c">// IE: node.value changes the button text, which should be handled via innerHTML</span>
-<span class="c"></span>            <span class="nx">button</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">attr</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">attr</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">].</span><span class="nx">createAttribute</span><span class="o">(</span><span class="s1">&#39;value&#39;</span><span class="o">);</span>
-                    <span class="nx">node</span><span class="o">.</span><span class="nx">setAttributeNode</span><span class="o">(</span><span class="nx">attr</span><span class="o">);</span>
-                <span class="o">}</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">VALUE_SETTERS</span><span class="p">,</span> <span class="p">{</span>
+            <span class="c1">// IE: node.value changes the button text, which should be handled via innerHTML</span>
+            <span class="nx">button</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">attr</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">attr</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">OWNER_DOCUMENT</span><span class="p">].</span><span class="nx">createAttribute</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">);</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">setAttributeNode</span><span class="p">(</span><span class="nx">attr</span><span class="p">);</span>
+                <span class="p">}</span>
 
-                <span class="nx">attr</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
-    <span class="o">}</span>
+                <span class="nx">attr</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
 
-    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">creators</span><span class="o">,</span> <span class="o">{</span>
-            <span class="nx">option</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;select&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/select&gt;&#39;</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
-            <span class="o">},</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">creators</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">option</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;select&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/select&gt;&#39;</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+            <span class="p">},</span>
 
-            <span class="nx">tr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;tbody&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/tbody&gt;&#39;</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
-            <span class="o">},</span>
+            <span class="nx">tr</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;tbody&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/tbody&gt;&#39;</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+            <span class="p">},</span>
 
-            <span class="nx">td</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;tr&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
-            <span class="o">},</span> 
+            <span class="nx">td</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;tr&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+            <span class="p">},</span> 
 
-            <span class="nx">tbody</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">create</span><span class="o">(</span><span class="nx">TABLE_OPEN</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="nx">TABLE_CLOSE</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
+            <span class="nx">tbody</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">create</span><span class="p">(</span><span class="nx">TABLE_OPEN</span> <span class="o">+</span> <span class="nx">html</span> <span class="o">+</span> <span class="nx">TABLE_CLOSE</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">creators</span><span class="o">,</span> <span class="o">{</span>
-            <span class="nx">legend</span><span class="o">:</span> <span class="s1">&#39;fieldset&#39;</span><span class="o">,</span>
-            <span class="nx">th</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">td</span><span class="o">,</span>
-            <span class="nx">thead</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
-            <span class="nx">tfoot</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
-            <span class="nx">caption</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
-            <span class="nx">colgroup</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
-            <span class="nx">col</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">tbody</span><span class="o">,</span>
-            <span class="nx">optgroup</span><span class="o">:</span> <span class="nx">creators</span><span class="o">.</span><span class="nx">option</span>
-        <span class="o">});</span>
-    <span class="o">}</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">creators</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">legend</span><span class="o">:</span> <span class="s1">&#39;fieldset&#39;</span><span class="p">,</span>
+            <span class="nx">th</span><span class="o">:</span> <span class="nx">creators</span><span class="p">.</span><span class="nx">td</span><span class="p">,</span>
+            <span class="nx">thead</span><span class="o">:</span> <span class="nx">creators</span><span class="p">.</span><span class="nx">tbody</span><span class="p">,</span>
+            <span class="nx">tfoot</span><span class="o">:</span> <span class="nx">creators</span><span class="p">.</span><span class="nx">tbody</span><span class="p">,</span>
+            <span class="nx">caption</span><span class="o">:</span> <span class="nx">creators</span><span class="p">.</span><span class="nx">tbody</span><span class="p">,</span>
+            <span class="nx">colgroup</span><span class="o">:</span> <span class="nx">creators</span><span class="p">.</span><span class="nx">tbody</span><span class="p">,</span>
+            <span class="nx">col</span><span class="o">:</span> <span class="nx">creators</span><span class="p">.</span><span class="nx">tbody</span><span class="p">,</span>
+            <span class="nx">optgroup</span><span class="o">:</span> <span class="nx">creators</span><span class="p">.</span><span class="nx">option</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">VALUE_GETTERS</span><span class="o">,</span> <span class="o">{</span>
-        <span class="nx">option</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">attributes</span><span class="o">;</span>
-            <span class="k">return</span> <span class="o">(</span><span class="nx">attrs</span><span class="o">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">attrs</span><span class="o">.</span><span class="nx">value</span><span class="o">.</span><span class="nx">specified</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span><span class="o">.</span><span class="nx">value</span> <span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">text</span><span class="o">;</span>
-        <span class="o">},</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">VALUE_GETTERS</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">option</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">;</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nx">attrs</span><span class="p">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">attrs</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">specified</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">value</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">text</span><span class="p">;</span>
+        <span class="p">},</span>
 
-        <span class="nx">select</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">value</span><span class="o">,</span>
-                <span class="nx">options</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">options</span><span class="o">;</span>
+        <span class="nx">select</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span>
+                <span class="nx">options</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">multiple</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;multiple select normalization not implemented&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;DOM&#39;</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">getValue</span><span class="o">(</span><span class="nx">options</span><span class="o">[</span><span class="nx">node</span><span class="o">.</span><span class="nx">selectedIndex</span><span class="o">],</span> <span class="s1">&#39;value&#39;</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">multiple</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;multiple select normalization not implemented&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;DOM&#39;</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">getValue</span><span class="p">(</span><span class="nx">options</span><span class="p">[</span><span class="nx">node</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">],</span> <span class="s1">&#39;value&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
 
-            <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">});</span>
-<span class="o">})(</span><span class="nx">Y</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+<span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>
 
-<span class="o">})(</span><span class="nx">Y</span><span class="o">);</span>
+<span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>
 </pre></div>
 
                     </div>
