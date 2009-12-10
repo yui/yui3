@@ -40,7 +40,7 @@ Parent.ATTRS = {
      * managed by this Widget.
      */
     defaultItemType: {
-        validator: Lang.isString        
+        validator: Lang.isString
     },
 
 
@@ -84,9 +84,7 @@ Parent.ATTRS = {
      */
     selection: {
         readOnly: true,
-        setter: function (val) {
-            return this._setSelection(val);
-        }
+        setter: "_setSelection"
     },
     
     
@@ -99,10 +97,8 @@ Parent.ATTRS = {
      * direct descendants.
      */
     items: {
-       readOnly: true,
-       valueFn: function () {
-           return [];
-       }
+        value: [],
+        readOnly: true
     }
 
 };
@@ -119,7 +115,7 @@ Parent.prototype = {
      * @param {EventFacade} event The event facade for the attribute change.
      */
     _afterSelectionChange: function (event) {
-        
+
         var prevSelection = event.prevVal,
             selection = event.newVal;
 
@@ -143,8 +139,13 @@ Parent.prototype = {
                     prevSelection.set("selected", 0, { src: this });
                 }
 
+                this.set("selected", 1, { src: this });
+
             }
-            
+
+        }
+        else {
+           this.set("selected", 0, { src: this });
         }
         
     },
@@ -163,12 +164,17 @@ Parent.prototype = {
         var value = event.newVal,
             items = this.get("items");
 
+        //  Sync the selected state of all children to match that of their
+        //  parent Widget
         if (event.src != this && this == event.target && items.length > 0 && 
             (value === 0 || value === 1)) {
 
             Y.each(items, function (item) {
-                item.set("selected", value);
-            });
+                //  Specify the source of this change as the parent so that 
+                //  value of the parent's "selection" attribute isn't 
+                //  recalculated
+                item.set("selected", value, { src: this });
+            }, this);
             
         }
         
@@ -186,9 +192,10 @@ Parent.prototype = {
     _setSelection: function (item) {
 
         var selection = null,
-            items = this.get("items");
+            items = this.get("items"),
+            root = this.get("root") || this;
 
-        if (this.get("root").get("multiple") && items.length > 0) {
+        if (root.get("multiple") && items.length > 0) {
 
             selection = [];
             
@@ -237,7 +244,7 @@ Parent.prototype = {
      * attribute of child Widgets, responsible for setting the value of the 
      * parent's <code>activeItem</code> attribute.
      *
-     * @method _afterSelectedChange
+     * @method _afterItemFocusedChange
      * @protected
      * @param {EventFacade} event The event facade for the attribute change.
      */
