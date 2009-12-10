@@ -265,10 +265,6 @@ Y.DOM = {
             html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
         }
 
-        if (!doc && Y.DOM._cloneCache[html]) {
-            return Y.DOM._cloneCache[html].cloneNode(true); // NOTE: return
-        }
-
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html),
             create = Y.DOM._create,
@@ -292,9 +288,6 @@ Y.DOM = {
              ret = Y.DOM._nl2frag(nodes, doc);
         }
 
-        if (ret) {
-            Y.DOM._cloneCache[html] = ret.cloneNode(true);
-        }
         return ret;
     },
 
@@ -366,9 +359,7 @@ Y.DOM = {
         return obj.alert && obj.document;
     },
 
-    _fragClones: {
-        div: document.createElement('div')
-    },
+    _fragClones: {},
 
     _create: function(html, doc, tag) {
         tag = tag || 'div';
@@ -389,8 +380,6 @@ Y.DOM = {
         }
     },
 
-    _cloneCache: {},
-
     /**
      * Inserts content in a node at the given location 
      * @method addHTML
@@ -403,12 +392,10 @@ Y.DOM = {
             content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
         }
 
-        var newNode = Y.DOM._cloneCache[content],
-            nodeParent = node.parentNode;
+        var nodeParent = node.parentNode,
+            newNode;
             
-        if (newNode) {
-            newNode = newNode.cloneNode(true);
-        } else if (content) {
+        if (content) {
             if (content.nodeType) { // domNode
                 newNode = content;
             } else { // create from string and cache
@@ -426,7 +413,7 @@ Y.DOM = {
                         while (node.firstChild) {
                             node.removeChild(node.firstChild);
                         }
-                        if (newNode) {
+                        if (newNode) { // allow empty content to clear node
                             node.appendChild(newNode);
                         }
                         break;
