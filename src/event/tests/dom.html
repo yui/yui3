@@ -291,12 +291,22 @@
                         els = document.getElementsByTagName('p');
 
                     Y.on('click', fn, 'clicker1', obj, 2, 3);
+                    Y.detach('click', fn, 'clicker1', obj, 2, 3);
 
-                    Y.Event.detach('click', fn, 'clicker1', obj, 2, 3);
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    Y.Assert.areEqual(0, clicked, "detach by signature was a failure");
+
+                    Y.on('click', fn, 'clicker1');
+                    Y.detach('click', fn, 'clicker1');
                     
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
-
                     Y.Assert.areEqual(0, clicked, "detach by signature was a failure");
+
+                    // Y.on('windowresize', fn);
+                    // // unbind windowresize - THIS IS NOT WORKING
+                    // Y.detach('windowresize', fn);
+                    // Y.Event.simulate(window, 'resize');
+                    // Y.Assert.areEqual(0, clicked, "detach by signature was a failure");
 
                 },
 
