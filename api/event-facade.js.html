@@ -390,7 +390,7 @@
 
                     <span class="nx">bc</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">broadcast</span><span class="p">;</span>
                     <span class="nx">ce</span><span class="p">.</span><span class="nx">broadcast</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-                    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span> <span class="o">||</span> <span class="nx">evt</span><span class="p">.</span><span class="nx">details</span><span class="p">);</span>
+                    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span> <span class="o">||</span> <span class="nx">evt</span><span class="p">.</span><span class="nx">details</span> <span class="o">||</span> <span class="p">[]);</span>
                     <span class="nx">ce</span><span class="p">.</span><span class="nx">broadcast</span> <span class="o">=</span> <span class="nx">bc</span><span class="p">;</span>
 
                     <span class="c1">// stopPropagation() was called</span>
