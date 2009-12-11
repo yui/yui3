@@ -679,9 +679,9 @@ YUI.prototype = {
 
     // inheritance utilities are not available yet
     for (i in p) {
-        // if (1) { // intenionally ignoring hasOwnProperty check
-        YUI[i] = p[i];
-        // }
+        if (1) { // intenionally ignoring hasOwnProperty check
+            YUI[i] = p[i];
+        }
     }
 
     // set up the environment
@@ -1658,8 +1658,7 @@ Y.cached = function(source, cache, refetch){
 
     return function(arg1, arg2) {
 
-        var k = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1,
-            v = cache[k];
+        var k = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
 
         if (!(k in cache) || (refetch && cache[k] == refetch)) {
             cache[k] = source.apply(source, arguments);
@@ -2212,6 +2211,9 @@ Y.Get = function() {
      * @private
      */
     var queues={}, 
+        _get,
+        _purge,
+        _track,
         
     /**
      * queue index used to generate transaction ids
@@ -2300,47 +2302,6 @@ Y.Get = function() {
     },
 
     /**
-     * Removes the nodes for the specified queue
-     * @method _purge
-     * @private
-     */
-    _purge = function(tId) {
-        var q=queues[tId], n, l, d, h, s, i, node, attr;
-        if (q) {
-            n = q.nodes; 
-            l = n.length;
-            d = q.win.document;
-            h = d.getElementsByTagName("head")[0];
-
-            if (q.insertBefore) {
-                s = _get(q.insertBefore, tId);
-                if (s) {
-                    h = s.parentNode;
-                }
-            }
-
-            for (i=0; i<l; i=i+1) {
-                node = n[i];
-                if (node.clearAttributes) {
-                    node.clearAttributes();
-                } else {
-                    // This is a hostile delete
-                    // operation attempting to improve
-                    // memory performance.  As such, the
-                    // hasOwnProperty check is intentionally
-                    // ommitted.
-                    for (attr in node) {
-                        delete node[attr];
-                    }
-                }
-
-                h.removeChild(node);
-            }
-        }
-        q.nodes = [];
-    },
-
-    /**
      * Returns the data payload for callback functions
      * @method _returnData
      * @private
@@ -2397,16 +2358,6 @@ Y.Get = function() {
         }
 
         _end(id, msg, 'failure');
-    },
-
-    _get = function(nId, tId) {
-        var q = queues[tId],
-            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
-        if (!n) {
-            _fail(tId, "target node not found: " + nId);
-        }
-
-        return n;
     },
 
     /**
@@ -2610,10 +2561,9 @@ Y.Get = function() {
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;
 
-        if (opts.charset) {
-            q.attributes = q.attributes || {};
-            q.attributes.charset = opts.charset;
-        }
+
+        q.attributes = q.attributes || {};
+        q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
 
         // L.later(0, q, _next, id);
         setTimeout(function() {
@@ -2623,7 +2573,7 @@ Y.Get = function() {
         return {
             tId: id
         };
-    },
+    };
 
     /**
      * Detects when a node has been loaded.  In the case of
@@ -2681,6 +2631,60 @@ Y.Get = function() {
                 _fail(id, e + ": " + url);
             };
         }
+    };
+
+
+    _get = function(nId, tId) {
+        var q = queues[tId],
+            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
+        if (!n) {
+            _fail(tId, "target node not found: " + nId);
+        }
+
+        return n;
+    };
+
+    /**
+     * Removes the nodes for the specified queue
+     * @method _purge
+     * @private
+     */
+    _purge = function(tId) {
+        var q=queues[tId], n, l, d, h, s, i, node, attr;
+        if (q) {
+            n = q.nodes; 
+            l = n.length;
+            d = q.win.document;
+            h = d.getElementsByTagName("head")[0];
+
+            if (q.insertBefore) {
+                s = _get(q.insertBefore, tId);
+                if (s) {
+                    h = s.parentNode;
+                }
+            }
+
+            for (i=0; i<l; i=i+1) {
+                node = n[i];
+                if (node.clearAttributes) {
+                    node.clearAttributes();
+                } else {
+                    // This is a hostile delete
+                    // operation attempting to improve
+                    // memory performance.  As such, the
+                    // hasOwnProperty check is intentionally
+                    // ommitted.
+                    for (attr in node) {
+                        if (node.hasOwnProperty(attr)) {
+                            delete node[attr];
+                        }
+                    }
+                }
+
+                h.removeChild(node);
+            }
+        }
+        q.nodes = [];
     };
 
     return {

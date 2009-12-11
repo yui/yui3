@@ -47,341 +47,341 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The DataSource utility provides a common configurable interface for widgets to</span>
-<span class="c"> * access a variety of data, from JavaScript arrays to online database servers.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datasource</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The DataSource utility provides a common configurable interface for widgets to</span>
+<span class="cm"> * access a variety of data, from JavaScript arrays to online database servers.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datasource</span>
+<span class="cm"> */</span>
     
-<span class="c">/**</span>
-<span class="c"> * Provides the base DataSource implementation, which can be extended to</span>
-<span class="c"> * create DataSources for specific data protocols, such as the IO Utility, the</span>
-<span class="c"> * Get Utility, or custom functions.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datasource</span>
-<span class="c"> * @submodule datasource-local</span>
-<span class="c"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * Provides the base DataSource implementation, which can be extended to</span>
+<span class="cm"> * create DataSources for specific data protocols, such as the IO Utility, the</span>
+<span class="cm"> * Get Utility, or custom functions.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datasource</span>
+<span class="cm"> * @submodule datasource-local</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Base class for the DataSource Utility.</span>
-<span class="c"> * @class DataSource.Local</span>
-<span class="c"> * @extends Base</span>
-<span class="c"> * @constructor</span>
-<span class="c"> */</span>    
-<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+<span class="cm">/**</span>
+<span class="cm"> * Base class for the DataSource Utility.</span>
+<span class="cm"> * @class DataSource.Local</span>
+<span class="cm"> * @extends Base</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> */</span>    
+<span class="kd">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
 
-<span class="nx">DSLocal</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-    <span class="nx">DSLocal</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="nx">DSLocal</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">DSLocal</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">};</span>
     
-    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSource static properties</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span><span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">DSLocal</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Class name.</span>
-<span class="c">     *</span>
-<span class="c">     * @property NAME</span>
-<span class="c">     * @type String</span>
-<span class="c">     * @static     </span>
-<span class="c">     * @final</span>
-<span class="c">     * @value &quot;dataSourceLocal&quot;</span>
-<span class="c">     */</span>
-    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceLocal&quot;</span><span class="o">,</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+    <span class="c1">//</span>
+    <span class="c1">// DataSource static properties</span>
+    <span class="c1">//</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">DSLocal</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Class name.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property NAME</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static     </span>
+<span class="cm">     * @final</span>
+<span class="cm">     * @value &quot;dataSourceLocal&quot;</span>
+<span class="cm">     */</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceLocal&quot;</span><span class="p">,</span>
 
-    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSource Attributes</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>
-    <span class="nx">ATTRS</span><span class="o">:</span> <span class="o">{</span>
-        <span class="c">/**</span>
-<span class="c">        * @attribute source</span>
-<span class="c">        * @description Pointer to live data.</span>
-<span class="c">        * @type MIXED</span>
-<span class="c">        * @default null        </span>
-<span class="c">        */</span>
-        <span class="nx">source</span><span class="o">:</span> <span class="o">{</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+    <span class="c1">//</span>
+    <span class="c1">// DataSource Attributes</span>
+    <span class="c1">//</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+
+    <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute source</span>
+<span class="cm">        * @description Pointer to live data.</span>
+<span class="cm">        * @type MIXED</span>
+<span class="cm">        * @default null        </span>
+<span class="cm">        */</span>
+        <span class="nx">source</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Global transaction counter.</span>
-<span class="c">     *</span>
-<span class="c">     * @property DataSource._tId</span>
-<span class="c">     * @type Number</span>
-<span class="c">     * @static</span>
-<span class="c">     * @private</span>
-<span class="c">     * @default 0</span>
-<span class="c">     */</span>
-    <span class="nx">_tId</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Global transaction counter.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property DataSource._tId</span>
+<span class="cm">     * @type Number</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @default 0</span>
+<span class="cm">     */</span>
+    <span class="nx">_tId</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Executes a given callback.  The third param determines whether to execute</span>
-<span class="c">     *</span>
-<span class="c">     * @method DataSource.issueCallback</span>
-<span class="c">     * @param callback {Object} The callback object.</span>
-<span class="c">     * @param params {Array} params to be passed to the callback method</span>
-<span class="c">     * @param error {Boolean} whether an error occurred</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">issueCallback</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">callbackFunc</span> <span class="o">=</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="o">.</span><span class="nx">callback</span><span class="o">.</span><span class="nx">failure</span><span class="o">)</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">callback</span><span class="o">.</span><span class="nx">success</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">callbackFunc</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">callbackFunc</span><span class="o">(</span><span class="nx">e</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Executes a given callback.  The third param determines whether to execute</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method DataSource.issueCallback</span>
+<span class="cm">     * @param callback {Object} The callback object.</span>
+<span class="cm">     * @param params {Array} params to be passed to the callback method</span>
+<span class="cm">     * @param error {Boolean} whether an error occurred</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">issueCallback</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">callbackFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">error</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">.</span><span class="nx">failure</span><span class="p">)</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">.</span><span class="nx">success</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">callbackFunc</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">callbackFunc</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
     
-<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">DSLocal</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">    * Internal init() handler.</span>
-<span class="c">    *</span>
-<span class="c">    * @method initializer</span>
-<span class="c">    * @param config {Object} Config object.</span>
-<span class="c">    * @private        </span>
-<span class="c">    */</span>
-    <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_initEvents</span><span class="o">();</span>
-    <span class="o">},</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">DSLocal</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">    * Internal init() handler.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method initializer</span>
+<span class="cm">    * @param config {Object} Config object.</span>
+<span class="cm">    * @private        </span>
+<span class="cm">    */</span>
+    <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_initEvents</span><span class="p">();</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">    * This method creates all the events for this module.</span>
-<span class="c">    * @method _initEvents</span>
-<span class="c">    * @private        </span>
-<span class="c">    */</span>
-    <span class="nx">_initEvents</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="c">/**</span>
-<span class="c">         * Fired when a data request is received.</span>
-<span class="c">         *</span>
-<span class="c">         * @event request</span>
-<span class="c">         * @param e {Event.Facade} Event Facade with the following properties:</span>
-<span class="c">         * &lt;dl&gt;                          </span>
-<span class="c">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
-<span class="c">         * &lt;/dl&gt;</span>
-<span class="c">         * @preventable _defRequestFn</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;request&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_defRequestFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">),</span> <span class="nx">queuable</span><span class="o">:</span><span class="kc">true</span><span class="o">});</span>
+    <span class="cm">/**</span>
+<span class="cm">    * This method creates all the events for this module.</span>
+<span class="cm">    * @method _initEvents</span>
+<span class="cm">    * @private        </span>
+<span class="cm">    */</span>
+    <span class="nx">_initEvents</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Fired when a data request is received.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @event request</span>
+<span class="cm">         * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="cm">         * &lt;dl&gt;                          </span>
+<span class="cm">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;/dl&gt;</span>
+<span class="cm">         * @preventable _defRequestFn</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s2">&quot;_defRequestFn&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="nx">queuable</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
          
-        <span class="c">/**</span>
-<span class="c">         * Fired when raw data is received.</span>
-<span class="c">         *</span>
-<span class="c">         * @event data</span>
-<span class="c">         * @param e {Event.Facade} Event Facade with the following properties:</span>
-<span class="c">         * &lt;dl&gt;</span>
-<span class="c">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
-<span class="c">         *     &lt;dl&gt;</span>
-<span class="c">         *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
-<span class="c">         *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
-<span class="c">         *     &lt;/dl&gt;</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
-<span class="c">         * &lt;/dl&gt;</span>
-<span class="c">         * @preventable _defDataFn</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_defDataFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">),</span> <span class="nx">queuable</span><span class="o">:</span><span class="kc">true</span><span class="o">});</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Fired when raw data is received.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @event data</span>
+<span class="cm">         * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="cm">         * &lt;dl&gt;</span>
+<span class="cm">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="cm">         *     &lt;dl&gt;</span>
+<span class="cm">         *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="cm">         *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="cm">         *     &lt;/dl&gt;</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;/dl&gt;</span>
+<span class="cm">         * @preventable _defDataFn</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s2">&quot;_defDataFn&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="nx">queuable</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Fired when response is returned.</span>
-<span class="c">         *</span>
-<span class="c">         * @event response</span>
-<span class="c">         * @param e {Event.Facade} Event Facade with the following properties:</span>
-<span class="c">         * &lt;dl&gt;</span>
-<span class="c">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
-<span class="c">         *     &lt;dl&gt;</span>
-<span class="c">         *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
-<span class="c">         *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
-<span class="c">         *     &lt;/dl&gt;</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized response object with the following properties:</span>
-<span class="c">         *     &lt;dl&gt;</span>
-<span class="c">         *         &lt;dt&gt;results (Object)&lt;/dt&gt; &lt;dd&gt;Parsed results.&lt;/dd&gt;</span>
-<span class="c">         *         &lt;dt&gt;meta (Object)&lt;/dt&gt; &lt;dd&gt;Parsed meta data.&lt;/dd&gt;</span>
-<span class="c">         *         &lt;dt&gt;error (Boolean)&lt;/dt&gt; &lt;dd&gt;Error flag.&lt;/dd&gt;</span>
-<span class="c">         *     &lt;/dl&gt;</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;/dl&gt;</span>
-<span class="c">         * @preventable _defResponseFn</span>
-<span class="c">         */</span>
-         <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;response&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="s2">&quot;_defResponseFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">),</span> <span class="nx">queuable</span><span class="o">:</span><span class="kc">true</span><span class="o">});</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Fired when response is returned.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @event response</span>
+<span class="cm">         * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="cm">         * &lt;dl&gt;</span>
+<span class="cm">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="cm">         *     &lt;dl&gt;</span>
+<span class="cm">         *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="cm">         *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="cm">         *     &lt;/dl&gt;</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized response object with the following properties:</span>
+<span class="cm">         *     &lt;dl&gt;</span>
+<span class="cm">         *         &lt;dt&gt;results (Object)&lt;/dt&gt; &lt;dd&gt;Parsed results.&lt;/dd&gt;</span>
+<span class="cm">         *         &lt;dt&gt;meta (Object)&lt;/dt&gt; &lt;dd&gt;Parsed meta data.&lt;/dd&gt;</span>
+<span class="cm">         *         &lt;dt&gt;error (Boolean)&lt;/dt&gt; &lt;dd&gt;Error flag.&lt;/dd&gt;</span>
+<span class="cm">         *     &lt;/dl&gt;</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;/dl&gt;</span>
+<span class="cm">         * @preventable _defResponseFn</span>
+<span class="cm">         */</span>
+         <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">&quot;response&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s2">&quot;_defResponseFn&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="nx">queuable</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Fired when an error is encountered.</span>
-<span class="c">         *</span>
-<span class="c">         * @event error</span>
-<span class="c">         * @param e {Event.Facade} Event Facade with the following properties:</span>
-<span class="c">         * &lt;dl&gt;</span>
-<span class="c">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
-<span class="c">         *     &lt;dl&gt;</span>
-<span class="c">         *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
-<span class="c">         *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
-<span class="c">         *     &lt;/dl&gt;</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized response object with the following properties:</span>
-<span class="c">         *     &lt;dl&gt;</span>
-<span class="c">         *         &lt;dt&gt;results (Object)&lt;/dt&gt; &lt;dd&gt;Parsed results.&lt;/dd&gt;</span>
-<span class="c">         *         &lt;dt&gt;meta (Object)&lt;/dt&gt; &lt;dd&gt;Parsed meta data.&lt;/dd&gt;</span>
-<span class="c">         *         &lt;dt&gt;error (Object)&lt;/dt&gt; &lt;dd&gt;Error object.&lt;/dd&gt;</span>
-<span class="c">         *     &lt;/dl&gt;</span>
-<span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;/dl&gt;</span>
-<span class="c">         */</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Fired when an error is encountered.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @event error</span>
+<span class="cm">         * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="cm">         * &lt;dl&gt;</span>
+<span class="cm">         * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="cm">         *     &lt;dl&gt;</span>
+<span class="cm">         *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="cm">         *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="cm">         *     &lt;/dl&gt;</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
+<span class="cm">         * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized response object with the following properties:</span>
+<span class="cm">         *     &lt;dl&gt;</span>
+<span class="cm">         *         &lt;dt&gt;results (Object)&lt;/dt&gt; &lt;dd&gt;Parsed results.&lt;/dd&gt;</span>
+<span class="cm">         *         &lt;dt&gt;meta (Object)&lt;/dt&gt; &lt;dd&gt;Parsed meta data.&lt;/dd&gt;</span>
+<span class="cm">         *         &lt;dt&gt;error (Object)&lt;/dt&gt; &lt;dd&gt;Error object.&lt;/dd&gt;</span>
+<span class="cm">         *     &lt;/dl&gt;</span>
+<span class="cm">         * &lt;/dd&gt;</span>
+<span class="cm">         * &lt;/dl&gt;</span>
+<span class="cm">         */</span>
 
-    <span class="o">},</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Manages request/response transaction. Must fire &lt;code&gt;response&lt;/code&gt;</span>
-<span class="c">     * event when response is received. This method should be implemented by</span>
-<span class="c">     * subclasses to achieve more complex behavior such as accessing remote data.</span>
-<span class="c">     *</span>
-<span class="c">     * @method _defRequestFn</span>
-<span class="c">     * @param e {Event.Facade} Event Facadewith the following properties:</span>
-<span class="c">     * &lt;dl&gt;</span>
-<span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
-<span class="c">     *     &lt;dl&gt;</span>
-<span class="c">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;/dl&gt;</span>
-<span class="c">     * &lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
-<span class="c">     * &lt;/dl&gt;</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_defRequestFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;source&quot;</span><span class="o">);</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Manages request/response transaction. Must fire &lt;code&gt;response&lt;/code&gt;</span>
+<span class="cm">     * event when response is received. This method should be implemented by</span>
+<span class="cm">     * subclasses to achieve more complex behavior such as accessing remote data.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defRequestFn</span>
+<span class="cm">     * @param e {Event.Facade} Event Facadewith the following properties:</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     * &lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defRequestFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">);</span>
         
-        <span class="c">// Problematic data</span>
-<span class="c"></span>        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">data</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;Local source undefined&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="k">if</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">error</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Error in response&quot;</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-local&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="c1">// Problematic data</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Local source undefined&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Error in response&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;datasource-local&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">data</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Transaction &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot; complete. Request: &quot;</span> <span class="o">+</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; . Response: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">response</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-local&quot;</span><span class="o">);</span>
-    <span class="o">},</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">data</span><span class="p">},</span> <span class="nx">e</span><span class="p">));</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Transaction &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot; complete. Request: &quot;</span> <span class="o">+</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">request</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; . Response: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">response</span><span class="p">),</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;datasource-local&quot;</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Normalizes raw data into a response that includes results and meta properties.</span>
-<span class="c">     *</span>
-<span class="c">     * @method _defDataFn</span>
-<span class="c">     * @param e {Event.Facade} Event Facade with the following properties:</span>
-<span class="c">     * &lt;dl&gt;</span>
-<span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
-<span class="c">     *     &lt;dl&gt;</span>
-<span class="c">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;/dl&gt;</span>
-<span class="c">     * &lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
-<span class="c">     * &lt;/dl&gt;</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_defDataFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
-            <span class="nx">meta</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">meta</span><span class="o">,</span>
-            <span class="nx">response</span> <span class="o">=</span> <span class="o">{</span>
-                <span class="nx">results</span><span class="o">:</span> <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">data</span><span class="o">))</span> <span class="o">?</span> <span class="nx">data</span> <span class="o">:</span> <span class="o">[</span><span class="nx">data</span><span class="o">],</span>
-                <span class="nx">meta</span><span class="o">:</span> <span class="o">(</span><span class="nx">meta</span><span class="o">)</span> <span class="o">?</span> <span class="nx">meta</span> <span class="o">:</span> <span class="o">{}</span>
-            <span class="o">};</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Normalizes raw data into a response that includes results and meta properties.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defDataFn</span>
+<span class="cm">     * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     * &lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defDataFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span>
+            <span class="nx">meta</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">meta</span><span class="p">,</span>
+            <span class="nx">response</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">results</span><span class="o">:</span> <span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span> <span class="o">?</span> <span class="nx">data</span> <span class="o">:</span> <span class="p">[</span><span class="nx">data</span><span class="p">],</span>
+                <span class="nx">meta</span><span class="o">:</span> <span class="p">(</span><span class="nx">meta</span><span class="p">)</span> <span class="o">?</span> <span class="nx">meta</span> <span class="o">:</span> <span class="p">{}</span>
+            <span class="p">};</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;response&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">response</span><span class="o">:</span> <span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
-    <span class="o">},</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;response&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span><span class="nx">response</span><span class="o">:</span> <span class="nx">response</span><span class="p">},</span> <span class="nx">e</span><span class="p">));</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Sends data as a normalized response to callback.</span>
-<span class="c">     *</span>
-<span class="c">     * @method _defResponseFn</span>
-<span class="c">     * @param e {Event.Facade} Event Facade with the following properties:</span>
-<span class="c">     * &lt;dl&gt;</span>
-<span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
-<span class="c">     *     &lt;dl&gt;</span>
-<span class="c">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;/dl&gt;</span>
-<span class="c">     * &lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized response object with the following properties:</span>
-<span class="c">     *     &lt;dl&gt;</span>
-<span class="c">     *         &lt;dt&gt;results (Object)&lt;/dt&gt; &lt;dd&gt;Parsed results.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;meta (Object)&lt;/dt&gt; &lt;dd&gt;Parsed meta data.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;error (Boolean)&lt;/dt&gt; &lt;dd&gt;Error flag.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;/dl&gt;</span>
-<span class="c">     * &lt;/dd&gt;</span>
-<span class="c">     * &lt;/dl&gt;</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_defResponseFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">// Send the response back to the callback</span>
-<span class="c"></span>        <span class="nx">DSLocal</span><span class="o">.</span><span class="nx">issueCallback</span><span class="o">(</span><span class="nx">e</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Sends data as a normalized response to callback.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defResponseFn</span>
+<span class="cm">     * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     * &lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized response object with the following properties:</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *         &lt;dt&gt;results (Object)&lt;/dt&gt; &lt;dd&gt;Parsed results.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;meta (Object)&lt;/dt&gt; &lt;dd&gt;Parsed meta data.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;error (Boolean)&lt;/dt&gt; &lt;dd&gt;Error flag.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     * &lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defResponseFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Send the response back to the callback</span>
+        <span class="nx">DSLocal</span><span class="p">.</span><span class="nx">issueCallback</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+    <span class="p">},</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Generates a unique transaction ID and fires &lt;code&gt;request&lt;/code&gt; event.</span>
-<span class="c">     *</span>
-<span class="c">     * @method sendRequest</span>
-<span class="c">     * @param request {Object} An object literal with the following properties:</span>
-<span class="c">     *     &lt;dl&gt;</span>
-<span class="c">     *     &lt;dt&gt;&lt;code&gt;request&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="c">     *     &lt;dd&gt;The request to send to the live data source, if any.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;dt&gt;&lt;code&gt;callback&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="c">     *     &lt;dd&gt;An object literal with the following properties:</span>
-<span class="c">     *         &lt;dl&gt;</span>
-<span class="c">     *         &lt;dt&gt;&lt;code&gt;success&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="c">     *         &lt;dd&gt;The function to call when the data is ready.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;&lt;code&gt;failure&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="c">     *         &lt;dd&gt;The function to call upon a response failure condition.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;&lt;code&gt;argument&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="c">     *         &lt;dd&gt;Arbitrary data payload that will be passed back to the success and failure handlers.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;/dl&gt;</span>
-<span class="c">     *     &lt;/dd&gt;</span>
-<span class="c">     *     &lt;dt&gt;&lt;code&gt;cfg&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="c">     *     &lt;dd&gt;Configuration object, if any.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;/dl&gt;</span>
-<span class="c">     * @return {Number} Transaction ID.</span>
-<span class="c">     */</span>
-    <span class="nx">sendRequest</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">request</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">request</span> <span class="o">=</span> <span class="nx">request</span> <span class="o">||</span> <span class="o">{};</span>
-        <span class="k">var</span> <span class="nx">tId</span> <span class="o">=</span> <span class="nx">DSLocal</span><span class="o">.</span><span class="nx">_tId</span><span class="o">++;</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;request&quot;</span><span class="o">,</span> <span class="o">{</span><span class="nx">tId</span><span class="o">:</span><span class="nx">tId</span><span class="o">,</span> <span class="nx">request</span><span class="o">:</span><span class="nx">request</span><span class="o">.</span><span class="nx">request</span><span class="o">,</span> <span class="nx">callback</span><span class="o">:</span><span class="nx">request</span><span class="o">.</span><span class="nx">callback</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">:</span><span class="nx">request</span><span class="o">.</span><span class="nx">cfg</span> <span class="o">||</span> <span class="o">{}});</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Transaction &quot;</span> <span class="o">+</span> <span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot; sent request: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">request</span><span class="o">.</span><span class="nx">request</span><span class="o">),</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-local&quot;</span><span class="o">);</span>
-        <span class="k">return</span> <span class="nx">tId</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Generates a unique transaction ID and fires &lt;code&gt;request&lt;/code&gt; event.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method sendRequest</span>
+<span class="cm">     * @param request {Object} An object literal with the following properties:</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *     &lt;dt&gt;&lt;code&gt;request&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *     &lt;dd&gt;The request to send to the live data source, if any.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;dt&gt;&lt;code&gt;callback&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *     &lt;dd&gt;An object literal with the following properties:</span>
+<span class="cm">     *         &lt;dl&gt;</span>
+<span class="cm">     *         &lt;dt&gt;&lt;code&gt;success&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *         &lt;dd&gt;The function to call when the data is ready.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;&lt;code&gt;failure&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *         &lt;dd&gt;The function to call upon a response failure condition.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;&lt;code&gt;argument&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *         &lt;dd&gt;Arbitrary data payload that will be passed back to the success and failure handlers.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;/dl&gt;</span>
+<span class="cm">     *     &lt;/dd&gt;</span>
+<span class="cm">     *     &lt;dt&gt;&lt;code&gt;cfg&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *     &lt;dd&gt;Configuration object, if any.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     * @return {Number} Transaction ID.</span>
+<span class="cm">     */</span>
+    <span class="nx">sendRequest</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">request</span> <span class="o">=</span> <span class="nx">request</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="kd">var</span> <span class="nx">tId</span> <span class="o">=</span> <span class="nx">DSLocal</span><span class="p">.</span><span class="nx">_tId</span><span class="o">++</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">tId</span><span class="o">:</span><span class="nx">tId</span><span class="p">,</span> <span class="nx">request</span><span class="o">:</span><span class="nx">request</span><span class="p">.</span><span class="nx">request</span><span class="p">,</span> <span class="nx">callback</span><span class="o">:</span><span class="nx">request</span><span class="p">.</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">cfg</span><span class="o">:</span><span class="nx">request</span><span class="p">.</span><span class="nx">cfg</span> <span class="o">||</span> <span class="p">{}});</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Transaction &quot;</span> <span class="o">+</span> <span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot; sent request: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">request</span><span class="p">),</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;datasource-local&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">tId</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
     
-<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;DataSource&quot;</span><span class="o">).</span><span class="nx">Local</span> <span class="o">=</span> <span class="nx">DSLocal</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;DataSource&quot;</span><span class="p">).</span><span class="nx">Local</span> <span class="o">=</span> <span class="nx">DSLocal</span><span class="p">;</span>
 </pre></div>
 
                     </div>

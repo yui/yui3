@@ -47,125 +47,125 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.</span>
-<span class="c">     * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.</span>
-<span class="c">     * @module dd</span>
-<span class="c">     * @submodule dd-ddm</span>
-<span class="c">     * @for DDM</span>
-<span class="c">     * @namespace DD</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">,</span> <span class="o">{</span>
-        <span class="c">/**</span>
-<span class="c">        * @private</span>
-<span class="c">        * @property _pg</span>
-<span class="c">        * @description The shim placed over the screen to track the mousemove event.</span>
-<span class="c">        * @type {Node}</span>
-<span class="c">        */</span>
-        <span class="nx">_pg</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-        <span class="c">/**</span>
-<span class="c">        * @private</span>
-<span class="c">        * @property _debugShim</span>
-<span class="c">        * @description Set this to true to set the shims opacity to .5 for debugging it, default: false.</span>
-<span class="c">        * @type {Boolean}</span>
-<span class="c">        */</span>
-        <span class="nx">_debugShim</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
-        <span class="nx">_activateTargets</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
-        <span class="nx">_deactivateTargets</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
-        <span class="nx">_startDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;useShim&#39;</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_pg_activate</span><span class="o">();</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_activateTargets</span><span class="o">();</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
-        <span class="nx">_endDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_pg_deactivate</span><span class="o">();</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_deactivateTargets</span><span class="o">();</span>
-        <span class="o">},</span>
-        <span class="c">/**</span>
-<span class="c">        * @private</span>
-<span class="c">        * @method _pg_deactivate</span>
-<span class="c">        * @description Deactivates the shim</span>
-<span class="c">        */</span>
-        <span class="nx">_pg_deactivate</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_pg</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;display&#39;</span><span class="o">,</span> <span class="s1">&#39;none&#39;</span><span class="o">);</span>
-        <span class="o">},</span>
-        <span class="c">/**</span>
-<span class="c">        * @private</span>
-<span class="c">        * @method _pg_activate</span>
-<span class="c">        * @description Activates the shim</span>
-<span class="c">        */</span>
-        <span class="nx">_pg_activate</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">ah</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;activeHandle&#39;</span><span class="o">),</span> <span class="nx">cur</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">ah</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">cur</span> <span class="o">=</span> <span class="nx">ah</span><span class="o">.</span><span class="nx">getStyle</span><span class="o">(</span><span class="s1">&#39;cursor&#39;</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">cur</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">cur</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragCursor&#39;</span><span class="o">);</span>
-            <span class="o">}</span>
+                        <div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.</span>
+<span class="cm">     * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.</span>
+<span class="cm">     * @module dd</span>
+<span class="cm">     * @submodule dd-ddm</span>
+<span class="cm">     * @for DDM</span>
+<span class="cm">     * @namespace DD</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">DDM</span><span class="p">,</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @property _pg</span>
+<span class="cm">        * @description The shim placed over the screen to track the mousemove event.</span>
+<span class="cm">        * @type {Node}</span>
+<span class="cm">        */</span>
+        <span class="nx">_pg</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @property _debugShim</span>
+<span class="cm">        * @description Set this to true to set the shims opacity to .5 for debugging it, default: false.</span>
+<span class="cm">        * @type {Boolean}</span>
+<span class="cm">        */</span>
+        <span class="nx">_debugShim</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="nx">_activateTargets</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span>
+        <span class="nx">_deactivateTargets</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span>
+        <span class="nx">_startDrag</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">activeDrag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;useShim&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_pg_activate</span><span class="p">();</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_activateTargets</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">_endDrag</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_pg_deactivate</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_deactivateTargets</span><span class="p">();</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @method _pg_deactivate</span>
+<span class="cm">        * @description Deactivates the shim</span>
+<span class="cm">        */</span>
+        <span class="nx">_pg_deactivate</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_pg</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;display&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @method _pg_activate</span>
+<span class="cm">        * @description Activates the shim</span>
+<span class="cm">        */</span>
+        <span class="nx">_pg_activate</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">ah</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">activeDrag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;activeHandle&#39;</span><span class="p">),</span> <span class="nx">cur</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ah</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cur</span> <span class="o">=</span> <span class="nx">ah</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="s1">&#39;cursor&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cur</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;dragCursor&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
             
-            <span class="k">this</span><span class="o">.</span><span class="nx">_pg_size</span><span class="o">();</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_pg</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
-                <span class="nx">top</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
-                <span class="nx">left</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
-                <span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;block&#39;</span><span class="o">,</span>
-                <span class="nx">opacity</span><span class="o">:</span> <span class="o">((</span><span class="k">this</span><span class="o">.</span><span class="nx">_debugShim</span><span class="o">)</span> <span class="o">?</span> <span class="s1">&#39;.5&#39;</span> <span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="o">),</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_pg_size</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_pg</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">({</span>
+                <span class="nx">top</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nx">left</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;block&#39;</span><span class="p">,</span>
+                <span class="nx">opacity</span><span class="o">:</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">_debugShim</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;.5&#39;</span> <span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="p">),</span>
                 <span class="nx">cursor</span><span class="o">:</span> <span class="nx">cur</span>
-            <span class="o">});</span>
-        <span class="o">},</span>
-        <span class="c">/**</span>
-<span class="c">        * @private</span>
-<span class="c">        * @method _pg_size</span>
-<span class="c">        * @description Sizes the shim on: activatation, window:scroll, window:resize</span>
-<span class="c">        */</span>
-        <span class="nx">_pg_size</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;body&#39;</span><span class="o">),</span>
-                <span class="nx">h</span> <span class="o">=</span> <span class="nx">b</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;docHeight&#39;</span><span class="o">),</span>
-                <span class="nx">w</span> <span class="o">=</span> <span class="nx">b</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;docWidth&#39;</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_pg</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
-                    <span class="nx">height</span><span class="o">:</span> <span class="nx">h</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="o">,</span>
+            <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @method _pg_size</span>
+<span class="cm">        * @description Sizes the shim on: activatation, window:scroll, window:resize</span>
+<span class="cm">        */</span>
+        <span class="nx">_pg_size</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">activeDrag</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">),</span>
+                <span class="nx">h</span> <span class="o">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;docHeight&#39;</span><span class="p">),</span>
+                <span class="nx">w</span> <span class="o">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;docWidth&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_pg</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">({</span>
+                    <span class="nx">height</span><span class="o">:</span> <span class="nx">h</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
                     <span class="nx">width</span><span class="o">:</span> <span class="nx">w</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
-                <span class="o">});</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
-        <span class="c">/**</span>
-<span class="c">        * @private</span>
-<span class="c">        * @method _createPG</span>
-<span class="c">        * @description Creates the shim and adds it&#39;s listeners to it.</span>
-<span class="c">        */</span>
-        <span class="nx">_createPG</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">pg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;div&gt;&lt;/div&gt;&#39;</span><span class="o">),</span>
-            <span class="nx">bd</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;body&#39;</span><span class="o">);</span>
-            <span class="nx">pg</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
-                <span class="nx">top</span><span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="o">,</span>
-                <span class="nx">left</span><span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="o">,</span>
-                <span class="nx">position</span><span class="o">:</span> <span class="s1">&#39;absolute&#39;</span><span class="o">,</span>
-                <span class="nx">zIndex</span><span class="o">:</span> <span class="s1">&#39;9999&#39;</span><span class="o">,</span>
-                <span class="nx">overflow</span><span class="o">:</span> <span class="s1">&#39;hidden&#39;</span><span class="o">,</span>
-                <span class="nx">backgroundColor</span><span class="o">:</span> <span class="s1">&#39;red&#39;</span><span class="o">,</span>
-                <span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;none&#39;</span><span class="o">,</span>
-                <span class="nx">height</span><span class="o">:</span> <span class="s1">&#39;5px&#39;</span><span class="o">,</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @method _createPG</span>
+<span class="cm">        * @description Creates the shim and adds it&#39;s listeners to it.</span>
+<span class="cm">        */</span>
+        <span class="nx">_createPG</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">pg</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;div&gt;&lt;/div&gt;&#39;</span><span class="p">),</span>
+            <span class="nx">bd</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">);</span>
+            <span class="nx">pg</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">({</span>
+                <span class="nx">top</span><span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+                <span class="nx">left</span><span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+                <span class="nx">position</span><span class="o">:</span> <span class="s1">&#39;absolute&#39;</span><span class="p">,</span>
+                <span class="nx">zIndex</span><span class="o">:</span> <span class="s1">&#39;9999&#39;</span><span class="p">,</span>
+                <span class="nx">overflow</span><span class="o">:</span> <span class="s1">&#39;hidden&#39;</span><span class="p">,</span>
+                <span class="nx">backgroundColor</span><span class="o">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                <span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                <span class="nx">height</span><span class="o">:</span> <span class="s1">&#39;5px&#39;</span><span class="p">,</span>
                 <span class="nx">width</span><span class="o">:</span> <span class="s1">&#39;5px&#39;</span>
-            <span class="o">});</span>
-            <span class="nx">pg</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;id&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">pg</span><span class="o">));</span>
-            <span class="nx">pg</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="s1">&#39;yui-dd-shim&#39;</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">bd</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;firstChild&#39;</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">bd</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">pg</span><span class="o">,</span> <span class="nx">bd</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;firstChild&#39;</span><span class="o">));</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">bd</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">pg</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_pg</span> <span class="o">=</span> <span class="nx">pg</span><span class="o">;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_pg</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mouseup&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_end</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_pg</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mousemove&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_move</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
+            <span class="p">});</span>
+            <span class="nx">pg</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">pg</span><span class="p">));</span>
+            <span class="nx">pg</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;yui-dd-shim&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">bd</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">bd</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">pg</span><span class="p">,</span> <span class="nx">bd</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">));</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">bd</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">pg</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_pg</span> <span class="o">=</span> <span class="nx">pg</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_pg</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mouseup&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_end</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_pg</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mousemove&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_move</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
             
-            <span class="k">var</span> <span class="nx">win</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nb">window</span><span class="o">);</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;window:resize&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_pg_size</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
-            <span class="nx">win</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;scroll&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_pg_size</span><span class="o">,</span> <span class="k">this</span><span class="o">));</span>
-        <span class="o">}</span>   
-    <span class="o">},</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="kd">var</span> <span class="nx">win</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nb">window</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;window:resize&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_pg_size</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="nx">win</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;scroll&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_pg_size</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+        <span class="p">}</span>   
+    <span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;domready&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">_createPG</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">));</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">_createPG</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">DDM</span><span class="p">));</span>
 </pre></div>
 
                     </div>

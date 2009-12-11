@@ -1508,7 +1508,7 @@ ET.prototype = {
             
             if (this._yuievt.hasTargets) {
                 a = (typeIncluded) ? arguments : Y.Array(arguments, 0, true).unshift(t);
-                return this.bubble(null, a, this);
+                return this.bubble({ type: type, target: this }, a, this);
             }
 
             // otherwise there is nothing to be done
@@ -1541,7 +1541,7 @@ ET.prototype = {
             type = (pre) ? _getType(type, pre) : type;
         }
         e = this._yuievt.events;
-        return (e && type in e) ? e[type] : null;
+        return e[type] || null;
     },
 
     /**
@@ -2065,7 +2065,7 @@ Y.EventTarget.prototype.bubble = function(evt, args, target) {
 
                     bc = ce.broadcast;
                     ce.broadcast = false;
-                    ret = ret && ce.fire.apply(ce, args || evt.details);
+                    ret = ret && ce.fire.apply(ce, args || evt.details || []);
                     ce.broadcast = bc;
 
                     // stopPropagation() was called

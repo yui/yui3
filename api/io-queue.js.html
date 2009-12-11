@@ -47,218 +47,218 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>   <span class="c">/**</span>
-<span class="c">    * Extends the IO base class to implement Queue for synchronous</span>
-<span class="c">    * transaction processing.</span>
-<span class="c">	* @module io</span>
-<span class="c">	* @submodule io-queue</span>
-<span class="c">	*/</span>
+                        <div class="highlight"><pre>   <span class="cm">/**</span>
+<span class="cm">    * Extends the IO base class to implement Queue for synchronous</span>
+<span class="cm">    * transaction processing.</span>
+<span class="cm">	* @module io</span>
+<span class="cm">	* @submodule io-queue</span>
+<span class="cm">	*/</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Array of transactions queued for processing</span>
-<span class="c">	*</span>
-<span class="c">	* @property _yQ</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @type Object</span>
-<span class="c">	*/</span>
-	<span class="k">var</span> <span class="nx">_q</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Queue</span><span class="o">(),</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Array of transactions queued for processing</span>
+<span class="cm">	*</span>
+<span class="cm">	* @property _yQ</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @type Object</span>
+<span class="cm">	*/</span>
+	<span class="kd">var</span> <span class="nx">_q</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Queue</span><span class="p">(),</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Reference to &quot;io:complete&quot; event handler.</span>
-<span class="c">	*</span>
-<span class="c">	* @property _e</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @type Object</span>
-<span class="c">	*/</span>
-	<span class="nx">_e</span><span class="o">,</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Reference to &quot;io:complete&quot; event handler.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @property _e</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @type Object</span>
+<span class="cm">	*/</span>
+	<span class="nx">_e</span><span class="p">,</span>
 
-	<span class="nx">_activeId</span><span class="o">,</span>
-   <span class="c">/**</span>
-<span class="c">	* @description Property to determine whether the queue is set to</span>
-<span class="c">	* 1 (active) or 0 (inactive).  When inactive, transactions</span>
-<span class="c">	* will be stored in the queue until the queue is set to active.</span>
-<span class="c">	*</span>
-<span class="c">	* @property _qState</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @type int</span>
-<span class="c">	*/</span>
-	<span class="nx">_qState</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
+	<span class="nx">_activeId</span><span class="p">,</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Property to determine whether the queue is set to</span>
+<span class="cm">	* 1 (active) or 0 (inactive).  When inactive, transactions</span>
+<span class="cm">	* will be stored in the queue until the queue is set to active.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @property _qState</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @type int</span>
+<span class="cm">	*/</span>
+	<span class="nx">_qState</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for requesting a transaction, and queueing the</span>
-<span class="c">	* request before it is sent to the resource.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _queue</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return Object</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_queue</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{</span> <span class="nx">uri</span><span class="o">:</span> <span class="nx">uri</span><span class="o">,</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_id</span><span class="o">(),</span> <span class="nx">cfg</span><span class="o">:</span><span class="nx">c</span> <span class="o">};</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for requesting a transaction, and queueing the</span>
+<span class="cm">	* request before it is sent to the resource.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _queue</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @return Object</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_queue</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">uri</span><span class="o">:</span> <span class="nx">uri</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">_id</span><span class="p">(),</span> <span class="nx">cfg</span><span class="o">:</span><span class="nx">c</span> <span class="p">};</span>
 
-		<span class="nx">_q</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-		<span class="k">if</span> <span class="o">(</span><span class="nx">_qState</span> <span class="o">===</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">_shift</span><span class="o">();</span>
-		<span class="o">}</span>
+		<span class="nx">_q</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">_qState</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">_shift</span><span class="p">();</span>
+		<span class="p">}</span>
 
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Object queued.  Transaction id is&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-		<span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
-	<span class="o">}</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Object queued.  Transaction id is&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+		<span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method Process the first transaction from the</span>
-<span class="c">	* queue in FIFO order.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _shift</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return void</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_shift</span><span class="o">()</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">_q</span><span class="o">.</span><span class="nx">next</span><span class="o">();</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method Process the first transaction from the</span>
+<span class="cm">	* queue in FIFO order.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _shift</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @return void</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_shift</span><span class="p">()</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">_q</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
 
-		<span class="nx">_activeId</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">;</span>
-		<span class="nx">_qState</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">cfg</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
-	<span class="o">}</span>
+		<span class="nx">_activeId</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+		<span class="nx">_qState</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">cfg</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for promoting a transaction to the top of the queue.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _unshift</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return void</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_unshift</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-		<span class="nx">_q</span><span class="o">.</span><span class="nx">promote</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-	<span class="o">}</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for promoting a transaction to the top of the queue.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _unshift</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @return void</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_unshift</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">_q</span><span class="p">.</span><span class="nx">promote</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+	<span class="p">}</span>
 
-	<span class="k">function</span> <span class="nx">_next</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-		<span class="nx">_qState</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
-		<span class="k">if</span> <span class="o">(</span><span class="nx">_activeId</span> <span class="o">===</span> <span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="nx">_q</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">_shift</span><span class="o">();</span>
-		<span class="o">}</span>
-	<span class="o">}</span>
+	<span class="kd">function</span> <span class="nx">_next</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">_qState</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">_activeId</span> <span class="o">===</span> <span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="nx">_q</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">_shift</span><span class="p">();</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for removing a specific, pending transaction from</span>
-<span class="c">	* the queue.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _remove</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return void</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_remove</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-		<span class="nx">_q</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-	<span class="o">}</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for removing a specific, pending transaction from</span>
+<span class="cm">	* the queue.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _remove</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @return void</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_remove</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">_q</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+	<span class="p">}</span>
 
-	<span class="k">function</span> <span class="nx">_start</span><span class="o">()</span> <span class="o">{</span>
-		<span class="nx">_qState</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
+	<span class="kd">function</span> <span class="nx">_start</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">_qState</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">_q</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">_shift</span><span class="o">();</span>
-		<span class="o">}</span>
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Queue started.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-	<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">_q</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">_shift</span><span class="p">();</span>
+		<span class="p">}</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Queue started.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for setting queue processing to inactive.</span>
-<span class="c">	* Transaction requests to YUI.io.queue() will be stored in the queue, but</span>
-<span class="c">	* not processed until the queue is reset to &quot;active&quot;.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _stop</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return void</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_stop</span><span class="o">()</span> <span class="o">{</span>
-		<span class="nx">_qState</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Queue stopped.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-	<span class="o">};</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for setting queue processing to inactive.</span>
+<span class="cm">	* Transaction requests to YUI.io.queue() will be stored in the queue, but</span>
+<span class="cm">	* not processed until the queue is reset to &quot;active&quot;.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _stop</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @return void</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_stop</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">_qState</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Queue stopped.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+	<span class="p">};</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method to query the current size of the queue.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _size</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return int</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_size</span><span class="o">()</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="nx">_q</span><span class="o">.</span><span class="nx">size</span><span class="o">();</span>
-	<span class="o">};</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method to query the current size of the queue.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _size</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @return int</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_size</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">_q</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
+	<span class="p">};</span>
 
-	<span class="nx">_e</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;io:complete&#39;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span> <span class="nx">_next</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span> <span class="o">},</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">);</span>
+	<span class="nx">_e</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;io:complete&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span> <span class="nx">_next</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span> <span class="p">},</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">);</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method to query the current size of the queue, or to</span>
-<span class="c">	* set a maximum queue size.  This is the interface for _size().</span>
-<span class="c">	*</span>
-<span class="c">	* @method size</span>
-<span class="c">	* @public</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {number} i - Specified maximum size of queue.</span>
-<span class="c">    * @return number</span>
-<span class="c">	*/</span>
-	<span class="nx">_queue</span><span class="o">.</span><span class="nx">size</span> <span class="o">=</span> <span class="nx">_size</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method to query the current size of the queue, or to</span>
+<span class="cm">	* set a maximum queue size.  This is the interface for _size().</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method size</span>
+<span class="cm">	* @public</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {number} i - Specified maximum size of queue.</span>
+<span class="cm">    * @return number</span>
+<span class="cm">	*/</span>
+	<span class="nx">_queue</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="nx">_size</span><span class="p">;</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for setting the queue to active. If there are</span>
-<span class="c">	* transactions pending in the queue, they will be processed from the</span>
-<span class="c">	* queue in FIFO order. This is the interface for _start().</span>
-<span class="c">	*</span>
-<span class="c">	* @method start</span>
-<span class="c">	* @public</span>
-<span class="c">	* @static</span>
-<span class="c">    * @return void</span>
-<span class="c">	*/</span>
-	<span class="nx">_queue</span><span class="o">.</span><span class="nx">start</span> <span class="o">=</span> <span class="nx">_start</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for setting the queue to active. If there are</span>
+<span class="cm">	* transactions pending in the queue, they will be processed from the</span>
+<span class="cm">	* queue in FIFO order. This is the interface for _start().</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method start</span>
+<span class="cm">	* @public</span>
+<span class="cm">	* @static</span>
+<span class="cm">    * @return void</span>
+<span class="cm">	*/</span>
+	<span class="nx">_queue</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="nx">_start</span><span class="p">;</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for setting queue processing to inactive.</span>
-<span class="c">	* Transaction requests to YUI.io.queue() will be stored in the queue, but</span>
-<span class="c">	* not processed until the queue is restarted. This is the</span>
-<span class="c">	* interface for _stop().</span>
-<span class="c">	*</span>
-<span class="c">	* @method stop</span>
-<span class="c">	* @public</span>
-<span class="c">	* @static</span>
-<span class="c">    * @return void</span>
-<span class="c">	*/</span>
-	<span class="nx">_queue</span><span class="o">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="nx">_stop</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for setting queue processing to inactive.</span>
+<span class="cm">	* Transaction requests to YUI.io.queue() will be stored in the queue, but</span>
+<span class="cm">	* not processed until the queue is restarted. This is the</span>
+<span class="cm">	* interface for _stop().</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method stop</span>
+<span class="cm">	* @public</span>
+<span class="cm">	* @static</span>
+<span class="cm">    * @return void</span>
+<span class="cm">	*/</span>
+	<span class="nx">_queue</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="nx">_stop</span><span class="p">;</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for promoting a transaction to the top of the queue.</span>
-<span class="c">	* This is the interface for _unshift().</span>
-<span class="c">	*</span>
-<span class="c">	* @method promote</span>
-<span class="c">	* @public</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {Object} o - Reference to queued transaction.</span>
-<span class="c">    * @return void</span>
-<span class="c">	*/</span>
-	<span class="nx">_queue</span><span class="o">.</span><span class="nx">promote</span> <span class="o">=</span> <span class="nx">_unshift</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for promoting a transaction to the top of the queue.</span>
+<span class="cm">	* This is the interface for _unshift().</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method promote</span>
+<span class="cm">	* @public</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {Object} o - Reference to queued transaction.</span>
+<span class="cm">    * @return void</span>
+<span class="cm">	*/</span>
+	<span class="nx">_queue</span><span class="p">.</span><span class="nx">promote</span> <span class="o">=</span> <span class="nx">_unshift</span><span class="p">;</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for removing a specific, pending transaction from</span>
-<span class="c">	* the queue. This is the interface for _remove().</span>
-<span class="c">	*</span>
-<span class="c">	* @method remove</span>
-<span class="c">	* @public</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {Object} o - Reference to queued transaction.</span>
-<span class="c">    * @return void</span>
-<span class="c">	*/</span>
-	<span class="nx">_queue</span><span class="o">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="nx">_remove</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for removing a specific, pending transaction from</span>
+<span class="cm">	* the queue. This is the interface for _remove().</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method remove</span>
+<span class="cm">	* @public</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {Object} o - Reference to queued transaction.</span>
+<span class="cm">    * @return void</span>
+<span class="cm">	*/</span>
+	<span class="nx">_queue</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="nx">_remove</span><span class="p">;</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">,</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">,</span> <span class="p">{</span>
 		<span class="nx">queue</span><span class="o">:</span> <span class="nx">_queue</span>
-    <span class="o">},</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
 </pre></div>
 
                     </div>

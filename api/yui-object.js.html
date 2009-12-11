@@ -47,256 +47,256 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The YUI module contains the components required for building the YUI seed file.</span>
-<span class="c"> * This includes the script loading mechanism, a simple queue, and the core utilities for the library.</span>
-<span class="c"> * @module yui</span>
-<span class="c"> * @submodule yui-base</span>
-<span class="c"> */</span>
-<span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The YUI module contains the components required for building the YUI seed file.</span>
+<span class="cm"> * This includes the script loading mechanism, a simple queue, and the core utilities for the library.</span>
+<span class="cm"> * @module yui</span>
+<span class="cm"> * @submodule yui-base</span>
+<span class="cm"> */</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-<span class="c">/**</span>
-<span class="c"> * Adds the following Object utilities to the YUI instance</span>
-<span class="c"> * @class Object</span>
-<span class="c"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * Adds the following Object utilities to the YUI instance</span>
+<span class="cm"> * @class Object</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Y.Object(o) returns a new object based upon the supplied object.  </span>
-<span class="c"> * @TODO Use native Object.create() when available</span>
-<span class="c"> * @method ()</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o the supplier object</span>
-<span class="c"> * @return {Object} the new object</span>
-<span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">F</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{};</span>
-    <span class="nx">F</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nx">F</span><span class="o">();</span>
-<span class="o">};</span> 
+<span class="cm">/**</span>
+<span class="cm"> * Y.Object(o) returns a new object based upon the supplied object.  </span>
+<span class="cm"> * @TODO Use native Object.create() when available</span>
+<span class="cm"> * @method ()</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o the supplier object</span>
+<span class="cm"> * @return {Object} the new object</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">F</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
+    <span class="nx">F</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">F</span><span class="p">();</span>
+<span class="p">};</span> 
 
-<span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
+<span class="kd">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
 
-<span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="kc">undefined</span><span class="o">,</span>
+<span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">,</span>
 
-<span class="c">/**</span>
-<span class="c"> * Extracts the keys, values, or size from an object</span>
-<span class="c"> * </span>
-<span class="c"> * @method _extract</span>
-<span class="c"> * @param o the object</span>
-<span class="c"> * @param what what to extract (0: keys, 1: values, 2: size)</span>
-<span class="c"> * @return {boolean|Array} the extracted info</span>
-<span class="c"> * @static</span>
-<span class="c"> * @private</span>
-<span class="c"> */</span>
-<span class="nx">_extract</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">what</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="o">(</span><span class="nx">what</span> <span class="o">===</span> <span class="m">2</span><span class="o">),</span> <span class="nx">out</span> <span class="o">=</span> <span class="o">(</span><span class="nx">count</span><span class="o">)</span> <span class="o">?</span> <span class="m">0</span> <span class="o">:</span> <span class="o">[],</span> <span class="nx">i</span><span class="o">;</span>
+<span class="cm">/**</span>
+<span class="cm"> * Extracts the keys, values, or size from an object</span>
+<span class="cm"> * </span>
+<span class="cm"> * @method _extract</span>
+<span class="cm"> * @param o the object</span>
+<span class="cm"> * @param what what to extract (0: keys, 1: values, 2: size)</span>
+<span class="cm"> * @return {boolean|Array} the extracted info</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @private</span>
+<span class="cm"> */</span>
+<span class="nx">_extract</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">what</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">count</span> <span class="o">=</span> <span class="p">(</span><span class="nx">what</span> <span class="o">===</span> <span class="mi">2</span><span class="p">),</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">(</span><span class="nx">count</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="p">[],</span> <span class="nx">i</span><span class="p">;</span>
 
-    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">count</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">out</span><span class="o">++;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">out</span><span class="o">.</span><span class="nx">push</span><span class="o">((</span><span class="nx">what</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">:</span> <span class="nx">i</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">count</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">out</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">((</span><span class="nx">what</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">:</span> <span class="nx">i</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
-    <span class="k">return</span> <span class="nx">out</span><span class="o">;</span>
-<span class="o">};</span>
+    <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Returns an array containing the object&#39;s keys</span>
-<span class="c"> * @TODO use native Object.keys() if available</span>
-<span class="c"> * @method keys</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o an object</span>
-<span class="c"> * @return {string[]} the keys</span>
-<span class="c"> */</span>
-<span class="nx">O</span><span class="o">.</span><span class="nx">keys</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="nx">_extract</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Returns an array containing the object&#39;s keys</span>
+<span class="cm"> * @TODO use native Object.keys() if available</span>
+<span class="cm"> * @method keys</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o an object</span>
+<span class="cm"> * @return {string[]} the keys</span>
+<span class="cm"> */</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">keys</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">_extract</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Returns an array containing the object&#39;s values</span>
-<span class="c"> * @TODO use native Object.values() if available</span>
-<span class="c"> * @method values</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o an object</span>
-<span class="c"> * @return {Array} the values</span>
-<span class="c"> */</span>
-<span class="nx">O</span><span class="o">.</span><span class="nx">values</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="nx">_extract</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Returns an array containing the object&#39;s values</span>
+<span class="cm"> * @TODO use native Object.values() if available</span>
+<span class="cm"> * @method values</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o an object</span>
+<span class="cm"> * @return {Array} the values</span>
+<span class="cm"> */</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">values</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">_extract</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Returns the size of an object</span>
-<span class="c"> * @TODO use native Object.size() if available</span>
-<span class="c"> * @method size</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o an object</span>
-<span class="c"> * @return {int} the size</span>
-<span class="c"> */</span>
-<span class="nx">O</span><span class="o">.</span><span class="nx">size</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="nx">_extract</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="m">2</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Returns the size of an object</span>
+<span class="cm"> * @TODO use native Object.size() if available</span>
+<span class="cm"> * @method size</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o an object</span>
+<span class="cm"> * @return {int} the size</span>
+<span class="cm"> */</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">_extract</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Returns true if the object contains a given key</span>
-<span class="c"> * @method hasKey</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o an object</span>
-<span class="c"> * @param k the key to query</span>
-<span class="c"> * @return {boolean} true if the object contains the key</span>
-<span class="c"> */</span>
-<span class="nx">O</span><span class="o">.</span><span class="nx">hasKey</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c">// return (o.hasOwnProperty(k));</span>
-<span class="c"></span>    <span class="k">return</span> <span class="o">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">o</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Returns true if the object contains a given key</span>
+<span class="cm"> * @method hasKey</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o an object</span>
+<span class="cm"> * @param k the key to query</span>
+<span class="cm"> * @return {boolean} true if the object contains the key</span>
+<span class="cm"> */</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">hasKey</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// return (o.hasOwnProperty(k));</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">o</span><span class="p">);</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Returns true if the object contains a given value</span>
-<span class="c"> * @method hasValue</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o an object</span>
-<span class="c"> * @param v the value to query</span>
-<span class="c"> * @return {boolean} true if the object contains the value</span>
-<span class="c"> */</span>
-<span class="nx">O</span><span class="o">.</span><span class="nx">hasValue</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">values</span><span class="o">(</span><span class="nx">o</span><span class="o">),</span> <span class="nx">v</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Returns true if the object contains a given value</span>
+<span class="cm"> * @method hasValue</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o an object</span>
+<span class="cm"> * @param v the value to query</span>
+<span class="cm"> * @return {boolean} true if the object contains the value</span>
+<span class="cm"> */</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">hasValue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">O</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">o</span><span class="p">),</span> <span class="nx">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Determines whether or not the property was added</span>
-<span class="c"> * to the object instance.  Returns false if the property is not present</span>
-<span class="c"> * in the object, or was inherited from the prototype.</span>
-<span class="c"> *</span>
-<span class="c"> * @deprecated Safari 1.x support has been removed, so this is simply a </span>
-<span class="c"> * wrapper for the native implementation.  Use the native implementation</span>
-<span class="c"> * directly instead.</span>
-<span class="c"> *</span>
-<span class="c"> * @TODO Remove in B1</span>
-<span class="c"> *</span>
-<span class="c"> * @method owns</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o {any} The object being testing</span>
-<span class="c"> * @param p {string} the property to look for</span>
-<span class="c"> * @return {boolean} true if the object has the property on the instance</span>
-<span class="c"> */</span>
-<span class="nx">O</span><span class="o">.</span><span class="nx">owns</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">k</span><span class="o">));</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Determines whether or not the property was added</span>
+<span class="cm"> * to the object instance.  Returns false if the property is not present</span>
+<span class="cm"> * in the object, or was inherited from the prototype.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @deprecated Safari 1.x support has been removed, so this is simply a </span>
+<span class="cm"> * wrapper for the native implementation.  Use the native implementation</span>
+<span class="cm"> * directly instead.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @TODO Remove in B1</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method owns</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o {any} The object being testing</span>
+<span class="cm"> * @param p {string} the property to look for</span>
+<span class="cm"> * @return {boolean} true if the object has the property on the instance</span>
+<span class="cm"> */</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">owns</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">k</span><span class="p">));</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Executes a function on each item. The function</span>
-<span class="c"> * receives the value, the key, and the object</span>
-<span class="c"> * as paramters (in that order).</span>
-<span class="c"> * @method each</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o the object to iterate</span>
-<span class="c"> * @param f {Function} the function to execute on each item. The function </span>
-<span class="c"> * receives three arguments: the value, the the key, the full object.</span>
-<span class="c"> * @param c the execution context</span>
-<span class="c"> * @param proto {boolean} include proto</span>
-<span class="c"> * @return {YUI} the YUI instance</span>
-<span class="c"> */</span>
-<span class="nx">O</span><span class="o">.</span><span class="nx">each</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+<span class="cm">/**</span>
+<span class="cm"> * Executes a function on each item. The function</span>
+<span class="cm"> * receives the value, the key, and the object</span>
+<span class="cm"> * as paramters (in that order).</span>
+<span class="cm"> * @method each</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o the object to iterate</span>
+<span class="cm"> * @param f {Function} the function to execute on each item. The function </span>
+<span class="cm"> * receives three arguments: the value, the the key, the full object.</span>
+<span class="cm"> * @param c the execution context</span>
+<span class="cm"> * @param proto {boolean} include proto</span>
+<span class="cm"> * @return {YUI} the YUI instance</span>
+<span class="cm"> */</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">each</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">proto</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
 
-    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">proto</span> <span class="o">||</span> <span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">o</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
-<span class="o">};</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">proto</span> <span class="o">||</span> <span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="c">/*</span>
-<span class="c"> * Executes a function on each item, but halts if the</span>
-<span class="c"> * function returns true.  The function</span>
-<span class="c"> * receives the value, the key, and the object</span>
-<span class="c"> * as paramters (in that order).</span>
-<span class="c"> * @method some</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o the object to iterate</span>
-<span class="c"> * @param f {Function} the function to execute on each item. The function </span>
-<span class="c"> * receives three arguments: the value, the the key, the full object.</span>
-<span class="c"> * @param c the execution context</span>
-<span class="c"> * @param proto {boolean} include proto</span>
-<span class="c"> * @return {boolean} true if any execution of the function returns true, false otherwise</span>
-<span class="c"> */</span>
-<span class="nx">O</span><span class="o">.</span><span class="nx">some</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+<span class="cm">/*</span>
+<span class="cm"> * Executes a function on each item, but halts if the</span>
+<span class="cm"> * function returns true.  The function</span>
+<span class="cm"> * receives the value, the key, and the object</span>
+<span class="cm"> * as paramters (in that order).</span>
+<span class="cm"> * @method some</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o the object to iterate</span>
+<span class="cm"> * @param f {Function} the function to execute on each item. The function </span>
+<span class="cm"> * receives three arguments: the value, the the key, the full object.</span>
+<span class="cm"> * @param c the execution context</span>
+<span class="cm"> * @param proto {boolean} include proto</span>
+<span class="cm"> * @return {boolean} true if any execution of the function returns true, false otherwise</span>
+<span class="cm"> */</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">some</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">proto</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
 
-    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">proto</span> <span class="o">||</span> <span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-<span class="o">};</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">proto</span> <span class="o">||</span> <span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Retrieves the sub value at the provided path,</span>
-<span class="c"> * from the value object provided.</span>
-<span class="c"> *</span>
-<span class="c"> * @method getValue</span>
-<span class="c"> * @param o The object from which to extract the property value</span>
-<span class="c"> * @param path {Array} A path array, specifying the object traversal path</span>
-<span class="c"> * from which to obtain the sub value.</span>
-<span class="c"> * @return {Any} The value stored in the path, undefined if not found,</span>
-<span class="c"> * undefined if the source is not an object.  Returns the source object </span>
-<span class="c"> * if an empty path is provided.</span>
-<span class="c"> */</span>
-<span class="nx">O</span><span class="o">.</span><span class="nx">getValue</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">path</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">UNDEFINED</span><span class="o">;</span>
-    <span class="o">}</span>
+<span class="cm">/**</span>
+<span class="cm"> * Retrieves the sub value at the provided path,</span>
+<span class="cm"> * from the value object provided.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method getValue</span>
+<span class="cm"> * @param o The object from which to extract the property value</span>
+<span class="cm"> * @param path {Array} A path array, specifying the object traversal path</span>
+<span class="cm"> * from which to obtain the sub value.</span>
+<span class="cm"> * @return {Any} The value stored in the path, undefined if not found,</span>
+<span class="cm"> * undefined if the source is not an object.  Returns the source object </span>
+<span class="cm"> * if an empty path is provided.</span>
+<span class="cm"> */</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">getValue</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">UNDEFINED</span><span class="p">;</span>
+    <span class="p">}</span>
 
-    <span class="k">var</span> <span class="nx">p</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">path</span><span class="o">),</span> <span class="nx">l</span><span class="o">=</span><span class="nx">p</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+    <span class="kd">var</span> <span class="nx">p</span><span class="o">=</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">path</span><span class="p">),</span> <span class="nx">l</span><span class="o">=</span><span class="nx">p</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
 
-    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">o</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">p</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
-    <span class="o">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">o</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">p</span><span class="p">[</span><span class="nx">i</span><span class="p">]];</span>
+    <span class="p">}</span>
 
-    <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
-<span class="o">};</span>
+    <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Sets the sub-attribute value at the provided path on the </span>
-<span class="c"> * value object.  Returns the modified value object, or </span>
-<span class="c"> * undefined if the path is invalid.</span>
-<span class="c"> *</span>
-<span class="c"> * @method setValue</span>
-<span class="c"> * @param o             The object on which to set the sub value.</span>
-<span class="c"> * @param path {Array}  A path array, specifying the object traversal path</span>
-<span class="c"> *                      at which to set the sub value.</span>
-<span class="c"> * @param val {Any}     The new value for the sub-attribute.</span>
-<span class="c"> * @return {Object}     The modified object, with the new sub value set, or </span>
-<span class="c"> *                      undefined, if the path was invalid.</span>
-<span class="c"> */</span>
-<span class="nx">O</span><span class="o">.</span><span class="nx">setValue</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+<span class="cm">/**</span>
+<span class="cm"> * Sets the sub-attribute value at the provided path on the </span>
+<span class="cm"> * value object.  Returns the modified value object, or </span>
+<span class="cm"> * undefined if the path is invalid.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method setValue</span>
+<span class="cm"> * @param o             The object on which to set the sub value.</span>
+<span class="cm"> * @param path {Array}  A path array, specifying the object traversal path</span>
+<span class="cm"> *                      at which to set the sub value.</span>
+<span class="cm"> * @param val {Any}     The new value for the sub-attribute.</span>
+<span class="cm"> * @return {Object}     The modified object, with the new sub value set, or </span>
+<span class="cm"> *                      undefined, if the path was invalid.</span>
+<span class="cm"> */</span>
+<span class="nx">O</span><span class="p">.</span><span class="nx">setValue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="k">var</span> <span class="nx">p</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">path</span><span class="o">),</span> <span class="nx">leafIdx</span><span class="o">=</span><span class="nx">p</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">ref</span><span class="o">=</span><span class="nx">o</span><span class="o">;</span>
+    <span class="kd">var</span> <span class="nx">p</span><span class="o">=</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">path</span><span class="p">),</span> <span class="nx">leafIdx</span><span class="o">=</span><span class="nx">p</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">ref</span><span class="o">=</span><span class="nx">o</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="o">(</span><span class="nx">leafIdx</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">ref</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">leafIdx</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">ref</span> <span class="o">=</span> <span class="nx">ref</span><span class="o">[</span><span class="nx">p</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
-        <span class="o">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">leafIdx</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">ref</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">leafIdx</span><span class="p">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ref</span> <span class="o">=</span> <span class="nx">ref</span><span class="p">[</span><span class="nx">p</span><span class="p">[</span><span class="nx">i</span><span class="p">]];</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">ref</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">ref</span><span class="o">[</span><span class="nx">p</span><span class="o">[</span><span class="nx">i</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">UNDEFINED</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">ref</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ref</span><span class="p">[</span><span class="nx">p</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">UNDEFINED</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
-    <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
-<span class="o">};</span>
+    <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+<span class="p">};</span>
 
 
-<span class="o">})();</span>
+<span class="p">})();</span>
 </pre></div>
 
                     </div>

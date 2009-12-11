@@ -47,160 +47,160 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Provides a DataSource implementation which can be used to retrieve data via the Get Utility.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datasource</span>
-<span class="c"> * @submodule datasource-get</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides a DataSource implementation which can be used to retrieve data via the Get Utility.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datasource</span>
+<span class="cm"> * @submodule datasource-get</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Get Utility subclass for the DataSource Utility.</span>
-<span class="c"> * @class DataSource.Get</span>
-<span class="c"> * @extends DataSource.Local</span>
-<span class="c"> * @constructor</span>
-<span class="c"> */</span>    
-<span class="k">var</span> <span class="nx">DSGet</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-    <span class="nx">DSGet</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Get Utility subclass for the DataSource Utility.</span>
+<span class="cm"> * @class DataSource.Get</span>
+<span class="cm"> * @extends DataSource.Local</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> */</span>    
+<span class="kd">var</span> <span class="nx">DSGet</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">DSGet</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">};</span>
     
 
-    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSource.Get static properties</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span><span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">DSGet</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Class name.</span>
-<span class="c">     *</span>
-<span class="c">     * @property NAME</span>
-<span class="c">     * @type String</span>
-<span class="c">     * @static     </span>
-<span class="c">     * @final</span>
-<span class="c">     * @value &quot;dataSourceGet&quot;</span>
-<span class="c">     */</span>
-    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceGet&quot;</span><span class="o">,</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+    <span class="c1">//</span>
+    <span class="c1">// DataSource.Get static properties</span>
+    <span class="c1">//</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">DSGet</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Class name.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property NAME</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static     </span>
+<span class="cm">     * @final</span>
+<span class="cm">     * @value &quot;dataSourceGet&quot;</span>
+<span class="cm">     */</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceGet&quot;</span><span class="p">,</span>
 
 
-    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSource.Get Attributes</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>
-    <span class="nx">ATTRS</span><span class="o">:</span> <span class="o">{</span>
-        <span class="c">/**</span>
-<span class="c">         * Pointer to Get Utility.</span>
-<span class="c">         *</span>
-<span class="c">         * @attribute get</span>
-<span class="c">         * @type Y.Get</span>
-<span class="c">         * @default Y.Get</span>
-<span class="c">         */</span>
-        <span class="nx">get</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">value</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">,</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+    <span class="c1">//</span>
+    <span class="c1">// DataSource.Get Attributes</span>
+    <span class="c1">//</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+
+    <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Pointer to Get Utility.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute get</span>
+<span class="cm">         * @type Y.Get</span>
+<span class="cm">         * @default Y.Get</span>
+<span class="cm">         */</span>
+        <span class="nx">get</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Get</span><span class="p">,</span>
             <span class="nx">cloneDefaultValue</span><span class="o">:</span> <span class="kc">false</span>
-        <span class="o">},</span>
+        <span class="p">},</span>
 
-<span class="c">/**</span>
-<span class="c"> * Defines request/response management in the following manner:</span>
-<span class="c"> * &lt;dl&gt;</span>
-<span class="c"> *     &lt;!--&lt;dt&gt;queueRequests&lt;/dt&gt;</span>
-<span class="c"> *     &lt;dd&gt;If a request is already in progress, wait until response is returned before sending the next request.&lt;/dd&gt;</span>
-<span class="c"> *     &lt;dt&gt;cancelStaleRequests&lt;/dt&gt;</span>
-<span class="c"> *     &lt;dd&gt;If a request is already in progress, cancel it before sending the next request.&lt;/dd&gt;--&gt;</span>
-<span class="c"> *     &lt;dt&gt;ignoreStaleResponses&lt;/dt&gt;</span>
-<span class="c"> *     &lt;dd&gt;Send all requests, but handle only the response for the most recently sent request.&lt;/dd&gt;</span>
-<span class="c"> *     &lt;dt&gt;allowAll&lt;/dt&gt;</span>
-<span class="c"> *     &lt;dd&gt;Send all requests and handle all responses.&lt;/dd&gt;</span>
-<span class="c"> * &lt;/dl&gt;</span>
-<span class="c"> *</span>
-<span class="c"> * @attribute asyncMode</span>
-<span class="c"> * @type String</span>
-<span class="c"> * @default &quot;allowAll&quot;</span>
-<span class="c"> */</span>
-<span class="nx">asyncMode</span><span class="o">:</span> <span class="o">{</span>
+<span class="cm">/**</span>
+<span class="cm"> * Defines request/response management in the following manner:</span>
+<span class="cm"> * &lt;dl&gt;</span>
+<span class="cm"> *     &lt;!--&lt;dt&gt;queueRequests&lt;/dt&gt;</span>
+<span class="cm"> *     &lt;dd&gt;If a request is already in progress, wait until response is returned before sending the next request.&lt;/dd&gt;</span>
+<span class="cm"> *     &lt;dt&gt;cancelStaleRequests&lt;/dt&gt;</span>
+<span class="cm"> *     &lt;dd&gt;If a request is already in progress, cancel it before sending the next request.&lt;/dd&gt;--&gt;</span>
+<span class="cm"> *     &lt;dt&gt;ignoreStaleResponses&lt;/dt&gt;</span>
+<span class="cm"> *     &lt;dd&gt;Send all requests, but handle only the response for the most recently sent request.&lt;/dd&gt;</span>
+<span class="cm"> *     &lt;dt&gt;allowAll&lt;/dt&gt;</span>
+<span class="cm"> *     &lt;dd&gt;Send all requests and handle all responses.&lt;/dd&gt;</span>
+<span class="cm"> * &lt;/dl&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @attribute asyncMode</span>
+<span class="cm"> * @type String</span>
+<span class="cm"> * @default &quot;allowAll&quot;</span>
+<span class="cm"> */</span>
+<span class="nx">asyncMode</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;allowAll&quot;</span>
-<span class="o">},</span>
+<span class="p">},</span>
 
-<span class="c">/**</span>
-<span class="c"> * Callback string parameter name sent to the remote script. By default,</span>
-<span class="c"> * requests are sent to</span>
-<span class="c"> * &amp;#60;URI&amp;#62;?&amp;#60;scriptCallbackParam&amp;#62;=callbackFunction</span>
-<span class="c"> *</span>
-<span class="c"> * @attribute scriptCallbackParam</span>
-<span class="c"> * @type String</span>
-<span class="c"> * @default &quot;callback&quot;</span>
-<span class="c"> */</span>
-<span class="nx">scriptCallbackParam</span> <span class="o">:</span> <span class="o">{</span>
+<span class="cm">/**</span>
+<span class="cm"> * Callback string parameter name sent to the remote script. By default,</span>
+<span class="cm"> * requests are sent to</span>
+<span class="cm"> * &amp;#60;URI&amp;#62;?&amp;#60;scriptCallbackParam&amp;#62;=callbackFunction</span>
+<span class="cm"> *</span>
+<span class="cm"> * @attribute scriptCallbackParam</span>
+<span class="cm"> * @type String</span>
+<span class="cm"> * @default &quot;callback&quot;</span>
+<span class="cm"> */</span>
+<span class="nx">scriptCallbackParam</span> <span class="o">:</span> <span class="p">{</span>
     <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;callback&quot;</span>
-<span class="o">},</span>
+<span class="p">},</span>
 
-<span class="c">/**</span>
-<span class="c"> * Accepts the DataSource instance and a callback ID, and returns a callback</span>
-<span class="c"> * param/value string that gets appended to the script URI. Implementers</span>
-<span class="c"> * can customize this string to match their server&#39;s query syntax.</span>
-<span class="c"> *</span>
-<span class="c"> * @attribute generateRequestCallback</span>
-<span class="c"> * @type Function</span>
-<span class="c"> */</span>
-<span class="nx">generateRequestCallback</span> <span class="o">:</span> <span class="o">{</span>
-    <span class="nx">value</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">self</span><span class="o">,</span> <span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span> <span class="nx">self</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;scriptCallbackParam&quot;</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;=YUI.Env.DataSource.callbacks[&quot;</span><span class="o">+</span><span class="nx">id</span><span class="o">+</span><span class="s2">&quot;]&quot;</span> <span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-
+<span class="cm">/**</span>
+<span class="cm"> * Accepts the DataSource instance and a callback ID, and returns a callback</span>
+<span class="cm"> * param/value string that gets appended to the script URI. Implementers</span>
+<span class="cm"> * can customize this string to match their server&#39;s query syntax.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @attribute generateRequestCallback</span>
+<span class="cm"> * @type Function</span>
+<span class="cm"> */</span>
+<span class="nx">generateRequestCallback</span> <span class="o">:</span> <span class="p">{</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span> <span class="nx">self</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;scriptCallbackParam&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;=YUI.Env.DataSource.callbacks[&quot;</span><span class="o">+</span><span class="nx">id</span><span class="o">+</span><span class="s2">&quot;]&quot;</span> <span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
 
 
-    <span class="o">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Global array of callback functions, one for each request sent.</span>
-<span class="c">     *</span>
-<span class="c">     * @property callbacks</span>
-<span class="c">     * @type Function[]</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">callbacks</span> <span class="o">:</span> <span class="o">[],</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Unique ID to track requests.</span>
-<span class="c">     *</span>
-<span class="c">     * @property _tId</span>
-<span class="c">     * @type Number</span>
-<span class="c">     * @private</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">_tId</span> <span class="o">:</span> <span class="m">0</span>
-<span class="o">});</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Global array of callback functions, one for each request sent.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property callbacks</span>
+<span class="cm">     * @type Function[]</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">callbacks</span> <span class="o">:</span> <span class="p">[],</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Unique ID to track requests.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _tId</span>
+<span class="cm">     * @type Number</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">_tId</span> <span class="o">:</span> <span class="mi">0</span>
+<span class="p">});</span>
     
-<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">DSGet</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nx">Local</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Passes query string to Get Utility. Fires &lt;code&gt;response&lt;/code&gt; event when</span>
-<span class="c">     * response is received asynchronously.</span>
-<span class="c">     *</span>
-<span class="c">     * @method _defRequestFn</span>
-<span class="c">     * @param e {Event.Facade} Event Facade with the following properties:</span>
-<span class="c">     * &lt;dl&gt;</span>
-<span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
-<span class="c">     *     &lt;dl&gt;</span>
-<span class="c">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;/dl&gt;</span>
-<span class="c">     * &lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
-<span class="c">     * &lt;/dl&gt;</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_defRequestFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;source&quot;</span><span class="o">),</span>
-            <span class="nx">get</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;get&quot;</span><span class="o">),</span>
-            <span class="nx">id</span> <span class="o">=</span> <span class="nx">DSGet</span><span class="o">.</span><span class="nx">_tId</span><span class="o">++,</span>
-            <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">DSGet</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataSource</span><span class="p">.</span><span class="nx">Local</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes query string to Get Utility. Fires &lt;code&gt;response&lt;/code&gt; event when</span>
+<span class="cm">     * response is received asynchronously.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defRequestFn</span>
+<span class="cm">     * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     * &lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defRequestFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">),</span>
+            <span class="nx">get</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">),</span>
+            <span class="nx">id</span> <span class="o">=</span> <span class="nx">DSGet</span><span class="p">.</span><span class="nx">_tId</span><span class="o">++</span><span class="p">,</span>
+            <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
             
 
 
@@ -214,34 +214,32 @@
 
 
 
-    <span class="c">// Dynamically add handler function with a closure to the callback stack</span>
-<span class="c"></span>    <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nx">callbacks</span><span class="o">[</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">rbind</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">response</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span><span class="o">((</span><span class="nx">self</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;asyncMode&quot;</span><span class="o">)</span> <span class="o">!==</span> <span class="s2">&quot;ignoreStaleResponses&quot;</span><span class="o">)||</span>
-                <span class="o">(</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">DSGet</span><span class="o">.</span><span class="nx">callbacks</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">))</span> <span class="o">{</span> <span class="c">// Must ignore stale responses</span>
-<span class="c"></span>
-            <span class="nx">self</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
-        <span class="o">}</span>
-        <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;DataSource ignored stale response for id &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-get&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
+    <span class="c1">// Dynamically add handler function with a closure to the callback stack</span>
+    <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">DataSource</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">rbind</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">((</span><span class="nx">self</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;asyncMode&quot;</span><span class="p">)</span> <span class="o">!==</span> <span class="s2">&quot;ignoreStaleResponses&quot;</span><span class="p">)</span><span class="o">||</span>
+                <span class="p">(</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">DSGet</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">{</span> <span class="c1">// Must ignore stale responses</span>
 
-        <span class="nx">delete</span> <span class="nx">DSGet</span><span class="o">.</span><span class="nx">callbacks</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
-    <span class="o">},</span> <span class="k">this</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
+            <span class="nx">self</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="p">},</span> <span class="nx">e</span><span class="p">));</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;DataSource ignored stale response for id &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;datasource-get&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
 
-    <span class="c">// We are now creating a request</span>
-<span class="c"></span>    <span class="nx">uri</span> <span class="o">+=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">request</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;generateRequestCallback&quot;</span><span class="o">)(</span><span class="k">this</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
-    <span class="c">//uri = this.doBefore(sUri);</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;DataSource is querying URL &quot;</span> <span class="o">+</span> <span class="nx">uri</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-get&quot;</span><span class="o">);</span>
-    <span class="nx">get</span><span class="o">.</span><span class="nx">script</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="o">{</span>
-        <span class="nx">autopurge</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-        <span class="c">// Works in Firefox only....</span>
-<span class="c"></span>        <span class="nx">onFailure</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;Script node data failure&quot;</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
-        <span class="o">},</span> <span class="k">this</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span>
-    <span class="o">});</span>
+        <span class="k">delete</span> <span class="nx">DSGet</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+    <span class="p">},</span> <span class="k">this</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
 
-
+    <span class="c1">// We are now creating a request</span>
+    <span class="nx">uri</span> <span class="o">+=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">request</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;generateRequestCallback&quot;</span><span class="p">)(</span><span class="k">this</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+    <span class="c1">//uri = this.doBefore(sUri);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;DataSource is querying URL &quot;</span> <span class="o">+</span> <span class="nx">uri</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;datasource-get&quot;</span><span class="p">);</span>
+    <span class="nx">get</span><span class="p">.</span><span class="nx">script</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">autopurge</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="c1">// Works in Firefox only....</span>
+        <span class="nx">onFailure</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Script node data failure&quot;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+        <span class="p">},</span> <span class="k">this</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span>
+    <span class="p">});</span>
 
 
 
@@ -255,12 +253,14 @@
 
 
 
-        <span class="k">return</span> <span class="nx">e</span><span class="o">.</span><span class="nx">tId</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+
+
+        <span class="k">return</span> <span class="nx">e</span><span class="p">.</span><span class="nx">tId</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
   
-<span class="nx">Y</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nx">Get</span> <span class="o">=</span> <span class="nx">DSGet</span><span class="o">;</span>
-<span class="nx">YUI</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Env.DataSource.callbacks&quot;</span><span class="o">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DataSource</span><span class="p">.</span><span class="nx">Get</span> <span class="o">=</span> <span class="nx">DSGet</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;Env.DataSource.callbacks&quot;</span><span class="p">);</span>
     
 </pre></div>
 

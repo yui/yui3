@@ -47,288 +47,288 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Collection utilities beyond what is provided in the YUI core</span>
-<span class="c"> * @module collection</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Collection utilities beyond what is provided in the YUI core</span>
+<span class="cm"> * @module collection</span>
+<span class="cm"> */</span>
 
-<span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> <span class="nx">Native</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">A</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">;</span>
+<span class="kd">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span> <span class="nx">Native</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">A</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">;</span>
 
-<span class="c">/**</span>
-<span class="c"> * Adds the following array utilities to the YUI instance</span>
-<span class="c"> * (Y.Array).  This is in addition to the methods provided</span>
-<span class="c"> * in the core.</span>
-<span class="c"> * @class YUI~array~extras</span>
-<span class="c"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * Adds the following array utilities to the YUI instance</span>
+<span class="cm"> * (Y.Array).  This is in addition to the methods provided</span>
+<span class="cm"> * in the core.</span>
+<span class="cm"> * @class YUI~array~extras</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Returns the index of the last item in the array</span>
-<span class="c"> * that contains the specified value, -1 if the</span>
-<span class="c"> * value isn&#39;t found.</span>
-<span class="c"> * method Array.lastIndexOf</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param a {Array} the array to search</span>
-<span class="c"> * @param val the value to search for</span>
-<span class="c"> * @return {int} the index of hte item that contains the value or -1</span>
-<span class="c"> */</span>
-<span class="nx">A</span><span class="o">.</span><span class="nx">lastIndexOf</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Native</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">)</span> <span class="o">?</span>
-    <span class="k">function</span><span class="o">(</span><span class="nx">a</span> <span class="o">,</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">a</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>    
-    <span class="o">}</span> <span class="o">:</span>
-    <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span><span class="o">&gt;=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">i</span><span class="o">;</span>
-    <span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Returns the index of the last item in the array</span>
+<span class="cm"> * that contains the specified value, -1 if the</span>
+<span class="cm"> * value isn&#39;t found.</span>
+<span class="cm"> * method Array.lastIndexOf</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param a {Array} the array to search</span>
+<span class="cm"> * @param val the value to search for</span>
+<span class="cm"> * @return {int} the index of hte item that contains the value or -1</span>
+<span class="cm"> */</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">lastIndexOf</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Native</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">)</span> <span class="o">?</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span> <span class="p">,</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>    
+    <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">i</span><span class="p">;</span>
+    <span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Returns a copy of the array with the duplicate entries removed</span>
-<span class="c"> * @method Array.unique</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param a {Array} the array to find the subset of uniques for</span>
-<span class="c"> * @param sort {bool} flag to denote if the array is sorted or not. Defaults to false, the more general operation</span>
-<span class="c"> * @return {Array} a copy of the array with duplicate entries removed</span>
-<span class="c"> */</span>
-<span class="nx">A</span><span class="o">.</span><span class="nx">unique</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">sort</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">a</span><span class="o">.</span><span class="nx">slice</span><span class="o">(),</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">n</span> <span class="o">=</span> <span class="o">-</span><span class="m">1</span><span class="o">,</span> <span class="nx">item</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+<span class="cm">/**</span>
+<span class="cm"> * Returns a copy of the array with the duplicate entries removed</span>
+<span class="cm"> * @method Array.unique</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param a {Array} the array to find the subset of uniques for</span>
+<span class="cm"> * @param sort {bool} flag to denote if the array is sorted or not. Defaults to false, the more general operation</span>
+<span class="cm"> * @return {Array} a copy of the array with duplicate entries removed</span>
+<span class="cm"> */</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">unique</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">sort</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">slice</span><span class="p">(),</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">n</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">item</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
-    <span class="k">while</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">b</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">item</span> <span class="o">=</span> <span class="nx">b</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-        <span class="k">while</span> <span class="o">((</span><span class="nx">n</span> <span class="o">=</span> <span class="nx">A</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">b</span><span class="o">,</span> <span class="nx">item</span><span class="o">))</span> <span class="o">!==</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">b</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">n</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="nx">i</span> <span class="o">+=</span> <span class="m">1</span><span class="o">;</span>
-    <span class="o">}</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">item</span> <span class="o">=</span> <span class="nx">b</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="k">while</span> <span class="p">((</span><span class="nx">n</span> <span class="o">=</span> <span class="nx">A</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="nx">item</span><span class="p">))</span> <span class="o">!==</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">b</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
 
-    <span class="c">// Note: the sort option doesn&#39;t really belong here... I think it was added</span>
-<span class="c"></span>    <span class="c">// because there was a way to fast path the two operations together.  That</span>
-<span class="c"></span>    <span class="c">// implementation was not working, so I replaced it with the following.</span>
-<span class="c"></span>    <span class="c">// Leaving it in so that the API doesn&#39;t get broken.</span>
-<span class="c"></span>    <span class="k">if</span> <span class="o">(</span><span class="nx">sort</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">b</span><span class="o">[</span><span class="m">0</span><span class="o">]))</span> <span class="o">{</span>
-            <span class="nx">b</span><span class="o">.</span><span class="nx">sort</span><span class="o">(</span><span class="nx">A</span><span class="o">.</span><span class="nx">numericSort</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">b</span><span class="o">.</span><span class="nx">sort</span><span class="o">();</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
+    <span class="c1">// Note: the sort option doesn&#39;t really belong here... I think it was added</span>
+    <span class="c1">// because there was a way to fast path the two operations together.  That</span>
+    <span class="c1">// implementation was not working, so I replaced it with the following.</span>
+    <span class="c1">// Leaving it in so that the API doesn&#39;t get broken.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">sort</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="nx">b</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="nx">A</span><span class="p">.</span><span class="nx">numericSort</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">b</span><span class="p">.</span><span class="nx">sort</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
-    <span class="k">return</span> <span class="nx">b</span><span class="o">;</span>
-<span class="o">};</span>
+    <span class="k">return</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c">* Executes the supplied function on each item in the array.</span>
-<span class="c">* Returns a new array containing the items that the supplied</span>
-<span class="c">* function returned true for.</span>
-<span class="c">* @method Array.filter</span>
-<span class="c">* @param a {Array} the array to iterate</span>
-<span class="c">* @param f {Function} the function to execute on each item</span>
-<span class="c">* @param o Optional context object</span>
-<span class="c">* @static</span>
-<span class="c">* @return {Array} The items on which the supplied function</span>
-<span class="c">* returned true. If no items matched an empty array is </span>
-<span class="c">* returned.</span>
-<span class="c">*/</span>
-<span class="nx">A</span><span class="o">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Native</span><span class="o">.</span><span class="nx">filter</span><span class="o">)</span> <span class="o">?</span>
-    <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Native</span><span class="o">.</span><span class="nx">filter</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">);</span>
-    <span class="o">}</span> <span class="o">:</span>
-    <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="o">[];</span>
-        <span class="nx">A</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">item</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">item</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">results</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">item</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
+<span class="cm">/**</span>
+<span class="cm">* Executes the supplied function on each item in the array.</span>
+<span class="cm">* Returns a new array containing the items that the supplied</span>
+<span class="cm">* function returned true for.</span>
+<span class="cm">* @method Array.filter</span>
+<span class="cm">* @param a {Array} the array to iterate</span>
+<span class="cm">* @param f {Function} the function to execute on each item</span>
+<span class="cm">* @param o Optional context object</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {Array} The items on which the supplied function</span>
+<span class="cm">* returned true. If no items matched an empty array is </span>
+<span class="cm">* returned.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Native</span><span class="p">.</span><span class="nx">filter</span><span class="p">)</span> <span class="o">?</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">filter</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+    <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
 
-        <span class="k">return</span> <span class="nx">results</span><span class="o">;</span>
-    <span class="o">};</span>
+        <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
+    <span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c">* The inverse of filter. Executes the supplied function on each item. </span>
-<span class="c">* Returns a new array containing the items that the supplied</span>
-<span class="c">* function returned *false* for.</span>
-<span class="c">* @method Array.reject</span>
-<span class="c">* @param a {Array} the array to iterate</span>
-<span class="c">* @param f {Function} the function to execute on each item</span>
-<span class="c">* @param o Optional context object</span>
-<span class="c">* @static</span>
-<span class="c">* @return {Array} The items on which the supplied function</span>
-<span class="c">* returned false.</span>
-<span class="c">*/</span>
-<span class="nx">A</span><span class="o">.</span><span class="nx">reject</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="nx">A</span><span class="o">.</span><span class="nx">filter</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">item</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="o">!</span><span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">item</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-    <span class="o">});</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm">* The inverse of filter. Executes the supplied function on each item. </span>
+<span class="cm">* Returns a new array containing the items that the supplied</span>
+<span class="cm">* function returned *false* for.</span>
+<span class="cm">* @method Array.reject</span>
+<span class="cm">* @param a {Array} the array to iterate</span>
+<span class="cm">* @param f {Function} the function to execute on each item</span>
+<span class="cm">* @param o Optional context object</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {Array} The items on which the supplied function</span>
+<span class="cm">* returned false.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">reject</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">A</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">!</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c">* Executes the supplied function on each item in the array.</span>
-<span class="c">* @method Array.every</span>
-<span class="c">* @param a {Array} the array to iterate</span>
-<span class="c">* @param f {Function} the function to execute on each item</span>
-<span class="c">* @param o Optional context object</span>
-<span class="c">* @static</span>
-<span class="c">* @return {boolean} true if every item in the array returns true</span>
-<span class="c">* from the supplied function.</span>
-<span class="c">*/</span>
-<span class="nx">A</span><span class="o">.</span><span class="nx">every</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Native</span><span class="o">.</span><span class="nx">every</span><span class="o">)</span> <span class="o">?</span>
-    <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Native</span><span class="o">.</span><span class="nx">every</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span><span class="nx">f</span><span class="o">,</span><span class="nx">o</span><span class="o">);</span>
-    <span class="o">}</span> <span class="o">:</span>
-    <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+<span class="cm">/**</span>
+<span class="cm">* Executes the supplied function on each item in the array.</span>
+<span class="cm">* @method Array.every</span>
+<span class="cm">* @param a {Array} the array to iterate</span>
+<span class="cm">* @param f {Function} the function to execute on each item</span>
+<span class="cm">* @param o Optional context object</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {boolean} true if every item in the array returns true</span>
+<span class="cm">* from the supplied function.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">every</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Native</span><span class="p">.</span><span class="nx">every</span><span class="p">)</span> <span class="o">?</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">every</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">f</span><span class="p">,</span><span class="nx">o</span><span class="p">);</span>
+    <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-    <span class="o">};</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c">* Executes the supplied function on each item in the array.</span>
-<span class="c">* @method Array.map</span>
-<span class="c">* @param a {Array} the array to iterate</span>
-<span class="c">* @param f {Function} the function to execute on each item</span>
-<span class="c">* @param o Optional context object</span>
-<span class="c">* @static</span>
-<span class="c">* @return {Array} A new array containing the return value</span>
-<span class="c">* of the supplied function for each item in the original</span>
-<span class="c">* array.</span>
-<span class="c">*/</span>
-<span class="nx">A</span><span class="o">.</span><span class="nx">map</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Native</span><span class="o">.</span><span class="nx">map</span><span class="o">)</span> <span class="o">?</span> 
-    <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Native</span><span class="o">.</span><span class="nx">map</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">);</span>
-    <span class="o">}</span> <span class="o">:</span>
-    <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="o">[];</span>
-        <span class="nx">A</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">item</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">results</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">item</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">));</span>
-        <span class="o">});</span>
-        <span class="k">return</span> <span class="nx">results</span><span class="o">;</span>
-    <span class="o">};</span>
-
-
-<span class="c">/**</span>
-<span class="c">* Executes the supplied function on each item in the array.</span>
-<span class="c">* Reduce &quot;folds&quot; the array into a single value.</span>
-<span class="c">* @method Array.reduce</span>
-<span class="c">* @param a {Array} the array to iterate</span>
-<span class="c">* @param init The initial value to start from</span>
-<span class="c">* @param f {Function} the function to execute on each item. It</span>
-<span class="c">* is responsible for returning the updated value of the</span>
-<span class="c">* computation.</span>
-<span class="c">* @param o Optional context object</span>
-<span class="c">* @static</span>
-<span class="c">* @return A value that results from iteratively applying the</span>
-<span class="c">* supplied function to each element in the array.</span>
-<span class="c">*/</span>
-<span class="nx">A</span><span class="o">.</span><span class="nx">reduce</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Native</span><span class="o">.</span><span class="nx">reduce</span><span class="o">)</span> <span class="o">?</span>
-    <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">init</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">//Firefox&#39;s Array.reduce does not allow inclusion of a</span>
-<span class="c"></span>        <span class="c">//  thisObject, so we need to implement it manually</span>
-<span class="c"></span>        <span class="k">return</span> <span class="nx">Native</span><span class="o">.</span><span class="nx">reduce</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">init</span><span class="o">,</span> <span class="nx">item</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">init</span><span class="o">,</span> <span class="nx">item</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span> <span class="nx">init</span><span class="o">);</span>
-    <span class="o">}</span> <span class="o">:</span>
-    <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">init</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">init</span><span class="o">;</span>
-        <span class="nx">A</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">r</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">r</span><span class="o">,</span> <span class="nx">item</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">});</span>
-        <span class="k">return</span> <span class="nx">r</span><span class="o">;</span>
-    <span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm">* Executes the supplied function on each item in the array.</span>
+<span class="cm">* @method Array.map</span>
+<span class="cm">* @param a {Array} the array to iterate</span>
+<span class="cm">* @param f {Function} the function to execute on each item</span>
+<span class="cm">* @param o Optional context object</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {Array} A new array containing the return value</span>
+<span class="cm">* of the supplied function for each item in the original</span>
+<span class="cm">* array.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Native</span><span class="p">.</span><span class="nx">map</span><span class="p">)</span> <span class="o">?</span> 
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+    <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">));</span>
+        <span class="p">});</span>
+        <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
+    <span class="p">};</span>
 
 
-<span class="c">/**</span>
-<span class="c">* Executes the supplied function on each item in the array,</span>
-<span class="c">* searching for the first item that matches the supplied</span>
-<span class="c">* function.</span>
-<span class="c">* @method Array.find</span>
-<span class="c">* @param a {Array} the array to search</span>
-<span class="c">* @param f {Function} the function to execute on each item. </span>
-<span class="c">* Iteration is stopped as soon as this function returns true</span>
-<span class="c">* on an item.</span>
-<span class="c">* @param o Optional context object</span>
-<span class="c">* @static</span>
-<span class="c">* @return {object} the first item that the supplied function</span>
-<span class="c">* returns true for, or null if it never returns true</span>
-<span class="c">*/</span>
-<span class="nx">A</span><span class="o">.</span><span class="nx">find</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
-    <span class="k">for</span><span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-<span class="o">};</span>
-
-<span class="c">/**</span>
-<span class="c">* Iterates over an array, returning a new array of all the elements</span>
-<span class="c">* that match the supplied regular expression</span>
-<span class="c">* @method Array.grep</span>
-<span class="c">* @param a {Array} a collection to iterate over</span>
-<span class="c">* @param pattern {RegExp} The regular expression to test against </span>
-<span class="c">* each item</span>
-<span class="c">* @static</span>
-<span class="c">* @return {Array} All the items in the collection that </span>
-<span class="c">* produce a match against the supplied regular expression. </span>
-<span class="c">* If no items match, an empty array is returned.</span>
-<span class="c">*/</span>
-<span class="nx">A</span><span class="o">.</span><span class="nx">grep</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">pattern</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="nx">A</span><span class="o">.</span><span class="nx">filter</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">pattern</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">item</span><span class="o">);</span>
-    <span class="o">});</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm">* Executes the supplied function on each item in the array.</span>
+<span class="cm">* Reduce &quot;folds&quot; the array into a single value.</span>
+<span class="cm">* @method Array.reduce</span>
+<span class="cm">* @param a {Array} the array to iterate</span>
+<span class="cm">* @param init The initial value to start from</span>
+<span class="cm">* @param f {Function} the function to execute on each item. It</span>
+<span class="cm">* is responsible for returning the updated value of the</span>
+<span class="cm">* computation.</span>
+<span class="cm">* @param o Optional context object</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return A value that results from iteratively applying the</span>
+<span class="cm">* supplied function to each element in the array.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">reduce</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Native</span><span class="p">.</span><span class="nx">reduce</span><span class="p">)</span> <span class="o">?</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">init</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//Firefox&#39;s Array.reduce does not allow inclusion of a</span>
+        <span class="c1">//  thisObject, so we need to implement it manually</span>
+        <span class="k">return</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">reduce</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">init</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">init</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">},</span> <span class="nx">init</span><span class="p">);</span>
+    <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">init</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
+        <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">r</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">});</span>
+        <span class="k">return</span> <span class="nx">r</span><span class="p">;</span>
+    <span class="p">};</span>
 
 
-<span class="c">/**</span>
-<span class="c">* Partitions an array into two new arrays, one with the items</span>
-<span class="c">* that match the supplied function, and one with the items that</span>
-<span class="c">* do not.</span>
-<span class="c">* @method Array.partition</span>
-<span class="c">* @param a {Array} a collection to iterate over</span>
-<span class="c">* @paran f {Function} a function that will receive each item </span>
-<span class="c">* in the collection and its index.</span>
-<span class="c">* @param o Optional execution context of f.</span>
-<span class="c">* @static</span>
-<span class="c">* @return An object with two members, &#39;matches&#39; and &#39;rejects&#39;,</span>
-<span class="c">* that are arrays containing the items that were selected or </span>
-<span class="c">* rejected by the test function (or an empty array).</span>
-<span class="c">*/</span>
-<span class="nx">A</span><span class="o">.</span><span class="nx">partition</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="o">{</span><span class="nx">matches</span><span class="o">:</span> <span class="o">[],</span> <span class="nx">rejects</span><span class="o">:</span> <span class="o">[]};</span>
-    <span class="nx">A</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">set</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">item</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">a</span><span class="o">)</span> <span class="o">?</span> <span class="nx">results</span><span class="o">.</span><span class="nx">matches</span> <span class="o">:</span> <span class="nx">results</span><span class="o">.</span><span class="nx">rejects</span><span class="o">;</span>
-        <span class="nx">set</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">item</span><span class="o">);</span>
-    <span class="o">});</span>
-    <span class="k">return</span> <span class="nx">results</span><span class="o">;</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm">* Executes the supplied function on each item in the array,</span>
+<span class="cm">* searching for the first item that matches the supplied</span>
+<span class="cm">* function.</span>
+<span class="cm">* @method Array.find</span>
+<span class="cm">* @param a {Array} the array to search</span>
+<span class="cm">* @param f {Function} the function to execute on each item. </span>
+<span class="cm">* Iteration is stopped as soon as this function returns true</span>
+<span class="cm">* on an item.</span>
+<span class="cm">* @param o Optional context object</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {object} the first item that the supplied function</span>
+<span class="cm">* returns true for, or null if it never returns true</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">find</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c">* Creates an array of arrays by pairing the corresponding</span>
-<span class="c">* elements of two arrays together into a new array.</span>
-<span class="c">* @method Array.zip</span>
-<span class="c">* @param a {Array} a collection to iterate over</span>
-<span class="c">* @param a2 {Array} another collection whose members will be </span>
-<span class="c">* paired with members of the first parameter</span>
-<span class="c">* @static</span>
-<span class="c">* @return An array of arrays formed by pairing each element </span>
-<span class="c">* of the first collection with an item in the second collection </span>
-<span class="c">* having the corresponding index.</span>
-<span class="c">*/</span>
-<span class="nx">A</span><span class="o">.</span><span class="nx">zip</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">a2</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="o">[];</span>
-    <span class="nx">A</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="k">function</span> <span class="o">(</span><span class="nx">item</span><span class="o">,</span> <span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">results</span><span class="o">.</span><span class="nx">push</span><span class="o">([</span><span class="nx">item</span><span class="o">,</span> <span class="nx">a2</span><span class="o">[</span><span class="nx">index</span><span class="o">]]);</span>
-    <span class="o">});</span>
-    <span class="k">return</span> <span class="nx">results</span><span class="o">;</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm">* Iterates over an array, returning a new array of all the elements</span>
+<span class="cm">* that match the supplied regular expression</span>
+<span class="cm">* @method Array.grep</span>
+<span class="cm">* @param a {Array} a collection to iterate over</span>
+<span class="cm">* @param pattern {RegExp} The regular expression to test against </span>
+<span class="cm">* each item</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {Array} All the items in the collection that </span>
+<span class="cm">* produce a match against the supplied regular expression. </span>
+<span class="cm">* If no items match, an empty array is returned.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">grep</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">pattern</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">A</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">pattern</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+
+
+<span class="cm">/**</span>
+<span class="cm">* Partitions an array into two new arrays, one with the items</span>
+<span class="cm">* that match the supplied function, and one with the items that</span>
+<span class="cm">* do not.</span>
+<span class="cm">* @method Array.partition</span>
+<span class="cm">* @param a {Array} a collection to iterate over</span>
+<span class="cm">* @paran f {Function} a function that will receive each item </span>
+<span class="cm">* in the collection and its index.</span>
+<span class="cm">* @param o Optional execution context of f.</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return An object with two members, &#39;matches&#39; and &#39;rejects&#39;,</span>
+<span class="cm">* that are arrays containing the items that were selected or </span>
+<span class="cm">* rejected by the test function (or an empty array).</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">partition</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">{</span><span class="nx">matches</span><span class="o">:</span> <span class="p">[],</span> <span class="nx">rejects</span><span class="o">:</span> <span class="p">[]};</span>
+    <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">set</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="o">?</span> <span class="nx">results</span><span class="p">.</span><span class="nx">matches</span> <span class="o">:</span> <span class="nx">results</span><span class="p">.</span><span class="nx">rejects</span><span class="p">;</span>
+        <span class="nx">set</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+    <span class="p">});</span>
+    <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm">* Creates an array of arrays by pairing the corresponding</span>
+<span class="cm">* elements of two arrays together into a new array.</span>
+<span class="cm">* @method Array.zip</span>
+<span class="cm">* @param a {Array} a collection to iterate over</span>
+<span class="cm">* @param a2 {Array} another collection whose members will be </span>
+<span class="cm">* paired with members of the first parameter</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return An array of arrays formed by pairing each element </span>
+<span class="cm">* of the first collection with an item in the second collection </span>
+<span class="cm">* having the corresponding index.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">zip</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">a2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">item</span><span class="p">,</span> <span class="nx">a2</span><span class="p">[</span><span class="nx">index</span><span class="p">]]);</span>
+    <span class="p">});</span>
+    <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
                     </div>

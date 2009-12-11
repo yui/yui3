@@ -47,106 +47,106 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * The ObjectAssert object provides functions to test JavaScript objects</span>
-<span class="c">     * for a variety of cases.</span>
-<span class="c">     *</span>
-<span class="c">     * @class ObjectAssert</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">ObjectAssert</span> <span class="o">=</span> <span class="o">{</span>
+                        <div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * The ObjectAssert object provides functions to test JavaScript objects</span>
+<span class="cm">     * for a variety of cases.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @class ObjectAssert</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">ObjectAssert</span> <span class="o">=</span> <span class="p">{</span>
     
-        <span class="nx">areEqual</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">expected</span><span class="o">,</span> <span class="nx">actual</span><span class="o">,</span> <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>               
-            <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">expected</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">,</span> <span class="nx">name</span><span class="o">){</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">!=</span> <span class="nx">actual</span><span class="o">[</span><span class="nx">name</span><span class="o">]){</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">ComparisonFailure</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Values should be equal for property &quot;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">),</span> <span class="nx">expected</span><span class="o">[</span><span class="nx">name</span><span class="o">],</span> <span class="nx">actual</span><span class="o">[</span><span class="nx">name</span><span class="o">]);</span>
-                <span class="o">}</span>
-            <span class="o">});</span>            
-        <span class="o">},</span>
+        <span class="nx">areEqual</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="nx">actual</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>               
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">name</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">expected</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">!=</span> <span class="nx">actual</span><span class="p">[</span><span class="nx">name</span><span class="p">]){</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">ComparisonFailure</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Values should be equal for property &quot;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">),</span> <span class="nx">expected</span><span class="p">[</span><span class="nx">name</span><span class="p">],</span> <span class="nx">actual</span><span class="p">[</span><span class="nx">name</span><span class="p">]);</span>
+                <span class="p">}</span>
+            <span class="p">});</span>            
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Asserts that an object has a property with the given name.</span>
-<span class="c">         * @param {String} propertyName The name of the property to test.</span>
-<span class="c">         * @param {Object} object The object to search.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method hasKey</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>    
-        <span class="nx">hasKey</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">propertyName</span><span class="o">,</span> <span class="nx">object</span><span class="o">,</span> <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>               
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">hasKey</span><span class="o">(</span><span class="nx">object</span><span class="o">,</span> <span class="nx">propertyName</span><span class="o">)){</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Property &#39;&quot;</span> <span class="o">+</span> <span class="nx">propertyName</span> <span class="o">+</span> <span class="s2">&quot;&#39; not found on object.&quot;</span><span class="o">));</span>
-            <span class="o">}</span>    
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that an object has a property with the given name.</span>
+<span class="cm">         * @param {String} propertyName The name of the property to test.</span>
+<span class="cm">         * @param {Object} object The object to search.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method hasKey</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>    
+        <span class="nx">hasKey</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">propertyName</span><span class="p">,</span> <span class="nx">object</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>               
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">hasKey</span><span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">propertyName</span><span class="p">)){</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Property &#39;&quot;</span> <span class="o">+</span> <span class="nx">propertyName</span> <span class="o">+</span> <span class="s2">&quot;&#39; not found on object.&quot;</span><span class="p">));</span>
+            <span class="p">}</span>    
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Asserts that an object has all properties of a reference object.</span>
-<span class="c">         * @param {Array} properties An array of property names that should be on the object.</span>
-<span class="c">         * @param {Object} object The object to search.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method hasKeys</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>    
-        <span class="nx">hasKeys</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">properties</span><span class="o">,</span> <span class="nx">object</span><span class="o">,</span> <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>  
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">properties</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++){</span>
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">hasKey</span><span class="o">(</span><span class="nx">object</span><span class="o">,</span> <span class="nx">properties</span><span class="o">[</span><span class="nx">i</span><span class="o">])){</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Property &#39;&quot;</span> <span class="o">+</span> <span class="nx">properties</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">+</span> <span class="s2">&quot;&#39; not found on object.&quot;</span><span class="o">));</span>
-                <span class="o">}</span>      
-            <span class="o">}</span>
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that an object has all properties of a reference object.</span>
+<span class="cm">         * @param {Array} properties An array of property names that should be on the object.</span>
+<span class="cm">         * @param {Object} object The object to search.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method hasKeys</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>    
+        <span class="nx">hasKeys</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">properties</span><span class="p">,</span> <span class="nx">object</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>  
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">properties</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">hasKey</span><span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">properties</span><span class="p">[</span><span class="nx">i</span><span class="p">])){</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Property &#39;&quot;</span> <span class="o">+</span> <span class="nx">properties</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39; not found on object.&quot;</span><span class="p">));</span>
+                <span class="p">}</span>      
+            <span class="p">}</span>
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Asserts that a property with the given name exists on an object instance (not on its prototype).</span>
-<span class="c">         * @param {String} propertyName The name of the property to test.</span>
-<span class="c">         * @param {Object} object The object to search.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method ownsKey</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>    
-        <span class="nx">ownsKey</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">propertyName</span><span class="o">,</span> <span class="nx">object</span><span class="o">,</span> <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>               
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">object</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">propertyName</span><span class="o">)){</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Property &#39;&quot;</span> <span class="o">+</span> <span class="nx">propertyName</span> <span class="o">+</span> <span class="s2">&quot;&#39; not found on object instance.&quot;</span><span class="o">));</span>
-            <span class="o">}</span>     
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that a property with the given name exists on an object instance (not on its prototype).</span>
+<span class="cm">         * @param {String} propertyName The name of the property to test.</span>
+<span class="cm">         * @param {Object} object The object to search.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method ownsKey</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>    
+        <span class="nx">ownsKey</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">propertyName</span><span class="p">,</span> <span class="nx">object</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>               
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">object</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">propertyName</span><span class="p">)){</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Property &#39;&quot;</span> <span class="o">+</span> <span class="nx">propertyName</span> <span class="o">+</span> <span class="s2">&quot;&#39; not found on object instance.&quot;</span><span class="p">));</span>
+            <span class="p">}</span>     
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Asserts that all properties exist on an object instance (not on its prototype).</span>
-<span class="c">         * @param {Array} properties An array of property names that should be on the object.</span>
-<span class="c">         * @param {Object} object The object to search.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method ownsKeys</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>    
-        <span class="nx">ownsKeys</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">properties</span><span class="o">,</span> <span class="nx">object</span><span class="o">,</span> <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>        
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">properties</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++){</span>
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">object</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">properties</span><span class="o">[</span><span class="nx">i</span><span class="o">])){</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Property &#39;&quot;</span> <span class="o">+</span> <span class="nx">properties</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">+</span> <span class="s2">&quot;&#39; not found on object instance.&quot;</span><span class="o">));</span>
-                <span class="o">}</span>      
-            <span class="o">}</span>
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that all properties exist on an object instance (not on its prototype).</span>
+<span class="cm">         * @param {Array} properties An array of property names that should be on the object.</span>
+<span class="cm">         * @param {Object} object The object to search.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method ownsKeys</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>    
+        <span class="nx">ownsKeys</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">properties</span><span class="p">,</span> <span class="nx">object</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>        
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">properties</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">object</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">properties</span><span class="p">[</span><span class="nx">i</span><span class="p">])){</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Property &#39;&quot;</span> <span class="o">+</span> <span class="nx">properties</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39; not found on object instance.&quot;</span><span class="p">));</span>
+                <span class="p">}</span>      
+            <span class="p">}</span>
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Asserts that an object owns no properties.</span>
-<span class="c">         * @param {Object} object The object to check.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method ownsNoKeys</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>    
-        <span class="nx">ownsNoKeys</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">object</span><span class="o">,</span> <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>  
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that an object owns no properties.</span>
+<span class="cm">         * @param {Object} object The object to check.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method ownsNoKeys</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>    
+        <span class="nx">ownsNoKeys</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>  
 
-            <span class="k">var</span> <span class="nx">keys</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">keys</span><span class="o">(</span><span class="nx">object</span><span class="o">);</span>
+            <span class="kd">var</span> <span class="nx">keys</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">object</span><span class="p">);</span>
             
-            <span class="k">if</span> <span class="o">(</span><span class="nx">keys</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">){</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Object owns &quot;</span> <span class="o">+</span> <span class="nx">keys</span><span class="o">.</span><span class="nx">length</span> <span class="o">+</span> <span class="s2">&quot; properties but should own none.&quot;</span><span class="o">));</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">keys</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Object owns &quot;</span> <span class="o">+</span> <span class="nx">keys</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="s2">&quot; properties but should own none.&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
 
-        <span class="o">}</span>     
-    <span class="o">};</span>
+        <span class="p">}</span>     
+    <span class="p">};</span>
 </pre></div>
 
                     </div>

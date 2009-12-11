@@ -694,9 +694,9 @@ YUI.prototype = {
 
     // inheritance utilities are not available yet
     for (i in p) {
-        // if (1) { // intenionally ignoring hasOwnProperty check
-        YUI[i] = p[i];
-        // }
+        if (1) { // intenionally ignoring hasOwnProperty check
+            YUI[i] = p[i];
+        }
     }
 
     // set up the environment
