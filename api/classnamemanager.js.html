@@ -47,81 +47,81 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c">* Contains a singleton (ClassNameManager) that enables easy creation and caching of </span>
-<span class="c">* prefixed class names.</span>
-<span class="c">* @module classnamemanager</span>
-<span class="c">*/</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm">* Contains a singleton (ClassNameManager) that enables easy creation and caching of </span>
+<span class="cm">* prefixed class names.</span>
+<span class="cm">* @module classnamemanager</span>
+<span class="cm">*/</span>
 
-<span class="c">/**</span>
-<span class="c"> * A singleton class providing: </span>
-<span class="c"> * </span>
-<span class="c"> * &lt;ul&gt;</span>
-<span class="c"> *    &lt;li&gt;Easy creation of prefixed class names&lt;/li&gt;</span>
-<span class="c"> *    &lt;li&gt;Caching of previously created class names for improved performance.&lt;/li&gt;</span>
-<span class="c"> * &lt;/ul&gt;</span>
-<span class="c"> * </span>
-<span class="c"> * @class ClassNameManager</span>
-<span class="c"> * @static </span>
-<span class="c"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * A singleton class providing: </span>
+<span class="cm"> * </span>
+<span class="cm"> * &lt;ul&gt;</span>
+<span class="cm"> *    &lt;li&gt;Easy creation of prefixed class names&lt;/li&gt;</span>
+<span class="cm"> *    &lt;li&gt;Caching of previously created class names for improved performance.&lt;/li&gt;</span>
+<span class="cm"> * &lt;/ul&gt;</span>
+<span class="cm"> * </span>
+<span class="cm"> * @class ClassNameManager</span>
+<span class="cm"> * @static </span>
+<span class="cm"> */</span>
 
-<span class="c">// String constants</span>
-<span class="c"></span><span class="k">var</span> <span class="nx">CLASS_NAME_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;classNamePrefix&#39;</span><span class="o">,</span>
-	<span class="nx">CLASS_NAME_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;classNameDelimiter&#39;</span><span class="o">,</span>
-    <span class="nx">CONFIG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">;</span>
+<span class="c1">// String constants</span>
+<span class="kd">var</span> <span class="nx">CLASS_NAME_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;classNamePrefix&#39;</span><span class="p">,</span>
+	<span class="nx">CLASS_NAME_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;classNameDelimiter&#39;</span><span class="p">,</span>
+    <span class="nx">CONFIG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">;</span>
 
-<span class="c">// Global config</span>
-<span class="c"></span>
-<span class="c">/**</span>
-<span class="c"> * Configuration property indicating the prefix for all CSS class names in this YUI instance.</span>
-<span class="c"> *</span>
-<span class="c"> * @property Y.config.classNamePrefix</span>
-<span class="c"> * @type {String}</span>
-<span class="c"> * @default &quot;yui&quot;</span>
-<span class="c"> * @static</span>
-<span class="c"> */</span>
-<span class="nx">CONFIG</span><span class="o">[</span><span class="nx">CLASS_NAME_PREFIX</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CONFIG</span><span class="o">[</span><span class="nx">CLASS_NAME_PREFIX</span><span class="o">]</span> <span class="o">||</span> <span class="s1">&#39;yui&#39;</span><span class="o">;</span>
+<span class="c1">// Global config</span>
 
-<span class="c">/**</span>
-<span class="c"> * Configuration property indicating the delimiter used to compose all CSS class names in</span>
-<span class="c"> * this YUI instance.</span>
-<span class="c"> *</span>
-<span class="c"> * @property Y.config.classNameDelimiter</span>
-<span class="c"> * @type {String}</span>
-<span class="c"> * @default &quot;-&quot;</span>
-<span class="c"> * @static</span>
-<span class="c"> */</span>
-<span class="nx">CONFIG</span><span class="o">[</span><span class="nx">CLASS_NAME_DELIMITER</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CONFIG</span><span class="o">[</span><span class="nx">CLASS_NAME_DELIMITER</span><span class="o">]</span> <span class="o">||</span> <span class="s1">&#39;-&#39;</span><span class="o">;</span>
+<span class="cm">/**</span>
+<span class="cm"> * Configuration property indicating the prefix for all CSS class names in this YUI instance.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @property Y.config.classNamePrefix</span>
+<span class="cm"> * @type {String}</span>
+<span class="cm"> * @default &quot;yui&quot;</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="nx">CONFIG</span><span class="p">[</span><span class="nx">CLASS_NAME_PREFIX</span><span class="p">]</span> <span class="o">=</span> <span class="nx">CONFIG</span><span class="p">[</span><span class="nx">CLASS_NAME_PREFIX</span><span class="p">]</span> <span class="o">||</span> <span class="s1">&#39;yui&#39;</span><span class="p">;</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">ClassNameManager</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+<span class="cm">/**</span>
+<span class="cm"> * Configuration property indicating the delimiter used to compose all CSS class names in</span>
+<span class="cm"> * this YUI instance.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @property Y.config.classNameDelimiter</span>
+<span class="cm"> * @type {String}</span>
+<span class="cm"> * @default &quot;-&quot;</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="nx">CONFIG</span><span class="p">[</span><span class="nx">CLASS_NAME_DELIMITER</span><span class="p">]</span> <span class="o">=</span> <span class="nx">CONFIG</span><span class="p">[</span><span class="nx">CLASS_NAME_DELIMITER</span><span class="p">]</span> <span class="o">||</span> <span class="s1">&#39;-&#39;</span><span class="p">;</span>
 
-	<span class="k">var</span> <span class="nx">sPrefix</span>    <span class="o">=</span> <span class="nx">CONFIG</span><span class="o">[</span><span class="nx">CLASS_NAME_PREFIX</span><span class="o">],</span>
-		<span class="nx">sDelimiter</span> <span class="o">=</span> <span class="nx">CONFIG</span><span class="o">[</span><span class="nx">CLASS_NAME_DELIMITER</span><span class="o">];</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-	<span class="k">return</span> <span class="o">{</span>
+	<span class="kd">var</span> <span class="nx">sPrefix</span>    <span class="o">=</span> <span class="nx">CONFIG</span><span class="p">[</span><span class="nx">CLASS_NAME_PREFIX</span><span class="p">],</span>
+		<span class="nx">sDelimiter</span> <span class="o">=</span> <span class="nx">CONFIG</span><span class="p">[</span><span class="nx">CLASS_NAME_DELIMITER</span><span class="p">];</span>
 
-		<span class="c">/**</span>
-<span class="c">		 * Returns a class name prefixed with the the value of the </span>
-<span class="c">		 * &lt;code&gt;Y.config.classNamePrefix&lt;/code&gt; attribute + the provided strings.</span>
-<span class="c">		 * Uses the &lt;code&gt;Y.config.classNameDelimiter&lt;/code&gt; attribute to delimit the </span>
-<span class="c">		 * provided strings. E.g. Y.ClassNameManager.getClassName(&#39;foo&#39;,&#39;bar&#39;); // yui-foo-bar</span>
-<span class="c">		 * </span>
-<span class="c">		 * @method getClassName</span>
-<span class="c">		 * @param {String}+ one or more classname bits to be joined and prefixed</span>
-<span class="c">		 */</span>
-		<span class="nx">getClassName</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">cached</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">c</span><span class="o">,</span> <span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
+	<span class="k">return</span> <span class="p">{</span>
 
-			<span class="k">var</span> <span class="nx">sClass</span> <span class="o">=</span> <span class="nx">sPrefix</span> <span class="o">+</span> <span class="nx">sDelimiter</span> <span class="o">+</span> 
-                   <span class="c">// ((x) ? Y.Array(arguments, 0, true).join(sDelimiter) : c);</span>
-<span class="c"></span>                   <span class="o">((</span><span class="nx">x</span><span class="o">)</span> <span class="o">?</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">join</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">sDelimiter</span><span class="o">)</span> <span class="o">:</span> <span class="nx">c</span><span class="o">);</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * Returns a class name prefixed with the the value of the </span>
+<span class="cm">		 * &lt;code&gt;Y.config.classNamePrefix&lt;/code&gt; attribute + the provided strings.</span>
+<span class="cm">		 * Uses the &lt;code&gt;Y.config.classNameDelimiter&lt;/code&gt; attribute to delimit the </span>
+<span class="cm">		 * provided strings. E.g. Y.ClassNameManager.getClassName(&#39;foo&#39;,&#39;bar&#39;); // yui-foo-bar</span>
+<span class="cm">		 * </span>
+<span class="cm">		 * @method getClassName</span>
+<span class="cm">		 * @param {String}+ one or more classname bits to be joined and prefixed</span>
+<span class="cm">		 */</span>
+		<span class="nx">getClassName</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
 
-			<span class="k">return</span> <span class="nx">sClass</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/\s/g</span><span class="o">,</span> <span class="s1">&#39;&#39;</span><span class="o">);</span>
+			<span class="kd">var</span> <span class="nx">sClass</span> <span class="o">=</span> <span class="nx">sPrefix</span> <span class="o">+</span> <span class="nx">sDelimiter</span> <span class="o">+</span> 
+                   <span class="c1">// ((x) ? Y.Array(arguments, 0, true).join(sDelimiter) : c);</span>
+                   <span class="p">((</span><span class="nx">x</span><span class="p">)</span> <span class="o">?</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">join</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">sDelimiter</span><span class="p">)</span> <span class="o">:</span> <span class="nx">c</span><span class="p">);</span>
 
-		<span class="o">})</span>
+			<span class="k">return</span> <span class="nx">sClass</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
 
-	<span class="o">};</span>
+		<span class="p">})</span>
 
-<span class="o">}();</span>
+	<span class="p">};</span>
+
+<span class="p">}();</span>
 </pre></div>
 
                     </div>
@@ -209,7 +209,8 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "ClassNameManager", "name": "getClassName", "url": "ClassNameManager.html#method_getClassName", "type": "method"}, {"access": "", "host": "ClassNameManager", "name": "Y.config.classNameDelimiter", "url": "ClassNameManager.html#property_Y.config.classNameDelimiter", "type": "property"}, {"access": "", "host": "ClassNameManager", "name": "Y.config.classNamePrefix", "url": "ClassNameManager.html#property_Y.config.classNamePrefix", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "ClassNameManager", "name": "getClassName", "url": "ClassNameManager.html#method_getClassName", "type": "method"}, {"access": "", "host": "ClassNameManager", "name": "Y.config.classNameDelimiter", "url": "ClassNameManager.html#property_Y.config.classNameDelimiter", "type": "property"}, {"access": "", "host": "ClassNameManager", "name": "Y.config.classNamePrefix", "url": "ClassNameManager.html#property_Y.config.classNamePrefix", "type": "property"}];
+    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

@@ -1,0 +1,62 @@
+.yui-tablist {
+	margin: 10px;
+}
+
+.yui-tablist ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	zoom: 1;	/* Clear the floated <LI> elements in IE */
+}
+
+.yui-tablist ul:after {  /* Clear the floated <LI> elements in Webkit, Opera and Gecko */
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    height: 0;
+    line-height: 0;
+}
+
+.yui-tablist .yui-tab {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	float: left;
+	border: solid 1px #000;
+	margin: 0 -1px -1px 0;
+	*position: relative;	/* Necessary to get negative margins in IE */
+}
+
+.yui-tablist .yui-tab a {
+	display: block;
+	text-decoration: none;
+	color: #000;
+	background-color: #ccc;
+    padding: .25em .5em;	
+	cursor: hand;	/* Needed for IE 8, which by default renders the text selection cursor. */
+}
+
+.yui-tablist .yui-tab-selected a {
+	background-color: #fff;
+    border-bottom: 1px solid #fff;
+    margin: 0 0 -1px 0;
+	*position: relative;	/* Necessary to get negative margins in IE */
+}
+
+.yui-tablist .yui-tab-focused a {
+    background-color: #99ccff;
+    border-color: #99ccff;
+    outline: none;
+}
+
+.yui-tablist .yui-tabpanel {
+	display: none;
+	background-color: #fff;
+    padding: 10px;
+	border: solid 1px #000;	    
+}
+
+.yui-tablist .yui-tabpanel-selected {
+	display: block;
+}

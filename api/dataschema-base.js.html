@@ -47,67 +47,67 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The DataSchema utility provides a common configurable interface for widgets to</span>
-<span class="c"> * apply a given schema to a variety of data.</span>
-<span class="c"> *</span>
-<span class="c"> * @module dataschema</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The DataSchema utility provides a common configurable interface for widgets to</span>
+<span class="cm"> * apply a given schema to a variety of data.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module dataschema</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Provides the base DataSchema implementation, which can be extended to </span>
-<span class="c"> * create DataSchemas for specific data formats, such XML, JSON, text and</span>
-<span class="c"> * arrays.</span>
-<span class="c"> *</span>
-<span class="c"> * @module dataschema</span>
-<span class="c"> * @submodule dataschema-base</span>
-<span class="c"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * Provides the base DataSchema implementation, which can be extended to </span>
+<span class="cm"> * create DataSchemas for specific data formats, such XML, JSON, text and</span>
+<span class="cm"> * arrays.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module dataschema</span>
+<span class="cm"> * @submodule dataschema-base</span>
+<span class="cm"> */</span>
 
-<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
-<span class="c">/**</span>
-<span class="c"> * Base class for the YUI DataSchema Utility.</span>
-<span class="c"> * @class DataSchema.Base</span>
-<span class="c"> * @static</span>
-<span class="c"> */</span>
-    <span class="nx">SchemaBase</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Overridable method returns data as-is.</span>
-<span class="c">     *</span>
-<span class="c">     * @method apply</span>
-<span class="c">     * @param schema {Object} Schema to apply.</span>
-<span class="c">     * @param data {Object} Data.</span>
-<span class="c">     * @return {Object} Schema-parsed data.</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">apply</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">schema</span><span class="o">,</span> <span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">data</span><span class="o">;</span>
-    <span class="o">},</span>
+<span class="kd">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+<span class="cm">/**</span>
+<span class="cm"> * Base class for the YUI DataSchema Utility.</span>
+<span class="cm"> * @class DataSchema.Base</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+    <span class="nx">SchemaBase</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Overridable method returns data as-is.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method apply</span>
+<span class="cm">     * @param schema {Object} Schema to apply.</span>
+<span class="cm">     * @param data {Object} Data.</span>
+<span class="cm">     * @return {Object} Schema-parsed data.</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">apply</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">schema</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">data</span><span class="p">;</span>
+    <span class="p">},</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Applies field parser, if defined</span>
-<span class="c">     *</span>
-<span class="c">     * @method parse</span>
-<span class="c">     * @param value {Object} Original value.</span>
-<span class="c">     * @param field {Object} Field.</span>
-<span class="c">     * @return {Object} Type-converted value.</span>
-<span class="c">     */</span>
-    <span class="nx">parse</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">,</span> <span class="nx">field</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span><span class="o">(</span><span class="nx">field</span><span class="o">.</span><span class="nx">parser</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">parser</span> <span class="o">=</span> <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">field</span><span class="o">.</span><span class="nx">parser</span><span class="o">))</span> <span class="o">?</span>
-            <span class="nx">field</span><span class="o">.</span><span class="nx">parser</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Parsers</span><span class="o">[</span><span class="nx">field</span><span class="o">.</span><span class="nx">parser</span><span class="o">+</span><span class="s1">&#39;&#39;</span><span class="o">];</span>
-            <span class="k">if</span><span class="o">(</span><span class="nx">parser</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">value</span> <span class="o">=</span> <span class="nx">parser</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">value</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Could not find parser for field &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">field</span><span class="o">),</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">value</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Applies field parser, if defined</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method parse</span>
+<span class="cm">     * @param value {Object} Original value.</span>
+<span class="cm">     * @param field {Object} Field.</span>
+<span class="cm">     * @return {Object} Type-converted value.</span>
+<span class="cm">     */</span>
+    <span class="nx">parse</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">field</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">field</span><span class="p">.</span><span class="nx">parser</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">parser</span> <span class="o">=</span> <span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">field</span><span class="p">.</span><span class="nx">parser</span><span class="p">))</span> <span class="o">?</span>
+            <span class="nx">field</span><span class="p">.</span><span class="nx">parser</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Parsers</span><span class="p">[</span><span class="nx">field</span><span class="p">.</span><span class="nx">parser</span><span class="o">+</span><span class="s1">&#39;&#39;</span><span class="p">];</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">parser</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">value</span> <span class="o">=</span> <span class="nx">parser</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Could not find parser for field &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">field</span><span class="p">),</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;DataSchema&quot;</span><span class="o">).</span><span class="nx">Base</span> <span class="o">=</span> <span class="nx">SchemaBase</span><span class="o">;</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Parsers&quot;</span><span class="o">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;DataSchema&quot;</span><span class="p">).</span><span class="nx">Base</span> <span class="o">=</span> <span class="nx">SchemaBase</span><span class="p">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;Parsers&quot;</span><span class="p">);</span>
 </pre></div>
 
                     </div>
@@ -203,7 +203,8 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DataSchema.Array", "name": "apply", "url": "DataSchema.Array.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "apply", "url": "DataSchema.Base.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "apply", "url": "DataSchema.JSON.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Text", "name": "apply", "url": "DataSchema.Text.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.XML", "name": "apply", "url": "DataSchema.XML.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getLocationValue", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getLocationValue", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getPath", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getPath", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_getFieldValues", "url": "DataSchema.JSON.html#method__getFieldValues", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getLocationValue", "url": "DataSchema.XML.html#method__getLocationValue", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getXPathResult", "url": "DataSchema.XML.html#method__getXPathResult", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "parse", "url": "DataSchema.Base.html#method_parse", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseField", "url": "DataSchema.XML.html#method__parseField", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseMeta", "url": "DataSchema.JSON.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseMeta", "url": "DataSchema.XML.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResult", "url": "DataSchema.XML.html#method__parseResult", "type": "method"}, {"access": "protected", "host": "DataSchema.Array", "name": "_parseResults", "url": "DataSchema.Array.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseResults", "url": "DataSchema.JSON.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.Text", "name": "_parseResults", "url": "DataSchema.Text.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResults", "url": "DataSchema.XML.html#method__parseResults", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "DataSchema.Array", "name": "apply", "url": "DataSchema.Array.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "apply", "url": "DataSchema.Base.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "apply", "url": "DataSchema.JSON.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Text", "name": "apply", "url": "DataSchema.Text.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.XML", "name": "apply", "url": "DataSchema.XML.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getLocationValue", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getLocationValue", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getPath", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getPath", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_getFieldValues", "url": "DataSchema.JSON.html#method__getFieldValues", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getLocationValue", "url": "DataSchema.XML.html#method__getLocationValue", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getXPathResult", "url": "DataSchema.XML.html#method__getXPathResult", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "parse", "url": "DataSchema.Base.html#method_parse", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseField", "url": "DataSchema.XML.html#method__parseField", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseMeta", "url": "DataSchema.JSON.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseMeta", "url": "DataSchema.XML.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResult", "url": "DataSchema.XML.html#method__parseResult", "type": "method"}, {"access": "protected", "host": "DataSchema.Array", "name": "_parseResults", "url": "DataSchema.Array.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseResults", "url": "DataSchema.JSON.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.Text", "name": "_parseResults", "url": "DataSchema.Text.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResults", "url": "DataSchema.XML.html#method__parseResults", "type": "method"}];
+    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

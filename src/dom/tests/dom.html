@@ -120,10 +120,11 @@ form {
     </div>
 <script type="text/javascript">
     YUI({ base: '../../../build/', filter: 'raw'}).use('console', 'test', function(Y) {
-        Assert = Y.Assert,
-        ArrayAssert = Y.ArrayAssert,
-        suite = new Y.Test.Suite("yuisuite");
+        var Assert = Y.Assert,
+            ArrayAssert = Y.ArrayAssert,
+            suite = new Y.Test.Suite("yuisuite");
 
+        window.Y = Y; // export Y global for Selenium
         new Y.Console({ height: '80%' }).render();
 
         var doc = document.getElementById('doc'),

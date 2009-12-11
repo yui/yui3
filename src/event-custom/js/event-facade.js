@@ -342,7 +342,7 @@ Y.EventTarget.prototype.bubble = function(evt, args, target) {
 
                     bc = ce.broadcast;
                     ce.broadcast = false;
-                    ret = ret && ce.fire.apply(ce, args || evt.details);
+                    ret = ret && ce.fire.apply(ce, args || evt.details || []);
                     ce.broadcast = bc;
 
                     // stopPropagation() was called

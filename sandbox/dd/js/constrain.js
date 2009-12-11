@@ -158,6 +158,14 @@ YUI.add('dd-constrain', function(Y) {
         */
         constrain2view: {
             value: false
+        },
+        /**
+        * @attribute cacheRegion
+        * @description Should the region be cached for performace. Default: true
+        * @type Boolean
+        */
+        cacheRegion: {
+            value: true
         }
     };
 
@@ -172,7 +180,7 @@ YUI.add('dd-constrain', function(Y) {
         * @description Fires on drag:start and clears the _regionCache
         */
         _handleStart: function() {
-            this._regionCache = null;
+            this.resetCache();
         },
         /**
         * @private
@@ -187,7 +195,16 @@ YUI.add('dd-constrain', function(Y) {
         * @description Get's the region and caches it, called from window.resize and when the cache is null
         */
         _cacheRegion: function() {
-            this._regionCache = this.get(CON_2_NODE).get('region');
+            if (this.get('cacheRegion')) {
+                this._regionCache = this.get(CON_2_NODE).get('region');
+            }
+        },
+        /**
+        * @method resetCache
+        * @description Reset the internal region cache.
+        */
+        resetCache: function() {
+            this._regionCache = null;
         },
         /**
         * @method getRegion

@@ -421,8 +421,8 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     Y.DD.DDM.on('ddm:start', function(e) {
         //console.log('DDM:start :: ', e);
     });
-    Y.DD.DDM.on('ddm:end', function(e) {
-        //console.log('DDM:end :: ', e);
+    Y.DD.DDM.on('drag:end', function(e) {
+        console.log('DDM:end :: ', e);
     });
     
     dd = new Y.DD.Drag({
@@ -439,6 +439,8 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
             three: 'This is my data object'
         }
     });
+
+    //dd.on('drag', console.log);
 
     dd.on('drag:end', function(e) {
         //console.log('drag:end: ', e);

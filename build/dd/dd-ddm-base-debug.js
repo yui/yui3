@@ -259,6 +259,64 @@ YUI.add('dd-ddm-base', function(Y) {
                 });
             }
             return drag;
+        },
+        /**
+        * @method swapPosition
+        * @description Swap the position of 2 nodes based on their CSS positioning.
+        * @param {Node} n1 The first node to swap
+        * @param {Node} n2 The first node to swap
+        * @return {Node}
+        */
+        swapPosition: function(n1, n2) {
+            n1 = Y.DD.DDM.getNode(n1);
+            n2 = Y.DD.DDM.getNode(n2);
+            var xy1 = n1.getXY(),
+                xy2 = n2.getXY();
+
+            n1.setXY(xy2);
+            n2.setXY(xy1);
+            return n1;
+        },
+        /**
+        * @method getNode
+        * @description Return a node instance from the given node, selector string or Y.Base extended object.
+        * @param {Node/Object/String} n The node to resolve.
+        * @return {Node}
+        */
+        getNode: function(n) {
+            if (n && n.get) {
+                if (Y.Widget && (n instanceof Y.Widget)) {
+                    n = n.get('boundingBox');
+                } else {
+                    n = n.get('node');
+                }
+            } else {
+                n = Y.one(n);
+            }
+            return n;
+        },
+        /**
+        * @method swapNode
+        * @description Swap the position of 2 nodes based on their DOM location.
+        * @param {Node} n1 The first node to swap
+        * @param {Node} n2 The first node to swap
+        * @return {Node}
+        */
+        swapNode: function(n1, n2) {
+            n1 = Y.DD.DDM.getNode(n1);
+            n2 = Y.DD.DDM.getNode(n2);
+            var p = n2.get('parentNode'),
+                s = n2.get('nextSibling');
+
+            if (s == n1) {
+                p.insertBefore(n1, n2);
+            } else if (n2 == n1.get('nextSibling')) {
+                p.insertBefore(n2, n1);
+            } else {
+                n1.get('parentNode').replaceChild(n2, n1);
+                p.insertBefore(n1, s);
+            }
+            return n1;
         }
     });
 

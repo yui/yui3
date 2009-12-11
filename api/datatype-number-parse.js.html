@@ -47,39 +47,39 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Parse number submodule.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datatype</span>
-<span class="c"> * @submodule datatype-number-parse</span>
-<span class="c"> * @for DataType.Number</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Parse number submodule.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datatype</span>
+<span class="cm"> * @submodule datatype-number-parse</span>
+<span class="cm"> * @for DataType.Number</span>
+<span class="cm"> */</span>
 
-<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
+<span class="kd">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">;</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;DataType.Number&quot;</span><span class="o">),</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Converts data to type Number.</span>
-<span class="c">     *</span>
-<span class="c">     * @method parse</span>
-<span class="c">     * @param data {String | Number | Boolean} Data to convert. The following</span>
-<span class="c">     * values return as null: null, undefined, NaN, &quot;&quot;.</span>
-<span class="c">     * @return {Number} A number, or null.</span>
-<span class="c">     */</span>
-    <span class="nx">parse</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="o">(</span><span class="nx">data</span> <span class="o">===</span> <span class="kc">null</span><span class="o">)</span> <span class="o">?</span> <span class="nx">data</span> <span class="o">:</span> <span class="o">+</span><span class="nx">data</span><span class="o">;</span>
-        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">number</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">number</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Could not parse data &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; to type Number&quot;</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;datatype-number&quot;</span><span class="o">);</span>
-            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;DataType.Number&quot;</span><span class="p">),</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Converts data to type Number.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method parse</span>
+<span class="cm">     * @param data {String | Number | Boolean} Data to convert. The following</span>
+<span class="cm">     * values return as null: null, undefined, NaN, &quot;&quot;.</span>
+<span class="cm">     * @return {Number} A number, or null.</span>
+<span class="cm">     */</span>
+    <span class="nx">parse</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="p">(</span><span class="nx">data</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="o">?</span> <span class="nx">data</span> <span class="o">:</span> <span class="o">+</span><span class="nx">data</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">number</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Could not parse data &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; to type Number&quot;</span><span class="p">,</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;datatype-number&quot;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
 
-<span class="c">// Add Parsers shortcut</span>
-<span class="c"></span><span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Parsers&quot;</span><span class="o">).</span><span class="nx">number</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataType</span><span class="o">.</span><span class="nb">Number</span><span class="o">.</span><span class="nx">parse</span><span class="o">;</span>
+<span class="c1">// Add Parsers shortcut</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;Parsers&quot;</span><span class="p">).</span><span class="nx">number</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataType</span><span class="p">.</span><span class="nb">Number</span><span class="p">.</span><span class="nx">parse</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -176,7 +176,8 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Date", "name": "parse", "url": "DataType.Date.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "private", "host": "DataType.Date", "name": "xPad", "url": "DataType.Date.html#method_xPad", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Date", "name": "parse", "url": "DataType.Date.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "private", "host": "DataType.Date", "name": "xPad", "url": "DataType.Date.html#method_xPad", "type": "method"}];
+    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

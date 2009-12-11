@@ -47,79 +47,79 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-<span class="k">var</span> <span class="nx">PARSE_INT</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">,</span>
-    <span class="nx">RE</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="o">;</span>
+                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">PARSE_INT</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">,</span>
+    <span class="nx">RE</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="p">;</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">KEYWORDS</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">black</span><span class="o">:</span> <span class="s1">&#39;000&#39;</span><span class="o">,</span>
-        <span class="nx">silver</span><span class="o">:</span> <span class="s1">&#39;c0c0c0&#39;</span><span class="o">,</span>
-        <span class="nx">gray</span><span class="o">:</span> <span class="s1">&#39;808080&#39;</span><span class="o">,</span>
-        <span class="nx">white</span><span class="o">:</span> <span class="s1">&#39;fff&#39;</span><span class="o">,</span>
-        <span class="nx">maroon</span><span class="o">:</span> <span class="s1">&#39;800000&#39;</span><span class="o">,</span>
-        <span class="nx">red</span><span class="o">:</span> <span class="s1">&#39;f00&#39;</span><span class="o">,</span>
-        <span class="nx">purple</span><span class="o">:</span> <span class="s1">&#39;800080&#39;</span><span class="o">,</span>
-        <span class="nx">fuchsia</span><span class="o">:</span> <span class="s1">&#39;f0f&#39;</span><span class="o">,</span>
-        <span class="nx">green</span><span class="o">:</span> <span class="s1">&#39;008000&#39;</span><span class="o">,</span>
-        <span class="nx">lime</span><span class="o">:</span> <span class="s1">&#39;0f0&#39;</span><span class="o">,</span>
-        <span class="nx">olive</span><span class="o">:</span> <span class="s1">&#39;808000&#39;</span><span class="o">,</span>
-        <span class="nx">yellow</span><span class="o">:</span> <span class="s1">&#39;ff0&#39;</span><span class="o">,</span>
-        <span class="nx">navy</span><span class="o">:</span> <span class="s1">&#39;000080&#39;</span><span class="o">,</span>
-        <span class="nx">blue</span><span class="o">:</span> <span class="s1">&#39;00f&#39;</span><span class="o">,</span>
-        <span class="nx">teal</span><span class="o">:</span> <span class="s1">&#39;008080&#39;</span><span class="o">,</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">KEYWORDS</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">black</span><span class="o">:</span> <span class="s1">&#39;000&#39;</span><span class="p">,</span>
+        <span class="nx">silver</span><span class="o">:</span> <span class="s1">&#39;c0c0c0&#39;</span><span class="p">,</span>
+        <span class="nx">gray</span><span class="o">:</span> <span class="s1">&#39;808080&#39;</span><span class="p">,</span>
+        <span class="nx">white</span><span class="o">:</span> <span class="s1">&#39;fff&#39;</span><span class="p">,</span>
+        <span class="nx">maroon</span><span class="o">:</span> <span class="s1">&#39;800000&#39;</span><span class="p">,</span>
+        <span class="nx">red</span><span class="o">:</span> <span class="s1">&#39;f00&#39;</span><span class="p">,</span>
+        <span class="nx">purple</span><span class="o">:</span> <span class="s1">&#39;800080&#39;</span><span class="p">,</span>
+        <span class="nx">fuchsia</span><span class="o">:</span> <span class="s1">&#39;f0f&#39;</span><span class="p">,</span>
+        <span class="nx">green</span><span class="o">:</span> <span class="s1">&#39;008000&#39;</span><span class="p">,</span>
+        <span class="nx">lime</span><span class="o">:</span> <span class="s1">&#39;0f0&#39;</span><span class="p">,</span>
+        <span class="nx">olive</span><span class="o">:</span> <span class="s1">&#39;808000&#39;</span><span class="p">,</span>
+        <span class="nx">yellow</span><span class="o">:</span> <span class="s1">&#39;ff0&#39;</span><span class="p">,</span>
+        <span class="nx">navy</span><span class="o">:</span> <span class="s1">&#39;000080&#39;</span><span class="p">,</span>
+        <span class="nx">blue</span><span class="o">:</span> <span class="s1">&#39;00f&#39;</span><span class="p">,</span>
+        <span class="nx">teal</span><span class="o">:</span> <span class="s1">&#39;008080&#39;</span><span class="p">,</span>
         <span class="nx">aqua</span><span class="o">:</span> <span class="s1">&#39;0ff&#39;</span>
-    <span class="o">},</span>
+    <span class="p">},</span>
 
-    <span class="nx">re_RGB</span><span class="o">:</span> <span class="sr">/^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i</span><span class="o">,</span>
-    <span class="nx">re_hex</span><span class="o">:</span> <span class="sr">/^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i</span><span class="o">,</span>
-    <span class="nx">re_hex3</span><span class="o">:</span> <span class="sr">/([0-9A-F])/gi</span><span class="o">,</span>
+    <span class="nx">re_RGB</span><span class="o">:</span> <span class="sr">/^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i</span><span class="p">,</span>
+    <span class="nx">re_hex</span><span class="o">:</span> <span class="sr">/^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i</span><span class="p">,</span>
+    <span class="nx">re_hex3</span><span class="o">:</span> <span class="sr">/([0-9A-F])/gi</span><span class="p">,</span>
 
-    <span class="nx">toRGB</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">re_RGB</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toHex</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
-        <span class="o">}</span>
+    <span class="nx">toRGB</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">re_RGB</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">toHex</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">re_hex</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;rgb(&#39;</span> <span class="o">+</span> <span class="o">[</span>
-                <span class="nx">PARSE_INT</span><span class="o">(</span><span class="nx">RE</span><span class="o">.</span><span class="nx">$1</span><span class="o">,</span> <span class="m">16</span><span class="o">),</span>
-                <span class="nx">PARSE_INT</span><span class="o">(</span><span class="nx">RE</span><span class="o">.</span><span class="nx">$2</span><span class="o">,</span> <span class="m">16</span><span class="o">),</span>
-                <span class="nx">PARSE_INT</span><span class="o">(</span><span class="nx">RE</span><span class="o">.</span><span class="nx">$3</span><span class="o">,</span> <span class="m">16</span><span class="o">)</span>
-            <span class="o">].</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;, &#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">re_hex</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;rgb(&#39;</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="nx">PARSE_INT</span><span class="p">(</span><span class="nx">RE</span><span class="p">.</span><span class="nx">$1</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+                <span class="nx">PARSE_INT</span><span class="p">(</span><span class="nx">RE</span><span class="p">.</span><span class="nx">$2</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+                <span class="nx">PARSE_INT</span><span class="p">(</span><span class="nx">RE</span><span class="p">.</span><span class="nx">$3</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+            <span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="nx">toHex</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">KEYWORDS</span><span class="o">[</span><span class="nx">val</span><span class="o">]</span> <span class="o">||</span> <span class="nx">val</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">re_RGB</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="o">[</span>
-                <span class="nb">Number</span><span class="o">(</span><span class="nx">RE</span><span class="o">.</span><span class="nx">$1</span><span class="o">).</span><span class="nx">toString</span><span class="o">(</span><span class="m">16</span><span class="o">),</span>
-                <span class="nb">Number</span><span class="o">(</span><span class="nx">RE</span><span class="o">.</span><span class="nx">$2</span><span class="o">).</span><span class="nx">toString</span><span class="o">(</span><span class="m">16</span><span class="o">),</span>
-                <span class="nb">Number</span><span class="o">(</span><span class="nx">RE</span><span class="o">.</span><span class="nx">$3</span><span class="o">).</span><span class="nx">toString</span><span class="o">(</span><span class="m">16</span><span class="o">)</span>
-            <span class="o">];</span>
+    <span class="nx">toHex</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">KEYWORDS</span><span class="p">[</span><span class="nx">val</span><span class="p">]</span> <span class="o">||</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">re_RGB</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">Number</span><span class="p">(</span><span class="nx">RE</span><span class="p">.</span><span class="nx">$1</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span>
+                <span class="nb">Number</span><span class="p">(</span><span class="nx">RE</span><span class="p">.</span><span class="nx">$2</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span>
+                <span class="nb">Number</span><span class="p">(</span><span class="nx">RE</span><span class="p">.</span><span class="nx">$3</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+            <span class="p">];</span>
 
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">val</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">val</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">val</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">re_hex3</span><span class="o">,</span> <span class="s1">&#39;$1$1&#39;</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">val</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">val</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">replace</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">re_hex3</span><span class="p">,</span> <span class="s1">&#39;$1$1&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
 
-            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">);</span>
-        <span class="o">}</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span><span class="o">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="m">6</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">re_hex3</span><span class="o">,</span> <span class="s1">&#39;$1$1&#39;</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">re_hex3</span><span class="p">,</span> <span class="s1">&#39;$1$1&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">!==</span> <span class="s1">&#39;transparent&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;#&#39;</span><span class="o">)</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="o">;</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">!==</span> <span class="s1">&#39;transparent&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">val</span><span class="o">.</span><span class="nx">toLowerCase</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">};</span>
-<span class="o">})(</span><span class="nx">Y</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">val</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>
 </pre></div>
 
                     </div>
@@ -218,7 +218,8 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addHTML", "url": "DOM.html#method_addHTML", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "PARENT_NODE", "url": "Selector.html#property_PARENT_NODE", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setHeight", "url": "DOM.html#method_setHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setWidth", "url": "DOM.html#method_setWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addHTML", "url": "DOM.html#method_addHTML", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "PARENT_NODE", "url": "Selector.html#property_PARENT_NODE", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setHeight", "url": "DOM.html#method_setHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setWidth", "url": "DOM.html#method_setWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

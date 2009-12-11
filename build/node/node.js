@@ -678,17 +678,15 @@ Y.mix(Node.prototype, {
     /**
      * Nulls internal node references, removes any plugins and event listeners
      * @method destroy
-     * @param {Boolean} purge (optional) Whether or not to remove listeners from the
-     * node and its subtree (default is false)
+     * @param {Boolean} recursivePurge (optional) Whether or not to remove listeners from the
+     * node's subtree (default is false)
      *
      */
-    destroy: function(purge) {
+    destroy: function(recursivePurge) {
         delete Node._instances[this[UID]];
-        if (purge) {
-            this.purge(true);
-        }
+        this.purge(recursivePurge);
 
-        if (this.unplug) {
+        if (this.unplug) { // may not be a PluginHost
             this.unplug();
         }
 
@@ -772,12 +770,15 @@ Y.mix(Node.prototype, {
         if (content) {
             if (typeof where === 'number') { // allow index
                 where = this._node.childNodes[where];
+            } else if (where && where._node) { // Node
+                where = where._node;
             }
 
             if (typeof content !== 'string') { // allow Node or NodeList/Array instances
                 if (content._node) { // Node
                     content = content._node;
                 } else if (content._nodes || (!content.nodeType && content.length)) { // NodeList or Array
+                    content = Y.all(content);
                     Y.each(content._nodes, function(n) {
                         Y.DOM.addHTML(node, n, where);
                     });
@@ -786,6 +787,7 @@ Y.mix(Node.prototype, {
                 }
             }
             Y.DOM.addHTML(node, content, where);
+        } else  {
         }
         return this;
     },
@@ -817,6 +819,15 @@ Y.mix(Node.prototype, {
      * @chainable
      */
     setContent: function(content) {
+        if (content) {
+            if (content._node) { // map to DOMNode
+                content = content._node;
+            } else if (content._nodes) { // convert DOMNodeList to documentFragment
+                content = Y.DOM._nl2Frag(content._nodes);
+            }
+
+        }
+
         Y.DOM.addHTML(this._node, content, 'replace');
         return this;
     },
@@ -850,6 +861,8 @@ var NodeList = function(nodes) {
     if (typeof nodes === 'string') {
         this._query = nodes;
         nodes = Y.Selector.query(nodes);
+    } else if (nodes.nodeType) {
+        nodes = [nodes];
     } else {
         nodes = Y.Array(nodes, 0, true);
     }
@@ -999,7 +1012,7 @@ Y.mix(NodeList.prototype, {
 
     /**
      * Creates a documenFragment from the nodes bound to the NodeList instance 
-     * @method toDocFrag
+     * @method toFrag
      * @return Node a Node instance bound to the documentFragment
      */
     toFrag: function() {
