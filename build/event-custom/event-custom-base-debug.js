@@ -364,17 +364,20 @@ Y.EventHandle.prototype = {
      * @method detach
      */
     detach: function() {
-        var evt = this.evt, i;
+        var evt = this.evt, detached = 0, i;
         if (evt) {
             // Y.log('EventHandle.detach: ' + this.sub, 'info', 'Event');
             if (Y.Lang.isArray(evt)) {
                 for (i=0; i<evt.length; i++) {
-                    evt[i].detach();
+                    detached += evt[i].detach();
                 }
             } else { 
                 evt._delete(this.sub);
+                detached = 1;
             }
         }
+
+        return detached;
     }
 };
 
@@ -632,9 +635,8 @@ Y.CustomEvent.prototype = {
     /**
      * Listen for this event
      * @method subscribe
-     * @param {Function} fn        The function to execute
-     * @return {EventHandle|EventTarget} unsubscribe handle or a
-     * chainable event target depending on the 'chain' config.
+     * @param {Function} fn The function to execute
+     * @return {EventHandle} handle Unsubscribe handle
      * @deprecated use on
      */
     subscribe: function(fn, context) {
@@ -646,9 +648,8 @@ Y.CustomEvent.prototype = {
     /**
      * Listen for this event
      * @method on
-     * @param {Function} fn        The function to execute
-     * @return {EventHandle|EventTarget} unsubscribe handle or a
-     * chainable event target depending on the 'chain' config.
+     * @param {Function} fn The function to execute
+     * @return {EventHandle} handle Unsubscribe handle
      */
     on: function(fn, context) {
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
@@ -660,9 +661,8 @@ Y.CustomEvent.prototype = {
      * the default behavior has been applied.  If a normal subscriber prevents the 
      * default behavior, it also prevents after listeners from firing.
      * @method after
-     * @param {Function} fn        The function to execute
-     * @return {EventHandle|EventTarget} unsubscribe handle or a
-     * chainable event target depending on the 'chain' config.
+     * @param {Function} fn The function to execute
+     * @return {EventHandle} handle Unsubscribe handle
      */
     after: function(fn, context) {
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
@@ -675,8 +675,7 @@ Y.CustomEvent.prototype = {
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed
      * @param {Object}   context The context object passed to subscribe.
-     * @return {int|EventTarget} returns a chainable event target
-     * or the number of subscribers unsubscribed.
+     * @return {int} returns the number of subscribers unsubscribed
      */
     detach: function(fn, context) {
         // unsubscribe handle
@@ -705,8 +704,7 @@ Y.CustomEvent.prototype = {
      * @param {Function} fn  The subscribed function to remove, if not supplied
      *                       all will be removed
      * @param {Object}   context The context object passed to subscribe.
-     * @return {boolean|EventTarget} returns a chainable event target
-     * or a boolean for legacy detach support.
+     * @return {int|undefined} returns the number of subscribers unsubscribed
      * @deprecated use detach
      */
     unsubscribe: function() {
@@ -1043,7 +1041,7 @@ var L = Y.Lang,
     /**
      * Returns an array with the detach key (if provided),
      * and the prefixed event name from _getType
-     * Y.on('detachcategory, menu:click', fn)
+     * Y.on('detachcategory| menu:click', fn)
      * @method _parseType
      * @private
      */
@@ -1417,7 +1415,7 @@ ET.prototype = {
      *    </li>
      *  </ul>
      *
-     *  @return {Event.Custom} the custom event
+     *  @return {CustomEvent} the custom event
      *
      */
     publish: function(type, opts) {
@@ -1504,7 +1502,7 @@ ET.prototype = {
      * configured to emit an event facade, the event facade will replace that
      * parameter after the properties the object literal contains are copied to
      * the event facade.
-     * @return {Event.Target} the event host
+     * @return {EventTarget} the event host
      *                   
      */
     fire: function(type) {
@@ -1545,7 +1543,7 @@ ET.prototype = {
      * @method getEvent
      * @param type {string} the type, or name of the event
      * @param prefixed {string} if true, the type is prefixed already
-     * @return {Event.Custom} the custom event or null
+     * @return {CustomEvent} the custom event or null
      */
     getEvent: function(type, prefixed) {
         var pre, e;

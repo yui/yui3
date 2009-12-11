@@ -50,7 +50,7 @@ var L = Y.Lang,
     /**
      * Returns an array with the detach key (if provided),
      * and the prefixed event name from _getType
-     * Y.on('detachcategory, menu:click', fn)
+     * Y.on('detachcategory| menu:click', fn)
      * @method _parseType
      * @private
      */
