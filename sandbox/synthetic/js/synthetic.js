@@ -133,7 +133,7 @@ SyntheticEvent.prototype = {
 
                 // Pass control to the implementation code
                 if (isFunction(self.impl.on)) {
-                    self.impl.on.call(self, node, handle.sub, ce, payload);
+                    self.impl.on.call(self.impl, node, handle.sub, ce, payload);
                 }
             }
         }
@@ -197,7 +197,7 @@ SyntheticEvent.prototype = {
                 }
 
                 if (isFunction(self.impl.detach)) {
-                    self.impl.detach.call(self, el, sub, ce);
+                    self.impl.detach.call(self.impl, el, sub, ce);
                 }
 
                 // Standard detach cleanup
