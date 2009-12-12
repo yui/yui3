@@ -111,17 +111,20 @@
 <span class="cm">     * @method detach</span>
 <span class="cm">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">evt</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">evt</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span> <span class="nx">detached</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// Y.log(&#39;EventHandle.detach: &#39; + this.sub, &#39;info&#39;, &#39;Event&#39;);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">evt</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">evt</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">evt</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">detach</span><span class="p">();</span>
+                    <span class="nx">detached</span> <span class="o">+=</span> <span class="nx">evt</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">detach</span><span class="p">();</span>
                 <span class="p">}</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> 
                 <span class="nx">evt</span><span class="p">.</span><span class="nx">_delete</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sub</span><span class="p">);</span>
+                <span class="nx">detached</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">detached</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
@@ -379,9 +382,8 @@
     <span class="cm">/**</span>
 <span class="cm">     * Listen for this event</span>
 <span class="cm">     * @method subscribe</span>
-<span class="cm">     * @param {Function} fn        The function to execute</span>
-<span class="cm">     * @return {EventHandle|EventTarget} unsubscribe handle or a</span>
-<span class="cm">     * chainable event target depending on the &#39;chain&#39; config.</span>
+<span class="cm">     * @param {Function} fn The function to execute</span>
+<span class="cm">     * @return {EventHandle} handle Unsubscribe handle</span>
 <span class="cm">     * @deprecated use on</span>
 <span class="cm">     */</span>
     <span class="nx">subscribe</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
@@ -393,9 +395,8 @@
     <span class="cm">/**</span>
 <span class="cm">     * Listen for this event</span>
 <span class="cm">     * @method on</span>
-<span class="cm">     * @param {Function} fn        The function to execute</span>
-<span class="cm">     * @return {EventHandle|EventTarget} unsubscribe handle or a</span>
-<span class="cm">     * chainable event target depending on the &#39;chain&#39; config.</span>
+<span class="cm">     * @param {Function} fn The function to execute</span>
+<span class="cm">     * @return {EventHandle} handle Unsubscribe handle</span>
 <span class="cm">     */</span>
     <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span><span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
@@ -407,9 +408,8 @@
 <span class="cm">     * the default behavior has been applied.  If a normal subscriber prevents the </span>
 <span class="cm">     * default behavior, it also prevents after listeners from firing.</span>
 <span class="cm">     * @method after</span>
-<span class="cm">     * @param {Function} fn        The function to execute</span>
-<span class="cm">     * @return {EventHandle|EventTarget} unsubscribe handle or a</span>
-<span class="cm">     * chainable event target depending on the &#39;chain&#39; config.</span>
+<span class="cm">     * @param {Function} fn The function to execute</span>
+<span class="cm">     * @return {EventHandle} handle Unsubscribe handle</span>
 <span class="cm">     */</span>
     <span class="nx">after</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span><span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
@@ -422,8 +422,7 @@
 <span class="cm">     * @param {Function} fn  The subscribed function to remove, if not supplied</span>
 <span class="cm">     *                       all will be removed</span>
 <span class="cm">     * @param {Object}   context The context object passed to subscribe.</span>
-<span class="cm">     * @return {int|EventTarget} returns a chainable event target</span>
-<span class="cm">     * or the number of subscribers unsubscribed.</span>
+<span class="cm">     * @return {int} returns the number of subscribers unsubscribed</span>
 <span class="cm">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// unsubscribe handle</span>
@@ -452,8 +451,7 @@
 <span class="cm">     * @param {Function} fn  The subscribed function to remove, if not supplied</span>
 <span class="cm">     *                       all will be removed</span>
 <span class="cm">     * @param {Object}   context The context object passed to subscribe.</span>
-<span class="cm">     * @return {boolean|EventTarget} returns a chainable event target</span>
-<span class="cm">     * or a boolean for legacy detach support.</span>
+<span class="cm">     * @return {int|undefined} returns the number of subscribers unsubscribed</span>
 <span class="cm">     * @deprecated use detach</span>
 <span class="cm">     */</span>
     <span class="nx">unsubscribe</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
