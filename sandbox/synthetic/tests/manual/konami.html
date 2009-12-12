@@ -27,7 +27,9 @@ Y.on('yui:log', function (e) {
 
 Y.Event.define('konami', {
     on: function (node, sub, ce, args) {
-        function key(e) {
+        var guid = Y.guid();
+
+        node.on(guid + '|keydown', function (e) {
             if (e.keyCode === sub.keys[sub.progress]) {
                 if (++sub.progress === sub.keys.length) {
                     ce.fire();
@@ -36,15 +38,12 @@ Y.Event.define('konami', {
             } else {
                 sub.progress = 0;
             }
-        }
-
-        var guid = Y.guid();
+        });
 
         Y.mix(sub,{
             progress : 0,
             keys     : [38,38,40,40,37,39,37,39,66,65],
-            _evtGuid : guid,
-            _handle  : node.on(guid + '|keydown', key),
+            _evtGuid : guid
         });
     },
     detach: function (node, sub, ce) {
