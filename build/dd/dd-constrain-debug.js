@@ -27,11 +27,10 @@ YUI.add('dd-constrain', function(Y) {
         RIGHT = 'right',
         BOTTOM = 'bottom',
         LEFT = 'left',
-        proto = null;
-
-    var C = function(config) {
-        C.superclass.constructor.apply(this, arguments);
-    };
+        proto = null,
+        C = function(config) {
+            C.superclass.constructor.apply(this, arguments);
+        };
     
     C.NAME = 'DragConstrained';
     /**
@@ -143,7 +142,7 @@ YUI.add('dd-constrain', function(Y) {
             value: false,
             setter: function(n) {
                 if (!this.get(CON_2_REGION)) {
-                    var node = Y.Node.get(n);
+                    var node = Y.one(n);
                     if (node) {
                         return node;
                     }

@@ -77,7 +77,7 @@ YUI.add('dd-drop', function(Y) {
         */        
         node: {
             setter: function(node) {
-                var n = Y.Node.get(node);
+                var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drop: Invalid Node Given: ' + node);
                 }
