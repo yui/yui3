@@ -877,12 +877,12 @@ YUI.add('dd-drag', function(Y) {
 
 
     /**
-     * This class provides the ability to drag a Node.
+     * Provides the ability to drag a Node.
      * @module dd
      * @submodule dd-drag
      */     
     /**
-     * This class provides the ability to drag a Node.
+     * Provides the ability to drag a Node.
      * @class Drag
      * @extends Base
      * @constructor
@@ -1970,12 +1970,12 @@ YUI.add('dd-proxy', function(Y) {
 
 
     /**
-     * This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.
+     * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.
      * @module dd
      * @submodule dd-proxy
      */
     /**
-     * This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.
+     * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.
      * @class DDProxy
      * @extends Base
      * @constructor
@@ -2207,12 +2207,12 @@ YUI.add('dd-constrain', function(Y) {
 
 
     /**
-     * This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a renodenode or viewport. It anode* supports tick based moves and XY axis constraints.
+     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
      * @submodule dd-constrain
      */
     /**
-     * This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a renodenode or viewport. It anode* supports tick based moves and XY axis constraints.
+     * Plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a node or viewport. It supports tick based moves and XY axis constraints.
      * @class DragConstrained
      * @extends Base
      * @constructor
@@ -2641,13 +2641,13 @@ YUI.add('dd-scroll', function(Y) {
 
 
     /**
-     * This class is the base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
+     * Base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
      * This class should not be called on it's own, it's designed to be a plugin.
      * @module dd
      * @submodule dd-scroll
      */
     /**
-     * This class is the base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
+     * Base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
      * This class should not be called on it's own, it's designed to be a plugin.
      * @class Scroll
      * @extends Base
@@ -3045,12 +3045,12 @@ YUI.add('dd-plugin', function(Y) {
 
 
        /**
-        * This is a simple Drag plugin that can be attached to a Node via the plug method.
+        * Simple Drag plugin that can be attached to a Node via the plug method.
         * @module dd
         * @submodule dd-plugin
         */
        /**
-        * This is a simple Drag plugin that can be attached to a Node via the plug method.
+        * Simple Drag plugin that can be attached to a Node via the plug method.
         * @class Drag
         * @extends DD.Drag
         * @constructor
@@ -3091,12 +3091,12 @@ YUI.add('dd-drop', function(Y) {
 
 
     /**
-     * This class provides the ability to create a Drop Target.
+     * Provides the ability to create a Drop Target.
      * @module dd
      * @submodule dd-drop
      */     
     /**
-     * This class provides the ability to create a Drop Target.
+     * Provides the ability to create a Drop Target.
      * @class Drop
      * @extends Base
      * @constructor
@@ -3584,12 +3584,12 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
        /**
-        * This is a simple Drop plugin that can be attached to a Node via the plug method.
+        * Simple Drop plugin that can be attached to a Node via the plug method.
         * @module dd
         * @submodule dd-drop-plugin
         */
        /**
-        * This is a simple Drop plugin that can be attached to a Node via the plug method.
+        * Simple Drop plugin that can be attached to a Node via the plug method.
         * @class Drop
         * @extends DD.Drop
         * @constructor
@@ -3629,12 +3629,12 @@ YUI.add('dd-delegate', function(Y) {
 
 
     /**
-     * This class provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
+     * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
      * @module dd
      * @submodule dd-delegate
      */     
     /**
-     * This class provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
+     * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
      * @class Delegate
      * @extends Base
      * @constructor
