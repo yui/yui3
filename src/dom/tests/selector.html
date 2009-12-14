@@ -335,6 +335,10 @@ onload = function() {
                 Assert.areEqual(document.getElementById('foo-bar'),
                     $('[-hyphen-start]', null, true),
                     "$('[-hyphen-start]', null, true)");
+
+                Assert.areEqual(Y.DOM.byId('test:colon'), 
+                    $('#test\\:colon', null, true),
+                    "$('#test\\:colon', null, true)");
             }
 
         });
