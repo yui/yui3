@@ -47,148 +47,148 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Provides a DataSource implementation which can be used to retrieve data via the IO Utility.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datasource</span>
-<span class="c"> * @submodule datasource-io</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides a DataSource implementation which can be used to retrieve data via the IO Utility.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datasource</span>
+<span class="cm"> * @submodule datasource-io</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * IO subclass for the DataSource Utility.</span>
-<span class="c"> * @class DataSource.IO</span>
-<span class="c"> * @extends DataSource.Local</span>
-<span class="c"> * @constructor</span>
-<span class="c"> */</span>    
-<span class="k">var</span> <span class="nx">DSIO</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-    <span class="nx">DSIO</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * IO subclass for the DataSource Utility.</span>
+<span class="cm"> * @class DataSource.IO</span>
+<span class="cm"> * @extends DataSource.Local</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> */</span>    
+<span class="kd">var</span> <span class="nx">DSIO</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">DSIO</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">};</span>
     
 
-    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSource.IO static properties</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span><span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">DSIO</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Class name.</span>
-<span class="c">     *</span>
-<span class="c">     * @property NAME</span>
-<span class="c">     * @type String</span>
-<span class="c">     * @static     </span>
-<span class="c">     * @final</span>
-<span class="c">     * @value &quot;dataSourceIO&quot;</span>
-<span class="c">     */</span>
-    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceIO&quot;</span><span class="o">,</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+    <span class="c1">//</span>
+    <span class="c1">// DataSource.IO static properties</span>
+    <span class="c1">//</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">DSIO</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Class name.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property NAME</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static     </span>
+<span class="cm">     * @final</span>
+<span class="cm">     * @value &quot;dataSourceIO&quot;</span>
+<span class="cm">     */</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceIO&quot;</span><span class="p">,</span>
 
 
-    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSource.IO Attributes</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>
-    <span class="nx">ATTRS</span><span class="o">:</span> <span class="o">{</span>
-        <span class="c">/**</span>
-<span class="c">         * Pointer to IO Utility.</span>
-<span class="c">         *</span>
-<span class="c">         * @attribute io</span>
-<span class="c">         * @type Y.io</span>
-<span class="c">         * @default Y.io</span>
-<span class="c">         */</span>
-        <span class="nx">io</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">value</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">,</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+    <span class="c1">//</span>
+    <span class="c1">// DataSource.IO Attributes</span>
+    <span class="c1">//</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+
+    <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Pointer to IO Utility.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute io</span>
+<span class="cm">         * @type Y.io</span>
+<span class="cm">         * @default Y.io</span>
+<span class="cm">         */</span>
+        <span class="nx">io</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">,</span>
             <span class="nx">cloneDefaultValue</span><span class="o">:</span> <span class="kc">false</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
     
-<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">DSIO</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nx">Local</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">    * Internal init() handler.</span>
-<span class="c">    *</span>
-<span class="c">    * @method initializer</span>
-<span class="c">    * @param config {Object} Config object.</span>
-<span class="c">    * @private</span>
-<span class="c">    */</span>
-    <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_queue</span> <span class="o">=</span> <span class="o">{</span><span class="nx">interval</span><span class="o">:</span><span class="kc">null</span><span class="o">,</span> <span class="nx">conn</span><span class="o">:</span><span class="kc">null</span><span class="o">,</span> <span class="nx">requests</span><span class="o">:[]};</span>
-    <span class="o">},</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">DSIO</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataSource</span><span class="p">.</span><span class="nx">Local</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">    * Internal init() handler.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method initializer</span>
+<span class="cm">    * @param config {Object} Config object.</span>
+<span class="cm">    * @private</span>
+<span class="cm">    */</span>
+    <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_queue</span> <span class="o">=</span> <span class="p">{</span><span class="nx">interval</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span> <span class="nx">conn</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span> <span class="nx">requests</span><span class="o">:</span><span class="p">[]};</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">    * @property _queue</span>
-<span class="c">    * @description Object literal to manage asynchronous request/response</span>
-<span class="c">    * cycles enabled if queue needs to be managed (asyncMode/ioConnMode):</span>
-<span class="c">    * &lt;dl&gt;</span>
-<span class="c">    *     &lt;dt&gt;interval {Number}&lt;/dt&gt;</span>
-<span class="c">    *         &lt;dd&gt;Interval ID of in-progress queue.&lt;/dd&gt;</span>
-<span class="c">    *     &lt;dt&gt;conn&lt;/dt&gt;</span>
-<span class="c">    *         &lt;dd&gt;In-progress connection identifier (if applicable).&lt;/dd&gt;</span>
-<span class="c">    *     &lt;dt&gt;requests {Object[]}&lt;/dt&gt;</span>
-<span class="c">    *         &lt;dd&gt;Array of queued request objects: {request:request, callback:callback}.&lt;/dd&gt;</span>
-<span class="c">    * &lt;/dl&gt;</span>
-<span class="c">    * @type Object</span>
-<span class="c">    * @default {interval:null, conn:null, requests:[]}</span>
-<span class="c">    * @private</span>
-<span class="c">    */</span>
-    <span class="nx">_queue</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">    * @property _queue</span>
+<span class="cm">    * @description Object literal to manage asynchronous request/response</span>
+<span class="cm">    * cycles enabled if queue needs to be managed (asyncMode/ioConnMode):</span>
+<span class="cm">    * &lt;dl&gt;</span>
+<span class="cm">    *     &lt;dt&gt;interval {Number}&lt;/dt&gt;</span>
+<span class="cm">    *         &lt;dd&gt;Interval ID of in-progress queue.&lt;/dd&gt;</span>
+<span class="cm">    *     &lt;dt&gt;conn&lt;/dt&gt;</span>
+<span class="cm">    *         &lt;dd&gt;In-progress connection identifier (if applicable).&lt;/dd&gt;</span>
+<span class="cm">    *     &lt;dt&gt;requests {Object[]}&lt;/dt&gt;</span>
+<span class="cm">    *         &lt;dd&gt;Array of queued request objects: {request:request, callback:callback}.&lt;/dd&gt;</span>
+<span class="cm">    * &lt;/dl&gt;</span>
+<span class="cm">    * @type Object</span>
+<span class="cm">    * @default {interval:null, conn:null, requests:[]}</span>
+<span class="cm">    * @private</span>
+<span class="cm">    */</span>
+    <span class="nx">_queue</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes query string to IO. Fires &lt;code&gt;response&lt;/code&gt; event when</span>
-<span class="c">     * response is received asynchronously.</span>
-<span class="c">     *</span>
-<span class="c">     * @method _defRequestFn</span>
-<span class="c">     * @param e {Event.Facade} Event Facade with the following properties:</span>
-<span class="c">     * &lt;dl&gt;</span>
-<span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
-<span class="c">     *     &lt;dl&gt;</span>
-<span class="c">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;/dl&gt;</span>
-<span class="c">     * &lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
-<span class="c">     * &lt;/dl&gt;</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_defRequestFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;source&quot;</span><span class="o">),</span>
-            <span class="nx">io</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;io&quot;</span><span class="o">),</span>
-            <span class="nx">request</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">,</span>
-            <span class="nx">cfg</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">cfg</span><span class="o">,</span> <span class="o">{</span>
-                <span class="nx">on</span><span class="o">:</span> <span class="o">{</span>
-                    <span class="nx">success</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">response</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Received IO data response for \&quot;&quot;</span> <span class="o">+</span> <span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-io&quot;</span><span class="o">);</span>
-                    <span class="o">},</span>
-                    <span class="nx">failure</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">response</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">e</span><span class="o">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="s2">&quot;IO data failure&quot;</span><span class="o">);</span>
-                        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;error&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
-                        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;data&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Received IO data failure for \&quot;&quot;</span> <span class="o">+</span> <span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;datasource-io&quot;</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">},</span>
-                <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes query string to IO. Fires &lt;code&gt;response&lt;/code&gt; event when</span>
+<span class="cm">     * response is received asynchronously.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defRequestFn</span>
+<span class="cm">     * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     * &lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defRequestFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">),</span>
+            <span class="nx">io</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;io&quot;</span><span class="p">),</span>
+            <span class="nx">request</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">request</span><span class="p">,</span>
+            <span class="nx">cfg</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">cfg</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">on</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="p">},</span> <span class="nx">e</span><span class="p">));</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Received IO data response for \&quot;&quot;</span> <span class="o">+</span> <span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;datasource-io&quot;</span><span class="p">);</span>
+                    <span class="p">},</span>
+                    <span class="nx">failure</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">e</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;IO data failure&quot;</span><span class="p">);</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="p">},</span> <span class="nx">e</span><span class="p">));</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span><span class="nx">data</span><span class="o">:</span><span class="nx">response</span><span class="p">},</span> <span class="nx">e</span><span class="p">));</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Received IO data failure for \&quot;&quot;</span> <span class="o">+</span> <span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;datasource-io&quot;</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="p">,</span>
                 <span class="nx">arguments</span><span class="o">:</span> <span class="nx">e</span>
-            <span class="o">});</span>
+            <span class="p">});</span>
         
-        <span class="c">// Support for POST transactions</span>
-<span class="c"></span>        <span class="k">if</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">request</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">if</span><span class="o">(</span><span class="nx">cfg</span><span class="o">.</span><span class="nx">method</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">cfg</span><span class="o">.</span><span class="nx">method</span><span class="o">.</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">===</span> <span class="s2">&quot;POST&quot;</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">cfg</span><span class="o">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">data</span> <span class="o">?</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">data</span><span class="o">+</span><span class="nx">request</span> <span class="o">:</span> <span class="nx">request</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">uri</span> <span class="o">+=</span> <span class="nx">request</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="nx">io</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">);</span>
-        <span class="k">return</span> <span class="nx">e</span><span class="o">.</span><span class="nx">tId</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+        <span class="c1">// Support for POST transactions</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">request</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">method</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">method</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">===</span> <span class="s2">&quot;POST&quot;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">cfg</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">data</span> <span class="o">?</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">data</span><span class="o">+</span><span class="nx">request</span> <span class="o">:</span> <span class="nx">request</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">uri</span> <span class="o">+=</span> <span class="nx">request</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">io</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">e</span><span class="p">.</span><span class="nx">tId</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
   
-<span class="nx">Y</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nx">IO</span> <span class="o">=</span> <span class="nx">DSIO</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DataSource</span><span class="p">.</span><span class="nx">IO</span> <span class="o">=</span> <span class="nx">DSIO</span><span class="p">;</span>
     
 </pre></div>
 

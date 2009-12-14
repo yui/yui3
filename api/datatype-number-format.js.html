@@ -47,106 +47,106 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Number submodule.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datatype</span>
-<span class="c"> * @submodule datatype-number</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Number submodule.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datatype</span>
+<span class="cm"> * @submodule datatype-number</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Format number submodule.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datatype</span>
-<span class="c"> * @submodule datatype-number-format</span>
-<span class="c"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * Format number submodule.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datatype</span>
+<span class="cm"> * @submodule datatype-number-format</span>
+<span class="cm"> */</span>
  
-<span class="c">/**</span>
-<span class="c"> * DataType.Number provides a set of utility functions to operate against Number objects.</span>
-<span class="c"> *</span>
-<span class="c"> * @class DataType.Number</span>
-<span class="c"> * @static</span>
-<span class="c"> */</span>
-<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
+<span class="cm">/**</span>
+<span class="cm"> * DataType.Number provides a set of utility functions to operate against Number objects.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class DataType.Number</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">;</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;DataType.Number&quot;</span><span class="o">),</span> <span class="o">{</span>
-     <span class="c">/**</span>
-<span class="c">     * Takes a Number and formats to string for display to user.</span>
-<span class="c">     *</span>
-<span class="c">     * @method format</span>
-<span class="c">     * @param data {Number} Number.</span>
-<span class="c">     * @param config {Object} (Optional) Optional configuration values:</span>
-<span class="c">     *  &lt;dl&gt;</span>
-<span class="c">     *   &lt;dt&gt;prefix {String}&lt;/dd&gt;</span>
-<span class="c">     *   &lt;dd&gt;String prepended before each number, like a currency designator &quot;$&quot;&lt;/dd&gt;</span>
-<span class="c">     *   &lt;dt&gt;decimalPlaces {Number}&lt;/dd&gt;</span>
-<span class="c">     *   &lt;dd&gt;Number of decimal places to round. Must be a number 0 to 20.&lt;/dd&gt;</span>
-<span class="c">     *   &lt;dt&gt;decimalSeparator {String}&lt;/dd&gt;</span>
-<span class="c">     *   &lt;dd&gt;Decimal separator&lt;/dd&gt;</span>
-<span class="c">     *   &lt;dt&gt;thousandsSeparator {String}&lt;/dd&gt;</span>
-<span class="c">     *   &lt;dd&gt;Thousands separator&lt;/dd&gt;</span>
-<span class="c">     *   &lt;dt&gt;suffix {String}&lt;/dd&gt;</span>
-<span class="c">     *   &lt;dd&gt;String appended after each number, like &quot; items&quot; (note the space)&lt;/dd&gt;</span>
-<span class="c">     *  &lt;/dl&gt;</span>
-<span class="c">     * @return {String} Formatted number for display. Note, the following values</span>
-<span class="c">     * return as &quot;&quot;: null, undefined, NaN, &quot;&quot;.</span>
-<span class="c">     */</span>
-    <span class="nx">format</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">data</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">data</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="o">{};</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;DataType.Number&quot;</span><span class="p">),</span> <span class="p">{</span>
+     <span class="cm">/**</span>
+<span class="cm">     * Takes a Number and formats to string for display to user.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method format</span>
+<span class="cm">     * @param data {Number} Number.</span>
+<span class="cm">     * @param config {Object} (Optional) Optional configuration values:</span>
+<span class="cm">     *  &lt;dl&gt;</span>
+<span class="cm">     *   &lt;dt&gt;prefix {String}&lt;/dd&gt;</span>
+<span class="cm">     *   &lt;dd&gt;String prepended before each number, like a currency designator &quot;$&quot;&lt;/dd&gt;</span>
+<span class="cm">     *   &lt;dt&gt;decimalPlaces {Number}&lt;/dd&gt;</span>
+<span class="cm">     *   &lt;dd&gt;Number of decimal places to round. Must be a number 0 to 20.&lt;/dd&gt;</span>
+<span class="cm">     *   &lt;dt&gt;decimalSeparator {String}&lt;/dd&gt;</span>
+<span class="cm">     *   &lt;dd&gt;Decimal separator&lt;/dd&gt;</span>
+<span class="cm">     *   &lt;dt&gt;thousandsSeparator {String}&lt;/dd&gt;</span>
+<span class="cm">     *   &lt;dd&gt;Thousands separator&lt;/dd&gt;</span>
+<span class="cm">     *   &lt;dt&gt;suffix {String}&lt;/dd&gt;</span>
+<span class="cm">     *   &lt;dd&gt;String appended after each number, like &quot; items&quot; (note the space)&lt;/dd&gt;</span>
+<span class="cm">     *  &lt;/dl&gt;</span>
+<span class="cm">     * @return {String} Formatted number for display. Note, the following values</span>
+<span class="cm">     * return as &quot;&quot;: null, undefined, NaN, &quot;&quot;.</span>
+<span class="cm">     */</span>
+    <span class="nx">format</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="p">{};</span>
 
-            <span class="k">var</span> <span class="nx">isNeg</span> <span class="o">=</span> <span class="o">(</span><span class="nx">data</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">),</span>
-                <span class="nx">output</span> <span class="o">=</span> <span class="nx">data</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">,</span>
-                <span class="nx">decPlaces</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">decimalPlaces</span><span class="o">,</span>
-                <span class="nx">decSep</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">decimalSeparator</span> <span class="o">||</span> <span class="s2">&quot;.&quot;</span><span class="o">,</span>
-                <span class="nx">thouSep</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">thousandsSeparator</span><span class="o">,</span>
-                <span class="nx">decIndex</span><span class="o">,</span>
-                <span class="nx">newOutput</span><span class="o">,</span> <span class="nx">count</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+            <span class="kd">var</span> <span class="nx">isNeg</span> <span class="o">=</span> <span class="p">(</span><span class="nx">data</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="nx">output</span> <span class="o">=</span> <span class="nx">data</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="nx">decPlaces</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">decimalPlaces</span><span class="p">,</span>
+                <span class="nx">decSep</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">decimalSeparator</span> <span class="o">||</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+                <span class="nx">thouSep</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">thousandsSeparator</span><span class="p">,</span>
+                <span class="nx">decIndex</span><span class="p">,</span>
+                <span class="nx">newOutput</span><span class="p">,</span> <span class="nx">count</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
 
-            <span class="c">// Decimal precision</span>
-<span class="c"></span>            <span class="k">if</span><span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">decPlaces</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">decPlaces</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">decPlaces</span> <span class="o">&lt;=</span> <span class="m">20</span><span class="o">))</span> <span class="o">{</span>
-                <span class="c">// Round to the correct decimal place</span>
-<span class="c"></span>                <span class="nx">output</span> <span class="o">=</span> <span class="nx">data</span><span class="o">.</span><span class="nx">toFixed</span><span class="o">(</span><span class="nx">decPlaces</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="c1">// Decimal precision</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">decPlaces</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">decPlaces</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">decPlaces</span> <span class="o">&lt;=</span> <span class="mi">20</span><span class="p">))</span> <span class="p">{</span>
+                <span class="c1">// Round to the correct decimal place</span>
+                <span class="nx">output</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="nx">decPlaces</span><span class="p">);</span>
+            <span class="p">}</span>
 
-            <span class="c">// Decimal separator</span>
-<span class="c"></span>            <span class="k">if</span><span class="o">(</span><span class="nx">decSep</span> <span class="o">!==</span> <span class="s2">&quot;.&quot;</span><span class="o">){</span>
-                <span class="nx">output</span> <span class="o">=</span> <span class="nx">output</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="s2">&quot;.&quot;</span><span class="o">,</span> <span class="nx">decSep</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="c1">// Decimal separator</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">decSep</span> <span class="o">!==</span> <span class="s2">&quot;.&quot;</span><span class="p">){</span>
+                <span class="nx">output</span> <span class="o">=</span> <span class="nx">output</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="nx">decSep</span><span class="p">);</span>
+            <span class="p">}</span>
 
-            <span class="c">// Add the thousands separator</span>
-<span class="c"></span>            <span class="k">if</span><span class="o">(</span><span class="nx">thouSep</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// Find the dot or where it would be</span>
-<span class="c"></span>                <span class="nx">decIndex</span> <span class="o">=</span> <span class="nx">output</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">decSep</span><span class="o">);</span>
-                <span class="nx">decIndex</span> <span class="o">=</span> <span class="o">(</span><span class="nx">decIndex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">?</span> <span class="nx">decIndex</span> <span class="o">:</span> <span class="nx">output</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
-                <span class="c">// Start with the dot and everything to the right</span>
-<span class="c"></span>                <span class="nx">newOutput</span> <span class="o">=</span> <span class="nx">output</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="nx">decIndex</span><span class="o">);</span>
-                <span class="c">// Working left, every third time add a separator, every time add a digit</span>
-<span class="c"></span>                <span class="k">for</span> <span class="o">(</span><span class="nx">count</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">i</span><span class="o">=</span><span class="nx">decIndex</span><span class="o">;</span> <span class="nx">i</span><span class="o">&gt;</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">--)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">((</span><span class="nx">count</span><span class="o">%</span><span class="m">3</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="nx">decIndex</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">isNeg</span> <span class="o">||</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)))</span> <span class="o">{</span>
-                        <span class="nx">newOutput</span> <span class="o">=</span> <span class="nx">thouSep</span> <span class="o">+</span> <span class="nx">newOutput</span><span class="o">;</span>
-                    <span class="o">}</span>
-                    <span class="nx">newOutput</span> <span class="o">=</span> <span class="nx">output</span><span class="o">.</span><span class="nx">charAt</span><span class="o">(</span><span class="nx">i</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">+</span> <span class="nx">newOutput</span><span class="o">;</span>
-                    <span class="nx">count</span><span class="o">++;</span>
-                <span class="o">}</span>
-                <span class="nx">output</span> <span class="o">=</span> <span class="nx">newOutput</span><span class="o">;</span>
-            <span class="o">}</span>
+            <span class="c1">// Add the thousands separator</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">thouSep</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Find the dot or where it would be</span>
+                <span class="nx">decIndex</span> <span class="o">=</span> <span class="nx">output</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">decSep</span><span class="p">);</span>
+                <span class="nx">decIndex</span> <span class="o">=</span> <span class="p">(</span><span class="nx">decIndex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="nx">decIndex</span> <span class="o">:</span> <span class="nx">output</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                <span class="c1">// Start with the dot and everything to the right</span>
+                <span class="nx">newOutput</span> <span class="o">=</span> <span class="nx">output</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">decIndex</span><span class="p">);</span>
+                <span class="c1">// Working left, every third time add a separator, every time add a digit</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span><span class="o">=</span><span class="nx">decIndex</span><span class="p">;</span> <span class="nx">i</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">((</span><span class="nx">count</span><span class="o">%</span><span class="mi">3</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="nx">decIndex</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">isNeg</span> <span class="o">||</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)))</span> <span class="p">{</span>
+                        <span class="nx">newOutput</span> <span class="o">=</span> <span class="nx">thouSep</span> <span class="o">+</span> <span class="nx">newOutput</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="nx">newOutput</span> <span class="o">=</span> <span class="nx">output</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">newOutput</span><span class="p">;</span>
+                    <span class="nx">count</span><span class="o">++</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">output</span> <span class="o">=</span> <span class="nx">newOutput</span><span class="p">;</span>
+            <span class="p">}</span>
 
-            <span class="c">// Prepend prefix</span>
-<span class="c"></span>            <span class="nx">output</span> <span class="o">=</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span><span class="o">)</span> <span class="o">?</span> <span class="nx">config</span><span class="o">.</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">output</span> <span class="o">:</span> <span class="nx">output</span><span class="o">;</span>
+            <span class="c1">// Prepend prefix</span>
+            <span class="nx">output</span> <span class="o">=</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">)</span> <span class="o">?</span> <span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">output</span> <span class="o">:</span> <span class="nx">output</span><span class="p">;</span>
 
-            <span class="c">// Append suffix</span>
-<span class="c"></span>            <span class="nx">output</span> <span class="o">=</span> <span class="o">(</span><span class="nx">config</span><span class="o">.</span><span class="nx">suffix</span><span class="o">)</span> <span class="o">?</span> <span class="nx">output</span> <span class="o">+</span> <span class="nx">config</span><span class="o">.</span><span class="nx">suffix</span> <span class="o">:</span> <span class="nx">output</span><span class="o">;</span>
+            <span class="c1">// Append suffix</span>
+            <span class="nx">output</span> <span class="o">=</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">suffix</span><span class="p">)</span> <span class="o">?</span> <span class="nx">output</span> <span class="o">+</span> <span class="nx">config</span><span class="p">.</span><span class="nx">suffix</span> <span class="o">:</span> <span class="nx">output</span><span class="p">;</span>
 
-            <span class="k">return</span> <span class="nx">output</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="c">// Not a Number, just return as string</span>
-<span class="c"></span>        <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Could not format data &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; from type Number&quot;</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;datatype-number&quot;</span><span class="o">);</span>
-            <span class="k">return</span> <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isValue</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="o">.</span><span class="nx">toString</span><span class="o">)</span> <span class="o">?</span> <span class="nx">data</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+            <span class="k">return</span> <span class="nx">output</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="c1">// Not a Number, just return as string</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Could not format data &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; from type Number&quot;</span><span class="p">,</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;datatype-number&quot;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">toString</span><span class="p">)</span> <span class="o">?</span> <span class="nx">data</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
 </pre></div>
 
                     </div>

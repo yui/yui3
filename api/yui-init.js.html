@@ -47,39 +47,39 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The YUI module contains the components required for building the YUI seed file.</span>
-<span class="c"> * This includes the script loading mechanism, a simple queue, and the core utilities for the library.</span>
-<span class="c"> * @module yui</span>
-<span class="c"> * @submodule yui-base</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The YUI module contains the components required for building the YUI seed file.</span>
+<span class="cm"> * This includes the script loading mechanism, a simple queue, and the core utilities for the library.</span>
+<span class="cm"> * @module yui</span>
+<span class="cm"> * @submodule yui-base</span>
+<span class="cm"> */</span>
 
-<span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-    <span class="k">var</span> <span class="nx">min</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;yui-base&#39;</span><span class="o">],</span> <span class="nx">core</span><span class="o">,</span> <span class="nx">C</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">,</span> <span class="nx">mods</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">mods</span><span class="o">,</span>
-        <span class="nx">extras</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+    <span class="kd">var</span> <span class="nx">min</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;yui-base&#39;</span><span class="p">],</span> <span class="nx">core</span><span class="p">,</span> <span class="nx">C</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span> <span class="nx">mods</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">mods</span><span class="p">,</span>
+        <span class="nx">extras</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
 
-    <span class="c">// apply the minimal required functionality</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">min</span><span class="o">);</span>
+    <span class="c1">// apply the minimal required functionality</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">min</span><span class="p">);</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; initialized&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;yui&#39;</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; initialized&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
 
-    <span class="k">if</span> <span class="o">(</span><span class="nx">C</span><span class="o">.</span><span class="nx">core</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">core</span> <span class="o">=</span> <span class="nx">C</span><span class="o">.</span><span class="nx">core</span><span class="o">;</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="nx">core</span> <span class="o">=</span> <span class="o">[];</span>
-        <span class="nx">extras</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;get&#39;</span><span class="o">,</span> <span class="s1">&#39;loader&#39;</span><span class="o">,</span> <span class="s1">&#39;yui-log&#39;</span><span class="o">,</span> <span class="s1">&#39;yui-later&#39;</span><span class="o">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">C</span><span class="p">.</span><span class="nx">core</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">core</span> <span class="o">=</span> <span class="nx">C</span><span class="p">.</span><span class="nx">core</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">core</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">extras</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="s1">&#39;loader&#39;</span><span class="p">,</span> <span class="s1">&#39;yui-log&#39;</span><span class="p">,</span> <span class="s1">&#39;yui-later&#39;</span><span class="p">];</span>
 
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">extras</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">mods</span><span class="o">[</span><span class="nx">extras</span><span class="o">[</span><span class="nx">i</span><span class="o">]])</span> <span class="o">{</span>
-                <span class="nx">core</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">extras</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">extras</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">mods</span><span class="p">[</span><span class="nx">extras</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
+                <span class="nx">core</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">extras</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">core</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">core</span><span class="p">);</span>
      
-<span class="o">})();</span>
+<span class="p">})();</span>
 </pre></div>
 
                     </div>

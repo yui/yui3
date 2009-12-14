@@ -47,341 +47,341 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Test&quot;</span><span class="o">);</span>
+                        <div class="highlight"><pre>    <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;Test&quot;</span><span class="p">);</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Runs pages containing test suite definitions.</span>
-<span class="c">     * @namespace Test</span>
-<span class="c">     * @class Manager</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Manager</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Runs pages containing test suite definitions.</span>
+<span class="cm">     * @namespace Test</span>
+<span class="cm">     * @class Manager</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Manager</span> <span class="o">=</span> <span class="p">{</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Constant for the testpagebegin custom event</span>
-<span class="c">         * @property TEST_PAGE_BEGIN_EVENT</span>
-<span class="c">         * @static</span>
-<span class="c">         * @type string</span>
-<span class="c">         * @final</span>
-<span class="c">         */</span>
-        <span class="nx">TEST_PAGE_BEGIN_EVENT</span> <span class="o">:</span> <span class="s2">&quot;testpagebegin&quot;</span><span class="o">,</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant for the testpagebegin custom event</span>
+<span class="cm">         * @property TEST_PAGE_BEGIN_EVENT</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @type string</span>
+<span class="cm">         * @final</span>
+<span class="cm">         */</span>
+        <span class="nx">TEST_PAGE_BEGIN_EVENT</span> <span class="o">:</span> <span class="s2">&quot;testpagebegin&quot;</span><span class="p">,</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Constant for the testpagecomplete custom event</span>
-<span class="c">         * @property TEST_PAGE_COMPLETE_EVENT</span>
-<span class="c">         * @static</span>
-<span class="c">         * @type string</span>
-<span class="c">         * @final</span>
-<span class="c">         */</span>
-        <span class="nx">TEST_PAGE_COMPLETE_EVENT</span> <span class="o">:</span> <span class="s2">&quot;testpagecomplete&quot;</span><span class="o">,</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant for the testpagecomplete custom event</span>
+<span class="cm">         * @property TEST_PAGE_COMPLETE_EVENT</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @type string</span>
+<span class="cm">         * @final</span>
+<span class="cm">         */</span>
+        <span class="nx">TEST_PAGE_COMPLETE_EVENT</span> <span class="o">:</span> <span class="s2">&quot;testpagecomplete&quot;</span><span class="p">,</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Constant for the testmanagerbegin custom event</span>
-<span class="c">         * @property TEST_MANAGER_BEGIN_EVENT</span>
-<span class="c">         * @static</span>
-<span class="c">         * @type string</span>
-<span class="c">         * @final</span>
-<span class="c">         */</span>
-        <span class="nx">TEST_MANAGER_BEGIN_EVENT</span> <span class="o">:</span> <span class="s2">&quot;testmanagerbegin&quot;</span><span class="o">,</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant for the testmanagerbegin custom event</span>
+<span class="cm">         * @property TEST_MANAGER_BEGIN_EVENT</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @type string</span>
+<span class="cm">         * @final</span>
+<span class="cm">         */</span>
+        <span class="nx">TEST_MANAGER_BEGIN_EVENT</span> <span class="o">:</span> <span class="s2">&quot;testmanagerbegin&quot;</span><span class="p">,</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Constant for the testmanagercomplete custom event</span>
-<span class="c">         * @property TEST_MANAGER_COMPLETE_EVENT</span>
-<span class="c">         * @static</span>
-<span class="c">         * @type string</span>
-<span class="c">         * @final</span>
-<span class="c">         */</span>
-        <span class="nx">TEST_MANAGER_COMPLETE_EVENT</span> <span class="o">:</span> <span class="s2">&quot;testmanagercomplete&quot;</span><span class="o">,</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant for the testmanagercomplete custom event</span>
+<span class="cm">         * @property TEST_MANAGER_COMPLETE_EVENT</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @type string</span>
+<span class="cm">         * @final</span>
+<span class="cm">         */</span>
+        <span class="nx">TEST_MANAGER_COMPLETE_EVENT</span> <span class="o">:</span> <span class="s2">&quot;testmanagercomplete&quot;</span><span class="p">,</span>
     
-        <span class="c">//-------------------------------------------------------------------------</span>
-<span class="c"></span>        <span class="c">// Private Properties</span>
-<span class="c"></span>        <span class="c">//-------------------------------------------------------------------------</span>
-<span class="c"></span>        
+        <span class="c1">//-------------------------------------------------------------------------</span>
+        <span class="c1">// Private Properties</span>
+        <span class="c1">//-------------------------------------------------------------------------</span>
         
-        <span class="c">/**</span>
-<span class="c">         * The URL of the page currently being executed.</span>
-<span class="c">         * @type String</span>
-<span class="c">         * @private</span>
-<span class="c">         * @property _curPage</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">_curPage</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
         
-        <span class="c">/**</span>
-<span class="c">         * The frame used to load and run tests.</span>
-<span class="c">         * @type Window</span>
-<span class="c">         * @private</span>
-<span class="c">         * @property _frame</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">_frame</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The URL of the page currently being executed.</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @property _curPage</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">_curPage</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
         
-        <span class="c">/**</span>
-<span class="c">         * The logger used to output results from the various tests.</span>
-<span class="c">         * @type YAHOO.tool.TestLogger</span>
-<span class="c">         * @private</span>
-<span class="c">         * @property _logger</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">_logger</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The frame used to load and run tests.</span>
+<span class="cm">         * @type Window</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @property _frame</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">_frame</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
         
-        <span class="c">/**</span>
-<span class="c">         * The timeout ID for the next iteration through the tests.</span>
-<span class="c">         * @type int</span>
-<span class="c">         * @private</span>
-<span class="c">         * @property _timeoutId</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">_timeoutId</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The logger used to output results from the various tests.</span>
+<span class="cm">         * @type YAHOO.tool.TestLogger</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @property _logger</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">_logger</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Array of pages to load.</span>
-<span class="c">         * @type String[]</span>
-<span class="c">         * @private</span>
-<span class="c">         * @property _pages</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">_pages</span> <span class="o">:</span> <span class="o">[],</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The timeout ID for the next iteration through the tests.</span>
+<span class="cm">         * @type int</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @property _timeoutId</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">_timeoutId</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Aggregated results</span>
-<span class="c">         * @type Object</span>
-<span class="c">         * @private</span>
-<span class="c">         * @property _results</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">_results</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Array of pages to load.</span>
+<span class="cm">         * @type String[]</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @property _pages</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">_pages</span> <span class="o">:</span> <span class="p">[],</span>
         
-        <span class="c">//-------------------------------------------------------------------------</span>
-<span class="c"></span>        <span class="c">// Private Methods</span>
-<span class="c"></span>        <span class="c">//-------------------------------------------------------------------------</span>
-<span class="c"></span>        
-        <span class="c">/**</span>
-<span class="c">         * Handles TestRunner.COMPLETE_EVENT, storing the results and beginning</span>
-<span class="c">         * the loop again.</span>
-<span class="c">         * @param {Object} data Data about the event.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @private</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">_handleTestRunnerComplete</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Aggregated results</span>
+<span class="cm">         * @type Object</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @property _results</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">_results</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        
+        <span class="c1">//-------------------------------------------------------------------------</span>
+        <span class="c1">// Private Methods</span>
+        <span class="c1">//-------------------------------------------------------------------------</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * Handles TestRunner.COMPLETE_EVENT, storing the results and beginning</span>
+<span class="cm">         * the loop again.</span>
+<span class="cm">         * @param {Object} data Data about the event.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">_handleTestRunnerComplete</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
     
-            <span class="k">this</span><span class="o">.</span><span class="nx">fireEvent</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">TEST_PAGE_COMPLETE_EVENT</span><span class="o">,</span> <span class="o">{</span>
-                    <span class="nx">page</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_curPage</span><span class="o">,</span>
-                    <span class="nx">results</span><span class="o">:</span> <span class="nx">data</span><span class="o">.</span><span class="nx">results</span>
-                <span class="o">});</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fireEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">TEST_PAGE_COMPLETE_EVENT</span><span class="p">,</span> <span class="p">{</span>
+                    <span class="nx">page</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_curPage</span><span class="p">,</span>
+                    <span class="nx">results</span><span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">results</span>
+                <span class="p">});</span>
         
-            <span class="c">//save results</span>
-<span class="c"></span>            <span class="c">//this._results[this.curPage] = data.results;</span>
-<span class="c"></span>            
-            <span class="c">//process &#39;em</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_processResults</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_curPage</span><span class="o">,</span> <span class="nx">data</span><span class="o">.</span><span class="nx">results</span><span class="o">);</span>
+            <span class="c1">//save results</span>
+            <span class="c1">//this._results[this.curPage] = data.results;</span>
             
-            <span class="k">this</span><span class="o">.</span><span class="nx">_logger</span><span class="o">.</span><span class="nx">clearTestRunner</span><span class="o">();</span>
+            <span class="c1">//process &#39;em</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_processResults</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_curPage</span><span class="p">,</span> <span class="nx">data</span><span class="p">.</span><span class="nx">results</span><span class="p">);</span>
+            
+            <span class="k">this</span><span class="p">.</span><span class="nx">_logger</span><span class="p">.</span><span class="nx">clearTestRunner</span><span class="p">();</span>
         
-            <span class="c">//if there&#39;s more to do, set a timeout to begin again</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_pages</span><span class="o">.</span><span class="nx">length</span><span class="o">){</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_timeoutId</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="o">(</span><span class="k">function</span><span class="o">(){</span>
-                    <span class="nx">YAHOO</span><span class="o">.</span><span class="nx">tool</span><span class="o">.</span><span class="nx">TestManager</span><span class="o">.</span><span class="nx">_run</span><span class="o">();</span>
-                <span class="o">},</span> <span class="m">1000</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">fireEvent</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">TEST_MANAGER_COMPLETE_EVENT</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_results</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+            <span class="c1">//if there&#39;s more to do, set a timeout to begin again</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_pages</span><span class="p">.</span><span class="nx">length</span><span class="p">){</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_timeoutId</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                    <span class="nx">YAHOO</span><span class="p">.</span><span class="nx">tool</span><span class="p">.</span><span class="nx">TestManager</span><span class="p">.</span><span class="nx">_run</span><span class="p">();</span>
+                <span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">fireEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">TEST_MANAGER_COMPLETE_EVENT</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_results</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Processes the results of a test page run, outputting log messages</span>
-<span class="c">         * for failed tests.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @private</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">_processResults</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">page</span><span class="o">,</span> <span class="nx">results</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Processes the results of a test page run, outputting log messages</span>
+<span class="cm">         * for failed tests.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">_processResults</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">page</span><span class="p">,</span> <span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
     
-            <span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_results</span><span class="o">;</span>
+            <span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_results</span><span class="p">;</span>
             
-            <span class="nx">r</span><span class="o">.</span><span class="nx">passed</span> <span class="o">+=</span> <span class="nx">results</span><span class="o">.</span><span class="nx">passed</span><span class="o">;</span>
-            <span class="nx">r</span><span class="o">.</span><span class="nx">failed</span> <span class="o">+=</span> <span class="nx">results</span><span class="o">.</span><span class="nx">failed</span><span class="o">;</span>
-            <span class="nx">r</span><span class="o">.</span><span class="nx">ignored</span> <span class="o">+=</span> <span class="nx">results</span><span class="o">.</span><span class="nx">ignored</span><span class="o">;</span>
-            <span class="nx">r</span><span class="o">.</span><span class="nx">total</span> <span class="o">+=</span> <span class="nx">results</span><span class="o">.</span><span class="nx">total</span><span class="o">;</span>
+            <span class="nx">r</span><span class="p">.</span><span class="nx">passed</span> <span class="o">+=</span> <span class="nx">results</span><span class="p">.</span><span class="nx">passed</span><span class="p">;</span>
+            <span class="nx">r</span><span class="p">.</span><span class="nx">failed</span> <span class="o">+=</span> <span class="nx">results</span><span class="p">.</span><span class="nx">failed</span><span class="p">;</span>
+            <span class="nx">r</span><span class="p">.</span><span class="nx">ignored</span> <span class="o">+=</span> <span class="nx">results</span><span class="p">.</span><span class="nx">ignored</span><span class="p">;</span>
+            <span class="nx">r</span><span class="p">.</span><span class="nx">total</span> <span class="o">+=</span> <span class="nx">results</span><span class="p">.</span><span class="nx">total</span><span class="p">;</span>
             
-            <span class="k">if</span> <span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">failed</span><span class="o">){</span>
-                <span class="nx">r</span><span class="o">.</span><span class="nx">failedPages</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">page</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">r</span><span class="o">.</span><span class="nx">passedPages</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">page</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">failed</span><span class="p">){</span>
+                <span class="nx">r</span><span class="p">.</span><span class="nx">failedPages</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">page</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">r</span><span class="p">.</span><span class="nx">passedPages</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">page</span><span class="p">);</span>
+            <span class="p">}</span>
             
-            <span class="nx">results</span><span class="o">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">page</span><span class="o">;</span>
-            <span class="nx">results</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;page&quot;</span><span class="o">;</span>
+            <span class="nx">results</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">page</span><span class="p">;</span>
+            <span class="nx">results</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;page&quot;</span><span class="p">;</span>
             
-            <span class="nx">r</span><span class="o">[</span><span class="nx">page</span><span class="o">]</span> <span class="o">=</span> <span class="nx">results</span><span class="o">;</span>
-        <span class="o">},</span>
+            <span class="nx">r</span><span class="p">[</span><span class="nx">page</span><span class="p">]</span> <span class="o">=</span> <span class="nx">results</span><span class="p">;</span>
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Loads the next test page into the iframe.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @static</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="nx">_run</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Loads the next test page into the iframe.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">_run</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
         
-            <span class="c">//set the current page</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_curPage</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_pages</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
+            <span class="c1">//set the current page</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_curPage</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_pages</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
     
-            <span class="k">this</span><span class="o">.</span><span class="nx">fireEvent</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">TEST_PAGE_BEGIN_EVENT</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_curPage</span><span class="o">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fireEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">TEST_PAGE_BEGIN_EVENT</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_curPage</span><span class="p">);</span>
             
-            <span class="c">//load the frame - destroy history in case there are other iframes that</span>
-<span class="c"></span>            <span class="c">//need testing</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_frame</span><span class="o">.</span><span class="nx">location</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_curPage</span><span class="o">);</span>
+            <span class="c1">//load the frame - destroy history in case there are other iframes that</span>
+            <span class="c1">//need testing</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_frame</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_curPage</span><span class="p">);</span>
         
-        <span class="o">},</span>
+        <span class="p">},</span>
             
-        <span class="c">//-------------------------------------------------------------------------</span>
-<span class="c"></span>        <span class="c">// Public Methods</span>
-<span class="c"></span>        <span class="c">//-------------------------------------------------------------------------</span>
-<span class="c"></span>        
-        <span class="c">/**</span>
-<span class="c">         * Signals that a test page has been loaded. This should be called from</span>
-<span class="c">         * within the test page itself to notify the TestManager that it is ready.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">load</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">parent</span><span class="o">.</span><span class="nx">YAHOO</span><span class="o">.</span><span class="nx">tool</span><span class="o">.</span><span class="nx">TestManager</span> <span class="o">!==</span> <span class="k">this</span><span class="o">){</span>
-                <span class="nx">parent</span><span class="o">.</span><span class="nx">YAHOO</span><span class="o">.</span><span class="nx">tool</span><span class="o">.</span><span class="nx">TestManager</span><span class="o">.</span><span class="nx">load</span><span class="o">();</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="c1">//-------------------------------------------------------------------------</span>
+        <span class="c1">// Public Methods</span>
+        <span class="c1">//-------------------------------------------------------------------------</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * Signals that a test page has been loaded. This should be called from</span>
+<span class="cm">         * within the test page itself to notify the TestManager that it is ready.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">load</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">parent</span><span class="p">.</span><span class="nx">YAHOO</span><span class="p">.</span><span class="nx">tool</span><span class="p">.</span><span class="nx">TestManager</span> <span class="o">!==</span> <span class="k">this</span><span class="p">){</span>
+                <span class="nx">parent</span><span class="p">.</span><span class="nx">YAHOO</span><span class="p">.</span><span class="nx">tool</span><span class="p">.</span><span class="nx">TestManager</span><span class="p">.</span><span class="nx">load</span><span class="p">();</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 
-                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_frame</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c">//assign event handling</span>
-<span class="c"></span>                    <span class="k">var</span> <span class="nx">TestRunner</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_frame</span><span class="o">.</span><span class="nx">YAHOO</span><span class="o">.</span><span class="nx">tool</span><span class="o">.</span><span class="nx">TestRunner</span><span class="o">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_frame</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">//assign event handling</span>
+                    <span class="kd">var</span> <span class="nx">TestRunner</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_frame</span><span class="p">.</span><span class="nx">YAHOO</span><span class="p">.</span><span class="nx">tool</span><span class="p">.</span><span class="nx">TestRunner</span><span class="p">;</span>
     
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_logger</span><span class="o">.</span><span class="nx">setTestRunner</span><span class="o">(</span><span class="nx">TestRunner</span><span class="o">);</span>
-                    <span class="nx">TestRunner</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">(</span><span class="nx">TestRunner</span><span class="o">.</span><span class="nx">COMPLETE_EVENT</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_handleTestRunnerComplete</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_logger</span><span class="p">.</span><span class="nx">setTestRunner</span><span class="p">(</span><span class="nx">TestRunner</span><span class="p">);</span>
+                    <span class="nx">TestRunner</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">TestRunner</span><span class="p">.</span><span class="nx">COMPLETE_EVENT</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_handleTestRunnerComplete</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
                     
-                    <span class="c">//run it</span>
-<span class="c"></span>                    <span class="nx">TestRunner</span><span class="o">.</span><span class="nx">run</span><span class="o">();</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+                    <span class="c1">//run it</span>
+                    <span class="nx">TestRunner</span><span class="p">.</span><span class="nx">run</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Sets the pages to be loaded.</span>
-<span class="c">         * @param {String[]} pages An array of URLs to load.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">setPages</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">pages</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_pages</span> <span class="o">=</span> <span class="nx">pages</span><span class="o">;</span>
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Sets the pages to be loaded.</span>
+<span class="cm">         * @param {String[]} pages An array of URLs to load.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">setPages</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">pages</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_pages</span> <span class="o">=</span> <span class="nx">pages</span><span class="p">;</span>
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Begins the process of running the tests.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">start</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Begins the process of running the tests.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">start</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     
-            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_initialized</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_initialized</span><span class="p">)</span> <span class="p">{</span>
     
-                <span class="c">/**</span>
-<span class="c">                 * Fires when loading a test page</span>
-<span class="c">                 * @event testpagebegin</span>
-<span class="c">                 * @param curPage {string} the page being loaded</span>
-<span class="c">                 * @static</span>
-<span class="c">                 */</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">createEvent</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">TEST_PAGE_BEGIN_EVENT</span><span class="o">);</span>
+                <span class="cm">/**</span>
+<span class="cm">                 * Fires when loading a test page</span>
+<span class="cm">                 * @event testpagebegin</span>
+<span class="cm">                 * @param curPage {string} the page being loaded</span>
+<span class="cm">                 * @static</span>
+<span class="cm">                 */</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">TEST_PAGE_BEGIN_EVENT</span><span class="p">);</span>
     
-                <span class="c">/**</span>
-<span class="c">                 * Fires when a test page is complete</span>
-<span class="c">                 * @event testpagecomplete</span>
-<span class="c">                 * @param obj {page: string, results: object} the name of the</span>
-<span class="c">                 * page that was loaded, and the test suite results</span>
-<span class="c">                 * @static</span>
-<span class="c">                 */</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">createEvent</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">TEST_PAGE_COMPLETE_EVENT</span><span class="o">);</span>
+                <span class="cm">/**</span>
+<span class="cm">                 * Fires when a test page is complete</span>
+<span class="cm">                 * @event testpagecomplete</span>
+<span class="cm">                 * @param obj {page: string, results: object} the name of the</span>
+<span class="cm">                 * page that was loaded, and the test suite results</span>
+<span class="cm">                 * @static</span>
+<span class="cm">                 */</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">TEST_PAGE_COMPLETE_EVENT</span><span class="p">);</span>
     
-                <span class="c">/**</span>
-<span class="c">                 * Fires when the test manager starts running all test pages</span>
-<span class="c">                 * @event testmanagerbegin</span>
-<span class="c">                 * @static</span>
-<span class="c">                 */</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">createEvent</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">TEST_MANAGER_BEGIN_EVENT</span><span class="o">);</span>
+                <span class="cm">/**</span>
+<span class="cm">                 * Fires when the test manager starts running all test pages</span>
+<span class="cm">                 * @event testmanagerbegin</span>
+<span class="cm">                 * @static</span>
+<span class="cm">                 */</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">TEST_MANAGER_BEGIN_EVENT</span><span class="p">);</span>
     
-                <span class="c">/**</span>
-<span class="c">                 * Fires when the test manager finishes running all test pages.  External</span>
-<span class="c">                 * test runners should subscribe to this event in order to get the</span>
-<span class="c">                 * aggregated test results.</span>
-<span class="c">                 * @event testmanagercomplete</span>
-<span class="c">                 * @param obj { pages_passed: int, pages_failed: int, tests_passed: int</span>
-<span class="c">                 *              tests_failed: int, passed: string[], failed: string[],</span>
-<span class="c">                 *              page_results: {} }</span>
-<span class="c">                 * @static</span>
-<span class="c">                 */</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">createEvent</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">TEST_MANAGER_COMPLETE_EVENT</span><span class="o">);</span>
+                <span class="cm">/**</span>
+<span class="cm">                 * Fires when the test manager finishes running all test pages.  External</span>
+<span class="cm">                 * test runners should subscribe to this event in order to get the</span>
+<span class="cm">                 * aggregated test results.</span>
+<span class="cm">                 * @event testmanagercomplete</span>
+<span class="cm">                 * @param obj { pages_passed: int, pages_failed: int, tests_passed: int</span>
+<span class="cm">                 *              tests_failed: int, passed: string[], failed: string[],</span>
+<span class="cm">                 *              page_results: {} }</span>
+<span class="cm">                 * @static</span>
+<span class="cm">                 */</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">TEST_MANAGER_COMPLETE_EVENT</span><span class="p">);</span>
     
-                <span class="c">//create iframe if not already available</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_frame</span><span class="o">){</span>
-                    <span class="k">var</span> <span class="nx">frame</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s2">&quot;iframe&quot;</span><span class="o">);</span>
-                    <span class="nx">frame</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="o">;</span>
-                    <span class="nx">frame</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s2">&quot;absolute&quot;</span><span class="o">;</span>
-                    <span class="nb">document</span><span class="o">.</span><span class="nx">body</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">frame</span><span class="o">);</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_frame</span> <span class="o">=</span> <span class="nx">frame</span><span class="o">.</span><span class="nx">contentWindow</span> <span class="o">||</span> <span class="nx">frame</span><span class="o">.</span><span class="nx">contentDocument</span><span class="o">.</span><span class="nx">parentWindow</span><span class="o">;</span>
-                <span class="o">}</span>
+                <span class="c1">//create iframe if not already available</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_frame</span><span class="p">){</span>
+                    <span class="kd">var</span> <span class="nx">frame</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;iframe&quot;</span><span class="p">);</span>
+                    <span class="nx">frame</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="p">;</span>
+                    <span class="nx">frame</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s2">&quot;absolute&quot;</span><span class="p">;</span>
+                    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">frame</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_frame</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">contentWindow</span> <span class="o">||</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">contentDocument</span><span class="p">.</span><span class="nx">parentWindow</span><span class="p">;</span>
+                <span class="p">}</span>
                 
-                <span class="c">//create test logger if not already available</span>
-<span class="c"></span>                <span class="c">//if (!this._logger){</span>
-<span class="c"></span>                <span class="c">//    this._logger = new YAHOO.tool.TestLogger();</span>
-<span class="c"></span>                <span class="c">//}</span>
-<span class="c"></span>    
-                <span class="k">this</span><span class="o">.</span><span class="nx">_initialized</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-            <span class="o">}</span>
+                <span class="c1">//create test logger if not already available</span>
+                <span class="c1">//if (!this._logger){</span>
+                <span class="c1">//    this._logger = new YAHOO.tool.TestLogger();</span>
+                <span class="c1">//}</span>
+    
+                <span class="k">this</span><span class="p">.</span><span class="nx">_initialized</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
     
     
-            <span class="c">// reset the results cache</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_results</span> <span class="o">=</span> <span class="o">{</span>
+            <span class="c1">// reset the results cache</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_results</span> <span class="o">=</span> <span class="p">{</span>
             
-                <span class="nx">passed</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
-                <span class="nx">failed</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
-                <span class="nx">ignored</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
-                <span class="nx">total</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
-                <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;report&quot;</span><span class="o">,</span>
-                <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;YUI Test Results&quot;</span><span class="o">,</span>
-                <span class="nx">failedPages</span><span class="o">:[],</span>
-                <span class="nx">passedPages</span><span class="o">:[]</span>
-                <span class="c">/*</span>
-<span class="c">                // number of pages that pass</span>
-<span class="c">                pages_passed: 0,</span>
-<span class="c">                // number of pages that fail</span>
-<span class="c">                pages_failed: 0,</span>
-<span class="c">                // total number of tests passed</span>
-<span class="c">                tests_passed: 0,</span>
-<span class="c">                // total number of tests failed</span>
-<span class="c">                tests_failed: 0,</span>
-<span class="c">                // array of pages that passed</span>
-<span class="c">                passed: [],</span>
-<span class="c">                // array of pages that failed</span>
-<span class="c">                failed: [],</span>
-<span class="c">                // map of full results for each page</span>
-<span class="c">                page_results: {}*/</span>
-            <span class="o">};</span>
+                <span class="nx">passed</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nx">failed</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nx">ignored</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nx">total</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;report&quot;</span><span class="p">,</span>
+                <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;YUI Test Results&quot;</span><span class="p">,</span>
+                <span class="nx">failedPages</span><span class="o">:</span><span class="p">[],</span>
+                <span class="nx">passedPages</span><span class="o">:</span><span class="p">[]</span>
+                <span class="cm">/*</span>
+<span class="cm">                // number of pages that pass</span>
+<span class="cm">                pages_passed: 0,</span>
+<span class="cm">                // number of pages that fail</span>
+<span class="cm">                pages_failed: 0,</span>
+<span class="cm">                // total number of tests passed</span>
+<span class="cm">                tests_passed: 0,</span>
+<span class="cm">                // total number of tests failed</span>
+<span class="cm">                tests_failed: 0,</span>
+<span class="cm">                // array of pages that passed</span>
+<span class="cm">                passed: [],</span>
+<span class="cm">                // array of pages that failed</span>
+<span class="cm">                failed: [],</span>
+<span class="cm">                // map of full results for each page</span>
+<span class="cm">                page_results: {}*/</span>
+            <span class="p">};</span>
     
-            <span class="k">this</span><span class="o">.</span><span class="nx">fireEvent</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">TEST_MANAGER_BEGIN_EVENT</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_run</span><span class="o">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fireEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">TEST_MANAGER_BEGIN_EVENT</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_run</span><span class="p">();</span>
         
-        <span class="o">},</span>
+        <span class="p">},</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Stops the execution of tests.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">stop</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-            <span class="nx">clearTimeout</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_timeoutId</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Stops the execution of tests.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">stop</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">clearTimeout</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_timeoutId</span><span class="p">);</span>
+        <span class="p">}</span>
     
-    <span class="o">};</span>
+    <span class="p">};</span>
     
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Manager</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">.</span><span class="nx">prototype</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Manager</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">Target</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
 </pre></div>
 
                     </div>

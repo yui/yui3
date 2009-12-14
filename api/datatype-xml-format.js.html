@@ -47,53 +47,53 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Format XML submodule.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datatype</span>
-<span class="c"> * @submodule datatype-xml-format</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Format XML submodule.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datatype</span>
+<span class="cm"> * @submodule datatype-xml-format</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * XML submodule.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datatype</span>
-<span class="c"> * @submodule datatype-xml</span>
-<span class="c"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * XML submodule.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datatype</span>
+<span class="cm"> * @submodule datatype-xml</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * DataType.XML provides a set of utility functions to operate against XML documents.</span>
-<span class="c"> *</span>
-<span class="c"> * @class DataType.XML</span>
-<span class="c"> * @static</span>
-<span class="c"> */</span>
-<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
+<span class="cm">/**</span>
+<span class="cm"> * DataType.XML provides a set of utility functions to operate against XML documents.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class DataType.XML</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">;</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;DataType.XML&quot;</span><span class="o">),</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Converts data to type XMLDocument.</span>
-<span class="c">     *</span>
-<span class="c">     * @method format</span>
-<span class="c">     * @param data {XMLDoc} Data to convert.</span>
-<span class="c">     * @return {String} String.</span>
-<span class="c">     */</span>
-    <span class="nx">format</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="k">if</span><span class="o">(!</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isUndefined</span><span class="o">(</span><span class="nx">XMLSerializer</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="o">(</span><span class="k">new</span> <span class="nx">XMLSerializer</span><span class="o">()).</span><span class="nx">serializeToString</span><span class="o">(</span><span class="nx">data</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span><span class="o">(</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="o">.</span><span class="nx">xml</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">data</span><span class="o">.</span><span class="nx">xml</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Could not format data &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; from type XML&quot;</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">,</span> <span class="s2">&quot;datatype-xml&quot;</span><span class="o">);</span>
-                <span class="k">return</span> <span class="o">(</span><span class="nx">LANG</span><span class="o">.</span><span class="nx">isValue</span><span class="o">(</span><span class="nx">data</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="o">.</span><span class="nx">toString</span><span class="o">)</span> <span class="o">?</span> <span class="nx">data</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;DataType.XML&quot;</span><span class="p">),</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Converts data to type XMLDocument.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method format</span>
+<span class="cm">     * @param data {XMLDoc} Data to convert.</span>
+<span class="cm">     * @return {String} String.</span>
+<span class="cm">     */</span>
+    <span class="nx">format</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">XMLSerializer</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">XMLSerializer</span><span class="p">()).</span><span class="nx">serializeToString</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">xml</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">data</span><span class="p">.</span><span class="nx">xml</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Could not format data &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; from type XML&quot;</span><span class="p">,</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;datatype-xml&quot;</span><span class="p">);</span>
+                <span class="k">return</span> <span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">toString</span><span class="p">)</span> <span class="o">?</span> <span class="nx">data</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
 </pre></div>
 
                     </div>

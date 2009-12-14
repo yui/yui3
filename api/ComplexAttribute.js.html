@@ -47,124 +47,124 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * Adds support for attribute providers to handle complex attributes in the constructor</span>
-<span class="c">     *</span>
-<span class="c">     * @module attribute</span>
-<span class="c">     * @submodule attribute-complex</span>
-<span class="c">     * @for Attribute</span>
-<span class="c">     */</span>
+                        <div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * Adds support for attribute providers to handle complex attributes in the constructor</span>
+<span class="cm">     *</span>
+<span class="cm">     * @module attribute</span>
+<span class="cm">     * @submodule attribute-complex</span>
+<span class="cm">     * @for Attribute</span>
+<span class="cm">     */</span>
 
-    <span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
-        <span class="nx">DOT</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">;</span>
+    <span class="kd">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
+        <span class="nx">DOT</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">;</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">Complex</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{};</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">Complex</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Attribute</span><span class="p">.</span><span class="nx">Complex</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Attribute</span><span class="p">.</span><span class="nx">Complex</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Utility method to split out simple attribute name/value pairs (&quot;x&quot;) </span>
-<span class="c">         * from complex attribute name/value pairs (&quot;x.y.z&quot;), so that complex</span>
-<span class="c">         * attributes can be keyed by the top level attribute name.</span>
-<span class="c">         *</span>
-<span class="c">         * @method _normAttrVals</span>
-<span class="c">         * @param {Object} valueHash An object with attribute name/value pairs</span>
-<span class="c">         *</span>
-<span class="c">         * @return {Object} An object literal with 2 properties - &quot;simple&quot; and &quot;complex&quot;,</span>
-<span class="c">         * containing simple and complex attribute values respectively keyed </span>
-<span class="c">         * by the top level attribute name, or null, if valueHash is falsey.</span>
-<span class="c">         *</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="nx">_normAttrVals</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">valueHash</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">vals</span> <span class="o">=</span> <span class="o">{},</span>
-                <span class="nx">subvals</span> <span class="o">=</span> <span class="o">{},</span>
-                <span class="nx">path</span><span class="o">,</span>
-                <span class="nx">attr</span><span class="o">,</span>
-                <span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Utility method to split out simple attribute name/value pairs (&quot;x&quot;) </span>
+<span class="cm">         * from complex attribute name/value pairs (&quot;x.y.z&quot;), so that complex</span>
+<span class="cm">         * attributes can be keyed by the top level attribute name.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _normAttrVals</span>
+<span class="cm">         * @param {Object} valueHash An object with attribute name/value pairs</span>
+<span class="cm">         *</span>
+<span class="cm">         * @return {Object} An object literal with 2 properties - &quot;simple&quot; and &quot;complex&quot;,</span>
+<span class="cm">         * containing simple and complex attribute values respectively keyed </span>
+<span class="cm">         * by the top level attribute name, or null, if valueHash is falsey.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">_normAttrVals</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">valueHash</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">vals</span> <span class="o">=</span> <span class="p">{},</span>
+                <span class="nx">subvals</span> <span class="o">=</span> <span class="p">{},</span>
+                <span class="nx">path</span><span class="p">,</span>
+                <span class="nx">attr</span><span class="p">,</span>
+                <span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">valueHash</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">valueHash</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">valueHash</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">k</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">k</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">path</span> <span class="o">=</span> <span class="nx">k</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
-                            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
-                            <span class="nx">v</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">||</span> <span class="o">[];</span>
-                            <span class="nx">v</span><span class="o">[</span><span class="nx">v</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span>
-                                <span class="nx">path</span> <span class="o">:</span> <span class="nx">path</span><span class="o">,</span> 
-                                <span class="nx">value</span><span class="o">:</span> <span class="nx">valueHash</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span>
-                            <span class="o">};</span>
-                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                            <span class="nx">vals</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">valueHash</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
-                        <span class="o">}</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-                <span class="k">return</span> <span class="o">{</span> <span class="nx">simple</span><span class="o">:</span><span class="nx">vals</span><span class="o">,</span> <span class="nx">complex</span><span class="o">:</span><span class="nx">subvals</span> <span class="o">};</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">valueHash</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">valueHash</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">valueHash</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">k</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">k</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">DOT</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">path</span> <span class="o">=</span> <span class="nx">k</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">DOT</span><span class="p">);</span>
+                            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+                            <span class="nx">v</span> <span class="o">=</span> <span class="nx">subvals</span><span class="p">[</span><span class="nx">attr</span><span class="p">]</span> <span class="o">=</span> <span class="nx">subvals</span><span class="p">[</span><span class="nx">attr</span><span class="p">]</span> <span class="o">||</span> <span class="p">[];</span>
+                            <span class="nx">v</span><span class="p">[</span><span class="nx">v</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                                <span class="nx">path</span> <span class="o">:</span> <span class="nx">path</span><span class="p">,</span> 
+                                <span class="nx">value</span><span class="o">:</span> <span class="nx">valueHash</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span>
+                            <span class="p">};</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">vals</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">valueHash</span><span class="p">[</span><span class="nx">k</span><span class="p">];</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="p">{</span> <span class="nx">simple</span><span class="o">:</span><span class="nx">vals</span><span class="p">,</span> <span class="nx">complex</span><span class="o">:</span><span class="nx">subvals</span> <span class="p">};</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Returns the initial value of the given attribute from</span>
-<span class="c">         * either the default configuration provided, or the </span>
-<span class="c">         * over-ridden value if it exists in the set of initValues </span>
-<span class="c">         * provided and the attribute is not read-only.</span>
-<span class="c">         *</span>
-<span class="c">         * @param {String} attr The name of the attribute</span>
-<span class="c">         * @param {Object} cfg The attribute configuration object</span>
-<span class="c">         * @param {Object} initValues The object with simple and complex attribute name/value pairs returned from _normAttrVals</span>
-<span class="c">         *</span>
-<span class="c">         * @return {Any} The initial value of the attribute.</span>
-<span class="c">         *</span>
-<span class="c">         * @method _getAttrInitVal</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="nx">_getAttrInitVal</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">,</span> <span class="nx">initValues</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Returns the initial value of the given attribute from</span>
+<span class="cm">         * either the default configuration provided, or the </span>
+<span class="cm">         * over-ridden value if it exists in the set of initValues </span>
+<span class="cm">         * provided and the attribute is not read-only.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @param {String} attr The name of the attribute</span>
+<span class="cm">         * @param {Object} cfg The attribute configuration object</span>
+<span class="cm">         * @param {Object} initValues The object with simple and complex attribute name/value pairs returned from _normAttrVals</span>
+<span class="cm">         *</span>
+<span class="cm">         * @return {Any} The initial value of the attribute.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _getAttrInitVal</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">_getAttrInitVal</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">attr</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">,</span> <span class="nx">initValues</span><span class="p">)</span> <span class="p">{</span>
 
-            <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span><span class="o">,</span>
-                <span class="nx">valFn</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">valueFn</span><span class="o">,</span>
-                <span class="nx">simple</span><span class="o">,</span>
-                <span class="nx">complex</span><span class="o">,</span>
-                <span class="nx">i</span><span class="o">,</span>
-                <span class="nx">l</span><span class="o">,</span>
-                <span class="nx">path</span><span class="o">,</span>
-                <span class="nx">subval</span><span class="o">,</span>
-                <span class="nx">subvals</span><span class="o">;</span>
+            <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span>
+                <span class="nx">valFn</span> <span class="o">=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">valueFn</span><span class="p">,</span>
+                <span class="nx">simple</span><span class="p">,</span>
+                <span class="nx">complex</span><span class="p">,</span>
+                <span class="nx">i</span><span class="p">,</span>
+                <span class="nx">l</span><span class="p">,</span>
+                <span class="nx">path</span><span class="p">,</span>
+                <span class="nx">subval</span><span class="p">,</span>
+                <span class="nx">subvals</span><span class="p">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">valFn</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">valFn</span><span class="o">.</span><span class="nx">call</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">valFn</span> <span class="o">=</span> <span class="k">this</span><span class="o">[</span><span class="nx">valFn</span><span class="o">];</span>
-                <span class="o">}</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">valFn</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">valFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">valFn</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">valFn</span><span class="p">.</span><span class="nx">call</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">valFn</span> <span class="o">=</span> <span class="k">this</span><span class="p">[</span><span class="nx">valFn</span><span class="p">];</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">valFn</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">valFn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">cfg</span><span class="o">.</span><span class="nx">readOnly</span> <span class="o">&amp;&amp;</span> <span class="nx">initValues</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">readOnly</span> <span class="o">&amp;&amp;</span> <span class="nx">initValues</span><span class="p">)</span> <span class="p">{</span>
 
-                <span class="c">// Simple Attributes</span>
-<span class="c"></span>                <span class="nx">simple</span> <span class="o">=</span> <span class="nx">initValues</span><span class="o">.</span><span class="nx">simple</span><span class="o">;</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">simple</span> <span class="o">&amp;&amp;</span> <span class="nx">simple</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">simple</span><span class="o">[</span><span class="nx">attr</span><span class="o">];</span>
-                <span class="o">}</span>
+                <span class="c1">// Simple Attributes</span>
+                <span class="nx">simple</span> <span class="o">=</span> <span class="nx">initValues</span><span class="p">.</span><span class="nx">simple</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">simple</span> <span class="o">&amp;&amp;</span> <span class="nx">simple</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">attr</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">simple</span><span class="p">[</span><span class="nx">attr</span><span class="p">];</span>
+                <span class="p">}</span>
 
-                <span class="c">// Complex Attributes (complex values applied, after simple, incase both are set)</span>
-<span class="c"></span>                <span class="nx">complex</span> <span class="o">=</span> <span class="nx">initValues</span><span class="o">.</span><span class="nx">complex</span><span class="o">;</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">complex</span> <span class="o">&amp;&amp;</span> <span class="nx">complex</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">subvals</span> <span class="o">=</span> <span class="nx">complex</span><span class="o">[</span><span class="nx">attr</span><span class="o">];</span>
-                    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">path</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">path</span><span class="o">;</span>
-                        <span class="nx">subval</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">value</span><span class="o">;</span>
-                        <span class="nx">O</span><span class="o">.</span><span class="nx">setValue</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">path</span><span class="o">,</span> <span class="nx">subval</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
+                <span class="c1">// Complex Attributes (complex values applied, after simple, incase both are set)</span>
+                <span class="nx">complex</span> <span class="o">=</span> <span class="nx">initValues</span><span class="p">.</span><span class="nx">complex</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">complex</span> <span class="o">&amp;&amp;</span> <span class="nx">complex</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">attr</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">subvals</span> <span class="o">=</span> <span class="nx">complex</span><span class="p">[</span><span class="nx">attr</span><span class="p">];</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">subvals</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">path</span> <span class="o">=</span> <span class="nx">subvals</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">path</span><span class="p">;</span>
+                        <span class="nx">subval</span> <span class="o">=</span> <span class="nx">subvals</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">value</span><span class="p">;</span>
+                        <span class="nx">O</span><span class="p">.</span><span class="nx">setValue</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">subval</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
 
-            <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
+            <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">Complex</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Attribute</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Attribute</span><span class="p">.</span><span class="nx">Complex</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 </pre></div>
 
                     </div>
