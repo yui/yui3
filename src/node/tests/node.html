@@ -498,7 +498,13 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.isTrue(node.hasAttribute('id'), 'node.hasAttribute("id")');
             Assert.isTrue(node.hasAttribute('title'), 'node.hasAttribute("title")');
             Assert.isFalse(node.hasAttribute('foo'), 'node.hasAttribute("foo")');
-
+            Assert.isTrue(node.hasAttribute('tabIndex'), 'node.hasAttribute("tabIndex")');
+            node.removeAttribute('tabIndex');
+            Assert.isFalse(node.hasAttribute('tabIndex'), 'node.hasAttribute("tabIndex") (false)');
+            console.log(node.getAttribute('tabIndex'));
+            console.log(node._node.getAttribute('tabIndex'));
+            Assert.areEqual(node.getAttribute('tabIndex'), node.get('tabIndex'),
+                "node.getAttribute('tabIndex') === node.get('tabIndex')");
             
             Assert.isFalse(Y.get('body').hasAttribute('title'), 'body.hasAttribute("title")');
             Assert.areEqual('0', Y.get('select[name=test-select] option:nth-child(1)').getAttribute('value'), 'option1.getAttribute("value") (from innerText)');

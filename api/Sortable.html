@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: datasource  DataSource.Get   (YUI Library)</title>
+	<title>API: sortable  Sortable   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,10 +16,10 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>datasource&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>sortable&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_datasource.html" title="datasource">datasource</a>
-                 &gt; DataSource.Get 
+            &gt; <a href="./module_sortable.html" title="sortable">sortable</a>
+                 &gt; Sortable 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,9 +48,9 @@
 
                         
                         
-                            Class <b property="yui:name">DataSource.Get</b>
+                            Class <b property="yui:name">Sortable</b>
                         <span class="extends">
-                           - extends <a href="DataSource.Local.html" title="DataSource.Local">DataSource.Local</a>
+                           - extends <a href="Base.html" title="Base">Base</a>
                         </span>
 
                     </h2>
@@ -60,14 +60,14 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Get Utility subclass for the DataSource Utility.
+                        Sortable Lists.
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
                         <h3 id="constructor">Constructor</h3>
                         <div class="content">
                             <div class="detail">
-                                <strong property="yui:name">DataSource.Get</strong>
+                                <strong property="yui:name">Sortable</strong>
                                 <code>
                                     (
                                     )
@@ -84,13 +84,13 @@
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="private" rel="yui:property" resource="#property__tId">
-                                    <h4><a name="property__tId" property="yui:name">_tId</a>
-                                        - <code>private static <span property="yui:type">Number</span></code>
+                                    <div class="private" rel="yui:property" resource="#property__sortables">
+                                    <h4><a name="property__sortables" property="yui:name">_sortables</a>
+                                        - <code>private static <span property="yui:type">Array</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Unique ID to track requests.
+                                            Hash map of all Sortables on the page.
                                         </div>
                                     </div>
      
@@ -99,28 +99,13 @@
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_callbacks">
-                                    <h4><a name="property_callbacks" property="yui:name">callbacks</a>
-                                        - <code>static <span property="yui:type">Function[]</span></code>
+                                    <div class="" rel="yui:property" resource="#property_delegate">
+                                    <h4><a name="property_delegate" property="yui:name">delegate</a>
+                                        - <code><span property="yui:type">DD.Delegate</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Global array of callback functions, one for each request sent.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_NAME">
-                                    <h4><a name="property_NAME" property="yui:name">NAME</a>
-                                        - <code>static final <span property="yui:type">String</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Class name.
+                                            A reference to the DD.Delegate instance.
                                         </div>
                                     </div>
      
@@ -153,14 +138,6 @@
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="DataSource.Local.html">
-                            <h4>Properties inherited from <a href="DataSource.Local.html" property="yui:name" title="DataSource.Local">DataSource.Local</a>:</h4>
-                            <div class="content" rel="yui:properties">
-                                <code>
-                                    
-                                </code>
-                            </div>
-                        </div>
                         </div>
                     </div>
 
@@ -168,28 +145,27 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="protected" rel="yui:method" resource="#method__defRequestFn">
+                                    <div class="private" rel="yui:method" resource="#method__handleDragEnd">
                                     <h4>
-                                        <a name="method__defRequestFn">_defRequestFn</a></h4>
+                                        <a name="method__handleDragEnd">_handleDragEnd</a></h4>
                                     <div class="detail" >
                                         <code>
-                                         protected 
+                                         private 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_defRequestFn</strong>
+                                            <strong property="yui:name">_handleDragEnd</strong>
                                            (
                                                 
                                                         
-                                                         e
+                                                         Event
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Passes query string to Get Utility. Fires <code>response</code> event when
-response is received asynchronously.
+                                            Handles the DragEnd event that cleans up the settings in the drag:start event.
                                         </div>
 
                                         <div class="description">
@@ -197,21 +173,393 @@ response is received asynchronously.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                        <code><span property="yui:name">Event</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Event Facade with the following properties:
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-</dl>
-</dd>
-<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
-</dl></span>
+                                                        <span property="yui:description"> e The Event Object</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__handleDragOver">
+                                    <h4>
+                                        <a name="method__handleDragOver">_handleDragOver</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_handleDragOver</strong>
+                                           (
+                                                
+                                                        
+                                                         Event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Handles the DragOver event that moves the object in the list or to another list.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Event</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> e The Event Object</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__handleDragStart">
+                                    <h4>
+                                        <a name="method__handleDragStart">_handleDragStart</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_handleDragStart</strong>
+                                           (
+                                                
+                                                        
+                                                         Event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Handles the DragStart event and initializes some settings.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Event</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> e The Event Object</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__handleDropOver">
+                                    <h4>
+                                        <a name="method__handleDropOver">_handleDropOver</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_handleDropOver</strong>
+                                           (
+                                                
+                                                        
+                                                         Event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Handles the DropOver event to append a drop node to an empty target
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Event</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> e The Event Object</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getSortable">
+                                    <h4>
+                                        <a name="method_getSortable">getSortable</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">getSortable</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Get a sortable instance back from a node reference or a selector string.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">String|Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The node instance or selector string to use to find a Sortable instance.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_join">
+                                    <h4>
+                                        <a name="method_join">join</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">join</strong>
+                                           (
+                                                
+                                                        
+                                                         Sortable
+                                                    
+                                                
+                                                        , 
+                                                         String
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Join this Sortable with another Sortable instance.
+<ul>
+<li>Full: Exchange nodes with both lists.</li>
+<li>Inner: Items can go into this list from the joined list.</li>
+<li>Outer: Items can go out of the joined list into this list.</li>
+</ul>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Sortable</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> sel The sortable list to join with</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">String</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> type The type of join to do: full, inner, outer. Default: full</span>
+                                                        </dd>
+                                                </dl>
+
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_plug">
+                                    <h4>
+                                        <a name="method_plug">plug</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">plug</strong>
+                                           (
+                                                
+                                                        
+                                                         Class
+                                                    
+                                                
+                                                        , 
+                                                         Object
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Passthrough to the DD.Delegate.ddplug method
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Class</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> cls The class to plug</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Object</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> config The class config</span>
+                                                        </dd>
+                                                </dl>
+
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_regSortable">
+                                    <h4>
+                                        <a name="method_regSortable">regSortable</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">regSortable</strong>
+                                           (
+                                                
+                                                        
+                                                         Sortable
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Register a Sortable instance with the singleton to allow lookups later.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Sortable</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> s A Sortable instance.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_unregSortable">
+                                    <h4>
+                                        <a name="method_unregSortable">unregSortable</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">unregSortable</strong>
+                                           (
+                                                
+                                                        
+                                                         Sortable
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Unregister a Sortable instance with the singleton.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Sortable</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> s A Sortable instance.</span>
                                                         </dd>
                                                 </dl>
 
@@ -439,31 +787,6 @@ response is received asynchronously.
                                     </code>
                                 </div>
                             </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="DataSource.Local.html">
-                                <h4>Methods inherited from <a href="DataSource.Local.html" property="yui:name" title="DataSource.Local">DataSource.Local</a>:</h4>
-                                <div class="content" rel="yui:methods">
-                                    <code>
-                                            <span rel="yui:method" resource="DataSource.Local.html#method__defDataFn">                                        
-                                            <a class="protected" href="DataSource.Local.html#method__defDataFn" property="yui:name" title="_defDataFn">_defDataFn</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="DataSource.Local.html#method__defRequestFn">                                        
-                                            <a class="protected" href="DataSource.Local.html#method__defRequestFn" property="yui:name" title="_defRequestFn">_defRequestFn</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="DataSource.Local.html#method__defResponseFn">                                        
-                                            <a class="protected" href="DataSource.Local.html#method__defResponseFn" property="yui:name" title="_defResponseFn">_defResponseFn</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="DataSource.Local.html#method__initEvents">                                        
-                                            <a class="private" href="DataSource.Local.html#method__initEvents" property="yui:name" title="_initEvents">_initEvents</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="DataSource.Local.html#method_initializer">                                        
-                                            <a class="private" href="DataSource.Local.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="DataSource.Local.html#method_sendRequest">                                        
-                                            <a class="" href="DataSource.Local.html#method_sendRequest" property="yui:name" title="sendRequest">sendRequest</a>
-                                            </span>
-                                    </code>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -471,15 +794,15 @@ response is received asynchronously.
                         <div class="section method details">
                             <h3 id="events">Events</h3>
                             <div class="content">
-                                    <div class="" rel="yui:event" resource="#event_asyncModeChange">
+                                    <div class="" rel="yui:event" resource="#event_contChange">
                                     <h4>
-                                        <a name="event_asyncModeChange">asyncModeChange</a></h4>
+                                        <a name="event_contChange">contChange</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong property="yui:name">asyncModeChange</strong>
+                                            <strong property="yui:name">contChange</strong>
 
                                             (
                                                 
@@ -492,7 +815,7 @@ response is received asynchronously.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Fires when the value for the configuration attribute 'asyncMode' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                            Fires when the value for the configuration attribute 'cont' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -515,15 +838,15 @@ response is received asynchronously.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:event" resource="#event_generateRequestCallbackChange">
+                                    <div class="" rel="yui:event" resource="#event_idChange">
                                     <h4>
-                                        <a name="event_generateRequestCallbackChange">generateRequestCallbackChange</a></h4>
+                                        <a name="event_idChange">idChange</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong property="yui:name">generateRequestCallbackChange</strong>
+                                            <strong property="yui:name">idChange</strong>
 
                                             (
                                                 
@@ -536,7 +859,7 @@ response is received asynchronously.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Fires when the value for the configuration attribute 'generateRequestCallback' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                            Fires when the value for the configuration attribute 'id' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -559,15 +882,15 @@ response is received asynchronously.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:event" resource="#event_getChange">
+                                    <div class="" rel="yui:event" resource="#event_invalidChange">
                                     <h4>
-                                        <a name="event_getChange">getChange</a></h4>
+                                        <a name="event_invalidChange">invalidChange</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong property="yui:name">getChange</strong>
+                                            <strong property="yui:name">invalidChange</strong>
 
                                             (
                                                 
@@ -580,7 +903,7 @@ response is received asynchronously.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Fires when the value for the configuration attribute 'get' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                            Fires when the value for the configuration attribute 'invalid' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -603,15 +926,15 @@ response is received asynchronously.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:event" resource="#event_scriptCallbackParamChange">
+                                    <div class="" rel="yui:event" resource="#event_moveTypeChange">
                                     <h4>
-                                        <a name="event_scriptCallbackParamChange">scriptCallbackParamChange</a></h4>
+                                        <a name="event_moveTypeChange">moveTypeChange</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong property="yui:name">scriptCallbackParamChange</strong>
+                                            <strong property="yui:name">moveTypeChange</strong>
 
                                             (
                                                 
@@ -624,7 +947,95 @@ response is received asynchronously.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Fires when the value for the configuration attribute 'scriptCallbackParam' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                            Fires when the value for the configuration attribute 'moveType' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_nodesChange">
+                                    <h4>
+                                        <a name="event_nodesChange">nodesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">nodesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'nodes' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_opacityChange">
+                                    <h4>
+                                        <a name="event_opacityChange">opacityChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">opacityChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'opacity' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -672,29 +1083,6 @@ response is received asynchronously.
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="DataSource.Local.html">
-                            <h4>Events inherited from <a href="DataSource.Local.html" property="yui:name" title="DataSource.Local">DataSource.Local</a>:</h4>
-                            <div class="content" rel="yui:events">
-                                <code>
-                                        <span rel="yui:event" resource="DataSource.Local.html#event_data">
-                                        <a class="" href="DataSource.Local.html#event_data" property="yui:name" title="data">data</a><span class="">,</span>
-                                        </span>
-                                                                            <span rel="yui:event" resource="DataSource.Local.html#event_error">
-                                        <a class="" href="DataSource.Local.html#event_error" property="yui:name" title="error">error</a><span class="">,</span>
-                                        </span>
-                                                                            <span rel="yui:event" resource="DataSource.Local.html#event_request">
-                                        <a class="" href="DataSource.Local.html#event_request" property="yui:name" title="request">request</a>
-                                        </span>
-                                                                            <span rel="yui:event" resource="DataSource.Local.html#event_response">
-                                        <a class="" href="DataSource.Local.html#event_response" property="yui:name" title="response">response</a>
-                                        </span>
-                                                                            <span rel="yui:event" resource="DataSource.Local.html#event_sourceChange">
-                                        <a class="" href="DataSource.Local.html#event_sourceChange" property="yui:name" title="sourceChange">sourceChange</a>
-                                        </span>
-                                    
-                                </code>
-                            </div>
-                        </div>
                         </div>
                     </div>
 
@@ -702,42 +1090,13 @@ response is received asynchronously.
                         <div class="section field details">
                             <h3 id="configattributes">Configuration Attributes</h3>
                             <div class="content">
-                                    <div class="" rel="yui:attribute" resource="#config_asyncMode">
-                                    <h4><a name="config_asyncMode">asyncMode</a>
+                                    <div class="" rel="yui:attribute" resource="#config_cont">
+                                    <h4><a name="config_cont">cont</a>
                                         <code>- <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Defines request/response management in the following manner:
-<dl>
-<!--<dt>queueRequests</dt>
-<dd>If a request is already in progress, wait until response is returned before sending the next request.</dd>
-<dt>cancelStaleRequests</dt>
-<dd>If a request is already in progress, cancel it before sending the next request.</dd>-->
-<dt>ignoreStaleResponses</dt>
-<dd>Send all requests, but handle only the response for the most recently sent request.</dd>
-<dt>allowAll</dt>
-<dd>Send all requests and handle all responses.</dd>
-</dl>
-                                        </div>
-                                    </div>
- 
-     
-                                    <div class="default">
-                                        Default Value: "allowAll"
-                                    </div>        
-
-                                    <hr />
-                                    </div>        
-                                    <div class="" rel="yui:attribute" resource="#config_generateRequestCallback">
-                                    <h4><a name="config_generateRequestCallback">generateRequestCallback</a>
-                                        <code>- <span property="yui:type">Function</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Accepts the DataSource instance and a callback ID, and returns a callback
-param/value string that gets appended to the script URI. Implementers
-can customize this string to match their server's query syntax.
+                                            A selector query to get the container to listen for mousedown events on. All "nodes" should be a child of this container.
                                         </div>
                                     </div>
  
@@ -745,39 +1104,73 @@ can customize this string to match their server's query syntax.
 
                                     <hr />
                                     </div>        
-                                    <div class="" rel="yui:attribute" resource="#config_get">
-                                    <h4><a name="config_get">get</a>
-                                        <code>- <span property="yui:type">Y.Get</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Pointer to Get Utility.
-                                        </div>
-                                    </div>
- 
-     
-                                    <div class="default">
-                                        Default Value: Y.Get
-                                    </div>        
-
-                                    <hr />
-                                    </div>        
-                                    <div class="" rel="yui:attribute" resource="#config_scriptCallbackParam">
-                                    <h4><a name="config_scriptCallbackParam">scriptCallbackParam</a>
+                                    <div class="" rel="yui:attribute" resource="#config_id">
+                                    <h4><a name="config_id">id</a>
                                         <code>- <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Callback string parameter name sent to the remote script. By default,
-requests are sent to
-&#60;URI&#62;?&#60;scriptCallbackParam&#62;=callbackFunction
+                                            The id of this sortable, used to get a reference to this sortable list from another list.
                                         </div>
                                     </div>
  
      
-                                    <div class="default">
-                                        Default Value: "callback"
+
+                                    <hr />
                                     </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_invalid">
+                                    <h4><a name="config_invalid">invalid</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A selector string to test if a list item is invalid and not sortable
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_moveType">
+                                    <h4><a name="config_moveType">moveType</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            How should an item move to another list: swap, move, copy. Default: swap
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_nodes">
+                                    <h4><a name="config_nodes">nodes</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A selector query to get the children of the "container" to make draggable elements from.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_opacity">
+                                    <h4><a name="config_opacity">opacity</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The ocpacity to test the proxy item to when dragging.
+                                        </div>
+                                    </div>
+ 
+     
 
                                     <hr />
                                     </div>        
@@ -795,17 +1188,6 @@ requests are sent to
                                         </span>
                                                                                 <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
                                         <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a>
-                                        </span>
-                                        
-                                </code>
-                            </div>
-                        </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="DataSource.Local.html">
-                            <h4>Configuration attributes inherited from <a href="DataSource.Local.html" property="yui:name" title="DataSource.Local">DataSource.Local</a>:</h4>
-                            <div class="content" rel="yui:attributes">
-                                <code>
-                                        <span rel="yui:attribute" resource="DataSource.Local.html#config_source">                                        
-                                        <a class="" href="DataSource.Local.html#config_source" property="yui:name" title="source">source</a>
                                         </span>
                                         
                                 </code>
@@ -834,7 +1216,7 @@ requests are sent to
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
-                                <li class="selected"><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
@@ -858,7 +1240,7 @@ requests are sent to
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
-                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class="selected"><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
@@ -875,68 +1257,61 @@ requests are sent to
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="DataSource.Function.html" title="DataSource.Function">DataSource.Function</a></li>
-                                <li class="selected"><a href="DataSource.Get.html" title="DataSource.Get">DataSource.Get</a></li>
-                                <li class=""><a href="DataSource.IO.html" title="DataSource.IO">DataSource.IO</a></li>
-                                <li class=""><a href="DataSource.Local.html" title="DataSource.Local">DataSource.Local</a></li>
-                                <li class=""><a href="DataSourceArraySchema.html" title="DataSourceArraySchema">DataSourceArraySchema</a></li>
-                                <li class=""><a href="DataSourceCache.html" title="DataSourceCache">DataSourceCache</a></li>
-                                <li class=""><a href="DataSourceJSONSchema.html" title="DataSourceJSONSchema">DataSourceJSONSchema</a></li>
-                                <li class=""><a href="DataSourceTextSchema.html" title="DataSourceTextSchema">DataSourceTextSchema</a></li>
-                                <li class=""><a href="DataSourceXMLSchema.html" title="DataSourceXMLSchema">DataSourceXMLSchema</a></li>
-                                <li class=""><a href="Pollable.html" title="Pollable">Pollable</a></li>
+                                <li class="selected"><a href="Sortable.html" title="Sortable">Sortable</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="datasource-arrayschema.js.html" title="datasource-arrayschema.js">datasource-arrayschema.js</a></li>
-                                <li class=""><a href="datasource-cache.js.html" title="datasource-cache.js">datasource-cache.js</a></li>
-                                <li class=""><a href="datasource-function.js.html" title="datasource-function.js">datasource-function.js</a></li>
-                                <li class=""><a href="datasource-get.js.html" title="datasource-get.js">datasource-get.js</a></li>
-                                <li class=""><a href="datasource-io.js.html" title="datasource-io.js">datasource-io.js</a></li>
-                                <li class=""><a href="datasource-jsonschema.js.html" title="datasource-jsonschema.js">datasource-jsonschema.js</a></li>
-                                <li class=""><a href="datasource-local.js.html" title="datasource-local.js">datasource-local.js</a></li>
-                                <li class=""><a href="datasource-polling.js.html" title="datasource-polling.js">datasource-polling.js</a></li>
-                                <li class=""><a href="datasource-textschema.js.html" title="datasource-textschema.js">datasource-textschema.js</a></li>
-                                <li class=""><a href="datasource-xmlschema.js.html" title="datasource-xmlschema.js">datasource-xmlschema.js</a></li>
+                                <li class=""><a href="sortable.js.html" title="sortable.js">sortable.js</a></li>
                         </ul>
                     </div>
 
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#property__tId" title="_tId">_tId</a></li>
-                                <li class=""><a href="#property_callbacks" title="callbacks">callbacks</a></li>
-                                <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
+                                <li class="private"><a href="#property__sortables" title="_sortables">_sortables</a></li>
+                                <li class=""><a href="#property_delegate" title="delegate">delegate</a></li>
                         </ul>
                     </div>
 
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="protected"><a href="#method__defRequestFn" title="_defRequestFn">_defRequestFn</a></li>
+                                <li class="private"><a href="#method__handleDragEnd" title="_handleDragEnd">_handleDragEnd</a></li>
+                                <li class="private"><a href="#method__handleDragOver" title="_handleDragOver">_handleDragOver</a></li>
+                                <li class="private"><a href="#method__handleDragStart" title="_handleDragStart">_handleDragStart</a></li>
+                                <li class="private"><a href="#method__handleDropOver" title="_handleDropOver">_handleDropOver</a></li>
+                                <li class=""><a href="#method_getSortable" title="getSortable">getSortable</a></li>
+                                <li class=""><a href="#method_join" title="join">join</a></li>
+                                <li class=""><a href="#method_plug" title="plug">plug</a></li>
+                                <li class=""><a href="#method_regSortable" title="regSortable">regSortable</a></li>
+                                <li class=""><a href="#method_unregSortable" title="unregSortable">unregSortable</a></li>
                         </ul>
                     </div>
 
                     <div id="eventsList" class="module">
                         <h4>Events</h4>
                         <ul class="content">        
-                                <li class=""><a href="#event_asyncModeChange" title="asyncModeChange">asyncModeChange</a></li>
-                                <li class=""><a href="#event_generateRequestCallbackChange" title="generateRequestCallbackChange">generateRequestCallbackChange</a></li>
-                                <li class=""><a href="#event_getChange" title="getChange">getChange</a></li>
-                                <li class=""><a href="#event_scriptCallbackParamChange" title="scriptCallbackParamChange">scriptCallbackParamChange</a></li>
+                                <li class=""><a href="#event_contChange" title="contChange">contChange</a></li>
+                                <li class=""><a href="#event_idChange" title="idChange">idChange</a></li>
+                                <li class=""><a href="#event_invalidChange" title="invalidChange">invalidChange</a></li>
+                                <li class=""><a href="#event_moveTypeChange" title="moveTypeChange">moveTypeChange</a></li>
+                                <li class=""><a href="#event_nodesChange" title="nodesChange">nodesChange</a></li>
+                                <li class=""><a href="#event_opacityChange" title="opacityChange">opacityChange</a></li>
                         </ul>
                     </div>
 
                     <div id="configList" class="module">
                         <h4>Configuration Attributes</h4>
                         <ul class="content">        
-                                <li class=""><a href="#config_asyncMode" title="asyncMode">asyncMode</a></li>
-                                <li class=""><a href="#config_generateRequestCallback" title="generateRequestCallback">generateRequestCallback</a></li>
-                                <li class=""><a href="#config_get" title="get">get</a></li>
-                                <li class=""><a href="#config_scriptCallbackParam" title="scriptCallbackParam">scriptCallbackParam</a></li>
+                                <li class=""><a href="#config_cont" title="cont">cont</a></li>
+                                <li class=""><a href="#config_id" title="id">id</a></li>
+                                <li class=""><a href="#config_invalid" title="invalid">invalid</a></li>
+                                <li class=""><a href="#config_moveType" title="moveType">moveType</a></li>
+                                <li class=""><a href="#config_nodes" title="nodes">nodes</a></li>
+                                <li class=""><a href="#config_opacity" title="opacity">opacity</a></li>
                         </ul>
                     </div>
 
@@ -949,7 +1324,7 @@ requests are sent to
 	</div>
 </div>
 <script type="text/javascript">
-    var ALL_YUI_PROPS = [{"access": "", "host": "DataSource.Get", "name": "asyncMode", "url": "DataSource.Get.html#config_asyncMode", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "asyncModeChange", "url": "DataSource.Get.html#event_asyncModeChange", "type": "event"}, {"access": "protected", "host": "DataSourceArraySchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "url": "DataSourceArraySchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "type": "method"}, {"access": "protected", "host": "DataSourceCache", "name": "_beforeDefRequestFn", "url": "DataSourceCache.html#method__beforeDefRequestFn", "type": "method"}, {"access": "protected", "host": "DataSourceCache", "name": "_beforeDefResponseFn", "url": "DataSourceCache.html#method__beforeDefResponseFn", "type": "method"}, {"access": "", "host": "DataSource.Get", "name": "callbacks", "url": "DataSource.Get.html#property_callbacks", "type": "property"}, {"access": "protected", "host": "DataSource.Function", "name": "_defRequestFn", "url": "DataSource.Function.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Get", "name": "_defRequestFn", "url": "DataSource.Get.html#method__defRequestFn", "type": "method"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallback", "url": "DataSource.Get.html#config_generateRequestCallback", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallbackChange", "url": "DataSource.Get.html#event_generateRequestCallbackChange", "type": "event"}, {"access": "", "host": "DataSource.Get", "name": "get", "url": "DataSource.Get.html#config_get", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "getChange", "url": "DataSource.Get.html#event_getChange", "type": "event"}, {"access": "private", "host": "DataSourceArraySchema", "name": "initializer", "url": "DataSourceArraySchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceCache", "name": "initializer", "url": "DataSourceCache.html#method_initializer", "type": "method"}, {"access": "", "host": "DataSourceArraySchema", "name": "NAME", "url": "DataSourceArraySchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NAME", "url": "DataSourceCache.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "NAME", "url": "DataSource.Function.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Get", "name": "NAME", "url": "DataSource.Get.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NS", "url": "DataSourceArraySchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NS", "url": "DataSourceCache.html#property_NS", "type": "property"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParam", "url": "DataSource.Get.html#config_scriptCallbackParam", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParamChange", "url": "DataSource.Get.html#event_scriptCallbackParamChange", "type": "event"}, {"access": "", "host": "DataSource.Function", "name": "source", "url": "DataSource.Function.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Function", "name": "sourceChange", "url": "DataSource.Function.html#event_sourceChange", "type": "event"}, {"access": "private", "host": "DataSource.Get", "name": "_tId", "url": "DataSource.Get.html#property__tId", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Sortable", "name": "cont", "url": "Sortable.html#config_cont", "type": "config"}, {"access": "", "host": "Sortable", "name": "contChange", "url": "Sortable.html#event_contChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "delegate", "url": "Sortable.html#property_delegate", "type": "property"}, {"access": "", "host": "Sortable", "name": "getSortable", "url": "Sortable.html#method_getSortable", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_handleDragEnd", "url": "Sortable.html#method__handleDragEnd", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_handleDragOver", "url": "Sortable.html#method__handleDragOver", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_handleDragStart", "url": "Sortable.html#method__handleDragStart", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_handleDropOver", "url": "Sortable.html#method__handleDropOver", "type": "method"}, {"access": "", "host": "Sortable", "name": "id", "url": "Sortable.html#config_id", "type": "config"}, {"access": "", "host": "Sortable", "name": "idChange", "url": "Sortable.html#event_idChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "invalid", "url": "Sortable.html#config_invalid", "type": "config"}, {"access": "", "host": "Sortable", "name": "invalidChange", "url": "Sortable.html#event_invalidChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "join", "url": "Sortable.html#method_join", "type": "method"}, {"access": "", "host": "Sortable", "name": "moveType", "url": "Sortable.html#config_moveType", "type": "config"}, {"access": "", "host": "Sortable", "name": "moveTypeChange", "url": "Sortable.html#event_moveTypeChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "nodes", "url": "Sortable.html#config_nodes", "type": "config"}, {"access": "", "host": "Sortable", "name": "nodesChange", "url": "Sortable.html#event_nodesChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "opacity", "url": "Sortable.html#config_opacity", "type": "config"}, {"access": "", "host": "Sortable", "name": "opacityChange", "url": "Sortable.html#event_opacityChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "plug", "url": "Sortable.html#method_plug", "type": "method"}, {"access": "", "host": "Sortable", "name": "regSortable", "url": "Sortable.html#method_regSortable", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_sortables", "url": "Sortable.html#property__sortables", "type": "property"}, {"access": "", "host": "Sortable", "name": "unregSortable", "url": "Sortable.html#method_unregSortable", "type": "method"}];
     YAHOO.yuidoc.init();
 </script>
 </body>
