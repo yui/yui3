@@ -221,7 +221,6 @@
         */        
         syncTargets: function(group) {
             if (!Y.Plugin.Drop) {
-                Y.error('DD.Delegate: Drop Plugin Not Found');
                 return;
             }
             var items, groups, self = this;
