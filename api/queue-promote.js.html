@@ -47,54 +47,54 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Adds methods promote, remove, and indexOf to Queue instances.</span>
-<span class="c"> *</span>
-<span class="c"> * @module queue-promote</span>
-<span class="c"> * @for Queue</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Adds methods promote, remove, and indexOf to Queue instances.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module queue-promote</span>
+<span class="cm"> * @for Queue</span>
+<span class="cm"> */</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Queue</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Returns the current index in the queue of the specified item</span>
-<span class="c">     * </span>
-<span class="c">     * @method indexOf</span>
-<span class="c">     * @param needle {MIXED} the item to search for</span>
-<span class="c">     * @return {Number} the index of the item or -1 if not found</span>
-<span class="c">     */</span>
-    <span class="nx">indexOf</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">,</span> <span class="nx">callback</span><span class="o">);</span>
-    <span class="o">},</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Queue</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the current index in the queue of the specified item</span>
+<span class="cm">     * </span>
+<span class="cm">     * @method indexOf</span>
+<span class="cm">     * @param needle {MIXED} the item to search for</span>
+<span class="cm">     * @return {Number} the index of the item or -1 if not found</span>
+<span class="cm">     */</span>
+    <span class="nx">indexOf</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Moves the referenced item to the head of the queue</span>
-<span class="c">     *</span>
-<span class="c">     * @method promote</span>
-<span class="c">     * @param item {MIXED} an item in the queue</span>
-<span class="c">     */</span>
-    <span class="nx">promote</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">callback</span><span class="o">);</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Moves the referenced item to the head of the queue</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method promote</span>
+<span class="cm">     * @param item {MIXED} an item in the queue</span>
+<span class="cm">     */</span>
+    <span class="nx">promote</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">callback</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">index</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">index</span><span class="o">,</span><span class="m">1</span><span class="o">));</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Removes the referenced item from the queue</span>
-<span class="c">     *</span>
-<span class="c">     * @method remove</span>
-<span class="c">     * @param item {MIXED} an item in the queue</span>
-<span class="c">     */</span>
-    <span class="nx">remove</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">callback</span><span class="o">);</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Removes the referenced item from the queue</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method remove</span>
+<span class="cm">     * @param item {MIXED} an item in the queue</span>
+<span class="cm">     */</span>
+    <span class="nx">remove</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">callback</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">index</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_q</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">index</span><span class="o">,</span><span class="m">1</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
-<span class="o">});</span>
+<span class="p">});</span>
 </pre></div>
 
                     </div>
@@ -176,7 +176,8 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [];
+    var ALL_YUI_PROPS = [];
+    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

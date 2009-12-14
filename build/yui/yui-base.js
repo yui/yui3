@@ -679,9 +679,9 @@ YUI.prototype = {
 
     // inheritance utilities are not available yet
     for (i in p) {
-        // if (1) { // intenionally ignoring hasOwnProperty check
-        YUI[i] = p[i];
-        // }
+        if (1) { // intenionally ignoring hasOwnProperty check
+            YUI[i] = p[i];
+        }
     }
 
     // set up the environment
@@ -1658,8 +1658,7 @@ Y.cached = function(source, cache, refetch){
 
     return function(arg1, arg2) {
 
-        var k = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1,
-            v = cache[k];
+        var k = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
 
         if (!(k in cache) || (refetch && cache[k] == refetch)) {
             cache[k] = source.apply(source, arguments);

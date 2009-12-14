@@ -11,6 +11,7 @@ The YUI Global
 * Added the ability to define a global configuration object (YUI_config).
 * Added Object.some().
 * Chrome detection
+* Inserted script nodes get charset="utf-8" by default.
 
 3.0.0
 

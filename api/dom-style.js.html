@@ -47,158 +47,158 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-<span class="c">/** </span>
-<span class="c"> * Add style management functionality to DOM.</span>
-<span class="c"> * @module dom</span>
-<span class="c"> * @submodule dom-style</span>
-<span class="c"> * @for DOM</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+<span class="cm">/** </span>
+<span class="cm"> * Add style management functionality to DOM.</span>
+<span class="cm"> * @module dom</span>
+<span class="cm"> * @submodule dom-style</span>
+<span class="cm"> * @for DOM</span>
+<span class="cm"> */</span>
 
-<span class="k">var</span> <span class="nx">DOCUMENT_ELEMENT</span> <span class="o">=</span> <span class="s1">&#39;documentElement&#39;</span><span class="o">,</span>
-    <span class="nx">DEFAULT_VIEW</span> <span class="o">=</span> <span class="s1">&#39;defaultView&#39;</span><span class="o">,</span>
-    <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s1">&#39;ownerDocument&#39;</span><span class="o">,</span>
-    <span class="nx">STYLE</span> <span class="o">=</span> <span class="s1">&#39;style&#39;</span><span class="o">,</span>
-    <span class="nx">FLOAT</span> <span class="o">=</span> <span class="s1">&#39;float&#39;</span><span class="o">,</span>
-    <span class="nx">CSS_FLOAT</span> <span class="o">=</span> <span class="s1">&#39;cssFloat&#39;</span><span class="o">,</span>
-    <span class="nx">STYLE_FLOAT</span> <span class="o">=</span> <span class="s1">&#39;styleFloat&#39;</span><span class="o">,</span>
-    <span class="nx">TRANSPARENT</span> <span class="o">=</span> <span class="s1">&#39;transparent&#39;</span><span class="o">,</span>
-    <span class="nx">GET_COMPUTED_STYLE</span> <span class="o">=</span> <span class="s1">&#39;getComputedStyle&#39;</span><span class="o">,</span>
+<span class="kd">var</span> <span class="nx">DOCUMENT_ELEMENT</span> <span class="o">=</span> <span class="s1">&#39;documentElement&#39;</span><span class="p">,</span>
+    <span class="nx">DEFAULT_VIEW</span> <span class="o">=</span> <span class="s1">&#39;defaultView&#39;</span><span class="p">,</span>
+    <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s1">&#39;ownerDocument&#39;</span><span class="p">,</span>
+    <span class="nx">STYLE</span> <span class="o">=</span> <span class="s1">&#39;style&#39;</span><span class="p">,</span>
+    <span class="nx">FLOAT</span> <span class="o">=</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+    <span class="nx">CSS_FLOAT</span> <span class="o">=</span> <span class="s1">&#39;cssFloat&#39;</span><span class="p">,</span>
+    <span class="nx">STYLE_FLOAT</span> <span class="o">=</span> <span class="s1">&#39;styleFloat&#39;</span><span class="p">,</span>
+    <span class="nx">TRANSPARENT</span> <span class="o">=</span> <span class="s1">&#39;transparent&#39;</span><span class="p">,</span>
+    <span class="nx">GET_COMPUTED_STYLE</span> <span class="o">=</span> <span class="s1">&#39;getComputedStyle&#39;</span><span class="p">,</span>
 
-    <span class="nx">DOCUMENT</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">,</span>
-    <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="kc">undefined</span><span class="o">,</span>
+    <span class="nx">DOCUMENT</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
+    <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">,</span>
 
-    <span class="nx">re_color</span> <span class="o">=</span> <span class="sr">/color$/i</span><span class="o">;</span>
-
-
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="o">{</span>
-    <span class="nx">CUSTOM_STYLES</span><span class="o">:</span> <span class="o">{</span>
-    <span class="o">},</span>
+    <span class="nx">re_color</span> <span class="o">=</span> <span class="sr">/color$/i</span><span class="p">;</span>
 
 
-    <span class="c">/**</span>
-<span class="c">     * Sets a style property for a given element.</span>
-<span class="c">     * @method setStyle</span>
-<span class="c">     * @param {HTMLElement} An HTMLElement to apply the style to.</span>
-<span class="c">     * @param {String} att The style property to set. </span>
-<span class="c">     * @param {String|Number} val The value. </span>
-<span class="c">     */</span>
-    <span class="nx">setStyle</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">style</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">style</span> <span class="o">=</span> <span class="nx">style</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">style</span><span class="o">;</span>
-        <span class="k">var</span> <span class="nx">CUSTOM_STYLES</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">CUSTOM_STYLES</span><span class="o">:</span> <span class="p">{</span>
+    <span class="p">},</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">style</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span> <span class="c">// normalize for unsetting</span>
-<span class="c"></span>            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">att</span> <span class="k">in</span> <span class="nx">CUSTOM_STYLES</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">att</span><span class="o">].</span><span class="nx">set</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">att</span><span class="o">].</span><span class="nx">set</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">style</span><span class="o">);</span>
-                    <span class="k">return</span><span class="o">;</span> <span class="c">// NOTE: return</span>
-<span class="c"></span>                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">att</span> <span class="o">=</span> <span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">att</span><span class="o">];</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-            <span class="nx">style</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span> 
-        <span class="o">}</span>
-    <span class="o">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Returns the current style value for the given property.</span>
-<span class="c">     * @method getStyle</span>
-<span class="c">     * @param {HTMLElement} An HTMLElement to get the style from.</span>
-<span class="c">     * @param {String} att The style property to get. </span>
-<span class="c">     */</span>
-    <span class="nx">getStyle</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">style</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">],</span>
-            <span class="nx">CUSTOM_STYLES</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">,</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Sets a style property for a given element.</span>
+<span class="cm">     * @method setStyle</span>
+<span class="cm">     * @param {HTMLElement} An HTMLElement to apply the style to.</span>
+<span class="cm">     * @param {String} att The style property to set. </span>
+<span class="cm">     * @param {String|Number} val The value. </span>
+<span class="cm">     */</span>
+    <span class="nx">setStyle</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">style</span> <span class="o">=</span> <span class="nx">style</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">CUSTOM_STYLES</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">style</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">att</span> <span class="k">in</span> <span class="nx">CUSTOM_STYLES</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">att</span><span class="o">].</span><span class="nx">get</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">return</span> <span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">att</span><span class="o">].</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">,</span> <span class="nx">style</span><span class="o">);</span> <span class="c">// NOTE: return</span>
-<span class="c"></span>                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">att</span> <span class="o">=</span> <span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">att</span><span class="o">];</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">style</span><span class="o">[</span><span class="nx">att</span><span class="o">];</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// TODO: is empty string sufficient?</span>
-<span class="c"></span>                <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="o">](</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span> <span class="c1">// normalize for unsetting</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">att</span> <span class="k">in</span> <span class="nx">CUSTOM_STYLES</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">att</span><span class="p">].</span><span class="nx">set</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">att</span><span class="p">].</span><span class="nx">set</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">style</span><span class="p">);</span>
+                    <span class="k">return</span><span class="p">;</span> <span class="c1">// NOTE: return</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">att</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">att</span> <span class="o">=</span> <span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">att</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">style</span><span class="p">[</span><span class="nx">att</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span> 
+        <span class="p">}</span>
+    <span class="p">},</span>
 
-        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the current style value for the given property.</span>
+<span class="cm">     * @method getStyle</span>
+<span class="cm">     * @param {HTMLElement} An HTMLElement to get the style from.</span>
+<span class="cm">     * @param {String} att The style property to get. </span>
+<span class="cm">     */</span>
+    <span class="nx">getStyle</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">style</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">STYLE</span><span class="p">],</span>
+            <span class="nx">CUSTOM_STYLES</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">,</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Sets multiple style properties.</span>
-<span class="c">     * @method setStyles</span>
-<span class="c">     * @param {HTMLElement} node An HTMLElement to apply the styles to. </span>
-<span class="c">     * @param {Object} hash An object literal of property:value pairs. </span>
-<span class="c">     */</span>
-    <span class="nx">setStyles</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">hash</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">style</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">style</span><span class="o">;</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">hash</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">n</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">style</span><span class="o">);</span>
-        <span class="o">},</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">);</span>
-    <span class="o">},</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">att</span> <span class="k">in</span> <span class="nx">CUSTOM_STYLES</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">att</span><span class="p">].</span><span class="nx">get</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">att</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">,</span> <span class="nx">style</span><span class="p">);</span> <span class="c1">// NOTE: return</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">att</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">att</span> <span class="o">=</span> <span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">att</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">style</span><span class="p">[</span><span class="nx">att</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// TODO: is empty string sufficient?</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Returns the computed style for the given node.</span>
-<span class="c">     * @method getComputedStyle</span>
-<span class="c">     * @param {HTMLElement} An HTMLElement to get the style from.</span>
-<span class="c">     * @param {String} att The style property to get. </span>
-<span class="c">     * @return {String} The computed value of the style property. </span>
-<span class="c">     */</span>
-    <span class="nx">getComputedStyle</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">,</span>
-            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">];</span>
+        <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="p">},</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">[</span><span class="nx">STYLE</span><span class="o">])</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">DEFAULT_VIEW</span><span class="o">][</span><span class="nx">GET_COMPUTED_STYLE</span><span class="o">](</span><span class="nx">node</span><span class="o">,</span> <span class="kc">null</span><span class="o">)[</span><span class="nx">att</span><span class="o">];</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Sets multiple style properties.</span>
+<span class="cm">     * @method setStyles</span>
+<span class="cm">     * @param {HTMLElement} node An HTMLElement to apply the styles to. </span>
+<span class="cm">     * @param {Object} hash An object literal of property:value pairs. </span>
+<span class="cm">     */</span>
+    <span class="nx">setStyles</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">hash</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">style</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">;</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">style</span><span class="p">);</span>
+        <span class="p">},</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">);</span>
+    <span class="p">},</span>
 
-<span class="c">// normalize reserved word float alternatives (&quot;cssFloat&quot; or &quot;styleFloat&quot;)</span>
-<span class="c"></span><span class="k">if</span> <span class="o">(</span><span class="nx">DOCUMENT</span><span class="o">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="o">][</span><span class="nx">STYLE</span><span class="o">][</span><span class="nx">CSS_FLOAT</span><span class="o">]</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span><span class="o">)</span> <span class="o">{</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">FLOAT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CSS_FLOAT</span><span class="o">;</span>
-<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">DOCUMENT</span><span class="o">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="o">][</span><span class="nx">STYLE</span><span class="o">][</span><span class="nx">STYLE_FLOAT</span><span class="o">]</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span><span class="o">)</span> <span class="o">{</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">CUSTOM_STYLES</span><span class="o">[</span><span class="nx">FLOAT</span><span class="o">]</span> <span class="o">=</span> <span class="nx">STYLE_FLOAT</span><span class="o">;</span>
-<span class="o">}</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the computed style for the given node.</span>
+<span class="cm">     * @method getComputedStyle</span>
+<span class="cm">     * @param {HTMLElement} An HTMLElement to get the style from.</span>
+<span class="cm">     * @param {String} att The style property to get. </span>
+<span class="cm">     * @return {String} The computed value of the style property. </span>
+<span class="cm">     */</span>
+    <span class="nx">getComputedStyle</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="nx">doc</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">OWNER_DOCUMENT</span><span class="p">];</span>
 
-<span class="c">// fix opera computedStyle default color unit (convert to rgb)</span>
-<span class="c"></span><span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span><span class="o">)</span> <span class="o">{</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">][</span><span class="nx">DEFAULT_VIEW</span><span class="o">],</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">view</span><span class="o">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="o">](</span><span class="nx">node</span><span class="o">,</span> <span class="s1">&#39;&#39;</span><span class="o">)[</span><span class="nx">att</span><span class="o">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">[</span><span class="nx">STYLE</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">[</span><span class="nx">DEFAULT_VIEW</span><span class="p">][</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="kc">null</span><span class="p">)[</span><span class="nx">att</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">re_color</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">att</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toRGB</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
-        <span class="o">}</span>
+<span class="c1">// normalize reserved word float alternatives (&quot;cssFloat&quot; or &quot;styleFloat&quot;)</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">DOCUMENT</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">][</span><span class="nx">STYLE</span><span class="p">][</span><span class="nx">CSS_FLOAT</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">FLOAT</span><span class="p">]</span> <span class="o">=</span> <span class="nx">CSS_FLOAT</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">DOCUMENT</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">][</span><span class="nx">STYLE</span><span class="p">][</span><span class="nx">STYLE_FLOAT</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">FLOAT</span><span class="p">]</span> <span class="o">=</span> <span class="nx">STYLE_FLOAT</span><span class="p">;</span>
+<span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-    <span class="o">};</span>
+<span class="c1">// fix opera computedStyle default color unit (convert to rgb)</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">opera</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">OWNER_DOCUMENT</span><span class="p">][</span><span class="nx">DEFAULT_VIEW</span><span class="p">],</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">view</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)[</span><span class="nx">att</span><span class="p">];</span>
 
-<span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">re_color</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">att</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Color</span><span class="p">.</span><span class="nx">toRGB</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+        <span class="p">}</span>
 
-<span class="c">// safari converts transparent to rgba(), others use &quot;transparent&quot;</span>
-<span class="c"></span><span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">OWNER_DOCUMENT</span><span class="o">][</span><span class="nx">DEFAULT_VIEW</span><span class="o">],</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">view</span><span class="o">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="o">](</span><span class="nx">node</span><span class="o">,</span> <span class="s1">&#39;&#39;</span><span class="o">)[</span><span class="nx">att</span><span class="o">];</span>
+        <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="p">};</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;rgba(0, 0, 0, 0)&#39;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">TRANSPARENT</span><span class="o">;</span> 
-        <span class="o">}</span>
+<span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-    <span class="o">};</span>
+<span class="c1">// safari converts transparent to rgba(), others use &quot;transparent&quot;</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">webkit</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">OWNER_DOCUMENT</span><span class="p">][</span><span class="nx">DEFAULT_VIEW</span><span class="p">],</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">view</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)[</span><span class="nx">att</span><span class="p">];</span>
 
-<span class="o">}</span>
-<span class="o">})(</span><span class="nx">Y</span><span class="o">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;rgba(0, 0, 0, 0)&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">TRANSPARENT</span><span class="p">;</span> 
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="p">};</span>
+
+<span class="p">}</span>
+<span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>
 </pre></div>
 
                     </div>
@@ -297,7 +297,8 @@
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addHTML", "url": "DOM.html#method_addHTML", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "PARENT_NODE", "url": "Selector.html#property_PARENT_NODE", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setHeight", "url": "DOM.html#method_setHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setWidth", "url": "DOM.html#method_setWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addHTML", "url": "DOM.html#method_addHTML", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "PARENT_NODE", "url": "Selector.html#property_PARENT_NODE", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setHeight", "url": "DOM.html#method_setHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setWidth", "url": "DOM.html#method_setWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

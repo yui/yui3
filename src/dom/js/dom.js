@@ -204,14 +204,53 @@ Y.DOM = {
      * @return {Boolean} Whether or not the element is attached to the document. 
      */
     inDoc: function(element, doc) {
+        // there may be multiple elements with the same ID
         doc = doc || element[OWNER_DOCUMENT];
-        var id = element.id;
-        if (!id) { // TODO: remove when done?
-            id = element.id = Y.guid();
+        var nodes = [],
+            ret = false,
+            i,
+            node,
+            query;
+                
+        element.id = element.id || Y.guid(); 
+
+        nodes = Y.DOM.allById(element.id, doc);
+        for (i = 0; node = nodes[i++];) { // check for a match
+            if (node === element) {
+                ret = true;
+                break;
+            }
         }
 
-        return !! (doc.getElementById(id));
+        return ret;
+
     },
+
+   allById: function(id, root) {
+        root = root || Y.config.doc;
+        var nodes = [],
+            ret = [],
+            i,
+            node;
+
+        if (root.querySelectorAll) {
+            ret = root.querySelectorAll('[id="' + id + '"]');
+        } else if (root.all) {
+            nodes = root.all(id);
+            if (nodes && nodes.nodeType) { // root.all may return one or many
+                nodes = [nodes];
+            }
+
+            if (nodes && nodes.length) {
+                for (i = 0; node = nodes[i++];) { // check for a match
+                    if (node.id === id) { // avoid false positive for node.name
+                        ret.push(node);
+                    }
+                }
+            }
+        }
+        return ret;
+   },
 
     /**
      * Creates a new dom node using the provided markup string. 
@@ -222,10 +261,6 @@ Y.DOM = {
     create: function(html, doc) {
         if (typeof html === 'string') {
             html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
-        }
-
-        if (!doc && Y.DOM._cloneCache[html]) {
-            return Y.DOM._cloneCache[html].cloneNode(true); // NOTE: return
         }
 
         doc = doc || Y.config.doc;
@@ -251,9 +286,6 @@ Y.DOM = {
              ret = Y.DOM._nl2frag(nodes, doc);
         }
 
-        if (ret) {
-            Y.DOM._cloneCache[html] = ret.cloneNode(true);
-        }
         return ret;
     },
 
@@ -326,9 +358,7 @@ Y.DOM = {
         return obj.alert && obj.document;
     },
 
-    _fragClones: {
-        div: document.createElement('div')
-    },
+    _fragClones: {},
 
     _create: function(html, doc, tag) {
         tag = tag || 'div';
@@ -349,8 +379,6 @@ Y.DOM = {
         }
     },
 
-    _cloneCache: {},
-
     /**
      * Inserts content in a node at the given location 
      * @method addHTML
@@ -363,12 +391,10 @@ Y.DOM = {
             content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
         }
 
-        var newNode = Y.DOM._cloneCache[content],
-            nodeParent = node.parentNode;
+        var nodeParent = node.parentNode,
+            newNode;
             
-        if (newNode) {
-            newNode = newNode.cloneNode(true);
-        } else {
+        if (content) {
             if (content.nodeType) { // domNode
                 newNode = content;
             } else { // create from string and cache
@@ -386,7 +412,9 @@ Y.DOM = {
                         while (node.firstChild) {
                             node.removeChild(node.firstChild);
                         }
-                        node.appendChild(newNode);
+                        if (newNode) { // allow empty content to clear node
+                            node.appendChild(newNode);
+                        }
                         break;
                     case 'before':
                         nodeParent.insertBefore(newNode, node);
